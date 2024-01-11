@@ -25,7 +25,7 @@ The Northeast Restoration Tracker (NERT) will provide an integrated, science-bas
 
 ### Clone the repo
 
-- `git clone https://github.com/bcgov/restoration-tracker.git`
+- `git clone https://github.com/bcgov/nert-restoration-tracker.git`
 
 ## Install Docker
 
