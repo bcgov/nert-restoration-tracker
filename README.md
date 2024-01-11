@@ -1,8 +1,8 @@
-[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bcgov_restoration-tracker&metric=alert_status)](https://sonarcloud.io/dashboard?id=bcgov_restoration-tracker) [![codecov](https://codecov.io/gh/bcgov/restoration-tracker/branch/dev/graph/badge.svg?token=CyJ2NTS3Bh)](https://codecov.io/gh/bcgov/restoration-tracker) [![Restoration](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/w8oxci/dev&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/bq8wdr/runs)
+[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bcgov_restoration-tracker&metric=alert_status)](https://sonarcloud.io/dashboard?id=bcgov_restoration-tracker) [![codecov](https://codecov.io/gh/bcgov/restoration-tracker/branch/dev/graph/badge.svg?token=CyJ2NTS3Bh)](https://codecov.io/gh/bcgov/restoration-tracker) [![Restoration](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/w8oxci/dev&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/bq8wdr/runs)
 
-# Habitat Restoration Tracker
+# Northeast Restoration Tracker (NERT)
 
-The Habitat Restoration Tracker is a system which supports the planning, implementation and monitoring of restoration projects in British Columbia. The initial release (March 2022) collects project and treatment details for caribou herd restoration initiatives in the north east of the province. Future development will support all restoration projects within the province and will assist with planning and monitoring the effectiveness of these projects.
+The Northeast Restoration Tracker (NERT) will provide an integrated, science-based view of restoration activities on the land base, and become the single point of restoration-activity truth for the entire province.
 
 ## Technologies Used
 
