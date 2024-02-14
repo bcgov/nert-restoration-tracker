@@ -18,64 +18,10 @@ export enum SYSTEM_USER_ROLE_ID {
 
 const systemUsers = [
   {
-    identifier: 'arosenth',
+    identifier: 'oinostro',
     type: SYSTEM_IDENTITY_SOURCE.IDIR,
     roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: 'DFE2CC5E345E4B1E813EC1DC10852064'
-  },
-  {
-    identifier: 'aagahche',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: 'DF86C48FAD244498B0881AF8DBB7645F'
-  },
-  {
-    identifier: 'cgarrett',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: '067361FFF3514B5E80AAAAD795E6741D'
-  },
-  {
-    identifier: 'cupshall',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: 'C42DFA74A976490A819BC85FF5E254E4'
-  },
-  {
-    identifier: 'jxdunsdo',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: '82E8D3B4BAD045E8AD3980D426EA781C'
-  },
-  {
-    identifier: 'keinarss',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: 'F4663727DE89489C8B7CFA81E4FA99B3'
-  },
-  {
-    identifier: 'nphura',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: '813B096BC1BC4AAAB2E39DDE58F432E2'
-  },
-  {
-    identifier: 'robmunro',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: '72013F74B95A4FBEB53BDB4B494E5550'
-  },
-  {
-    identifier: 'zochampi',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: '349F20767A834FB582A18E8D378973E7'
-  },
-  {
-    identifier: 'achirico',
-    type: SYSTEM_IDENTITY_SOURCE.IDIR,
-    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: 'E3A279530D164485BF43C6FE7A49E175'
+    user_guid: '5134A2E785814352A291886CD5F53CD1'
   }
 ];
 
