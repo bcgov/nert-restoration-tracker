@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { initialize } from 'express-openapi';
 import multer from 'multer';
 import { OpenAPIV3 } from 'openapi-types';
-import swaggerUIExperss from 'swagger-ui-express';
+import swaggerUIExpress from 'swagger-ui-express';
 import { defaultPoolConfig, initDBPool } from './database/db';
 import { ensureHTTPError, HTTPErrorType } from './errors/custom-error';
 import { rootAPIDoc } from './openapi/root-api-doc';
@@ -98,7 +98,7 @@ const openAPIFramework = initialize({
 });
 
 // Path to view beautified openapi spec
-app.use('/api-docs', swaggerUIExperss.serve, swaggerUIExperss.setup(openAPIFramework.apiDoc));
+app.use('/api-docs', swaggerUIExpress.serve, swaggerUIExpress.setup(openAPIFramework.apiDoc));
 
 // Start api
 try {
