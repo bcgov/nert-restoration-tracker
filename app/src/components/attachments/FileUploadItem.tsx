@@ -1,13 +1,13 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import ListItem from '@material-ui/core/ListItem';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
 import { mdiCheck, mdiFileOutline, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+import ListItem from '@mui/material/ListItem';
+import { Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import axios, { CancelTokenSource } from 'axios';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { APIError } from 'hooks/api/useAxios';
@@ -270,7 +270,7 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
 
   if (props.status === UploadFileStatus.PENDING || props.status === UploadFileStatus.STAGED) {
     return (
-      <IconButton title="Remove File" aria-label="remove file" onClick={() => props.onCancel()}>
+      <IconButton title="Remove File" aria-label="remove file" onClick={() => props.onCancel()} size="large">
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -278,7 +278,7 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
 
   if (props.status === UploadFileStatus.UPLOADING) {
     return (
-      <IconButton title="Cancel Upload" aria-label="cancel upload" onClick={() => props.onCancel()}>
+      <IconButton title="Cancel Upload" aria-label="cancel upload" onClick={() => props.onCancel()} size="large">
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -298,7 +298,8 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         title="Remove File"
         aria-label="remove file"
         onClick={() => props.onCancel()}
-        className={classes.errorColor}>
+        className={classes.errorColor}
+        size="large">
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );

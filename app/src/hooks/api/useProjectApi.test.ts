@@ -149,7 +149,7 @@ describe('useProjectApi', () => {
   });
 
   it('createProject works as expected', async () => {
-    const projectData = ({} as unknown) as ICreateProjectRequest;
+    const projectData = {} as unknown as ICreateProjectRequest;
 
     mock.onPost('/api/project/create').reply(200, {
       id: 1

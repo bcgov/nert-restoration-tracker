@@ -1,16 +1,16 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import IconButton from '@material-ui/core/IconButton';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
 import { mdiArrowRight, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import IconButton from '@mui/material/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
+// import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL } from 'constants/misc';
@@ -18,7 +18,7 @@ import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   iucnInputContainer: {
     overflow: 'hidden'
   },
@@ -47,9 +47,9 @@ export interface IProjectIUCNForm {
 }
 
 export const ProjectIUCNFormArrayItemInitialValues: IProjectIUCNFormArrayItem = {
-  classification: ('' as unknown) as number,
-  subClassification1: ('' as unknown) as number,
-  subClassification2: ('' as unknown) as number
+  classification: '' as unknown as number,
+  subClassification1: '' as unknown as number,
+  subClassification2: '' as unknown as number
 };
 
 export const ProjectIUCNFormInitialValues: IProjectIUCNForm = {
@@ -146,8 +146,8 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                           label="Classification"
                           value={classificationDetail.classification}
                           onChange={(e: any) => {
-                            classificationDetail.subClassification1 = ('' as unknown) as number;
-                            classificationDetail.subClassification2 = ('' as unknown) as number;
+                            classificationDetail.subClassification1 = '' as unknown as number;
+                            classificationDetail.subClassification2 = '' as unknown as number;
                             handleChange(e);
                           }}
                           error={classificationMeta.touched && Boolean(classificationMeta.error)}
@@ -178,7 +178,7 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                           label="Sub-classification"
                           value={classificationDetail.subClassification1}
                           onChange={(e: any) => {
-                            classificationDetail.subClassification2 = ('' as unknown) as number;
+                            classificationDetail.subClassification2 = '' as unknown as number;
                             handleChange(e);
                           }}
                           disabled={!classificationDetail.classification}
@@ -237,7 +237,8 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                         data-testid="delete-icon"
                         color="primary"
                         aria-label="delete"
-                        onClick={() => arrayHelpers.remove(index)}>
+                        onClick={() => arrayHelpers.remove(index)}
+                        size="large">
                         <Icon path={mdiTrashCanOutline} size={1} />
                       </IconButton>
                     </Box>

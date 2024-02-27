@@ -150,12 +150,10 @@ const DrawControls: React.FC<IDrawControlsProps> = (props) => {
     map.on(eventHandlers.onEdited, onDrawEditDelete);
     // @ts-ignore
     map.on(eventHandlers.onDeleted, onDrawEditDelete);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useDeepCompareEffect(() => {
     drawFeatures(props.features);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.features]);
 
   const drawControlsRef = useRef(getDrawControls());
@@ -166,7 +164,6 @@ const DrawControls: React.FC<IDrawControlsProps> = (props) => {
     drawControlsRef.current.remove();
     drawControlsRef.current = getDrawControls();
     drawControlsRef.current.addTo(map);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.options]);
 
   return null;

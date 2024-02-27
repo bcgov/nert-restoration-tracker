@@ -1,5 +1,5 @@
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 import { useFormikContext } from 'formik';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useEffect, useState } from 'react';
@@ -86,8 +86,6 @@ export const ScrollToFormikError: React.FC = () => {
     }
 
     errorElement[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errors]);
 
   return (

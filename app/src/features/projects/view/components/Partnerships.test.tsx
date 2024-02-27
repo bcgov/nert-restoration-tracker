@@ -32,8 +32,8 @@ describe('Partnerships', () => {
         projectForViewData={{
           ...getProjectForViewResponse,
           partnerships: {
-            indigenous_partnerships: (null as unknown) as number[],
-            stakeholder_partnerships: (null as unknown) as string[]
+            indigenous_partnerships: null as unknown as number[],
+            stakeholder_partnerships: null as unknown as string[]
           }
         }}
         codes={codes}

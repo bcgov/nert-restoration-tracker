@@ -58,7 +58,7 @@ describe('Project Contact Form', () => {
         validationSchema={ProjectContactYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async (values, helper) => {
+        onSubmit={async (values) => {
           handleSaveAndNext(values);
         }}>
         {() => <ProjectContactForm coordinator_agency={agencies} />}

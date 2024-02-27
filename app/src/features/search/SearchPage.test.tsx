@@ -19,9 +19,9 @@ const mockUseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockUseRestorationTrackerApi
->).mockReturnValue(mockUseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockUseRestorationTrackerApi>
+).mockReturnValue(mockUseRestorationTrackerApi);
 
 const history = createMemoryHistory();
 

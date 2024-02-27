@@ -25,7 +25,7 @@ import { codes } from 'test-helpers/code-helpers';
 const history = createMemoryHistory();
 
 jest.mock('../../../hooks/useCodes');
-const mockUseCodes = ((useCodes as unknown) as jest.Mock).mockReturnValue({ codes: codes });
+const mockUseCodes = (useCodes as unknown as jest.Mock).mockReturnValue({ codes: codes });
 
 jest.mock('../../../hooks/useRestorationTrackerApi');
 const mockuseRestorationTrackerApi = {
@@ -43,9 +43,9 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
+).mockReturnValue(mockuseRestorationTrackerApi);
 
 const renderContainer = () => {
   return render(

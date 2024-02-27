@@ -1,15 +1,15 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import Chip from '@material-ui/core/Chip';
-import Grid from '@material-ui/core/Grid';
-import Input from '@material-ui/core/Input';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
 import { mdiClose, mdiMagnify, mdiMenuDown, mdiMenuUp } from '@mdi/js';
 import { Icon } from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import { Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteField';
 import { useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -279,7 +279,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
 
           {isFiltersChipsOpen && (
             <Box my={2}>
-              <Grid container direction="row" justify="flex-start" alignItems="center" spacing={1}>
+              <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={1}>
                 <Grid item>
                   <Typography variant="h4">Filters </Typography>
                 </Grid>
