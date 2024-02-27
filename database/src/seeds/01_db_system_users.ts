@@ -22,6 +22,12 @@ const systemUsers = [
     type: SYSTEM_IDENTITY_SOURCE.IDIR,
     roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
     user_guid: '5134A2E785814352A291886CD5F53CD1'
+  },
+  {
+    identifier: 'jrpopkin',
+    type: SYSTEM_IDENTITY_SOURCE.IDIR,
+    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
+    user_guid: 'c1210b3766c84571bd60c5b274873e89'
   }
 ];
 
