@@ -1,5 +1,7 @@
-import Chip, { ChipProps } from '@material-ui/core/Chip';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Chip, { ChipProps } from '@mui/material/Chip';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import moment from 'moment';
 import React from 'react';

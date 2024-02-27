@@ -17,16 +17,16 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
+).mockReturnValue(mockuseRestorationTrackerApi);
 
-const mockUser = ({
+const mockUser = {
   id: 1,
   user_identifier: 'testUser',
   record_end_date: 'ending',
   role_names: ['system']
-} as unknown) as IGetUserResponse;
+} as unknown as IGetUserResponse;
 
 describe('UsersDetailHeader', () => {
   afterEach(() => {

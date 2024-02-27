@@ -1,16 +1,16 @@
-import Box from '@material-ui/core/Box';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
-import ArrowBack from '@material-ui/icons/ArrowBack';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Box from '@mui/material/Box';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
+import { Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import { EditProjectI18N } from 'constants/i18n';
@@ -83,7 +83,7 @@ const EditProjectPage: React.FC = () => {
   const dialogContext = useContext(DialogContext);
 
   const [initialProjectFormData, setInitialProjectFormData] = useState<IGetProjectForViewResponse>(
-    (ProjectFormInitialValues as unknown) as IGetProjectForViewResponse
+    ProjectFormInitialValues as unknown as IGetProjectForViewResponse
   );
 
   useEffect(() => {
@@ -186,7 +186,7 @@ const EditProjectPage: React.FC = () => {
    * @param {History.Location} location
    * @return {*}
    */
-  const handleLocationChange = (location: History.Location, action: History.Action) => {
+  const handleLocationChange = (location: History.Location) => {
     if (!dialogContext.yesNoDialogProps.open) {
       // If the cancel dialog is not open: open it
       dialogContext.setYesNoDialog({

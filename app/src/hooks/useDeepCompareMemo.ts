@@ -20,6 +20,5 @@ export function useDeepCompareMemo<T>(value: T) {
     signalRef.current += 1;
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => ref.current, [signalRef.current]);
 }

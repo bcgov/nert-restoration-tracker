@@ -1,11 +1,11 @@
-import Checkbox from '@material-ui/core/Checkbox';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import TextField from '@material-ui/core/TextField';
-import CheckBox from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlank from '@material-ui/icons/CheckBoxOutlineBlank';
-import { FilterOptionsState } from '@material-ui/lab';
-import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@material-ui/lab/Autocomplete';
+import CheckBox from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
+import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@mui/material/Autocomplete';
+import Checkbox from '@mui/material/Checkbox';
+import ListSubheader from '@mui/material/ListSubheader';
+import TextField from '@mui/material/TextField';
+import { FilterOptionsState } from '@mui/material/useAutocomplete';
+import makeStyles from '@mui/styles/makeStyles';
 import { useFormikContext } from 'formik';
 import { DebouncedFunc } from 'lodash-es';
 import get from 'lodash-es/get';
@@ -167,17 +167,14 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
 
   useEffect(() => {
     apiSearchTypeHelpers && apiSearchTypeHelpers.loadOptionsForSelectedValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedValues]);
 
   useEffect(() => {
     apiSearchTypeHelpers && apiSearchTypeHelpers.searchSpecies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
 
   useEffect(() => {
     setOptions(props.options || []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.options]);
 
   const getExistingValue = (existingValues: (number | string)[]): IMultiAutocompleteFieldOption[] => {
@@ -253,7 +250,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
       data-testid={props.id}
       options={options}
       getOptionLabel={(option) => option.label}
-      getOptionSelected={handleGetOptionSelected}
+      isOptionEqualToValue={handleGetOptionSelected}
       disableCloseOnSelect
       disableListWrap
       classes={classes}

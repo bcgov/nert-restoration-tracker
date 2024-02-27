@@ -1,6 +1,6 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 

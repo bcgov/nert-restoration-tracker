@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
@@ -973,7 +974,7 @@ describe('Guards', () => {
           <Router history={history}>
             <Route path="test/:id">
               <AuthStateContext.Provider value={authState}>
-                <UnAuthGuard fallback={(id) => <div data-testid="fallback-child-component" />}>
+                <UnAuthGuard fallback={() => <div data-testid="fallback-child-component" />}>
                   <div data-testid="child-component" />
                 </UnAuthGuard>
               </AuthStateContext.Provider>

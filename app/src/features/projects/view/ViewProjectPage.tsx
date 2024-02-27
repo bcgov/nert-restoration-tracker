@@ -1,15 +1,17 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Dialog from '@material-ui/core/Dialog';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { mdiAccountMultipleOutline, mdiArrowLeft, mdiFullscreen, mdiPencilOutline } from '@mdi/js';
 import { Icon } from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import { Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { RoleGuard } from 'components/security/Guards';
@@ -300,7 +302,8 @@ const ViewProjectPage: React.FC = () => {
                         aria-label="view full screen map"
                         title="View full screen map"
                         className={classes.fullScreenBtn}
-                        onClick={openMapDialog}>
+                        onClick={openMapDialog}
+                        size="large">
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>
@@ -325,7 +328,7 @@ const ViewProjectPage: React.FC = () => {
       <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
         <Box pr={3} pl={1} display="flex" alignItems="center">
           <Box mr={1}>
-            <IconButton onClick={closeMapDialog} aria-label="back to project">
+            <IconButton onClick={closeMapDialog} aria-label="back to project" size="large">
               <Icon path={mdiArrowLeft} size={1} />
             </IconButton>
           </Box>

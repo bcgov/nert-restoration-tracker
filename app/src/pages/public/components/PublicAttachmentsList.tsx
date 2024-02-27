@@ -1,12 +1,12 @@
-import Link from '@material-ui/core/Link';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
+import Link from '@mui/material/Link';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import makeStyles from '@mui/styles/makeStyles';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
@@ -73,8 +73,8 @@ const PublicAttachmentsList: React.FC<IPublicAttachmentsListProps> = (props) => 
           count={props.attachmentsList.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
-          onChangeRowsPerPage={(event: React.ChangeEvent<HTMLInputElement>) =>
+          onPageChange={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
+          onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             handleChangeRowsPerPage(event, setPage, setRowsPerPage)
           }
         />

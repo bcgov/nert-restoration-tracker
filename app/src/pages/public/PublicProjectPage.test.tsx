@@ -29,11 +29,11 @@ const mockuseRestorationTrackerApi = {
 };
 
 jest.mock('../../hooks/useCodes');
-const mockUseCodes = (useCodes as unknown) as jest.MockedFunction<typeof useCodes>;
+const mockUseCodes = useCodes as unknown as jest.MockedFunction<typeof useCodes>;
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
+).mockReturnValue(mockuseRestorationTrackerApi);
 
 describe('PublicProjectPage', () => {
   beforeEach(() => {
@@ -67,9 +67,8 @@ describe('PublicProjectPage', () => {
   it('renders spinner when no codes is loaded', async () => {
     mockUseCodes.mockReturnValue({ codes: undefined, isLoading: true, isReady: false });
 
-    const mockGetProjectForView = mockRestorationTrackerApi().public.project.getProjectForView.mockResolvedValue(
-      getProjectForViewResponse
-    );
+    const mockGetProjectForView =
+      mockRestorationTrackerApi().public.project.getProjectForView.mockResolvedValue(getProjectForViewResponse);
 
     const { getByTestId } = render(
       <DialogContextProvider>
@@ -144,7 +143,7 @@ describe('PublicProjectPage', () => {
       ...getProjectForViewResponse,
       project: {
         ...getProjectForViewResponse.project,
-        end_date: (null as unknown) as string
+        end_date: null as unknown as string
       }
     });
 
