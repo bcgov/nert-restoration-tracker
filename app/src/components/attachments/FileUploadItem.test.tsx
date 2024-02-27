@@ -57,7 +57,7 @@ describe('FileUploadItem', () => {
   it('handles file upload success', async () => {
     let resolveRef: (value: unknown) => void;
 
-    const mockUploadPromise = new Promise(function (resolve: any, reject: any) {
+    const mockUploadPromise = new Promise(function (resolve: any) {
       resolveRef = resolve;
     });
 

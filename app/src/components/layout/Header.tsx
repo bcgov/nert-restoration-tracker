@@ -1,19 +1,19 @@
-import AppBar from '@material-ui/core/AppBar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import OtherLink from '@material-ui/core/Link';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
 import Icon from '@mdi/react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import OtherLink from '@mui/material/Link';
+import { Theme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
 import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
@@ -136,7 +136,11 @@ const Header: React.FC = () => {
         <Box pl={2}>
           <Divider orientation="vertical" />
         </Box>
-        <IconButton aria-label="need help" className={classes.govHeaderIconButton} onClick={showSupportDialog}>
+        <IconButton
+          aria-label="need help"
+          className={classes.govHeaderIconButton}
+          onClick={showSupportDialog}
+          size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -157,7 +161,7 @@ const Header: React.FC = () => {
           data-testid="login">
           Log In
         </Button>
-        <IconButton className={classes.govHeaderIconButton} onClick={showSupportDialog}>
+        <IconButton className={classes.govHeaderIconButton} onClick={showSupportDialog} size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>

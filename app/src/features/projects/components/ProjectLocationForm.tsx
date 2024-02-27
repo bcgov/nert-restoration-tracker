@@ -1,18 +1,18 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormLabel from '@material-ui/core/FormLabel';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
 import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
@@ -37,9 +37,9 @@ export interface IProjectLocationForm {
 export const ProjectLocationFormInitialValues: IProjectLocationForm = {
   location: {
     geometry: [],
-    range: (undefined as unknown) as number,
+    range: undefined as unknown as number,
     priority: 'false',
-    region: ('' as unknown) as number
+    region: '' as unknown as number
   }
 };
 

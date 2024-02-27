@@ -1,5 +1,5 @@
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectAttachment, IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -45,7 +45,6 @@ const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () =>
 
   useEffect(() => {
     getAttachments(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { Feature } from 'geojson';
 import L, { LeafletEventHandlerFnMap } from 'leaflet';
 import 'leaflet-draw/dist/leaflet.draw.css';

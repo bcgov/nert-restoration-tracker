@@ -1,7 +1,7 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { ThemeProvider } from '@material-ui/core/styles';
 // Strange looking `type {}` import below, see: https://github.com/microsoft/TypeScript/issues/36812
-import type {} from '@material-ui/lab/themeAugmentation'; // this allows `@material-ui/lab` components to be themed
+import type {} from '@mui/lab/themeAugmentation'; // this allows `@mui/lab` components to be themed
+import CircularProgress from '@mui/material/CircularProgress';
+import { StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import AppRouter from 'AppRouter';
 import { AuthStateContextProvider } from 'contexts/authStateContext';
@@ -11,34 +11,41 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import appTheme from 'themes/appTheme';
 
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={appTheme}>
-      <ConfigContextProvider>
-        <ConfigContext.Consumer>
-          {(config) => {
-            if (!config) {
-              return <CircularProgress className="pageProgress" size={40} />;
-            }
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={appTheme}>
+        <ConfigContextProvider>
+          <ConfigContext.Consumer>
+            {(config) => {
+              if (!config) {
+                return <CircularProgress className="pageProgress" size={40} />;
+              }
 
-            const keycloak = new Keycloak(config.KEYCLOAK_CONFIG);
+              const keycloak = new Keycloak(config.KEYCLOAK_CONFIG);
 
-            return (
-              <ReactKeycloakProvider
-                authClient={keycloak}
-                initOptions={{ pkceMethod: 'S256' }}
-                LoadingComponent={<CircularProgress className="pageProgress" size={40} />}>
-                <AuthStateContextProvider>
-                  <BrowserRouter>
-                    <AppRouter />
-                  </BrowserRouter>
-                </AuthStateContextProvider>
-              </ReactKeycloakProvider>
-            );
-          }}
-        </ConfigContext.Consumer>
-      </ConfigContextProvider>
-    </ThemeProvider>
+              return (
+                <ReactKeycloakProvider
+                  authClient={keycloak}
+                  initOptions={{ pkceMethod: 'S256' }}
+                  LoadingComponent={<CircularProgress className="pageProgress" size={40} />}>
+                  <AuthStateContextProvider>
+                    <BrowserRouter>
+                      <AppRouter />
+                    </BrowserRouter>
+                  </AuthStateContextProvider>
+                </ReactKeycloakProvider>
+              );
+            }}
+          </ConfigContext.Consumer>
+        </ConfigContextProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 

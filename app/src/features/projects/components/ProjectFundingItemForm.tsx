@@ -1,12 +1,12 @@
-import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import DollarAmountField from 'components/fields/DollarAmountField';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
@@ -31,12 +31,12 @@ export interface IProjectFundingFormArrayItem {
 
 export const ProjectFundingFormArrayItemInitialValues: IProjectFundingFormArrayItem = {
   id: 0,
-  agency_id: ('' as unknown) as number,
+  agency_id: '' as unknown as number,
   agency_name: '',
-  investment_action_category: ('' as unknown) as number,
+  investment_action_category: '' as unknown as number,
   investment_action_category_name: '',
   agency_project_id: '',
-  funding_amount: ('' as unknown) as number,
+  funding_amount: '' as unknown as number,
   start_date: '',
   end_date: '',
   revision_count: 0

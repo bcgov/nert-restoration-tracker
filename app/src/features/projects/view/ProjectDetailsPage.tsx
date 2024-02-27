@@ -1,6 +1,8 @@
-import Box from '@material-ui/core/Box';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import { Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import IUCNClassification from 'features/projects/view/components/IUCNClassification';

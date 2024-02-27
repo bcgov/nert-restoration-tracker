@@ -25,7 +25,7 @@ describe('ProjectsListPage', () => {
 
   test('renders with a proper list of a single project', async () => {
     const projectArray = [
-      ({
+      {
         project: {
           project_id: 1,
           project_name: 'Project 1',
@@ -43,7 +43,7 @@ describe('ProjectsListPage', () => {
             }
           ]
         }
-      } as unknown) as IGetProjectForViewResponse
+      } as unknown as IGetProjectForViewResponse
     ];
 
     const { getByText, getByTestId } = render(
@@ -60,7 +60,7 @@ describe('ProjectsListPage', () => {
 
   test('renders with a proper list of multiple projects and drafts', async () => {
     const projectArray = [
-      ({
+      {
         project: {
           project_id: 1,
           project_name: 'Project 1',
@@ -78,7 +78,7 @@ describe('ProjectsListPage', () => {
             }
           ]
         }
-      } as unknown) as IGetProjectForViewResponse
+      } as unknown as IGetProjectForViewResponse
     ];
     const draftArray = [
       {
@@ -110,7 +110,7 @@ describe('ProjectsListPage', () => {
 
   test('navigating to the project works', async () => {
     const projectArray = [
-      ({
+      {
         project: {
           project_id: 1,
           project_name: 'Project 1',
@@ -128,7 +128,7 @@ describe('ProjectsListPage', () => {
             }
           ]
         }
-      } as unknown) as IGetProjectForViewResponse
+      } as unknown as IGetProjectForViewResponse
     ];
 
     const { getByTestId } = render(

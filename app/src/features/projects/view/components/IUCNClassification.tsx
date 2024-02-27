@@ -1,5 +1,6 @@
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';

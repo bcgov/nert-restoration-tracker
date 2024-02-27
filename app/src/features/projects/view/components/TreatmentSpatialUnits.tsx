@@ -1,16 +1,16 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Alert from '@material-ui/lab/Alert';
 import { mdiExport, mdiImport, mdiMenuDown, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
@@ -255,7 +255,6 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     id={'download-spatial'}
                     data-testid={'download-spatial'}
                     variant="contained"
-                    color="default"
                     disableElevation
                     title="Export treatment shapefile"
                     aria-label="export treatment shapefile"
@@ -284,7 +283,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     data-testid={'remove-project-treatments-button'}
                     onClick={() => {
                       showDeleteTreatmentsDialog();
-                    }}>
+                    }}
+                    size="large">
                     <Icon path={mdiTrashCanOutline} size={0.9375} />
                   </IconButton>
                 </Box>

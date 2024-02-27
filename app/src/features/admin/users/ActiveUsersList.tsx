@@ -1,20 +1,20 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiDotsVertical, mdiInformationOutline, mdiMenuDown, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+// import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import EditDialog from 'components/dialog/EditDialog';
 import { CustomMenuButton, CustomMenuIconButton } from 'components/toolbar/ActionToolbars';
 import { AddSystemUserI18N, DeleteSystemUserI18N, UpdateSystemUserI18N } from 'constants/i18n';
@@ -32,7 +32,7 @@ import AddSystemUsersForm, {
   IAddSystemUsersForm
 } from './AddSystemUsersForm';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   table: {
     tableLayout: 'fixed',
     '& td': {
@@ -242,7 +242,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       <Paper>
         <Toolbar disableGutters>
           <Grid
-            justify="space-between" // Add it here :)
+            justifyContent="space-between" // Add it here :)
             container
             alignItems="center">
             <Grid item>
@@ -348,8 +348,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
             count={activeUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onChangePage={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
-            onChangeRowsPerPage={(event: React.ChangeEvent<HTMLInputElement>) =>
+            onPageChange={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
+            onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }
           />

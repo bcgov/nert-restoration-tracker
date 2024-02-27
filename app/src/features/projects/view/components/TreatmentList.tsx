@@ -1,15 +1,15 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
 import React, { ReactElement, useState } from 'react';
@@ -283,8 +283,8 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             count={treatmentList.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onChangePage={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
-            onChangeRowsPerPage={(event: React.ChangeEvent<HTMLInputElement>) =>
+            onPageChange={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
+            onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }
           />

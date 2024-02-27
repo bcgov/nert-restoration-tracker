@@ -43,9 +43,9 @@ const defaultAuthState = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
+).mockReturnValue(mockuseRestorationTrackerApi);
 
 describe('ViewProjectPage', () => {
   beforeEach(() => {
@@ -76,7 +76,7 @@ describe('ViewProjectPage', () => {
     });
 
     const { getByTestId } = render(
-      <AuthStateContext.Provider value={(authState as unknown) as IAuthState}>
+      <AuthStateContext.Provider value={authState as unknown as IAuthState}>
         <Router history={history}>
           <ViewProjectPage />
         </Router>
@@ -102,7 +102,7 @@ describe('ViewProjectPage', () => {
     });
 
     const { getByTestId } = render(
-      <AuthStateContext.Provider value={(authState as unknown) as IAuthState}>
+      <AuthStateContext.Provider value={authState as unknown as IAuthState}>
         <Router history={history}>
           <ViewProjectPage />
         </Router>
@@ -128,7 +128,7 @@ describe('ViewProjectPage', () => {
     });
 
     const { getByTestId } = render(
-      <AuthStateContext.Provider value={(authState as unknown) as IAuthState}>
+      <AuthStateContext.Provider value={authState as unknown as IAuthState}>
         <Router history={history}>
           <ViewProjectPage />
         </Router>

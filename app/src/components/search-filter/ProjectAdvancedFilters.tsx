@@ -1,11 +1,11 @@
-import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
 import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
 import CustomTextField from 'components/fields/CustomTextField';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteField';
@@ -65,7 +65,7 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
 
   return (
     <Box data-testid="advancedFilters">
-      <Grid container spacing={3} justify="flex-start">
+      <Grid container spacing={3} justifyContent="flex-start">
         <Grid item xs={12} md={3}>
           <Typography variant="subtitle1" component="h3">
             <strong>Project Details</strong>
@@ -150,7 +150,7 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
         <Divider></Divider>
       </Box>
 
-      <Grid container spacing={3} justify="flex-start">
+      <Grid container spacing={3} justifyContent="flex-start">
         <Grid item xs={12} md={3}>
           <Typography variant="subtitle1" component="h3">
             <strong>Permits</strong>

@@ -1,10 +1,11 @@
-import Box from '@material-ui/core/Box';
-import Chip from '@material-ui/core/Chip';
-import Link from '@material-ui/core/Link';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { mdiAccountCircleOutline, mdiDomain } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   IGetProjectForViewResponse,
   IGetProjectForViewResponseContactArrayItem

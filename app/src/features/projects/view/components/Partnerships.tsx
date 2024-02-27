@@ -1,6 +1,7 @@
-import Box from '@material-ui/core/Box';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';

@@ -21,6 +21,8 @@
  * @template R The type of the Promise.
  * @template Q The type of the reject reason.
  */
+
+// typescript-eslint/no-unnecessary-type-constraint
 export class Deferred<R = void, Q extends any = void> {
   /**
    * Resolves the deferred promise with the given value.

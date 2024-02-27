@@ -1,17 +1,17 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiPencilOutline, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import { Icon } from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Paper from '@mui/material/Paper';
+import { Theme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
 import EditDialog from 'components/dialog/EditDialog';
 import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
@@ -174,7 +174,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                               values: values.contact.contacts[index]
                             });
                             setIsModalOpen(true);
-                          }}>
+                          }}
+                          size="large">
                           <Icon path={mdiPencilOutline} size={1} />
                         </IconButton>
                         <IconButton
@@ -182,7 +183,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                           data-testid={'delete-button-' + index}
                           title="Remove Contact"
                           aria-label="Remove Contact"
-                          onClick={() => arrayHelpers.remove(index)}>
+                          onClick={() => arrayHelpers.remove(index)}
+                          size="large">
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Toolbar>

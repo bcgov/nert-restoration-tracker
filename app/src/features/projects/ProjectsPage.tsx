@@ -1,7 +1,7 @@
-import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import ProjectFilter, {
   IProjectAdvancedFilters,
@@ -39,7 +39,7 @@ const ProjectsPage: React.FC = () => {
       const values = {
         keyword: urlParams.keyword,
         contact_agency: urlParams.contact_agency,
-        funding_agency: (urlParams.funding_agency as unknown) as number[],
+        funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
         species: urlParams.species,
         start_date: urlParams.start_date,

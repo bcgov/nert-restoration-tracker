@@ -1,14 +1,15 @@
-import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Dialog from '@material-ui/core/Dialog';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { mdiArrowLeft, mdiFullscreen } from '@mdi/js';
 import { Icon } from '@mdi/react';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import TreatmentList from 'features/projects/view/components/TreatmentList';
@@ -191,7 +192,8 @@ const PublicProjectPage = () => {
                         aria-label="view full screen map"
                         title="View full screen map"
                         className={classes.fullScreenBtn}
-                        onClick={openMapDialog}>
+                        onClick={openMapDialog}
+                        size="large">
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>
@@ -218,7 +220,7 @@ const PublicProjectPage = () => {
       <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
         <Box pr={3} pl={1} display="flex" alignItems="center">
           <Box>
-            <IconButton onClick={closeMapDialog}>
+            <IconButton onClick={closeMapDialog} size="large">
               <Icon path={mdiArrowLeft} size={1} />
             </IconButton>
           </Box>

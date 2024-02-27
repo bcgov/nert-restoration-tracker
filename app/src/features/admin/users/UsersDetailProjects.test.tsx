@@ -22,12 +22,12 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
+).mockReturnValue(mockuseRestorationTrackerApi);
 
 jest.mock('../../../hooks/useCodes');
-const mockUseCodes = (useCodes as unknown) as jest.MockedFunction<typeof useCodes>;
+const mockUseCodes = useCodes as unknown as jest.MockedFunction<typeof useCodes>;
 
 const mockUser = {
   id: 1,

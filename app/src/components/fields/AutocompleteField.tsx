@@ -1,5 +1,5 @@
-import TextField from '@material-ui/core/TextField';
-import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import { useFormikContext } from 'formik';
 import get from 'lodash-es/get';
 import React, { ChangeEvent } from 'react';
@@ -30,7 +30,7 @@ const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <T exte
     const result = props.options.find((option) => existingValue === option.value);
 
     if (!result) {
-      return (null as unknown) as IAutocompleteFieldOption<T>;
+      return null as unknown as IAutocompleteFieldOption<T>;
     }
 
     return result;
@@ -58,7 +58,7 @@ const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <T exte
       value={getExistingValue(get(values, props.name))}
       options={props.options}
       getOptionLabel={(option) => option.label}
-      getOptionSelected={handleGetOptionSelected}
+      isOptionEqualToValue={handleGetOptionSelected}
       filterOptions={createFilterOptions({ limit: props.filterLimit })}
       onChange={(event, option) => {
         if (props.onChange) {

@@ -1,6 +1,6 @@
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
+import { Theme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
