@@ -27,7 +27,7 @@ const systemUsers = [
     identifier: 'jrpopkin',
     type: SYSTEM_IDENTITY_SOURCE.IDIR,
     roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: 'c1210b3766c84571bd60c5b274873e89'
+    user_guid: 'C1210B3766C84571BD60C5B274873E89'
   }
 ];
 
