@@ -123,7 +123,7 @@ exports[`AccessRequestPage renders correctly 1`] = `
                 <h3
                   class="MuiTypography-root MuiTypography-h3"
                 >
-                  Why are you requesting access to Habitat Restoration Tracker?
+                  Why are you requesting access to Northeast Restoration Tracker?
                 </h3>
                 <div
                   class="MuiBox-root MuiBox-root-13"

@@ -35,7 +35,7 @@ const BCeIDRequestForm = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <h3>Why are you requesting access to Habitat Restoration Tracker?</h3>
+          <h3>Why are you requesting access to Northeast Restoration Tracker?</h3>
           <CustomTextField name="reason" label="Request Reason" other={{ multiline: true, rows: 4 }} />
         </Grid>
       </Grid>

@@ -50,7 +50,6 @@ const IDIRRequestForm: React.FC<IIDIRRequestFormProps> = (props) => {
                 labelId="role-label"
                 label="Role"
                 value={values.role}
-                labelWidth={300}
                 onChange={handleChange}
                 error={touched.role && Boolean(errors.role)}
                 displayEmpty
@@ -68,7 +67,7 @@ const IDIRRequestForm: React.FC<IIDIRRequestFormProps> = (props) => {
       </Grid>
 
       <Box mt={3}>
-        <Typography variant="h3">Why are you requesting access to Habitat Restoration Tracker?</Typography>
+        <Typography variant="h3">Why are you requesting access to Northeast Restoration Tracker?</Typography>
         <Box mt={2}>
           <CustomTextField name="reason" label="Reason" other={{ multiline: true, rows: 4 }} />
         </Box>

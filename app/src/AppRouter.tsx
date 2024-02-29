@@ -20,7 +20,7 @@ const AppRouter: React.FC = () => {
   const location = useLocation();
 
   const getTitle = (page: string) => {
-    return `Habitat Restoration Tracker - ${page}`;
+    return `Northeast Restoration Tracker - ${page}`;
   };
 
   return (
@@ -29,7 +29,7 @@ const AppRouter: React.FC = () => {
 
       <Redirect exact from="/" to="/projects" />
 
-      <AppRoute path="/projects" title={getTitle('Projects')} layout={PublicLayout}>
+      <AppRoute path="/projects" title={getTitle('All Projects/All Plans')} layout={PublicLayout}>
         <PublicProjectsRouter />
       </AppRoute>
 
@@ -61,13 +61,13 @@ const AppRouter: React.FC = () => {
 
       <Redirect exact from="/admin" to="/admin/projects" />
 
-      <AppRoute path="/admin/projects" title={getTitle('Projects')} layout={PublicLayout}>
+      <AppRoute path="/admin/projects" title={getTitle('All Projects/All Plans')} layout={PublicLayout}>
         <AuthenticatedRouteGuard>
           <ProjectsRouter />
         </AuthenticatedRouteGuard>
       </AppRoute>
 
-      <AppRoute path="/admin/user" title={getTitle('My Projects')} layout={PublicLayout}>
+      <AppRoute path="/admin/user" title={getTitle('My Projects/My Plans')} layout={PublicLayout}>
         <AuthenticatedRouteGuard>
           <UserRouter />
         </AuthenticatedRouteGuard>

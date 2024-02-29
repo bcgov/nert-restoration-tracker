@@ -7,7 +7,7 @@ import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { Router } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
-import MyProjectsPage from './MyProjectsPage';
+import MyProjectsPage from './MyProjectsPlansListPage';
 
 const history = createMemoryHistory();
 
@@ -57,7 +57,7 @@ describe('MyProjectsPage', () => {
     );
 
     await waitFor(() => {
-      expect(getByText('My Projects')).toBeInTheDocument();
+      expect(getByText('My Projects/My Plans')).toBeInTheDocument();
       expect(getByTestId('create-project-button')).toBeInTheDocument();
     });
   });
@@ -79,7 +79,7 @@ describe('MyProjectsPage', () => {
     );
 
     await waitFor(() => {
-      expect(getByText('My Projects')).toBeInTheDocument();
+      expect(getByText('My Projects/My Plans')).toBeInTheDocument();
       expect(queryByTestId('create-project-button')).not.toBeInTheDocument();
     });
   });

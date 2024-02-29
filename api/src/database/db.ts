@@ -396,7 +396,7 @@ export const getDBConnection = function (keycloakToken: object): IDBConnection {
  * Returns an IDBConnection where the system user context is set to the API's system user.
  *
  * Note: Use of this should be limited to requests that are impossible to initiated under a real user context (ie: when
- * an unknown user is requesting access to Habitat Restoration Tracker and therefore does not yet have a user in the
+ * an unknown user is requesting access to Northeast Restoration Tracker and therefore does not yet have a user in the
  * system).
  *
  * @return {*}  {IDBConnection}

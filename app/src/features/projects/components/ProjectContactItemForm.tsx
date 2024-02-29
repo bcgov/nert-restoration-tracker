@@ -115,7 +115,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
                   onChange={handleChange}
                 />
               }
-              label={<Typography color="textSecondary">This person is the primary contact for this project</Typography>}
+              label={<Typography>Select All</Typography>}
             />
           </Grid>
         </Grid>

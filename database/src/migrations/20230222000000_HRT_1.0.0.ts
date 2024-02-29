@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 
 /**
- * Apply Habitat Restoration Tracker release changes.
+ * Apply Northeast Restoration Tracker release changes.
  *
  * @export
  * @param {Knex} knex

@@ -12,6 +12,7 @@ import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+// import PlanListPage from '../projects/list/PlanListPage';
 import ProjectsListPage from '../projects/list/ProjectsListPage';
 
 const MyProjectsPage: React.FC = () => {
@@ -55,8 +56,13 @@ const MyProjectsPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl">
-      <Box mb={5} display="flex" justifyContent="space-between">
-        <Typography variant="h1">My Projects</Typography>
+      <Box mb={2} display="flex" justifyContent="space-between">
+        <Box mb={1}>
+          <Typography variant="h1">My Projects</Typography>
+          <Typography variant="body1" color="textSecondary">
+            BC restoration projects and drafts.
+          </Typography>
+        </Box>
         <SystemRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR]}>
           <Button
@@ -71,6 +77,28 @@ const MyProjectsPage: React.FC = () => {
       </Box>
 
       <ProjectsListPage projects={projects} drafts={drafts} />
+
+      {/* <Box mt={5} mb={2} display="flex" justifyContent="space-between">
+        <Box mb={1}>
+          <Typography variant="h1">My Plans</Typography>
+          <Typography variant="body1" color="textSecondary">
+            BC restoration plans and drafts.
+          </Typography>
+        </Box>
+        <SystemRoleGuard
+          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR]}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Icon path={mdiPlus} size={1} />}
+            onClick={() => history.push('/admin/projects/create')}
+            data-testid="create-project-button">
+            Create Plan
+          </Button>
+        </SystemRoleGuard>
+      </Box>
+
+      <PlanListPage projects={projects} drafts={drafts} /> */}
     </Container>
   );
 };
