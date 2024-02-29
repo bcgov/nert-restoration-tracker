@@ -48,7 +48,7 @@ export interface IProjectsListProps {
   drafts?: IGetDraftsListResponse[];
 }
 
-const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
+const PlanListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts } = props;
 
   const history = useHistory();
@@ -87,7 +87,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     <Card>
       <Box display="flex" alignItems="center" justifyContent="space-between" p={3}>
         <Typography variant="h2">
-          Found {projects?.length} {projects?.length !== 1 ? 'projects' : 'project'}
+          Found {projects?.length} {projects?.length !== 1 ? 'plans' : 'plan'}
         </Typography>
       </Box>
       <Box>
@@ -95,19 +95,19 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Project Name</TableCell>
-                <TableCell>Authorization ref.</TableCell>
+                <TableCell>Plan Name</TableCell>
+                <TableCell>Term</TableCell>
                 <TableCell>Organization</TableCell>
-                <TableCell>Planned Start Date</TableCell>
-                <TableCell>Planned End Date</TableCell>
+                <TableCell>Start Date</TableCell>
+                <TableCell>End Date</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell width="105" align="left">
                   <FormControlLabel
                     control={
                       <Checkbox
-                        id="select_all_projects_export"
-                        name="is_select_all_projects_export"
-                        aria-label="Select All Projects to Export"
+                        id="select_all_plans_export"
+                        name="is_select_all_plans_export"
+                        aria-label="Select All Plans to Export"
                         icon={<CheckBoxOutlineBlank fontSize="small" />}
                         checkedIcon={<CheckBox fontSize="small" />}
                       />
@@ -190,4 +190,4 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   );
 };
 
-export default ProjectsListPage;
+export default PlanListPage;

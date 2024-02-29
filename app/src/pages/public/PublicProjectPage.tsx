@@ -50,8 +50,8 @@ const useStyles = makeStyles(() =>
  */
 const PublicProjectPage = () => {
   const classes = useStyles();
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const { id } = useParams();
+  const projectId = id;
 
   const [openFullScreen, setOpenFullScreen] = React.useState(false);
 

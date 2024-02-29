@@ -2,7 +2,7 @@ import { NoRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
 import PublicProjectPage from 'pages/public/PublicProjectPage';
-import PublicProjectsListPage from 'pages/public/PublicProjectsListPage';
+import PublicProjectsListPage from 'pages/public/PublicProjectsPlansListPage';
 import React from 'react';
 import { Redirect, Switch } from 'react-router';
 import AppRoute from 'utils/AppRoute';

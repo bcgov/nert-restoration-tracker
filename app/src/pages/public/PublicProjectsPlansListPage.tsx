@@ -1,7 +1,10 @@
+import CheckBox from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import { Theme } from '@mui/material/styles';
@@ -15,17 +18,17 @@ import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { DownloadEMLI18N } from 'constants/i18n';
+// import { DownloadEMLI18N } from 'constants/i18n';
 import { ProjectStatusType } from 'constants/misc';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { DialogContext } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
+// import { DialogContext } from 'contexts/dialogContext';
+// import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectsListResponse } from 'interfaces/useProjectApi.interface';
 import moment from 'moment';
 import React, { useContext, useEffect, useState } from 'react';
 import { Redirect, useHistory } from 'react-router';
-import { getFormattedDate, triggerFileDownload } from 'utils/Utils';
+import { getFormattedDate } from 'utils/Utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
   linkButton: {
@@ -54,7 +57,7 @@ const PublicProjectsListPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<IGetProjectsListResponse[]>([]);
 
-  const dialogContext = useContext(DialogContext);
+  // const dialogContext = useContext(DialogContext);
 
   useEffect(() => {
     const getProjects = async () => {
@@ -103,40 +106,12 @@ const PublicProjectsListPage = () => {
     return <Redirect to={{ pathname: '/admin/projects' }} />;
   }
 
-  const handleDownloadProjectEML = async (projectId: number) => {
-    let response;
-
-    try {
-      response = await restorationTrackerApi.public.project.downloadProjectEML(projectId);
-    } catch (error) {
-      dialogContext.setErrorDialog({
-        dialogTitle: DownloadEMLI18N.errorTitle,
-        dialogText: DownloadEMLI18N.errorText,
-        dialogError: (error as APIError).message,
-        dialogErrorDetails: (error as APIError).errors,
-        open: true,
-        onClose: () => {
-          dialogContext.setErrorDialog({ open: false });
-        },
-        onOk: () => {
-          dialogContext.setErrorDialog({ open: false });
-        }
-      });
-
-      return;
-    }
-
-    triggerFileDownload(response.fileData, response.fileName);
-  };
-
   return (
     <Container maxWidth="xl">
-      <Box mb={5}>
-        <Box mb={1}>
-          <Typography variant="h1">Projects</Typography>
-        </Box>
+      <Box mb={2}>
+        <Typography variant="h1">Projects</Typography>
         <Typography variant="body1" color="textSecondary">
-          BC habitat restoration projects and related data.
+          BC restoration projects and related data.
         </Typography>
       </Box>
       <Paper>
@@ -145,13 +120,28 @@ const PublicProjectsListPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
-                <TableCell>Permits</TableCell>
-                <TableCell>Contact Agencies</TableCell>
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
+                <TableCell>Authorization Ref.</TableCell>
+                <TableCell>Organization</TableCell>
+                <TableCell>Planned Start Date</TableCell>
+                <TableCell>Planned End Date</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell width="105" align="left">
-                  Actions
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        id="select_all_projects_export"
+                        name="is_select_all_projects_export"
+                        aria-label="Select All Projects to Export"
+                        icon={<CheckBoxOutlineBlank fontSize="small" />}
+                        checkedIcon={<CheckBox fontSize="small" />}
+                      />
+                    }
+                    label={
+                      <Typography noWrap variant="inherit">
+                        Select All
+                      </Typography>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -183,18 +173,15 @@ const PublicProjectsListPage = () => {
                   <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.end_date)}</TableCell>
                   <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
                   <TableCell>
-                    <Box my={-1}>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        title="Download Project Metadata"
-                        aria-label="Download Project Metadata"
-                        data-testid="project-table-download-eml"
-                        onClick={() => handleDownloadProjectEML(row.id)}>
-                        Download
-                      </Button>
-                    </Box>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          icon={<CheckBoxOutlineBlank fontSize="small" />}
+                          checkedIcon={<CheckBox fontSize="small" />}
+                        />
+                      }
+                      label={<Typography variant="inherit">Export</Typography>}
+                    />
                   </TableCell>
                 </TableRow>
               ))}

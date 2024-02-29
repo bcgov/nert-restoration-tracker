@@ -3,10 +3,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+// import PlanFilter, {
+//   IPlanAdvancedFilters
+//   // PlanAdvancedFiltersInitialValues
+// } from 'components/search-plan-filter/PlanFilter';
 import ProjectFilter, {
   IProjectAdvancedFilters,
   ProjectAdvancedFiltersInitialValues
-} from 'components/search-filter/ProjectFilter';
+} from 'components/search-project-filter/ProjectFilter';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -16,6 +20,7 @@ import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
+// import PlanListPage from './list/PlanListPage';
 import ProjectsListPage from './list/ProjectsListPage';
 
 /**
@@ -165,16 +170,14 @@ const ProjectsPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl">
-      <Box mb={5}>
-        <Box mb={1}>
-          <Typography variant="h1">Projects</Typography>
-        </Box>
+      <Box mb={2}>
+        <Typography variant="h1">Projects</Typography>
         <Typography variant="body1" color="textSecondary">
-          BC habitat restoration projects and related data.
+          BC restoration projects and related data.
         </Typography>
       </Box>
 
-      <Box mb={5}>
+      <Box mb={3}>
         <Formik<IProjectAdvancedFilters>
           innerRef={formikRef}
           initialValues={formikValues}
@@ -208,6 +211,48 @@ const ProjectsPage: React.FC = () => {
       </Box>
 
       <ProjectsListPage projects={projects} />
+
+      {/* <Box mt={5} mb={2}>
+        <Typography variant="h1">Plans</Typography>
+        <Typography variant="body1" color="textSecondary">
+          BC restoration plans and related data.
+        </Typography>
+      </Box>
+
+      <Box mb={3}>
+        <Formik<IPlanAdvancedFilters>
+          innerRef={formikRef}
+          initialValues={formikValues}
+          onSubmit={handleSubmit}
+          onReset={handleReset}
+          enableReinitialize={true}>
+          <PlanFilter
+            contact_agency={
+              codes.codes.coordinator_agency?.map((item: any) => {
+                return item.name;
+              }) || []
+            }
+            funding_agency={
+              codes.codes.funding_source.map((item) => {
+                return { value: item.id, label: item.name };
+              }) || []
+            }
+            ranges={
+              codes.codes.ranges.map((item) => {
+                return { value: item.id, label: item.name };
+              }) || []
+            }
+            region={
+              codes.codes.regions.map((item) => {
+                return { value: item.id, label: item.name };
+              }) || []
+            }
+            filterChipParams={filterChipValues}
+          />
+        </Formik>
+      </Box>
+
+      <PlanListPage projects={projects} /> */}
     </Container>
   );
 };

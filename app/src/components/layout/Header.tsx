@@ -24,6 +24,9 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
+const nert_version = process.env.NERT_VERSION || '0.0.0.0';
+const nert_environment = process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
+
 const useStyles = makeStyles((theme: Theme) => ({
   govHeaderToolbar: {
     height: '70px'
@@ -60,10 +63,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       display: 'block'
     }
   },
-  appPhaseTag: {
+  appVersionTag: {
     marginLeft: theme.spacing(0.75),
     color: '#fcba19',
-    textTransform: 'uppercase',
     fontSize: '0.75rem',
     fontWeight: 400
   },
@@ -178,8 +180,12 @@ const Header: React.FC = () => {
     setOpen(false);
   };
 
-  const BetaLabel = () => {
-    return <span aria-label="This application is currently in beta phase of development">Beta</span>;
+  const VersionEnvironmentLabel = () => {
+    return (
+      <span aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
+        v{nert_version} {nert_environment}
+      </span>
+    );
   };
 
   return (
@@ -187,16 +193,16 @@ const Header: React.FC = () => {
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
         <Toolbar className={classes.govHeaderToolbar}>
           <Box display="flex" justifyContent="space-between" width="100%">
-            <Link to="/projects" className={classes.brand} aria-label="Go to Habitat Restoration Tracker Home">
+            <Link to="/projects" className={classes.brand} aria-label="Go to Northeast Restoration Tracker Home">
               <picture>
                 <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                 <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
                 <img src={headerImageSmall} alt={'Government of British Columbia'} />
               </picture>
               <span>
-                Habitat Restoration Tracker
-                <sup className={classes.appPhaseTag}>
-                  <BetaLabel />
+                Northeast Restoration Tracker
+                <sup className={classes.appVersionTag}>
+                  <VersionEnvironmentLabel />
                 </sup>
               </span>
             </Link>
@@ -213,7 +219,7 @@ const Header: React.FC = () => {
           <Toolbar variant="dense" className={classes.mainNavToolbar} role="navigation" aria-label="Main Navigation">
             <UnAuthGuard>
               <Link to="/" id="menu_projects">
-                Projects
+                All Projects/All Plans
               </Link>
               <Link to="/search" id="menu_search">
                 Map
@@ -221,10 +227,10 @@ const Header: React.FC = () => {
             </UnAuthGuard>
             <AuthGuard>
               <Link to="/admin/projects" id="menu_projects">
-                Projects
+                All Projects/All Plans
               </Link>
               <Link to="/admin/user/projects" id="menu_user_projects">
-                My Projects
+                My Projects/My Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
                 Map
@@ -243,16 +249,17 @@ const Header: React.FC = () => {
         <DialogTitle>Need Help?</DialogTitle>
         <DialogContent>
           <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
-            For technical support or questions about this application, please contact:&nbsp;
+            For technical support or questions about this application, please email:&nbsp;
             <OtherLink
-              href="mailto:biohub@gov.bc.ca?subject=Habitat Restoration Tracker - Support Request"
+              href="mailto:oinostro@gov.bc.ca?subject=Northeast Restoration Tracker - Support Request"
               underline="always">
-              biohub@gov.bc.ca
+              oinostro@gov.bc.ca
             </OtherLink>
             .
           </Typography>
-          <Typography variant="body1" color="textSecondary">
-            A support representative will respond to your request shortly.
+          <Typography variant="body2">Northeast Restoration Tracker</Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            Version: {nert_version} Environment: {nert_environment}
           </Typography>
         </DialogContent>
         <DialogActions>

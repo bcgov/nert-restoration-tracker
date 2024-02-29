@@ -2,7 +2,7 @@ import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
 import { Redirect, Switch } from 'react-router';
 import AppRoute from 'utils/AppRoute';
-import MyProjectsPage from './MyProjectsPage';
+import MyProjectsPage from './MyProjectsPlansListPage';
 
 /**
  * Router for all user specific pages.
