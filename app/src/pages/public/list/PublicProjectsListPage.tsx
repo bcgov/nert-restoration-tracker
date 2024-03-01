@@ -95,7 +95,7 @@ const PublicProjectsListPage = () => {
 
   return (
     <Card>
-      <Box mt={1} mb={1}>
+      <Box mt={1} mb={1} sx={{ paddingTop: '20px' }}>
         <Typography variant="h1">Projects</Typography>
         <Typography variant="body1" color="textSecondary">
           BC restoration projects and related data.

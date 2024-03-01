@@ -1,6 +1,7 @@
 import { SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
 import { AuthenticatedRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { AuthStateContext } from 'contexts/authStateContext';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
 import ProjectsRouter from 'features/projects/ProjectsRouter';
 import PublicProjectsRouter from 'features/projects/PublicProjectsRouter';
@@ -12,22 +13,31 @@ import AccessDenied from 'pages/403/AccessDenied';
 import NotFoundPage from 'pages/404/NotFoundPage';
 import AccessRequestPage from 'pages/access/AccessRequestPage';
 import LogOutPage from 'pages/logout/LogOutPage';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Redirect, Switch, useLocation } from 'react-router-dom';
 import AppRoute from 'utils/AppRoute';
 
 const AppRouter: React.FC = () => {
+  const { keycloakWrapper } = useContext(AuthStateContext);
   const location = useLocation();
 
   const getTitle = (page: string) => {
     return `Northeast Restoration Tracker - ${page}`;
   };
 
+  const authenticated = keycloakWrapper?.keycloak.authenticated;
+
   return (
     <Switch>
       <Redirect from="/:url*(/+)" to={{ ...location, pathname: location.pathname.slice(0, -1) }} />
 
-      <Redirect exact from="/" to="/projects" />
+      {/* Redirect to admin search if user is authenticated */}
+      {authenticated ? (
+        <Redirect exact from="/" to="/admin/search" />
+      ) : (
+        <Redirect exact from="/" to="/search" />
+      )}
+      {authenticated && <Redirect exact from="/search" to="/admin/search" />}
 
       <AppRoute path="/projects" title={getTitle('All Projects/All Plans')} layout={PublicLayout}>
         <PublicProjectsRouter />
@@ -53,15 +63,21 @@ const AppRouter: React.FC = () => {
         </AuthenticatedRouteGuard>
       </AppRoute>
 
-      <AppRoute path="/request-submitted" title={getTitle('Request submitted')} layout={PublicLayout}>
+      <AppRoute
+        path="/request-submitted"
+        title={getTitle('Request submitted')}
+        layout={PublicLayout}>
         <AuthenticatedRouteGuard>
           <RequestSubmitted />
         </AuthenticatedRouteGuard>
       </AppRoute>
 
-      <Redirect exact from="/admin" to="/admin/projects" />
+      <Redirect exact from="/admin" to="/admin/search" />
 
-      <AppRoute path="/admin/projects" title={getTitle('All Projects/All Plans')} layout={PublicLayout}>
+      <AppRoute
+        path="/admin/projects"
+        title={getTitle('All Projects/All Plans')}
+        layout={PublicLayout}>
         <AuthenticatedRouteGuard>
           <ProjectsRouter />
         </AuthenticatedRouteGuard>
