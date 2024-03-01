@@ -25,7 +25,8 @@ import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
 const nert_version = process.env.NERT_VERSION || '0.0.0.0';
-const nert_environment = process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
+const nert_environment =
+  process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
 
 const useStyles = makeStyles((theme: Theme) => ({
   govHeaderToolbar: {
@@ -121,7 +122,10 @@ const Header: React.FC = () => {
   const LoggedInUser = () => {
     const identitySource = keycloakWrapper?.getIdentitySource() || '';
     const userIdentifier = keycloakWrapper?.getUserIdentifier() || '';
-    const formattedUsername = [getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE), userIdentifier]
+    const formattedUsername = [
+      getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
+      userIdentifier
+    ]
       .filter(Boolean)
       .join('/');
 
@@ -163,7 +167,10 @@ const Header: React.FC = () => {
           data-testid="login">
           Log In
         </Button>
-        <IconButton className={classes.govHeaderIconButton} onClick={showSupportDialog} size="large">
+        <IconButton
+          className={classes.govHeaderIconButton}
+          onClick={showSupportDialog}
+          size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -182,7 +189,8 @@ const Header: React.FC = () => {
 
   const VersionEnvironmentLabel = () => {
     return (
-      <span aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
+      <span
+        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
         v{nert_version} {nert_environment}
       </span>
     );
@@ -193,7 +201,10 @@ const Header: React.FC = () => {
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
         <Toolbar className={classes.govHeaderToolbar}>
           <Box display="flex" justifyContent="space-between" width="100%">
-            <Link to="/" className={classes.brand} aria-label="Go to Northeast Restoration Tracker Home">
+            <Link
+              to="/"
+              className={classes.brand}
+              aria-label="Go to Northeast Restoration Tracker Home">
               <picture>
                 <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                 <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
@@ -216,9 +227,13 @@ const Header: React.FC = () => {
         </Toolbar>
 
         <Box className={classes.mainNav}>
-          <Toolbar variant="dense" className={classes.mainNavToolbar} role="navigation" aria-label="Main Navigation">
+          <Toolbar
+            variant="dense"
+            className={classes.mainNavToolbar}
+            role="navigation"
+            aria-label="Main Navigation">
             <UnAuthGuard>
-              <Link to="/" id="menu_projects">
+              <Link to="/projects" id="menu_projects">
                 All Projects/All Plans
               </Link>
               <Link to="/search" id="menu_search">

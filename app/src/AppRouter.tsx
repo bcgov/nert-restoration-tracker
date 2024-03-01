@@ -23,6 +23,8 @@ const AppRouter: React.FC = () => {
     return `Northeast Restoration Tracker - ${page}`;
   };
 
+  // TODO: Put a conditional route for a user that is authenticated and going to '/'
+
   return (
     <Switch>
       <Redirect from="/:url*(/+)" to={{ ...location, pathname: location.pathname.slice(0, -1) }} />
@@ -53,15 +55,21 @@ const AppRouter: React.FC = () => {
         </AuthenticatedRouteGuard>
       </AppRoute>
 
-      <AppRoute path="/request-submitted" title={getTitle('Request submitted')} layout={PublicLayout}>
+      <AppRoute
+        path="/request-submitted"
+        title={getTitle('Request submitted')}
+        layout={PublicLayout}>
         <AuthenticatedRouteGuard>
           <RequestSubmitted />
         </AuthenticatedRouteGuard>
       </AppRoute>
 
-      <Redirect exact from="/admin" to="/admin/projects" />
+      <Redirect exact from="/admin" to="/admin/search" />
 
-      <AppRoute path="/admin/projects" title={getTitle('All Projects/All Plans')} layout={PublicLayout}>
+      <AppRoute
+        path="/admin/projects"
+        title={getTitle('All Projects/All Plans')}
+        layout={PublicLayout}>
         <AuthenticatedRouteGuard>
           <ProjectsRouter />
         </AuthenticatedRouteGuard>
