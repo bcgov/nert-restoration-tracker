@@ -93,7 +93,7 @@ const ManageUsersPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl">
-      <Box mb={5} display="flex" alignItems="center" justifyContent="space-between">
+      <Box mb={5} display="flex" alignItems="center" justifyContent="space-between" sx={{ paddingTop: '20px' }}>
         <Typography variant="h1">Manage Users</Typography>
       </Box>
 

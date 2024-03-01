@@ -4,6 +4,7 @@ import React from 'react';
 
 const useStyles = makeStyles(() => ({
   projectsLayoutRoot: {
+    paddingTop: '20px',
     position: 'relative',
     width: 'inherit',
     height: '100%',
