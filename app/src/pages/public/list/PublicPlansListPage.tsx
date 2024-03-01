@@ -1,13 +1,12 @@
 import CheckBox from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -19,15 +18,14 @@ import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectStatusType } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectsListResponse } from 'interfaces/useProjectApi.interface';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   linkButton: {
     textAlign: 'left'
   },
@@ -35,18 +33,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: 'white'
   },
   chipActive: {
-    backgroundColor: theme.palette.success.main
+    backgroundColor: '#A2B9E2'
   },
   chipPublishedCompleted: {
-    backgroundColor: theme.palette.success.main
+    backgroundColor: '#70AD47'
   },
   chipDraft: {
-    backgroundColor: theme.palette.info.main
+    backgroundColor: '#A6A6A6'
   }
 }));
 
-const PublicProjectsListPage = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+const PublicPlansListPage = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
   const classes = useStyles();
   const history = useHistory();
@@ -96,17 +93,12 @@ const PublicProjectsListPage = () => {
     history.push(`/projects/${id}`);
   };
 
-  if (keycloakWrapper?.keycloak.authenticated) {
-    // User has a role
-    return <Redirect to={{ pathname: '/admin/projects' }} />;
-  }
-
   return (
-    <Container maxWidth="xl">
-      <Box mb={2}>
-        <Typography variant="h1">Projects</Typography>
+    <Card>
+      <Box mt={1} mb={1}>
+        <Typography variant="h1">Plans</Typography>
         <Typography variant="body1" color="textSecondary">
-          BC restoration projects and related data.
+          BC restoration plans and related data.
         </Typography>
       </Box>
       <Paper>
@@ -114,19 +106,19 @@ const PublicProjectsListPage = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Authorization Ref.</TableCell>
+                <TableCell>Plan Name</TableCell>
+                <TableCell>Term</TableCell>
                 <TableCell>Organization</TableCell>
-                <TableCell>Planned Start Date</TableCell>
-                <TableCell>Planned End Date</TableCell>
+                <TableCell>Start Date</TableCell>
+                <TableCell>End Date</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell width="105" align="left">
                   <FormControlLabel
                     control={
                       <Checkbox
-                        id="select_all_projects_export"
-                        name="is_select_all_projects_export"
-                        aria-label="Select All Projects to Export"
+                        id="select_all_plans_export"
+                        name="is_select_all_plans_export"
+                        aria-label="Select All Plans to Export"
                         icon={<CheckBoxOutlineBlank fontSize="small" />}
                         checkedIcon={<CheckBox fontSize="small" />}
                       />
@@ -184,8 +176,8 @@ const PublicProjectsListPage = () => {
           </Table>
         </TableContainer>
       </Paper>
-    </Container>
+    </Card>
   );
 };
 
-export default PublicProjectsListPage;
+export default PublicPlansListPage;

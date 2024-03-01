@@ -6,7 +6,6 @@ import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
-import { Theme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -25,7 +24,7 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   linkButton: {
     textAlign: 'left'
   },
@@ -33,13 +32,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: 'white'
   },
   chipActive: {
-    backgroundColor: theme.palette.success.main
+    backgroundColor: '#A2B9E2'
   },
   chipPublishedCompleted: {
-    backgroundColor: theme.palette.success.main
+    backgroundColor: '#70AD47'
   },
   chipDraft: {
-    backgroundColor: theme.palette.info.main
+    backgroundColor: '#A6A6A6'
   }
 }));
 
