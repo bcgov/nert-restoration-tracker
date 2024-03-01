@@ -1,6 +1,4 @@
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { IMarker } from 'components/map/components/MarkerCluster';
@@ -89,19 +87,9 @@ const SearchPage: React.FC = () => {
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Container maxWidth="xl">
-      <Box mb={5} display="flex" justifyContent="space-between">
-        <Typography variant="h1">Map</Typography>
-      </Box>
-      <Box height={750}>
-        <MapContainer
-          mapId="search_boundary_map"
-          fullScreenControl={true}
-          scrollWheelZoom={true}
-          markers={geometries}
-        />
-      </Box>
-    </Container>
+    <Box sx={{ height: '100%' }}>
+      <MapContainer mapId="search_boundary_map" fullScreenControl={false} scrollWheelZoom={true} markers={geometries} />
+    </Box>
   );
 };
 
