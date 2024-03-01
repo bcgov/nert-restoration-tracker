@@ -1,13 +1,12 @@
 import CheckBox from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,19 +17,15 @@ import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
-// import { DownloadEMLI18N } from 'constants/i18n';
 import { ProjectStatusType } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
-// import { DialogContext } from 'contexts/dialogContext';
-// import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectsListResponse } from 'interfaces/useProjectApi.interface';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   linkButton: {
     textAlign: 'left'
   },
@@ -38,26 +33,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: 'white'
   },
   chipActive: {
-    backgroundColor: theme.palette.success.main
+    backgroundColor: '#A2B9E2'
   },
   chipPublishedCompleted: {
-    backgroundColor: theme.palette.success.main
+    backgroundColor: '#70AD47'
   },
   chipDraft: {
-    backgroundColor: theme.palette.info.main
+    backgroundColor: '#A6A6A6'
   }
 }));
 
 const PublicProjectsListPage = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useRestorationTrackerApi();
   const classes = useStyles();
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<IGetProjectsListResponse[]>([]);
-
-  // const dialogContext = useContext(DialogContext);
 
   useEffect(() => {
     const getProjects = async () => {
@@ -101,14 +93,9 @@ const PublicProjectsListPage = () => {
     history.push(`/projects/${id}`);
   };
 
-  if (keycloakWrapper?.keycloak.authenticated) {
-    // User has a role
-    return <Redirect to={{ pathname: '/admin/projects' }} />;
-  }
-
   return (
-    <Container maxWidth="xl">
-      <Box mb={2}>
+    <Card>
+      <Box mt={1} mb={1}>
         <Typography variant="h1">Projects</Typography>
         <Typography variant="body1" color="textSecondary">
           BC restoration projects and related data.
@@ -119,7 +106,7 @@ const PublicProjectsListPage = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
+                <TableCell>Project Name</TableCell>
                 <TableCell>Authorization Ref.</TableCell>
                 <TableCell>Organization</TableCell>
                 <TableCell>Planned Start Date</TableCell>
@@ -189,7 +176,7 @@ const PublicProjectsListPage = () => {
           </Table>
         </TableContainer>
       </Paper>
-    </Container>
+    </Card>
   );
 };
 
