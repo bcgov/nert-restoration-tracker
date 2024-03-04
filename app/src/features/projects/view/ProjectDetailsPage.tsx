@@ -1,8 +1,5 @@
 import Box from '@mui/material/Box';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import IUCNClassification from 'features/projects/view/components/IUCNClassification';
@@ -22,23 +19,22 @@ export interface IProjectDetailsProps {
   refresh: () => void;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const pageStyles = {
     projectMetadata: {
       '& section': {
-        marginBottom: theme.spacing(3)
+        marginBottom: '3rem'
       },
       '& section:last-child': {
         marginBottom: 0
       },
       '& dl, ul': {
-        marginTop: theme.spacing(1),
+        marginTop: '0.5rem',
         marginBottom: 0,
         borderTop: '1px solid #dddddd'
       },
       '& dl div, li': {
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
+        paddingTop: '0.5rem',
+        paddingBottom: '0.5rem',
         borderBottom: '1px solid #dddddd'
       },
       '& dd, dt': {
@@ -55,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'inline'
       },
       '& h3': {
-        marginBottom: theme.spacing(1),
+        marginBottom: '0.5rem',
         fontSize: '15px',
         fontWeight: 700,
         textTransform: 'uppercase'
@@ -70,8 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
         }
       }
     }
-  })
-);
+  };
 
 /**
  * Project details content for a project.
@@ -80,10 +75,9 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
   const { projectForViewData, codes, refresh } = props;
-  const classes = useStyles();
 
   return (
-    <Box className={classes.projectMetadata} p={3}>
+    <Box sx={pageStyles.projectMetadata} p={3}>
       <Box mb={3}>
         <Typography variant="h2">Project Details</Typography>
       </Box>

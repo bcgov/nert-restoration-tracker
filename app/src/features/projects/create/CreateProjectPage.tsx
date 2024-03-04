@@ -8,9 +8,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
@@ -62,7 +60,7 @@ import { useHistory } from 'react-router';
 import { Prompt } from 'react-router-dom';
 import yup from 'utils/YupSchema';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
@@ -71,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   formButtons: {
     '& button': {
-      margin: theme.spacing(0.5)
+      margin: '0.5rem'
     }
   },
   breadCrumbLink: {
@@ -82,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   breadCrumbLinkIcon: {
     marginRight: '0.25rem'
   }
-}));
+};
 
 export const ProjectFormInitialValues = {
   ...ProjectGeneralInformationFormInitialValues,
@@ -110,8 +108,6 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const classes = useStyles();
-
   const history = useHistory();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
@@ -351,8 +347,8 @@ const CreateProjectPage: React.FC = () => {
       <Container maxWidth="xl">
         <Box mb={3}>
           <Breadcrumbs>
-            <Link color="primary" onClick={handleCancel} aria-current="page" className={classes.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" className={classes.breadCrumbLinkIcon} />
+            <Link color="primary" onClick={handleCancel} aria-current="page" sx={pageStyles.breadCrumbLink}>
+              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
           </Breadcrumbs>
@@ -498,7 +494,7 @@ const CreateProjectPage: React.FC = () => {
 
                 <Divider></Divider>
 
-                <Box mt={5} className={classes.formButtons} display="flex" justifyContent="flex-end">
+                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
                   <Button
                     variant="outlined"
                     color="primary"

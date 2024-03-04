@@ -1,4 +1,3 @@
-import makeStyles from '@mui/styles/makeStyles';
 import { Feature } from 'geojson';
 import L, { LeafletEventHandlerFnMap } from 'leaflet';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -17,12 +16,6 @@ import EventHandler from './components/EventHandler';
 import FullScreenScrollingEventHandler from './components/FullScreenScrollingEventHandler';
 import MarkerClusterGroup, { IMarker } from './components/MarkerCluster';
 import StaticLayers, { IStaticLayer } from './components/StaticLayers';
-
-const useStyles = makeStyles(() => ({
-  map: {
-    height: '100%'
-  }
-}));
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -51,8 +44,6 @@ export interface IMapContainerProps {
 }
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const classes = useStyles();
-
   const {
     mapId,
     staticLayers,
@@ -71,7 +62,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   return (
     <LeafletMapContainer
       id={mapId}
-      className={classes.map}
+      style={{height: '100%'}}
       center={[53, -124]}
       zoom={zoom || 7}
       minZoom={3}

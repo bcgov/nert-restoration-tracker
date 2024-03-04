@@ -8,8 +8,6 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import TreatmentList from 'features/projects/view/components/TreatmentList';
@@ -27,8 +25,7 @@ import { useParams } from 'react-router';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 import PublicTreatmentSpatialUnits from './components/PublicTreatmentSpatialUnits';
 
-const useStyles = makeStyles(() =>
-  createStyles({
+const pageStyles = {
     fullScreenBtn: {
       padding: '3px',
       borderRadius: '4px',
@@ -40,8 +37,7 @@ const useStyles = makeStyles(() =>
         backgroundColor: '#eeeeee'
       }
     }
-  })
-);
+  };
 
 /**
  * Page to display a single Public (published) Project.
@@ -49,7 +45,6 @@ const useStyles = makeStyles(() =>
  * @return {*}
  */
 const PublicProjectPage = () => {
-  const classes = useStyles();
   const { id } = useParams();
   const projectId = id;
 
@@ -191,7 +186,7 @@ const PublicProjectPage = () => {
                       <IconButton
                         aria-label="view full screen map"
                         title="View full screen map"
-                        className={classes.fullScreenBtn}
+                        sx={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
                         size="large">
                         <Icon path={mdiFullscreen} size={1} />

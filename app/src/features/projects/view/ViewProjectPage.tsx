@@ -8,10 +8,7 @@ import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { RoleGuard } from 'components/security/Guards';
@@ -36,11 +33,10 @@ import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
 import ProjectAttachments from './ProjectAttachments';
 import ProjectDetailsPage from './ProjectDetailsPage';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const pageStyles = {
     titleContainerActions: {
       '& button + button': {
-        marginLeft: theme.spacing(1)
+        marginLeft: '1rem'
       }
     },
     fullScreenBtn: {
@@ -54,8 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: '#eeeeee'
       }
     }
-  })
-);
+  };
 
 /**
  * Page to display a single Project.
@@ -63,7 +58,6 @@ const useStyles = makeStyles((theme: Theme) =>
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  const classes = useStyles();
   const history = useHistory();
   const urlParams = useParams();
   const projectId = urlParams['id'];
@@ -238,7 +232,7 @@ const ViewProjectPage: React.FC = () => {
           <RoleGuard
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
             validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
-            <Box className={classes.titleContainerActions}>
+            <Box sx={pageStyles.titleContainerActions}>
               <Button
                 aria-label="manage project team"
                 variant="outlined"
@@ -301,7 +295,7 @@ const ViewProjectPage: React.FC = () => {
                       <IconButton
                         aria-label="view full screen map"
                         title="View full screen map"
-                        className={classes.fullScreenBtn}
+                        style={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
                         size="large">
                         <Icon path={mdiFullscreen} size={1} />
