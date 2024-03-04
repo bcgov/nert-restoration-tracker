@@ -133,25 +133,31 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
             </TableHead>
             <TableBody>
               {props.attachmentsList.length > 0 &&
-                props.attachmentsList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                  return (
-                    <TableRow key={`${row.fileName}-${index}`}>
-                      <TableCell scope="row">
-                        <Link underline="always" component="button" variant="body2" onClick={() => openAttachment(row)}>
-                          {row.fileName}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{getFormattedFileSize(row.size)}</TableCell>
-                      <TableCell align="center">
-                        <AttachmentItemMenuButton
-                          attachment={row}
-                          handleDownloadFileClick={handleDownloadFileClick}
-                          handleDeleteFileClick={handleDeleteFileClick}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                props.attachmentsList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    return (
+                      <TableRow key={`${row.fileName}-${index}`}>
+                        <TableCell scope="row">
+                          <Link
+                            underline="always"
+                            component="button"
+                            variant="body2"
+                            onClick={() => openAttachment(row)}>
+                            {row.fileName}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{getFormattedFileSize(row.size)}</TableCell>
+                        <TableCell align="center">
+                          <AttachmentItemMenuButton
+                            attachment={row}
+                            handleDownloadFileClick={handleDownloadFileClick}
+                            handleDeleteFileClick={handleDeleteFileClick}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               {!props.attachmentsList.length && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
@@ -169,7 +175,9 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
             count={props.attachmentsList.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
+            onPageChange={(event: unknown, newPage: number) =>
+              handleChangePage(event, newPage, setPage)
+            }
             onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }

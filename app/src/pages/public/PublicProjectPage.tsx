@@ -8,8 +8,6 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import TreatmentList from 'features/projects/view/components/TreatmentList';
@@ -27,21 +25,19 @@ import { useParams } from 'react-router';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 import PublicTreatmentSpatialUnits from './components/PublicTreatmentSpatialUnits';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    fullScreenBtn: {
-      padding: '3px',
-      borderRadius: '4px',
-      background: '#ffffff',
-      color: '#000000',
-      border: '2px solid rgba(0,0,0,0.2)',
-      backgroundClip: 'padding-box',
-      '&:hover': {
-        backgroundColor: '#eeeeee'
-      }
+const pageStyles = {
+  fullScreenBtn: {
+    padding: '3px',
+    borderRadius: '4px',
+    background: '#ffffff',
+    color: '#000000',
+    border: '2px solid rgba(0,0,0,0.2)',
+    backgroundClip: 'padding-box',
+    '&:hover': {
+      backgroundColor: '#eeeeee'
     }
-  })
-);
+  }
+};
 
 /**
  * Page to display a single Public (published) Project.
@@ -49,7 +45,6 @@ const useStyles = makeStyles(() =>
  * @return {*}
  */
 const PublicProjectPage = () => {
-  const classes = useStyles();
   const { id } = useParams();
   const projectId = id;
 
@@ -58,14 +53,18 @@ const PublicProjectPage = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
+  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
+    null
+  );
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.public.project.getProjectForView(projectId);
+    const projectWithDetailsResponse = await restorationTrackerApi.public.project.getProjectForView(
+      projectId
+    );
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -80,7 +79,9 @@ const PublicProjectPage = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectAttachments(projectId);
+        const response = await restorationTrackerApi.public.project.getProjectAttachments(
+          projectId
+        );
 
         if (!response?.attachmentsList) return;
 
@@ -97,7 +98,10 @@ const PublicProjectPage = () => {
       if (treatmentList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectTreatments(projectId, selectedYears);
+        const response = await restorationTrackerApi.public.project.getProjectTreatments(
+          projectId,
+          selectedYears
+        );
 
         if (!response?.treatmentList) return;
 
@@ -179,7 +183,10 @@ const PublicProjectPage = () => {
               <Box mb={3}>
                 <Paper elevation={2}>
                   <Box px={3}>
-                    <PublicTreatmentSpatialUnits treatmentList={treatmentList} getTreatments={getTreatments} />
+                    <PublicTreatmentSpatialUnits
+                      treatmentList={treatmentList}
+                      getTreatments={getTreatments}
+                    />
                   </Box>
                   <Box height="500px" position="relative">
                     <LocationBoundary
@@ -191,7 +198,7 @@ const PublicProjectPage = () => {
                       <IconButton
                         aria-label="view full screen map"
                         title="View full screen map"
-                        className={classes.fullScreenBtn}
+                        sx={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
                         size="large">
                         <Icon path={mdiFullscreen} size={1} />
@@ -210,7 +217,11 @@ const PublicProjectPage = () => {
 
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={projectWithDetails} codes={codes.codes} refresh={getProject} />
+                <ProjectDetailsPage
+                  projectForViewData={projectWithDetails}
+                  codes={codes.codes}
+                  refresh={getProject}
+                />
               </Paper>
             </Grid>
           </Grid>
@@ -225,7 +236,10 @@ const PublicProjectPage = () => {
             </IconButton>
           </Box>
           <Box flex="1 1 auto">
-            <PublicTreatmentSpatialUnits treatmentList={treatmentList} getTreatments={getTreatments} />
+            <PublicTreatmentSpatialUnits
+              treatmentList={treatmentList}
+              getTreatments={getTreatments}
+            />
           </Box>
         </Box>
         <Box display="flex" height="100%" flexDirection="column">

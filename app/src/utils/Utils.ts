@@ -10,7 +10,10 @@ import moment from 'moment';
  * @param {('http://' | 'https://')} [protocol='https://'] The protocol to add, if necessary. Defaults to `https://`.
  * @return {*}  {string} the url which is guaranteed to have an `http(s)://` protocol.
  */
-export const ensureProtocol = (url: string, protocol: 'http://' | 'https://' = 'https://'): string => {
+export const ensureProtocol = (
+  url: string,
+  protocol: 'http://' | 'https://' = 'https://'
+): string => {
   return ((url.startsWith('http://') || url.startsWith('https://')) && url) || `${protocol}${url}`;
 };
 
@@ -108,7 +111,12 @@ export const getFormattedAmount = (amount: number): string => {
  * @return {*}  {(string | undefined)}
  */
 export const getLogOutUrl = (config: IConfig): string | undefined => {
-  if (!config || !config.KEYCLOAK_CONFIG?.url || !config.KEYCLOAK_CONFIG?.realm || !config.SITEMINDER_LOGOUT_URL) {
+  if (
+    !config ||
+    !config.KEYCLOAK_CONFIG?.url ||
+    !config.KEYCLOAK_CONFIG?.realm ||
+    !config.SITEMINDER_LOGOUT_URL
+  ) {
     return;
   }
 
@@ -172,7 +180,9 @@ export const triggerFileDownload = (fileData: string, fileName: string) => {
  * @param {SYSTEM_IDENTITY_SOURCE} identitySource The identity source
  * @returns {*} {string} the string representing the identity source
  */
-export const getFormattedIdentitySource = (identitySource: SYSTEM_IDENTITY_SOURCE): string | null => {
+export const getFormattedIdentitySource = (
+  identitySource: SYSTEM_IDENTITY_SOURCE
+): string | null => {
   switch (identitySource) {
     case SYSTEM_IDENTITY_SOURCE.BCEID_BASIC:
       return 'BCeID Basic';

@@ -48,7 +48,8 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
   const [yearList, setYearList] = useState<{ year: number }[]>([]);
   const [selectedSpatialLayer, setSelectedSpatialLayer] = useState({ boundary: true });
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
 
@@ -62,7 +63,10 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
 
     Object.keys(selectedSpatialLayer).forEach((key) => {
       //handles async discrepancies for selected years
-      if ((selectedSpatialLayer[key] && key !== selectedName) || (key === selectedName && !selectedSpatialLayer[key])) {
+      if (
+        (selectedSpatialLayer[key] && key !== selectedName) ||
+        (key === selectedName && !selectedSpatialLayer[key])
+      ) {
         selectedArray.years.push(key);
       }
     });
@@ -77,7 +81,9 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
       }
 
       try {
-        const yearsResponse = await restorationTrackerApi.public.project.getProjectTreatmentsYears(projectId);
+        const yearsResponse = await restorationTrackerApi.public.project.getProjectTreatmentsYears(
+          projectId
+        );
 
         if (!yearsResponse) {
           return;

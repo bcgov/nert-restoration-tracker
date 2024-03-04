@@ -6,7 +6,14 @@ import { createMemoryHistory } from 'history';
 import React from 'react';
 import { Route, Router } from 'react-router';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
-import { AuthGuard, NoRoleGuard, ProjectRoleGuard, RoleGuard, SystemRoleGuard, UnAuthGuard } from './Guards';
+import {
+  AuthGuard,
+  NoRoleGuard,
+  ProjectRoleGuard,
+  RoleGuard,
+  SystemRoleGuard,
+  UnAuthGuard
+} from './Guards';
 
 const history = createMemoryHistory({ initialEntries: ['test/123'] });
 

@@ -52,7 +52,9 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
         existingValues: (string | number)[],
         callback: (searchedValues: IMultiAutocompleteFieldOption[]) => void
       ) => {
-        const response = await restorationTrackerApi.taxonomy.searchSpecies(inputValue.toLowerCase());
+        const response = await restorationTrackerApi.taxonomy.searchSpecies(
+          inputValue.toLowerCase()
+        );
         const newOptions = convertOptions(response.searchResponse).filter(
           (item) => !existingValues.includes(item.value)
         );
@@ -105,7 +107,10 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   defaultValue={[]}
                   multiple
                   displayEmpty
-                  inputProps={{ 'aria-label': 'Funding Agency Name', 'data-testid': 'funding_agency' }}>
+                  inputProps={{
+                    'aria-label': 'Funding Agency Name',
+                    'data-testid': 'funding_agency'
+                  }}>
                   {props.funding_agency.map((item) => (
                     <MenuItem key={item.value} value={item.value}>
                       {item.label}

@@ -37,7 +37,10 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
 
   const identitySource = props.request.data.identitySource;
   const userIdentifier = props.request.data.username;
-  const formattedUsername = [getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE), userIdentifier]
+  const formattedUsername = [
+    getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
+    userIdentifier
+  ]
     .filter(Boolean)
     .join('/');
 
@@ -89,7 +92,8 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
                 Company
               </Typography>
               <Typography component="dd" variant="body1">
-                {('company' in props.request.data && props.request.data.company) || 'Not Applicable'}
+                {('company' in props.request.data && props.request.data.company) ||
+                  'Not Applicable'}
               </Typography>
             </Grid>
 

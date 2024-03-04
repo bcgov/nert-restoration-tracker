@@ -131,7 +131,10 @@ function useKeycloakWrapper(): IKeycloakWrapper {
   const keycloakUserDataLoader = useDataLoader(async () => {
     return (
       (keycloak.token &&
-        (keycloak.loadUserInfo() as unknown as IIDIRUserInfo | IBCEIDBasicUserInfo | IBCEIDBusinessUserInfo)) ||
+        (keycloak.loadUserInfo() as unknown as
+          | IIDIRUserInfo
+          | IBCEIDBasicUserInfo
+          | IBCEIDBusinessUserInfo)) ||
       undefined
     );
   });
@@ -151,7 +154,10 @@ function useKeycloakWrapper(): IKeycloakWrapper {
     // keycloak user is authenticated, load system user info
     userDataLoader.load();
 
-    if (userDataLoader.isReady && (!userDataLoader.data?.role_names?.length || userDataLoader.data?.record_end_date)) {
+    if (
+      userDataLoader.isReady &&
+      (!userDataLoader.data?.role_names?.length || userDataLoader.data?.record_end_date)
+    ) {
       // Authenticated user either has has no roles or has been deactivated
       // Check if the user has a pending access request
       hasPendingAdministrativeActivitiesDataLoader.load();
@@ -166,7 +172,9 @@ function useKeycloakWrapper(): IKeycloakWrapper {
    * @param userIdentitySource The user identity source string
    * @returns {*} {SYSTEM_IDENTITY_SOURCE | null}
    */
-  const _inferIdentitySource = (userIdentitySource: string | undefined): SYSTEM_IDENTITY_SOURCE | null => {
+  const _inferIdentitySource = (
+    userIdentitySource: string | undefined
+  ): SYSTEM_IDENTITY_SOURCE | null => {
     switch (userIdentitySource) {
       case SYSTEM_IDENTITY_SOURCE.BCEID_BASIC:
         return SYSTEM_IDENTITY_SOURCE.BCEID_BASIC;
@@ -205,7 +213,9 @@ function useKeycloakWrapper(): IKeycloakWrapper {
    *
    * @return {*} {(string | null)}
    */ const getUserGuid = useCallback((): string | null => {
-    return keycloakUserDataLoader.data?.['preferred_username']?.split('@')?.[0].toLowerCase() || null;
+    return (
+      keycloakUserDataLoader.data?.['preferred_username']?.split('@')?.[0].toLowerCase() || null
+    );
   }, [keycloakUserDataLoader.data]);
 
   /**
@@ -291,7 +301,8 @@ function useKeycloakWrapper(): IKeycloakWrapper {
 
   return {
     keycloak,
-    hasLoadedAllUserInfo: userDataLoader.isReady || !!hasPendingAdministrativeActivitiesDataLoader.data,
+    hasLoadedAllUserInfo:
+      userDataLoader.isReady || !!hasPendingAdministrativeActivitiesDataLoader.data,
     systemRoles: getSystemRoles(),
     hasSystemRole,
     hasProjectRole,

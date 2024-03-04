@@ -13,8 +13,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
-import clsx from 'clsx';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectStatusType } from 'constants/misc';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
@@ -24,23 +22,24 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   linkButton: {
     textAlign: 'left'
   },
-  chip: {
-    color: 'white'
-  },
   chipActive: {
+    color: 'white',
+    fontWeight: 600,
     backgroundColor: '#A2B9E2'
   },
   chipPublishedCompleted: {
+    color: 'white',
     backgroundColor: '#70AD47'
   },
   chipDraft: {
+    color: 'white',
     backgroundColor: '#A6A6A6'
   }
-}));
+};
 
 export interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
@@ -51,10 +50,12 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts } = props;
 
   const history = useHistory();
-  const classes = useStyles();
 
   const getProjectStatusType = (projectData: IGetProjectForViewResponse): ProjectStatusType => {
-    if (projectData.project.end_date && moment(projectData.project.end_date).endOf('day').isBefore(moment())) {
+    if (
+      projectData.project.end_date &&
+      moment(projectData.project.end_date).endOf('day').isBefore(moment())
+    ) {
       return ProjectStatusType.COMPLETED;
     }
 
@@ -67,16 +68,16 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
 
     if (ProjectStatusType.ACTIVE === statusType) {
       chipLabel = 'Active';
-      chipStatusClass = classes.chipActive;
+      chipStatusClass = pageStyles.chipActive;
     } else if (ProjectStatusType.COMPLETED === statusType) {
       chipLabel = 'Completed';
-      chipStatusClass = classes.chipPublishedCompleted;
+      chipStatusClass = pageStyles.chipPublishedCompleted;
     } else if (ProjectStatusType.DRAFT === statusType) {
       chipLabel = 'Draft';
-      chipStatusClass = classes.chipDraft;
+      chipStatusClass = pageStyles.chipDraft;
     }
 
-    return <Chip size="small" className={clsx(classes.chip, chipStatusClass)} label={chipLabel} />;
+    return <Chip size="small" sx={chipStatusClass} label={chipLabel} />;
   };
 
   /**
@@ -137,7 +138,7 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
                       data-testid={row.name}
                       underline="always"
                       component="button"
-                      className={classes.linkButton}
+                      sx={pageStyles.linkButton}
                       variant="body2"
                       onClick={() => history.push(`/admin/projects/create?draftId=${row.id}`)}>
                       {row.name}
@@ -163,10 +164,18 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
                       {row.project.project_name}
                     </Link>
                   </TableCell>
-                  <TableCell>{row.permit.permits.map((item) => item.permit_number).join(', ')}</TableCell>
-                  <TableCell>{row.contact.contacts.map((item) => item.agency).join(', ')}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}</TableCell>
+                  <TableCell>
+                    {row.permit.permits.map((item) => item.permit_number).join(', ')}
+                  </TableCell>
+                  <TableCell>
+                    {row.contact.contacts.map((item) => item.agency).join(', ')}
+                  </TableCell>
+                  <TableCell>
+                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}
+                  </TableCell>
+                  <TableCell>
+                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}
+                  </TableCell>
                   <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
                   <TableCell>
                     <FormControlLabel

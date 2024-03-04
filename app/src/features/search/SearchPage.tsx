@@ -57,7 +57,8 @@ const SearchPage: React.FC = () => {
       const clusteredPointGeometries: IMarker[] = [];
 
       response.forEach((result: any) => {
-        const feature = generateValidGeometryCollection(result.geometry, result.id).geometryCollection[0];
+        const feature = generateValidGeometryCollection(result.geometry, result.id)
+          .geometryCollection[0];
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
@@ -88,7 +89,12 @@ const SearchPage: React.FC = () => {
    */
   return (
     <Box sx={{ height: '100%' }}>
-      <MapContainer mapId="search_boundary_map" fullScreenControl={false} scrollWheelZoom={true} markers={geometries} />
+      <MapContainer
+        mapId="search_boundary_map"
+        fullScreenControl={false}
+        scrollWheelZoom={true}
+        markers={geometries}
+      />
     </Box>
   );
 };

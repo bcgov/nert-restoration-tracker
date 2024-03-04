@@ -67,7 +67,8 @@ const ProjectsPage: React.FC = () => {
   }, [location.search]);
 
   const [formikValues, setFormikValues] = useState<IProjectAdvancedFilters>(collectFilterParams);
-  const [filterChipValues, setFilterChipValues] = useState<IProjectAdvancedFilters>(collectFilterParams);
+  const [filterChipValues, setFilterChipValues] =
+    useState<IProjectAdvancedFilters>(collectFilterParams);
 
   //push params to url
   const handleFilterParams = () => {
@@ -97,14 +98,19 @@ const ProjectsPage: React.FC = () => {
     }
 
     //empty Filters
-    if (JSON.stringify(formikRef.current.values) === JSON.stringify(ProjectAdvancedFiltersInitialValues)) {
+    if (
+      JSON.stringify(formikRef.current.values) ===
+      JSON.stringify(ProjectAdvancedFiltersInitialValues)
+    ) {
       return;
     }
 
     try {
       setFilterChipValues(formikRef.current.values);
 
-      const response = await restorationTrackerApi.project.getProjectsList(formikRef.current.values);
+      const response = await restorationTrackerApi.project.getProjectsList(
+        formikRef.current.values
+      );
 
       if (!response) {
         return;

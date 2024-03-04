@@ -28,7 +28,9 @@ export interface IFullScreenScrollingEventHandlerProps {
  * @param {*} props
  * @return {*}
  */
-const FullScreenScrollingEventHandler: React.FC<IFullScreenScrollingEventHandlerProps> = (props) => {
+const FullScreenScrollingEventHandler: React.FC<IFullScreenScrollingEventHandlerProps> = (
+  props
+) => {
   const map = useMap();
 
   if (props.scrollWheelZoom) {

@@ -33,7 +33,9 @@ const MyProjectsPage: React.FC = () => {
         return;
       }
 
-      const projectsResponse = await restorationTrackerApi.project.getUserProjectsList(keycloakWrapper.systemUserId);
+      const projectsResponse = await restorationTrackerApi.project.getUserProjectsList(
+        keycloakWrapper.systemUserId
+      );
 
       setIsLoading(false);
       setProjects(projectsResponse);
@@ -64,7 +66,11 @@ const MyProjectsPage: React.FC = () => {
           </Typography>
         </Box>
         <SystemRoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR]}>
+          validSystemRoles={[
+            SYSTEM_ROLE.SYSTEM_ADMIN,
+            SYSTEM_ROLE.DATA_ADMINISTRATOR,
+            SYSTEM_ROLE.PROJECT_CREATOR
+          ]}>
           <Button
             variant="contained"
             color="primary"

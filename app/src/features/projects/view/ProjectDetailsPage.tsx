@@ -1,8 +1,5 @@
 import Box from '@mui/material/Box';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import IUCNClassification from 'features/projects/view/components/IUCNClassification';
@@ -22,56 +19,54 @@ export interface IProjectDetailsProps {
   refresh: () => void;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    projectMetadata: {
-      '& section': {
-        marginBottom: theme.spacing(3)
+const pageStyles = {
+  projectMetadata: {
+    '& section': {
+      marginBottom: '3rem'
+    },
+    '& section:last-child': {
+      marginBottom: 0
+    },
+    '& dl, ul': {
+      marginTop: '0.5rem',
+      marginBottom: 0,
+      borderTop: '1px solid #dddddd'
+    },
+    '& dl div, li': {
+      paddingTop: '0.5rem',
+      paddingBottom: '0.5rem',
+      borderBottom: '1px solid #dddddd'
+    },
+    '& dd, dt': {
+      display: 'inline-block',
+      verticalAlign: 'top'
+    },
+    '& dt': {
+      width: '33.333%'
+    },
+    '& dd': {
+      width: '66.666%'
+    },
+    '& dd span': {
+      display: 'inline'
+    },
+    '& h3': {
+      marginBottom: '0.5rem',
+      fontSize: '15px',
+      fontWeight: 700,
+      textTransform: 'uppercase'
+    },
+    '& ul': {
+      listStyleType: 'none',
+      '& dl': {
+        marginTop: 0
       },
-      '& section:last-child': {
-        marginBottom: 0
-      },
-      '& dl, ul': {
-        marginTop: theme.spacing(1),
-        marginBottom: 0,
-        borderTop: '1px solid #dddddd'
-      },
-      '& dl div, li': {
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
-        borderBottom: '1px solid #dddddd'
-      },
-      '& dd, dt': {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      '& dt': {
-        width: '33.333%'
-      },
-      '& dd': {
-        width: '66.666%'
-      },
-      '& dd span': {
-        display: 'inline'
-      },
-      '& h3': {
-        marginBottom: theme.spacing(1),
-        fontSize: '15px',
-        fontWeight: 700,
-        textTransform: 'uppercase'
-      },
-      '& ul': {
-        listStyleType: 'none',
-        '& dl': {
-          marginTop: 0
-        },
-        '& dl div:last-child': {
-          borderBottom: 'none'
-        }
+      '& dl div:last-child': {
+        borderBottom: 'none'
       }
     }
-  })
-);
+  }
+};
 
 /**
  * Project details content for a project.
@@ -80,10 +75,9 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
   const { projectForViewData, codes, refresh } = props;
-  const classes = useStyles();
 
   return (
-    <Box className={classes.projectMetadata} p={3}>
+    <Box sx={pageStyles.projectMetadata} p={3}>
       <Box mb={3}>
         <Typography variant="h2">Project Details</Typography>
       </Box>
@@ -92,7 +86,11 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         <Typography variant="body1" component={'h3'} data-testid="GeneralInfoTitle">
           General Information
         </Typography>
-        <GeneralInformation projectForViewData={projectForViewData} codes={codes} refresh={refresh} />
+        <GeneralInformation
+          projectForViewData={projectForViewData}
+          codes={codes}
+          refresh={refresh}
+        />
       </Box>
 
       <Box component="section">
@@ -101,8 +99,14 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         </Typography>
         <RoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}
-          fallback={<PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />}>
+          validProjectRoles={[
+            PROJECT_ROLE.PROJECT_LEAD,
+            PROJECT_ROLE.PROJECT_EDITOR,
+            PROJECT_ROLE.PROJECT_VIEWER
+          ]}
+          fallback={
+            <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
+          }>
           <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
         </RoleGuard>
       </Box>
@@ -111,12 +115,20 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         <Typography variant="body1" component={'h3'} data-testid="IUCNTitle">
           IUCN Conservation Actions Classifications
         </Typography>
-        <IUCNClassification projectForViewData={projectForViewData} codes={codes} refresh={refresh} />
+        <IUCNClassification
+          projectForViewData={projectForViewData}
+          codes={codes}
+          refresh={refresh}
+        />
       </Box>
 
       <RoleGuard
         validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}>
+        validProjectRoles={[
+          PROJECT_ROLE.PROJECT_LEAD,
+          PROJECT_ROLE.PROJECT_EDITOR,
+          PROJECT_ROLE.PROJECT_VIEWER
+        ]}>
         <Box component="section">
           <Typography variant="body1" component={'h3'} data-testid="PermitsTitle">
             Permits

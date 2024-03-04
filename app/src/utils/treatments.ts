@@ -21,7 +21,9 @@ export const groupTreatmentsByYear = (treatments: IGetTreatmentItem[]): Record<s
   return treatmentsByYearArray;
 };
 
-export const getFormattedTreatmentStringsByYear = (treatmentsByYear: Record<string, string>): string[] => {
+export const getFormattedTreatmentStringsByYear = (
+  treatmentsByYear: Record<string, string>
+): string[] => {
   return Object.entries(treatmentsByYear).map(([key, value]) => {
     return [key, value].filter(Boolean).join(' - ');
   });

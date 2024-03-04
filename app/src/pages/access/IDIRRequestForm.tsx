@@ -33,7 +33,8 @@ export interface IIDIRRequestFormProps {
  * @return {*}
  */
 const IDIRRequestForm: React.FC<IIDIRRequestFormProps> = (props) => {
-  const { values, touched, errors, handleChange } = useFormikContext<IIDIRAccessRequestDataObject>();
+  const { values, touched, errors, handleChange } =
+    useFormikContext<IIDIRAccessRequestDataObject>();
   const { codes } = props;
 
   return (
@@ -67,7 +68,9 @@ const IDIRRequestForm: React.FC<IIDIRRequestFormProps> = (props) => {
       </Grid>
 
       <Box mt={3}>
-        <Typography variant="h3">Why are you requesting access to Northeast Restoration Tracker?</Typography>
+        <Typography variant="h3">
+          Why are you requesting access to Northeast Restoration Tracker?
+        </Typography>
         <Box mt={2}>
           <CustomTextField name="reason" label="Reason" other={{ multiline: true, rows: 4 }} />
         </Box>

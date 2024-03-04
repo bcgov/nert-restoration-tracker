@@ -130,9 +130,14 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                 }}
                 onCancel={() => setIsModalOpen(false)}
                 onSave={(projectFundingItemValues) => {
-                  if (currentProjectFundingFormArrayItem.index < values.funding.fundingSources.length) {
+                  if (
+                    currentProjectFundingFormArrayItem.index < values.funding.fundingSources.length
+                  ) {
                     // Update an existing item
-                    arrayHelpers.replace(currentProjectFundingFormArrayItem.index, projectFundingItemValues);
+                    arrayHelpers.replace(
+                      currentProjectFundingFormArrayItem.index,
+                      projectFundingItemValues
+                    );
                   } else {
                     // Add a new item
                     arrayHelpers.push(projectFundingItemValues);
@@ -145,7 +150,12 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
               <List dense disablePadding>
                 {!values.funding.fundingSources.length && (
                   <ListItem dense component={Paper}>
-                    <Box display="flex" flexGrow={1} justifyContent="center" alignContent="middle" p={2}>
+                    <Box
+                      display="flex"
+                      flexGrow={1}
+                      justifyContent="center"
+                      alignContent="middle"
+                      p={2}>
                       <Typography variant="subtitle2">No Funding Sources</Typography>
                     </Box>
                   </ListItem>
@@ -167,7 +177,9 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                           <Typography className={classes.title}>
                             {getCodeValueNameByID(props.fundingSources, fundingSource.agency_id)}
                             {investment_action_category_label && (
-                              <span className={classes.titleDesc}>({investment_action_category_value})</span>
+                              <span className={classes.titleDesc}>
+                                ({investment_action_category_value})
+                              </span>
                             )}
                           </Typography>
 
@@ -203,7 +215,9 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                               <Typography variant="body2" color="textSecondary">
                                 Agency Project ID
                               </Typography>
-                              <Typography variant="body1">{fundingSource.agency_project_id}</Typography>
+                              <Typography variant="body1">
+                                {fundingSource.agency_project_id}
+                              </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
                               <Typography variant="body2" color="textSecondary">
@@ -259,7 +273,10 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
 
 export default ProjectFundingForm;
 
-export const getCodeValueNameByID = (codeSet: IMultiAutocompleteFieldOption[], codeValueId: number): string => {
+export const getCodeValueNameByID = (
+  codeSet: IMultiAutocompleteFieldOption[],
+  codeValueId: number
+): string => {
   if (!codeSet?.length || !codeValueId) {
     return '';
   }

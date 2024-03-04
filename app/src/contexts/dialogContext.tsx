@@ -119,9 +119,11 @@ export const DialogContext = createContext<IDialogContext>({
  * @return {*}
  */
 export const DialogContextProvider: React.FC = (props) => {
-  const [yesNoDialogProps, setYesNoDialogProps] = useState<IYesNoDialogProps>(defaultYesNoDialogProps);
+  const [yesNoDialogProps, setYesNoDialogProps] =
+    useState<IYesNoDialogProps>(defaultYesNoDialogProps);
 
-  const [errorDialogProps, setErrorDialogProps] = useState<IErrorDialogProps>(defaultErrorDialogProps);
+  const [errorDialogProps, setErrorDialogProps] =
+    useState<IErrorDialogProps>(defaultErrorDialogProps);
 
   const [snackbarProps, setSnackbarProps] = useState<ISnackbarProps>(defaultSnackbarProps);
 
@@ -161,7 +163,11 @@ export const DialogContextProvider: React.FC = (props) => {
         message={snackbarProps.snackbarMessage}
         action={
           <React.Fragment>
-            <IconButton size="small" aria-label="close" color="inherit" onClick={() => setSnackbar({ open: false })}>
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={() => setSnackbar({ open: false })}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </React.Fragment>

@@ -14,8 +14,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
-import clsx from 'clsx';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectStatusType } from 'constants/misc';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
@@ -25,27 +23,27 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   linkButton: {
     textAlign: 'left'
   },
-  chip: {
-    color: 'white'
-  },
   chipActive: {
+    color: 'white',
+    fontWeight: 600,
     backgroundColor: '#A2B9E2'
   },
   chipPublishedCompleted: {
+    color: 'white',
     backgroundColor: '#70AD47'
   },
   chipDraft: {
+    color: 'white',
     backgroundColor: '#A6A6A6'
   }
-}));
+};
 
 const PublicPlansListPage = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
-  const classes = useStyles();
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -74,19 +72,22 @@ const PublicPlansListPage = () => {
     return ProjectStatusType.ACTIVE;
   };
 
-  const getChipIcon = (status_name: string) => {
+  const getChipIcon = (statusType: ProjectStatusType) => {
     let chipLabel;
     let chipStatusClass;
 
-    if (ProjectStatusType.ACTIVE === status_name) {
+    if (ProjectStatusType.ACTIVE === statusType) {
       chipLabel = 'Active';
-      chipStatusClass = classes.chipActive;
-    } else if (ProjectStatusType.COMPLETED === status_name) {
+      chipStatusClass = pageStyles.chipActive;
+    } else if (ProjectStatusType.COMPLETED === statusType) {
       chipLabel = 'Completed';
-      chipStatusClass = classes.chipPublishedCompleted;
+      chipStatusClass = pageStyles.chipPublishedCompleted;
+    } else if (ProjectStatusType.DRAFT === statusType) {
+      chipLabel = 'Draft';
+      chipStatusClass = pageStyles.chipDraft;
     }
 
-    return <Chip size="small" className={clsx(classes.chip, chipStatusClass)} label={chipLabel} />;
+    return <Chip size="small" sx={chipStatusClass} label={chipLabel} />;
   };
 
   const navigateToPublicProjectPage = (id: number) => {
@@ -149,6 +150,7 @@ const PublicPlansListPage = () => {
                       data-testid={row.name}
                       underline="always"
                       component="button"
+                      sx={pageStyles.linkButton}
                       variant="body2"
                       onClick={() => navigateToPublicProjectPage(row.id)}>
                       {row.name}
@@ -156,8 +158,12 @@ const PublicPlansListPage = () => {
                   </TableCell>
                   <TableCell>{row.permits_list}</TableCell>
                   <TableCell>{row.contact_agency_list}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.start_date)}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.end_date)}</TableCell>
+                  <TableCell>
+                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.start_date)}
+                  </TableCell>
+                  <TableCell>
+                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.end_date)}
+                  </TableCell>
                   <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
                   <TableCell>
                     <FormControlLabel

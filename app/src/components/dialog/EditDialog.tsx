@@ -73,7 +73,9 @@ export interface IEditDialogProps<T> {
  * @param {PropsWithChildren<IEditDialogProps<T>>} props
  * @return {*}
  */
-export const EditDialog = <T extends FormikValues>(props: PropsWithChildren<IEditDialogProps<T>>) => {
+export const EditDialog = <T extends FormikValues>(
+  props: PropsWithChildren<IEditDialogProps<T>>
+) => {
   const theme = useTheme();
 
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -110,7 +112,11 @@ export const EditDialog = <T extends FormikValues>(props: PropsWithChildren<IEdi
               data-testid="edit-dialog-save-button">
               {props.dialogSaveButtonLabel || 'Save Changes'}
             </Button>
-            <Button onClick={props.onCancel} color="primary" variant="outlined" data-testid="edit-dialog-cancel-button">
+            <Button
+              onClick={props.onCancel}
+              color="primary"
+              variant="outlined"
+              data-testid="edit-dialog-cancel-button">
               Cancel
             </Button>
           </DialogActions>

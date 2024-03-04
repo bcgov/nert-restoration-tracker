@@ -32,7 +32,8 @@ const IUCNClassification: React.FC<IIUCNClassificationProps> = (props) => {
     projectForViewData: { iucn }
   } = props;
 
-  const hasIucnClassifications = iucn.classificationDetails && iucn.classificationDetails.length > 0;
+  const hasIucnClassifications =
+    iucn.classificationDetails && iucn.classificationDetails.length > 0;
   return (
     <ul className={classes.projectIucnList}>
       {hasIucnClassifications &&

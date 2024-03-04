@@ -61,17 +61,22 @@ const useAdminApi = (axios: AxiosInstance) => {
     identitySource: string,
     roleIds: number[] = []
   ): Promise<void> => {
-    const { data } = await axios.put(`/api/administrative-activity/system-access/${administrativeActivityId}/approve`, {
-      userIdentifier,
-      identitySource,
-      roleIds: roleIds
-    });
+    const { data } = await axios.put(
+      `/api/administrative-activity/system-access/${administrativeActivityId}/approve`,
+      {
+        userIdentifier,
+        identitySource,
+        roleIds: roleIds
+      }
+    );
 
     return data;
   };
 
   const denyAccessRequest = async (administrativeActivityId: number): Promise<void> => {
-    const { data } = await axios.put(`/api/administrative-activity/system-access/${administrativeActivityId}/reject`);
+    const { data } = await axios.put(
+      `/api/administrative-activity/system-access/${administrativeActivityId}/reject`
+    );
 
     return data;
   };
@@ -109,7 +114,9 @@ const useAdminApi = (axios: AxiosInstance) => {
    * @return {*}  {Promise<number>}
    */
   const addSystemUserRoles = async (userId: number, roleIds: number[]): Promise<number> => {
-    const { data } = await axios.post(`/api/user/${userId}/system-roles/create`, { roles: roleIds });
+    const { data } = await axios.post(`/api/user/${userId}/system-roles/create`, {
+      roles: roleIds
+    });
 
     return data;
   };
@@ -124,7 +131,11 @@ const useAdminApi = (axios: AxiosInstance) => {
    * @param {number} roleId
    * @return {*}
    */
-  const addSystemUser = async (userIdentifier: string, identitySource: string, roleId: number): Promise<boolean> => {
+  const addSystemUser = async (
+    userIdentifier: string,
+    identitySource: string,
+    roleId: number
+  ): Promise<boolean> => {
     const { status } = await axios.post(`/api/user/add`, {
       identitySource: identitySource,
       userIdentifier: userIdentifier,

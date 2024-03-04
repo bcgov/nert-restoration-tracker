@@ -14,11 +14,20 @@ import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IBCeIDAccessRequestDataObject, IIDIRAccessRequestDataObject } from 'interfaces/useAdminApi.interface';
+import {
+  IBCeIDAccessRequestDataObject,
+  IIDIRAccessRequestDataObject
+} from 'interfaces/useAdminApi.interface';
 import React, { ReactElement, useContext, useState } from 'react';
 import { Redirect, useHistory } from 'react-router';
-import BCeIDRequestForm, { BCeIDRequestFormInitialValues, BCeIDRequestFormYupSchema } from './BCeIDRequestForm';
-import IDIRRequestForm, { IDIRRequestFormInitialValues, IDIRRequestFormYupSchema } from './IDIRRequestForm';
+import BCeIDRequestForm, {
+  BCeIDRequestFormInitialValues,
+  BCeIDRequestFormYupSchema
+} from './BCeIDRequestForm';
+import IDIRRequestForm, {
+  IDIRRequestFormInitialValues,
+  IDIRRequestFormYupSchema
+} from './IDIRRequestForm';
 
 const useStyles = makeStyles(() => ({
   actionButton: {
@@ -69,7 +78,9 @@ export const AccessRequestPage: React.FC = () => {
     });
   };
 
-  const handleSubmitAccessRequest = async (values: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject) => {
+  const handleSubmitAccessRequest = async (
+    values: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject
+  ) => {
     try {
       const response = await restorationTrackerApi.admin.createAdministrativeActivity({
         ...values,
@@ -152,7 +163,8 @@ export const AccessRequestPage: React.FC = () => {
               <Typography variant="h1">Request Access</Typography>
               <Box mt={3}>
                 <Typography variant="body1" color="textSecondary">
-                  You will need to provide some additional details before accessing this application.
+                  You will need to provide some additional details before accessing this
+                  application.
                 </Typography>
               </Box>
               <Box mt={4}>

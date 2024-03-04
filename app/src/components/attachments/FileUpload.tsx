@@ -137,7 +137,9 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
 
     // Parse out any rejected files that have already been added
     rejectedFiles.forEach((item) => {
-      const isAlreadyRejected = files.some((existingFile) => existingFile.file.name === item.file.name);
+      const isAlreadyRejected = files.some(
+        (existingFile) => existingFile.file.name === item.file.name
+      );
 
       if (isAlreadyRejected) {
         return;

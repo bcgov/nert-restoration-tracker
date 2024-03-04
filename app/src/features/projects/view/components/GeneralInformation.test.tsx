@@ -36,7 +36,11 @@ describe('GeneralInformation', () => {
     } as IGetAllCodeSetsResponse;
 
     const { getByText } = render(
-      <GeneralInformation projectForViewData={projectPermitData} codes={codes} refresh={mockRefresh} />
+      <GeneralInformation
+        projectForViewData={projectPermitData}
+        codes={codes}
+        refresh={mockRefresh}
+      />
     );
 
     expect(getByText('Jan 10, 2021', { exact: false })).toBeVisible();
@@ -73,7 +77,11 @@ describe('GeneralInformation', () => {
     } as IGetAllCodeSetsResponse;
 
     const { getByText } = render(
-      <GeneralInformation projectForViewData={projectPermitData} codes={codes} refresh={mockRefresh} />
+      <GeneralInformation
+        projectForViewData={projectPermitData}
+        codes={codes}
+        refresh={mockRefresh}
+      />
     );
 
     expect(getByText('Jan 10, 2021', { exact: false })).toBeVisible();

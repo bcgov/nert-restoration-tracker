@@ -45,7 +45,8 @@ const ProjectPartnershipsForm: React.FC<IProjectPartnershipsFormProps> = (props)
 
       <Box mb={3} maxWidth={'72ch'}>
         <Typography variant="body1" color="textSecondary">
-          Specify any additional partnerships that have not been previously identified as a funding sources.
+          Specify any additional partnerships that have not been previously identified as a funding
+          sources.
         </Typography>
       </Box>
 

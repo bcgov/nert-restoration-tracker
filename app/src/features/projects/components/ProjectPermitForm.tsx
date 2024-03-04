@@ -107,8 +107,8 @@ const ProjectPermitForm: React.FC = () => {
           <>
             <Box mb={3} maxWidth={'72ch'}>
               <Typography variant="body1" color="textSecondary">
-                <strong>Note:</strong> For permit numbers, only provide the last 6 digits located after the hyphen (e.g.
-                for KA12-845782 enter 845782)
+                <strong>Note:</strong> For permit numbers, only provide the last 6 digits located
+                after the hyphen (e.g. for KA12-845782 enter 845782)
               </Typography>
             </Box>
             {values.permit.permits?.map((permit, index) => {
@@ -193,7 +193,9 @@ const ProjectPermitForm: React.FC = () => {
       <Box>
         {errors.permit?.permits && !Array.isArray(errors.permit?.permits) && (
           <Box pt={2}>
-            <Typography style={{ fontSize: '12px', color: '#f44336' }}>{errors.permit.permits}</Typography>
+            <Typography style={{ fontSize: '12px', color: '#f44336' }}>
+              {errors.permit.permits}
+            </Typography>
           </Box>
         )}
       </Box>

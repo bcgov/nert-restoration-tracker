@@ -38,7 +38,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
   } = props;
 
   const hasIndigenousPartnerships = indigenous_partnerships && indigenous_partnerships.length > 0;
-  const hasStakeholderPartnerships = stakeholder_partnerships && stakeholder_partnerships.length > 0;
+  const hasStakeholderPartnerships =
+    stakeholder_partnerships && stakeholder_partnerships.length > 0;
 
   return (
     <Box component="dl">
@@ -55,15 +56,22 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
         <Typography component="dd" variant="body2">
           {hasIndigenousPartnerships &&
             indigenous_partnerships?.map((indigenousPartnership: number, index: number) => {
-              const codeValue = codes.first_nations.find((code) => code.id === indigenousPartnership);
+              const codeValue = codes.first_nations.find(
+                (code) => code.id === indigenousPartnership
+              );
               return (
-                <span key={index} data-testid="indigenous_partners_data" className={classes.partnerItem}>
+                <span
+                  key={index}
+                  data-testid="indigenous_partners_data"
+                  className={classes.partnerItem}>
                   {codeValue?.name}
                   <span className="seperator">,&nbsp;</span>
                 </span>
               );
             })}
-          {!hasIndigenousPartnerships && <span data-testid="no_indigenous_partners_data">None</span>}
+          {!hasIndigenousPartnerships && (
+            <span data-testid="no_indigenous_partners_data">None</span>
+          )}
         </Typography>
       </div>
 
@@ -81,13 +89,18 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
           {hasStakeholderPartnerships &&
             stakeholder_partnerships?.map((stakeholderPartnership: string, index: number) => {
               return (
-                <span key={index} data-testid="stakeholder_partners_data" className={classes.partnerItem}>
+                <span
+                  key={index}
+                  data-testid="stakeholder_partners_data"
+                  className={classes.partnerItem}>
                   {stakeholderPartnership}
                   <span className="seperator">,&nbsp;</span>
                 </span>
               );
             })}
-          {!hasStakeholderPartnerships && <span data-testid="no_stakeholder_partners_data">None</span>}
+          {!hasStakeholderPartnerships && (
+            <span data-testid="no_stakeholder_partners_data">None</span>
+          )}
         </Typography>
       </div>
     </Box>

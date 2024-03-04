@@ -1,6 +1,9 @@
 import CheckBox from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
-import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete, {
+  AutocompleteInputChangeReason,
+  createFilterOptions
+} from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
 import ListSubheader from '@mui/material/ListSubheader';
 import TextField from '@mui/material/TextField';
@@ -130,7 +133,8 @@ const useStyles = makeStyles({
 const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (props) => {
   const classes = useStyles();
 
-  const { values, touched, errors, setFieldValue } = useFormikContext<IMultiAutocompleteFieldOption>();
+  const { values, touched, errors, setFieldValue } =
+    useFormikContext<IMultiAutocompleteFieldOption>();
 
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(props.options || []); // store options if provided
@@ -149,7 +153,8 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
           },
           async searchSpecies() {
             const existingValues = get(values, props.id);
-            const selectedOptions = (existingValues?.length && options.slice(0, existingValues.length)) || [];
+            const selectedOptions =
+              (existingValues?.length && options.slice(0, existingValues.length)) || [];
 
             if (!inputValue) {
               setOptions(selectedOptions);
@@ -177,7 +182,9 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     setOptions(props.options || []);
   }, [props.options]);
 
-  const getExistingValue = (existingValues: (number | string)[]): IMultiAutocompleteFieldOption[] => {
+  const getExistingValue = (
+    existingValues: (number | string)[]
+  ): IMultiAutocompleteFieldOption[] => {
     if (existingValues) {
       return options.filter((option) => existingValues.includes(option.value));
     }
@@ -191,7 +198,11 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     return !option?.value || !value?.value ? false : option.value === value.value;
   };
 
-  const handleOnInputChange = (event: React.ChangeEvent<any>, value: string, reason: AutocompleteInputChangeReason) => {
+  const handleOnInputChange = (
+    event: React.ChangeEvent<any>,
+    value: string,
+    reason: AutocompleteInputChangeReason
+  ) => {
     if (event && event.type === 'blur') {
       setInputValue('');
     } else if (reason !== 'reset') {
@@ -199,7 +210,10 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     }
   };
 
-  const handleOnChange = (_event: React.ChangeEvent<any>, selectedOptions: IMultiAutocompleteFieldOption[]) => {
+  const handleOnChange = (
+    _event: React.ChangeEvent<any>,
+    selectedOptions: IMultiAutocompleteFieldOption[]
+  ) => {
     const selectedOptionsValue = selectedOptions.map((item) => item.value);
     const remainingOptions = options.filter((item) => !selectedOptionsValue.includes(item.value));
 
@@ -236,7 +250,9 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
   ) => {
     // For api-search selected will be always on top and options doesn't need to be filtered
     // as search funciton maintains both of this.
-    return props.type === 'api-search' ? optionsList : filterOptionsKeepingSelectedOnTop(optionsList, state);
+    return props.type === 'api-search'
+      ? optionsList
+      : filterOptionsKeepingSelectedOnTop(optionsList, state);
   };
 
   return (

@@ -212,7 +212,10 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
     <>
       <Box display="flex" flexDirection="column" height="100%">
         <Box component={TableContainer}>
-          <Table stickyHeader className={classes.treatmentsTable} aria-label="treatments-list-table">
+          <Table
+            stickyHeader
+            className={classes.treatmentsTable}
+            aria-label="treatments-list-table">
             <TableHead>
               <TableRow>
                 <TableCell width="50">ID</TableCell>
@@ -243,34 +246,36 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
               )}
 
               {treatmentList.length > 0 &&
-                treatmentList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                  return (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell colSpan={2}>
-                        {formatYearsTreatmentsBox(groupTreatmentsByYear(row.treatments))}
-                      </TableCell>
-                      <TableCell align="right">{row.width}</TableCell>
-                      <TableCell align="right">{row.length}</TableCell>
-                      <TableCell align="right">{row.area}</TableCell>
-                      <TableCell>
-                        <Box my={-0.5}>
-                          <Button
-                            size="small"
-                            color="primary"
-                            variant="outlined"
-                            title="View treatment unit details"
-                            aria-label="view treatment unit details"
-                            data-testid="view-treatment-unit-details"
-                            onClick={() => viewTreatmentUnitDetailsDialog(row)}>
-                            Details
-                          </Button>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                treatmentList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow key={row.id}>
+                        <TableCell>{row.id}</TableCell>
+                        <TableCell>{row.type}</TableCell>
+                        <TableCell colSpan={2}>
+                          {formatYearsTreatmentsBox(groupTreatmentsByYear(row.treatments))}
+                        </TableCell>
+                        <TableCell align="right">{row.width}</TableCell>
+                        <TableCell align="right">{row.length}</TableCell>
+                        <TableCell align="right">{row.area}</TableCell>
+                        <TableCell>
+                          <Box my={-0.5}>
+                            <Button
+                              size="small"
+                              color="primary"
+                              variant="outlined"
+                              title="View treatment unit details"
+                              aria-label="view treatment unit details"
+                              data-testid="view-treatment-unit-details"
+                              onClick={() => viewTreatmentUnitDetailsDialog(row)}>
+                              Details
+                            </Button>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
             </TableBody>
           </Table>
         </Box>
@@ -283,7 +288,9 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             count={treatmentList.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
+            onPageChange={(event: unknown, newPage: number) =>
+              handleChangePage(event, newPage, setPage)
+            }
             onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }

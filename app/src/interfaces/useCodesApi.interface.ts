@@ -28,8 +28,16 @@ export interface IGetAllCodeSetsResponse {
   regions: CodeSet;
   species: CodeSet;
   iucn_conservation_action_level_1_classification: CodeSet;
-  iucn_conservation_action_level_2_subclassification: CodeSet<{ id: number; iucn1_id: number; name: string }>;
-  iucn_conservation_action_level_3_subclassification: CodeSet<{ id: number; iucn2_id: number; name: string }>;
+  iucn_conservation_action_level_2_subclassification: CodeSet<{
+    id: number;
+    iucn1_id: number;
+    name: string;
+  }>;
+  iucn_conservation_action_level_3_subclassification: CodeSet<{
+    id: number;
+    iucn2_id: number;
+    name: string;
+  }>;
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;

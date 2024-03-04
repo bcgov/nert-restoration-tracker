@@ -57,11 +57,13 @@ const ProjectParticipantsPage: React.FC = () => {
   const classes = useStyles();
 
   const [isLoadingProject, setIsLoadingProject] = useState(true);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
-
-  const [projectParticipants, setProjectParticipants] = useState<IGetProjectParticipantsResponseArrayItem[] | null>(
+  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
     null
   );
+
+  const [projectParticipants, setProjectParticipants] = useState<
+    IGetProjectParticipantsResponseArrayItem[] | null
+  >(null);
 
   const projectId = urlParams['id'];
 
@@ -95,7 +97,9 @@ const ProjectParticipantsPage: React.FC = () => {
   };
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
+      urlParams['id']
+    );
 
     if (!projectWithDetailsResponse) {
       return;
@@ -148,7 +152,10 @@ const ProjectParticipantsPage: React.FC = () => {
 
   const handleRemoveProjectParticipant = async (projectParticipationId: number) => {
     try {
-      const response = await restorationTrackerApi.project.removeProjectParticipant(projectId, projectParticipationId);
+      const response = await restorationTrackerApi.project.removeProjectParticipant(
+        projectId,
+        projectParticipationId
+      );
 
       if (!response) {
         openErrorDialog({
@@ -199,8 +206,8 @@ const ProjectParticipantsPage: React.FC = () => {
                         dialogTitle: ProjectParticipantsI18N.removeParticipantTitle,
                         dialogContent: (
                           <Typography variant="body1" component="div" color="textSecondary">
-                            Removing user <strong>{row.user_identifier}</strong> will revoke their access to this
-                            project. Are you sure you want to proceed?
+                            Removing user <strong>{row.user_identifier}</strong> will revoke their
+                            access to this project. Are you sure you want to proceed?
                           </Typography>
                         ),
                         yesButtonLabel: 'Remove User',
@@ -368,7 +375,8 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            User <strong>{item.user_identifier}</strong>'s role changed to <strong>{newRole}</strong>.
+            User <strong>{item.user_identifier}</strong>'s role changed to{' '}
+            <strong>{newRole}</strong>.
           </Typography>
         )
       });
@@ -380,7 +388,9 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     }
   };
 
-  const currentProjectRoleName = projectRoleCodes.find((item) => item.id === row.project_role_id)?.name;
+  const currentProjectRoleName = projectRoleCodes.find(
+    (item) => item.id === row.project_role_id
+  )?.name;
 
   return (
     <CustomMenuButton

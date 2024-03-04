@@ -32,7 +32,9 @@ describe('useDataLoader', () => {
     describe('with rejecting promise', () => {
       it('should expose an error when the promise rejects', async () => {
         const deferred = new Deferred<string, string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.reject('promise-rejected');
@@ -43,7 +45,9 @@ describe('useDataLoader', () => {
 
       it('should be in a ready state once the promise rejects', async () => {
         const deferred = new Deferred<string, string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.reject('promise-rejected');
@@ -59,7 +63,9 @@ describe('useDataLoader', () => {
     describe('with resolved promise', () => {
       it('should expose data when the promise resolves', async () => {
         const deferred = new Deferred<string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.resolve('promise-resolved');
@@ -70,7 +76,9 @@ describe('useDataLoader', () => {
 
       it('should be in a ready state once the promise resolves', async () => {
         const deferred = new Deferred<string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.resolve('promise-resolved');
@@ -87,7 +95,9 @@ describe('useDataLoader', () => {
   describe('refresh', () => {
     it('should clear errors when refresh is called', async () => {
       const deferred = new Deferred<string, string>();
-      const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+      const { result, waitForValueToChange } = renderHook(() =>
+        useDataLoader(() => deferred.promise)
+      );
 
       act(() => result.current.load());
       deferred.reject('reject1');
@@ -105,7 +115,9 @@ describe('useDataLoader', () => {
 
     it('should still expose its old data after refresh is called', async () => {
       const deferred = new Deferred<string>();
-      const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+      const { result, waitForValueToChange } = renderHook(() =>
+        useDataLoader(() => deferred.promise)
+      );
 
       act(() => result.current.load());
       deferred.resolve('test2');
@@ -123,7 +135,9 @@ describe('useDataLoader', () => {
     describe('resolves a successful refresh', () => {
       it('should update the data after refresh callback resolves', async () => {
         const deferred = new Deferred<string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.resolve('test3');
@@ -142,7 +156,9 @@ describe('useDataLoader', () => {
 
       it('should be in a ready state after refresh resolves', async () => {
         const deferred = new Deferred<string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.resolve('test3');
@@ -171,7 +187,9 @@ describe('useDataLoader', () => {
     describe('rejects an unsuccessful refresh', () => {
       it('should not update the data after refresh callback rejects', async () => {
         const deferred = new Deferred<string, string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.resolve('resolve1');
@@ -189,7 +207,9 @@ describe('useDataLoader', () => {
 
       it('should be in a ready state after refresh callback rejects', async () => {
         const deferred = new Deferred<string, string>();
-        const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+        const { result, waitForValueToChange } = renderHook(() =>
+          useDataLoader(() => deferred.promise)
+        );
 
         act(() => result.current.load());
         deferred.resolve('resolve2');
@@ -217,7 +237,9 @@ describe('useDataLoader', () => {
   describe('clearError', () => {
     it('should clear errors when clear is called', async () => {
       const deferred = new Deferred<string, string>();
-      const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+      const { result, waitForValueToChange } = renderHook(() =>
+        useDataLoader(() => deferred.promise)
+      );
 
       act(() => result.current.load());
       deferred.reject('reject1');
@@ -233,7 +255,9 @@ describe('useDataLoader', () => {
 
     it('should be in a ready state after clear is called', async () => {
       const deferred = new Deferred<string, string>();
-      const { result, waitForValueToChange } = renderHook(() => useDataLoader(() => deferred.promise));
+      const { result, waitForValueToChange } = renderHook(() =>
+        useDataLoader(() => deferred.promise)
+      );
 
       act(() => result.current.load());
       deferred.reject('reject1');

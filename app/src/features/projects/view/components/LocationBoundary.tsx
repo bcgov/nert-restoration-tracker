@@ -5,7 +5,10 @@ import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import { IStaticLayer, IStaticLayerFeature } from 'components/map/components/StaticLayers';
 import MapContainer from 'components/map/MapContainer';
-import { IGetProjectForViewResponse, IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectForViewResponse,
+  IGetProjectTreatment
+} from 'interfaces/useProjectApi.interface';
 import React, { useEffect, useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';
@@ -91,14 +94,21 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     ];
 
     setBounds(
-      calculateUpdatedMapBounds([...projectLocationFeatures, ...treatmentFeatures].map((item) => item.geoJSON))
+      calculateUpdatedMapBounds(
+        [...projectLocationFeatures, ...treatmentFeatures].map((item) => item.geoJSON)
+      )
     );
 
     setStaticLayers(allLayers);
   }, [location.geometry, treatmentList]);
 
   return (
-    <Box width="100%" height="100%" overflow="hidden" data-testid="map_container" className={classes.mapContainer}>
+    <Box
+      width="100%"
+      height="100%"
+      overflow="hidden"
+      data-testid="map_container"
+      className={classes.mapContainer}>
       <MapContainer
         mapId="project_location_form_map"
         staticLayers={staticLayers}
@@ -114,7 +124,9 @@ export default LocationBoundary;
 const TreatmentPopup: React.FC<{ treatment: IGetProjectTreatment }> = (props) => {
   const { treatment } = props;
 
-  const treatmentStrings = getFormattedTreatmentStringsByYear(groupTreatmentsByYear(treatment.treatments));
+  const treatmentStrings = getFormattedTreatmentStringsByYear(
+    groupTreatmentsByYear(treatment.treatments)
+  );
 
   return (
     <Box component="dl">

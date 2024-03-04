@@ -25,7 +25,9 @@ const PublicLayout: React.FC = (props) => {
       <CssBaseline />
       <DialogContextProvider>
         {!isSupportedBrowser() && (
-          <Alert severity="error">This is an unsupported browser. Some functionality may not work as expected.</Alert>
+          <Alert severity="error">
+            This is an unsupported browser. Some functionality may not work as expected.
+          </Alert>
         )}
 
         <Header />

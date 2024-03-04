@@ -46,7 +46,9 @@ const Footer: React.FC = () => {
             <a href="https://www2.gov.bc.ca/gov/content/home/privacy">Privacy</a>
           </li>
           <li>
-            <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government">Accessibility</a>
+            <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government">
+              Accessibility
+            </a>
           </li>
           <li>
             <a href="https://www2.gov.bc.ca/gov/content/home/copyright">Copyright</a>

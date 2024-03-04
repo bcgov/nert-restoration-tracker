@@ -37,7 +37,9 @@ const AccessDenied = () => {
         <Icon path={mdiAlertCircleOutline} size={2} color="#ff5252" />
         <h1>Access Denied</h1>
         <Typography>
-          {`You do not have permission to access this ${(userHasARole && 'page') || 'application'}.`}
+          {`You do not have permission to access this ${
+            (userHasARole && 'page') || 'application'
+          }.`}
         </Typography>
         <Box pt={4}>
           {!userHasARole && (

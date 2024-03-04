@@ -1,4 +1,10 @@
-import { mdiDotsVertical, mdiInformationOutline, mdiMenuDown, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
+import {
+  mdiDotsVertical,
+  mdiInformationOutline,
+  mdiMenuDown,
+  mdiPlus,
+  mdiTrashCanOutline
+} from '@mdi/js';
 import Icon from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -74,8 +80,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       dialogTitle: 'Remove User?',
       dialogContent: (
         <Typography variant="body1" component="div" color="textSecondary">
-          Removing user <strong>{row.user_identifier}</strong> will revoke their access to this application and all
-          related projects. Are you sure you want to proceed?
+          Removing user <strong>{row.user_identifier}</strong> will revoke their access to this
+          application and all related projects. Are you sure you want to proceed?
         </Typography>
       ),
       yesButtonLabel: 'Remove User',
@@ -133,12 +139,17 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
     }
   };
 
-  const handleChangeUserPermissionsClick = (row: IGetUserResponse, newRoleName: any, newRoleId: number) => {
+  const handleChangeUserPermissionsClick = (
+    row: IGetUserResponse,
+    newRoleName: any,
+    newRoleId: number
+  ) => {
     dialogContext.setYesNoDialog({
       dialogTitle: 'Change User Role?',
       dialogContent: (
         <Typography variant="body1" color="textSecondary">
-          Change user <strong>{row.user_identifier}</strong>'s role to <strong>{newRoleName}</strong>?
+          Change user <strong>{row.user_identifier}</strong>'s role to{' '}
+          <strong>{newRoleName}</strong>?
         </Typography>
       ),
       yesButtonLabel: 'Change Role',
@@ -171,7 +182,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         snackbarMessage: (
           <>
             <Typography variant="body2" component="div">
-              User <strong>{user.user_identifier}</strong>'s role has changed to <strong>{roleName}</strong>.
+              User <strong>{user.user_identifier}</strong>'s role has changed to{' '}
+              <strong>{roleName}</strong>.
             </Typography>
           </>
         ),
@@ -215,7 +227,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            {values.systemUsers.length} system {values.systemUsers.length > 1 ? 'users' : 'user'} added.
+            {values.systemUsers.length} system {values.systemUsers.length > 1 ? 'users' : 'user'}{' '}
+            added.
           </Typography>
         )
       });
@@ -287,57 +300,60 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                 </TableRow>
               )}
               {activeUsers.length > 0 &&
-                activeUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
-                    <TableCell>
-                      <strong>{row.user_identifier || 'Not Applicable'}</strong>
-                    </TableCell>
-                    <TableCell>
-                      <Box m={-1}>
-                        <CustomMenuButton
-                          buttonLabel={row.role_names.join(', ') || 'Unassigned'}
-                          buttonTitle={'Change User Permissions'}
-                          buttonProps={{ variant: 'text' }}
-                          menuItems={codes.system_roles
-                            .sort((item1, item2) => {
-                              return item1.name.localeCompare(item2.name);
-                            })
-                            .map((item) => {
-                              return {
-                                menuLabel: item.name,
-                                menuOnClick: () => handleChangeUserPermissionsClick(row, item.name, item.id)
-                              };
-                            })}
-                          buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
-                        />
-                      </Box>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box my={-1}>
-                        <CustomMenuIconButton
-                          buttonTitle="Actions"
-                          buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
-                          menuItems={[
-                            {
-                              menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
-                              menuLabel: 'View Users Details',
-                              menuOnClick: () =>
-                                history.push({
-                                  pathname: `/admin/users/${row.id}`,
-                                  state: row
-                                })
-                            },
-                            {
-                              menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
-                              menuLabel: 'Remove User',
-                              menuOnClick: () => handleRemoveUserClick(row)
-                            }
-                          ]}
-                        />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                activeUsers
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
+                      <TableCell>
+                        <strong>{row.user_identifier || 'Not Applicable'}</strong>
+                      </TableCell>
+                      <TableCell>
+                        <Box m={-1}>
+                          <CustomMenuButton
+                            buttonLabel={row.role_names.join(', ') || 'Unassigned'}
+                            buttonTitle={'Change User Permissions'}
+                            buttonProps={{ variant: 'text' }}
+                            menuItems={codes.system_roles
+                              .sort((item1, item2) => {
+                                return item1.name.localeCompare(item2.name);
+                              })
+                              .map((item) => {
+                                return {
+                                  menuLabel: item.name,
+                                  menuOnClick: () =>
+                                    handleChangeUserPermissionsClick(row, item.name, item.id)
+                                };
+                              })}
+                            buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
+                          />
+                        </Box>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box my={-1}>
+                          <CustomMenuIconButton
+                            buttonTitle="Actions"
+                            buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
+                            menuItems={[
+                              {
+                                menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
+                                menuLabel: 'View Users Details',
+                                menuOnClick: () =>
+                                  history.push({
+                                    pathname: `/admin/users/${row.id}`,
+                                    state: row
+                                  })
+                              },
+                              {
+                                menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
+                                menuLabel: 'Remove User',
+                                menuOnClick: () => handleRemoveUserClick(row)
+                              }
+                            ]}
+                          />
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -348,7 +364,9 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
             count={activeUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
+            onPageChange={(event: unknown, newPage: number) =>
+              handleChangePage(event, newPage, setPage)
+            }
             onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }

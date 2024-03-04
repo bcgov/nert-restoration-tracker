@@ -57,7 +57,11 @@ export const ProjectFundingFormArrayItemYupSchema = yup.object().shape({
     .max(9999999999, 'Must be less than $9,999,999,999')
     .required('Required'),
   start_date: yup.string().isValidDateString().required('Required'),
-  end_date: yup.string().isValidDateString().required('Required').isEndDateAfterStartDate('start_date')
+  end_date: yup
+    .string()
+    .isValidDateString()
+    .required('Required')
+    .isEndDateAfterStartDate('start_date')
 });
 
 export interface IProjectFundingItemFormProps {
@@ -82,7 +86,9 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
   // Only show investment_action_category if certain agency_id values are selected
   // Toggle investment_action_category label and dropdown values based on chosen agency_id
   const investment_action_category_label =
-    (values.agency_id === 1 && 'Investment Action') || (values.agency_id === 2 && 'Investment Category') || null;
+    (values.agency_id === 1 && 'Investment Action') ||
+    (values.agency_id === 2 && 'Investment Category') ||
+    null;
 
   return (
     <form data-testid="funding-item-form" onSubmit={handleSubmit}>
@@ -113,7 +119,9 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   if (event.target.value !== 1 && event.target.value !== 2) {
                     setFieldValue(
                       'investment_action_category',
-                      props.investment_action_category.find((item) => item.fs_id === event.target.value)?.value || 0
+                      props.investment_action_category.find(
+                        (item) => item.fs_id === event.target.value
+                      )?.value || 0
                     );
                   }
                 }}
@@ -132,7 +140,9 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
           {investment_action_category_label && (
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined" required={true} style={{ width: '100%' }}>
-                <InputLabel id="investment_action_category-label">{investment_action_category_label}</InputLabel>
+                <InputLabel id="investment_action_category-label">
+                  {investment_action_category_label}
+                </InputLabel>
                 <Select
                   id="investment_action_category"
                   name="investment_action_category"
@@ -140,7 +150,9 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   label={investment_action_category_label}
                   value={values.investment_action_category}
                   onChange={handleChange}
-                  error={touched.investment_action_category && Boolean(errors.investment_action_category)}
+                  error={
+                    touched.investment_action_category && Boolean(errors.investment_action_category)
+                  }
                   displayEmpty
                   inputProps={{
                     'aria-label': `${investment_action_category_label}`,
@@ -168,7 +180,12 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
         <Typography component="legend">Funding Details</Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <DollarAmountField required={true} id="funding_amount" name="funding_amount" label="Funding Amount" />
+            <DollarAmountField
+              required={true}
+              id="funding_amount"
+              name="funding_amount"
+              label="Funding Amount"
+            />
           </Grid>
           <StartEndDateFields
             formikProps={formikProps}

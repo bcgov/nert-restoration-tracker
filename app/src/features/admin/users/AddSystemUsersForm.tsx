@@ -50,7 +50,8 @@ export interface AddSystemUsersFormProps {
 }
 
 const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
-  const { values, handleChange, handleSubmit, getFieldMeta } = useFormikContext<IAddSystemUsersForm>();
+  const { values, handleChange, handleSubmit, getFieldMeta } =
+    useFormikContext<IAddSystemUsersForm>();
 
   return (
     <form onSubmit={handleSubmit}>
@@ -80,7 +81,11 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                         />
                       </Box>
                       <Box flexBasis="25%" pl={1}>
-                        <FormControl fullWidth variant="outlined" required={true} style={{ width: '100%' }}>
+                        <FormControl
+                          fullWidth
+                          variant="outlined"
+                          required={true}
+                          style={{ width: '100%' }}>
                           <InputLabel id="loginMethod" required={false}>
                             Login Method
                           </InputLabel>
@@ -95,7 +100,9 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}
                             displayEmpty
                             inputProps={{ 'aria-label': 'Login Method' }}>
-                            <MenuItem key={SYSTEM_IDENTITY_SOURCE.IDIR} value={SYSTEM_IDENTITY_SOURCE.IDIR}>
+                            <MenuItem
+                              key={SYSTEM_IDENTITY_SOURCE.IDIR}
+                              value={SYSTEM_IDENTITY_SOURCE.IDIR}>
                               IDIR
                             </MenuItem>
                             <MenuItem
@@ -109,11 +116,17 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                               BCeID Business
                             </MenuItem>
                           </Select>
-                          <FormHelperText>{identitySourceMeta.touched && identitySourceMeta.error}</FormHelperText>
+                          <FormHelperText>
+                            {identitySourceMeta.touched && identitySourceMeta.error}
+                          </FormHelperText>
                         </FormControl>
                       </Box>
                       <Box flexBasis="35%" pl={1}>
-                        <FormControl fullWidth variant="outlined" required={true} style={{ width: '100%' }}>
+                        <FormControl
+                          fullWidth
+                          variant="outlined"
+                          required={true}
+                          style={{ width: '100%' }}>
                           <InputLabel id="Id" required={false}>
                             System Role
                           </InputLabel>
@@ -134,7 +147,9 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                               </MenuItem>
                             ))}
                           </Select>
-                          <FormHelperText>{systemRoleMeta.touched && systemRoleMeta.error}</FormHelperText>
+                          <FormHelperText>
+                            {systemRoleMeta.touched && systemRoleMeta.error}
+                          </FormHelperText>
                         </FormControl>
                       </Box>
                       <Box pt={0.5} pl={1}>

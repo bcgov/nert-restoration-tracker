@@ -38,8 +38,12 @@ const InferredLocationDetails: React.FC<IInferredLocationDetailsProps> = (props)
   return (
     <>
       {displayInferredLayersInfo(props.layers.nrm, 'Natural Resource Ministries Regions')}
-      <Box mt={3}>{displayInferredLayersInfo(props.layers.env, 'Ministry of Environment Regions')}</Box>
-      <Box mt={3}>{displayInferredLayersInfo(props.layers.wmu, 'Management Unit / Game Management Zones')}</Box>
+      <Box mt={3}>
+        {displayInferredLayersInfo(props.layers.env, 'Ministry of Environment Regions')}
+      </Box>
+      <Box mt={3}>
+        {displayInferredLayersInfo(props.layers.wmu, 'Management Unit / Game Management Zones')}
+      </Box>
       <Box mt={3}>{displayInferredLayersInfo(props.layers.parks, 'Parks and EcoReserves')}</Box>
     </>
   );

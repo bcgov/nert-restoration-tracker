@@ -108,7 +108,9 @@ const YesNoDialog: React.FC<IYesNoDialogProps> = (props) => {
       aria-describedby="alert-dialog-description">
       <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
       <DialogContent>
-        {props.dialogText && <DialogContentText id="alert-dialog-description">{props.dialogText}</DialogContentText>}
+        {props.dialogText && (
+          <DialogContentText id="alert-dialog-description">{props.dialogText}</DialogContentText>
+        )}
         {props.dialogContent}
       </DialogContent>
       <DialogActions>

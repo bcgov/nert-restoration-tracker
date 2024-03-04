@@ -56,7 +56,9 @@ const CheckForAuthLoginParam: React.FC = ({ children }) => {
     // check for urlParam to force login
     if (authLoginUrlParam) {
       // remove authLogin url param from url to stop possible loop redirect
-      const redirectUrlParams = qs.stringify(urlParams, { filter: (prefix) => prefix !== 'authLogin' });
+      const redirectUrlParams = qs.stringify(urlParams, {
+        filter: (prefix) => prefix !== 'authLogin'
+      });
       const redirectUri = `${window.location.origin}${location.pathname}?${redirectUrlParams}`;
 
       // trigger login

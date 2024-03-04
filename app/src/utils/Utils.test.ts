@@ -79,34 +79,53 @@ describe('getFormattedDateRangeString', () => {
 
   it('returns empty string if invalid startDate is provided', async () => {
     const startDate = '12312312312312312';
-    const formattedDateString = getFormattedDateRangeString(DATE_FORMAT.MediumDateFormat, startDate);
+    const formattedDateString = getFormattedDateRangeString(
+      DATE_FORMAT.MediumDateFormat,
+      startDate
+    );
     expect(formattedDateString).toEqual('');
   });
 
   it('returns empty string if invalid endDate is provided', async () => {
     const startDate = '2021-03-04T22:44:55.478682';
     const endDate = '12312312312312312';
-    const formattedDateString = getFormattedDateRangeString(DATE_FORMAT.MediumDateFormat, startDate, endDate);
+    const formattedDateString = getFormattedDateRangeString(
+      DATE_FORMAT.MediumDateFormat,
+      startDate,
+      endDate
+    );
     expect(formattedDateString).toEqual('');
   });
 
   it('returns formatted string if valid startDate is provided', async () => {
     const startDate = '2021-03-04T22:44:55.478682';
-    const formattedDateString = getFormattedDateRangeString(DATE_FORMAT.MediumDateFormat, startDate);
+    const formattedDateString = getFormattedDateRangeString(
+      DATE_FORMAT.MediumDateFormat,
+      startDate
+    );
     expect(formattedDateString).toEqual('March 4, 2021');
   });
 
   it('returns formatted string if valid startDate is provided', async () => {
     const startDate = '2021-03-04T22:44:55.478682';
     const endDate = '2021-05-25T22:44:55.478682';
-    const formattedDateString = getFormattedDateRangeString(DATE_FORMAT.MediumDateFormat, startDate, endDate);
+    const formattedDateString = getFormattedDateRangeString(
+      DATE_FORMAT.MediumDateFormat,
+      startDate,
+      endDate
+    );
     expect(formattedDateString).toEqual('March 4, 2021 - May 25, 2021');
   });
 
   it('returns formatted string with custom dateSeparator', async () => {
     const startDate = '2021-03-04T22:44:55.478682';
     const endDate = '2021-05-25T22:44:55.478682';
-    const formattedDateString = getFormattedDateRangeString(DATE_FORMAT.MediumDateFormat, startDate, endDate, '//');
+    const formattedDateString = getFormattedDateRangeString(
+      DATE_FORMAT.MediumDateFormat,
+      startDate,
+      endDate,
+      '//'
+    );
     expect(formattedDateString).toEqual('March 4, 2021 // May 25, 2021');
   });
 });

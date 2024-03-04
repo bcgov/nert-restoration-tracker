@@ -8,10 +8,7 @@ import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { RoleGuard } from 'components/security/Guards';
@@ -36,26 +33,24 @@ import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
 import ProjectAttachments from './ProjectAttachments';
 import ProjectDetailsPage from './ProjectDetailsPage';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    titleContainerActions: {
-      '& button + button': {
-        marginLeft: theme.spacing(1)
-      }
-    },
-    fullScreenBtn: {
-      padding: '3px',
-      borderRadius: '4px',
-      background: '#ffffff',
-      color: '#000000',
-      border: '2px solid rgba(0,0,0,0.2)',
-      backgroundClip: 'padding-box',
-      '&:hover': {
-        backgroundColor: '#eeeeee'
-      }
+const pageStyles = {
+  titleContainerActions: {
+    '& button + button': {
+      marginLeft: '1rem'
     }
-  })
-);
+  },
+  fullScreenBtn: {
+    padding: '3px',
+    borderRadius: '4px',
+    background: '#ffffff',
+    color: '#000000',
+    border: '2px solid rgba(0,0,0,0.2)',
+    backgroundClip: 'padding-box',
+    '&:hover': {
+      backgroundColor: '#eeeeee'
+    }
+  }
+};
 
 /**
  * Page to display a single Project.
@@ -63,7 +58,6 @@ const useStyles = makeStyles((theme: Theme) =>
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  const classes = useStyles();
   const history = useHistory();
   const urlParams = useParams();
   const projectId = urlParams['id'];
@@ -74,14 +68,18 @@ const ViewProjectPage: React.FC = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
+  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
+    null
+  );
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
+      urlParams['id']
+    );
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -116,7 +114,10 @@ const ViewProjectPage: React.FC = () => {
       if (treatmentList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectTreatments(projectId, selectedYears);
+        const response = await restorationTrackerApi.project.getProjectTreatments(
+          projectId,
+          selectedYears
+        );
 
         if (!response?.treatmentList) return;
 
@@ -188,7 +189,9 @@ const ViewProjectPage: React.FC = () => {
     }
 
     try {
-      const response = await restorationTrackerApi.project.deleteProject(projectWithDetails.project.project_id);
+      const response = await restorationTrackerApi.project.deleteProject(
+        projectWithDetails.project.project_id
+      );
 
       if (!response) {
         showDeleteErrorDialog({ open: true });
@@ -238,7 +241,7 @@ const ViewProjectPage: React.FC = () => {
           <RoleGuard
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
             validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
-            <Box className={classes.titleContainerActions}>
+            <Box sx={pageStyles.titleContainerActions}>
               <Button
                 aria-label="manage project team"
                 variant="outlined"
@@ -289,7 +292,10 @@ const ViewProjectPage: React.FC = () => {
               <Box mb={3}>
                 <Paper elevation={2}>
                   <Box px={3}>
-                    <TreatmentSpatialUnits getTreatments={getTreatments} getAttachments={getAttachments} />
+                    <TreatmentSpatialUnits
+                      getTreatments={getTreatments}
+                      getAttachments={getAttachments}
+                    />
                   </Box>
                   <Box height="500px" position="relative">
                     <LocationBoundary
@@ -301,7 +307,7 @@ const ViewProjectPage: React.FC = () => {
                       <IconButton
                         aria-label="view full screen map"
                         title="View full screen map"
-                        className={classes.fullScreenBtn}
+                        style={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
                         size="large">
                         <Icon path={mdiFullscreen} size={1} />
@@ -313,12 +319,19 @@ const ViewProjectPage: React.FC = () => {
               </Box>
               {/* Documents */}
               <Paper elevation={2}>
-                <ProjectAttachments attachmentsList={attachmentsList} getAttachments={getAttachments} />
+                <ProjectAttachments
+                  attachmentsList={attachmentsList}
+                  getAttachments={getAttachments}
+                />
               </Paper>
             </Grid>
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={projectWithDetails} codes={codes.codes} refresh={getProject} />
+                <ProjectDetailsPage
+                  projectForViewData={projectWithDetails}
+                  codes={codes.codes}
+                  refresh={getProject}
+                />
               </Paper>
             </Grid>
           </Grid>
