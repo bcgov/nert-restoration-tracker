@@ -144,7 +144,12 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
               <List dense disablePadding>
                 {!values.contact.contacts.length && (
                   <ListItem dense component={Paper}>
-                    <Box display="flex" flexGrow={1} justifyContent="center" alignContent="middle" p={2}>
+                    <Box
+                      display="flex"
+                      flexGrow={1}
+                      justifyContent="center"
+                      alignContent="middle"
+                      p={2}>
                       <Typography variant="subtitle2">No Contacts</Typography>
                     </Box>
                   </ListItem>

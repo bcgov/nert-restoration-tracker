@@ -59,7 +59,10 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
 
   const handleAddProjectParticipantsSave = async (values: IAddProjectParticipantsForm) => {
     try {
-      const response = await restorationTrackerApi.project.addProjectParticipants(projectId, values.participants);
+      const response = await restorationTrackerApi.project.addProjectParticipants(
+        projectId,
+        values.participants
+      );
 
       if (!response) {
         openErrorDialog({
@@ -84,14 +87,21 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
       <Container maxWidth="xl">
         <Box pb={3}>
           <Breadcrumbs>
-            <Link color="primary" onClick={() => history.push('/admin/projects')} aria-current="page">
+            <Link
+              color="primary"
+              onClick={() => history.push('/admin/projects')}
+              aria-current="page">
               <Typography variant="body2">Projects</Typography>
             </Link>
             <Link
               color="primary"
-              onClick={() => history.push(`/admin/projects/${props.projectWithDetails.project.project_id}`)}
+              onClick={() =>
+                history.push(`/admin/projects/${props.projectWithDetails.project.project_id}`)
+              }
               aria-current="page">
-              <Typography variant="body2">{props.projectWithDetails.project.project_name}</Typography>
+              <Typography variant="body2">
+                {props.projectWithDetails.project.project_name}
+              </Typography>
             </Link>
             <Typography variant="body2">Project Team</Typography>
           </Breadcrumbs>
@@ -138,7 +148,8 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
             open: true,
             snackbarMessage: (
               <Typography variant="body2" component="div">
-                {values.participants.length} team {values.participants.length > 1 ? 'members' : 'member'} added.
+                {values.participants.length} team{' '}
+                {values.participants.length > 1 ? 'members' : 'member'} added.
               </Typography>
             )
           });

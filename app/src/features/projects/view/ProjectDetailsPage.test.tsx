@@ -31,7 +31,11 @@ describe('ProjectDetailsPage', () => {
     const { getByTestId, queryByTestId } = render(
       <Router history={history}>
         <AuthStateContext.Provider value={authState}>
-          <ProjectDetailsPage projectForViewData={getProjectForViewResponse} codes={codes} refresh={jest.fn()} />
+          <ProjectDetailsPage
+            projectForViewData={getProjectForViewResponse}
+            codes={codes}
+            refresh={jest.fn()}
+          />
         </AuthStateContext.Provider>
       </Router>
     );
@@ -54,7 +58,11 @@ describe('ProjectDetailsPage', () => {
     const { getByTestId } = render(
       <Router history={history}>
         <AuthStateContext.Provider value={authState}>
-          <ProjectDetailsPage projectForViewData={getProjectForViewResponse} codes={codes} refresh={jest.fn()} />
+          <ProjectDetailsPage
+            projectForViewData={getProjectForViewResponse}
+            codes={codes}
+            refresh={jest.fn()}
+          />
         </AuthStateContext.Provider>
       </Router>
     );
@@ -77,7 +85,11 @@ describe('ProjectDetailsPage', () => {
     const { getByTestId } = render(
       <Router history={history}>
         <AuthStateContext.Provider value={authState}>
-          <ProjectDetailsPage projectForViewData={getProjectForViewResponse} codes={codes} refresh={jest.fn()} />
+          <ProjectDetailsPage
+            projectForViewData={getProjectForViewResponse}
+            codes={codes}
+            refresh={jest.fn()}
+          />
         </AuthStateContext.Provider>
       </Router>
     );

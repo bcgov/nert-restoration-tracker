@@ -95,7 +95,8 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
             <Box p={2} display="flex" flexDirection="column" alignItems="center">
               <Icon className={classes.dropZoneIcon} path={mdiTrayArrowUp} size={1.5} />
               <Box mt={0.5} className={classes.dropZoneTitle}>
-                Drag your {(multiple && 'files') || 'file'} here, or <Link underline="always">Browse Files</Link>
+                Drag your {(multiple && 'files') || 'file'} here, or{' '}
+                <Link underline="always">Browse Files</Link>
               </Box>
               <Box textAlign="center">
                 {acceptedFileExtensions && (

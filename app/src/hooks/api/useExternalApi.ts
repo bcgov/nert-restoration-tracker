@@ -33,7 +33,11 @@ const useExternalApi = (axios: AxiosInstance) => {
    * @param {CancelTokenSource} [cancelTokenSource] Cancel token to manually cancel the request (optional)
    * @return {Promise<T=any>} A promise that resolves with the response data
    */
-  const post = async <T = any>(url: string, body: any, cancelTokenSource?: CancelTokenSource): Promise<T> => {
+  const post = async <T = any>(
+    url: string,
+    body: any,
+    cancelTokenSource?: CancelTokenSource
+  ): Promise<T> => {
     const { data } = await axios.post(url, body, { cancelToken: cancelTokenSource?.token });
 
     return data;

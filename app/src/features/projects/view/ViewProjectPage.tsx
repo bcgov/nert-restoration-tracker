@@ -34,23 +34,23 @@ import ProjectAttachments from './ProjectAttachments';
 import ProjectDetailsPage from './ProjectDetailsPage';
 
 const pageStyles = {
-    titleContainerActions: {
-      '& button + button': {
-        marginLeft: '1rem'
-      }
-    },
-    fullScreenBtn: {
-      padding: '3px',
-      borderRadius: '4px',
-      background: '#ffffff',
-      color: '#000000',
-      border: '2px solid rgba(0,0,0,0.2)',
-      backgroundClip: 'padding-box',
-      '&:hover': {
-        backgroundColor: '#eeeeee'
-      }
+  titleContainerActions: {
+    '& button + button': {
+      marginLeft: '1rem'
     }
-  };
+  },
+  fullScreenBtn: {
+    padding: '3px',
+    borderRadius: '4px',
+    background: '#ffffff',
+    color: '#000000',
+    border: '2px solid rgba(0,0,0,0.2)',
+    backgroundClip: 'padding-box',
+    '&:hover': {
+      backgroundColor: '#eeeeee'
+    }
+  }
+};
 
 /**
  * Page to display a single Project.
@@ -68,14 +68,18 @@ const ViewProjectPage: React.FC = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
+  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
+    null
+  );
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
+      urlParams['id']
+    );
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -110,7 +114,10 @@ const ViewProjectPage: React.FC = () => {
       if (treatmentList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectTreatments(projectId, selectedYears);
+        const response = await restorationTrackerApi.project.getProjectTreatments(
+          projectId,
+          selectedYears
+        );
 
         if (!response?.treatmentList) return;
 
@@ -182,7 +189,9 @@ const ViewProjectPage: React.FC = () => {
     }
 
     try {
-      const response = await restorationTrackerApi.project.deleteProject(projectWithDetails.project.project_id);
+      const response = await restorationTrackerApi.project.deleteProject(
+        projectWithDetails.project.project_id
+      );
 
       if (!response) {
         showDeleteErrorDialog({ open: true });
@@ -283,7 +292,10 @@ const ViewProjectPage: React.FC = () => {
               <Box mb={3}>
                 <Paper elevation={2}>
                   <Box px={3}>
-                    <TreatmentSpatialUnits getTreatments={getTreatments} getAttachments={getAttachments} />
+                    <TreatmentSpatialUnits
+                      getTreatments={getTreatments}
+                      getAttachments={getAttachments}
+                    />
                   </Box>
                   <Box height="500px" position="relative">
                     <LocationBoundary
@@ -307,12 +319,19 @@ const ViewProjectPage: React.FC = () => {
               </Box>
               {/* Documents */}
               <Paper elevation={2}>
-                <ProjectAttachments attachmentsList={attachmentsList} getAttachments={getAttachments} />
+                <ProjectAttachments
+                  attachmentsList={attachmentsList}
+                  getAttachments={getAttachments}
+                />
               </Paper>
             </Grid>
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={projectWithDetails} codes={codes.codes} refresh={getProject} />
+                <ProjectDetailsPage
+                  projectForViewData={projectWithDetails}
+                  codes={codes.codes}
+                  refresh={getProject}
+                />
               </Paper>
             </Grid>
           </Grid>

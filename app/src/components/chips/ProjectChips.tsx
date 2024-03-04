@@ -33,9 +33,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const ProjectStatusChip: React.FC<{ startDate: string; endDate?: string; chipProps?: Partial<ChipProps> }> = (
-  props
-) => {
+export const ProjectStatusChip: React.FC<{
+  startDate: string;
+  endDate?: string;
+  chipProps?: Partial<ChipProps>;
+}> = (props) => {
   const classes = useStyles();
 
   let chipLabel;
@@ -49,19 +51,38 @@ export const ProjectStatusChip: React.FC<{ startDate: string; endDate?: string; 
     chipStatusClass = classes.chipPublishedCompleted;
   }
 
-  return <Chip size="small" className={clsx(classes.chip, chipStatusClass)} label={chipLabel} {...props.chipProps} />;
+  return (
+    <Chip
+      size="small"
+      className={clsx(classes.chip, chipStatusClass)}
+      label={chipLabel}
+      {...props.chipProps}
+    />
+  );
 };
 
 export const ProjectDraftChip: React.FC<{ chipProps?: Partial<ChipProps> }> = (props) => {
   const classes = useStyles();
 
-  return <Chip size="small" className={clsx(classes.chip, classes.chipDraft)} label="Draft" {...props.chipProps} />;
+  return (
+    <Chip
+      size="small"
+      className={clsx(classes.chip, classes.chipDraft)}
+      label="Draft"
+      {...props.chipProps}
+    />
+  );
 };
 
 export const ProjectPriorityChip: React.FC<{ chipProps?: Partial<ChipProps> }> = (props) => {
   const classes = useStyles();
 
   return (
-    <Chip size="small" className={clsx(classes.chip, classes.chipPriority)} label="Priority" {...props.chipProps} />
+    <Chip
+      size="small"
+      className={clsx(classes.chip, classes.chipPriority)}
+      label="Priority"
+      {...props.chipProps}
+    />
   );
 };

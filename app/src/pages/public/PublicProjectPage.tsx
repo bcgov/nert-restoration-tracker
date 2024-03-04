@@ -26,18 +26,18 @@ import PublicProjectAttachments from './components/PublicProjectAttachments';
 import PublicTreatmentSpatialUnits from './components/PublicTreatmentSpatialUnits';
 
 const pageStyles = {
-    fullScreenBtn: {
-      padding: '3px',
-      borderRadius: '4px',
-      background: '#ffffff',
-      color: '#000000',
-      border: '2px solid rgba(0,0,0,0.2)',
-      backgroundClip: 'padding-box',
-      '&:hover': {
-        backgroundColor: '#eeeeee'
-      }
+  fullScreenBtn: {
+    padding: '3px',
+    borderRadius: '4px',
+    background: '#ffffff',
+    color: '#000000',
+    border: '2px solid rgba(0,0,0,0.2)',
+    backgroundClip: 'padding-box',
+    '&:hover': {
+      backgroundColor: '#eeeeee'
     }
-  };
+  }
+};
 
 /**
  * Page to display a single Public (published) Project.
@@ -53,14 +53,18 @@ const PublicProjectPage = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
+  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
+    null
+  );
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.public.project.getProjectForView(projectId);
+    const projectWithDetailsResponse = await restorationTrackerApi.public.project.getProjectForView(
+      projectId
+    );
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -75,7 +79,9 @@ const PublicProjectPage = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectAttachments(projectId);
+        const response = await restorationTrackerApi.public.project.getProjectAttachments(
+          projectId
+        );
 
         if (!response?.attachmentsList) return;
 
@@ -92,7 +98,10 @@ const PublicProjectPage = () => {
       if (treatmentList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectTreatments(projectId, selectedYears);
+        const response = await restorationTrackerApi.public.project.getProjectTreatments(
+          projectId,
+          selectedYears
+        );
 
         if (!response?.treatmentList) return;
 
@@ -174,7 +183,10 @@ const PublicProjectPage = () => {
               <Box mb={3}>
                 <Paper elevation={2}>
                   <Box px={3}>
-                    <PublicTreatmentSpatialUnits treatmentList={treatmentList} getTreatments={getTreatments} />
+                    <PublicTreatmentSpatialUnits
+                      treatmentList={treatmentList}
+                      getTreatments={getTreatments}
+                    />
                   </Box>
                   <Box height="500px" position="relative">
                     <LocationBoundary
@@ -205,7 +217,11 @@ const PublicProjectPage = () => {
 
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={projectWithDetails} codes={codes.codes} refresh={getProject} />
+                <ProjectDetailsPage
+                  projectForViewData={projectWithDetails}
+                  codes={codes.codes}
+                  refresh={getProject}
+                />
               </Paper>
             </Grid>
           </Grid>
@@ -220,7 +236,10 @@ const PublicProjectPage = () => {
             </IconButton>
           </Box>
           <Box flex="1 1 auto">
-            <PublicTreatmentSpatialUnits treatmentList={treatmentList} getTreatments={getTreatments} />
+            <PublicTreatmentSpatialUnits
+              treatmentList={treatmentList}
+              getTreatments={getTreatments}
+            />
           </Box>
         </Box>
         <Box display="flex" height="100%" flexDirection="column">

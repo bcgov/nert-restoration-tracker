@@ -8,7 +8,12 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import React from 'react';
-import { FeatureGroup, LayersControl, MapContainer as LeafletMapContainer, ZoomControl } from 'react-leaflet';
+import {
+  FeatureGroup,
+  LayersControl,
+  MapContainer as LeafletMapContainer,
+  ZoomControl
+} from 'react-leaflet';
 import BaseLayerControls from './components/BaseLayerControls';
 import MapBounds from './components/Bounds';
 import DrawControls from './components/DrawControls';
@@ -62,7 +67,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   return (
     <LeafletMapContainer
       id={mapId}
-      style={{height: '100%'}}
+      style={{ height: '100%' }}
       center={[53, -124]}
       zoom={zoom || 7}
       minZoom={3}

@@ -36,7 +36,9 @@ describe('LogOutPage', () => {
   });
 
   it('renders correctly and does not log the user out when config context is null', async () => {
-    getLogOutUrlSpy = jest.spyOn(utils, 'getLogOutUrl').mockReturnValue('https://testLogOutURL.com');
+    getLogOutUrlSpy = jest
+      .spyOn(utils, 'getLogOutUrl')
+      .mockReturnValue('https://testLogOutURL.com');
 
     const { getByText } = render(
       <ConfigContext.Provider value={null as unknown as IConfig}>
@@ -81,7 +83,9 @@ describe('LogOutPage', () => {
   });
 
   it('renders correctly and logs the user out when config is valid', async () => {
-    getLogOutUrlSpy = jest.spyOn(utils, 'getLogOutUrl').mockReturnValue('https://testLogOutURL.com');
+    getLogOutUrlSpy = jest
+      .spyOn(utils, 'getLogOutUrl')
+      .mockReturnValue('https://testLogOutURL.com');
 
     const config = {
       API_HOST: '',

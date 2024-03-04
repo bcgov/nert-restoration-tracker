@@ -106,8 +106,8 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
 
       <Box mb={3} maxWidth={'72ch'}>
         <Typography variant="body1" color="textSecondary">
-          Conservation actions are specific actions or sets of tasks undertaken by project staff designed to reach each
-          of the project's objectives.
+          Conservation actions are specific actions or sets of tasks undertaken by project staff
+          designed to reach each of the project's objectives.
           <Button
             color="primary"
             className={classes.learnMoreBtn}
@@ -123,9 +123,15 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
         render={(arrayHelpers: any) => (
           <Box>
             {values.iucn.classificationDetails.map((classificationDetail, index) => {
-              const classificationMeta = getFieldMeta(`iucn.classificationDetails.[${index}].classification`);
-              const subClassification1Meta = getFieldMeta(`iucn.classificationDetails.[${index}].subClassification1`);
-              const subClassification2Meta = getFieldMeta(`iucn.classificationDetails.[${index}].subClassification2`);
+              const classificationMeta = getFieldMeta(
+                `iucn.classificationDetails.[${index}].classification`
+              );
+              const subClassification1Meta = getFieldMeta(
+                `iucn.classificationDetails.[${index}].subClassification1`
+              );
+              const subClassification2Meta = getFieldMeta(
+                `iucn.classificationDetails.[${index}].subClassification2`
+              );
 
               return (
                 <Box
@@ -135,7 +141,11 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                   mb={1}
                   data-testid="iucn-classification-grid"
                   key={index}>
-                  <Box display="flex" alignItems="center" className={classes.iucnInputContainer} mr={1}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    className={classes.iucnInputContainer}
+                    mr={1}>
                     <Box className={classes.iucnInput} py={1}>
                       <FormControl variant="outlined" fullWidth required={true}>
                         <InputLabel id="classification">Classification</InputLabel>
@@ -182,11 +192,15 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                             handleChange(e);
                           }}
                           disabled={!classificationDetail.classification}
-                          error={subClassification1Meta.touched && Boolean(subClassification1Meta.error)}
+                          error={
+                            subClassification1Meta.touched && Boolean(subClassification1Meta.error)
+                          }
                           inputProps={{ 'aria-label': 'subClassification1' }}>
                           {props.subClassifications1
                             // Only show the sub-classification 1 categories whose iucn1_id matches the classification id
-                            .filter((item: any) => item.iucn1_id === classificationDetail.classification)
+                            .filter(
+                              (item: any) => item.iucn1_id === classificationDetail.classification
+                            )
                             .map((item: any) => (
                               <MenuItem key={item.value} value={item.value}>
                                 {item.label}
@@ -214,11 +228,16 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                           value={classificationDetail.subClassification2}
                           onChange={handleChange}
                           disabled={!classificationDetail.subClassification1}
-                          error={subClassification2Meta.touched && Boolean(subClassification2Meta.error)}
+                          error={
+                            subClassification2Meta.touched && Boolean(subClassification2Meta.error)
+                          }
                           inputProps={{ 'aria-label': 'subClassification2' }}>
                           {props.subClassifications2
                             // Only show the sub-classification 2 categories whose iucn1_id matches the sub-classification 1 iucn2_id
-                            .filter((item: any) => item.iucn2_id === classificationDetail.subClassification1)
+                            .filter(
+                              (item: any) =>
+                                item.iucn2_id === classificationDetail.subClassification1
+                            )
                             .map((item: any) => (
                               <MenuItem key={item.value} value={item.value}>
                                 {item.label}
@@ -247,13 +266,14 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
               );
             })}
 
-            {errors.iucn?.classificationDetails && !Array.isArray(errors.iucn?.classificationDetails) && (
-              <Box pb={2}>
-                <Typography style={{ fontSize: '12px', color: '#f44336' }}>
-                  {errors.iucn.classificationDetails}
-                </Typography>
-              </Box>
-            )}
+            {errors.iucn?.classificationDetails &&
+              !Array.isArray(errors.iucn?.classificationDetails) && (
+                <Box pb={2}>
+                  <Typography style={{ fontSize: '12px', color: '#f44336' }}>
+                    {errors.iucn.classificationDetails}
+                  </Typography>
+                </Box>
+              )}
 
             <Box>
               <Button
@@ -270,28 +290,34 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
         )}
       />
 
-      <ComponentDialog open={openDialog} dialogTitle="IUCN Information" onClose={() => setOpenDialog(false)}>
+      <ComponentDialog
+        open={openDialog}
+        dialogTitle="IUCN Information"
+        onClose={() => setOpenDialog(false)}>
         <Typography variant="body1">
-          The taxonomies presented here began with a collaborative effort between the World Conservation Union (IUCN)
-          and CMP to create standard classifications of the conservation actions biologist and other conservation actors
-          can take to counter threats to species and ecosystem conservation.
+          The taxonomies presented here began with a collaborative effort between the World
+          Conservation Union (IUCN) and CMP to create standard classifications of the conservation
+          actions biologist and other conservation actors can take to counter threats to species and
+          ecosystem conservation.
           <br></br>
           <br></br>
-          This classification is designed to provide a simple, hierarchical, comprehensive, consistent, expandable,
-          exclusive, and scalable classification of all conservation actions.
+          This classification is designed to provide a simple, hierarchical, comprehensive,
+          consistent, expandable, exclusive, and scalable classification of all conservation
+          actions.
           <br></br>
           <br></br>
           The classifications are intended to:
           <ul>
             <li>Help conservation teams describe what is happening at their site.</li>
             <li>
-              A common classification of conservation actions which enables practitioners to search a database of
-              conservation projects and find projects using similar actions.
+              A common classification of conservation actions which enables practitioners to search
+              a database of conservation projects and find projects using similar actions.
             </li>
             <li>
-              Create general summaries or “roll-ups” for broader organizational purposes and/or use by senior managers,
-              researcher, NGOs, etc. Summaries can tally the frequency of actions across projects at various
-              organizational scales or be combined with other information for more detailed summaries.
+              Create general summaries or “roll-ups” for broader organizational purposes and/or use
+              by senior managers, researcher, NGOs, etc. Summaries can tally the frequency of
+              actions across projects at various organizational scales or be combined with other
+              information for more detailed summaries.
             </li>
           </ul>
           For a detailed explanation about each classification:

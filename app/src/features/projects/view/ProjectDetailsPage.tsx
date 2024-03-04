@@ -20,53 +20,53 @@ export interface IProjectDetailsProps {
 }
 
 const pageStyles = {
-    projectMetadata: {
-      '& section': {
-        marginBottom: '3rem'
+  projectMetadata: {
+    '& section': {
+      marginBottom: '3rem'
+    },
+    '& section:last-child': {
+      marginBottom: 0
+    },
+    '& dl, ul': {
+      marginTop: '0.5rem',
+      marginBottom: 0,
+      borderTop: '1px solid #dddddd'
+    },
+    '& dl div, li': {
+      paddingTop: '0.5rem',
+      paddingBottom: '0.5rem',
+      borderBottom: '1px solid #dddddd'
+    },
+    '& dd, dt': {
+      display: 'inline-block',
+      verticalAlign: 'top'
+    },
+    '& dt': {
+      width: '33.333%'
+    },
+    '& dd': {
+      width: '66.666%'
+    },
+    '& dd span': {
+      display: 'inline'
+    },
+    '& h3': {
+      marginBottom: '0.5rem',
+      fontSize: '15px',
+      fontWeight: 700,
+      textTransform: 'uppercase'
+    },
+    '& ul': {
+      listStyleType: 'none',
+      '& dl': {
+        marginTop: 0
       },
-      '& section:last-child': {
-        marginBottom: 0
-      },
-      '& dl, ul': {
-        marginTop: '0.5rem',
-        marginBottom: 0,
-        borderTop: '1px solid #dddddd'
-      },
-      '& dl div, li': {
-        paddingTop: '0.5rem',
-        paddingBottom: '0.5rem',
-        borderBottom: '1px solid #dddddd'
-      },
-      '& dd, dt': {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      '& dt': {
-        width: '33.333%'
-      },
-      '& dd': {
-        width: '66.666%'
-      },
-      '& dd span': {
-        display: 'inline'
-      },
-      '& h3': {
-        marginBottom: '0.5rem',
-        fontSize: '15px',
-        fontWeight: 700,
-        textTransform: 'uppercase'
-      },
-      '& ul': {
-        listStyleType: 'none',
-        '& dl': {
-          marginTop: 0
-        },
-        '& dl div:last-child': {
-          borderBottom: 'none'
-        }
+      '& dl div:last-child': {
+        borderBottom: 'none'
       }
     }
-  };
+  }
+};
 
 /**
  * Project details content for a project.
@@ -86,7 +86,11 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         <Typography variant="body1" component={'h3'} data-testid="GeneralInfoTitle">
           General Information
         </Typography>
-        <GeneralInformation projectForViewData={projectForViewData} codes={codes} refresh={refresh} />
+        <GeneralInformation
+          projectForViewData={projectForViewData}
+          codes={codes}
+          refresh={refresh}
+        />
       </Box>
 
       <Box component="section">
@@ -95,8 +99,14 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         </Typography>
         <RoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}
-          fallback={<PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />}>
+          validProjectRoles={[
+            PROJECT_ROLE.PROJECT_LEAD,
+            PROJECT_ROLE.PROJECT_EDITOR,
+            PROJECT_ROLE.PROJECT_VIEWER
+          ]}
+          fallback={
+            <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
+          }>
           <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
         </RoleGuard>
       </Box>
@@ -105,12 +115,20 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         <Typography variant="body1" component={'h3'} data-testid="IUCNTitle">
           IUCN Conservation Actions Classifications
         </Typography>
-        <IUCNClassification projectForViewData={projectForViewData} codes={codes} refresh={refresh} />
+        <IUCNClassification
+          projectForViewData={projectForViewData}
+          codes={codes}
+          refresh={refresh}
+        />
       </Box>
 
       <RoleGuard
         validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}>
+        validProjectRoles={[
+          PROJECT_ROLE.PROJECT_LEAD,
+          PROJECT_ROLE.PROJECT_EDITOR,
+          PROJECT_ROLE.PROJECT_VIEWER
+        ]}>
         <Box component="section">
           <Typography variant="body1" component={'h3'} data-testid="PermitsTitle">
             Permits

@@ -99,7 +99,9 @@ export const NoRoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const SystemRoleGuard: React.FC<{ validSystemRoles: SYSTEM_ROLE[] } & IGuardProps> = (props) => {
+export const SystemRoleGuard: React.FC<{ validSystemRoles: SYSTEM_ROLE[] } & IGuardProps> = (
+  props
+) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
@@ -129,7 +131,9 @@ export const SystemRoleGuard: React.FC<{ validSystemRoles: SYSTEM_ROLE[] } & IGu
  * @param {*} props
  * @return {*}
  */
-export const ProjectRoleGuard: React.FC<{ validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number>> = (props) => {
+export const ProjectRoleGuard: React.FC<
+  { validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number>
+> = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const urlParams = useParams();

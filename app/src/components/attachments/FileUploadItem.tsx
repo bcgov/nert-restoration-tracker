@@ -209,9 +209,18 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
     <ListItem key={file.name} disableGutters>
       <Box className={classes.uploadListItemBox}>
         <Box display="flex" flexDirection="row" alignItems="center" p={2} width="100%">
-          <Icon path={mdiFileOutline} size={1.5} className={error ? classes.errorColor : classes.fileIconColor} />
+          <Icon
+            path={mdiFileOutline}
+            size={1.5}
+            className={error ? classes.errorColor : classes.fileIconColor}
+          />
           <Box pl={1.5} flex="1 1 auto">
-            <Box display="flex" flexDirection="row" flex="1 1 auto" alignItems="center" height="3rem">
+            <Box
+              display="flex"
+              flexDirection="row"
+              flex="1 1 auto"
+              alignItems="center"
+              height="3rem">
               <Box flex="1 1 auto">
                 <Typography variant="body2" component="div">
                   <strong>{file.name}</strong>
@@ -270,7 +279,11 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
 
   if (props.status === UploadFileStatus.PENDING || props.status === UploadFileStatus.STAGED) {
     return (
-      <IconButton title="Remove File" aria-label="remove file" onClick={() => props.onCancel()} size="large">
+      <IconButton
+        title="Remove File"
+        aria-label="remove file"
+        onClick={() => props.onCancel()}
+        size="large">
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -278,7 +291,11 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
 
   if (props.status === UploadFileStatus.UPLOADING) {
     return (
-      <IconButton title="Cancel Upload" aria-label="cancel upload" onClick={() => props.onCancel()} size="large">
+      <IconButton
+        title="Cancel Upload"
+        aria-label="cancel upload"
+        onClick={() => props.onCancel()}
+        size="large">
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -349,7 +366,10 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
         variant="determinate"
         value={100}
         className={classes.uploadProgress}
-        classes={{ colorPrimary: classes.completeBgColor, barColorPrimary: classes.completeBgColor }}
+        classes={{
+          colorPrimary: classes.completeBgColor,
+          barColorPrimary: classes.completeBgColor
+        }}
       />
     );
   }

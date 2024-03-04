@@ -15,7 +15,11 @@ import { v4 as uuidv4 } from 'uuid';
  * @param {FormikContextType<T>} formikProps The formik props
  * @return {*}
  */
-export const handleShapefileUpload = <T>(file: File, name: string, formikProps: FormikContextType<T>) => {
+export const handleShapefileUpload = <T>(
+  file: File,
+  name: string,
+  formikProps: FormikContextType<T>
+) => {
   const { values, setFieldValue, setFieldError } = formikProps;
 
   // Back out if not a zipped file
@@ -63,7 +67,11 @@ export const handleShapefileUpload = <T>(file: File, name: string, formikProps: 
  * @param {FormikContextType<T>} formikProps The formik props
  * @return {*}
  */
-export const handleGPXUpload = async <T>(file: File, name: string, formikProps: FormikContextType<T>) => {
+export const handleGPXUpload = async <T>(
+  file: File,
+  name: string,
+  formikProps: FormikContextType<T>
+) => {
   const { values, setFieldValue, setFieldError } = formikProps;
 
   const fileAsString = await file?.text().then((xmlString: string) => {
@@ -101,7 +109,11 @@ export const handleGPXUpload = async <T>(file: File, name: string, formikProps: 
  * @param {FormikContextType<T>} formikProps The formik props
  * @return {*}
  */
-export const handleKMLUpload = async <T>(file: File, name: string, formikProps: FormikContextType<T>) => {
+export const handleKMLUpload = async <T>(
+  file: File,
+  name: string,
+  formikProps: FormikContextType<T>
+) => {
   const { values, setFieldValue, setFieldError } = formikProps;
 
   const fileAsString = await file?.text().then((xmlString: string) => {
@@ -138,7 +150,11 @@ export const calculateUpdatedMapBounds = (geometries: Feature[]): any[][] | unde
 
     If there are multiple points or a polygon and a point, this is not an issue
   */
-  if (!geometries || !geometries.length || (geometries.length === 1 && geometries[0]?.geometry?.type === 'Point')) {
+  if (
+    !geometries ||
+    !geometries.length ||
+    (geometries.length === 1 && geometries[0]?.geometry?.type === 'Point')
+  ) {
     return;
   }
 

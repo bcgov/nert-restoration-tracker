@@ -17,7 +17,12 @@ const NotFoundPage = () => {
         <h1>Page Not Found</h1>
         <Typography>Sorry, the page you are trying to access does not exist.</Typography>
         <Box pt={4}>
-          <Button onClick={() => history.push('/')} type="submit" size="large" variant="contained" color="primary">
+          <Button
+            onClick={() => history.push('/')}
+            type="submit"
+            size="large"
+            variant="contained"
+            color="primary">
             Return Home
           </Button>
         </Box>

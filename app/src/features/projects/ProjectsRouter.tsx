@@ -25,7 +25,11 @@ const ProjectsRouter: React.FC = () => {
 
       <AppRoute exact path="/admin/projects/create" layout={ProjectsLayout}>
         <SystemRoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR]}
+          validSystemRoles={[
+            SYSTEM_ROLE.SYSTEM_ADMIN,
+            SYSTEM_ROLE.DATA_ADMINISTRATOR,
+            SYSTEM_ROLE.PROJECT_CREATOR
+          ]}
           fallback={<Redirect to={'/projects'} />}>
           <CreateProjectPage />
         </SystemRoleGuard>
@@ -45,7 +49,11 @@ const ProjectsRouter: React.FC = () => {
       <AppRoute exact path="/admin/projects/:id/details" layout={ProjectsLayout}>
         <RoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}
+          validProjectRoles={[
+            PROJECT_ROLE.PROJECT_LEAD,
+            PROJECT_ROLE.PROJECT_EDITOR,
+            PROJECT_ROLE.PROJECT_VIEWER
+          ]}
           fallback={(projectId) => <Redirect to={`/projects/${projectId}`} />}>
           <ViewProjectPage />
         </RoleGuard>

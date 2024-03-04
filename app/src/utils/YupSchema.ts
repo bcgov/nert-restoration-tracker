@@ -83,8 +83,14 @@ yup.addMethod(
         return true;
       }
 
-      const endDateTime = moment(`2020-10-20 ${this.parent.end_time}`, DATE_FORMAT.ShortDateTimeFormat);
-      const startDateTime = moment(`2020-10-20 ${this.parent[startTimeName]}`, DATE_FORMAT.ShortDateTimeFormat);
+      const endDateTime = moment(
+        `2020-10-20 ${this.parent.end_time}`,
+        DATE_FORMAT.ShortDateTimeFormat
+      );
+      const startDateTime = moment(
+        `2020-10-20 ${this.parent[startTimeName]}`,
+        DATE_FORMAT.ShortDateTimeFormat
+      );
 
       // compare valid start and end times
       return startDateTime.isBefore(endDateTime);
@@ -112,7 +118,9 @@ yup.addMethod(
       }
 
       // compare valid start and end dates
-      return moment(this.parent.start_date, dateFormat, true).isBefore(moment(value, dateFormat, true));
+      return moment(this.parent.start_date, dateFormat, true).isBefore(
+        moment(value, dateFormat, true)
+      );
     });
   }
 );

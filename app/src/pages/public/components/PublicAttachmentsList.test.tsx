@@ -42,7 +42,11 @@ describe('PublicAttachmentsList', () => {
     window.open = jest.fn();
 
     const { getByText } = render(
-      <PublicAttachmentsList projectId={1} attachmentsList={attachmentsList} getAttachments={jest.fn()} />
+      <PublicAttachmentsList
+        projectId={1}
+        attachmentsList={attachmentsList}
+        getAttachments={jest.fn()}
+      />
     );
 
     expect(getByText('filename30.test')).toBeInTheDocument();
@@ -56,7 +60,11 @@ describe('PublicAttachmentsList', () => {
 
   it('renders correctly with attachments (of various sizes)', async () => {
     const { getByText } = render(
-      <PublicAttachmentsList projectId={1} attachmentsList={attachmentsList} getAttachments={jest.fn()} />
+      <PublicAttachmentsList
+        projectId={1}
+        attachmentsList={attachmentsList}
+        getAttachments={jest.fn()}
+      />
     );
 
     expect(getByText('filename.test')).toBeInTheDocument();
@@ -120,7 +128,11 @@ describe('PublicAttachmentsList', () => {
     ];
 
     const { getByText, queryByText, getByLabelText } = render(
-      <PublicAttachmentsList projectId={1} attachmentsList={largeAttachmentsList} getAttachments={jest.fn()} />
+      <PublicAttachmentsList
+        projectId={1}
+        attachmentsList={largeAttachmentsList}
+        getAttachments={jest.fn()}
+      />
     );
 
     expect(getByText('filename.test')).toBeInTheDocument();

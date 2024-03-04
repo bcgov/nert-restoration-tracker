@@ -234,7 +234,9 @@ describe('ProjectIUCNForm', () => {
           ]
         }}
         initialTouched={{
-          classificationDetails: [{ classification: true, subClassification1: true, subClassification2: true }]
+          classificationDetails: [
+            { classification: true, subClassification1: true, subClassification2: true }
+          ]
         }}
         onSubmit={async () => {}}>
         {() => (

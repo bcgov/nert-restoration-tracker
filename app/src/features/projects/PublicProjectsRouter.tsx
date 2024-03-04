@@ -26,7 +26,11 @@ const PublicProjectsRouter: React.FC = () => {
         {/* Catches Logged in users and redirects them to admin page */}
         <NoRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}
+          validProjectRoles={[
+            PROJECT_ROLE.PROJECT_LEAD,
+            PROJECT_ROLE.PROJECT_EDITOR,
+            PROJECT_ROLE.PROJECT_VIEWER
+          ]}
           fallback={(projectId) => <Redirect to={`/admin/projects/${projectId}`} />}>
           <ProjectsLayout>
             <PublicProjectPage />

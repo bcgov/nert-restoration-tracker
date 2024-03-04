@@ -22,7 +22,10 @@ import ProjectIUCNForm from 'features/projects/components/ProjectIUCNForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
 import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
 import ProjectPermitForm from 'features/projects/components/ProjectPermitForm';
-import { ProjectFormInitialValues, ProjectFormYupSchema } from 'features/projects/create/CreateProjectPage';
+import {
+  ProjectFormInitialValues,
+  ProjectFormYupSchema
+} from 'features/projects/create/CreateProjectPage';
 import { Form, Formik, FormikProps } from 'formik';
 import History from 'history';
 import { APIError } from 'hooks/api/useAxios';
@@ -211,7 +214,11 @@ const EditProjectPage: React.FC = () => {
       <Container maxWidth="xl">
         <Box mb={3}>
           <Breadcrumbs>
-            <Link color="primary" onClick={handleCancel} aria-current="page" className={classes.breadCrumbLink}>
+            <Link
+              color="primary"
+              onClick={handleCancel}
+              aria-current="page"
+              className={classes.breadCrumbLink}>
               <ArrowBack color="primary" fontSize="small" className={classes.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
@@ -252,19 +259,33 @@ const EditProjectPage: React.FC = () => {
                       <Box component="fieldset" mt={5} mx={0}>
                         <ProjectIUCNForm
                           classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map((item) => {
-                              return { value: item.id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_1_classification?.map(
+                              (item) => {
+                                return { value: item.id, label: item.name };
+                              }
+                            ) || []
                           }
                           subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map((item) => {
-                              return { value: item.id, iucn1_id: item.iucn1_id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
+                              (item) => {
+                                return {
+                                  value: item.id,
+                                  iucn1_id: item.iucn1_id,
+                                  label: item.name
+                                };
+                              }
+                            ) || []
                           }
                           subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map((item) => {
-                              return { value: item.id, iucn2_id: item.iucn2_id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
+                              (item) => {
+                                return {
+                                  value: item.id,
+                                  iucn2_id: item.iucn2_id,
+                                  label: item.name
+                                };
+                              }
+                            ) || []
                           }
                         />
                       </Box>
@@ -316,9 +337,11 @@ const EditProjectPage: React.FC = () => {
                           fundingSources={codes.codes.funding_source.map((item) => {
                             return { value: item.id, label: item.name };
                           })}
-                          investment_action_category={codes.codes.investment_action_category.map((item) => {
-                            return { value: item.id, label: item.name, fs_id: item.fs_id };
-                          })}
+                          investment_action_category={codes.codes.investment_action_category.map(
+                            (item) => {
+                              return { value: item.id, label: item.name, fs_id: item.fs_id };
+                            }
+                          )}
                         />
                       </Box>
 
@@ -359,7 +382,11 @@ const EditProjectPage: React.FC = () => {
 
                 <Divider></Divider>
 
-                <Box mt={5} className={classes.formButtons} display="flex" justifyContent="flex-end">
+                <Box
+                  mt={5}
+                  className={classes.formButtons}
+                  display="flex"
+                  justifyContent="flex-end">
                   <Button
                     variant="contained"
                     color="primary"

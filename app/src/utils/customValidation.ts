@@ -6,7 +6,11 @@ export const validateFormFieldsAndReportCompletion = async (
 ) => {
   const validationResult = await validateForm(values);
 
-  if (validationResult && Object.keys(validationResult).length === 0 && validationResult.constructor === Object) {
+  if (
+    validationResult &&
+    Object.keys(validationResult).length === 0 &&
+    validationResult.constructor === Object
+  ) {
     return true;
   }
 

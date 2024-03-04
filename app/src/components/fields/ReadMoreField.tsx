@@ -55,7 +55,11 @@ export const ReadMoreField: React.FC<IReadMoreFieldProps> = (props) => {
               return renderParagraph(paragraph);
             })}
           <Box mt={3}>
-            <Button size="small" variant="outlined" color="primary" onClick={() => setIsTruncatedText(false)}>
+            <Button
+              size="small"
+              variant="outlined"
+              color="primary"
+              onClick={() => setIsTruncatedText(false)}>
               Read More
             </Button>
           </Box>
@@ -68,7 +72,11 @@ export const ReadMoreField: React.FC<IReadMoreFieldProps> = (props) => {
           })}
           {text?.length > maxCharLength && (
             <Box mt={3}>
-              <Button size="small" variant="outlined" color="primary" onClick={() => setIsTruncatedText(true)}>
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                onClick={() => setIsTruncatedText(true)}>
                 Read Less
               </Button>
             </Box>

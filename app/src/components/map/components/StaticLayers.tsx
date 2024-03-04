@@ -53,7 +53,10 @@ const StaticLayers: React.FC<IStaticLayersProps> = (props) => {
                 data={item.geoJSON}
                 {...item.GeoJSONProps}>
                 {item.tooltip && (
-                  <Tooltip key={`static-feature-tooltip-${id}-${index}`} direction="top" {...item.TooltipProps}>
+                  <Tooltip
+                    key={`static-feature-tooltip-${id}-${index}`}
+                    direction="top"
+                    {...item.TooltipProps}>
                     {item.tooltip}
                   </Tooltip>
                 )}

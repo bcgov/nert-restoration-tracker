@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export const AccessStatusChip: React.FC<{ status: string; chipProps?: Partial<ChipProps> }> = (props) => {
+export const AccessStatusChip: React.FC<{ status: string; chipProps?: Partial<ChipProps> }> = (
+  props
+) => {
   const classes = useStyles();
 
   let chipLabel;
@@ -37,5 +39,12 @@ export const AccessStatusChip: React.FC<{ status: string; chipProps?: Partial<Ch
     chipStatusClass = classes.chipPending;
   }
 
-  return <Chip size="small" className={clsx(classes.chip, chipStatusClass)} label={chipLabel} {...props.chipProps} />;
+  return (
+    <Chip
+      size="small"
+      className={clsx(classes.chip, chipStatusClass)}
+      label={chipLabel}
+      {...props.chipProps}
+    />
+  );
 };

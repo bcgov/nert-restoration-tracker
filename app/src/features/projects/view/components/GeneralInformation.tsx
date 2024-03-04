@@ -69,7 +69,9 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
           End Date:
         </Typography>
         <Typography variant="body2" component="dd">
-          {project.end_date ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date) : '---'}
+          {project.end_date
+            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
+            : '---'}
         </Typography>
       </div>
       <div>

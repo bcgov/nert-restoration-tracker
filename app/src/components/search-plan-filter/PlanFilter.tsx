@@ -279,7 +279,12 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
 
           {isFiltersChipsOpen && (
             <Box my={2}>
-              <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={1}>
+              <Grid
+                container
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="center"
+                spacing={1}>
                 <Grid item>
                   <Typography variant="h4">Filters </Typography>
                 </Grid>

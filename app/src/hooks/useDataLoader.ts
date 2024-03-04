@@ -70,7 +70,11 @@ export type DataLoader<AFArgs extends any[], AFResponse = unknown, AFError = unk
  * - If set to `false` the `fetchData` function will run each time `refresh` is called.
  * @return {*}  {DataLoader<AFArgs, AFResponse, AFError>}
  */
-export default function useDataLoader<AFArgs extends any[], AFResponse = unknown, AFError = unknown>(
+export default function useDataLoader<
+  AFArgs extends any[],
+  AFResponse = unknown,
+  AFError = unknown
+>(
   fetchData: AsyncFunction<AFArgs, AFResponse>,
   onError?: (error: AFError | unknown) => void
 ): DataLoader<AFArgs, AFResponse, AFError> {

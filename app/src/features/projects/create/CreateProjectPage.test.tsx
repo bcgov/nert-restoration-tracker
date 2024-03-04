@@ -239,7 +239,10 @@ describe('CreateProjectPage', () => {
       fireEvent.click(getByTestId('edit-dialog-save-button'));
 
       await waitFor(() => {
-        expect(mockRestorationTrackerApi().draft.createDraft).toHaveBeenCalledWith('draft name', expect.any(Object));
+        expect(mockRestorationTrackerApi().draft.createDraft).toHaveBeenCalledWith(
+          'draft name',
+          expect.any(Object)
+        );
 
         expect(queryByText('Save Incomplete Project as a Draft')).not.toBeInTheDocument();
       });
@@ -255,7 +258,11 @@ describe('CreateProjectPage', () => {
       fireEvent.click(getByTestId('edit-dialog-save-button'));
 
       await waitFor(() => {
-        expect(mockRestorationTrackerApi().draft.updateDraft).toHaveBeenCalledWith(1, 'draft name', expect.any(Object));
+        expect(mockRestorationTrackerApi().draft.updateDraft).toHaveBeenCalledWith(
+          1,
+          'draft name',
+          expect.any(Object)
+        );
 
         expect(queryByText('Save Incomplete Project as a Draft')).not.toBeInTheDocument();
       });
@@ -275,7 +282,9 @@ describe('CreateProjectPage', () => {
       });
 
       // update project name field
-      fireEvent.change(getByLabelText('Project Name *'), { target: { value: 'draft project name' } });
+      fireEvent.change(getByLabelText('Project Name *'), {
+        target: { value: 'draft project name' }
+      });
 
       const saveAsDraftButton = await getByTestId('project-save-draft-button');
 

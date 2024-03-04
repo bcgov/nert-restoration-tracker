@@ -175,7 +175,9 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
                 return (
                   <TableRow data-testid={`access-request-row-${index}`} key={index}>
                     <TableCell>{row.data?.username || ''}</TableCell>
-                    <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.create_date)}</TableCell>
+                    <TableCell>
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.create_date)}
+                    </TableCell>
                     <TableCell>
                       <AccessStatusChip status={row.status_name} />
                     </TableCell>

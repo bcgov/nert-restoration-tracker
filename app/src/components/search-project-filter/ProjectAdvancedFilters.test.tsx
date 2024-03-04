@@ -106,7 +106,9 @@ describe('ProjectAdvancedFilters', () => {
 
     const { queryByText } = render(
       <MemoryRouter>
-        <Formik<IProjectAdvancedFilters> initialValues={ProjectAdvancedFiltersInitialValues} onSubmit={() => {}}>
+        <Formik<IProjectAdvancedFilters>
+          initialValues={ProjectAdvancedFiltersInitialValues}
+          onSubmit={() => {}}>
           <ProjectAdvancedFilters
             funding_agency={funding_agency}
             contact_agency={contact_agency}

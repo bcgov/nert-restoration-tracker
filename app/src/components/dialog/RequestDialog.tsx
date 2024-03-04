@@ -74,7 +74,10 @@ const RequestDialog: React.FC<IRequestDialog> = (props) => {
           props.onApprove(values);
         }}>
         {(formikProps) => (
-          <Dialog open={props.open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+          <Dialog
+            open={props.open}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
             <DialogTitle id="access-request-dialog-title">{props.dialogTitle}</DialogTitle>
             <DialogContent>
               <Box py={2}>{props.component.element}</Box>

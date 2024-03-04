@@ -124,6 +124,8 @@ declare module 'yup' {
      * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
      * @memberof ArraySchema
      */
-    isUniqueAuthor(message: string): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+    isUniqueAuthor(
+      message: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
   }
 }

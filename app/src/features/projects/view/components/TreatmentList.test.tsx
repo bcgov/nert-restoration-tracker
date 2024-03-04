@@ -231,7 +231,9 @@ describe('TreatmentList', () => {
       }
     ];
 
-    const { getByText, getByLabelText } = render(<TreatmentList treatmentList={largeTreatmentList} />);
+    const { getByText, getByLabelText } = render(
+      <TreatmentList treatmentList={largeTreatmentList} />
+    );
 
     expect(getByText('TU1')).toBeInTheDocument();
     expect(getByText('TU2')).toBeInTheDocument();

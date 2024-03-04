@@ -22,7 +22,11 @@ import { ProjectAttachmentValidExtensions } from 'constants/attachments';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
-import { handleGPXUpload, handleKMLUpload, handleShapefileUpload } from 'utils/mapBoundaryUploadHelpers';
+import {
+  handleGPXUpload,
+  handleKMLUpload,
+  handleShapefileUpload
+} from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 
 export interface IProjectLocationForm {
@@ -45,7 +49,10 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    geometry: yup.array().min(1, 'You must specify a project boundary').required('You must specify a project boundary'),
+    geometry: yup
+      .array()
+      .min(1, 'You must specify a project boundary')
+      .required('You must specify a project boundary'),
     range: yup.string().notRequired(),
     priority: yup.string().notRequired(),
     region: yup.string().required('Required')
@@ -170,7 +177,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                 control={<Radio required={true} color="primary" size="small" />}
                 label="Yes"
               />
-              <FormHelperText>{touched.location?.priority && errors.location?.priority}</FormHelperText>
+              <FormHelperText>
+                {touched.location?.priority && errors.location?.priority}
+              </FormHelperText>
             </RadioGroup>
           </Box>
         </FormControl>
@@ -180,8 +189,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Typography component="legend">Project Boundary *</Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
-            Upload a shapefile or use the drawing tools on the map to define your project boundary (KML or shapefiles
-            accepted).
+            Upload a shapefile or use the drawing tools on the map to define your project boundary
+            (KML or shapefiles accepted).
           </Typography>
         </Box>
 
@@ -210,7 +219,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
         {errors?.location?.geometry && (
           <Box pt={2}>
-            <Typography style={{ fontSize: '16px', color: '#f44336' }}>{errors?.location?.geometry}</Typography>
+            <Typography style={{ fontSize: '16px', color: '#f44336' }}>
+              {errors?.location?.geometry}
+            </Typography>
           </Box>
         )}
       </Box>

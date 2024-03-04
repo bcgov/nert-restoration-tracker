@@ -66,7 +66,8 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
 
   const handleGetUserProjects = useCallback(
     async (userId: number) => {
-      const userProjectsListResponse = await restorationTrackerApi.project.getAllUserProjectsParticipation(userId);
+      const userProjectsListResponse =
+        await restorationTrackerApi.project.getAllUserProjectsParticipation(userId);
       setAssignedProjects(userProjectsListResponse);
     },
     [restorationTrackerApi.project]
@@ -84,9 +85,15 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
 
   const codes = useCodes();
 
-  const handleRemoveProjectParticipant = async (projectId: number, projectParticipationId: number) => {
+  const handleRemoveProjectParticipant = async (
+    projectId: number,
+    projectParticipationId: number
+  ) => {
     try {
-      const response = await restorationTrackerApi.project.removeProjectParticipant(projectId, projectParticipationId);
+      const response = await restorationTrackerApi.project.removeProjectParticipant(
+        projectId,
+        projectParticipationId
+      );
 
       if (!response) {
         openErrorDialog({
@@ -184,8 +191,8 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
                         dialogContent: (
                           <>
                             <Typography variant="body1" color="textSecondary">
-                              Removing user <strong>{userDetails.user_identifier}</strong> will revoke their access to
-                              this project.
+                              Removing user <strong>{userDetails.user_identifier}</strong> will
+                              revoke their access to this project.
                             </Typography>
                             <Typography variant="body1" color="textPrimary">
                               Are you sure you want to proceed?
@@ -196,7 +203,10 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
                         yesButtonProps: { color: 'secondary' },
                         noButtonLabel: 'Cancel',
                         onYes: () => {
-                          handleRemoveProjectParticipant(row.project_id, row.project_participation_id);
+                          handleRemoveProjectParticipant(
+                            row.project_id,
+                            row.project_participation_id
+                          );
                           dialogContext.setYesNoDialog({ open: false });
                         }
                       })
@@ -285,7 +295,11 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     dialogContext.setErrorDialog({ ...errorDialogProps, ...textDialogProps, open: true });
   };
 
-  const handleChangeUserPermissionsClick = (item: IGetUserProjectsListResponse, newRole: string, newRoleId: number) => {
+  const handleChangeUserPermissionsClick = (
+    item: IGetUserProjectsListResponse,
+    newRole: string,
+    newRoleId: number
+  ) => {
     dialogContext.setYesNoDialog({
       dialogTitle: 'Change Project Role?',
       dialogContent: (
@@ -353,7 +367,9 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     }
   };
 
-  const currentProjectRoleName = projectRoleCodes.find((item) => item.id === row.project_role_id)?.name;
+  const currentProjectRoleName = projectRoleCodes.find(
+    (item) => item.id === row.project_role_id
+  )?.name;
 
   return (
     <CustomMenuButton

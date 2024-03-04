@@ -23,7 +23,10 @@ const mockuseRestorationTrackerApi = {
     project: {
       getProjectForView: jest.fn<Promise<IGetProjectForViewResponse>, [number]>(),
       getProjectAttachments: jest.fn<Promise<IGetProjectAttachmentsResponse>, [number]>(),
-      getTreatments: jest.fn<Promise<IGetProjectTreatmentsResponse>, [number, TreatmentSearchCriteria]>()
+      getTreatments: jest.fn<
+        Promise<IGetProjectTreatmentsResponse>,
+        [number, TreatmentSearchCriteria]
+      >()
     }
   }
 };
@@ -68,7 +71,9 @@ describe('PublicProjectPage', () => {
     mockUseCodes.mockReturnValue({ codes: undefined, isLoading: true, isReady: false });
 
     const mockGetProjectForView =
-      mockRestorationTrackerApi().public.project.getProjectForView.mockResolvedValue(getProjectForViewResponse);
+      mockRestorationTrackerApi().public.project.getProjectForView.mockResolvedValue(
+        getProjectForViewResponse
+      );
 
     const { getByTestId } = render(
       <DialogContextProvider>

@@ -23,7 +23,10 @@ export const H3ButtonToolbar: React.FC<IButtonToolbarProps> = (props) => {
   const id = `h3-button-toolbar-${props.buttonLabel.replace(/\s/g, '')}`;
 
   return (
-    <ActionToolbar label={props.label} labelProps={{ variant: 'h3' }} toolbarProps={props.toolbarProps}>
+    <ActionToolbar
+      label={props.label}
+      labelProps={{ variant: 'h3' }}
+      toolbarProps={props.toolbarProps}>
       <Button
         id={id}
         data-testid={id}
@@ -46,7 +49,10 @@ export const H2ButtonToolbar: React.FC<IButtonToolbarProps> = (props) => {
   const id = `h2-button-toolbar-${props.buttonLabel.replace(/\s/g, '')}`;
 
   return (
-    <ActionToolbar label={props.label} labelProps={{ variant: 'h2' }} toolbarProps={props.toolbarProps}>
+    <ActionToolbar
+      label={props.label}
+      labelProps={{ variant: 'h2' }}
+      toolbarProps={props.toolbarProps}>
       <Button
         id={id}
         data-testid={id}
@@ -74,7 +80,10 @@ export interface IMenuToolbarProps extends ICustomMenuButtonProps, IActionToolba
 
 export const H2MenuToolbar: React.FC<IMenuToolbarProps> = (props) => {
   return (
-    <ActionToolbar label={props.label} labelProps={{ variant: 'h2' }} toolbarProps={props.toolbarProps}>
+    <ActionToolbar
+      label={props.label}
+      labelProps={{ variant: 'h2' }}
+      toolbarProps={props.toolbarProps}>
       <CustomMenuButton {...props} />
     </ActionToolbar>
   );

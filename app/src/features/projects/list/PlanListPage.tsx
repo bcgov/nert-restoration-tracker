@@ -52,7 +52,10 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
   const history = useHistory();
 
   const getProjectStatusType = (projectData: IGetProjectForViewResponse): ProjectStatusType => {
-    if (projectData.project.end_date && moment(projectData.project.end_date).endOf('day').isBefore(moment())) {
+    if (
+      projectData.project.end_date &&
+      moment(projectData.project.end_date).endOf('day').isBefore(moment())
+    ) {
       return ProjectStatusType.COMPLETED;
     }
 
@@ -161,10 +164,18 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
                       {row.project.project_name}
                     </Link>
                   </TableCell>
-                  <TableCell>{row.permit.permits.map((item) => item.permit_number).join(', ')}</TableCell>
-                  <TableCell>{row.contact.contacts.map((item) => item.agency).join(', ')}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}</TableCell>
+                  <TableCell>
+                    {row.permit.permits.map((item) => item.permit_number).join(', ')}
+                  </TableCell>
+                  <TableCell>
+                    {row.contact.contacts.map((item) => item.agency).join(', ')}
+                  </TableCell>
+                  <TableCell>
+                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}
+                  </TableCell>
+                  <TableCell>
+                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}
+                  </TableCell>
                   <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
                   <TableCell>
                     <FormControlLabel

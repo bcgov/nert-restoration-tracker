@@ -101,7 +101,9 @@ describe('ProjectAttachments', () => {
   });
 
   it('renders correctly with attachments', async () => {
-    mockRestorationTrackerApi().project.getProjectAttachments.mockResolvedValue({ attachmentsList });
+    mockRestorationTrackerApi().project.getProjectAttachments.mockResolvedValue({
+      attachmentsList
+    });
 
     const { getByText } = render(
       <Router history={history}>
@@ -119,7 +121,9 @@ describe('ProjectAttachments', () => {
 
   it('does not delete an attachment from the attachments when user selects no from dialog', async () => {
     mockRestorationTrackerApi().project.deleteProjectAttachment.mockResolvedValue(1);
-    mockRestorationTrackerApi().project.getProjectAttachments.mockResolvedValue({ attachmentsList });
+    mockRestorationTrackerApi().project.getProjectAttachments.mockResolvedValue({
+      attachmentsList
+    });
 
     const { baseElement, queryByText, getByTestId, queryByTestId, getAllByTestId } = render(
       <DialogContextProvider>
@@ -143,7 +147,9 @@ describe('ProjectAttachments', () => {
     fireEvent.click(getAllByTestId('attachment-action-menu')[0]);
 
     await waitFor(() => {
-      expect(rawQueryByTestId(baseElement as HTMLElement, 'attachment-action-menu-delete')).toBeInTheDocument();
+      expect(
+        rawQueryByTestId(baseElement as HTMLElement, 'attachment-action-menu-delete')
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(rawGetByTestId(baseElement as HTMLElement, 'attachment-action-menu-delete'));
@@ -161,7 +167,9 @@ describe('ProjectAttachments', () => {
 
   it('does not delete an attachment from the attachments when user clicks outside the dialog', async () => {
     mockRestorationTrackerApi().project.deleteProjectAttachment.mockResolvedValue(1);
-    mockRestorationTrackerApi().project.getProjectAttachments.mockResolvedValue({ attachmentsList });
+    mockRestorationTrackerApi().project.getProjectAttachments.mockResolvedValue({
+      attachmentsList
+    });
 
     const { baseElement, queryByText, getAllByRole, queryByTestId, getAllByTestId } = render(
       <DialogContextProvider>
@@ -185,7 +193,9 @@ describe('ProjectAttachments', () => {
     fireEvent.click(getAllByTestId('attachment-action-menu')[0]);
 
     await waitFor(() => {
-      expect(rawQueryByTestId(baseElement as HTMLElement, 'attachment-action-menu-delete')).toBeInTheDocument();
+      expect(
+        rawQueryByTestId(baseElement as HTMLElement, 'attachment-action-menu-delete')
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(rawGetByTestId(baseElement as HTMLElement, 'attachment-action-menu-delete'));

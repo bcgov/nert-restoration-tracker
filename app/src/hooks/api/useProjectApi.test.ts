@@ -182,9 +182,14 @@ describe('useProjectApi', () => {
   it('removeProjectParticipant works as expected', async () => {
     const projectParticipationId = 1;
 
-    mock.onDelete(`/api/project/${projectId}/participants/${projectParticipationId}/delete`).reply(200);
+    mock
+      .onDelete(`/api/project/${projectId}/participants/${projectParticipationId}/delete`)
+      .reply(200);
 
-    const result = await useProjectApi(axios).removeProjectParticipant(projectId, projectParticipationId);
+    const result = await useProjectApi(axios).removeProjectParticipant(
+      projectId,
+      projectParticipationId
+    );
 
     expect(result).toEqual(true);
   });
@@ -193,7 +198,9 @@ describe('useProjectApi', () => {
     const projectParticipationId = 1;
     const projectRoleId = 1;
 
-    mock.onPut(`/api/project/${projectId}/participants/${projectParticipationId}/update`).reply(200);
+    mock
+      .onPut(`/api/project/${projectId}/participants/${projectParticipationId}/update`)
+      .reply(200);
 
     const result = await useProjectApi(axios).updateProjectParticipantRole(
       projectId,
@@ -205,9 +212,14 @@ describe('useProjectApi', () => {
   });
 
   it('deleteProjectTreatmentUnit works as expected', async () => {
-    mock.onDelete(`/api/project/${projectId}/treatments/treatment-unit/${treatmentUnitId}/delete`).reply(200);
+    mock
+      .onDelete(`/api/project/${projectId}/treatments/treatment-unit/${treatmentUnitId}/delete`)
+      .reply(200);
 
-    const result = await useProjectApi(axios).deleteProjectTreatmentUnit(projectId, treatmentUnitId);
+    const result = await useProjectApi(axios).deleteProjectTreatmentUnit(
+      projectId,
+      treatmentUnitId
+    );
 
     expect(result).toEqual(true);
   });
@@ -239,7 +251,10 @@ describe('useProjectApi', () => {
   });
 
   it('importProjectTreatmentSpatialFile works as expected', async () => {
-    const treatmentResponse = { treatment_unit_id: 1, revision_count: 2 } as IPostTreatmentUnitResponse;
+    const treatmentResponse = {
+      treatment_unit_id: 1,
+      revision_count: 2
+    } as IPostTreatmentUnitResponse;
 
     mock.onPost(`/api/project/${projectId}/treatments/upload`).reply(200, treatmentResponse);
 
@@ -345,7 +360,9 @@ describe('usePublicProjectApi', () => {
       ]
     });
 
-    const result = await useProjectApi(axios).getProjectAttachments(projectId, { type: 'attachments' });
+    const result = await useProjectApi(axios).getProjectAttachments(projectId, {
+      type: 'attachments'
+    });
 
     expect(result.attachmentsList).toEqual([
       {

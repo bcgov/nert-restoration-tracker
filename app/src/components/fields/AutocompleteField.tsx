@@ -16,15 +16,21 @@ export interface IAutocompleteField<T extends string | number> {
   options: IAutocompleteFieldOption<T>[];
   required?: boolean;
   filterLimit?: number;
-  onChange?: (event: ChangeEvent<Record<string, unknown>>, option: IAutocompleteFieldOption<T> | null) => void;
+  onChange?: (
+    event: ChangeEvent<Record<string, unknown>>,
+    option: IAutocompleteFieldOption<T> | null
+  ) => void;
 }
 
 // To be used when you want an autocomplete field with no freesolo allowed but only one option can be selected
 
-const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <T extends string | number>(
+const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <
+  T extends string | number
+>(
   props: IAutocompleteField<T>
 ) => {
-  const { touched, errors, setFieldValue, values } = useFormikContext<IAutocompleteFieldOption<T>>();
+  const { touched, errors, setFieldValue, values } =
+    useFormikContext<IAutocompleteFieldOption<T>>();
 
   const getExistingValue = (existingValue: T): IAutocompleteFieldOption<T> => {
     const result = props.options.find((option) => existingValue === option.value);

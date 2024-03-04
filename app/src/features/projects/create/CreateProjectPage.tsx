@@ -159,7 +159,8 @@ const CreateProjectPage: React.FC = () => {
 
   const [draft, setDraft] = useState({ id: 0, date: '' });
 
-  const [initialProjectFormData, setInitialProjectFormData] = useState<ICreateProjectRequest>(ProjectFormInitialValues);
+  const [initialProjectFormData, setInitialProjectFormData] =
+    useState<ICreateProjectRequest>(ProjectFormInitialValues);
 
   // Get draft project fields if draft id exists
   useEffect(() => {
@@ -193,16 +194,24 @@ const CreateProjectPage: React.FC = () => {
 
       let response;
       if (draftId) {
-        response = await restorationTrackerApi.draft.updateDraft(draftId, values.draft_name, formikRef.current?.values);
+        response = await restorationTrackerApi.draft.updateDraft(
+          draftId,
+          values.draft_name,
+          formikRef.current?.values
+        );
       } else {
-        response = await restorationTrackerApi.draft.createDraft(values.draft_name, formikRef.current?.values);
+        response = await restorationTrackerApi.draft.createDraft(
+          values.draft_name,
+          formikRef.current?.values
+        );
       }
 
       setOpenDraftDialog(false);
 
       if (!response?.id) {
         showCreateErrorDialog({
-          dialogError: 'The response from the server was null, or did not contain a draft project ID.'
+          dialogError:
+            'The response from the server was null, or did not contain a draft project ID.'
         });
 
         return;
@@ -347,7 +356,11 @@ const CreateProjectPage: React.FC = () => {
       <Container maxWidth="xl">
         <Box mb={3}>
           <Breadcrumbs>
-            <Link color="primary" onClick={handleCancel} aria-current="page" sx={pageStyles.breadCrumbLink}>
+            <Link
+              color="primary"
+              onClick={handleCancel}
+              aria-current="page"
+              sx={pageStyles.breadCrumbLink}>
               <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
@@ -387,19 +400,33 @@ const CreateProjectPage: React.FC = () => {
                       <Box component="fieldset" mt={5} mx={0}>
                         <ProjectIUCNForm
                           classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map((item) => {
-                              return { value: item.id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_1_classification?.map(
+                              (item) => {
+                                return { value: item.id, label: item.name };
+                              }
+                            ) || []
                           }
                           subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map((item) => {
-                              return { value: item.id, iucn1_id: item.iucn1_id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
+                              (item) => {
+                                return {
+                                  value: item.id,
+                                  iucn1_id: item.iucn1_id,
+                                  label: item.name
+                                };
+                              }
+                            ) || []
                           }
                           subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map((item) => {
-                              return { value: item.id, iucn2_id: item.iucn2_id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
+                              (item) => {
+                                return {
+                                  value: item.id,
+                                  iucn2_id: item.iucn2_id,
+                                  label: item.name
+                                };
+                              }
+                            ) || []
                           }
                         />
                       </Box>
@@ -451,9 +478,11 @@ const CreateProjectPage: React.FC = () => {
                           fundingSources={codes.codes.funding_source.map((item) => {
                             return { value: item.id, label: item.name };
                           })}
-                          investment_action_category={codes.codes.investment_action_category.map((item) => {
-                            return { value: item.id, label: item.name, fs_id: item.fs_id };
-                          })}
+                          investment_action_category={codes.codes.investment_action_category.map(
+                            (item) => {
+                              return { value: item.id, label: item.name, fs_id: item.fs_id };
+                            }
+                          )}
                         />
                       </Box>
 

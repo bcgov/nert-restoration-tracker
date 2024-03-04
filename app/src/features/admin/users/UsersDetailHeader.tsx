@@ -127,13 +127,19 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
       <Box display="flex" justifyContent="space-between" alignItems="flex-start">
         <Box>
           <Box display="flex">
-            <Typography data-testid="user-detail-title" className={classes.spacingRight} variant="h1">
+            <Typography
+              data-testid="user-detail-title"
+              className={classes.spacingRight}
+              variant="h1">
               User - <span className={classes.projectTitle}>{userDetails.user_identifier}</span>
             </Typography>
           </Box>
 
           <Box my={1.5}>
-            <Chip className={classes.roleChip} size="small" label={userDetails.role_names[0] || 'Unassigned'}></Chip>
+            <Chip
+              className={classes.roleChip}
+              size="small"
+              label={userDetails.role_names[0] || 'Unassigned'}></Chip>
           </Box>
         </Box>
         <Box ml={2}>
@@ -152,8 +158,8 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
                     dialogContent: (
                       <>
                         <Typography variant="body1" color="textPrimary">
-                          Removing user <strong>{userDetails.user_identifier}</strong> will revoke their access to all
-                          projects.
+                          Removing user <strong>{userDetails.user_identifier}</strong> will revoke
+                          their access to all projects.
                         </Typography>
                         <Typography variant="body1" color="textPrimary">
                           Are you sure you want to proceed?
