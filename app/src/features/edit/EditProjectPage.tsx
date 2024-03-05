@@ -8,9 +8,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import { EditProjectI18N } from 'constants/i18n';
@@ -36,7 +34,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { Prompt } from 'react-router-dom';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
@@ -45,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   formButtons: {
     '& button': {
-      margin: theme.spacing(0.5)
+      margin: '0.5rem'
     }
   },
   breadCrumbLink: {
@@ -56,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   breadCrumbLinkIcon: {
     marginRight: '0.25rem'
   }
-}));
+};
 
 /**
  * Page for editing a project.
@@ -64,8 +62,6 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @return {*}
  */
 const EditProjectPage: React.FC = () => {
-  const classes = useStyles();
-
   const history = useHistory();
 
   const restorationTrackerApi = useRestorationTrackerApi();
@@ -218,8 +214,8 @@ const EditProjectPage: React.FC = () => {
               color="primary"
               onClick={handleCancel}
               aria-current="page"
-              className={classes.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" className={classes.breadCrumbLinkIcon} />
+              sx={pageStyles.breadCrumbLink}>
+              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
           </Breadcrumbs>
@@ -382,11 +378,7 @@ const EditProjectPage: React.FC = () => {
 
                 <Divider></Divider>
 
-                <Box
-                  mt={5}
-                  className={classes.formButtons}
-                  display="flex"
-                  justifyContent="flex-end">
+                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
                   <Button
                     variant="contained"
                     color="primary"

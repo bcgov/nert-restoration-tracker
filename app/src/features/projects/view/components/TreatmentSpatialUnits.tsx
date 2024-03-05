@@ -10,7 +10,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
@@ -22,7 +21,7 @@ import { IGetProjectAttachment, TreatmentSearchCriteria } from 'interfaces/usePr
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-const useStyles = makeStyles({
+const pageStyles = {
   filterMenu: {
     minWidth: '200px !important',
     borderBottom: '1px solid #ffffff',
@@ -36,7 +35,7 @@ const useStyles = makeStyles({
       paddingBottom: 0
     }
   }
-});
+};
 
 export interface IProjectSpatialUnitsProps {
   getTreatments: (forceFetch: boolean, selectedYears?: TreatmentSearchCriteria) => void;
@@ -49,7 +48,6 @@ export interface IProjectSpatialUnitsProps {
  * @return {*}
  */
 const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
-  const classes = useStyles();
   const { getTreatments, getAttachments } = props;
   const urlParams = useParams();
   const projectId = urlParams['id'];
@@ -305,7 +303,7 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              className={classes.treatmentFilterList}>
+              sx={pageStyles.treatmentFilterList}>
               {!yearList.length && (
                 <Box flexGrow={1} m={0.5}>
                   <Typography>No Treatment Years Available</Typography>
@@ -317,7 +315,7 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     <ListItem
                       dense
                       disableGutters
-                      className={classes.filterMenu}
+                      sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
                       onClick={() => handleSelectedSwitch(year.year)}>

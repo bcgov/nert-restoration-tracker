@@ -1,7 +1,5 @@
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { FileError, FileRejection } from 'react-dropzone';
 import DropZone, { IDropZoneConfigProps } from './DropZone';
@@ -13,22 +11,22 @@ import {
   UploadFileStatus
 } from './FileUploadItem';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   dropZone: {
     clear: 'both',
     borderRadius: '4px',
     borderStyle: 'dashed',
     borderWidth: '2px',
-    borderColor: theme.palette.text.disabled,
-    background: theme.palette.primary.main + '11',
+    borderColor: 'gray',
+    background: 'white',
     transition: 'all ease-out 0.2s',
     '&:hover, &:focus': {
-      borderColor: theme.palette.primary.main,
-      backgroundColor: theme.palette.primary.main + '22'
+      borderColor: 'darkgray',
+      backgroundColor: 'lightgray'
     },
     cursor: 'pointer'
   }
-}));
+};
 
 export interface IUploadFile {
   file: File;
@@ -104,8 +102,6 @@ export interface IFileUploadProps {
 }
 
 export const FileUpload: React.FC<IFileUploadProps> = (props) => {
-  const classes = useStyles();
-
   const [files, setFiles] = useState<IUploadFile[]>([]);
 
   const [fileUploadItems, setFileUploadItems] = useState<any[]>([]);
@@ -232,7 +228,7 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
 
   return (
     <Box>
-      <Box className={classes.dropZone}>
+      <Box sx={pageStyles.dropZone}>
         <DropZone onFiles={onFiles} {...props.dropZoneProps} />
       </Box>
       <Box>

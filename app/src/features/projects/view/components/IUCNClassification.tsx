@@ -1,18 +1,14 @@
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    projectIucnList: {
-      margin: 0,
-      padding: 0
-    }
-  })
-);
+const pageStyles = {
+  projectIucnList: {
+    margin: 0,
+    padding: 0
+  }
+};
 
 export interface IIUCNClassificationProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -26,8 +22,6 @@ export interface IIUCNClassificationProps {
  * @return {*}
  */
 const IUCNClassification: React.FC<IIUCNClassificationProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: { iucn }
   } = props;
@@ -35,7 +29,7 @@ const IUCNClassification: React.FC<IIUCNClassificationProps> = (props) => {
   const hasIucnClassifications =
     iucn.classificationDetails && iucn.classificationDetails.length > 0;
   return (
-    <ul className={classes.projectIucnList}>
+    <ul style={pageStyles.projectIucnList}>
       {hasIucnClassifications &&
         iucn.classificationDetails.map((classificationDetail: any, index: number) => {
           const iucn1_name = props.codes.iucn_conservation_action_level_1_classification.find(

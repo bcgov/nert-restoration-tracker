@@ -6,7 +6,6 @@ import Link from '@mui/material/Link';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Theme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -14,7 +13,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import makeStyles from '@mui/styles/makeStyles';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { AttachmentsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
@@ -25,16 +23,16 @@ import React, { useContext, useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedFileSize } from 'utils/Utils';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   attachmentsTable: {
     '& .MuiTableCell-root': {
       verticalAlign: 'middle'
     }
   },
   uploadMenu: {
-    marginTop: theme.spacing(1)
+    marginTop: '0.5rem'
   }
-}));
+};
 
 export interface IAttachmentsListProps {
   projectId: number;
@@ -43,7 +41,6 @@ export interface IAttachmentsListProps {
 }
 
 const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
-  const classes = useStyles();
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -121,7 +118,7 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
     <>
       <Box>
         <TableContainer>
-          <Table className={classes.attachmentsTable} aria-label="attachments-list-table">
+          <Table sx={pageStyles.attachmentsTable} aria-label="attachments-list-table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -197,8 +194,6 @@ interface IAttachmentItemMenuButtonProps {
 }
 
 const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (props) => {
-  const classes = useStyles();
-
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -221,7 +216,7 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
             <Icon path={mdiDotsVertical} size={1} />
           </IconButton>
           <Menu
-            className={classes.uploadMenu}
+            sx={pageStyles.uploadMenu}
             getContentAnchorEl={null}
             anchorOrigin={{
               vertical: 'top',

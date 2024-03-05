@@ -4,8 +4,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
@@ -14,19 +12,17 @@ export interface IProjectContactProps {
   refresh: () => void;
 }
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    projectContactList: {
-      marginBottom: 0,
-      marginLeft: 0,
-      marginRight: 0,
-      padding: 0
-    },
-    contactIcon: {
-      color: '#575759'
-    }
-  })
-);
+const pageStyles = {
+  projectContactList: {
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    padding: 0
+  },
+  contactIcon: {
+    color: '#575759'
+  }
+};
 /**
  * Project contact content for a project.
  *
@@ -34,17 +30,16 @@ const useStyles = makeStyles(() =>
  */
 const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) => {
   const { contact } = projectForViewData;
-  const classes = useStyles();
 
   const hasContacts = contact.contacts && contact.contacts.length > 0;
 
   return (
     <>
-      <ul className={classes.projectContactList}>
+      <ul style={pageStyles.projectContactList}>
         {contact.contacts.map((contactDetails, index) => (
           <Box component="li" key={index} display="flex" justifyContent="space-between">
             <Box display="flex" pl={1}>
-              <Icon className={classes.contactIcon} path={mdiAccountCircleOutline} size={1} />
+              <Icon color={pageStyles.contactIcon.color} path={mdiAccountCircleOutline} size={1} />
               <Box ml={2}>
                 <div>
                   <strong data-testid="contact_name">

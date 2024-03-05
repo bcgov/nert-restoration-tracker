@@ -7,7 +7,6 @@ import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React, { useCallback, useContext } from 'react';
 import { useHistory } from 'react-router';
@@ -18,7 +17,7 @@ import { DialogContext } from '../../../contexts/dialogContext';
 import { APIError } from '../../../hooks/api/useAxios';
 import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   breadCrumbLink: {
     display: 'flex',
     alignItems: 'center',
@@ -40,7 +39,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#1976d2',
     color: '#ffffff'
   }
-}));
+};
 
 export interface IUsersHeaderProps {
   userDetails: IGetUserResponse;
@@ -48,7 +47,6 @@ export interface IUsersHeaderProps {
 
 const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
   const { userDetails } = props;
-  const classes = useStyles();
   const history = useHistory();
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
@@ -118,7 +116,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
             color="primary"
             onClick={() => history.push('/admin/users')}
             aria-current="page"
-            className={classes.breadCrumbLink}>
+            sx={pageStyles.breadCrumbLink}>
             <Typography variant="body2">Manage Users</Typography>
           </Link>
           <Typography variant="body2">{userDetails.user_identifier}</Typography>
@@ -127,17 +125,14 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
       <Box display="flex" justifyContent="space-between" alignItems="flex-start">
         <Box>
           <Box display="flex">
-            <Typography
-              data-testid="user-detail-title"
-              className={classes.spacingRight}
-              variant="h1">
-              User - <span className={classes.projectTitle}>{userDetails.user_identifier}</span>
+            <Typography data-testid="user-detail-title" sx={pageStyles.spacingRight} variant="h1">
+              User - <span style={pageStyles.projectTitle}>{userDetails.user_identifier}</span>
             </Typography>
           </Box>
 
           <Box my={1.5}>
             <Chip
-              className={classes.roleChip}
+              sx={pageStyles.roleChip}
               size="small"
               label={userDetails.role_names[0] || 'Unassigned'}></Chip>
           </Box>
@@ -149,7 +144,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
                 title="Remove User"
                 color="primary"
                 variant="outlined"
-                className={classes.actionButton}
+                sx={pageStyles.actionButton}
                 startIcon={<Icon path={mdiTrashCanOutline} size={0.875} />}
                 data-testid={'remove-user-button'}
                 onClick={() =>

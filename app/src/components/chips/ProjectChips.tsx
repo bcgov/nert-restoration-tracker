@@ -1,88 +1,62 @@
 import Chip, { ChipProps } from '@mui/material/Chip';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
-import clsx from 'clsx';
 import moment from 'moment';
 import React from 'react';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    chip: {
-      color: 'white',
-      textTransform: 'uppercase',
-      fontSize: '11px',
-      fontWeight: 700,
-      letterSpacing: '0.02rem'
-    },
-    chipActive: {
-      backgroundColor: theme.palette.success.main
-    },
-    chipPublishedCompleted: {
-      backgroundColor: theme.palette.success.main
-    },
-    chipUnpublished: {
-      backgroundColor: theme.palette.text.disabled
-    },
-    chipDraft: {
-      backgroundColor: theme.palette.info.main
-    },
-    chipPriority: {
-      backgroundColor: theme.palette.info.dark
-    }
-  })
-);
+const pageStyles = {
+  chipActive: {
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: '#A2B9E2'
+  },
+  chipPublishedCompleted: {
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: '#70AD47'
+  },
+  chipUnpublished: {
+    color: 'white',
+    fontWeight: 600,
+    backgroundColor: 'gray'
+  },
+  chipDraft: {
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: '#A6A6A'
+  },
+  chipPriority: {
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: 'orange'
+  }
+};
 
 export const ProjectStatusChip: React.FC<{
   startDate: string;
   endDate?: string;
   chipProps?: Partial<ChipProps>;
 }> = (props) => {
-  const classes = useStyles();
-
   let chipLabel;
   let chipStatusClass;
 
   if (!props.endDate || moment(props.endDate).endOf('day').isAfter(moment())) {
     chipLabel = 'Active';
-    chipStatusClass = classes.chipActive;
+    chipStatusClass = pageStyles.chipActive;
   } else {
     chipLabel = 'Completed';
-    chipStatusClass = classes.chipPublishedCompleted;
+    chipStatusClass = pageStyles.chipPublishedCompleted;
   }
 
-  return (
-    <Chip
-      size="small"
-      className={clsx(classes.chip, chipStatusClass)}
-      label={chipLabel}
-      {...props.chipProps}
-    />
-  );
+  return <Chip size="small" sx={chipStatusClass} label={chipLabel} {...props.chipProps} />;
 };
 
 export const ProjectDraftChip: React.FC<{ chipProps?: Partial<ChipProps> }> = (props) => {
-  const classes = useStyles();
-
-  return (
-    <Chip
-      size="small"
-      className={clsx(classes.chip, classes.chipDraft)}
-      label="Draft"
-      {...props.chipProps}
-    />
-  );
+  return <Chip size="small" sx={pageStyles.chipDraft} label="Draft" {...props.chipProps} />;
 };
 
 export const ProjectPriorityChip: React.FC<{ chipProps?: Partial<ChipProps> }> = (props) => {
-  const classes = useStyles();
-
-  return (
-    <Chip
-      size="small"
-      className={clsx(classes.chip, classes.chipPriority)}
-      label="Priority"
-      {...props.chipProps}
-    />
-  );
+  return <Chip size="small" sx={pageStyles.chipPriority} label="Priority" {...props.chipProps} />;
 };

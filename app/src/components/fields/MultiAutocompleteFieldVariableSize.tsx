@@ -8,7 +8,6 @@ import Checkbox from '@mui/material/Checkbox';
 import ListSubheader from '@mui/material/ListSubheader';
 import TextField from '@mui/material/TextField';
 import { FilterOptionsState } from '@mui/material/useAutocomplete';
-import makeStyles from '@mui/styles/makeStyles';
 import { useFormikContext } from 'formik';
 import { DebouncedFunc } from 'lodash-es';
 import get from 'lodash-es/get';
@@ -120,7 +119,7 @@ const ListboxComponent = React.forwardRef<HTMLDivElement>(function ListboxCompon
   );
 });
 
-const useStyles = makeStyles({
+const pageStyles = {
   listbox: {
     boxSizing: 'border-box',
     '& ul': {
@@ -128,11 +127,9 @@ const useStyles = makeStyles({
       margin: 0
     }
   }
-});
+};
 
 const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (props) => {
-  const classes = useStyles();
-
   const { values, touched, errors, setFieldValue } =
     useFormikContext<IMultiAutocompleteFieldOption>();
 
@@ -269,7 +266,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
       isOptionEqualToValue={handleGetOptionSelected}
       disableCloseOnSelect
       disableListWrap
-      classes={classes}
+      sx={pageStyles.listbox}
       inputValue={inputValue}
       onInputChange={handleOnInputChange}
       onChange={handleOnChange}

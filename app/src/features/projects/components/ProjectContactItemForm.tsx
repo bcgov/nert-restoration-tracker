@@ -115,7 +115,11 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
                   onChange={handleChange}
                 />
               }
-              label={<Typography>Select All</Typography>}
+              label={
+                <Typography color="textSecondary">
+                  This person is the primary contact for this project
+                </Typography>
+              }
             />
           </Grid>
         </Grid>
@@ -139,12 +143,12 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               onChange={handleChange}>
               <FormControlLabel
                 value="true"
-                control={<Radio required={true} color="primary" size="small" />}
+                control={<Radio color="primary" size="small" />}
                 label="Yes"
               />
               <FormControlLabel
                 value="false"
-                control={<Radio required={true} color="primary" size="small" />}
+                control={<Radio color="primary" size="small" />}
                 label="No"
               />
               <FormHelperText>{errors.is_public}</FormHelperText>

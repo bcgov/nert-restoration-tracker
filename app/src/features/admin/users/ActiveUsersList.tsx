@@ -19,8 +19,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-// import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
 import EditDialog from 'components/dialog/EditDialog';
 import { CustomMenuButton, CustomMenuIconButton } from 'components/toolbar/ActionToolbars';
 import { AddSystemUserI18N, DeleteSystemUserI18N, UpdateSystemUserI18N } from 'constants/i18n';
@@ -38,14 +36,14 @@ import AddSystemUsersForm, {
   IAddSystemUsersForm
 } from './AddSystemUsersForm';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   table: {
     tableLayout: 'fixed',
     '& td': {
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 export interface IActiveUsersListProps {
   activeUsers: IGetUserResponse[];
@@ -60,7 +58,6 @@ export interface IActiveUsersListProps {
  * @return {*}
  */
 const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
-  const classes = useStyles();
   const restorationTrackerApi = useRestorationTrackerApi();
   const { activeUsers, codes } = props;
   const history = useHistory();
@@ -281,7 +278,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
           </Grid>
         </Toolbar>
         <TableContainer>
-          <Table className={classes.table}>
+          <Table sx={pageStyles.table}>
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>

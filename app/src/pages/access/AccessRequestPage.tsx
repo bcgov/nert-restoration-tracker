@@ -4,7 +4,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { AccessRequestI18N } from 'constants/i18n';
 import { AuthStateContext } from 'contexts/authStateContext';
@@ -29,14 +28,14 @@ import IDIRRequestForm, {
   IDIRRequestFormYupSchema
 } from './IDIRRequestForm';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
       marginLeft: '0.5rem'
     }
   }
-}));
+};
 
 /**
  * Access Request form
@@ -44,7 +43,6 @@ const useStyles = makeStyles(() => ({
  * @return {*}
  */
 export const AccessRequestPage: React.FC = () => {
-  const classes = useStyles();
   const restorationTrackerApi = useRestorationTrackerApi();
   const history = useHistory();
 
@@ -176,7 +174,7 @@ export const AccessRequestPage: React.FC = () => {
                         type="submit"
                         variant="contained"
                         color="primary"
-                        className={classes.actionButton}
+                        sx={pageStyles.actionButton}
                         disabled={isSubmittingRequest}>
                         <strong>Submit Request</strong>
                       </Button>
@@ -200,7 +198,7 @@ export const AccessRequestPage: React.FC = () => {
                       onClick={() => {
                         history.push('/logout');
                       }}
-                      className={classes.actionButton}
+                      sx={pageStyles.actionButton}
                       data-testid="logout-button">
                       Log out
                     </Button>

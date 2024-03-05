@@ -7,13 +7,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectTreatment, TreatmentSearchCriteria } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-const useStyles = makeStyles({
+const pageStyles = {
   filterMenu: {
     minWidth: '200px !important',
     padding: 0,
@@ -22,7 +21,7 @@ const useStyles = makeStyles({
       borderBottom: 'none'
     }
   }
-});
+};
 
 export interface IProjectSpatialUnitsProps {
   treatmentList: IGetProjectTreatment[];
@@ -35,7 +34,6 @@ export interface IProjectSpatialUnitsProps {
  * @return {*}
  */
 const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
-  const classes = useStyles();
   const { getTreatments } = props;
   const urlParams = useParams();
   const projectId = urlParams['id'];
@@ -146,7 +144,7 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
                     <MenuItem
                       dense
                       disableGutters
-                      className={classes.filterMenu}
+                      sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
                       onClick={() => handleSelectedSwitch(year.year)}>

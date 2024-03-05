@@ -10,10 +10,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import OtherLink from '@mui/material/Link';
-import { Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
 import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
@@ -28,7 +26,7 @@ const nert_version = process.env.NERT_VERSION || '0.0.0.0';
 const nert_environment =
   process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   govHeaderToolbar: {
     height: '70px'
   },
@@ -65,13 +63,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   },
   appVersionTag: {
-    marginLeft: theme.spacing(0.75),
+    marginLeft: '0.5rem',
     color: '#fcba19',
     fontSize: '0.75rem',
     fontWeight: 400
   },
   userProfile: {
-    color: theme.palette.primary.contrastText,
+    color: 'white',
     fontSize: '0.9375rem',
     '& hr': {
       backgroundColor: '#4b5e7e',
@@ -94,7 +92,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   mainNavToolbar: {
     '& a': {
       display: 'block',
-      padding: theme.spacing(2),
+      padding: '1rem',
       color: 'inherit',
       fontSize: '1rem',
       textDecoration: 'none'
@@ -103,19 +101,17 @@ const useStyles = makeStyles((theme: Theme) => ({
       textDecoration: 'underline'
     },
     '& a:first-child': {
-      marginLeft: theme.spacing(-2)
+      marginLeft: '-1rem'
     }
   },
   '.MuiDialogContent-root': {
     '& p + p': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   }
-}));
+};
 
 const Header: React.FC = () => {
-  const classes = useStyles();
-
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   // Authenticated view
@@ -130,7 +126,7 @@ const Header: React.FC = () => {
       .join('/');
 
     return (
-      <Box display="flex" className={classes.userProfile} my="auto" alignItems="center">
+      <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
         <Icon path={mdiAccountCircle} size={1.12} />
         <Box ml={1}>{formattedUsername}</Box>
         <Box px={2}>
@@ -144,7 +140,7 @@ const Header: React.FC = () => {
         </Box>
         <IconButton
           aria-label="need help"
-          className={classes.govHeaderIconButton}
+          sx={pageStyles.govHeaderIconButton}
           onClick={showSupportDialog}
           size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
@@ -156,7 +152,7 @@ const Header: React.FC = () => {
   // Unauthenticated public view
   const PublicViewUser = () => {
     return (
-      <Box display="flex" className={classes.userProfile} alignItems="center" my="auto">
+      <Box display="flex" sx={pageStyles.userProfile} alignItems="center" my="auto">
         <Button
           onClick={() => keycloakWrapper?.keycloak.login()}
           type="submit"
@@ -167,10 +163,7 @@ const Header: React.FC = () => {
           data-testid="login">
           Log In
         </Button>
-        <IconButton
-          className={classes.govHeaderIconButton}
-          onClick={showSupportDialog}
-          size="large">
+        <IconButton sx={pageStyles.govHeaderIconButton} onClick={showSupportDialog} size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -199,11 +192,11 @@ const Header: React.FC = () => {
   return (
     <>
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
-        <Toolbar className={classes.govHeaderToolbar}>
+        <Toolbar sx={pageStyles.govHeaderToolbar}>
           <Box display="flex" justifyContent="space-between" width="100%">
             <Link
               to="/"
-              className={classes.brand}
+              style={pageStyles.brand}
               aria-label="Go to Northeast Restoration Tracker Home">
               <picture>
                 <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
@@ -212,7 +205,7 @@ const Header: React.FC = () => {
               </picture>
               <span>
                 Northeast Restoration Tracker
-                <sup className={classes.appVersionTag}>
+                <sup style={pageStyles.appVersionTag}>
                   <VersionEnvironmentLabel />
                 </sup>
               </span>
@@ -226,10 +219,10 @@ const Header: React.FC = () => {
           </Box>
         </Toolbar>
 
-        <Box className={classes.mainNav}>
+        <Box sx={pageStyles.mainNav}>
           <Toolbar
             variant="dense"
-            className={classes.mainNavToolbar}
+            sx={pageStyles.mainNavToolbar}
             role="navigation"
             aria-label="Main Navigation">
             <UnAuthGuard>

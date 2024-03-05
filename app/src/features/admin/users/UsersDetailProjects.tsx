@@ -12,7 +12,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -27,7 +26,7 @@ import { CodeSet, IGetAllCodeSetsResponse } from '../../../interfaces/useCodesAp
 import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
 
-const useStyles = makeStyles((theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
@@ -35,8 +34,8 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   projectMembersToolbar: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingLeft: '1rem',
+    paddingRight: '1rem'
   },
   projectMembersTable: {
     tableLayout: 'fixed',
@@ -44,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 export interface IProjectDetailsProps {
   userDetails: IGetUserResponse;
@@ -60,7 +59,6 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
   const history = useHistory();
-  const classes = useStyles();
 
   const [assignedProjects, setAssignedProjects] = useState<IGetUserProjectsListResponse[]>();
 
@@ -239,13 +237,13 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
 
   return (
     <Paper>
-      <Toolbar className={classes.projectMembersToolbar}>
+      <Toolbar sx={pageStyles.projectMembersToolbar}>
         <Typography data-testid="projects_header" variant="h2">
           Assigned Projects ({assignedProjects?.length})
         </Typography>
       </Toolbar>
       <Box>
-        <Table className={classes.projectMembersTable}>
+        <Table sx={pageStyles.projectMembersTable}>
           <TableHead>
             <TableRow>
               <TableCell>Project Name</TableCell>

@@ -9,7 +9,6 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
 import React, { ReactElement, useState } from 'react';
@@ -20,7 +19,7 @@ export interface IProjectTreatmentListProps {
   treatmentList: IGetProjectTreatment[];
 }
 
-const useStyles = makeStyles({
+const pageStyles = {
   treatmentsTable: {
     '& thead sup': {
       display: 'inline-block',
@@ -46,7 +45,7 @@ const useStyles = makeStyles({
   pagination: {
     flex: '0 0 auto'
   }
-});
+};
 
 /**
  * General information content for a project.
@@ -54,7 +53,6 @@ const useStyles = makeStyles({
  * @return {*}
  */
 const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
-  const classes = useStyles();
   const { treatmentList } = props;
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -92,7 +90,7 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
 
           <Divider />
 
-          <Box component="dl" my={0} className={classes.detaildl}>
+          <Box component="dl" my={0} sx={pageStyles.detaildl}>
             <Box key={`treatment-id-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
                 <Typography component="dt" variant="body2" color="textSecondary">
@@ -212,10 +210,7 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
     <>
       <Box display="flex" flexDirection="column" height="100%">
         <Box component={TableContainer}>
-          <Table
-            stickyHeader
-            className={classes.treatmentsTable}
-            aria-label="treatments-list-table">
+          <Table stickyHeader sx={pageStyles.treatmentsTable} aria-label="treatments-list-table">
             <TableHead>
               <TableRow>
                 <TableCell width="50">ID</TableCell>
@@ -282,7 +277,7 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
 
         {treatmentList.length > 0 && (
           <TablePagination
-            className={classes.pagination}
+            sx={pageStyles.pagination}
             rowsPerPageOptions={[5, 10, 15, 20]}
             component="div"
             count={treatmentList.length}
