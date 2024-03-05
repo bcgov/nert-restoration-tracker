@@ -1,8 +1,8 @@
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { DATE_FORMAT, DATE_LIMIT } from 'constants/dateTimeFormats';
+import dayjs from 'dayjs';
 import get from 'lodash-es/get';
-import moment from 'moment';
 import React from 'react';
 
 interface IStartEndDateFieldsProps {
@@ -35,14 +35,14 @@ const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
 
   const formattedStartDateValue =
     (rawStartDateValue &&
-      moment(rawStartDateValue).isValid() &&
-      moment(rawStartDateValue).format(DATE_FORMAT.ShortDateFormat)) ||
+      dayjs(rawStartDateValue).isValid() &&
+      dayjs(rawStartDateValue).format(DATE_FORMAT.ShortDateFormat)) ||
     '';
 
   const formattedEndDateValue =
     (rawEndDateValue &&
-      moment(rawEndDateValue).isValid() &&
-      moment(rawEndDateValue).format(DATE_FORMAT.ShortDateFormat)) ||
+      dayjs(rawEndDateValue).isValid() &&
+      dayjs(rawEndDateValue).format(DATE_FORMAT.ShortDateFormat)) ||
     '';
 
   return (

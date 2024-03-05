@@ -1,5 +1,5 @@
 import Chip, { ChipProps } from '@mui/material/Chip';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React from 'react';
 
 const pageStyles = {
@@ -42,7 +42,7 @@ export const ProjectStatusChip: React.FC<{
   let chipLabel;
   let chipStatusClass;
 
-  if (!props.endDate || moment(props.endDate).endOf('day').isAfter(moment())) {
+  if (!props.endDate || dayjs(props.endDate).endOf('day').isAfter(dayjs())) {
     chipLabel = 'Active';
     chipStatusClass = pageStyles.chipActive;
   } else {

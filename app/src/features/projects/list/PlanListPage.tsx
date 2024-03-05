@@ -15,9 +15,9 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectStatusType } from 'constants/misc';
+import dayjs from 'dayjs';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import moment from 'moment';
 import React from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
@@ -54,7 +54,7 @@ const PlanListPage: React.FC<IProjectsListProps> = (props) => {
   const getProjectStatusType = (projectData: IGetProjectForViewResponse): ProjectStatusType => {
     if (
       projectData.project.end_date &&
-      moment(projectData.project.end_date).endOf('day').isBefore(moment())
+      dayjs(projectData.project.end_date).endOf('day').isBefore(dayjs())
     ) {
       return ProjectStatusType.COMPLETED;
     }

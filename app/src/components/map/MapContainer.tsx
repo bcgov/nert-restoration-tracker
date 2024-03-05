@@ -24,8 +24,6 @@ import MarkerClusterGroup, { IMarker } from './components/MarkerCluster';
 import StaticLayers, { IStaticLayer } from './components/StaticLayers';
 import boundary from './layers/north_east_boundary.json';
 
-console.log(boundary);
-
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
