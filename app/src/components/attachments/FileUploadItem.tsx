@@ -5,45 +5,43 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import axios, { CancelTokenSource } from 'axios';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { APIError } from 'hooks/api/useAxios';
 import useIsMounted from 'hooks/useIsMounted';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   uploadProgress: {
-    marginTop: theme.spacing(0.5)
+    marginTop: '0.3rem'
   },
   uploadListItemBox: {
     width: '100%',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: theme.palette.action.disabled,
+    borderColor: 'gray',
     borderRadius: '4px'
   },
   uploadingColor: {
-    color: theme.palette.primary.main
+    color: 'blue'
   },
   completeColor: {
-    color: theme.palette.success.main
+    color: 'gray'
   },
   completeBgColor: {
-    background: theme.palette.success.main
+    background: 'lightgray'
   },
   errorColor: {
-    color: theme.palette.error.main
+    color: 'red'
   },
   errorBgColor: {
-    background: theme.palette.error.main + '44'
+    background: 'lightorange'
   },
   fileIconColor: {
-    color: theme.palette.action.disabled
+    color: 'gray'
   }
-}));
+};
 
 export enum UploadFileStatus {
   STAGED = 'Ready for upload',
@@ -85,7 +83,6 @@ export interface IFileUploadItemProps {
 
 const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
   const isMounted = useIsMounted();
-  const classes = useStyles();
 
   const { uploadHandler, fileHandler, onSuccess } = props;
 
@@ -207,12 +204,12 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
 
   return (
     <ListItem key={file.name} disableGutters>
-      <Box className={classes.uploadListItemBox}>
+      <Box sx={pageStyles.uploadListItemBox}>
         <Box display="flex" flexDirection="row" alignItems="center" p={2} width="100%">
           <Icon
             path={mdiFileOutline}
             size={1.5}
-            className={error ? classes.errorColor : classes.fileIconColor}
+            color={error ? pageStyles.errorColor.color : pageStyles.fileIconColor.color}
           />
           <Box pl={1.5} flex="1 1 auto">
             <Box
@@ -232,7 +229,7 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
 
               {errors && props.errorDetailHandler && (
                 <Box display="flex" alignItems="center">
-                  <Button className={classes.errorColor} onClick={() => setOpenDialog(!openDialog)}>
+                  <Button sx={pageStyles.errorColor} onClick={() => setOpenDialog(!openDialog)}>
                     View Details
                   </Button>
                   <ComponentDialog
@@ -275,8 +272,6 @@ interface IActionButtonProps {
  * @return {*}
  */
 const ActionButton: React.FC<IActionButtonProps> = (props) => {
-  const classes = useStyles();
-
   if (props.status === UploadFileStatus.PENDING || props.status === UploadFileStatus.STAGED) {
     return (
       <IconButton
@@ -304,7 +299,7 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
   if (props.status === UploadFileStatus.COMPLETE) {
     return (
       <Box display="flex" alignItems="center" p={'12px'}>
-        <Icon path={mdiCheck} size={1} className={classes.completeColor} />
+        <Icon path={mdiCheck} size={1} color={pageStyles.completeColor.color} />
       </Box>
     );
   }
@@ -315,7 +310,7 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         title="Remove File"
         aria-label="remove file"
         onClick={() => props.onCancel()}
-        className={classes.errorColor}
+        sx={pageStyles.errorColor}
         size="large">
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
@@ -344,8 +339,6 @@ interface IProgressBarProps {
  * @return {*}
  */
 const ProgressBar: React.FC<IProgressBarProps> = (props) => {
-  const classes = useStyles();
-
   if (props.status === UploadFileStatus.STAGED) {
     return <></>;
   }
@@ -354,8 +347,11 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
     return (
       <LinearProgress
         variant="indeterminate"
-        className={classes.uploadProgress}
-        classes={{ colorPrimary: classes.uploadingColor, barColorPrimary: classes.uploadingColor }}
+        sx={pageStyles.uploadProgress}
+        classes={{
+          colorPrimary: pageStyles.uploadingColor.color,
+          barColorPrimary: pageStyles.uploadingColor.color
+        }}
       />
     );
   }
@@ -365,10 +361,10 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
       <LinearProgress
         variant="determinate"
         value={100}
-        className={classes.uploadProgress}
+        sx={pageStyles.uploadProgress}
         classes={{
-          colorPrimary: classes.completeBgColor,
-          barColorPrimary: classes.completeBgColor
+          colorPrimary: pageStyles.completeBgColor.background,
+          barColorPrimary: pageStyles.completeBgColor.background
         }}
       />
     );
@@ -379,8 +375,11 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
       <LinearProgress
         variant="determinate"
         value={0}
-        className={classes.uploadProgress}
-        classes={{ colorPrimary: classes.errorBgColor, barColorPrimary: classes.errorBgColor }}
+        sx={pageStyles.uploadProgress}
+        classes={{
+          colorPrimary: pageStyles.errorBgColor.background,
+          barColorPrimary: pageStyles.errorBgColor.background
+        }}
       />
     );
   }
@@ -390,8 +389,11 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
     <LinearProgress
       variant="determinate"
       value={props.progress}
-      className={classes.uploadProgress}
-      classes={{ colorPrimary: classes.uploadingColor, barColorPrimary: classes.uploadingColor }}
+      sx={pageStyles.uploadProgress}
+      classes={{
+        colorPrimary: pageStyles.uploadingColor.color,
+        barColorPrimary: pageStyles.uploadingColor.color
+      }}
     />
   );
 };

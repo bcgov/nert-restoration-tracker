@@ -1,8 +1,7 @@
 import Box from '@mui/material/Box';
-import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   projectsLayoutRoot: {
     paddingTop: '20px',
     position: 'relative',
@@ -11,7 +10,7 @@ const useStyles = makeStyles(() => ({
     flex: '1',
     flexDirection: 'column'
   }
-}));
+};
 
 /**
  * Layout for all project pages.
@@ -20,9 +19,7 @@ const useStyles = makeStyles(() => ({
  * @return {*}
  */
 const ProjectsLayout: React.FC = (props) => {
-  const classes = useStyles();
-
-  return <Box className={classes.projectsLayoutRoot}>{props.children}</Box>;
+  return <Box sx={pageStyles.projectsLayoutRoot}>{props.children}</Box>;
 };
 
 export default ProjectsLayout;

@@ -9,7 +9,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { AccessStatusChip } from 'components/chips/RequestChips';
 import RequestDialog from 'components/dialog/RequestDialog';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
@@ -28,14 +27,14 @@ import ReviewAccessRequestForm, {
   ReviewAccessRequestFormYupSchema
 } from './ReviewAccessRequestForm';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   table: {
     tableLayout: 'fixed',
     '& td': {
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 export interface IAccessRequestListProps {
   accessRequests: IGetAccessRequestsListResponse[];
@@ -51,8 +50,6 @@ export interface IAccessRequestListProps {
  */
 const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
   const { accessRequests, codes, refresh } = props;
-
-  const classes = useStyles();
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
@@ -152,7 +149,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
           </Box>
         </Toolbar>
         <TableContainer>
-          <Table className={classes.table}>
+          <Table sx={pageStyles.table}>
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>

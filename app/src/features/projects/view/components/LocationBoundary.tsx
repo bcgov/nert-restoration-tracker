@@ -1,8 +1,5 @@
 import Box from '@mui/material/Box';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { IStaticLayer, IStaticLayerFeature } from 'components/map/components/StaticLayers';
 import MapContainer from 'components/map/MapContainer';
 import {
@@ -13,35 +10,33 @@ import React, { useEffect, useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    mapContainer: {
-      '& dl': {
-        marginBottom: 0
-      },
-      '& dl div + div': {
-        marginTop: theme.spacing(0.75)
-      },
-      '& dd, dt': {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      '& dt': {
-        width: '40%'
-      },
-      '& dd': {
-        width: '60%'
-      },
-      '& dd span': {
-        display: 'inline'
-      },
-      '& ul': {
-        border: '1px solid #ccccccc',
-        borderRadius: '4px'
-      }
+const pageStyles = {
+  mapContainer: {
+    '& dl': {
+      marginBottom: 0
+    },
+    '& dl div + div': {
+      marginTop: '0.5rem'
+    },
+    '& dd, dt': {
+      display: 'inline-block',
+      verticalAlign: 'top'
+    },
+    '& dt': {
+      width: '40%'
+    },
+    '& dd': {
+      width: '60%'
+    },
+    '& dd span': {
+      display: 'inline'
+    },
+    '& ul': {
+      border: '1px solid #ccccccc',
+      borderRadius: '4px'
     }
-  })
-);
+  }
+};
 
 export interface ILocationBoundaryProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -60,8 +55,6 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     projectForViewData: { location },
     treatmentList
   } = props;
-
-  const classes = useStyles();
 
   const [bounds, setBounds] = useState<any[] | undefined>([]);
   const [staticLayers, setStaticLayers] = useState<IStaticLayer[]>([]);
@@ -108,7 +101,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
       height="100%"
       overflow="hidden"
       data-testid="map_container"
-      className={classes.mapContainer}>
+      sx={pageStyles.mapContainer}>
       <MapContainer
         mapId="project_location_form_map"
         staticLayers={staticLayers}

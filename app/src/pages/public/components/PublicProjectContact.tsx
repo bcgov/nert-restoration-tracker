@@ -4,34 +4,20 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
-import {
-  IGetProjectForViewResponse,
-  IGetProjectForViewResponseContactArrayItem
-} from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    projectContactList: {
-      marginBottom: 0,
-      marginLeft: 0,
-      marginRight: 0,
-      padding: 0
-    },
-    contactIcon: {
-      color: '#575759'
-    },
-    agencyOnlyContainer: {
-      alignItems: 'center',
-      fontWeight: 700,
-      '& .contactName, .contactEmail': {
-        display: 'none'
-      }
-    }
-  })
-);
+const pageStyles = {
+  projectContactList: {
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    padding: 0
+  },
+  contactIcon: {
+    color: '#575759'
+  }
+} as const;
 
 export interface IPublicProjectContactProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -45,16 +31,12 @@ export interface IPublicProjectContactProps {
  */
 const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectForViewData }) => {
   const { contact } = projectForViewData;
-  const classes = useStyles();
-
-  const publicContact = ({ is_public }: IGetProjectForViewResponseContactArrayItem) =>
-    !JSON.parse(is_public) ? classes.agencyOnlyContainer : '';
 
   const hasContacts = contact.contacts && contact.contacts.length > 0;
 
   return (
     <>
-      <ul className={classes.projectContactList}>
+      <ul style={pageStyles.projectContactList}>
         {hasContacts &&
           contact.contacts.map((contactDetails, index) => (
             <Box
@@ -63,10 +45,33 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
               flexDirection="row"
               justifyContent="space-between"
               key={index}
-              className={publicContact(contactDetails)}>
-              <Box display="flex" className={publicContact(contactDetails)} pl={1}>
+              sx={
+                !contactDetails.is_public
+                  ? {
+                      alignItems: 'center',
+                      fontWeight: 700,
+                      '& .contactName, .contactEmail': {
+                        display: 'none'
+                      }
+                    }
+                  : {}
+              }>
+              <Box
+                display="flex"
+                pl={1}
+                sx={
+                  !contactDetails.is_public
+                    ? {
+                        alignItems: 'center',
+                        fontWeight: 700,
+                        '& .contactName, .contactEmail': {
+                          display: 'none'
+                        }
+                      }
+                    : {}
+                }>
                 <Icon
-                  className={classes.contactIcon}
+                  color={pageStyles.contactIcon.color}
                   path={JSON.parse(contactDetails.is_public) ? mdiAccountCircleOutline : mdiDomain}
                   size={1}
                 />

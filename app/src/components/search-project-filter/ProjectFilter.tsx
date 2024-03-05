@@ -7,26 +7,23 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteField';
 import { useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
 import ProjectAdvancedFilters from './ProjectAdvancedFilters';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
       marginLeft: '0.5rem'
     }
   },
-
   keywordSearch: {
     height: '52px',
     flex: '1 1 auto',
-    paddingLeft: theme.spacing(1.25),
+    paddingLeft: '1rem',
     display: 'flex',
     alignItems: 'center',
     border: '1px solid rgba(0, 0, 0, 0.23)',
@@ -34,15 +31,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: '#f6f6f6',
     transition: 'all ease-out 0.25s',
     '&:hover': {
-      borderColor: theme.palette.primary.main,
+      borderColor: 'darkblue',
       boxShadow: '0 0 0 1px #003366 inset'
     },
     '&:active': {
-      borderColor: theme.palette.primary.main,
+      borderColor: 'darkblue',
       boxShadow: '0 0 0 1px #003366 inset'
     },
     '&:focus': {
-      borderColor: theme.palette.primary.main,
+      borderColor: 'darkblue',
       boxShadow: '0 0 0 1px #003366 inset'
     }
   },
@@ -61,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: '#38598a',
     textTransform: 'capitalize'
   }
-}));
+};
 
 export const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
   keyword: '',
@@ -113,7 +110,6 @@ export interface IProjectAdvancedFiltersProps {
  * @return {*}
  */
 const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
-  const classes = useStyles();
   const { filterChipParams, contact_agency, funding_agency, region, ranges } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
@@ -210,7 +206,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
         <Grid item xs="auto" key={`${key}${chipValue}`}>
           <Chip
             label={getChipLabel(key, chipValue)}
-            className={classes.chipStyle}
+            sx={pageStyles.chipStyle}
             clickable={false}
             onDelete={() => handleDelete(key, chipValue)}
             deleteIcon={<Icon path={mdiClose} color="white" size={1} />}
@@ -238,7 +234,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
             <Box flex="1 1 auto" display="flex">
               <Input
                 tabIndex={0}
-                className={classes.keywordSearch}
+                sx={pageStyles.keywordSearch}
                 name="keyword"
                 fullWidth
                 startAdornment={
@@ -252,7 +248,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                 value={values.keyword}
               />
               <Button
-                className={classes.filterToggleBtn}
+                sx={pageStyles.filterToggleBtn}
                 size="large"
                 variant="outlined"
                 disableRipple={true}
@@ -270,7 +266,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                 size="large"
                 variant="contained"
                 color="primary"
-                className={classes.filterApplyBtn}
+                sx={pageStyles.filterApplyBtn}
                 onClick={handleFilterUpdate}>
                 Apply
               </Button>
@@ -313,7 +309,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                   variant="outlined"
                   color="primary"
                   size="medium"
-                  className={classes.actionButton}
+                  sx={pageStyles.actionButton}
                   onClick={handleFilterReset}>
                   Reset
                 </Button>

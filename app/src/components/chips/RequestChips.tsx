@@ -1,50 +1,44 @@
 import Chip, { ChipProps } from '@mui/material/Chip';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import clsx from 'clsx';
 import { AdministrativeActivityStatusType } from 'constants/misc';
 import React from 'react';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  chip: {
-    color: 'white'
-  },
+const pageStyles = {
   chipPending: {
-    backgroundColor: theme.palette.primary.main
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: 'gray'
   },
   chipActioned: {
-    backgroundColor: theme.palette.success.main
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: 'green'
   },
   chipRejected: {
-    backgroundColor: theme.palette.error.main
+    color: 'white',
+    fontWeight: 600,
+    letterSpacing: '0.02rem',
+    backgroundColor: 'orange'
   }
-}));
+};
 
 export const AccessStatusChip: React.FC<{ status: string; chipProps?: Partial<ChipProps> }> = (
   props
 ) => {
-  const classes = useStyles();
-
   let chipLabel;
   let chipStatusClass;
 
   if (props.status === AdministrativeActivityStatusType.REJECTED) {
     chipLabel = 'Denied';
-    chipStatusClass = classes.chipRejected;
+    chipStatusClass = pageStyles.chipRejected;
   } else if (props.status === AdministrativeActivityStatusType.ACTIONED) {
     chipLabel = 'Approved';
-    chipStatusClass = classes.chipActioned;
+    chipStatusClass = pageStyles.chipActioned;
   } else {
     chipLabel = 'Pending';
-    chipStatusClass = classes.chipPending;
+    chipStatusClass = pageStyles.chipPending;
   }
 
-  return (
-    <Chip
-      size="small"
-      className={clsx(classes.chip, chipStatusClass)}
-      label={chipLabel}
-      {...props.chipProps}
-    />
-  );
+  return <Chip size="small" sx={chipStatusClass} label={chipLabel} {...props.chipProps} />;
 };

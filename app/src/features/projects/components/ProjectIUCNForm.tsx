@@ -9,8 +9,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
-// import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL } from 'constants/misc';
@@ -18,7 +16,7 @@ import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   iucnInputContainer: {
     overflow: 'hidden'
   },
@@ -32,7 +30,7 @@ const useStyles = makeStyles(() => ({
       textDecoration: 'underline'
     }
   }
-}));
+};
 
 export interface IProjectIUCNFormArrayItem {
   classification: number;
@@ -95,7 +93,6 @@ export interface IProjectIUCNFormProps {
  * @return {*}
  */
 const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
-  const classes = useStyles();
   const { values, handleChange, getFieldMeta, errors } = useFormikContext<IProjectIUCNForm>();
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -110,7 +107,7 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
           designed to reach each of the project's objectives.
           <Button
             color="primary"
-            className={classes.learnMoreBtn}
+            sx={pageStyles.learnMoreBtn}
             data-testid="prop-dialog-btn"
             onClick={() => setOpenDialog(true)}>
             <Typography component="span">Learn more.</Typography>
@@ -141,12 +138,8 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                   mb={1}
                   data-testid="iucn-classification-grid"
                   key={index}>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    className={classes.iucnInputContainer}
-                    mr={1}>
-                    <Box className={classes.iucnInput} py={1}>
+                  <Box display="flex" alignItems="center" sx={pageStyles.iucnInputContainer} mr={1}>
+                    <Box sx={pageStyles.iucnInput} py={1}>
                       <FormControl variant="outlined" fullWidth required={true}>
                         <InputLabel id="classification">Classification</InputLabel>
                         <Select
@@ -178,7 +171,7 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                       <Icon path={mdiArrowRight} size={0.75}></Icon>
                     </Box>
 
-                    <Box className={classes.iucnInput} py={1}>
+                    <Box sx={pageStyles.iucnInput} py={1}>
                       <FormControl variant="outlined" fullWidth required={true}>
                         <InputLabel id="subClassification1">Sub-classification</InputLabel>
                         <Select
@@ -217,7 +210,7 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                       <Icon path={mdiArrowRight} size={0.75}></Icon>
                     </Box>
 
-                    <Box className={classes.iucnInput} py={1}>
+                    <Box sx={pageStyles.iucnInput} py={1}>
                       <FormControl variant="outlined" fullWidth required={true}>
                         <InputLabel id="subClassification2">Sub-classification</InputLabel>
                         <Select
@@ -323,7 +316,7 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
           For a detailed explanation about each classification:
           <Button
             color="primary"
-            className={classes.learnMoreBtn}
+            sx={pageStyles.learnMoreBtn}
             data-testid="prop-dialog-btn"
             onClick={() => openAttachment(ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL)}>
             <Typography component="span">Download CMP Classificiations</Typography>

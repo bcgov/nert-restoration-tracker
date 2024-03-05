@@ -1,20 +1,16 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    partnerItem: {
-      '&:last-child .seperator': {
-        display: 'none'
-      }
+const pageStyles = {
+  partnerItem: {
+    '&:last-child .seperator': {
+      display: 'none'
     }
-  })
-);
+  }
+};
 
 export interface IPartnershipsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -28,8 +24,6 @@ export interface IPartnershipsProps {
  * @return {*}
  */
 const Partnerships: React.FC<IPartnershipsProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: {
       partnerships: { indigenous_partnerships, stakeholder_partnerships }
@@ -63,7 +57,7 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
                 <span
                   key={index}
                   data-testid="indigenous_partners_data"
-                  className={classes.partnerItem}>
+                  style={pageStyles.partnerItem['&:last-child .seperator']}>
                   {codeValue?.name}
                   <span className="seperator">,&nbsp;</span>
                 </span>
@@ -92,7 +86,7 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
                 <span
                   key={index}
                   data-testid="stakeholder_partners_data"
-                  className={classes.partnerItem}>
+                  style={pageStyles.partnerItem['&:last-child .seperator']}>
                   {stakeholderPartnership}
                   <span className="seperator">,&nbsp;</span>
                 </span>

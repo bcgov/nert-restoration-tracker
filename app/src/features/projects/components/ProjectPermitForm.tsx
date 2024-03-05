@@ -12,36 +12,31 @@ import ListItem from '@mui/material/ListItem';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    formButtons: {
-      '& button': {
-        margin: theme.spacing(0.5)
-      }
-    },
-    addRowButton: {
-      fontWeight: 700
-    },
-    customListItem: {
-      paddingTop: 0,
-      paddingBottom: 0,
-      paddingLeft: 0,
-      paddingRight: theme.spacing(8)
-    },
-    input: {
-      display: 'none'
+const pageStyles = {
+  formButtons: {
+    '& button': {
+      margin: '0.3rem'
     }
-  })
-);
+  },
+  addRowButton: {
+    fontWeight: 700
+  },
+  customListItem: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 0,
+    paddingRight: '5rem'
+  },
+  input: {
+    display: 'none'
+  }
+};
 
 export interface IProjectPermitFormArrayItem {
   permit_number: string;
@@ -85,8 +80,6 @@ export const ProjectPermitFormYupSchema = yup.object().shape({
  * @return {*}
  */
 const ProjectPermitForm: React.FC = () => {
-  const classes = useStyles();
-
   const { values, handleChange, getFieldMeta, errors } = useFormikContext<IProjectPermitForm>();
 
   const permitTypes = [
@@ -120,7 +113,7 @@ const ProjectPermitForm: React.FC = () => {
                 <Grid container spacing={3} key={index}>
                   <Grid item xs={12} md={6}>
                     <List>
-                      <ListItem className={classes.customListItem}>
+                      <ListItem sx={pageStyles.customListItem}>
                         <Grid container spacing={3}>
                           <Grid item xs={6}>
                             <FormControl fullWidth variant="outlined">

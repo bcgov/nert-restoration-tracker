@@ -12,7 +12,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { CustomMenuButton } from 'components/toolbar/ActionToolbars';
@@ -30,7 +29,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectParticipantsHeader from './ProjectParticipantsHeader';
 
-const useStyles = makeStyles((theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
@@ -38,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   teamMembersToolbar: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingLeft: '1rem',
+    paddingRight: '1rem'
   },
   teamMembersTable: {
     tableLayout: 'fixed',
@@ -47,14 +46,12 @@ const useStyles = makeStyles((theme) => ({
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 const ProjectParticipantsPage: React.FC = () => {
   const urlParams = useParams();
   const dialogContext = useContext(DialogContext);
   const restorationTrackerApi = useRestorationTrackerApi();
-
-  const classes = useStyles();
 
   const [isLoadingProject, setIsLoadingProject] = useState(true);
   const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
@@ -264,13 +261,13 @@ const ProjectParticipantsPage: React.FC = () => {
       <Container maxWidth="xl">
         <Box my={3}>
           <Paper>
-            <Toolbar className={classes.teamMembersToolbar}>
+            <Toolbar sx={pageStyles.teamMembersToolbar}>
               <Typography variant="h2" color="inherit">
                 Team Members
               </Typography>
             </Toolbar>
 
-            <Table className={classes.teamMembersTable}>
+            <Table sx={pageStyles.teamMembersTable}>
               <TableHead>
                 <TableRow>
                   <TableCell>Username</TableCell>

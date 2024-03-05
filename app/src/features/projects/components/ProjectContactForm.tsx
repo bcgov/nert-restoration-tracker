@@ -8,10 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import EditDialog from 'components/dialog/EditDialog';
 import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
@@ -43,7 +41,7 @@ export const ProjectContactYupSchema = yup.object().shape({
 
 export type IProjectContactFormProps = IProjectContactItemFormProps;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   legend: {
     marginTop: '1rem',
     float: 'left',
@@ -59,13 +57,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 700
   },
   titleDesc: {
-    marginLeft: theme.spacing(1),
+    marginLeft: '0.5rem',
     fontWeight: 400
   },
   contactListItem: {
     padding: 0,
     '& + li': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   },
   contactListItemInner: {
@@ -74,9 +72,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'hidden'
   },
   contactListItemToolbar: {
-    paddingRight: theme.spacing(2)
+    paddingRight: '1rem'
   }
-}));
+};
 
 /**
  * Create project - contact section
@@ -84,8 +82,6 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @return {*}
  */
 const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_agency }) => {
-  const classes = useStyles();
-
   const { values } = useFormikContext<IProjectContactForm>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,10 +151,10 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                   </ListItem>
                 )}
                 {values.contact.contacts.map((contact, index) => (
-                  <ListItem dense className={classes.contactListItem} key={index}>
-                    <Paper className={classes.contactListItemInner}>
-                      <Toolbar className={classes.contactListItemToolbar}>
-                        <Typography className={classes.title}>
+                  <ListItem dense sx={pageStyles.contactListItem} key={index}>
+                    <Paper sx={pageStyles.contactListItemInner}>
+                      <Toolbar sx={pageStyles.contactListItemToolbar}>
+                        <Typography sx={pageStyles.title}>
                           {`${contact.first_name} ${contact.last_name}`}
                           {JSON.parse(contact.is_primary) && (
                             <Box ml={1} component="sup">

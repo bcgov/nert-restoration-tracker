@@ -1,20 +1,16 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { getFormattedAmount, getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    projectFundingList: {
-      margin: 0,
-      padding: 0
-    }
-  })
-);
+const pageStyles = {
+  projectFundingList: {
+    margin: 0,
+    padding: 0
+  }
+};
 
 export interface IProjectFundingProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -27,8 +23,6 @@ export interface IProjectFundingProps {
  * @return {*}
  */
 const FundingSource: React.FC<IProjectFundingProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: { funding }
   } = props;
@@ -37,7 +31,7 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
 
   return (
     <>
-      <ul className={classes.projectFundingList}>
+      <ul style={pageStyles.projectFundingList}>
         {hasFundingSources &&
           funding.fundingSources.map((item: any, index: number) => (
             <li key={index} data-testid="funding_data">

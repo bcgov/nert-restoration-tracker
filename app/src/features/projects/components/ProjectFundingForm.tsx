@@ -8,10 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Paper from '@mui/material/Paper';
-import { Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
 import EditDialog from 'components/dialog/EditDialog';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
@@ -53,7 +51,7 @@ export interface IProjectFundingFormProps {
   investment_action_category: IInvestmentActionCategoryOption[];
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   title: {
     flexGrow: 1,
     marginRight: '1rem',
@@ -63,13 +61,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 700
   },
   titleDesc: {
-    marginLeft: theme.spacing(1),
+    marginLeft: '0.5rem',
     fontWeight: 400
   },
   fundingListItem: {
     padding: 0,
     '& + li': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   },
   fundingListItemInner: {
@@ -78,9 +76,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'hidden'
   },
   fundingListItemToolbar: {
-    paddingRight: theme.spacing(2)
+    paddingRight: '1rem'
   }
-}));
+};
 
 /**
  * Create project - Funding section
@@ -88,8 +86,6 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @return {*}
  */
 const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
-  const classes = useStyles();
-
   const { values } = useFormikContext<IProjectFundingForm>();
 
   // Tracks information about the current funding source item that is being added/edited
@@ -171,13 +167,13 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                   )?.[0]?.label;
 
                   return (
-                    <ListItem dense className={classes.fundingListItem} key={index}>
-                      <Paper className={classes.fundingListItemInner}>
-                        <Toolbar className={classes.fundingListItemToolbar}>
-                          <Typography className={classes.title}>
+                    <ListItem dense sx={pageStyles.fundingListItem} key={index}>
+                      <Paper sx={pageStyles.fundingListItemInner}>
+                        <Toolbar sx={pageStyles.fundingListItemToolbar}>
+                          <Typography sx={pageStyles.title}>
                             {getCodeValueNameByID(props.fundingSources, fundingSource.agency_id)}
                             {investment_action_category_label && (
-                              <span className={classes.titleDesc}>
+                              <span style={pageStyles.titleDesc}>
                                 ({investment_action_category_value})
                               </span>
                             )}
