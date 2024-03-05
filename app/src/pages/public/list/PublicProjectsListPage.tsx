@@ -16,9 +16,9 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectStatusType } from 'constants/misc';
+import dayjs from 'dayjs';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectsListResponse } from 'interfaces/useProjectApi.interface';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
@@ -65,7 +65,7 @@ const PublicProjectsListPage = () => {
   }, [restorationTrackerApi, isLoading]);
 
   const getProjectStatusType = (projectData: IGetProjectsListResponse): ProjectStatusType => {
-    if (projectData.end_date && moment(projectData.end_date).endOf('day').isBefore(moment())) {
+    if (projectData.end_date && dayjs(projectData.end_date).endOf('day').isBefore(dayjs())) {
       return ProjectStatusType.COMPLETED;
     }
 
