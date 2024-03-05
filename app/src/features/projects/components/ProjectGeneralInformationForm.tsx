@@ -44,6 +44,7 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
       .max(3000, 'Cannot exceed 3000 characters')
       .required('You must provide objectives for the project')
   })
+  // This part of the form is not yet implemented
   // species: yup.object().shape({
   //   focal_species: yup.array().min(1, 'You must specify a focal species').required('Required')
   // })

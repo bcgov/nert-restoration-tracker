@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import React from 'react';
 import {
   FeatureGroup,
+  GeoJSON,
   LayersControl,
   MapContainer as LeafletMapContainer,
   ZoomControl
@@ -21,6 +22,9 @@ import EventHandler from './components/EventHandler';
 import FullScreenScrollingEventHandler from './components/FullScreenScrollingEventHandler';
 import MarkerClusterGroup, { IMarker } from './components/MarkerCluster';
 import StaticLayers, { IStaticLayer } from './components/StaticLayers';
+import boundary from './layers/north_east_boundary.json';
+
+console.log(boundary);
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -68,7 +72,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     <LeafletMapContainer
       id={mapId}
       style={{ height: '100%' }}
-      center={[53, -124]}
+      center={[57, -124]}
       zoom={zoom || 7}
       minZoom={3}
       maxZoom={17}
@@ -107,6 +111,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
         <BaseLayerControls />
       </LayersControl>
+
+      <GeoJSON data={boundary} />
     </LeafletMapContainer>
   );
 };
