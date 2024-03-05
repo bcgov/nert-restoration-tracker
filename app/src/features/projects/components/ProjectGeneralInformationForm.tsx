@@ -43,10 +43,10 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
       .string()
       .max(3000, 'Cannot exceed 3000 characters')
       .required('You must provide objectives for the project')
-  }),
-  species: yup.object().shape({
-    focal_species: yup.array().min(1, 'You must specify a focal species').required('Required')
   })
+  // species: yup.object().shape({
+  //   focal_species: yup.array().min(1, 'You must specify a focal species').required('Required')
+  // })
 });
 
 /**
@@ -122,7 +122,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
               <MultiAutocompleteFieldVariableSize
                 id="species.focal_species"
                 label="Focal Species"
-                required={true}
+                required={false}
                 type="api-search"
                 getInitList={handleGetInitList}
                 search={handleSearch}
