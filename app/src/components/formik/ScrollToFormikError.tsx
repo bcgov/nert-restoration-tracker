@@ -32,7 +32,7 @@ export const ScrollToFormikError: React.FC = () => {
 
     const getAllFieldErrorNames = (obj: object, prefix = '', result: string[] = []) => {
       Object.keys(obj).forEach((key) => {
-        const value = obj[key];
+        const value = (obj as Record<string, any>)[key];
         if (!value) return;
 
         key = Number(key) || key === '0' ? `[${key}]` : key;

@@ -2,7 +2,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useFormikContext } from 'formik';
 import get from 'lodash-es/get';
-import React, { ChangeEvent } from 'react';
+import React, { SyntheticEvent } from 'react';
 
 export interface IAutocompleteFieldOption<T extends string | number> {
   value: T;
@@ -17,18 +17,14 @@ export interface IAutocompleteField<T extends string | number> {
   required?: boolean;
   filterLimit?: number;
   onChange?: (
-    event: ChangeEvent<Record<string, unknown>>,
+    event: SyntheticEvent<Element, Event>,
     option: IAutocompleteFieldOption<T> | null
   ) => void;
 }
 
 // To be used when you want an autocomplete field with no freesolo allowed but only one option can be selected
 
-const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <
-  T extends string | number
->(
-  props: IAutocompleteField<T>
-) => {
+const AutocompleteField = <T extends string | number>(props: IAutocompleteField<T>) => {
   const { touched, errors, setFieldValue, values } =
     useFormikContext<IAutocompleteFieldOption<T>>();
 
@@ -63,10 +59,13 @@ const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <
       data-testid={props.id}
       value={getExistingValue(get(values, props.name))}
       options={props.options}
-      getOptionLabel={(option) => option.label}
+      getOptionLabel={(option: { label: any }) => option.label}
       isOptionEqualToValue={handleGetOptionSelected}
       filterOptions={createFilterOptions({ limit: props.filterLimit })}
-      onChange={(event, option) => {
+      onChange={(
+        event: React.SyntheticEvent<Element, Event>,
+        option: IAutocompleteFieldOption<T> | null
+      ) => {
         if (props.onChange) {
           props.onChange(event, option);
           return;
@@ -74,7 +73,7 @@ const AutocompleteField: React.FC<IAutocompleteField<string | number>> = <
 
         setFieldValue(props.name, option?.value);
       }}
-      renderInput={(params) => (
+      renderInput={(params: any) => (
         <TextField
           {...params}
           name={props.name}

@@ -1,10 +1,10 @@
-import { LatLngExpression } from 'leaflet';
+import { LatLngTuple } from 'leaflet';
 import React, { ReactElement } from 'react';
 import { Marker } from 'react-leaflet';
 import { default as ReactLeafletMarkerClusterGroup } from 'react-leaflet-cluster';
 
 export interface IMarker {
-  position: LatLngExpression;
+  position: LatLngTuple;
   popup?: ReactElement;
 }
 

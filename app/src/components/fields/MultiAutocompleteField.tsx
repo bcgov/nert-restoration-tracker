@@ -1,6 +1,7 @@
 import CheckBox from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import { useFormikContext } from 'formik';
@@ -50,20 +51,24 @@ const MultiAutocompleteField: React.FC<IMultiAutocompleteField> = (props) => {
       value={getExistingValue(get(values, props.id))}
       id={props.id}
       options={props.options}
-      getOptionLabel={(option) => option.label}
+      getOptionLabel={(option: { label: any }) => option.label}
       isOptionEqualToValue={handleGetOptionSelected}
       filterOptions={createFilterOptions({ limit: props.filterLimit })}
       disableCloseOnSelect
-      onChange={(event, option) => {
+      onChange={(event: any, option: any[]) => {
         setFieldValue(
           props.id,
           option.map((item) => item.value)
         );
       }}
-      renderOption={(option, { selected }) => {
+      renderOption={(
+        renderProps: React.HTMLAttributes<HTMLLIElement>,
+        option: IMultiAutocompleteFieldOption,
+        { selected }: any
+      ) => {
         const disabled: any = props.options && props.options?.indexOf(option) !== -1;
         return (
-          <>
+          <Box component="li" {...renderProps}>
             <Checkbox
               icon={<CheckBoxOutlineBlank fontSize="small" />}
               checkedIcon={<CheckBox fontSize="small" />}
@@ -73,10 +78,10 @@ const MultiAutocompleteField: React.FC<IMultiAutocompleteField> = (props) => {
               value={option.value}
             />
             {option.label}
-          </>
+          </Box>
         );
       }}
-      renderInput={(params) => (
+      renderInput={(params: any) => (
         <TextField
           {...params}
           required={props.required}
