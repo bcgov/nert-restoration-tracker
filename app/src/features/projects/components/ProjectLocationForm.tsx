@@ -18,7 +18,6 @@ import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
-import { ProjectAttachmentValidExtensions } from 'constants/attachments';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
@@ -233,7 +232,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
-            acceptedFileExtensions: ProjectAttachmentValidExtensions.SPATIAL
+            acceptedFileExtensions: {
+              'application/vnd.google-earth.kml+xml': ['.kml'],
+              'application/octet-stream': ['.gpx'],
+              'application/zip': ['.zip']
+            }
           }}
         />
       </ComponentDialog>

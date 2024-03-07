@@ -67,7 +67,7 @@ export interface IDropZoneConfigProps {
    * @type {string}
    * @memberof IDropZoneConfigProps
    */
-  acceptedFileExtensions?: string;
+  acceptedFileExtensions?: { [key: string]: string[] };
 }
 
 export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props) => {
@@ -76,7 +76,12 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
   const maxNumFiles = props.maxNumFiles || config?.MAX_UPLOAD_NUM_FILES;
   const maxFileSize = props.maxFileSize || config?.MAX_UPLOAD_FILE_SIZE;
   const multiple = props.multiple ?? true;
-  const acceptedFileExtensions = props.acceptedFileExtensions;
+  // const acceptedFileExtensions = props.acceptedFileExtensions;
+  const acceptedFileExtensions = {
+    'application/vnd.google-earth.kml+xml': ['.kml'],
+    'application/octet-stream': ['.gpx'],
+    'application/zip': ['.zip']
+  };
 
   return (
     <Box className="dropZoneContainer">

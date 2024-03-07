@@ -110,7 +110,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
         <BaseLayerControls />
       </LayersControl>
 
-      <GeoJSON data={boundary} />
+      <GeoJSON data={boundary as unknown as Feature} />
     </LeafletMapContainer>
   );
 };

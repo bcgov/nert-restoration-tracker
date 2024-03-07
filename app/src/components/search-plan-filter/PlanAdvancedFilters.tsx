@@ -102,9 +102,14 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   name="funding_agency"
                   labelId="funding_agency-label"
                   label="Funding Agencies"
-                  value={values.funding_agency?.toString() ? values.funding_agency : []}
+                  value={
+                    (values.funding_agency?.toString() ? values.funding_agency : []) as
+                      | number
+                      | ''
+                      | undefined
+                  }
                   onChange={handleChange}
-                  defaultValue={[]}
+                  defaultValue={[] as unknown as number | undefined}
                   multiple
                   displayEmpty
                   inputProps={{

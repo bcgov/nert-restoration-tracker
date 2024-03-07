@@ -217,7 +217,6 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
           </IconButton>
           <Menu
             sx={pageStyles.uploadMenu}
-            getContentAnchorEl={null}
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right'

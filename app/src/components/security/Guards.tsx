@@ -23,7 +23,8 @@ interface IGuardProps<T = never> {
  * @return {*}
  */
 export const RoleGuard: React.FC<
-  { validSystemRoles: SYSTEM_ROLE[]; validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number>
+  { validSystemRoles: SYSTEM_ROLE[]; validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number> &
+    React.PropsWithChildren
 > = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -65,7 +66,8 @@ export const RoleGuard: React.FC<
  * @return {*}
  */
 export const NoRoleGuard: React.FC<
-  { validSystemRoles: SYSTEM_ROLE[]; validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number>
+  { validSystemRoles: SYSTEM_ROLE[]; validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number> &
+    React.PropsWithChildren
 > = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -99,9 +101,9 @@ export const NoRoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const SystemRoleGuard: React.FC<{ validSystemRoles: SYSTEM_ROLE[] } & IGuardProps> = (
-  props
-) => {
+export const SystemRoleGuard: React.FC<
+  { validSystemRoles: SYSTEM_ROLE[] } & IGuardProps & React.PropsWithChildren
+> = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
@@ -132,7 +134,7 @@ export const SystemRoleGuard: React.FC<{ validSystemRoles: SYSTEM_ROLE[] } & IGu
  * @return {*}
  */
 export const ProjectRoleGuard: React.FC<
-  { validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number>
+  { validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number> & React.PropsWithChildren
 > = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -164,7 +166,7 @@ export const ProjectRoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const AuthGuard: React.FC<IGuardProps> = (props) => {
+export const AuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (isAuthenticated(keycloakWrapper)) {
@@ -190,7 +192,7 @@ export const AuthGuard: React.FC<IGuardProps> = (props) => {
  * @param {*} props
  * @return {*}
  */
-export const UnAuthGuard: React.FC<IGuardProps> = (props) => {
+export const UnAuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (!isAuthenticated(keycloakWrapper)) {

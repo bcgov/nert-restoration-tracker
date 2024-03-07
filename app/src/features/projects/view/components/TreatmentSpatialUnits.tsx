@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { ProjectAttachmentValidExtensions } from 'constants/attachments';
 import { attachmentType } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
@@ -226,7 +225,11 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
         <FileUpload
           uploadHandler={handleUpload()}
           dropZoneProps={{
-            acceptedFileExtensions: ProjectAttachmentValidExtensions.SPATIAL
+            acceptedFileExtensions: {
+              'application/vnd.google-earth.kml+xml': ['.kml'],
+              'application/octet-stream': ['.gpx'],
+              'application/zip': ['.zip']
+            }
           }}
           errorDetailHandler={errorDetailHandler}
         />

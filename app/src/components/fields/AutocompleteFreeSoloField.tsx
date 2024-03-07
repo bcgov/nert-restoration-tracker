@@ -30,12 +30,12 @@ const AutocompleteFreeSoloField: React.FC<IAutocompleteFreeSoloField> = (props) 
       data-testid={id}
       value={get(values, name)}
       options={options}
-      getOptionLabel={(option) => option}
+      getOptionLabel={(option: any) => option}
       filterOptions={createFilterOptions({ limit: filterLimit })}
-      onChange={(event, option) => {
+      onChange={(event: any, option: any) => {
         setFieldValue(name, option);
       }}
-      renderInput={(params) => (
+      renderInput={(params: any) => (
         <TextField
           {...params}
           required={required}
@@ -43,7 +43,7 @@ const AutocompleteFreeSoloField: React.FC<IAutocompleteFreeSoloField> = (props) 
           variant="outlined"
           fullWidth
           error={get(touched, name) && Boolean(get(errors, name))}
-          helperText={get(touched, name) && get(errors, name)}
+          helperText={get(touched, name) && (get(errors, name) as string)}
         />
       )}
     />
