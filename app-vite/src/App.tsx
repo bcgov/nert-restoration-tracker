@@ -1,35 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import CircularProgress from "@mui/material/CircularProgress";
+import { ThemeProvider } from "@mui/material/styles";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import AppRouter from "AppRouter";
+import { AuthStateContextProvider } from "contexts/authStateContext";
+import { ConfigContext, ConfigContextProvider } from "contexts/configContext";
+import Keycloak from "keycloak-js";
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import appTheme from "themes/appTheme";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <ThemeProvider theme={appTheme}>
+      <ConfigContextProvider>
+        <ConfigContext.Consumer>
+          {(config) => {
+            if (!config) {
+              return <CircularProgress className="pageProgress" size={40} />;
+            }
 
-export default App
+            const keycloak = new Keycloak(config.KEYCLOAK_CONFIG);
+
+            return (
+              <ReactKeycloakProvider
+                authClient={keycloak}
+                initOptions={{ pkceMethod: "S256" }}
+                LoadingComponent={
+                  <CircularProgress className="pageProgress" size={40} />
+                }
+              >
+                <AuthStateContextProvider>
+                  <BrowserRouter>
+                    <AppRouter />
+                  </BrowserRouter>
+                </AuthStateContextProvider>
+              </ReactKeycloakProvider>
+            );
+          }}
+        </ConfigContext.Consumer>
+      </ConfigContextProvider>
+    </ThemeProvider>
+  );
+};
+
+export default App;
