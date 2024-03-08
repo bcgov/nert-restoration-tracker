@@ -1,15 +1,15 @@
-import { mdiArrowRight, mdiDoorClosedLock, mdiDoorOpen } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import { ConfigContext } from 'contexts/configContext';
-import React, { useContext, useEffect } from 'react';
-import { getLogOutUrl } from 'utils/Utils';
+import { mdiArrowRight, mdiDoorClosedLock, mdiDoorOpen } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import { ConfigContext } from "../../contexts/configContext";
+import React, { useContext, useEffect } from "react";
+import { getLogOutUrl } from "../../utils/Utils";
 
 const pageStyles = {
   icon: {
-    color: 'darkblue'
-  }
+    color: "darkblue",
+  },
 };
 
 const LogOutPage = () => {

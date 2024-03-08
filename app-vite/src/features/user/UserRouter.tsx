@@ -1,8 +1,8 @@
-import ProjectsLayout from 'features/projects/ProjectsLayout';
-import React from 'react';
-import { Redirect, Switch } from 'react-router';
-import AppRoute from 'utils/AppRoute';
-import MyProjectsPage from './MyProjectsPlansListPage';
+import ProjectsLayout from "../../features/projects/ProjectsLayout";
+import React from "react";
+import { Redirect, Routes } from "react-router";
+import AppRoute from "../../utils/AppRoute";
+import MyProjectsPage from "./MyProjectsPlansListPage";
 
 /**
  * Router for all user specific pages.
@@ -12,7 +12,7 @@ import MyProjectsPage from './MyProjectsPlansListPage';
  */
 const UserRouter: React.FC = () => {
   return (
-    <Switch>
+    <Routes>
       <Redirect exact from="/admin/user" to="/admin/user/projects" />
 
       <AppRoute exact path="/admin/user/projects" layout={ProjectsLayout}>
@@ -25,7 +25,7 @@ const UserRouter: React.FC = () => {
       <AppRoute path="/admin/user/projects/*">
         <Redirect to="/page-not-found" />
       </AppRoute>
-    </Switch>
+    </Routes>
   );
 };
 

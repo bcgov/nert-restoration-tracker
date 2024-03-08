@@ -1,13 +1,13 @@
-import { mdiCheck } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import { AuthStateContext } from 'contexts/authStateContext';
-import React, { useContext } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import { mdiCheck } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import { AuthStateContext } from "../../contexts/authStateContext";
+import React, { useContext } from "react";
+import { Redirect, useHistory } from "react-router";
 
 const RequestSubmitted = () => {
   const history = useHistory();
@@ -21,12 +21,12 @@ const RequestSubmitted = () => {
 
   if (keycloakWrapper?.systemRoles.length) {
     // User already has a role
-    return <Redirect to={{ pathname: '/admin/projects' }} />;
+    return <Redirect to={{ pathname: "/admin/projects" }} />;
   }
 
   if (!keycloakWrapper.hasAccessRequest) {
     // User has no pending access request
-    return <Redirect to={{ pathname: '/' }} />;
+    return <Redirect to={{ pathname: "/" }} />;
   }
 
   return (
@@ -34,17 +34,20 @@ const RequestSubmitted = () => {
       <Box pt={6} textAlign="center">
         <Icon path={mdiCheck} size={2} color="#4caf50" />
         <h1>Access Request Submitted</h1>
-        <Typography>Your access request has been submitted for review.</Typography>
+        <Typography>
+          Your access request has been submitted for review.
+        </Typography>
         <Box pt={4}>
           <Button
             onClick={() => {
-              history.push('/logout');
+              history.push("/logout");
             }}
             type="submit"
             size="large"
             variant="contained"
             color="primary"
-            data-testid="logout-button">
+            data-testid="logout-button"
+          >
             Log Out
           </Button>
         </Box>

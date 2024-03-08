@@ -1,22 +1,27 @@
-import useKeycloakWrapper, { IKeycloakWrapper } from 'hooks/useKeycloakWrapper';
-import React from 'react';
+import useKeycloakWrapper, {
+  IKeycloakWrapper,
+} from "../hooks/useKeycloakWrapper";
+import React from "react";
 
 export interface IAuthState {
   keycloakWrapper?: IKeycloakWrapper;
 }
 
 export const AuthStateContext = React.createContext<IAuthState>({
-  keycloakWrapper: undefined
+  keycloakWrapper: undefined,
 });
 
-export const AuthStateContextProvider: React.FC<React.PropsWithChildren> = (props) => {
+export const AuthStateContextProvider: React.FC<React.PropsWithChildren> = (
+  props
+) => {
   const keycloakWrapper = useKeycloakWrapper();
 
   return (
     <AuthStateContext.Provider
       value={{
-        keycloakWrapper
-      }}>
+        keycloakWrapper,
+      }}
+    >
       {props.children}
     </AuthStateContext.Provider>
   );
