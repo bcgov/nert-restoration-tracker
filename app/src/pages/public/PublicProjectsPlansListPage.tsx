@@ -4,7 +4,7 @@ import Divider from '@mui/material/Divider';
 import { AuthStateContext } from 'contexts/authStateContext';
 import React, { useContext } from 'react';
 import { Redirect } from 'react-router';
-// import PublicPlansListPage from './list/PublicPlansListPage';
+import PublicPlansListPage from './list/PublicPlansListPage';
 import PublicProjectsListPage from './list/PublicProjectsListPage';
 
 const PublicProjectsPlansListPage = () => {
@@ -21,7 +21,7 @@ const PublicProjectsPlansListPage = () => {
       <Box mt={1} mb={1}>
         <Divider aria-hidden="true" color="lightgray" />
       </Box>
-      {/* <PublicPlansListPage /> */}
+      <PublicPlansListPage />
     </Container>
   );
 };
