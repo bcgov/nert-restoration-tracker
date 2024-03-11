@@ -3,46 +3,56 @@ import {
   mdiInformationOutline,
   mdiMenuDown,
   mdiPlus,
-  mdiTrashCanOutline
-} from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import EditDialog from 'components/dialog/EditDialog';
-import { CustomMenuButton, CustomMenuIconButton } from 'components/toolbar/ActionToolbars';
-import { AddSystemUserI18N, DeleteSystemUserI18N, UpdateSystemUserI18N } from 'constants/i18n';
-import { DialogContext, ISnackbarProps } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetUserResponse } from 'interfaces/useUserApi.interface';
-import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
-import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
+  mdiTrashCanOutline,
+} from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import EditDialog from "../../../components/dialog/EditDialog";
+import {
+  CustomMenuButton,
+  CustomMenuIconButton,
+} from "../../../components/toolbar/ActionToolbars";
+import {
+  AddSystemUserI18N,
+  DeleteSystemUserI18N,
+  UpdateSystemUserI18N,
+} from "../../../constants/i18n";
+import { DialogContext, ISnackbarProps } from "../../../contexts/dialogContext";
+import { APIError } from "../../../hooks/api/useAxios";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import { IGetAllCodeSetsResponse } from "../../../interfaces/useCodesApi.interface";
+import { IGetUserResponse } from "../../../interfaces/useUserApi.interface";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router";
+import {
+  handleChangePage,
+  handleChangeRowsPerPage,
+} from "../../../utils/tablePaginationUtils";
 import AddSystemUsersForm, {
   AddSystemUsersFormInitialValues,
   AddSystemUsersFormYupSchema,
-  IAddSystemUsersForm
-} from './AddSystemUsersForm';
+  IAddSystemUsersForm,
+} from "./AddSystemUsersForm";
 
 const pageStyles = {
   table: {
-    tableLayout: 'fixed',
-    '& td': {
-      verticalAlign: 'middle'
-    }
-  }
+    tableLayout: "fixed",
+    "& td": {
+      verticalAlign: "middle",
+    },
+  },
 };
 
 export interface IActiveUsersListProps {
@@ -60,7 +70,7 @@ export interface IActiveUsersListProps {
 const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
   const restorationTrackerApi = useRestorationTrackerApi();
   const { activeUsers, codes } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [page, setPage] = useState(0);
@@ -74,16 +84,17 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
 
   const handleRemoveUserClick = (row: IGetUserResponse) => {
     dialogContext.setYesNoDialog({
-      dialogTitle: 'Remove User?',
+      dialogTitle: "Remove User?",
       dialogContent: (
         <Typography variant="body1" component="div" color="textSecondary">
-          Removing user <strong>{row.user_identifier}</strong> will revoke their access to this
-          application and all related projects. Are you sure you want to proceed?
+          Removing user <strong>{row.user_identifier}</strong> will revoke their
+          access to this application and all related projects. Are you sure you
+          want to proceed?
         </Typography>
       ),
-      yesButtonLabel: 'Remove User',
-      noButtonLabel: 'Cancel',
-      yesButtonProps: { color: 'secondary' },
+      yesButtonLabel: "Remove User",
+      noButtonLabel: "Cancel",
+      yesButtonProps: { color: "secondary" },
       onClose: () => {
         dialogContext.setYesNoDialog({ open: false });
       },
@@ -94,7 +105,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       onYes: () => {
         deActivateSystemUser(row);
         dialogContext.setYesNoDialog({ open: false });
-      }
+      },
     });
   };
 
@@ -109,11 +120,12 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         snackbarMessage: (
           <>
             <Typography variant="body2" component="div">
-              User <strong>{user.user_identifier}</strong> removed from application.
+              User <strong>{user.user_identifier}</strong> removed from
+              application.
             </Typography>
           </>
         ),
-        open: true
+        open: true,
       });
 
       props.refresh();
@@ -131,7 +143,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         },
         onOk: () => {
           dialogContext.setErrorDialog({ open: false });
-        }
+        },
       });
     }
   };
@@ -142,16 +154,16 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
     newRoleId: number
   ) => {
     dialogContext.setYesNoDialog({
-      dialogTitle: 'Change User Role?',
+      dialogTitle: "Change User Role?",
       dialogContent: (
         <Typography variant="body1" color="textSecondary">
-          Change user <strong>{row.user_identifier}</strong>'s role to{' '}
+          Change user <strong>{row.user_identifier}</strong>'s role to{" "}
           <strong>{newRoleName}</strong>?
         </Typography>
       ),
-      yesButtonLabel: 'Change Role',
-      noButtonLabel: 'Cancel',
-      yesButtonProps: { color: 'primary' },
+      yesButtonLabel: "Change Role",
+      noButtonLabel: "Cancel",
+      yesButtonProps: { color: "primary" },
       onClose: () => {
         dialogContext.setYesNoDialog({ open: false });
       },
@@ -162,11 +174,15 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       onYes: () => {
         changeSystemUserRole(row, newRoleId, newRoleName);
         dialogContext.setYesNoDialog({ open: false });
-      }
+      },
     });
   };
 
-  const changeSystemUserRole = async (user: IGetUserResponse, roleId: number, roleName: string) => {
+  const changeSystemUserRole = async (
+    user: IGetUserResponse,
+    roleId: number,
+    roleName: string
+  ) => {
     if (!user?.id) {
       return;
     }
@@ -179,12 +195,12 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         snackbarMessage: (
           <>
             <Typography variant="body2" component="div">
-              User <strong>{user.user_identifier}</strong>'s role has changed to{' '}
+              User <strong>{user.user_identifier}</strong>'s role has changed to{" "}
               <strong>{roleName}</strong>.
             </Typography>
           </>
         ),
-        open: true
+        open: true,
       });
 
       props.refresh();
@@ -201,7 +217,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         },
         onOk: () => {
           dialogContext.setErrorDialog({ open: false });
-        }
+        },
       });
     }
   };
@@ -224,10 +240,10 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            {values.systemUsers.length} system {values.systemUsers.length > 1 ? 'users' : 'user'}{' '}
-            added.
+            {values.systemUsers.length} system{" "}
+            {values.systemUsers.length > 1 ? "users" : "user"} added.
           </Typography>
-        )
+        ),
       });
     } catch (error) {
       const apiError = error as APIError;
@@ -242,7 +258,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         },
         onOk: () => {
           dialogContext.setErrorDialog({ open: false });
-        }
+        },
       });
     }
   };
@@ -254,10 +270,13 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
           <Grid
             justifyContent="space-between" // Add it here :)
             container
-            alignItems="center">
+            alignItems="center"
+          >
             <Grid item>
               <Box px={2}>
-                <Typography variant="h2">Active Users ({activeUsers?.length || 0})</Typography>
+                <Typography variant="h2">
+                  Active Users ({activeUsers?.length || 0})
+                </Typography>
               </Box>
             </Grid>
 
@@ -268,9 +287,10 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                   variant="outlined"
                   disableElevation
                   data-testid="invite-system-users-button"
-                  aria-label={'Add Users'}
+                  aria-label={"Add Users"}
                   startIcon={<Icon path={mdiPlus} size={1} />}
-                  onClick={() => setOpenAddUserDialog(true)}>
+                  onClick={() => setOpenAddUserDialog(true)}
+                >
                   <strong>Add Users</strong>
                 </Button>
               </Box>
@@ -290,8 +310,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
             </TableHead>
             <TableBody data-testid="active-users-table">
               {!activeUsers?.length && (
-                <TableRow data-testid={'active-users-row-0'}>
-                  <TableCell colSpan={6} style={{ textAlign: 'center' }}>
+                <TableRow data-testid={"active-users-row-0"}>
+                  <TableCell colSpan={6} style={{ textAlign: "center" }}>
                     No Active Users
                   </TableCell>
                 </TableRow>
@@ -300,16 +320,23 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                 activeUsers
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
-                    <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
+                    <TableRow
+                      data-testid={`active-user-row-${index}`}
+                      key={row.id}
+                    >
                       <TableCell>
-                        <strong>{row.user_identifier || 'Not Applicable'}</strong>
+                        <strong>
+                          {row.user_identifier || "Not Applicable"}
+                        </strong>
                       </TableCell>
                       <TableCell>
                         <Box m={-1}>
                           <CustomMenuButton
-                            buttonLabel={row.role_names.join(', ') || 'Unassigned'}
-                            buttonTitle={'Change User Permissions'}
-                            buttonProps={{ variant: 'text' }}
+                            buttonLabel={
+                              row.role_names.join(", ") || "Unassigned"
+                            }
+                            buttonTitle={"Change User Permissions"}
+                            buttonProps={{ variant: "text" }}
                             menuItems={codes.system_roles
                               .sort((item1, item2) => {
                                 return item1.name.localeCompare(item2.name);
@@ -318,7 +345,11 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                                 return {
                                   menuLabel: item.name,
                                   menuOnClick: () =>
-                                    handleChangeUserPermissionsClick(row, item.name, item.id)
+                                    handleChangeUserPermissionsClick(
+                                      row,
+                                      item.name,
+                                      item.id
+                                    ),
                                 };
                               })}
                             buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
@@ -329,22 +360,33 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                         <Box my={-1}>
                           <CustomMenuIconButton
                             buttonTitle="Actions"
-                            buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
+                            buttonIcon={
+                              <Icon path={mdiDotsVertical} size={1} />
+                            }
                             menuItems={[
                               {
-                                menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
-                                menuLabel: 'View Users Details',
+                                menuIcon: (
+                                  <Icon
+                                    path={mdiInformationOutline}
+                                    size={0.875}
+                                  />
+                                ),
+                                menuLabel: "View Users Details",
                                 menuOnClick: () =>
-                                  history.push({
-                                    pathname: `/admin/users/${row.id}`,
-                                    state: row
-                                  })
+                                  navigate(`/admin/users/${row.id}`, {
+                                    state: row,
+                                  }),
                               },
                               {
-                                menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
-                                menuLabel: 'Remove User',
-                                menuOnClick: () => handleRemoveUserClick(row)
-                              }
+                                menuIcon: (
+                                  <Icon
+                                    path={mdiTrashCanOutline}
+                                    size={0.875}
+                                  />
+                                ),
+                                menuLabel: "Remove User",
+                                menuOnClick: () => handleRemoveUserClick(row),
+                              },
                             ]}
                           />
                         </Box>
@@ -372,9 +414,9 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       </Paper>
 
       <EditDialog
-        dialogTitle={'Add Users'}
+        dialogTitle={"Add Users"}
         open={openAddUserDialog}
-        dialogSaveButtonLabel={'Add'}
+        dialogSaveButtonLabel={"Add"}
         component={{
           element: (
             <AddSystemUsersForm
@@ -386,7 +428,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
             />
           ),
           initialValues: AddSystemUsersFormInitialValues,
-          validationSchema: AddSystemUsersFormYupSchema
+          validationSchema: AddSystemUsersFormYupSchema,
         }}
         onCancel={() => setOpenAddUserDialog(false)}
         onSave={(values) => {

@@ -1,7 +1,7 @@
-import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
-import { IConfig } from 'contexts/configContext';
-import dayjs from 'dayjs';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
+import { DATE_FORMAT, TIME_FORMAT } from "../constants/dateTimeFormats";
+import { IConfig } from "../contexts/configContext";
+import dayjs from "dayjs";
+import { SYSTEM_IDENTITY_SOURCE } from "../hooks/useKeycloakWrapper";
 
 /**
  * Checks if a url string starts with an `http(s)://` protocol, and adds `https://` if it does not.
@@ -12,9 +12,12 @@ import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
  */
 export const ensureProtocol = (
   url: string,
-  protocol: 'http://' | 'https://' = 'https://'
+  protocol: "http://" | "https://" = "https://"
 ): string => {
-  return ((url.startsWith('http://') || url.startsWith('https://')) && url) || `${protocol}${url}`;
+  return (
+    ((url.startsWith("http://") || url.startsWith("https://")) && url) ||
+    `${protocol}${url}`
+  );
 };
 
 /**
@@ -30,14 +33,14 @@ export const getFormattedDateRangeString = (
   dateFormat: DATE_FORMAT,
   startDate: string,
   endDate?: string,
-  dateSeparator = '-'
+  dateSeparator = "-"
 ): string => {
   const startDateFormatted = getFormattedDate(dateFormat, startDate);
 
-  const endDateFormatted = getFormattedDate(dateFormat, endDate || '');
+  const endDateFormatted = getFormattedDate(dateFormat, endDate || "");
 
   if (!startDateFormatted || (endDate && !endDateFormatted)) {
-    return '';
+    return "";
   }
 
   if (endDateFormatted) {
@@ -54,12 +57,15 @@ export const getFormattedDateRangeString = (
  * @param {string} date ISO 8601 date string
  * @return {string} formatted date string, or an empty string if unable to parse the date
  */
-export const getFormattedDate = (dateFormat: DATE_FORMAT, date: string): string => {
+export const getFormattedDate = (
+  dateFormat: DATE_FORMAT,
+  date: string
+): string => {
   const dateMoment = dayjs(date);
 
   if (!dateMoment.isValid()) {
     //date was invalid
-    return '';
+    return "";
   }
 
   return dateMoment.format(dateFormat);
@@ -72,12 +78,15 @@ export const getFormattedDate = (dateFormat: DATE_FORMAT, date: string): string 
  * @param {string} date ISO 8601 date string
  * @return {string} formatted time string, or an empty string if unable to parse the date
  */
-export const getFormattedTime = (timeFormat: TIME_FORMAT, date: string): string => {
+export const getFormattedTime = (
+  timeFormat: TIME_FORMAT,
+  date: string
+): string => {
   const dateMoment = dayjs(date);
 
   if (!dateMoment.isValid()) {
     //date was invalid
-    return '';
+    return "";
   }
 
   return dateMoment.format(timeFormat);
@@ -90,16 +99,16 @@ export const getFormattedTime = (timeFormat: TIME_FORMAT, date: string): string 
  * @return {string} formatted amount string (rounded to the nearest integer), or an empty string if unable to parse the amount
  */
 export const getFormattedAmount = (amount: number): string => {
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   });
 
   if (!amount && amount !== 0) {
     //amount was invalid
-    return '';
+    return "";
   }
   return formatter.format(amount);
 };
@@ -129,7 +138,7 @@ export const getLogOutUrl = (config: IConfig): string | undefined => {
 
 export const getFormattedFileSize = (fileSize: number) => {
   if (!fileSize) {
-    return '0 KB';
+    return "0 KB";
   }
 
   // kilobyte size
@@ -154,7 +163,7 @@ export const getFormattedFileSize = (fileSize: number) => {
  */
 export const triggerFileDownload = (fileData: string, fileName: string) => {
   // add anchor tag to page
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   document.body.appendChild(a);
 
   // set anchor link
@@ -185,13 +194,13 @@ export const getFormattedIdentitySource = (
 ): string | null => {
   switch (identitySource) {
     case SYSTEM_IDENTITY_SOURCE.BCEID_BASIC:
-      return 'BCeID Basic';
+      return "BCeID Basic";
 
     case SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS:
-      return 'BCeID Business';
+      return "BCeID Business";
 
     case SYSTEM_IDENTITY_SOURCE.IDIR:
-      return 'IDIR';
+      return "IDIR";
 
     default:
       return null;

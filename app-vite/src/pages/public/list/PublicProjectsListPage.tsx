@@ -1,57 +1,58 @@
-import CheckBox from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { ProjectStatusType } from 'constants/misc';
-import dayjs from 'dayjs';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectsListResponse } from 'interfaces/useProjectApi.interface';
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-import { getFormattedDate } from 'utils/Utils';
+import CheckBox from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlank from "@mui/icons-material/CheckBoxOutlineBlank";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Checkbox from "@mui/material/Checkbox";
+import Chip from "@mui/material/Chip";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import { DATE_FORMAT } from "../../../constants/dateTimeFormats";
+import { ProjectStatusType } from "../../../constants/misc";
+import dayjs from "dayjs";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import { IGetProjectsListResponse } from "../../../interfaces/useProjectApi.interface";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { getFormattedDate } from "../../../utils/Utils";
 
 const pageStyles = {
   linkButton: {
-    textAlign: 'left'
+    textAlign: "left",
   },
   chipActive: {
-    color: 'white',
+    color: "white",
     fontWeight: 600,
-    backgroundColor: '#A2B9E2'
+    backgroundColor: "#A2B9E2",
   },
   chipPublishedCompleted: {
-    color: 'white',
-    backgroundColor: '#70AD47'
+    color: "white",
+    backgroundColor: "#70AD47",
   },
   chipDraft: {
-    color: 'white',
-    backgroundColor: '#A6A6A6'
-  }
+    color: "white",
+    backgroundColor: "#A6A6A6",
+  },
 };
 
 const PublicProjectsListPage = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<IGetProjectsListResponse[]>([]);
 
   useEffect(() => {
     const getProjects = async () => {
-      const projectsResponse = await restorationTrackerApi.public.project.getProjectsList();
+      const projectsResponse =
+        await restorationTrackerApi.public.project.getProjectsList();
 
       setProjects(() => {
         setIsLoading(false);
@@ -64,8 +65,13 @@ const PublicProjectsListPage = () => {
     }
   }, [restorationTrackerApi, isLoading]);
 
-  const getProjectStatusType = (projectData: IGetProjectsListResponse): ProjectStatusType => {
-    if (projectData.end_date && dayjs(projectData.end_date).endOf('day').isBefore(dayjs())) {
+  const getProjectStatusType = (
+    projectData: IGetProjectsListResponse
+  ): ProjectStatusType => {
+    if (
+      projectData.end_date &&
+      dayjs(projectData.end_date).endOf("day").isBefore(dayjs())
+    ) {
       return ProjectStatusType.COMPLETED;
     }
 
@@ -77,13 +83,13 @@ const PublicProjectsListPage = () => {
     let chipStatusClass;
 
     if (ProjectStatusType.ACTIVE === statusType) {
-      chipLabel = 'Active';
+      chipLabel = "Active";
       chipStatusClass = pageStyles.chipActive;
     } else if (ProjectStatusType.COMPLETED === statusType) {
-      chipLabel = 'Completed';
+      chipLabel = "Completed";
       chipStatusClass = pageStyles.chipPublishedCompleted;
     } else if (ProjectStatusType.DRAFT === statusType) {
-      chipLabel = 'Draft';
+      chipLabel = "Draft";
       chipStatusClass = pageStyles.chipDraft;
     }
 
@@ -91,12 +97,12 @@ const PublicProjectsListPage = () => {
   };
 
   const navigateToPublicProjectPage = (id: number) => {
-    history.push(`/projects/${id}`);
+    navigate(`/projects/${id}`);
   };
 
   return (
     <Card>
-      <Box mt={1} mb={1} sx={{ paddingTop: '20px' }}>
+      <Box mt={1} mb={1} sx={{ paddingTop: "20px" }}>
         <Typography variant="h1">Projects</Typography>
         <Typography variant="body1" color="textSecondary">
           BC restoration projects and related data.
@@ -152,19 +158,28 @@ const PublicProjectsListPage = () => {
                       component="button"
                       sx={pageStyles.linkButton}
                       variant="body2"
-                      onClick={() => navigateToPublicProjectPage(row.id)}>
+                      onClick={() => navigateToPublicProjectPage(row.id)}
+                    >
                       {row.name}
                     </Link>
                   </TableCell>
                   <TableCell>{row.permits_list}</TableCell>
                   <TableCell>{row.contact_agency_list}</TableCell>
                   <TableCell>
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.start_date)}
+                    {getFormattedDate(
+                      DATE_FORMAT.ShortMediumDateFormat,
+                      row.start_date
+                    )}
                   </TableCell>
                   <TableCell>
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.end_date)}
+                    {getFormattedDate(
+                      DATE_FORMAT.ShortMediumDateFormat,
+                      row.end_date
+                    )}
                   </TableCell>
-                  <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
+                  <TableCell>
+                    {getChipIcon(getProjectStatusType(row))}
+                  </TableCell>
                   <TableCell>
                     <FormControlLabel
                       control={

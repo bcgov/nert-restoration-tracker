@@ -1,44 +1,44 @@
-import { mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
-import Link from '@mui/material/Link';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import React, { useCallback, useContext } from 'react';
-import { useHistory } from 'react-router';
-import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
-import { IYesNoDialogProps } from '../../../components/dialog/YesNoDialog';
-import { SystemUserI18N } from '../../../constants/i18n';
-import { DialogContext } from '../../../contexts/dialogContext';
-import { APIError } from '../../../hooks/api/useAxios';
-import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
+import { mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Link from "@mui/material/Link";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import React, { useCallback, useContext } from "react";
+import { useNavigate } from "react-router";
+import { IErrorDialogProps } from "../../../components/dialog/ErrorDialog";
+import { IYesNoDialogProps } from "../../../components/dialog/YesNoDialog";
+import { SystemUserI18N } from "../../../constants/i18n";
+import { DialogContext } from "../../../contexts/dialogContext";
+import { APIError } from "../../../hooks/api/useAxios";
+import { IGetUserResponse } from "../../../interfaces/useUserApi.interface";
 
 const pageStyles = {
   breadCrumbLink: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer'
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
   },
   spacingRight: {
-    paddingRight: '1rem'
+    paddingRight: "1rem",
   },
   actionButton: {
-    minWidth: '6rem',
-    '& + button': {
-      marginLeft: '0.5rem'
-    }
+    minWidth: "6rem",
+    "& + button": {
+      marginLeft: "0.5rem",
+    },
   },
   projectTitle: {
-    fontWeight: 400
+    fontWeight: 400,
   },
   roleChip: {
-    backgroundColor: '#1976d2',
-    color: '#ffffff'
-  }
+    backgroundColor: "#1976d2",
+    color: "#ffffff",
+  },
 };
 
 export interface IUsersHeaderProps {
@@ -47,25 +47,25 @@ export interface IUsersHeaderProps {
 
 const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
   const { userDetails } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
 
   const defaultErrorDialogProps: Partial<IErrorDialogProps> = {
     onClose: () => dialogContext.setErrorDialog({ open: false }),
-    onOk: () => dialogContext.setErrorDialog({ open: false })
+    onOk: () => dialogContext.setErrorDialog({ open: false }),
   };
 
   const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
     onClose: () => dialogContext.setYesNoDialog({ open: false }),
-    onNo: () => dialogContext.setYesNoDialog({ open: false })
+    onNo: () => dialogContext.setYesNoDialog({ open: false }),
   };
 
   const openYesNoDialog = (yesNoDialogProps?: Partial<IYesNoDialogProps>) => {
     dialogContext.setYesNoDialog({
       ...defaultYesNoDialogProps,
       ...yesNoDialogProps,
-      open: true
+      open: true,
     });
   };
 
@@ -74,7 +74,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
       dialogContext.setErrorDialog({
         ...defaultErrorDialogProps,
         ...errorDialogProps,
-        open: true
+        open: true,
       });
     },
     [defaultErrorDialogProps, dialogContext]
@@ -91,19 +91,20 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
         snackbarMessage: (
           <>
             <Typography variant="body2" component="div">
-              User <strong>{user.user_identifier}</strong> removed from application.
+              User <strong>{user.user_identifier}</strong> removed from
+              application.
             </Typography>
           </>
         ),
-        open: true
+        open: true,
       });
 
-      history.push('/admin/users');
+      navigate("/admin/users");
     } catch (error) {
       openErrorDialog({
         dialogTitle: SystemUserI18N.removeUserErrorTitle,
         dialogText: SystemUserI18N.removeUserErrorText,
-        dialogError: (error as APIError).message
+        dialogError: (error as APIError).message,
       });
     }
   };
@@ -114,19 +115,31 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
         <Breadcrumbs>
           <Link
             color="primary"
-            onClick={() => history.push('/admin/users')}
+            onClick={() => navigate("/admin/users")}
             aria-current="page"
-            sx={pageStyles.breadCrumbLink}>
+            sx={pageStyles.breadCrumbLink}
+          >
             <Typography variant="body2">Manage Users</Typography>
           </Link>
           <Typography variant="body2">{userDetails.user_identifier}</Typography>
         </Breadcrumbs>
       </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+      >
         <Box>
           <Box display="flex">
-            <Typography data-testid="user-detail-title" sx={pageStyles.spacingRight} variant="h1">
-              User - <span style={pageStyles.projectTitle}>{userDetails.user_identifier}</span>
+            <Typography
+              data-testid="user-detail-title"
+              sx={pageStyles.spacingRight}
+              variant="h1"
+            >
+              User -{" "}
+              <span style={pageStyles.projectTitle}>
+                {userDetails.user_identifier}
+              </span>
             </Typography>
           </Box>
 
@@ -134,11 +147,12 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
             <Chip
               sx={pageStyles.roleChip}
               size="small"
-              label={userDetails.role_names[0] || 'Unassigned'}></Chip>
+              label={userDetails.role_names[0] || "Unassigned"}
+            ></Chip>
           </Box>
         </Box>
         <Box ml={2}>
-          <Tooltip arrow color="secondary" title={'delete'}>
+          <Tooltip arrow color="secondary" title={"delete"}>
             <>
               <Button
                 title="Remove User"
@@ -146,30 +160,32 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
                 variant="outlined"
                 sx={pageStyles.actionButton}
                 startIcon={<Icon path={mdiTrashCanOutline} size={0.875} />}
-                data-testid={'remove-user-button'}
+                data-testid={"remove-user-button"}
                 onClick={() =>
                   openYesNoDialog({
                     dialogTitle: SystemUserI18N.removeSystemUserTitle,
                     dialogContent: (
                       <>
                         <Typography variant="body1" color="textPrimary">
-                          Removing user <strong>{userDetails.user_identifier}</strong> will revoke
-                          their access to all projects.
+                          Removing user{" "}
+                          <strong>{userDetails.user_identifier}</strong> will
+                          revoke their access to all projects.
                         </Typography>
                         <Typography variant="body1" color="textPrimary">
                           Are you sure you want to proceed?
                         </Typography>
                       </>
                     ),
-                    yesButtonLabel: 'Remove User',
-                    yesButtonProps: { color: 'secondary' },
-                    noButtonLabel: 'Cancel',
+                    yesButtonLabel: "Remove User",
+                    yesButtonProps: { color: "secondary" },
+                    noButtonLabel: "Cancel",
                     onYes: () => {
                       deActivateSystemUser(userDetails);
                       dialogContext.setYesNoDialog({ open: false });
-                    }
+                    },
                   })
-                }>
+                }
+              >
                 Remove User
               </Button>
             </>

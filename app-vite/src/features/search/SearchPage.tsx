@@ -1,17 +1,17 @@
-import Box from '@mui/material/Box';
-import centroid from '@turf/centroid';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer';
-import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
-import { AuthStateContext } from 'contexts/authStateContext';
-import { DialogContext } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { LatLngTuple } from 'leaflet';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { isAuthenticated } from 'utils/authUtils';
-import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
+import Box from "@mui/material/Box";
+import centroid from "@turf/centroid";
+import { IErrorDialogProps } from "../../components/dialog/ErrorDialog";
+import { IMarker } from "../../components/map/components/MarkerCluster";
+import MapContainer from "../../components/map/MapContainer";
+import { SearchFeaturePopup } from "../../components/map/SearchFeaturePopup";
+import { AuthStateContext } from "../../contexts/authStateContext";
+import { DialogContext } from "../../contexts/dialogContext";
+import { APIError } from "../../hooks/api/useAxios";
+import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
+import { LatLngTuple } from "leaflet";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { isAuthenticated } from "../../utils/authUtils";
+import { generateValidGeometryCollection } from "../../utils/mapBoundaryUploadHelpers";
 
 /**
  * Page to search for and display a list of records spatially.
@@ -37,7 +37,7 @@ const SearchPage: React.FC = () => {
           dialogContext.setErrorDialog({ open: false });
         },
         ...textDialogProps,
-        open: true
+        open: true,
       });
     },
     [dialogContext]
@@ -57,12 +57,15 @@ const SearchPage: React.FC = () => {
       const clusteredPointGeometries: IMarker[] = [];
 
       response.forEach((result: any) => {
-        const feature = generateValidGeometryCollection(result.geometry, result.id)
-          .geometryCollection[0];
+        const feature = generateValidGeometryCollection(
+          result.geometry,
+          result.id
+        ).geometryCollection[0];
 
         clusteredPointGeometries.push({
-          position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          popup: <SearchFeaturePopup featureData={result} />
+          position: centroid(feature as any).geometry
+            .coordinates as LatLngTuple,
+          popup: <SearchFeaturePopup featureData={result} />,
         });
       });
 
@@ -71,12 +74,17 @@ const SearchPage: React.FC = () => {
     } catch (error) {
       const apiError = error as APIError;
       showFilterErrorDialog({
-        dialogTitle: 'Error Searching For Results',
+        dialogTitle: "Error Searching For Results",
         dialogError: apiError?.message,
-        dialogErrorDetails: apiError?.errors
+        dialogErrorDetails: apiError?.errors,
       });
     }
-  }, [restorationApi.search, restorationApi.public.search, showFilterErrorDialog, keycloakWrapper]);
+  }, [
+    restorationApi.search,
+    restorationApi.public.search,
+    showFilterErrorDialog,
+    keycloakWrapper,
+  ]);
 
   useEffect(() => {
     if (performSearch) {
@@ -88,7 +96,7 @@ const SearchPage: React.FC = () => {
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Box sx={{ height: '100%' }}>
+    <Box sx={{ height: "100%" }}>
       <MapContainer
         mapId="search_boundary_map"
         fullScreenControl={false}

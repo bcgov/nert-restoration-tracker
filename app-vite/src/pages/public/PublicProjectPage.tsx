@@ -1,42 +1,45 @@
-import { mdiArrowLeft, mdiFullscreen } from '@mdi/js';
-import { Icon } from '@mdi/react';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
-import LocationBoundary from 'features/projects/view/components/LocationBoundary';
-import TreatmentList from 'features/projects/view/components/TreatmentList';
-import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { mdiArrowLeft, mdiFullscreen } from "@mdi/js";
+import { Icon } from "@mdi/react";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import Dialog from "@mui/material/Dialog";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import {
+  ProjectPriorityChip,
+  ProjectStatusChip,
+} from "../../components/chips/ProjectChips";
+import LocationBoundary from "../../features/projects/view/components/LocationBoundary";
+import TreatmentList from "../../features/projects/view/components/TreatmentList";
+import ProjectDetailsPage from "../../features/projects/view/ProjectDetailsPage";
+import useCodes from "../../hooks/useCodes";
+import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse,
   IGetProjectTreatment,
-  TreatmentSearchCriteria
-} from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import PublicProjectAttachments from './components/PublicProjectAttachments';
-import PublicTreatmentSpatialUnits from './components/PublicTreatmentSpatialUnits';
+  TreatmentSearchCriteria,
+} from "../../interfaces/useProjectApi.interface";
+import React, { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router";
+import PublicProjectAttachments from "./components/PublicProjectAttachments";
+import PublicTreatmentSpatialUnits from "./components/PublicTreatmentSpatialUnits";
 
 const pageStyles = {
   fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
-    }
-  }
+    padding: "3px",
+    borderRadius: "4px",
+    background: "#ffffff",
+    color: "#000000",
+    border: "2px solid rgba(0,0,0,0.2)",
+    backgroundClip: "padding-box",
+    "&:hover": {
+      backgroundColor: "#eeeeee",
+    },
+  },
 };
 
 /**
@@ -53,18 +56,20 @@ const PublicProjectPage = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
-    null
+  const [projectWithDetails, setProjectWithDetails] =
+    useState<IGetProjectForViewResponse | null>(null);
+  const [attachmentsList, setAttachmentsList] = useState<
+    IGetProjectAttachment[]
+  >([]);
+  const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>(
+    []
   );
-  const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
-  const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.public.project.getProjectForView(
-      projectId
-    );
+    const projectWithDetailsResponse =
+      await restorationTrackerApi.public.project.getProjectForView(projectId);
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -79,9 +84,10 @@ const PublicProjectPage = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectAttachments(
-          projectId
-        );
+        const response =
+          await restorationTrackerApi.public.project.getProjectAttachments(
+            projectId
+          );
 
         if (!response?.attachmentsList) return;
 
@@ -98,10 +104,11 @@ const PublicProjectPage = () => {
       if (treatmentList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectTreatments(
-          projectId,
-          selectedYears
-        );
+        const response =
+          await restorationTrackerApi.public.project.getProjectTreatments(
+            projectId,
+            selectedYears
+          );
 
         if (!response?.treatmentList) return;
 
@@ -120,13 +127,25 @@ const PublicProjectPage = () => {
       getTreatments(false);
       setIsLoadingProject(true);
     }
-  }, [isLoadingProject, projectWithDetails, getProject, getAttachments, getTreatments]);
+  }, [
+    isLoadingProject,
+    projectWithDetails,
+    getProject,
+    getAttachments,
+    getTreatments,
+  ]);
 
   if (!codes.codes || !projectWithDetails) {
-    return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
+    return (
+      <CircularProgress
+        className="pageProgress"
+        size={40}
+        data-testid="loading_spinner"
+      />
+    );
   }
 
-  const isPriority = projectWithDetails.location.priority === 'true';
+  const isPriority = projectWithDetails.location.priority === "true";
 
   // Full Screen Map Dialog
   const openMapDialog = () => {
@@ -142,9 +161,20 @@ const PublicProjectPage = () => {
       <Container maxWidth="xl" data-testid="view_project_page_component">
         <Box mb={5} display="flex" justifyContent="space-between">
           <Box>
-            <Typography variant="h1">{projectWithDetails.project.project_name}</Typography>
-            <Box mt={1.5} display="flex" flexDirection={'row'} alignItems="center">
-              <Typography variant="subtitle2" component="span" color="textSecondary">
+            <Typography variant="h1">
+              {projectWithDetails.project.project_name}
+            </Typography>
+            <Box
+              mt={1.5}
+              display="flex"
+              flexDirection={"row"}
+              alignItems="center"
+            >
+              <Typography
+                variant="subtitle2"
+                component="span"
+                color="textSecondary"
+              >
                 Project Status:
               </Typography>
               <Box ml={1}>
@@ -194,13 +224,19 @@ const PublicProjectPage = () => {
                       treatmentList={treatmentList}
                       refresh={getProject}
                     />
-                    <Box position="absolute" top="80px" left="10px" zIndex="999">
+                    <Box
+                      position="absolute"
+                      top="80px"
+                      left="10px"
+                      zIndex="999"
+                    >
                       <IconButton
                         aria-label="view full screen map"
                         title="View full screen map"
                         sx={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
-                        size="large">
+                        size="large"
+                      >
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>
@@ -211,7 +247,9 @@ const PublicProjectPage = () => {
 
               {/* Documents */}
               <Paper elevation={2}>
-                <PublicProjectAttachments projectForViewData={projectWithDetails} />
+                <PublicProjectAttachments
+                  projectForViewData={projectWithDetails}
+                />
               </Paper>
             </Grid>
 

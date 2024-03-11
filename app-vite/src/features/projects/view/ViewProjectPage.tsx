@@ -1,55 +1,63 @@
-import { mdiAccountMultipleOutline, mdiArrowLeft, mdiFullscreen, mdiPencilOutline } from '@mdi/js';
-import { Icon } from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { RoleGuard } from 'components/security/Guards';
-import { DeleteProjectI18N } from 'constants/i18n';
-import { attachmentType } from 'constants/misc';
-import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import { DialogContext } from 'contexts/dialogContext';
-import LocationBoundary from 'features/projects/view/components/LocationBoundary';
-import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import {
+  mdiAccountMultipleOutline,
+  mdiArrowLeft,
+  mdiFullscreen,
+  mdiPencilOutline,
+} from "@mdi/js";
+import { Icon } from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import Dialog from "@mui/material/Dialog";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import {
+  ProjectPriorityChip,
+  ProjectStatusChip,
+} from "../../../components/chips/ProjectChips";
+import { IErrorDialogProps } from "../../../components/dialog/ErrorDialog";
+import { RoleGuard } from "../../../components/security/Guards";
+import { DeleteProjectI18N } from "../../../constants/i18n";
+import { attachmentType } from "../../../constants/misc";
+import { PROJECT_ROLE, SYSTEM_ROLE } from "../../../constants/roles";
+import { DialogContext } from "../../../contexts/dialogContext";
+import LocationBoundary from "../../../features/projects/view/components/LocationBoundary";
+import { APIError } from "../../../hooks/api/useAxios";
+import useCodes from "../../../hooks/useCodes";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse,
   IGetProjectTreatment,
-  TreatmentSearchCriteria
-} from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import TreatmentList from './components/TreatmentList';
-import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
-import ProjectAttachments from './ProjectAttachments';
-import ProjectDetailsPage from './ProjectDetailsPage';
+  TreatmentSearchCriteria,
+} from "../../../interfaces/useProjectApi.interface";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import TreatmentList from "./components/TreatmentList";
+import TreatmentSpatialUnits from "./components/TreatmentSpatialUnits";
+import ProjectAttachments from "./ProjectAttachments";
+import ProjectDetailsPage from "./ProjectDetailsPage";
 
 const pageStyles = {
   titleContainerActions: {
-    '& button + button': {
-      marginLeft: '1rem'
-    }
+    "& button + button": {
+      marginLeft: "1rem",
+    },
   },
   fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
-    }
-  }
+    padding: "3px",
+    borderRadius: "4px",
+    background: "#ffffff",
+    color: "#000000",
+    border: "2px solid rgba(0,0,0,0.2)",
+    backgroundClip: "padding-box",
+    "&:hover": {
+      backgroundColor: "#eeeeee",
+    },
+  },
 };
 
 /**
@@ -58,9 +66,9 @@ const pageStyles = {
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const projectId = urlParams["id"];
   const dialogContext = useContext(DialogContext);
 
   const [openFullScreen, setOpenFullScreen] = React.useState(false);
@@ -68,18 +76,20 @@ const ViewProjectPage: React.FC = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
-    null
+  const [projectWithDetails, setProjectWithDetails] =
+    useState<IGetProjectForViewResponse | null>(null);
+  const [attachmentsList, setAttachmentsList] = useState<
+    IGetProjectAttachment[]
+  >([]);
+  const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>(
+    []
   );
-  const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
-  const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
-      urlParams['id']
-    );
+    const projectWithDetailsResponse =
+      await restorationTrackerApi.project.getProjectById(urlParams["id"]);
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -94,10 +104,11 @@ const ViewProjectPage: React.FC = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectAttachments(
-          projectId,
-          attachmentType.ATTACHMENTS
-        );
+        const response =
+          await restorationTrackerApi.project.getProjectAttachments(
+            projectId,
+            attachmentType.ATTACHMENTS
+          );
 
         if (!response?.attachmentsList) return;
 
@@ -114,10 +125,11 @@ const ViewProjectPage: React.FC = () => {
       if (treatmentList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectTreatments(
-          projectId,
-          selectedYears
-        );
+        const response =
+          await restorationTrackerApi.project.getProjectTreatments(
+            projectId,
+            selectedYears
+          );
 
         if (!response?.treatmentList) return;
 
@@ -136,9 +148,21 @@ const ViewProjectPage: React.FC = () => {
       getTreatments(false);
       setIsLoadingProject(true);
     }
-  }, [isLoadingProject, projectWithDetails, getProject, getAttachments, getTreatments]);
+  }, [
+    isLoadingProject,
+    projectWithDetails,
+    getProject,
+    getAttachments,
+    getTreatments,
+  ]);
   if (!codes.isReady || !codes.codes || !projectWithDetails) {
-    return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
+    return (
+      <CircularProgress
+        className="pageProgress"
+        size={40}
+        data-testid="loading_spinner"
+      />
+    );
   }
 
   const defaultYesNoDialogProps = {
@@ -148,13 +172,19 @@ const ViewProjectPage: React.FC = () => {
     open: false,
     onClose: () => dialogContext.setYesNoDialog({ open: false }),
     onNo: () => dialogContext.setYesNoDialog({ open: false }),
-    onYes: () => dialogContext.setYesNoDialog({ open: false })
+    onYes: () => dialogContext.setYesNoDialog({ open: false }),
   };
 
-  const isPriority = projectWithDetails.location.priority === 'true';
+  const isPriority = projectWithDetails.location.priority === "true";
 
-  const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-    dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
+  const showDeleteErrorDialog = (
+    textDialogProps?: Partial<IErrorDialogProps>
+  ) => {
+    dialogContext.setErrorDialog({
+      ...deleteErrorDialogProps,
+      ...textDialogProps,
+      open: true,
+    });
   };
 
   const deleteErrorDialogProps = {
@@ -166,20 +196,20 @@ const ViewProjectPage: React.FC = () => {
     },
     onOk: () => {
       dialogContext.setErrorDialog({ open: false });
-    }
+    },
   };
 
   const showDeleteProjectDialog = () => {
     dialogContext.setYesNoDialog({
       ...defaultYesNoDialogProps,
       open: true,
-      yesButtonLabel: 'Delete',
-      yesButtonProps: { color: 'secondary' },
-      noButtonLabel: 'Cancel',
+      yesButtonLabel: "Delete",
+      yesButtonProps: { color: "secondary" },
+      noButtonLabel: "Cancel",
       onYes: () => {
         deleteProject();
         dialogContext.setYesNoDialog({ open: false });
-      }
+      },
     });
   };
 
@@ -198,7 +228,7 @@ const ViewProjectPage: React.FC = () => {
         return;
       }
 
-      history.push('/admin/user/projects');
+      navigate("/admin/user/projects");
     } catch (error) {
       const apiError = error as APIError;
       showDeleteErrorDialog({ dialogText: apiError.message, open: true });
@@ -220,9 +250,20 @@ const ViewProjectPage: React.FC = () => {
       <Container maxWidth="xl" data-testid="view_project_page_component">
         <Box mb={5} display="flex" justifyContent="space-between">
           <Box>
-            <Typography variant="h1">{projectWithDetails.project.project_name}</Typography>
-            <Box mt={1.5} display="flex" flexDirection={'row'} alignItems="center">
-              <Typography variant="subtitle2" component="span" color="textSecondary">
+            <Typography variant="h1">
+              {projectWithDetails.project.project_name}
+            </Typography>
+            <Box
+              mt={1.5}
+              display="flex"
+              flexDirection={"row"}
+              alignItems="center"
+            >
+              <Typography
+                variant="subtitle2"
+                component="span"
+                color="textSecondary"
+              >
                 Project Status:
               </Typography>
               <Box ml={1}>
@@ -239,32 +280,48 @@ const ViewProjectPage: React.FC = () => {
             </Box>
           </Box>
           <RoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+            validSystemRoles={[
+              SYSTEM_ROLE.SYSTEM_ADMIN,
+              SYSTEM_ROLE.DATA_ADMINISTRATOR,
+            ]}
+            validProjectRoles={[
+              PROJECT_ROLE.PROJECT_LEAD,
+              PROJECT_ROLE.PROJECT_EDITOR,
+            ]}
+          >
             <Box sx={pageStyles.titleContainerActions}>
               <Button
                 aria-label="manage project team"
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history.push('users')}>
+                onClick={() => navigate("users")}
+              >
                 Project Team
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                onClick={() => history.push(`/admin/projects/${urlParams['id']}/edit`)}>
+                onClick={() =>
+                  navigate(`/admin/projects/${urlParams["id"]}/edit`)
+                }
+              >
                 Edit Project
               </Button>
               <RoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                validSystemRoles={[
+                  SYSTEM_ROLE.SYSTEM_ADMIN,
+                  SYSTEM_ROLE.DATA_ADMINISTRATOR,
+                ]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
+              >
                 <Button
                   aria-label="delete project"
                   variant="outlined"
                   color="primary"
-                  onClick={showDeleteProjectDialog}>
+                  onClick={showDeleteProjectDialog}
+                >
                   Delete
                 </Button>
               </RoleGuard>
@@ -303,13 +360,19 @@ const ViewProjectPage: React.FC = () => {
                       treatmentList={treatmentList}
                       refresh={getProject}
                     />
-                    <Box position="absolute" top="80px" left="10px" zIndex="999">
+                    <Box
+                      position="absolute"
+                      top="80px"
+                      left="10px"
+                      zIndex="999"
+                    >
                       <IconButton
                         aria-label="view full screen map"
                         title="View full screen map"
                         style={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
-                        size="large">
+                        size="large"
+                      >
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>
@@ -341,12 +404,19 @@ const ViewProjectPage: React.FC = () => {
       <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
         <Box pr={3} pl={1} display="flex" alignItems="center">
           <Box mr={1}>
-            <IconButton onClick={closeMapDialog} aria-label="back to project" size="large">
+            <IconButton
+              onClick={closeMapDialog}
+              aria-label="back to project"
+              size="large"
+            >
               <Icon path={mdiArrowLeft} size={1} />
             </IconButton>
           </Box>
           <Box flex="1 1 auto">
-            <TreatmentSpatialUnits getTreatments={getTreatments} getAttachments={getAttachments} />
+            <TreatmentSpatialUnits
+              getTreatments={getTreatments}
+              getAttachments={getAttachments}
+            />
           </Box>
         </Box>
         <Box display="flex" height="100%" flexDirection="column">

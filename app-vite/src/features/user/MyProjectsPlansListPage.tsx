@@ -1,22 +1,22 @@
-import { mdiPlus } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import { SystemRoleGuard } from 'components/security/Guards';
-import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { mdiPlus } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import { SystemRoleGuard } from "../../components/security/Guards";
+import { SYSTEM_ROLE } from "../../constants/roles";
+import { AuthStateContext } from "../../contexts/authStateContext";
+import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
+import { IGetDraftsListResponse } from "../../interfaces/useDraftApi.interface";
+import { IGetProjectForViewResponse } from "../../interfaces/useProjectApi.interface";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 // import PlanListPage from '../projects/list/PlanListPage';
-import ProjectsListPage from '../projects/list/ProjectsListPage';
+import ProjectsListPage from "../projects/list/ProjectsListPage";
 
 const MyProjectsPage: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -33,9 +33,10 @@ const MyProjectsPage: React.FC = () => {
         return;
       }
 
-      const projectsResponse = await restorationTrackerApi.project.getUserProjectsList(
-        keycloakWrapper.systemUserId
-      );
+      const projectsResponse =
+        await restorationTrackerApi.project.getUserProjectsList(
+          keycloakWrapper.systemUserId
+        );
 
       setIsLoading(false);
       setProjects(projectsResponse);
@@ -69,14 +70,16 @@ const MyProjectsPage: React.FC = () => {
           validSystemRoles={[
             SYSTEM_ROLE.SYSTEM_ADMIN,
             SYSTEM_ROLE.DATA_ADMINISTRATOR,
-            SYSTEM_ROLE.PROJECT_CREATOR
-          ]}>
+            SYSTEM_ROLE.PROJECT_CREATOR,
+          ]}
+        >
           <Button
             variant="contained"
             color="primary"
             startIcon={<Icon path={mdiPlus} size={1} />}
-            onClick={() => history.push('/admin/projects/create')}
-            data-testid="create-project-button">
+            onClick={() => navigate("/admin/projects/create")}
+            data-testid="create-project-button"
+          >
             Create Project
           </Button>
         </SystemRoleGuard>

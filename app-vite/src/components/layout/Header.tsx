@@ -1,114 +1,120 @@
-import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
-import Icon from '@mdi/react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import OtherLink from '@mui/material/Link';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
-import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
-import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
-import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { getFormattedIdentitySource } from 'utils/Utils';
+import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from "@mdi/js";
+import Icon from "@mdi/react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import OtherLink from "@mui/material/Link";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import headerImageLarge from "../../assets/images/gov-bc-logo-horiz.png";
+import headerImageSmall from "../../assets/images/gov-bc-logo-vert.png";
+import {
+  AuthGuard,
+  SystemRoleGuard,
+  UnAuthGuard,
+} from "../../components/security/Guards";
+import { SYSTEM_ROLE } from "../../constants/roles";
+import { AuthStateContext } from "../../contexts/authStateContext";
+import { SYSTEM_IDENTITY_SOURCE } from "../../hooks/useKeycloakWrapper";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { getFormattedIdentitySource } from "../../utils/Utils";
 
-const nert_version = process.env.NERT_VERSION || '0.0.0.0';
+const nert_version = process.env.NERT_VERSION || "0.0.0.0";
 const nert_environment =
-  process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
+  process.env.NODE_ENV === "development"
+    ? "local"
+    : process.env.NODE_ENV || "undefined";
 
 const pageStyles = {
   govHeaderToolbar: {
-    height: '70px'
+    height: "70px",
   },
   brand: {
-    display: 'flex',
-    flex: '0 0 auto',
-    alignItems: 'center',
-    color: 'inherit',
-    textDecoration: 'none',
-    fontSize: '1.25rem',
+    display: "flex",
+    flex: "0 0 auto",
+    alignItems: "center",
+    color: "inherit",
+    textDecoration: "none",
+    fontSize: "1.25rem",
     fontWeight: 700,
-    '& img': {
-      verticalAlign: 'middle'
+    "& img": {
+      verticalAlign: "middle",
     },
-    '& picture': {
-      marginRight: '1.25rem'
+    "& picture": {
+      marginRight: "1.25rem",
     },
-    '&:hover': {
-      textDecoration: 'none'
+    "&:hover": {
+      textDecoration: "none",
     },
-    '&:focus': {
-      outlineOffset: '6px'
-    }
+    "&:focus": {
+      outlineOffset: "6px",
+    },
   },
-  '@media (max-width: 1000px)': {
+  "@media (max-width: 1000px)": {
     brand: {
-      fontSize: '1rem',
-      '& picture': {
-        marginRight: '1rem'
-      }
+      fontSize: "1rem",
+      "& picture": {
+        marginRight: "1rem",
+      },
     },
     wrapText: {
-      display: 'block'
-    }
+      display: "block",
+    },
   },
   appVersionTag: {
-    marginLeft: '0.5rem',
-    color: '#fcba19',
-    fontSize: '0.75rem',
-    fontWeight: 400
+    marginLeft: "0.5rem",
+    color: "#fcba19",
+    fontSize: "0.75rem",
+    fontWeight: 400,
   },
   userProfile: {
-    color: 'white',
-    fontSize: '0.9375rem',
-    '& hr': {
-      backgroundColor: '#4b5e7e',
-      height: '1rem'
+    color: "white",
+    fontSize: "0.9375rem",
+    "& hr": {
+      backgroundColor: "#4b5e7e",
+      height: "1rem",
     },
-    '& a': {
-      color: 'inherit',
-      textDecoration: 'none'
+    "& a": {
+      color: "inherit",
+      textDecoration: "none",
     },
-    '& a:hover': {
-      textDecoration: 'underline'
-    }
+    "& a:hover": {
+      textDecoration: "underline",
+    },
   },
   govHeaderIconButton: {
-    color: '#ffffff'
+    color: "#ffffff",
   },
   mainNav: {
-    backgroundColor: '#38598a'
+    backgroundColor: "#38598a",
   },
   mainNavToolbar: {
-    '& a': {
-      display: 'block',
-      padding: '1rem',
-      color: 'inherit',
-      fontSize: '1rem',
-      textDecoration: 'none'
+    "& a": {
+      display: "block",
+      padding: "1rem",
+      color: "inherit",
+      fontSize: "1rem",
+      textDecoration: "none",
     },
-    '& a:hover': {
-      textDecoration: 'underline'
+    "& a:hover": {
+      textDecoration: "underline",
     },
-    '& a:first-child': {
-      marginLeft: '-1rem'
-    }
+    "& a:first-child": {
+      marginLeft: "-1rem",
+    },
   },
-  '.MuiDialogContent-root': {
-    '& p + p': {
-      marginTop: '1rem'
-    }
-  }
+  ".MuiDialogContent-root": {
+    "& p + p": {
+      marginTop: "1rem",
+    },
+  },
 };
 
 const Header: React.FC = () => {
@@ -116,17 +122,22 @@ const Header: React.FC = () => {
 
   // Authenticated view
   const LoggedInUser = () => {
-    const identitySource = keycloakWrapper?.getIdentitySource() || '';
-    const userIdentifier = keycloakWrapper?.getUserIdentifier() || '';
+    const identitySource = keycloakWrapper?.getIdentitySource() || "";
+    const userIdentifier = keycloakWrapper?.getUserIdentifier() || "";
     const formattedUsername = [
       getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
-      userIdentifier
+      userIdentifier,
     ]
       .filter(Boolean)
-      .join('/');
+      .join("/");
 
     return (
-      <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
+      <Box
+        display="flex"
+        sx={pageStyles.userProfile}
+        my="auto"
+        alignItems="center"
+      >
         <Icon path={mdiAccountCircle} size={1.12} />
         <Box ml={1}>{formattedUsername}</Box>
         <Box px={2}>
@@ -142,7 +153,8 @@ const Header: React.FC = () => {
           aria-label="need help"
           sx={pageStyles.govHeaderIconButton}
           onClick={showSupportDialog}
-          size="large">
+          size="large"
+        >
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -152,7 +164,12 @@ const Header: React.FC = () => {
   // Unauthenticated public view
   const PublicViewUser = () => {
     return (
-      <Box display="flex" sx={pageStyles.userProfile} alignItems="center" my="auto">
+      <Box
+        display="flex"
+        sx={pageStyles.userProfile}
+        alignItems="center"
+        my="auto"
+      >
         <Button
           onClick={() => keycloakWrapper?.keycloak.login()}
           type="submit"
@@ -160,10 +177,15 @@ const Header: React.FC = () => {
           color="primary"
           disableElevation
           startIcon={<Icon path={mdiLoginVariant} size={1.12} />}
-          data-testid="login">
+          data-testid="login"
+        >
           Log In
         </Button>
-        <IconButton sx={pageStyles.govHeaderIconButton} onClick={showSupportDialog} size="large">
+        <IconButton
+          sx={pageStyles.govHeaderIconButton}
+          onClick={showSupportDialog}
+          size="large"
+        >
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -183,7 +205,8 @@ const Header: React.FC = () => {
   const VersionEnvironmentLabel = () => {
     return (
       <span
-        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
+        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}
+      >
         v{nert_version} {nert_environment}
       </span>
     );
@@ -191,17 +214,27 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="sticky" style={{ boxShadow: 'none' }}>
+      <AppBar position="sticky" style={{ boxShadow: "none" }}>
         <Toolbar sx={pageStyles.govHeaderToolbar}>
           <Box display="flex" justifyContent="space-between" width="100%">
             <Link
               to="/"
               style={pageStyles.brand}
-              aria-label="Go to Northeast Restoration Tracker Home">
+              aria-label="Go to Northeast Restoration Tracker Home"
+            >
               <picture>
-                <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
-                <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
-                <img src={headerImageSmall} alt={'Government of British Columbia'} />
+                <source
+                  srcSet={headerImageLarge}
+                  media="(min-width: 1200px)"
+                ></source>
+                <source
+                  srcSet={headerImageSmall}
+                  media="(min-width: 600px)"
+                ></source>
+                <img
+                  src={headerImageSmall}
+                  alt={"Government of British Columbia"}
+                />
               </picture>
               <span>
                 Northeast Restoration Tracker
@@ -224,7 +257,8 @@ const Header: React.FC = () => {
             variant="dense"
             sx={pageStyles.mainNavToolbar}
             role="navigation"
-            aria-label="Main Navigation">
+            aria-label="Main Navigation"
+          >
             <UnAuthGuard>
               <Link to="/projects" id="menu_projects">
                 All Projects/All Plans
@@ -256,11 +290,18 @@ const Header: React.FC = () => {
       <Dialog open={open}>
         <DialogTitle>Need Help?</DialogTitle>
         <DialogContent>
-          <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
-            For technical support or questions about this application, please email:&nbsp;
+          <Typography
+            variant="body1"
+            component="div"
+            color="textSecondary"
+            gutterBottom
+          >
+            For technical support or questions about this application, please
+            email:&nbsp;
             <OtherLink
               href="mailto:oinostro@gov.bc.ca?subject=Northeast Restoration Tracker - Support Request"
-              underline="always">
+              underline="always"
+            >
               oinostro@gov.bc.ca
             </OtherLink>
             .
@@ -271,7 +312,11 @@ const Header: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="primary" onClick={hideSupportDialog}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={hideSupportDialog}
+          >
             OK
           </Button>
         </DialogActions>

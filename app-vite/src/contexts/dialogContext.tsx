@@ -1,10 +1,15 @@
-import CloseIcon from '@mui/icons-material/Close';
-import { Color } from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
-import Snackbar from '@mui/material/Snackbar';
-import { ErrorDialog, IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import YesNoDialog, { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
-import React, { createContext, ReactNode, useState } from 'react';
+import CloseIcon from "@mui/icons-material/Close";
+import Color from "@mui/material/Alert";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
+import {
+  ErrorDialog,
+  IErrorDialogProps,
+} from "../components/dialog/ErrorDialog";
+import YesNoDialog, {
+  IYesNoDialogProps,
+} from "../components/dialog/YesNoDialog";
+import React, { createContext, ReactNode, useState } from "react";
 
 export interface IDialogContext {
   /**
@@ -63,8 +68,8 @@ export interface ISnackbarProps {
 }
 
 export const defaultYesNoDialogProps: IYesNoDialogProps = {
-  dialogTitle: '',
-  dialogText: '',
+  dialogTitle: "",
+  dialogText: "",
   open: false,
   onClose: () => {
     // default do nothing
@@ -74,27 +79,27 @@ export const defaultYesNoDialogProps: IYesNoDialogProps = {
   },
   onYes: () => {
     // default do nothing
-  }
+  },
 };
 
 export const defaultErrorDialogProps: IErrorDialogProps = {
-  dialogTitle: '',
-  dialogText: '',
+  dialogTitle: "",
+  dialogText: "",
   open: false,
   onClose: () => {
     // default do nothing
   },
   onOk: () => {
     // default do nothing
-  }
+  },
 };
 
 export const defaultSnackbarProps: ISnackbarProps = {
-  snackbarMessage: '',
+  snackbarMessage: "",
   open: false,
   onClose: () => {
     // default do nothing
-  }
+  },
 };
 
 export const DialogContext = createContext<IDialogContext>({
@@ -109,7 +114,7 @@ export const DialogContext = createContext<IDialogContext>({
   setSnackbar: () => {
     // default do nothing
   },
-  snackbarProps: defaultSnackbarProps
+  snackbarProps: defaultSnackbarProps,
 });
 
 /**
@@ -119,13 +124,16 @@ export const DialogContext = createContext<IDialogContext>({
  * @return {*}
  */
 export const DialogContextProvider: React.FC = (props) => {
-  const [yesNoDialogProps, setYesNoDialogProps] =
-    useState<IYesNoDialogProps>(defaultYesNoDialogProps);
+  const [yesNoDialogProps, setYesNoDialogProps] = useState<IYesNoDialogProps>(
+    defaultYesNoDialogProps
+  );
 
-  const [errorDialogProps, setErrorDialogProps] =
-    useState<IErrorDialogProps>(defaultErrorDialogProps);
+  const [errorDialogProps, setErrorDialogProps] = useState<IErrorDialogProps>(
+    defaultErrorDialogProps
+  );
 
-  const [snackbarProps, setSnackbarProps] = useState<ISnackbarProps>(defaultSnackbarProps);
+  const [snackbarProps, setSnackbarProps] =
+    useState<ISnackbarProps>(defaultSnackbarProps);
 
   const setYesNoDialog = function (partialProps: Partial<IYesNoDialogProps>) {
     setYesNoDialogProps({ ...yesNoDialogProps, ...partialProps });
@@ -147,15 +155,16 @@ export const DialogContextProvider: React.FC = (props) => {
         setErrorDialog,
         errorDialogProps,
         setSnackbar,
-        snackbarProps
-      }}>
+        snackbarProps,
+      }}
+    >
       {props.children}
       <YesNoDialog {...yesNoDialogProps} />
       <ErrorDialog {...errorDialogProps} />
       <Snackbar
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center'
+          vertical: "bottom",
+          horizontal: "center",
         }}
         open={snackbarProps.open}
         autoHideDuration={6000}
@@ -167,7 +176,8 @@ export const DialogContextProvider: React.FC = (props) => {
               size="small"
               aria-label="close"
               color="inherit"
-              onClick={() => setSnackbar({ open: false })}>
+              onClick={() => setSnackbar({ open: false })}
+            >
               <CloseIcon fontSize="small" />
             </IconButton>
           </React.Fragment>

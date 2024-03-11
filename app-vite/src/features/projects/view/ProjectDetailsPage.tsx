@@ -1,17 +1,17 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { RoleGuard } from 'components/security/Guards';
-import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import IUCNClassification from 'features/projects/view/components/IUCNClassification';
-import Partnerships from 'features/projects/view/components/Partnerships';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import PublicProjectContact from 'pages/public/components/PublicProjectContact';
-import React from 'react';
-import FundingSource from './components/FundingSource';
-import GeneralInformation from './components/GeneralInformation';
-import ProjectContact from './components/ProjectContact';
-import ProjectPermits from './components/ProjectPermits';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { RoleGuard } from "../../../components/security/Guards";
+import { PROJECT_ROLE, SYSTEM_ROLE } from "../../../constants/roles";
+import IUCNClassification from "../../../features/projects/view/components/IUCNClassification";
+import Partnerships from "../../../features/projects/view/components/Partnerships";
+import { IGetAllCodeSetsResponse } from "../../../interfaces/useCodesApi.interface";
+import { IGetProjectForViewResponse } from "../../../interfaces/useProjectApi.interface";
+import PublicProjectContact from "../../../pages/public/components/PublicProjectContact";
+import React from "react";
+import FundingSource from "./components/FundingSource";
+import GeneralInformation from "./components/GeneralInformation";
+import ProjectContact from "./components/ProjectContact";
+import ProjectPermits from "./components/ProjectPermits";
 
 export interface IProjectDetailsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -21,51 +21,51 @@ export interface IProjectDetailsProps {
 
 const pageStyles = {
   projectMetadata: {
-    '& section': {
-      marginBottom: '3rem'
+    "& section": {
+      marginBottom: "3rem",
     },
-    '& section:last-child': {
-      marginBottom: 0
-    },
-    '& dl, ul': {
-      marginTop: '0.5rem',
+    "& section:last-child": {
       marginBottom: 0,
-      borderTop: '1px solid #dddddd'
     },
-    '& dl div, li': {
-      paddingTop: '0.5rem',
-      paddingBottom: '0.5rem',
-      borderBottom: '1px solid #dddddd'
+    "& dl, ul": {
+      marginTop: "0.5rem",
+      marginBottom: 0,
+      borderTop: "1px solid #dddddd",
     },
-    '& dd, dt': {
-      display: 'inline-block',
-      verticalAlign: 'top'
+    "& dl div, li": {
+      paddingTop: "0.5rem",
+      paddingBottom: "0.5rem",
+      borderBottom: "1px solid #dddddd",
     },
-    '& dt': {
-      width: '33.333%'
+    "& dd, dt": {
+      display: "inline-block",
+      verticalAlign: "top",
     },
-    '& dd': {
-      width: '66.666%'
+    "& dt": {
+      width: "33.333%",
     },
-    '& dd span': {
-      display: 'inline'
+    "& dd": {
+      width: "66.666%",
     },
-    '& h3': {
-      marginBottom: '0.5rem',
-      fontSize: '15px',
+    "& dd span": {
+      display: "inline",
+    },
+    "& h3": {
+      marginBottom: "0.5rem",
+      fontSize: "15px",
       fontWeight: 700,
-      textTransform: 'uppercase'
+      textTransform: "uppercase",
     },
-    '& ul': {
-      listStyleType: 'none',
-      '& dl': {
-        marginTop: 0
+    "& ul": {
+      listStyleType: "none",
+      "& dl": {
+        marginTop: 0,
       },
-      '& dl div:last-child': {
-        borderBottom: 'none'
-      }
-    }
-  }
+      "& dl div:last-child": {
+        borderBottom: "none",
+      },
+    },
+  },
 };
 
 /**
@@ -83,7 +83,11 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
       </Box>
 
       <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="GeneralInfoTitle">
+        <Typography
+          variant="body1"
+          component={"h3"}
+          data-testid="GeneralInfoTitle"
+        >
           General Information
         </Typography>
         <GeneralInformation
@@ -94,25 +98,39 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
       </Box>
 
       <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="ContactsTitle">
+        <Typography
+          variant="body1"
+          component={"h3"}
+          data-testid="ContactsTitle"
+        >
           Project Contacts
         </Typography>
         <RoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+          validSystemRoles={[
+            SYSTEM_ROLE.SYSTEM_ADMIN,
+            SYSTEM_ROLE.DATA_ADMINISTRATOR,
+          ]}
           validProjectRoles={[
             PROJECT_ROLE.PROJECT_LEAD,
             PROJECT_ROLE.PROJECT_EDITOR,
-            PROJECT_ROLE.PROJECT_VIEWER
+            PROJECT_ROLE.PROJECT_VIEWER,
           ]}
           fallback={
-            <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
-          }>
-          <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
+            <PublicProjectContact
+              projectForViewData={projectForViewData}
+              refresh={refresh}
+            />
+          }
+        >
+          <ProjectContact
+            projectForViewData={projectForViewData}
+            refresh={refresh}
+          />
         </RoleGuard>
       </Box>
 
       <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="IUCNTitle">
+        <Typography variant="body1" component={"h3"} data-testid="IUCNTitle">
           IUCN Conservation Actions Classifications
         </Typography>
         <IUCNClassification
@@ -123,32 +141,58 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
       </Box>
 
       <RoleGuard
-        validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+        validSystemRoles={[
+          SYSTEM_ROLE.SYSTEM_ADMIN,
+          SYSTEM_ROLE.DATA_ADMINISTRATOR,
+        ]}
         validProjectRoles={[
           PROJECT_ROLE.PROJECT_LEAD,
           PROJECT_ROLE.PROJECT_EDITOR,
-          PROJECT_ROLE.PROJECT_VIEWER
-        ]}>
+          PROJECT_ROLE.PROJECT_VIEWER,
+        ]}
+      >
         <Box component="section">
-          <Typography variant="body1" component={'h3'} data-testid="PermitsTitle">
+          <Typography
+            variant="body1"
+            component={"h3"}
+            data-testid="PermitsTitle"
+          >
             Permits
           </Typography>
-          <ProjectPermits projectForViewData={projectForViewData} refresh={refresh} />
+          <ProjectPermits
+            projectForViewData={projectForViewData}
+            refresh={refresh}
+          />
         </Box>
       </RoleGuard>
 
       <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="FundingSourceTitle">
+        <Typography
+          variant="body1"
+          component={"h3"}
+          data-testid="FundingSourceTitle"
+        >
           Funding Sources
         </Typography>
-        <FundingSource projectForViewData={projectForViewData} refresh={refresh} />
+        <FundingSource
+          projectForViewData={projectForViewData}
+          refresh={refresh}
+        />
       </Box>
 
       <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="PartnershipTitle">
+        <Typography
+          variant="body1"
+          component={"h3"}
+          data-testid="PartnershipTitle"
+        >
           Partnerships
         </Typography>
-        <Partnerships projectForViewData={projectForViewData} codes={codes} refresh={refresh} />
+        <Partnerships
+          projectForViewData={projectForViewData}
+          codes={codes}
+          refresh={refresh}
+        />
       </Box>
     </Box>
   );

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { KeycloakConfig } from 'keycloak-js';
-import React, { useEffect, useState } from 'react';
-import { ensureProtocol } from 'utils/Utils';
+import axios from "axios";
+import { KeycloakConfig } from "keycloak-js";
+import React, { useEffect, useState } from "react";
+import { ensureProtocol } from "../utils/Utils";
 
 export interface IConfig {
   API_HOST: string;
@@ -16,19 +16,19 @@ export interface IConfig {
 }
 
 export const ConfigContext = React.createContext<IConfig | undefined>({
-  API_HOST: '',
-  CHANGE_VERSION: '',
-  NODE_ENV: '',
-  REACT_APP_NODE_ENV: '',
-  VERSION: '',
+  API_HOST: "",
+  CHANGE_VERSION: "",
+  NODE_ENV: "",
+  REACT_APP_NODE_ENV: "",
+  VERSION: "",
   KEYCLOAK_CONFIG: {
-    url: '',
-    realm: '',
-    clientId: ''
+    url: "",
+    realm: "",
+    clientId: "",
   },
-  SITEMINDER_LOGOUT_URL: '',
+  SITEMINDER_LOGOUT_URL: "",
   MAX_UPLOAD_NUM_FILES: 10,
-  MAX_UPLOAD_FILE_SIZE: 52428800
+  MAX_UPLOAD_FILE_SIZE: 52428800,
 });
 
 /**
@@ -40,22 +40,27 @@ const getLocalConfig = (): IConfig => {
   const API_HOST = process.env.REACT_APP_API_HOST;
   const API_PORT = process.env.REACT_APP_API_PORT;
 
-  const API_URL = (API_PORT && `${API_HOST}:${API_PORT}`) || API_HOST || 'localhost';
+  const API_URL =
+    (API_PORT && `${API_HOST}:${API_PORT}`) || API_HOST || "localhost";
 
   return {
-    API_HOST: ensureProtocol(API_URL, 'http://'),
-    CHANGE_VERSION: process.env.CHANGE_VERSION || 'NA',
+    API_HOST: ensureProtocol(API_URL, "http://"),
+    CHANGE_VERSION: process.env.CHANGE_VERSION || "NA",
     NODE_ENV: process.env.NODE_ENV,
-    REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || 'dev',
-    VERSION: `${process.env.VERSION || 'NA'}(build #${process.env.CHANGE_VERSION || 'NA'})`,
+    REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || "dev",
+    VERSION: `${process.env.VERSION || "NA"}(build #${
+      process.env.CHANGE_VERSION || "NA"
+    })`,
     KEYCLOAK_CONFIG: {
-      url: process.env.REACT_APP_KEYCLOAK_HOST || '',
-      realm: process.env.REACT_APP_KEYCLOAK_REALM || '',
-      clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || ''
+      url: process.env.REACT_APP_KEYCLOAK_HOST || "",
+      realm: process.env.REACT_APP_KEYCLOAK_REALM || "",
+      clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || "",
     },
-    SITEMINDER_LOGOUT_URL: process.env.REACT_APP_SITEMINDER_LOGOUT_URL || '',
-    MAX_UPLOAD_NUM_FILES: Number(process.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
-    MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800
+    SITEMINDER_LOGOUT_URL: process.env.REACT_APP_SITEMINDER_LOGOUT_URL || "",
+    MAX_UPLOAD_NUM_FILES:
+      Number(process.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
+    MAX_UPLOAD_FILE_SIZE:
+      Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800,
   };
 };
 
@@ -65,7 +70,7 @@ const getLocalConfig = (): IConfig => {
  * @return {*}  {Promise<IConfig>}
  */
 const getDeployedConfig = async (): Promise<IConfig> => {
-  const { data } = await axios.get<IConfig>('/config');
+  const { data } = await axios.get<IConfig>("/config");
 
   return data;
 };
@@ -76,7 +81,7 @@ const getDeployedConfig = async (): Promise<IConfig> => {
  * @return {*}  {boolean}
  */
 const isDevelopment = (): boolean => {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     return true;
   }
 
@@ -92,7 +97,9 @@ const isDevelopment = (): boolean => {
  * @param {*} props
  * @return {*}
  */
-export const ConfigContextProvider: React.FC<React.PropsWithChildren> = (props) => {
+export const ConfigContextProvider: React.FC<React.PropsWithChildren> = (
+  props
+) => {
   const [config, setConfig] = useState<IConfig>();
 
   useEffect(() => {
@@ -110,5 +117,9 @@ export const ConfigContextProvider: React.FC<React.PropsWithChildren> = (props) 
       loadConfig();
     }
   }, [config]);
-  return <ConfigContext.Provider value={config}>{props.children}</ConfigContext.Provider>;
+  return (
+    <ConfigContext.Provider value={config}>
+      {props.children}
+    </ConfigContext.Provider>
+  );
 };

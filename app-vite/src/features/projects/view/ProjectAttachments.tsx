@@ -1,17 +1,17 @@
-import { mdiTrayArrowUp } from '@mdi/js';
-import Icon from '@mdi/react';
-import AttachmentsList from 'components/attachments/AttachmentsList';
-import FileUpload from 'components/attachments/FileUpload';
-import { IUploadHandler } from 'components/attachments/FileUploadItem';
-import ComponentDialog from 'components/dialog/ComponentDialog';
-import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { mdiTrayArrowUp } from "@mdi/js";
+import Icon from "@mdi/react";
+import AttachmentsList from "../../../components/attachments/AttachmentsList";
+import FileUpload from "../../../components/attachments/FileUpload";
+import { IUploadHandler } from "../../../components/attachments/FileUploadItem";
+import ComponentDialog from "../../../components/dialog/ComponentDialog";
+import { H2ButtonToolbar } from "../../../components/toolbar/ActionToolbars";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
 import {
   IGetProjectAttachment,
-  IUploadAttachmentResponse
-} from 'interfaces/useProjectApi.interface';
-import React, { useState } from 'react';
-import { useParams } from 'react-router';
+  IUploadAttachmentResponse,
+} from "../../../interfaces/useProjectApi.interface";
+import React, { useState } from "react";
+import { useParams } from "react-router";
 
 export interface IProjectAttachmentsProps {
   attachmentsList: IGetProjectAttachment[];
@@ -26,7 +26,7 @@ export interface IProjectAttachmentsProps {
 const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const { attachmentsList, getAttachments } = props;
   const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const projectId = urlParams["id"];
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
@@ -52,7 +52,8 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         onClose={() => {
           setOpenUploadAttachments(false);
           getAttachments(true);
-        }}>
+        }}
+      >
         <FileUpload uploadHandler={getUploadHandler()} />
       </ComponentDialog>
 
@@ -64,7 +65,7 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         buttonStartIcon={<Icon path={mdiTrayArrowUp} size={1} />}
         buttonOnClick={handleUploadAttachmentClick}
         buttonProps={{
-          variant: 'outlined'
+          variant: "outlined",
         }}
       />
 

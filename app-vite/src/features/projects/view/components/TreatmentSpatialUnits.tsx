@@ -1,43 +1,55 @@
-import { mdiExport, mdiImport, mdiMenuDown, mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import FileUpload from 'components/attachments/FileUpload';
-import { IUploadHandler } from 'components/attachments/FileUploadItem';
-import ComponentDialog from 'components/dialog/ComponentDialog';
-import { attachmentType } from 'constants/misc';
-import { DialogContext } from 'contexts/dialogContext';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment, TreatmentSearchCriteria } from 'interfaces/useProjectApi.interface';
-import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { mdiExport, mdiImport, mdiMenuDown, mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Menu from "@mui/material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import FileUpload from "../../../../components/attachments/FileUpload";
+import { IUploadHandler } from "../../../../components/attachments/FileUploadItem";
+import ComponentDialog from "../../../../components/dialog/ComponentDialog";
+import { attachmentType } from "../../../../constants/misc";
+import { DialogContext } from "../../../../contexts/dialogContext";
+import { useRestorationTrackerApi } from "../../../../hooks/useRestorationTrackerApi";
+import {
+  IGetProjectAttachment,
+  TreatmentSearchCriteria,
+} from "../../../../interfaces/useProjectApi.interface";
+import React, {
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useParams } from "react-router";
 
 const pageStyles = {
   filterMenu: {
-    minWidth: '200px !important',
-    borderBottom: '1px solid #ffffff',
-    '&:last-child': {
-      borderBottom: 'none'
-    }
+    minWidth: "200px !important",
+    borderBottom: "1px solid #ffffff",
+    "&:last-child": {
+      borderBottom: "none",
+    },
   },
   treatmentFilterList: {
-    '& .MuiList-padding': {
+    "& .MuiList-padding": {
       paddingTop: 0,
-      paddingBottom: 0
-    }
-  }
+      paddingBottom: 0,
+    },
+  },
 };
 
 export interface IProjectSpatialUnitsProps {
-  getTreatments: (forceFetch: boolean, selectedYears?: TreatmentSearchCriteria) => void;
+  getTreatments: (
+    forceFetch: boolean,
+    selectedYears?: TreatmentSearchCriteria
+  ) => void;
   getAttachments: (forceFetch: boolean) => void;
 }
 
@@ -49,7 +61,7 @@ export interface IProjectSpatialUnitsProps {
 const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
   const { getTreatments, getAttachments } = props;
   const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const projectId = urlParams["id"];
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -59,17 +71,21 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
   const [isTreatmentLoading, setIsTreatmentLoading] = useState(false);
 
   const [yearList, setYearList] = useState<{ year: number }[]>([]);
-  const [selectedSpatialLayer, setSelectedSpatialLayer] = useState({ boundary: true });
+  const [selectedSpatialLayer, setSelectedSpatialLayer] = useState({
+    boundary: true,
+  });
 
   const handleImportTreatmentClick = () => setOpenImportTreatments(true);
   const handleExportTreatmentClick = async () => {
-    const treatmentAttachments = await restorationTrackerApi.project.getProjectAttachments(
-      projectId,
-      attachmentType.TREATMENTS
-    );
+    const treatmentAttachments =
+      await restorationTrackerApi.project.getProjectAttachments(
+        projectId,
+        attachmentType.TREATMENTS
+      );
     openAttachment(treatmentAttachments.attachmentsList[0]);
   };
-  const openAttachment = async (attachment: IGetProjectAttachment) => window.open(attachment.url);
+  const openAttachment = async (attachment: IGetProjectAttachment) =>
+    window.open(attachment.url);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
     setAnchorEl(event.currentTarget);
@@ -99,7 +115,7 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
   const handleSelectedSwitch = (selectedName: string | number) => {
     setSelectedSpatialLayer({
       ...selectedSpatialLayer,
-      [selectedName]: !selectedSpatialLayer[selectedName]
+      [selectedName]: !selectedSpatialLayer[selectedName],
     });
 
     const selectedArray: TreatmentSearchCriteria = { years: [] };
@@ -124,9 +140,10 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
       }
 
       try {
-        const yearsResponse = await restorationTrackerApi.project.getProjectTreatmentsYears(
-          projectId
-        );
+        const yearsResponse =
+          await restorationTrackerApi.project.getProjectTreatmentsYears(
+            projectId
+          );
 
         if (!yearsResponse.length) {
           setYearList([]);
@@ -146,7 +163,12 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
         return error;
       }
     },
-    [restorationTrackerApi.project, projectId, yearList.length, selectedSpatialLayer]
+    [
+      restorationTrackerApi.project,
+      projectId,
+      yearList.length,
+      selectedSpatialLayer,
+    ]
   );
 
   useEffect(() => {
@@ -158,11 +180,11 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
 
   const defaultYesNoDialogProps = {
     dialogText:
-      'Are you sure you want to permanently delete all treatments for this project? This action cannot be undone.',
+      "Are you sure you want to permanently delete all treatments for this project? This action cannot be undone.",
     open: false,
     onClose: () => dialogContext.setYesNoDialog({ open: false }),
     onNo: () => dialogContext.setYesNoDialog({ open: false }),
-    onYes: () => dialogContext.setYesNoDialog({ open: false })
+    onYes: () => dialogContext.setYesNoDialog({ open: false }),
   };
 
   const showDeleteTreatmentsDialog = () => {
@@ -170,24 +192,24 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
       ...defaultYesNoDialogProps,
       dialogTitle: `Delete all treatments?`,
       open: true,
-      yesButtonProps: { color: 'secondary' },
-      yesButtonLabel: 'Delete',
-      noButtonLabel: 'Cancel',
+      yesButtonProps: { color: "secondary" },
+      yesButtonLabel: "Delete",
+      noButtonLabel: "Cancel",
       onYes: () => {
         handleDeleteTreatments();
         dialogContext.setYesNoDialog({ open: false });
-      }
+      },
     });
   };
 
   const errorDetailHandler = (errors: (string | object)[]): ReactElement => {
     const items = errors.map((item, index) => {
-      if (item['treatmentUnitId']) {
+      if (item["treatmentUnitId"]) {
         return (
           <li key={index}>
-            TU_ID:{item['treatmentUnitId']}
+            TU_ID:{item["treatmentUnitId"]}
             <ul>
-              {item['errors'].map((itemError: string) => {
+              {item["errors"].map((itemError: string) => {
                 return <li key={itemError}>{itemError}</li>;
               })}
             </ul>
@@ -211,13 +233,14 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
           getAttachments(true);
           getTreatmentYears(true);
         }}
-        dialogProps={{ maxWidth: 'md' }}>
+        dialogProps={{ maxWidth: "md" }}
+      >
         {!!yearList.length && (
           <Box mb={2}>
             <Alert severity="error" variant="filled">
               <Typography variant="body2">
-                Treatments have already been imported to this project. Importing a new treatment
-                shapefile will replace all existing data.
+                Treatments have already been imported to this project. Importing
+                a new treatment shapefile will replace all existing data.
               </Typography>
             </Alert>
           </Box>
@@ -226,31 +249,37 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
           uploadHandler={handleUpload()}
           dropZoneProps={{
             acceptedFileExtensions: {
-              'application/vnd.google-earth.kml+xml': ['.kml'],
-              'application/octet-stream': ['.gpx'],
-              'application/zip': ['.zip']
-            }
+              "application/vnd.google-earth.kml+xml": [".kml"],
+              "application/octet-stream": [".gpx"],
+              "application/zip": [".zip"],
+            },
           }}
           errorDetailHandler={errorDetailHandler}
         />
       </ComponentDialog>
 
       <Toolbar disableGutters>
-        <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+        >
           <Typography variant="h2">Restoration Treatments</Typography>
 
           <Box py={1}>
             <Box display="inline-block" ml={1}>
               <Button
-                id={'upload-spatial'}
-                data-testid={'upload-spatial'}
+                id={"upload-spatial"}
+                data-testid={"upload-spatial"}
                 variant="contained"
                 color="primary"
                 disableElevation
                 title="Import treatment shapefile"
                 aria-label="import treatment shapefile"
                 startIcon={<Icon path={mdiImport} size={1} />}
-                onClick={handleImportTreatmentClick}>
+                onClick={handleImportTreatmentClick}
+              >
                 Import Treatments
               </Button>
             </Box>
@@ -259,27 +288,29 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
               <>
                 <Box display="inline-block" ml={1}>
                   <Button
-                    id={'download-spatial'}
-                    data-testid={'download-spatial'}
+                    id={"download-spatial"}
+                    data-testid={"download-spatial"}
                     variant="contained"
                     disableElevation
                     title="Export treatment shapefile"
                     aria-label="export treatment shapefile"
                     startIcon={<Icon path={mdiExport} size={1} />}
-                    onClick={handleExportTreatmentClick}>
+                    onClick={handleExportTreatmentClick}
+                  >
                     Download Treatments
                   </Button>
                 </Box>
                 <Box display="inline-block" ml={1}>
                   <Button
-                    id={'open-layer-menu'}
-                    data-testid={'open-layer-menu'}
+                    id={"open-layer-menu"}
+                    data-testid={"open-layer-menu"}
                     variant="outlined"
                     color="primary"
-                    title={'Filter by year'}
-                    aria-label={'filter by year'}
+                    title={"Filter by year"}
+                    aria-label={"filter by year"}
                     endIcon={<Icon path={mdiMenuDown} size={1} />}
-                    onClick={handleClick}>
+                    onClick={handleClick}
+                  >
                     Filter Years ({yearList?.length})
                   </Button>
                 </Box>
@@ -287,11 +318,12 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                   <IconButton
                     aria-label="delete all treatments"
                     title="Delete All Treatments"
-                    data-testid={'remove-project-treatments-button'}
+                    data-testid={"remove-project-treatments-button"}
                     onClick={() => {
                       showDeleteTreatmentsDialog();
                     }}
-                    size="large">
+                    size="large"
+                  >
                     <Icon path={mdiTrashCanOutline} size={0.9375} />
                   </IconButton>
                 </Box>
@@ -302,11 +334,12 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
               id="treatment-menu"
               anchorEl={anchorEl}
               getContentAnchorEl={null}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              sx={pageStyles.treatmentFilterList}>
+              sx={pageStyles.treatmentFilterList}
+            >
               {!yearList.length && (
                 <Box flexGrow={1} m={0.5}>
                   <Typography>No Treatment Years Available</Typography>
@@ -321,9 +354,13 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                       sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
-                      onClick={() => handleSelectedSwitch(year.year)}>
+                      onClick={() => handleSelectedSwitch(year.year)}
+                    >
                       <ListItemIcon>
-                        <Checkbox checked={selectedSpatialLayer[year.year]} color="primary" />
+                        <Checkbox
+                          checked={selectedSpatialLayer[year.year]}
+                          color="primary"
+                        />
                       </ListItemIcon>
                       <Box flexGrow={1}>{year.year}</Box>
                     </ListItem>

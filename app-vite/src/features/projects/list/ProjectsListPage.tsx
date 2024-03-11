@@ -1,44 +1,44 @@
-import CheckBox from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { ProjectStatusType } from 'constants/misc';
-import dayjs from 'dayjs';
-import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React from 'react';
-import { useHistory } from 'react-router';
-import { getFormattedDate } from 'utils/Utils';
+import CheckBox from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlank from "@mui/icons-material/CheckBoxOutlineBlank";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Checkbox from "@mui/material/Checkbox";
+import Chip from "@mui/material/Chip";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Link from "@mui/material/Link";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import { DATE_FORMAT } from "../../../constants/dateTimeFormats";
+import { ProjectStatusType } from "../../../constants/misc";
+import dayjs from "dayjs";
+import { IGetDraftsListResponse } from "../../../interfaces/useDraftApi.interface";
+import { IGetProjectForViewResponse } from "../../../interfaces/useProjectApi.interface";
+import React from "react";
+import { useNavigate } from "react-router";
+import { getFormattedDate } from "../../../utils/Utils";
 
 const pageStyles = {
   linkButton: {
-    textAlign: 'left'
+    textAlign: "left",
   },
   chipActive: {
-    color: 'white',
+    color: "white",
     fontWeight: 600,
-    backgroundColor: '#A2B9E2'
+    backgroundColor: "#A2B9E2",
   },
   chipPublishedCompleted: {
-    color: 'white',
-    backgroundColor: '#70AD47'
+    color: "white",
+    backgroundColor: "#70AD47",
   },
   chipDraft: {
-    color: 'white',
-    backgroundColor: '#A6A6A6'
-  }
+    color: "white",
+    backgroundColor: "#A6A6A6",
+  },
 };
 
 export interface IProjectsListProps {
@@ -49,12 +49,14 @@ export interface IProjectsListProps {
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts } = props;
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  const getProjectStatusType = (projectData: IGetProjectForViewResponse): ProjectStatusType => {
+  const getProjectStatusType = (
+    projectData: IGetProjectForViewResponse
+  ): ProjectStatusType => {
     if (
       projectData.project.end_date &&
-      dayjs(projectData.project.end_date).endOf('day').isBefore(dayjs())
+      dayjs(projectData.project.end_date).endOf("day").isBefore(dayjs())
     ) {
       return ProjectStatusType.COMPLETED;
     }
@@ -67,13 +69,13 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     let chipStatusClass;
 
     if (ProjectStatusType.ACTIVE === statusType) {
-      chipLabel = 'Active';
+      chipLabel = "Active";
       chipStatusClass = pageStyles.chipActive;
     } else if (ProjectStatusType.COMPLETED === statusType) {
-      chipLabel = 'Completed';
+      chipLabel = "Completed";
       chipStatusClass = pageStyles.chipPublishedCompleted;
     } else if (ProjectStatusType.DRAFT === statusType) {
-      chipLabel = 'Draft';
+      chipLabel = "Draft";
       chipStatusClass = pageStyles.chipDraft;
     }
 
@@ -85,9 +87,15 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
    */
   return (
     <Card>
-      <Box display="flex" alignItems="center" justifyContent="space-between" p={3}>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        p={3}
+      >
         <Typography variant="h2">
-          Found {projects?.length} {projects?.length !== 1 ? 'projects' : 'project'}
+          Found {projects?.length}{" "}
+          {projects?.length !== 1 ? "projects" : "project"}
         </Typography>
       </Box>
       <Box>
@@ -140,7 +148,10 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                       component="button"
                       sx={pageStyles.linkButton}
                       variant="body2"
-                      onClick={() => history.push(`/admin/projects/create?draftId=${row.id}`)}>
+                      onClick={() =>
+                        navigate(`/admin/projects/create?draftId=${row.id}`)
+                      }
+                    >
                       {row.name}
                     </Link>
                   </TableCell>
@@ -160,23 +171,36 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                       underline="always"
                       component="button"
                       variant="body2"
-                      onClick={() => history.push(`/admin/projects/${row.project.project_id}`)}>
+                      onClick={() =>
+                        navigate(`/admin/projects/${row.project.project_id}`)
+                      }
+                    >
                       {row.project.project_name}
                     </Link>
                   </TableCell>
                   <TableCell>
-                    {row.permit.permits.map((item) => item.permit_number).join(', ')}
+                    {row.permit.permits
+                      .map((item) => item.permit_number)
+                      .join(", ")}
                   </TableCell>
                   <TableCell>
-                    {row.contact.contacts.map((item) => item.agency).join(', ')}
+                    {row.contact.contacts.map((item) => item.agency).join(", ")}
                   </TableCell>
                   <TableCell>
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}
+                    {getFormattedDate(
+                      DATE_FORMAT.ShortMediumDateFormat,
+                      row.project.start_date
+                    )}
                   </TableCell>
                   <TableCell>
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}
+                    {getFormattedDate(
+                      DATE_FORMAT.ShortMediumDateFormat,
+                      row.project.end_date
+                    )}
                   </TableCell>
-                  <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
+                  <TableCell>
+                    {getChipIcon(getProjectStatusType(row))}
+                  </TableCell>
                   <TableCell>
                     <FormControlLabel
                       control={

@@ -1,9 +1,9 @@
-import AdminUsersLayout from 'features/admin/AdminUsersLayout';
-import React from 'react';
-import { Redirect, Switch } from 'react-router';
-import AppRoute from 'utils/AppRoute';
-import ManageUsersPage from './users/ManageUsersPage';
-import UsersDetailPage from './users/UsersDetailPage';
+import AdminUsersLayout from "../../features/admin/AdminUsersLayout";
+import React from "react";
+import { Redirect, Routes } from "react-router";
+import AppRoute from "../../utils/AppRoute";
+import ManageUsersPage from "./users/ManageUsersPage";
+import UsersDetailPage from "./users/UsersDetailPage";
 
 /**
  * Router for all `/admin/users/*` pages.
@@ -13,7 +13,7 @@ import UsersDetailPage from './users/UsersDetailPage';
  */
 const AdminUsersRouter: React.FC = () => {
   return (
-    <Switch>
+    <Routes>
       <AppRoute exact path="/admin/users" layout={AdminUsersLayout}>
         <ManageUsersPage />
       </AppRoute>
@@ -26,7 +26,7 @@ const AdminUsersRouter: React.FC = () => {
       <AppRoute path="/admin/users/*">
         <Redirect to="/page-not-found" />
       </AppRoute>
-    </Switch>
+    </Routes>
   );
 };
 

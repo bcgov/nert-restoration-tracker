@@ -1,48 +1,54 @@
-import { mdiMenuDown, mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
-import { IYesNoDialogProps } from '../../../components/dialog/YesNoDialog';
-import { CustomMenuButton } from '../../../components/toolbar/ActionToolbars';
-import { ProjectParticipantsI18N, SystemUserI18N } from '../../../constants/i18n';
-import { DialogContext } from '../../../contexts/dialogContext';
-import { APIError } from '../../../hooks/api/useAxios';
-import { CodeSet, IGetAllCodeSetsResponse } from '../../../interfaces/useCodesApi.interface';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
-import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
+import { mdiMenuDown, mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import useCodes from "../../../hooks/useCodes";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { IErrorDialogProps } from "../../../components/dialog/ErrorDialog";
+import { IYesNoDialogProps } from "../../../components/dialog/YesNoDialog";
+import { CustomMenuButton } from "../../../components/toolbar/ActionToolbars";
+import {
+  ProjectParticipantsI18N,
+  SystemUserI18N,
+} from "../../../constants/i18n";
+import { DialogContext } from "../../../contexts/dialogContext";
+import { APIError } from "../../../hooks/api/useAxios";
+import {
+  CodeSet,
+  IGetAllCodeSetsResponse,
+} from "../../../interfaces/useCodesApi.interface";
+import { IGetUserProjectsListResponse } from "../../../interfaces/useProjectApi.interface";
+import { IGetUserResponse } from "../../../interfaces/useUserApi.interface";
 
 const pageStyles = {
   actionButton: {
-    minWidth: '6rem',
-    '& + button': {
-      marginLeft: '0.5rem'
-    }
+    minWidth: "6rem",
+    "& + button": {
+      marginLeft: "0.5rem",
+    },
   },
   projectMembersToolbar: {
-    paddingLeft: '1rem',
-    paddingRight: '1rem'
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
   },
   projectMembersTable: {
-    tableLayout: 'fixed',
-    '& td': {
-      verticalAlign: 'middle'
-    }
-  }
+    tableLayout: "fixed",
+    "& td": {
+      verticalAlign: "middle",
+    },
+  },
 };
 
 export interface IProjectDetailsProps {
@@ -58,14 +64,17 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   const { userDetails } = props;
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  const [assignedProjects, setAssignedProjects] = useState<IGetUserProjectsListResponse[]>();
+  const [assignedProjects, setAssignedProjects] =
+    useState<IGetUserProjectsListResponse[]>();
 
   const handleGetUserProjects = useCallback(
     async (userId: number) => {
       const userProjectsListResponse =
-        await restorationTrackerApi.project.getAllUserProjectsParticipation(userId);
+        await restorationTrackerApi.project.getAllUserProjectsParticipation(
+          userId
+        );
       setAssignedProjects(userProjectsListResponse);
     },
     [restorationTrackerApi.project]
@@ -88,15 +97,16 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     projectParticipationId: number
   ) => {
     try {
-      const response = await restorationTrackerApi.project.removeProjectParticipant(
-        projectId,
-        projectParticipationId
-      );
+      const response =
+        await restorationTrackerApi.project.removeProjectParticipant(
+          projectId,
+          projectParticipationId
+        );
 
       if (!response) {
         openErrorDialog({
           dialogTitle: SystemUserI18N.removeUserErrorTitle,
-          dialogText: SystemUserI18N.removeUserErrorText
+          dialogText: SystemUserI18N.removeUserErrorText,
         });
         return;
       }
@@ -105,9 +115,10 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            User <strong>{userDetails.user_identifier}</strong> removed from project.
+            User <strong>{userDetails.user_identifier}</strong> removed from
+            project.
           </Typography>
-        )
+        ),
       });
 
       handleGetUserProjects(userDetails.id);
@@ -116,26 +127,26 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
         dialogTitle: SystemUserI18N.removeUserErrorTitle,
         dialogText: SystemUserI18N.removeUserErrorText,
         dialogError: (error as APIError).message,
-        dialogErrorDetails: (error as APIError).errors
+        dialogErrorDetails: (error as APIError).errors,
       });
     }
   };
 
   const defaultErrorDialogProps: Partial<IErrorDialogProps> = {
     onClose: () => dialogContext.setErrorDialog({ open: false }),
-    onOk: () => dialogContext.setErrorDialog({ open: false })
+    onOk: () => dialogContext.setErrorDialog({ open: false }),
   };
 
   const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
     onClose: () => dialogContext.setYesNoDialog({ open: false }),
-    onNo: () => dialogContext.setYesNoDialog({ open: false })
+    onNo: () => dialogContext.setYesNoDialog({ open: false }),
   };
 
   const openYesNoDialog = (yesNoDialogProps?: Partial<IYesNoDialogProps>) => {
     dialogContext.setYesNoDialog({
       ...defaultYesNoDialogProps,
       ...yesNoDialogProps,
-      open: true
+      open: true,
     });
   };
 
@@ -144,7 +155,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
       dialogContext.setErrorDialog({
         ...defaultErrorDialogProps,
         ...errorDialogProps,
-        open: true
+        open: true,
       });
     },
     [defaultErrorDialogProps, dialogContext]
@@ -154,7 +165,10 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     assignedProjects: IGetUserProjectsListResponse[];
     codes: IGetAllCodeSetsResponse;
   }> = (tableRowsProps) => {
-    if (tableRowsProps.assignedProjects && tableRowsProps.assignedProjects.length) {
+    if (
+      tableRowsProps.assignedProjects &&
+      tableRowsProps.assignedProjects.length
+    ) {
       return (
         <>
           {tableRowsProps.assignedProjects.map((row) => (
@@ -162,8 +176,11 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
               <TableCell scope="row">
                 <Link
                   color="primary"
-                  onClick={() => history.push(`/admin/projects/${row.project_id}/details`)}
-                  aria-current="page">
+                  onClick={() =>
+                    navigate(`/admin/projects/${row.project_id}/details`)
+                  }
+                  aria-current="page"
+                >
                   <Typography variant="body2">{row.name}</Typography>
                 </Link>
               </TableCell>
@@ -182,34 +199,36 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
                 <Box m={-1}>
                   <IconButton
                     title="Remove Project Participant"
-                    data-testid={'remove-project-participant-button'}
+                    data-testid={"remove-project-participant-button"}
                     onClick={() =>
                       openYesNoDialog({
                         dialogTitle: SystemUserI18N.removeUserFromProject,
                         dialogContent: (
                           <>
                             <Typography variant="body1" color="textSecondary">
-                              Removing user <strong>{userDetails.user_identifier}</strong> will
-                              revoke their access to this project.
+                              Removing user{" "}
+                              <strong>{userDetails.user_identifier}</strong>{" "}
+                              will revoke their access to this project.
                             </Typography>
                             <Typography variant="body1" color="textPrimary">
                               Are you sure you want to proceed?
                             </Typography>
                           </>
                         ),
-                        yesButtonLabel: 'Remove User',
-                        yesButtonProps: { color: 'secondary' },
-                        noButtonLabel: 'Cancel',
+                        yesButtonLabel: "Remove User",
+                        yesButtonProps: { color: "secondary" },
+                        noButtonLabel: "Cancel",
                         onYes: () => {
                           handleRemoveProjectParticipant(
                             row.project_id,
                             row.project_participation_id
                           );
                           dialogContext.setYesNoDialog({ open: false });
-                        }
+                        },
                       })
                     }
-                    size="large">
+                    size="large"
+                  >
                     <Icon path={mdiTrashCanOutline} size={1} />
                   </IconButton>
                 </Box>
@@ -232,7 +251,13 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   };
 
   if (!codes.isReady || !codes.codes || !assignedProjects) {
-    return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
+    return (
+      <CircularProgress
+        data-testid="project-loading"
+        className="pageProgress"
+        size={40}
+      />
+    );
   }
 
   return (
@@ -254,7 +279,10 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody data-testid="resources-table">
-            <TableRows assignedProjects={assignedProjects} codes={codes.codes} />
+            <TableRows
+              assignedProjects={assignedProjects}
+              codes={codes.codes}
+            />
           </TableBody>
         </Table>
       </Box>
@@ -271,7 +299,9 @@ export interface IChangeProjectRoleMenuProps {
   refresh: () => void;
 }
 
-const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => {
+const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (
+  props
+) => {
   const { row, user_identifier, projectRoleCodes, refresh } = props;
 
   const dialogContext = useContext(DialogContext);
@@ -286,11 +316,15 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     },
     onOk: () => {
       dialogContext.setErrorDialog({ open: false });
-    }
+    },
   };
 
   const displayErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-    dialogContext.setErrorDialog({ ...errorDialogProps, ...textDialogProps, open: true });
+    dialogContext.setErrorDialog({
+      ...errorDialogProps,
+      ...textDialogProps,
+      open: true,
+    });
   };
 
   const handleChangeUserPermissionsClick = (
@@ -299,17 +333,18 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     newRoleId: number
   ) => {
     dialogContext.setYesNoDialog({
-      dialogTitle: 'Change Project Role?',
+      dialogTitle: "Change Project Role?",
       dialogContent: (
         <>
           <Typography color="textPrimary">
-            Change user <strong>{user_identifier}</strong>'s role to <strong>{newRole}</strong>?
+            Change user <strong>{user_identifier}</strong>'s role to{" "}
+            <strong>{newRole}</strong>?
           </Typography>
         </>
       ),
-      yesButtonLabel: 'Change Role',
-      noButtonLabel: 'Cancel',
-      yesButtonProps: { color: 'primary' },
+      yesButtonLabel: "Change Role",
+      noButtonLabel: "Cancel",
+      yesButtonProps: { color: "primary" },
       open: true,
       onClose: () => {
         dialogContext.setYesNoDialog({ open: false });
@@ -320,7 +355,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
       onYes: () => {
         changeProjectParticipantRole(item, newRole, newRoleId);
         dialogContext.setYesNoDialog({ open: false });
-      }
+      },
     });
   };
 
@@ -334,11 +369,12 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     }
 
     try {
-      const status = await restorationTrackerApi.project.updateProjectParticipantRole(
-        item.project_id,
-        item.project_participation_id,
-        newRoleId
-      );
+      const status =
+        await restorationTrackerApi.project.updateProjectParticipantRole(
+          item.project_id,
+          item.project_participation_id,
+          newRoleId
+        );
 
       if (!status) {
         displayErrorDialog();
@@ -349,9 +385,10 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            User <strong>{user_identifier}</strong>'s role changed to <strong>{newRole}</strong>.
+            User <strong>{user_identifier}</strong>'s role changed to{" "}
+            <strong>{newRole}</strong>.
           </Typography>
-        )
+        ),
       });
 
       refresh();
@@ -360,7 +397,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
         dialogTitle: SystemUserI18N.updateProjectLeadRoleErrorTitle,
         dialogText: SystemUserI18N.updateProjectLeadRoleErrorText,
         dialogError: (error as APIError).message,
-        dialogErrorDetails: (error as APIError).errors
+        dialogErrorDetails: (error as APIError).errors,
       });
     }
   };
@@ -372,12 +409,13 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
   return (
     <CustomMenuButton
       buttonLabel={currentProjectRoleName}
-      buttonTitle={'Change Project Role'}
-      buttonProps={{ variant: 'text' }}
+      buttonTitle={"Change Project Role"}
+      buttonProps={{ variant: "text" }}
       menuItems={projectRoleCodes.map((roleCode) => {
         return {
           menuLabel: roleCode.name,
-          menuOnClick: () => handleChangeUserPermissionsClick(row, roleCode.name, roleCode.id)
+          menuOnClick: () =>
+            handleChangeUserPermissionsClick(row, roleCode.name, roleCode.id),
         };
       })}
       buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}

@@ -1,8 +1,8 @@
-import CircularProgress from '@mui/material/CircularProgress';
-import { AuthStateContext } from 'contexts/authStateContext';
-import qs from 'qs';
-import React, { useContext } from 'react';
-import { Redirect, Route, RouteProps, useLocation } from 'react-router';
+import CircularProgress from "@mui/material/CircularProgress";
+import { AuthStateContext } from "../../contexts/authStateContext";
+import qs from "qs";
+import React, { useContext } from "react";
+import { Redirect, Route, RouteProps, useLocation } from "react-router";
 
 /**
  * Special route guard that requires the user to be authenticated, but also accounts for routes that are exceptions to
@@ -14,7 +14,10 @@ import { Redirect, Route, RouteProps, useLocation } from 'react-router';
  * @param {*} { children, ...rest }
  * @return {*}
  */
-export const AuthenticatedRouteGuard: React.FC<RouteProps> = ({ children, ...rest }) => {
+export const AuthenticatedRouteGuard: React.FC<RouteProps> = ({
+  children,
+  ...rest
+}) => {
   return (
     <CheckForAuthLoginParam>
       <WaitForKeycloakToLoadUserInfo>
@@ -51,13 +54,13 @@ const CheckForAuthLoginParam: React.FC = ({ children }) => {
   const location = useLocation();
 
   if (!keycloakWrapper?.keycloak.authenticated) {
-    const urlParams = qs.parse(location.search.replace('?', ''));
+    const urlParams = qs.parse(location.search.replace("?", ""));
     const authLoginUrlParam = urlParams.authLogin;
     // check for urlParam to force login
     if (authLoginUrlParam) {
       // remove authLogin url param from url to stop possible loop redirect
       const redirectUrlParams = qs.stringify(urlParams, {
-        filter: (prefix) => prefix !== 'authLogin'
+        filter: (prefix) => prefix !== "authLogin",
       });
       const redirectUri = `${window.location.origin}${location.pathname}?${redirectUrlParams}`;
 
@@ -107,15 +110,18 @@ const CheckIfAuthenticatedUser: React.FC = ({ children }) => {
     // User is not a registered system user
     if (keycloakWrapper?.hasAccessRequest) {
       // The user has a pending access request, restrict them to the request-submitted or logout pages
-      if (location.pathname !== '/request-submitted' && location.pathname !== '/logout') {
+      if (
+        location.pathname !== "/request-submitted" &&
+        location.pathname !== "/logout"
+      ) {
         return <Redirect to="/request-submitted" />;
       }
     } else {
       // The user does not have a pending access request, restrict them to the access-request, request-submitted or logout pages
       if (
-        location.pathname !== '/access-request' &&
-        location.pathname !== '/request-submitted' &&
-        location.pathname !== '/logout'
+        location.pathname !== "/access-request" &&
+        location.pathname !== "/request-submitted" &&
+        location.pathname !== "/logout"
       ) {
         // User attempted to go to restricted page
         return <Redirect to="/forbidden" />;

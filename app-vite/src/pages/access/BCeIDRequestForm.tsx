@@ -1,18 +1,18 @@
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import CustomTextField from 'components/fields/CustomTextField';
-import { IBCeIDAccessRequestDataObject } from 'interfaces/useAdminApi.interface';
-import React from 'react';
-import yup from 'utils/YupSchema';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import CustomTextField from "../../components/fields/CustomTextField";
+import { IBCeIDAccessRequestDataObject } from "../../interfaces/useAdminApi.interface";
+import React from "react";
+import yup from "../../utils/YupSchema";
 
 export const BCeIDRequestFormInitialValues: IBCeIDAccessRequestDataObject = {
-  company: '',
-  reason: ''
+  company: "",
+  reason: "",
 };
 
 export const BCeIDRequestFormYupSchema = yup.object().shape({
-  company: yup.string().required('Required'),
-  reason: yup.string().max(300, 'Maximum 300 characters')
+  company: yup.string().required("Required"),
+  reason: yup.string().max(300, "Maximum 300 characters"),
 });
 
 /**
@@ -30,12 +30,14 @@ const BCeIDRequestForm = () => {
             name="company"
             label="Company Name"
             other={{
-              required: true
+              required: true,
             }}
           />
         </Grid>
         <Grid item xs={12}>
-          <h3>Why are you requesting access to Northeast Restoration Tracker?</h3>
+          <h3>
+            Why are you requesting access to Northeast Restoration Tracker?
+          </h3>
           <CustomTextField
             name="reason"
             label="Request Reason"

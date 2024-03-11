@@ -1,39 +1,39 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { AccessStatusChip } from 'components/chips/RequestChips';
-import RequestDialog from 'components/dialog/RequestDialog';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { ReviewAccessRequestI18N } from 'constants/i18n';
-import { AdministrativeActivityStatusType } from 'constants/misc';
-import { DialogContext } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import React, { useContext, useState } from 'react';
-import { getFormattedDate } from 'utils/Utils';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { AccessStatusChip } from "../../../components/chips/RequestChips";
+import RequestDialog from "../../../components/dialog/RequestDialog";
+import { DATE_FORMAT } from "../../../constants/dateTimeFormats";
+import { ReviewAccessRequestI18N } from "../../../constants/i18n";
+import { AdministrativeActivityStatusType } from "../../../constants/misc";
+import { DialogContext } from "../../../contexts/dialogContext";
+import { APIError } from "../../../hooks/api/useAxios";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import { IGetAccessRequestsListResponse } from "../../../interfaces/useAdminApi.interface";
+import { IGetAllCodeSetsResponse } from "../../../interfaces/useCodesApi.interface";
+import React, { useContext, useState } from "react";
+import { getFormattedDate } from "../../../utils/Utils";
 import ReviewAccessRequestForm, {
   IReviewAccessRequestForm,
   ReviewAccessRequestFormInitialValues,
-  ReviewAccessRequestFormYupSchema
-} from './ReviewAccessRequestForm';
+  ReviewAccessRequestFormYupSchema,
+} from "./ReviewAccessRequestForm";
 
 const pageStyles = {
   table: {
-    tableLayout: 'fixed',
-    '& td': {
-      verticalAlign: 'middle'
-    }
-  }
+    tableLayout: "fixed",
+    "& td": {
+      verticalAlign: "middle",
+    },
+  },
 };
 
 export interface IAccessRequestListProps {
@@ -58,7 +58,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
     request: IGetAccessRequestsListResponse | any;
   }>({
     open: false,
-    request: null
+    request: null,
   });
 
   const dialogContext = useContext(DialogContext);
@@ -72,11 +72,14 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
     },
     onOk: () => {
       dialogContext.setErrorDialog({ open: false });
-    }
+    },
   };
 
-  const handleReviewDialogApprove = async (values: IReviewAccessRequestForm) => {
-    const updatedRequest = activeReviewDialog.request as IGetAccessRequestsListResponse;
+  const handleReviewDialogApprove = async (
+    values: IReviewAccessRequestForm
+  ) => {
+    const updatedRequest =
+      activeReviewDialog.request as IGetAccessRequestsListResponse;
 
     setActiveReviewDialog({ open: false, request: null });
 
@@ -93,13 +96,14 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
       dialogContext.setErrorDialog({
         ...defaultErrorDialogProps,
         open: true,
-        dialogErrorDetails: (error as APIError).errors
+        dialogErrorDetails: (error as APIError).errors,
       });
     }
   };
 
   const handleReviewDialogDeny = async () => {
-    const updatedRequest = activeReviewDialog.request as IGetAccessRequestsListResponse;
+    const updatedRequest =
+      activeReviewDialog.request as IGetAccessRequestsListResponse;
 
     setActiveReviewDialog({ open: false, request: null });
 
@@ -111,7 +115,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
       dialogContext.setErrorDialog({
         ...defaultErrorDialogProps,
         open: true,
-        dialogErrorDetails: (error as APIError).errors
+        dialogErrorDetails: (error as APIError).errors,
       });
     }
   };
@@ -119,7 +123,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
   return (
     <>
       <RequestDialog
-        dialogTitle={'Review Access Request'}
+        dialogTitle={"Review Access Request"}
         open={activeReviewDialog.open}
         onClose={() => setActiveReviewDialog({ open: false, request: null })}
         onDeny={handleReviewDialogDeny}
@@ -127,7 +131,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
         component={{
           initialValues: {
             ...ReviewAccessRequestFormInitialValues,
-            system_role: activeReviewDialog.request?.data?.role
+            system_role: activeReviewDialog.request?.data?.role,
           },
           validationSchema: ReviewAccessRequestFormYupSchema,
           element: (
@@ -139,13 +143,15 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
                 }) || []
               }
             />
-          )
+          ),
         }}
       />
       <Paper>
         <Toolbar disableGutters>
           <Box px={2}>
-            <Typography variant="h2">Access Requests ({accessRequests?.length || 0})</Typography>
+            <Typography variant="h2">
+              Access Requests ({accessRequests?.length || 0})
+            </Typography>
           </Box>
         </Toolbar>
         <TableContainer>
@@ -162,7 +168,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
             </TableHead>
             <TableBody data-testid="access-request-table">
               {!accessRequests?.length && (
-                <TableRow data-testid={'access-request-row-0'}>
+                <TableRow data-testid={"access-request-row-0"}>
                   <TableCell colSpan={4} align="center">
                     No Access Requests
                   </TableCell>
@@ -170,21 +176,31 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
               )}
               {accessRequests?.map((row, index) => {
                 return (
-                  <TableRow data-testid={`access-request-row-${index}`} key={index}>
-                    <TableCell>{row.data?.username || ''}</TableCell>
+                  <TableRow
+                    data-testid={`access-request-row-${index}`}
+                    key={index}
+                  >
+                    <TableCell>{row.data?.username || ""}</TableCell>
                     <TableCell>
-                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.create_date)}
+                      {getFormattedDate(
+                        DATE_FORMAT.ShortMediumDateFormat,
+                        row.create_date
+                      )}
                     </TableCell>
                     <TableCell>
                       <AccessStatusChip status={row.status_name} />
                     </TableCell>
 
                     <TableCell align="center">
-                      {row.status_name === AdministrativeActivityStatusType.PENDING && (
+                      {row.status_name ===
+                        AdministrativeActivityStatusType.PENDING && (
                         <Button
                           color="primary"
                           variant="outlined"
-                          onClick={() => setActiveReviewDialog({ open: true, request: row })}>
+                          onClick={() =>
+                            setActiveReviewDialog({ open: true, request: row })
+                          }
+                        >
                           <strong>Review</strong>
                         </Button>
                       )}
