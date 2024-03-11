@@ -1,25 +1,30 @@
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import AutocompleteField, { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { useFormikContext } from 'formik';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
-import React from 'react';
-import { getFormattedDate, getFormattedIdentitySource } from 'utils/Utils';
-import yup from 'utils/YupSchema';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import AutocompleteField, {
+  IAutocompleteFieldOption,
+} from "../../../components/fields/AutocompleteField";
+import { DATE_FORMAT } from "../../../constants/dateTimeFormats";
+import { useFormikContext } from "formik";
+import { SYSTEM_IDENTITY_SOURCE } from "../../../hooks/useKeycloakWrapper";
+import { IGetAccessRequestsListResponse } from "../../../interfaces/useAdminApi.interface";
+import React from "react";
+import {
+  getFormattedDate,
+  getFormattedIdentitySource,
+} from "../../../utils/Utils";
+import yup from "../../../utils/YupSchema";
 
 export interface IReviewAccessRequestForm {
   system_role: number;
 }
 
 export const ReviewAccessRequestFormInitialValues: IReviewAccessRequestForm = {
-  system_role: '' as unknown as number
+  system_role: "" as unknown as number,
 };
 
 export const ReviewAccessRequestFormYupSchema = yup.object().shape({
-  system_role: yup.number().nullable().notRequired()
+  system_role: yup.number().nullable().notRequired(),
 });
 
 export interface IReviewAccessRequestFormProps {
@@ -32,17 +37,19 @@ export interface IReviewAccessRequestFormProps {
  *
  * @return {*}
  */
-const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props) => {
+const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (
+  props
+) => {
   const { handleSubmit } = useFormikContext<IReviewAccessRequestForm>();
 
   const identitySource = props.request.data.identitySource;
   const userIdentifier = props.request.data.username;
   const formattedUsername = [
     getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
-    userIdentifier
+    userIdentifier,
   ]
     .filter(Boolean)
-    .join('/');
+    .join("/");
 
   return (
     <Box>
@@ -53,7 +60,11 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
         <dl>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <Typography component="dt" variant="subtitle2" color="textSecondary">
+              <Typography
+                component="dt"
+                variant="subtitle2"
+                color="textSecondary"
+              >
                 Name
               </Typography>
               <Typography component="dd" variant="body1">
@@ -61,7 +72,11 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography component="dt" variant="subtitle2" color="textSecondary">
+              <Typography
+                component="dt"
+                variant="subtitle2"
+                color="textSecondary"
+              >
                 Email Address
               </Typography>
               <Typography component="dd" variant="body1">
@@ -70,7 +85,11 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography component="dt" variant="subtitle2" color="textSecondary">
+              <Typography
+                component="dt"
+                variant="subtitle2"
+                color="textSecondary"
+              >
                 Username
               </Typography>
               <Typography component="dd" variant="body1">
@@ -79,26 +98,42 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography component="dt" variant="subtitle2" color="textSecondary">
+              <Typography
+                component="dt"
+                variant="subtitle2"
+                color="textSecondary"
+              >
                 Request Date
               </Typography>
               <Typography component="dd" variant="body1">
-                {getFormattedDate(DATE_FORMAT.ShortDateFormatMonthFirst, props.request.create_date)}
+                {getFormattedDate(
+                  DATE_FORMAT.ShortDateFormatMonthFirst,
+                  props.request.create_date
+                )}
               </Typography>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography component="dt" variant="subtitle2" color="textSecondary">
+              <Typography
+                component="dt"
+                variant="subtitle2"
+                color="textSecondary"
+              >
                 Company
               </Typography>
               <Typography component="dd" variant="body1">
-                {('company' in props.request.data && props.request.data.company) ||
-                  'Not Applicable'}
+                {("company" in props.request.data &&
+                  props.request.data.company) ||
+                  "Not Applicable"}
               </Typography>
             </Grid>
 
             <Grid item xs={12}>
-              <Typography component="dt" variant="subtitle2" color="textSecondary">
+              <Typography
+                component="dt"
+                variant="subtitle2"
+                color="textSecondary"
+              >
                 Reason
               </Typography>
               <Typography component="dd" variant="body1">
@@ -110,7 +145,9 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
       </Box>
       <Box mb={5}>
         <Box mb={2}>
-          <Typography variant="h3">Review / Update Requested System Role</Typography>
+          <Typography variant="h3">
+            Review / Update Requested System Role
+          </Typography>
         </Box>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -118,7 +155,7 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
               <AutocompleteField
                 id="system_role"
                 name="system_role"
-                label={'System Role'}
+                label={"System Role"}
                 options={props.system_roles}
               />
             </Grid>

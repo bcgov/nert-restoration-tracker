@@ -1,29 +1,29 @@
-import { useLeafletContext } from '@react-leaflet/core';
-import { Feature } from 'geojson';
-import { useDeepCompareEffect } from 'hooks/useDeepCompareEffect';
-import * as L from 'leaflet';
-import 'leaflet-draw';
-import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useRef } from 'react';
+import { useLeafletContext } from "@react-leaflet/core";
+import { Feature } from "geojson";
+import { useDeepCompareEffect } from "../../../hooks/useDeepCompareEffect";
+import * as L from "leaflet";
+import "leaflet-draw";
+import "leaflet/dist/leaflet.css";
+import React, { useEffect, useRef } from "react";
 
 /*
  * Supported draw events.
  */
 const eventHandlers = {
-  onCreated: 'draw:created',
-  onEdited: 'draw:edited',
-  onDrawStart: 'draw:drawstart',
-  onDrawStop: 'draw:drawstop',
-  onDrawVertex: 'draw:drawvertex',
-  onEditStart: 'draw:editstart',
-  onEditMove: 'draw:editmove',
-  onEditResize: 'draw:editresize',
-  onEditVertex: 'draw:editvertex',
-  onEditStop: 'draw:editstop',
-  onDeleted: 'draw:deleted',
-  onDeleteStart: 'draw:deletestart',
-  onDeleteStop: 'draw:deletestop',
-  onMounted: 'draw:mounted'
+  onCreated: "draw:created",
+  onEdited: "draw:edited",
+  onDrawStart: "draw:drawstart",
+  onDrawStop: "draw:drawstop",
+  onDrawVertex: "draw:drawvertex",
+  onEditStart: "draw:editstart",
+  onEditMove: "draw:editmove",
+  onEditResize: "draw:editresize",
+  onEditVertex: "draw:editvertex",
+  onEditStop: "draw:editstop",
+  onDeleted: "draw:deleted",
+  onDeleteStart: "draw:deletestart",
+  onDeleteStop: "draw:deletestop",
+  onMounted: "draw:mounted",
 };
 
 export interface IDrawControlsProps {
@@ -44,7 +44,7 @@ const DrawControls: React.FC<IDrawControlsProps> = (props) => {
     const container = context.layerContainer;
 
     if (!container || !(container instanceof L.FeatureGroup)) {
-      throw new Error('Failed to get map layer');
+      throw new Error("Failed to get map layer");
     }
 
     return container;
@@ -81,13 +81,13 @@ const DrawControls: React.FC<IDrawControlsProps> = (props) => {
     const options: L.Control.DrawConstructorOptions = {
       edit: {
         ...props.options?.edit,
-        featureGroup: getFeatureGroup()
-      }
+        featureGroup: getFeatureGroup(),
+      },
     };
 
     options.draw = { ...props.options?.draw };
 
-    options.position = props.options?.position || 'topright';
+    options.position = props.options?.position || "topright";
 
     return new L.Control.Draw(options);
   };
@@ -129,14 +129,17 @@ const DrawControls: React.FC<IDrawControlsProps> = (props) => {
       L.geoJSON(item, {
         pointToLayer: (feature, latlng) => {
           if (feature.properties?.radius) {
-            return new L.Circle([latlng.lat, latlng.lng], feature.properties.radius);
+            return new L.Circle(
+              [latlng.lat, latlng.lng],
+              feature.properties.radius
+            );
           }
 
           return new L.Marker([latlng.lat, latlng.lng]);
         },
         onEachFeature: function (_feature, layer) {
           container.addLayer(layer);
-        }
+        },
       });
     });
   };

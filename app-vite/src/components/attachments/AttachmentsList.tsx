@@ -1,37 +1,40 @@
-import { mdiDotsVertical, mdiDownload, mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { AttachmentsI18N } from 'constants/i18n';
-import { DialogContext } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
-import React, { useContext, useState } from 'react';
-import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
-import { getFormattedFileSize } from 'utils/Utils';
+import { mdiDotsVertical, mdiDownload, mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import { IErrorDialogProps } from "../../components/dialog/ErrorDialog";
+import { AttachmentsI18N } from "../../constants/i18n";
+import { DialogContext } from "../../contexts/dialogContext";
+import { APIError } from "../../hooks/api/useAxios";
+import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
+import { IGetProjectAttachment } from "../../interfaces/useProjectApi.interface";
+import React, { useContext, useState } from "react";
+import {
+  handleChangePage,
+  handleChangeRowsPerPage,
+} from "../../utils/tablePaginationUtils";
+import { getFormattedFileSize } from "../../utils/Utils";
 
 const pageStyles = {
   attachmentsTable: {
-    '& .MuiTableCell-root': {
-      verticalAlign: 'middle'
-    }
+    "& .MuiTableCell-root": {
+      verticalAlign: "middle",
+    },
   },
   uploadMenu: {
-    marginTop: '0.5rem'
-  }
+    marginTop: "0.5rem",
+  },
 };
 
 export interface IAttachmentsListProps {
@@ -63,31 +66,35 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
     },
     onOk: () => {
       dialogContext.setErrorDialog({ open: false });
-    }
+    },
   };
 
   const showErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-    dialogContext.setErrorDialog({ ...defaultErrorDialogProps, ...textDialogProps, open: true });
+    dialogContext.setErrorDialog({
+      ...defaultErrorDialogProps,
+      ...textDialogProps,
+      open: true,
+    });
   };
 
   const defaultYesNoDialogProps = {
-    dialogTitle: 'Delete Attachment',
-    dialogText: 'Are you sure you want to delete the selected attachment?',
+    dialogTitle: "Delete Attachment",
+    dialogText: "Are you sure you want to delete the selected attachment?",
     open: false,
     onClose: () => dialogContext.setYesNoDialog({ open: false }),
     onNo: () => dialogContext.setYesNoDialog({ open: false }),
-    onYes: () => dialogContext.setYesNoDialog({ open: false })
+    onYes: () => dialogContext.setYesNoDialog({ open: false }),
   };
 
   const showDeleteAttachmentDialog = (attachment: IGetProjectAttachment) => {
     dialogContext.setYesNoDialog({
       ...defaultYesNoDialogProps,
       open: true,
-      yesButtonProps: { color: 'secondary' },
+      yesButtonProps: { color: "secondary" },
       onYes: () => {
         deleteAttachment(attachment);
         dialogContext.setYesNoDialog({ open: false });
-      }
+      },
     });
   };
 
@@ -97,7 +104,10 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
     }
 
     try {
-      await restorationTrackerApi.project.deleteProjectAttachment(props.projectId, attachment.id);
+      await restorationTrackerApi.project.deleteProjectAttachment(
+        props.projectId,
+        attachment.id
+      );
 
       props.getAttachments(true);
     } catch (error) {
@@ -106,19 +116,23 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
         dialogTitle: AttachmentsI18N.deleteErrorTitle,
         dialogText: AttachmentsI18N.deleteErrorText,
         dialogErrorDetails: apiError.errors,
-        open: true
+        open: true,
       });
       return;
     }
   };
 
-  const openAttachment = async (attachment: IGetProjectAttachment) => window.open(attachment.url);
+  const openAttachment = async (attachment: IGetProjectAttachment) =>
+    window.open(attachment.url);
 
   return (
     <>
       <Box>
         <TableContainer>
-          <Table sx={pageStyles.attachmentsTable} aria-label="attachments-list-table">
+          <Table
+            sx={pageStyles.attachmentsTable}
+            aria-label="attachments-list-table"
+          >
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -140,7 +154,8 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
                             underline="always"
                             component="button"
                             variant="body2"
-                            onClick={() => openAttachment(row)}>
+                            onClick={() => openAttachment(row)}
+                          >
                             {row.fileName}
                           </Link>
                         </TableCell>
@@ -193,7 +208,9 @@ interface IAttachmentItemMenuButtonProps {
   handleDeleteFileClick: (attachment: IGetProjectAttachment) => void;
 }
 
-const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (props) => {
+const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (
+  props
+) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -212,32 +229,35 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
             size="small"
             aria-label="document actions"
             onClick={handleClick}
-            data-testid="attachment-action-menu">
+            data-testid="attachment-action-menu"
+          >
             <Icon path={mdiDotsVertical} size={1} />
           </IconButton>
           <Menu
             sx={pageStyles.uploadMenu}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
+              vertical: "top",
+              horizontal: "right",
             }}
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
+              vertical: "top",
+              horizontal: "right",
             }}
             id="basic-menu"
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
             MenuListProps={{
-              'aria-labelledby': 'basic-button'
-            }}>
+              "aria-labelledby": "basic-button",
+            }}
+          >
             <MenuItem
               onClick={() => {
                 props.handleDownloadFileClick(props.attachment);
                 setAnchorEl(null);
               }}
-              data-testid="attachment-action-menu-download">
+              data-testid="attachment-action-menu-download"
+            >
               <ListItemIcon>
                 <Icon path={mdiDownload} size={1} />
               </ListItemIcon>
@@ -248,7 +268,8 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
                 props.handleDeleteFileClick(props.attachment);
                 setAnchorEl(null);
               }}
-              data-testid="attachment-action-menu-delete">
+              data-testid="attachment-action-menu-delete"
+            >
               <ListItemIcon>
                 <Icon path={mdiTrashCanOutline} size={1} />
               </ListItemIcon>

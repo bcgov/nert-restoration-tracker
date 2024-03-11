@@ -1,85 +1,88 @@
-import ArrowBack from '@mui/icons-material/ArrowBack';
-import Box from '@mui/material/Box';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import EditDialog from 'components/dialog/EditDialog';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
-import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
-import { AuthStateContext } from 'contexts/authStateContext';
-import { DialogContext } from 'contexts/dialogContext';
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import Box from "@mui/material/Box";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import EditDialog from "../../../components/dialog/EditDialog";
+import { IErrorDialogProps } from "../../../components/dialog/ErrorDialog";
+import { ScrollToFormikError } from "../../../components/formik/ScrollToFormikError";
+import {
+  CreateProjectDraftI18N,
+  CreateProjectI18N,
+} from "../../../constants/i18n";
+import { AuthStateContext } from "../../../contexts/authStateContext";
+import { DialogContext } from "../../../contexts/dialogContext";
 import ProjectContactForm, {
   ProjectContactInitialValues,
-  ProjectContactYupSchema
-} from 'features/projects/components/ProjectContactForm';
+  ProjectContactYupSchema,
+} from "../../../features/projects/components/ProjectContactForm";
 import ProjectDraftForm, {
   IProjectDraftForm,
   ProjectDraftFormInitialValues,
-  ProjectDraftFormYupSchema
-} from 'features/projects/components/ProjectDraftForm';
+  ProjectDraftFormYupSchema,
+} from "../../../features/projects/components/ProjectDraftForm";
 import ProjectFundingForm, {
   ProjectFundingFormInitialValues,
-  ProjectFundingFormYupSchema
-} from 'features/projects/components/ProjectFundingForm';
+  ProjectFundingFormYupSchema,
+} from "../../../features/projects/components/ProjectFundingForm";
 import ProjectGeneralInformationForm, {
   ProjectGeneralInformationFormInitialValues,
-  ProjectGeneralInformationFormYupSchema
-} from 'features/projects/components/ProjectGeneralInformationForm';
+  ProjectGeneralInformationFormYupSchema,
+} from "../../../features/projects/components/ProjectGeneralInformationForm";
 import ProjectIUCNForm, {
   ProjectIUCNFormInitialValues,
-  ProjectIUCNFormYupSchema
-} from 'features/projects/components/ProjectIUCNForm';
+  ProjectIUCNFormYupSchema,
+} from "../../../features/projects/components/ProjectIUCNForm";
 import ProjectLocationForm, {
   ProjectLocationFormInitialValues,
-  ProjectLocationFormYupSchema
-} from 'features/projects/components/ProjectLocationForm';
+  ProjectLocationFormYupSchema,
+} from "../../../features/projects/components/ProjectLocationForm";
 import ProjectPartnershipsForm, {
   ProjectPartnershipsFormInitialValues,
-  ProjectPartnershipsFormYupSchema
-} from 'features/projects/components/ProjectPartnershipsForm';
+  ProjectPartnershipsFormYupSchema,
+} from "../../../features/projects/components/ProjectPartnershipsForm";
 import ProjectPermitForm, {
   ProjectPermitFormInitialValues,
-  ProjectPermitFormYupSchema
-} from 'features/projects/components/ProjectPermitForm';
-import { Form, Formik, FormikProps } from 'formik';
-import History from 'history';
-import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useQuery } from 'hooks/useQuery';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router';
-import { Prompt } from 'react-router-dom';
-import yup from 'utils/YupSchema';
+  ProjectPermitFormYupSchema,
+} from "../../../features/projects/components/ProjectPermitForm";
+import { Form, Formik, FormikProps } from "formik";
+import History from "history";
+import { APIError } from "../../../hooks/api/useAxios";
+import useCodes from "../../../hooks/useCodes";
+import { useQuery } from "../../../hooks/useQuery";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import { ICreateProjectRequest } from "../../../interfaces/useProjectApi.interface";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
+import { Prompt } from "react-router-dom";
+import yup from "../../../utils/YupSchema";
 
 const pageStyles = {
   actionButton: {
-    minWidth: '6rem',
-    '& + button': {
-      marginLeft: '0.5rem'
-    }
+    minWidth: "6rem",
+    "& + button": {
+      marginLeft: "0.5rem",
+    },
   },
   formButtons: {
-    '& button': {
-      margin: '0.5rem'
-    }
+    "& button": {
+      margin: "0.5rem",
+    },
   },
   breadCrumbLink: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer'
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
   },
   breadCrumbLinkIcon: {
-    marginRight: '0.25rem'
-  }
+    marginRight: "0.25rem",
+  },
 };
 
 export const ProjectFormInitialValues = {
@@ -89,7 +92,7 @@ export const ProjectFormInitialValues = {
   ...ProjectPermitFormInitialValues,
   ...ProjectFundingFormInitialValues,
   ...ProjectPartnershipsFormInitialValues,
-  ...ProjectLocationFormInitialValues
+  ...ProjectLocationFormInitialValues,
 };
 
 export const ProjectFormYupSchema = yup
@@ -108,7 +111,7 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -118,7 +121,9 @@ const CreateProjectPage: React.FC = () => {
 
   const codes = useCodes();
 
-  const [hasLoadedDraftData, setHasLoadedDraftData] = useState(!queryParams.draftId);
+  const [hasLoadedDraftData, setHasLoadedDraftData] = useState(
+    !queryParams.draftId
+  );
 
   // Reference to pass to the formik component in order to access its state at any time
   // Used by the draft logic to fetch the values of a step form that has not been validated/completed
@@ -141,8 +146,8 @@ const CreateProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push('/admin/user/projects');
-    }
+      navigate("/admin/user/projects");
+    },
   };
 
   const defaultErrorDialogProps = {
@@ -151,13 +156,13 @@ const CreateProjectPage: React.FC = () => {
     },
     onOk: () => {
       dialogContext.setErrorDialog({ open: false });
-    }
+    },
   };
 
   // Whether or not to show the 'Save as draft' dialog
   const [openDraftDialog, setOpenDraftDialog] = useState(false);
 
-  const [draft, setDraft] = useState({ id: 0, date: '' });
+  const [draft, setDraft] = useState({ id: 0, date: "" });
 
   const [initialProjectFormData, setInitialProjectFormData] =
     useState<ICreateProjectRequest>(ProjectFormInitialValues);
@@ -165,7 +170,9 @@ const CreateProjectPage: React.FC = () => {
   // Get draft project fields if draft id exists
   useEffect(() => {
     const getDraftProjectFields = async () => {
-      const response = await restorationTrackerApi.draft.getDraft(queryParams.draftId);
+      const response = await restorationTrackerApi.draft.getDraft(
+        queryParams.draftId
+      );
 
       setHasLoadedDraftData(true);
 
@@ -185,7 +192,7 @@ const CreateProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push('/admin/user/projects');
+    navigate("/admin/user/projects");
   };
 
   const handleSubmitDraft = async (values: IProjectDraftForm) => {
@@ -211,7 +218,7 @@ const CreateProjectPage: React.FC = () => {
       if (!response?.id) {
         showCreateErrorDialog({
           dialogError:
-            'The response from the server was null, or did not contain a draft project ID.'
+            "The response from the server was null, or did not contain a draft project ID.",
         });
 
         return;
@@ -220,14 +227,14 @@ const CreateProjectPage: React.FC = () => {
       setDraft({ id: response.id, date: response.date });
       setEnableCancelCheck(false);
 
-      history.push('/admin/user/projects');
+      navigate("/admin/user/projects");
     } catch (error) {
       setOpenDraftDialog(false);
 
       const apiError = error as APIError;
       showDraftErrorDialog({
         dialogError: apiError?.message,
-        dialogErrorDetails: apiError?.errors
+        dialogErrorDetails: apiError?.errors,
       });
     }
   };
@@ -237,11 +244,14 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (values: ICreateProjectRequest) => {
     try {
-      const response = await restorationTrackerApi.project.createProject(values);
+      const response = await restorationTrackerApi.project.createProject(
+        values
+      );
 
       if (!response?.id) {
         showCreateErrorDialog({
-          dialogError: 'The response from the server was null, or did not contain a project ID.'
+          dialogError:
+            "The response from the server was null, or did not contain a project ID.",
         });
         return;
       }
@@ -252,12 +262,12 @@ const CreateProjectPage: React.FC = () => {
 
       keycloakWrapper?.refresh();
 
-      history.push(`/admin/projects/${response.id}`);
+      navigate(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({
-        dialogTitle: 'Error Creating Project',
+        dialogTitle: "Error Creating Project",
         dialogError: (error as APIError)?.message,
-        dialogErrorDetails: (error as APIError)?.errors
+        dialogErrorDetails: (error as APIError)?.errors,
       });
     }
   };
@@ -282,23 +292,27 @@ const CreateProjectPage: React.FC = () => {
     }
   };
 
-  const showDraftErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
+  const showDraftErrorDialog = (
+    textDialogProps?: Partial<IErrorDialogProps>
+  ) => {
     dialogContext.setErrorDialog({
       dialogTitle: CreateProjectDraftI18N.draftErrorTitle,
       dialogText: CreateProjectDraftI18N.draftErrorText,
       ...defaultErrorDialogProps,
       ...textDialogProps,
-      open: true
+      open: true,
     });
   };
 
-  const showCreateErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
+  const showCreateErrorDialog = (
+    textDialogProps?: Partial<IErrorDialogProps>
+  ) => {
     dialogContext.setErrorDialog({
       dialogTitle: CreateProjectI18N.createErrorTitle,
       dialogText: CreateProjectI18N.createErrorText,
       ...defaultErrorDialogProps,
       ...textDialogProps,
-      open: true
+      open: true,
     });
   };
 
@@ -321,9 +335,9 @@ const CreateProjectPage: React.FC = () => {
         ...defaultCancelDialogProps,
         onYes: () => {
           dialogContext.setYesNoDialog({ open: false });
-          history.push(location.pathname);
+          navigate(location.pathname);
         },
-        open: true
+        open: true,
       });
       return false;
     }
@@ -345,9 +359,9 @@ const CreateProjectPage: React.FC = () => {
           initialValues: {
             draft_name: formikRef.current
               ? formikRef.current.values.project.project_name
-              : ProjectDraftFormInitialValues.draft_name
+              : ProjectDraftFormInitialValues.draft_name,
           },
-          validationSchema: ProjectDraftFormYupSchema
+          validationSchema: ProjectDraftFormYupSchema,
         }}
         onCancel={() => setOpenDraftDialog(false)}
         onSave={handleSubmitDraft}
@@ -360,8 +374,13 @@ const CreateProjectPage: React.FC = () => {
               color="primary"
               onClick={handleCancel}
               aria-current="page"
-              sx={pageStyles.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
+              sx={pageStyles.breadCrumbLink}
+            >
+              <ArrowBack
+                color="primary"
+                fontSize="small"
+                sx={pageStyles.breadCrumbLinkIcon}
+              />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
           </Breadcrumbs>
@@ -384,7 +403,8 @@ const CreateProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
-            onSubmit={handleProjectCreation}>
+            onSubmit={handleProjectCreation}
+          >
             <>
               <ScrollToFormikError />
               <Form noValidate>
@@ -412,7 +432,7 @@ const CreateProjectPage: React.FC = () => {
                                 return {
                                   value: item.id,
                                   iucn1_id: item.iucn1_id,
-                                  label: item.name
+                                  label: item.name,
                                 };
                               }
                             ) || []
@@ -423,7 +443,7 @@ const CreateProjectPage: React.FC = () => {
                                 return {
                                   value: item.id,
                                   iucn2_id: item.iucn2_id,
-                                  label: item.name
+                                  label: item.name,
                                 };
                               }
                             ) || []
@@ -444,7 +464,9 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                        coordinator_agency={codes.codes.coordinator_agency.map(
+                          (item) => item.name
+                        )}
                       />
                     </Grid>
                   </Grid>
@@ -469,18 +491,26 @@ const CreateProjectPage: React.FC = () => {
                 <Box my={5}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Funding and Partnerships</Typography>
+                      <Typography variant="h2">
+                        Funding and Partnerships
+                      </Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
                       <Box component="fieldset" mx={0}>
                         <ProjectFundingForm
-                          fundingSources={codes.codes.funding_source.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
+                          fundingSources={codes.codes.funding_source.map(
+                            (item) => {
+                              return { value: item.id, label: item.name };
+                            }
+                          )}
                           investment_action_category={codes.codes.investment_action_category.map(
                             (item) => {
-                              return { value: item.id, label: item.name, fs_id: item.fs_id };
+                              return {
+                                value: item.id,
+                                label: item.name,
+                                fs_id: item.fs_id,
+                              };
                             }
                           )}
                         />
@@ -488,12 +518,16 @@ const CreateProjectPage: React.FC = () => {
 
                       <Box component="fieldset" mt={5} mx={0}>
                         <ProjectPartnershipsForm
-                          first_nations={codes.codes.first_nations.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          stakeholder_partnerships={codes.codes.funding_source.map((item) => {
-                            return { value: item.name, label: item.name };
-                          })}
+                          first_nations={codes.codes.first_nations.map(
+                            (item) => {
+                              return { value: item.id, label: item.name };
+                            }
+                          )}
+                          stakeholder_partnerships={codes.codes.funding_source.map(
+                            (item) => {
+                              return { value: item.name, label: item.name };
+                            }
+                          )}
                         />
                       </Box>
                     </Grid>
@@ -523,13 +557,19 @@ const CreateProjectPage: React.FC = () => {
 
                 <Divider></Divider>
 
-                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                <Box
+                  mt={5}
+                  sx={pageStyles.formButtons}
+                  display="flex"
+                  justifyContent="flex-end"
+                >
                   <Button
                     variant="outlined"
                     color="primary"
                     size="large"
                     onClick={() => setOpenDraftDialog(true)}
-                    data-testid="project-save-draft-button">
+                    data-testid="project-save-draft-button"
+                  >
                     Save Draft
                   </Button>
                   <Button
@@ -537,7 +577,8 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     type="submit"
-                    data-testid="project-create-button">
+                    data-testid="project-create-button"
+                  >
                     Create Project
                   </Button>
                   <Button
@@ -545,7 +586,8 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}>
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </Button>
                 </Box>

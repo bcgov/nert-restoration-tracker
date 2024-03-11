@@ -1,18 +1,18 @@
-import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import CustomTextField from 'components/fields/CustomTextField';
-import { FieldArray, useFormikContext } from 'formik';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import React from 'react';
-import yup from 'utils/YupSchema';
+import { mdiPlus, mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import CustomTextField from "../../../components/fields/CustomTextField";
+import { FieldArray, useFormikContext } from "formik";
+import { SYSTEM_IDENTITY_SOURCE } from "../../../hooks/useKeycloakWrapper";
+import React from "react";
+import yup from "../../../utils/YupSchema";
 
 export interface IAddProjectParticipantsFormArrayItem {
   userIdentifier: string;
@@ -26,30 +26,33 @@ export interface IAddProjectParticipantsForm {
 
 export const AddProjectParticipantsFormArrayItemInitialValues: IAddProjectParticipantsFormArrayItem =
   {
-    userIdentifier: '',
-    identitySource: '',
-    roleId: '' as unknown as number
+    userIdentifier: "",
+    identitySource: "",
+    roleId: "" as unknown as number,
   };
 
-export const AddProjectParticipantsFormInitialValues: IAddProjectParticipantsForm = {
-  participants: [AddProjectParticipantsFormArrayItemInitialValues]
-};
+export const AddProjectParticipantsFormInitialValues: IAddProjectParticipantsForm =
+  {
+    participants: [AddProjectParticipantsFormArrayItemInitialValues],
+  };
 
 export const AddProjectParticipantsFormYupSchema = yup.object().shape({
   participants: yup.array().of(
     yup.object().shape({
-      userIdentifier: yup.string().required('Username is required'),
-      identitySource: yup.string().required('Login Method is required'),
-      roleId: yup.number().required('Role is required')
+      userIdentifier: yup.string().required("Username is required"),
+      identitySource: yup.string().required("Login Method is required"),
+      roleId: yup.number().required("Role is required"),
     })
-  )
+  ),
 });
 
 export interface AddProjectParticipantsFormProps {
   project_roles: any[];
 }
 
-const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (props) => {
+const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (
+  props
+) => {
   const { values, handleChange, handleSubmit, getFieldMeta } =
     useFormikContext<IAddProjectParticipantsForm>();
 
@@ -61,9 +64,15 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
           <>
             <Box>
               {values.participants?.map((participant, index) => {
-                const userIdentifierMeta = getFieldMeta(`participants.[${index}].userIdentifier`);
-                const identitySourceMeta = getFieldMeta(`participants.[${index}].identitySource`);
-                const roleIdMeta = getFieldMeta(`participants.[${index}].roleId`);
+                const userIdentifierMeta = getFieldMeta(
+                  `participants.[${index}].userIdentifier`
+                );
+                const identitySourceMeta = getFieldMeta(
+                  `participants.[${index}].identitySource`
+                );
+                const roleIdMeta = getFieldMeta(
+                  `participants.[${index}].roleId`
+                );
 
                 return (
                   <Box key={index}>
@@ -77,8 +86,11 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               required: true,
                               value: participant.userIdentifier,
                               error:
-                                userIdentifierMeta.touched && Boolean(userIdentifierMeta.error),
-                              helperText: userIdentifierMeta.touched && userIdentifierMeta.error
+                                userIdentifierMeta.touched &&
+                                Boolean(userIdentifierMeta.error),
+                              helperText:
+                                userIdentifierMeta.touched &&
+                                userIdentifierMeta.error,
                             }}
                           />
                         </Box>
@@ -87,7 +99,11 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                             fullWidth
                             variant="outlined"
                             required={true}
-                            error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}>
+                            error={
+                              identitySourceMeta.touched &&
+                              Boolean(identitySourceMeta.error)
+                            }
+                          >
                             <InputLabel id="loginMethod" required={false}>
                               Login Method
                             </InputLabel>
@@ -100,25 +116,30 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               labelWidth={300}
                               onChange={handleChange}
                               displayEmpty
-                              inputProps={{ 'aria-label': 'Login Method' }}>
+                              inputProps={{ "aria-label": "Login Method" }}
+                            >
                               <MenuItem
                                 key={SYSTEM_IDENTITY_SOURCE.IDIR}
-                                value={SYSTEM_IDENTITY_SOURCE.IDIR}>
+                                value={SYSTEM_IDENTITY_SOURCE.IDIR}
+                              >
                                 IDIR
                               </MenuItem>
                               <MenuItem
                                 key={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
-                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}>
+                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
+                              >
                                 BCeID Basic
                               </MenuItem>
                               <MenuItem
                                 key={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
-                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}>
+                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
+                              >
                                 BCeID Business
                               </MenuItem>
                             </Select>
                             <FormHelperText>
-                              {identitySourceMeta.touched && identitySourceMeta.error}
+                              {identitySourceMeta.touched &&
+                                identitySourceMeta.error}
                             </FormHelperText>
                           </FormControl>
                         </Box>
@@ -127,7 +148,10 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                             fullWidth
                             variant="outlined"
                             required={true}
-                            error={roleIdMeta.touched && Boolean(roleIdMeta.error)}>
+                            error={
+                              roleIdMeta.touched && Boolean(roleIdMeta.error)
+                            }
+                          >
                             <InputLabel id="Id" required={false}>
                               Project Role
                             </InputLabel>
@@ -140,7 +164,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               labelWidth={300}
                               onChange={handleChange}
                               displayEmpty
-                              inputProps={{ 'aria-label': 'Project Role' }}>
+                              inputProps={{ "aria-label": "Project Role" }}
+                            >
                               {props.project_roles.map((item) => (
                                 <MenuItem key={item.value} value={item.value}>
                                   {item.label}
@@ -158,7 +183,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                           data-testid="delete-icon"
                           aria-label="remove participant"
                           onClick={() => arrayHelpers.remove(index)}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Box>
@@ -175,7 +201,12 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                 aria-label="add new team member"
                 data-testid="add-participant-button"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                onClick={() => arrayHelpers.push(AddProjectParticipantsFormArrayItemInitialValues)}>
+                onClick={() =>
+                  arrayHelpers.push(
+                    AddProjectParticipantsFormArrayItemInitialValues
+                  )
+                }
+              >
                 <strong>Add New</strong>
               </Button>
             </Box>

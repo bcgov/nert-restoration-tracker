@@ -1,15 +1,15 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React from 'react';
-import { getFormattedAmount, getFormattedDate } from 'utils/Utils';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { DATE_FORMAT } from "../../../../constants/dateTimeFormats";
+import { IGetProjectForViewResponse } from "../../../../interfaces/useProjectApi.interface";
+import React from "react";
+import { getFormattedAmount, getFormattedDate } from "../../../../utils/Utils";
 
 const pageStyles = {
   projectFundingList: {
     margin: 0,
-    padding: 0
-  }
+    padding: 0,
+  },
 };
 
 export interface IProjectFundingProps {
@@ -24,10 +24,11 @@ export interface IProjectFundingProps {
  */
 const FundingSource: React.FC<IProjectFundingProps> = (props) => {
   const {
-    projectForViewData: { funding }
+    projectForViewData: { funding },
   } = props;
 
-  const hasFundingSources = funding.fundingSources && funding.fundingSources.length > 0;
+  const hasFundingSources =
+    funding.fundingSources && funding.fundingSources.length > 0;
 
   return (
     <>
@@ -40,7 +41,11 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
               </Box>
               <Box component="dl" mt={1}>
                 <div>
-                  <Typography variant="body2" component="dt" color="textSecondary">
+                  <Typography
+                    variant="body2"
+                    component="dt"
+                    color="textSecondary"
+                  >
                     Amount:
                   </Typography>
                   <Typography variant="body2" component="dd">
@@ -48,7 +53,11 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                   </Typography>
                 </div>
                 <div>
-                  <Typography variant="body2" component="dt" color="textSecondary">
+                  <Typography
+                    variant="body2"
+                    component="dt"
+                    color="textSecondary"
+                  >
                     Project ID:
                   </Typography>
                   <Typography variant="body2" component="dd">
@@ -56,19 +65,33 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                   </Typography>
                 </div>
                 <div>
-                  <Typography variant="body2" component="dt" color="textSecondary">
+                  <Typography
+                    variant="body2"
+                    component="dt"
+                    color="textSecondary"
+                  >
                     Start Date:
                   </Typography>
                   <Typography variant="body2" component="dd">
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.start_date)}
+                    {getFormattedDate(
+                      DATE_FORMAT.ShortMediumDateFormat,
+                      item.start_date
+                    )}
                   </Typography>
                 </div>
                 <div>
-                  <Typography variant="body2" component="dt" color="textSecondary">
+                  <Typography
+                    variant="body2"
+                    component="dt"
+                    color="textSecondary"
+                  >
                     End Date:
                   </Typography>
                   <Typography variant="body2" component="dd">
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.end_date)}
+                    {getFormattedDate(
+                      DATE_FORMAT.ShortMediumDateFormat,
+                      item.end_date
+                    )}
                   </Typography>
                 </div>
               </Box>
@@ -77,7 +100,11 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
 
         {!hasFundingSources && (
           <li>
-            <Typography variant="body2" color="textSecondary" data-testid="no_funding_sources">
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              data-testid="no_funding_sources"
+            >
               No Funding Sources
             </Typography>
           </li>

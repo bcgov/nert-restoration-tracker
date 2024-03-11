@@ -1,19 +1,19 @@
-import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import CustomTextField from 'components/fields/CustomTextField';
-import { FieldArray, useFormikContext } from 'formik';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import React from 'react';
-import yup from 'utils/YupSchema';
+import { mdiPlus, mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import CustomTextField from "../../../components/fields/CustomTextField";
+import { FieldArray, useFormikContext } from "formik";
+import { SYSTEM_IDENTITY_SOURCE } from "../../../hooks/useKeycloakWrapper";
+import React from "react";
+import yup from "../../../utils/YupSchema";
 
 export interface IAddSystemUsersFormArrayItem {
   userIdentifier: string;
@@ -25,24 +25,25 @@ export interface IAddSystemUsersForm {
   systemUsers: IAddSystemUsersFormArrayItem[];
 }
 
-export const AddSystemUsersFormArrayItemInitialValues: IAddSystemUsersFormArrayItem = {
-  userIdentifier: '',
-  identitySource: '',
-  system_role: '' as unknown as number
-};
+export const AddSystemUsersFormArrayItemInitialValues: IAddSystemUsersFormArrayItem =
+  {
+    userIdentifier: "",
+    identitySource: "",
+    system_role: "" as unknown as number,
+  };
 
 export const AddSystemUsersFormInitialValues: IAddSystemUsersForm = {
-  systemUsers: [AddSystemUsersFormArrayItemInitialValues]
+  systemUsers: [AddSystemUsersFormArrayItemInitialValues],
 };
 
 export const AddSystemUsersFormYupSchema = yup.object().shape({
   systemUsers: yup.array().of(
     yup.object().shape({
-      userIdentifier: yup.string().required('Username is required'),
-      identitySource: yup.string().required('Login Method is required'),
-      system_role: yup.number().required('Role is required')
+      userIdentifier: yup.string().required("Username is required"),
+      identitySource: yup.string().required("Login Method is required"),
+      system_role: yup.number().required("Role is required"),
     })
-  )
+  ),
 });
 
 export interface AddSystemUsersFormProps {
@@ -61,9 +62,15 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
           <Box>
             <Grid container direction="row" spacing={2}>
               {values.systemUsers?.map((systemUser, index) => {
-                const userIdentifierMeta = getFieldMeta(`systemUsers.[${index}].userIdentifier`);
-                const identitySourceMeta = getFieldMeta(`systemUsers.[${index}].identitySource`);
-                const systemRoleMeta = getFieldMeta(`systemUsers.[${index}].roleId`);
+                const userIdentifierMeta = getFieldMeta(
+                  `systemUsers.[${index}].userIdentifier`
+                );
+                const identitySourceMeta = getFieldMeta(
+                  `systemUsers.[${index}].identitySource`
+                );
+                const systemRoleMeta = getFieldMeta(
+                  `systemUsers.[${index}].roleId`
+                );
 
                 return (
                   <Grid item xs={12} key={index}>
@@ -75,8 +82,12 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           other={{
                             required: true,
                             value: systemUser.userIdentifier,
-                            error: userIdentifierMeta.touched && Boolean(userIdentifierMeta.error),
-                            helperText: userIdentifierMeta.touched && userIdentifierMeta.error
+                            error:
+                              userIdentifierMeta.touched &&
+                              Boolean(userIdentifierMeta.error),
+                            helperText:
+                              userIdentifierMeta.touched &&
+                              userIdentifierMeta.error,
                           }}
                         />
                       </Box>
@@ -85,7 +96,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           fullWidth
                           variant="outlined"
                           required={true}
-                          style={{ width: '100%' }}>
+                          style={{ width: "100%" }}
+                        >
                           <InputLabel id="loginMethod" required={false}>
                             Login Method
                           </InputLabel>
@@ -97,27 +109,35 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             value={systemUser.identitySource}
                             labelWidth={300}
                             onChange={handleChange}
-                            error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}
+                            error={
+                              identitySourceMeta.touched &&
+                              Boolean(identitySourceMeta.error)
+                            }
                             displayEmpty
-                            inputProps={{ 'aria-label': 'Login Method' }}>
+                            inputProps={{ "aria-label": "Login Method" }}
+                          >
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.IDIR}
-                              value={SYSTEM_IDENTITY_SOURCE.IDIR}>
+                              value={SYSTEM_IDENTITY_SOURCE.IDIR}
+                            >
                               IDIR
                             </MenuItem>
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
-                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}>
+                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
+                            >
                               BCeID Basic
                             </MenuItem>
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
-                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}>
+                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
+                            >
                               BCeID Business
                             </MenuItem>
                           </Select>
                           <FormHelperText>
-                            {identitySourceMeta.touched && identitySourceMeta.error}
+                            {identitySourceMeta.touched &&
+                              identitySourceMeta.error}
                           </FormHelperText>
                         </FormControl>
                       </Box>
@@ -126,7 +146,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           fullWidth
                           variant="outlined"
                           required={true}
-                          style={{ width: '100%' }}>
+                          style={{ width: "100%" }}
+                        >
                           <InputLabel id="Id" required={false}>
                             System Role
                           </InputLabel>
@@ -138,9 +159,13 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             value={systemUser.system_role}
                             labelWidth={300}
                             onChange={handleChange}
-                            error={systemRoleMeta.touched && Boolean(systemRoleMeta.error)}
+                            error={
+                              systemRoleMeta.touched &&
+                              Boolean(systemRoleMeta.error)
+                            }
                             displayEmpty
-                            inputProps={{ 'aria-label': 'System Role' }}>
+                            inputProps={{ "aria-label": "System Role" }}
+                          >
                             {props?.system_roles?.map((item) => (
                               <MenuItem key={item.value} value={item.value}>
                                 {item.label}
@@ -158,7 +183,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           data-testid="delete-icon"
                           aria-label="remove participant"
                           onClick={() => arrayHelpers.remove(index)}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Box>
@@ -175,7 +201,10 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                 aria-label="add participant"
                 data-testid="add-participant-button"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                onClick={() => arrayHelpers.push(AddSystemUsersFormArrayItemInitialValues)}>
+                onClick={() =>
+                  arrayHelpers.push(AddSystemUsersFormArrayItemInitialValues)
+                }
+              >
                 <strong>Add New</strong>
               </Button>
             </Box>

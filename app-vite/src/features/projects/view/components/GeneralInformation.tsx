@@ -1,10 +1,10 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React from 'react';
-import { getFormattedDate } from 'utils/Utils';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { DATE_FORMAT } from "../../../../constants/dateTimeFormats";
+import { IGetAllCodeSetsResponse } from "../../../../interfaces/useCodesApi.interface";
+import { IGetProjectForViewResponse } from "../../../../interfaces/useProjectApi.interface";
+import React from "react";
+import { getFormattedDate } from "../../../../utils/Utils";
 
 export interface IProjectGeneralInformationProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -17,13 +17,17 @@ export interface IProjectGeneralInformationProps {
  *
  * @return {*}
  */
-const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) => {
+const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (
+  props
+) => {
   const {
-    projectForViewData: { project, species, location }
+    projectForViewData: { project, species, location },
   } = props;
 
   const getRegionName = (regionNumber: number) => {
-    const codeValue = props.codes.regions.find((code) => code.id === regionNumber);
+    const codeValue = props.codes.regions.find(
+      (code) => code.id === regionNumber
+    );
     return (
       <Typography variant="body2" component="dd" data-testid="project-region">
         {codeValue?.name}
@@ -32,7 +36,9 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
   };
 
   const getRangeName = (rangeNumber: number) => {
-    const codeValue = props.codes.ranges.find((code) => code.id === rangeNumber);
+    const codeValue = props.codes.ranges.find(
+      (code) => code.id === rangeNumber
+    );
     return (
       <Typography variant="body2" component="dd" data-testid="project-region">
         {codeValue?.name}
@@ -61,7 +67,10 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
           Start Date:
         </Typography>
         <Typography variant="body2" component="dd">
-          {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)}
+          {getFormattedDate(
+            DATE_FORMAT.ShortMediumDateFormat,
+            project.start_date
+          )}
         </Typography>
       </div>
       <div>
@@ -70,8 +79,11 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
         </Typography>
         <Typography variant="body2" component="dd">
           {project.end_date
-            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
-            : '---'}
+            ? getFormattedDate(
+                DATE_FORMAT.ShortMediumDateFormat,
+                project.end_date
+              )
+            : "---"}
         </Typography>
       </div>
       <div>

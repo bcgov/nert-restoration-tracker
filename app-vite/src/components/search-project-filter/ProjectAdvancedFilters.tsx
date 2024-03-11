@@ -1,21 +1,21 @@
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
-import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
-import CustomTextField from 'components/fields/CustomTextField';
-import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteField';
-import MultiAutocompleteFieldVariableSize from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/StartEndDateFields';
-import { useFormikContext } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { debounce } from 'lodash-es';
-import React, { useCallback } from 'react';
-import { IProjectAdvancedFilters } from './ProjectFilter';
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+import AutocompleteFreeSoloField from "../../components/fields/AutocompleteFreeSoloField";
+import CustomTextField from "../../components/fields/CustomTextField";
+import { IMultiAutocompleteFieldOption } from "../../components/fields/MultiAutocompleteField";
+import MultiAutocompleteFieldVariableSize from "../../components/fields/MultiAutocompleteFieldVariableSize";
+import StartEndDateFields from "../../components/fields/StartEndDateFields";
+import { useFormikContext } from "formik";
+import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
+import { debounce } from "lodash-es";
+import React, { useCallback } from "react";
+import { IProjectAdvancedFilters } from "./ProjectFilter";
 
 export interface IProjectAdvancedFiltersProps {
   contact_agency: string[];
@@ -29,7 +29,9 @@ export interface IProjectAdvancedFiltersProps {
  *
  * @return {*}
  */
-const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) => {
+const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (
+  props
+) => {
   const formikProps = useFormikContext<IProjectAdvancedFilters>();
   const { handleChange, values } = formikProps;
 
@@ -41,7 +43,9 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
     });
 
   const handleGetInitList = async (initialvalues: number[]) => {
-    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(initialvalues);
+    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(
+      initialvalues
+    );
     return convertOptions(response.searchResponse);
   };
 
@@ -87,15 +91,17 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
             <Grid item xs={12}>
               <StartEndDateFields
                 formikProps={formikProps}
-                startName={'start_date'}
-                endName={'end_date'}
+                startName={"start_date"}
+                endName={"end_date"}
                 startRequired={false}
                 endRequired={false}
               />
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined" required={false}>
-                <InputLabel id="funding_agency-label">Funding Agencies</InputLabel>
+                <InputLabel id="funding_agency-label">
+                  Funding Agencies
+                </InputLabel>
                 <Select
                   data-testid="funding_agency"
                   id="funding_agency"
@@ -103,19 +109,19 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
                   labelId="funding_agency-label"
                   label="Funding Agencies"
                   value={
-                    (values.funding_agency?.toString() ? values.funding_agency : []) as
-                      | number
-                      | ''
-                      | undefined
+                    (values.funding_agency?.toString()
+                      ? values.funding_agency
+                      : []) as number | "" | undefined
                   }
                   onChange={handleChange}
                   defaultValue={[] as unknown as number | undefined}
                   multiple
                   displayEmpty
                   inputProps={{
-                    'aria-label': 'Funding Agency Name',
-                    'data-testid': 'funding_agency'
-                  }}>
+                    "aria-label": "Funding Agency Name",
+                    "data-testid": "funding_agency",
+                  }}
+                >
                   {props.funding_agency.map((item) => (
                     <MenuItem key={item.value} value={item.value}>
                       {item.label}

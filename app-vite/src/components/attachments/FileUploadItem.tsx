@@ -1,55 +1,55 @@
-import { mdiCheck, mdiFileOutline, mdiTrashCanOutline } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import LinearProgress from '@mui/material/LinearProgress';
-import ListItem from '@mui/material/ListItem';
-import Typography from '@mui/material/Typography';
-import axios, { CancelTokenSource } from 'axios';
-import ComponentDialog from 'components/dialog/ComponentDialog';
-import { APIError } from 'hooks/api/useAxios';
-import useIsMounted from 'hooks/useIsMounted';
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { mdiCheck, mdiFileOutline, mdiTrashCanOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import LinearProgress from "@mui/material/LinearProgress";
+import ListItem from "@mui/material/ListItem";
+import Typography from "@mui/material/Typography";
+import axios, { CancelTokenSource } from "axios";
+import ComponentDialog from "../../components/dialog/ComponentDialog";
+import { APIError } from "../../hooks/api/useAxios";
+import useIsMounted from "../../hooks/useIsMounted";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 
 const pageStyles = {
   uploadProgress: {
-    marginTop: '0.3rem'
+    marginTop: "0.3rem",
   },
   uploadListItemBox: {
-    width: '100%',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: 'gray',
-    borderRadius: '4px'
+    width: "100%",
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: "gray",
+    borderRadius: "4px",
   },
   uploadingColor: {
-    color: 'blue'
+    color: "blue",
   },
   completeColor: {
-    color: 'gray'
+    color: "gray",
   },
   completeBgColor: {
-    background: 'lightgray'
+    background: "lightgray",
   },
   errorColor: {
-    color: 'red'
+    color: "red",
   },
   errorBgColor: {
-    background: 'lightorange'
+    background: "lightorange",
   },
   fileIconColor: {
-    color: 'gray'
-  }
+    color: "gray",
+  },
 };
 
 export enum UploadFileStatus {
-  STAGED = 'Ready for upload',
-  PENDING = 'Pending',
-  UPLOADING = 'Uploading',
-  FINISHING_UPLOAD = 'Finishing upload',
-  FAILED = 'Failed',
-  COMPLETE = 'Complete'
+  STAGED = "Ready for upload",
+  PENDING = "Pending",
+  UPLOADING = "Uploading",
+  FINISHING_UPLOAD = "Finishing upload",
+  FAILED = "Failed",
+  COMPLETE = "Complete",
 }
 
 export interface IUploadFile {
@@ -93,7 +93,9 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
 
   const [error, setError] = useState<string | undefined>(props.error);
 
-  const [status, setStatus] = useState<UploadFileStatus>(props.status || UploadFileStatus.PENDING);
+  const [status, setStatus] = useState<UploadFileStatus>(
+    props.status || UploadFileStatus.PENDING
+  );
   const [progress, setProgress] = useState<number>(0);
   const [cancelToken] = useState<CancelTokenSource>(axios.CancelToken.source());
 
@@ -125,7 +127,9 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
         return;
       }
 
-      setProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100));
+      setProgress(
+        Math.round((progressEvent.loaded / progressEvent.total) * 100)
+      );
 
       if (progressEvent.loaded === progressEvent.total) {
         setStatus(UploadFileStatus.FINISHING_UPLOAD);
@@ -165,7 +169,7 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
     isMounted,
     initiateCancel,
     error,
-    handleFileUploadError
+    handleFileUploadError,
   ]);
 
   useEffect(() => {
@@ -205,11 +209,21 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
   return (
     <ListItem key={file.name} disableGutters>
       <Box sx={pageStyles.uploadListItemBox}>
-        <Box display="flex" flexDirection="row" alignItems="center" p={2} width="100%">
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          p={2}
+          width="100%"
+        >
           <Icon
             path={mdiFileOutline}
             size={1.5}
-            color={error ? pageStyles.errorColor.color : pageStyles.fileIconColor.color}
+            color={
+              error
+                ? pageStyles.errorColor.color
+                : pageStyles.fileIconColor.color
+            }
           />
           <Box pl={1.5} flex="1 1 auto">
             <Box
@@ -217,7 +231,8 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
               flexDirection="row"
               flex="1 1 auto"
               alignItems="center"
-              height="3rem">
+              height="3rem"
+            >
               <Box flex="1 1 auto">
                 <Typography variant="body2" component="div">
                   <strong>{file.name}</strong>
@@ -229,19 +244,26 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
 
               {errors && props.errorDetailHandler && (
                 <Box display="flex" alignItems="center">
-                  <Button sx={pageStyles.errorColor} onClick={() => setOpenDialog(!openDialog)}>
+                  <Button
+                    sx={pageStyles.errorColor}
+                    onClick={() => setOpenDialog(!openDialog)}
+                  >
                     View Details
                   </Button>
                   <ComponentDialog
                     open={openDialog}
                     dialogTitle="Treatment File Errors"
-                    onClose={() => setOpenDialog(false)}>
+                    onClose={() => setOpenDialog(false)}
+                  >
                     {props.errorDetailHandler(errors)}
                   </ComponentDialog>
                 </Box>
               )}
               <Box display="flex" alignItems="center">
-                <MemoizedActionButton status={status} onCancel={() => setInitiateCancel(true)} />
+                <MemoizedActionButton
+                  status={status}
+                  onCancel={() => setInitiateCancel(true)}
+                />
               </Box>
             </Box>
             <MemoizedProgressBar status={status} progress={progress} />
@@ -254,9 +276,12 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
 
 export default FileUploadItem;
 
-export const MemoizedFileUploadItem = React.memo(FileUploadItem, (prevProps, nextProps) => {
-  return prevProps.file.name === nextProps.file.name;
-});
+export const MemoizedFileUploadItem = React.memo(
+  FileUploadItem,
+  (prevProps, nextProps) => {
+    return prevProps.file.name === nextProps.file.name;
+  }
+);
 
 interface IActionButtonProps {
   status: UploadFileStatus;
@@ -272,13 +297,17 @@ interface IActionButtonProps {
  * @return {*}
  */
 const ActionButton: React.FC<IActionButtonProps> = (props) => {
-  if (props.status === UploadFileStatus.PENDING || props.status === UploadFileStatus.STAGED) {
+  if (
+    props.status === UploadFileStatus.PENDING ||
+    props.status === UploadFileStatus.STAGED
+  ) {
     return (
       <IconButton
         title="Remove File"
         aria-label="remove file"
         onClick={() => props.onCancel()}
-        size="large">
+        size="large"
+      >
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -290,7 +319,8 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         title="Cancel Upload"
         aria-label="cancel upload"
         onClick={() => props.onCancel()}
-        size="large">
+        size="large"
+      >
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -298,7 +328,7 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
 
   if (props.status === UploadFileStatus.COMPLETE) {
     return (
-      <Box display="flex" alignItems="center" p={'12px'}>
+      <Box display="flex" alignItems="center" p={"12px"}>
         <Icon path={mdiCheck} size={1} color={pageStyles.completeColor.color} />
       </Box>
     );
@@ -311,7 +341,8 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         aria-label="remove file"
         onClick={() => props.onCancel()}
         sx={pageStyles.errorColor}
-        size="large">
+        size="large"
+      >
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -321,9 +352,12 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
   return <Box width="4rem" />;
 };
 
-export const MemoizedActionButton = React.memo(ActionButton, (prevProps, nextProps) => {
-  return prevProps.status === nextProps.status;
-});
+export const MemoizedActionButton = React.memo(
+  ActionButton,
+  (prevProps, nextProps) => {
+    return prevProps.status === nextProps.status;
+  }
+);
 
 interface IProgressBarProps {
   status: UploadFileStatus;
@@ -350,7 +384,7 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
         sx={pageStyles.uploadProgress}
         classes={{
           colorPrimary: pageStyles.uploadingColor.color,
-          barColorPrimary: pageStyles.uploadingColor.color
+          barColorPrimary: pageStyles.uploadingColor.color,
         }}
       />
     );
@@ -364,7 +398,7 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
         sx={pageStyles.uploadProgress}
         classes={{
           colorPrimary: pageStyles.completeBgColor.background,
-          barColorPrimary: pageStyles.completeBgColor.background
+          barColorPrimary: pageStyles.completeBgColor.background,
         }}
       />
     );
@@ -378,7 +412,7 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
         sx={pageStyles.uploadProgress}
         classes={{
           colorPrimary: pageStyles.errorBgColor.background,
-          barColorPrimary: pageStyles.errorBgColor.background
+          barColorPrimary: pageStyles.errorBgColor.background,
         }}
       />
     );
@@ -392,12 +426,18 @@ const ProgressBar: React.FC<IProgressBarProps> = (props) => {
       sx={pageStyles.uploadProgress}
       classes={{
         colorPrimary: pageStyles.uploadingColor.color,
-        barColorPrimary: pageStyles.uploadingColor.color
+        barColorPrimary: pageStyles.uploadingColor.color,
       }}
     />
   );
 };
 
-export const MemoizedProgressBar = React.memo(ProgressBar, (prevProps, nextProps) => {
-  return prevProps.status === nextProps.status && prevProps.progress === nextProps.progress;
-});
+export const MemoizedProgressBar = React.memo(
+  ProgressBar,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.status === nextProps.status &&
+      prevProps.progress === nextProps.progress
+    );
+  }
+);

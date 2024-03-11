@@ -1,18 +1,21 @@
-import CustomTextField from 'components/fields/CustomTextField';
-import { useFormikContext } from 'formik';
-import React from 'react';
-import yup from 'utils/YupSchema';
+import CustomTextField from "../../../components/fields/CustomTextField";
+import { useFormikContext } from "formik";
+import React from "react";
+import yup from "../../../utils/YupSchema";
 
 export interface IProjectDraftForm {
   draft_name: string;
 }
 
 export const ProjectDraftFormInitialValues: IProjectDraftForm = {
-  draft_name: ''
+  draft_name: "",
 };
 
 export const ProjectDraftFormYupSchema = yup.object().shape({
-  draft_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required')
+  draft_name: yup
+    .string()
+    .max(300, "Cannot exceed 300 characters")
+    .required("Required"),
 });
 
 /**
@@ -31,7 +34,7 @@ const ProjectDraftForm: React.FC = () => {
         name="draft_name"
         label="Draft Name"
         other={{
-          required: true
+          required: true,
         }}
       />
     </form>

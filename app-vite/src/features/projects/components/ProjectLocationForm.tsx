@@ -1,32 +1,32 @@
-import { mdiTrayArrowUp } from '@mdi/js';
-import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormLabel from '@mui/material/FormLabel';
-import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
-import FileUpload from 'components/attachments/FileUpload';
-import { IUploadHandler } from 'components/attachments/FileUploadItem';
-import ComponentDialog from 'components/dialog/ComponentDialog';
-import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import MapContainer from 'components/map/MapContainer';
-import { useFormikContext } from 'formik';
-import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import { mdiTrayArrowUp } from "@mdi/js";
+import Icon from "@mdi/react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormLabel from "@mui/material/FormLabel";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+import FileUpload from "../../../components/attachments/FileUpload";
+import { IUploadHandler } from "../../../components/attachments/FileUploadItem";
+import ComponentDialog from "../../../components/dialog/ComponentDialog";
+import { IAutocompleteFieldOption } from "../../../components/fields/AutocompleteField";
+import MapContainer from "../../../components/map/MapContainer";
+import { useFormikContext } from "formik";
+import { Feature } from "geojson";
+import React, { useState } from "react";
 import {
   handleGPXUpload,
   handleKMLUpload,
-  handleShapefileUpload
-} from 'utils/mapBoundaryUploadHelpers';
-import yup from 'utils/YupSchema';
+  handleShapefileUpload,
+} from "../../../utils/mapBoundaryUploadHelpers";
+import yup from "../../../utils/YupSchema";
 
 export interface IProjectLocationForm {
   location: {
@@ -41,21 +41,21 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
   location: {
     geometry: [],
     range: undefined as unknown as number,
-    priority: 'false',
-    region: '' as unknown as number
-  }
+    priority: "false",
+    region: "" as unknown as number,
+  },
 };
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
     geometry: yup
       .array()
-      .min(1, 'You must specify a project boundary')
-      .required('You must specify a project boundary'),
+      .min(1, "You must specify a project boundary")
+      .required("You must specify a project boundary"),
     range: yup.string().notRequired(),
     priority: yup.string().notRequired(),
-    region: yup.string().required('Required')
-  })
+    region: yup.string().required("Required"),
+  }),
 });
 
 export interface IProjectLocationFormProps {
@@ -77,12 +77,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
-      if (file?.type.includes('zip') || file?.name.includes('.zip')) {
-        handleShapefileUpload(file, 'location.geometry', formikProps);
-      } else if (file?.type.includes('gpx') || file?.name.includes('.gpx')) {
-        handleGPXUpload(file, 'location.geometry', formikProps);
-      } else if (file?.type.includes('kml') || file?.name.includes('.kml')) {
-        handleKMLUpload(file, 'location.geometry', formikProps);
+      if (file?.type.includes("zip") || file?.name.includes(".zip")) {
+        handleShapefileUpload(file, "location.geometry", formikProps);
+      } else if (file?.type.includes("gpx") || file?.name.includes(".gpx")) {
+        handleGPXUpload(file, "location.geometry", formikProps);
+      } else if (file?.type.includes("kml") || file?.name.includes(".kml")) {
+        handleKMLUpload(file, "location.geometry", formikProps);
       }
 
       return Promise.resolve();
@@ -94,18 +94,26 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       <Box mb={5}>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <FormControl component="fieldset" required={true} fullWidth variant="outlined">
+            <FormControl
+              component="fieldset"
+              required={true}
+              fullWidth
+              variant="outlined"
+            >
               <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
               <Select
                 id="nrm-region-select"
                 name="location.region"
                 labelId="nrm-region-select-label"
                 label="NRM Region"
-                value={values.location.region ? values.location.region : ''}
+                value={values.location.region ? values.location.region : ""}
                 onChange={formikProps.handleChange}
-                error={touched?.location?.region && Boolean(errors?.location?.region)}
+                error={
+                  touched?.location?.region && Boolean(errors?.location?.region)
+                }
                 displayEmpty
-                inputProps={{ 'aria-label': 'NRM Region' }}>
+                inputProps={{ "aria-label": "NRM Region" }}
+              >
                 {props.regions.map((item) => (
                   <MenuItem key={item.value} value={item.value}>
                     {item.label}
@@ -118,7 +126,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Grid>
 
         <Box>
-          <Box my={2} maxWidth={'72ch'}>
+          <Box my={2} maxWidth={"72ch"}>
             <Typography variant="body1" color="textSecondary">
               Specify the caribou range associate with this project.
             </Typography>
@@ -126,18 +134,28 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
           <Grid container spacing={3}>
             <Grid item xs={6}>
-              <FormControl component="fieldset" required={false} fullWidth variant="outlined">
-                <InputLabel id="caribou-range-select-label">Caribou Range</InputLabel>
+              <FormControl
+                component="fieldset"
+                required={false}
+                fullWidth
+                variant="outlined"
+              >
+                <InputLabel id="caribou-range-select-label">
+                  Caribou Range
+                </InputLabel>
                 <Select
                   id="caribou-range-select"
                   name="location.range"
                   labelId="caribou-range-select-label"
                   label="Caribou Range"
-                  value={values.location.range ? values.location.range : ''}
+                  value={values.location.range ? values.location.range : ""}
                   onChange={handleChange}
-                  error={touched.location?.range && Boolean(errors.location?.range)}
-                  inputProps={{ 'aria-label': 'Caribou Range' }}>
-                  <MenuItem key={'empty'} value={undefined}>
+                  error={
+                    touched.location?.range && Boolean(errors.location?.range)
+                  }
+                  inputProps={{ "aria-label": "Caribou Range" }}
+                >
+                  <MenuItem key={"empty"} value={undefined}>
                     Not Applicable
                   </MenuItem>
                   {props.ranges.map((item) => (
@@ -157,15 +175,21 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <FormControl
           component="fieldset"
           required={true}
-          error={touched.location?.priority && Boolean(errors.location?.priority)}>
-          <FormLabel component="legend">Is this location a priority area?</FormLabel>
+          error={
+            touched.location?.priority && Boolean(errors.location?.priority)
+          }
+        >
+          <FormLabel component="legend">
+            Is this location a priority area?
+          </FormLabel>
 
           <Box mt={2}>
             <RadioGroup
               name="location.priority"
               aria-label="Location Priority"
-              value={values.location.priority || 'false'}
-              onChange={handleChange}>
+              value={values.location.priority || "false"}
+              onChange={handleChange}
+            >
               <FormControlLabel
                 value="false"
                 control={<Radio required={true} color="primary" size="small" />}
@@ -186,10 +210,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
       <Box component="fieldset">
         <Typography component="legend">Project Boundary *</Typography>
-        <Box mb={3} maxWidth={'72ch'}>
+        <Box mb={3} maxWidth={"72ch"}>
           <Typography variant="body1" color="textSecondary">
-            Upload a shapefile or use the drawing tools on the map to define your project boundary
-            (KML or shapefiles accepted).
+            Upload a shapefile or use the drawing tools on the map to define
+            your project boundary (KML or shapefiles accepted).
           </Typography>
         </Box>
 
@@ -201,24 +225,26 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             component="span"
             startIcon={<Icon path={mdiTrayArrowUp} size={1}></Icon>}
             onClick={() => setOpenUploadBoundary(true)}
-            data-testid="project-boundary-upload">
+            data-testid="project-boundary-upload"
+          >
             Upload Boundary
           </Button>
         </Box>
 
         <Box height={500}>
           <MapContainer
-            mapId={'project_location_map'}
+            mapId={"project_location_map"}
             fullScreenControl={true}
             drawControls={{
               features: values.location.geometry,
-              onChange: (features) => setFieldValue('location.geometry', features)
+              onChange: (features) =>
+                setFieldValue("location.geometry", features),
             }}
           />
         </Box>
         {errors?.location?.geometry && (
           <Box pt={2}>
-            <Typography style={{ fontSize: '16px', color: '#f44336' }}>
+            <Typography style={{ fontSize: "16px", color: "#f44336" }}>
               {errors?.location?.geometry}
             </Typography>
           </Box>
@@ -228,15 +254,16 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       <ComponentDialog
         open={openUploadBoundary}
         dialogTitle="Upload Project Boundary"
-        onClose={() => setOpenUploadBoundary(false)}>
+        onClose={() => setOpenUploadBoundary(false)}
+      >
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
             acceptedFileExtensions: {
-              'application/vnd.google-earth.kml+xml': ['.kml'],
-              'application/octet-stream': ['.gpx'],
-              'application/zip': ['.zip']
-            }
+              "application/vnd.google-earth.kml+xml": [".kml"],
+              "application/octet-stream": [".gpx"],
+              "application/zip": [".zip"],
+            },
           }}
         />
       </ComponentDialog>

@@ -1,13 +1,13 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
 import {
   IGetProjectAttachment,
-  IGetProjectForViewResponse
-} from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import PublicAttachmentsList from './PublicAttachmentsList';
+  IGetProjectForViewResponse,
+} from "../../../interfaces/useProjectApi.interface";
+import React, { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router";
+import PublicAttachmentsList from "./PublicAttachmentsList";
 
 export interface IPublicProjectAttachmentsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -18,12 +18,16 @@ export interface IPublicProjectAttachmentsProps {
  *
  * @return {*}
  */
-const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () => {
+const PublicProjectAttachments: React.FC<
+  IPublicProjectAttachmentsProps
+> = () => {
   const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const projectId = urlParams["id"];
   const restorationTrackerApi = useRestorationTrackerApi();
 
-  const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
+  const [attachmentsList, setAttachmentsList] = useState<
+    IGetProjectAttachment[]
+  >([]);
 
   const getAttachments = useCallback(
     async (forceFetch: boolean) => {
@@ -32,9 +36,10 @@ const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () =>
       }
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectAttachments(
-          projectId
-        );
+        const response =
+          await restorationTrackerApi.public.project.getProjectAttachments(
+            projectId
+          );
 
         if (!response?.attachmentsList) {
           return;

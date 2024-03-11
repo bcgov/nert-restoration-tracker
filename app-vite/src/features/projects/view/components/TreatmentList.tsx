@@ -1,19 +1,25 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import ComponentDialog from 'components/dialog/ComponentDialog';
-import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
-import React, { ReactElement, useState } from 'react';
-import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
-import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import ComponentDialog from "../../../../components/dialog/ComponentDialog";
+import { IGetProjectTreatment } from "../../../../interfaces/useProjectApi.interface";
+import React, { ReactElement, useState } from "react";
+import {
+  handleChangePage,
+  handleChangeRowsPerPage,
+} from "../../../../utils/tablePaginationUtils";
+import {
+  getFormattedTreatmentStringsByYear,
+  groupTreatmentsByYear,
+} from "../../../../utils/treatments";
 
 export interface IProjectTreatmentListProps {
   treatmentList: IGetProjectTreatment[];
@@ -21,30 +27,30 @@ export interface IProjectTreatmentListProps {
 
 const pageStyles = {
   treatmentsTable: {
-    '& thead sup': {
-      display: 'inline-block',
-      marginTop: '-7px',
-      verticalAlign: 'middle',
-      fontSize: '9px'
+    "& thead sup": {
+      display: "inline-block",
+      marginTop: "-7px",
+      verticalAlign: "middle",
+      fontSize: "9px",
     },
-    '& tbody .MuiTableCell-root': {
-      verticalAlign: 'top'
-    }
+    "& tbody .MuiTableCell-root": {
+      verticalAlign: "top",
+    },
   },
   detaildl: {
-    '& dt': {
-      width: '10rem'
+    "& dt": {
+      width: "10rem",
     },
-    '& sup': {
-      display: 'inline-block',
-      marginTop: '-6px',
-      verticalAlign: 'middle',
-      fontSize: '10px'
-    }
+    "& sup": {
+      display: "inline-block",
+      marginTop: "-6px",
+      verticalAlign: "middle",
+      fontSize: "10px",
+    },
   },
   pagination: {
-    flex: '0 0 auto'
-  }
+    flex: "0 0 auto",
+  },
 };
 
 /**
@@ -59,7 +65,8 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
   const [page, setPage] = useState(0);
 
   const [opentreatmentDetails, setOpenTreatmentDetails] = useState(false);
-  const [currentTreatmentDetail, setCurrentTreatmentDetail] = useState<IGetProjectTreatment>();
+  const [currentTreatmentDetail, setCurrentTreatmentDetail] =
+    useState<IGetProjectTreatment>();
 
   const viewTreatmentUnitDetailsDialog = (treatment: IGetProjectTreatment) => {
     setCurrentTreatmentDetail(treatment);
@@ -82,7 +89,8 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
         onClose={() => {
           setOpenTreatmentDetails(false);
           setCurrentTreatmentDetail(undefined);
-        }}>
+        }}
+      >
         <Box component="section" mb={3}>
           <Box my={1}>
             <Typography variant="h3">GENERAL INFORMATION</Typography>
@@ -93,7 +101,11 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
           <Box component="dl" my={0} sx={pageStyles.detaildl}>
             <Box key={`treatment-id-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
-                <Typography component="dt" variant="body2" color="textSecondary">
+                <Typography
+                  component="dt"
+                  variant="body2"
+                  color="textSecondary"
+                >
                   ID:
                 </Typography>
                 <Typography component="dd" variant="body2">
@@ -104,7 +116,11 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             </Box>
             <Box key={`treatment-type-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
-                <Typography component="dt" variant="body2" color="textSecondary">
+                <Typography
+                  component="dt"
+                  variant="body2"
+                  color="textSecondary"
+                >
                   Type:
                 </Typography>
                 <Typography component="dd" variant="body2">
@@ -115,7 +131,11 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             </Box>
             <Box key={`treatment-width-length-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
-                <Typography component="dt" variant="body2" color="textSecondary">
+                <Typography
+                  component="dt"
+                  variant="body2"
+                  color="textSecondary"
+                >
                   Width / Length (m):
                 </Typography>
                 <Typography component="dd" variant="body2">
@@ -126,7 +146,11 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             </Box>
             <Box key={`treatment-area-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
-                <Typography component="dt" variant="body2" color="textSecondary">
+                <Typography
+                  component="dt"
+                  variant="body2"
+                  color="textSecondary"
+                >
                   Area (m<sup>2</sup>)
                 </Typography>
                 <Typography component="dd" variant="body2">
@@ -137,7 +161,11 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             </Box>
             <Box key={`treatment-recon-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
-                <Typography component="dt" variant="body2" color="textSecondary">
+                <Typography
+                  component="dt"
+                  variant="body2"
+                  color="textSecondary"
+                >
                   Reconnaissance Conducted
                 </Typography>
                 <Typography component="dd" variant="body2">
@@ -148,11 +176,20 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
             </Box>
             <Box key={`treatment-treatments-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
-                <Typography component="dt" variant="body2" color="textSecondary">
+                <Typography
+                  component="dt"
+                  variant="body2"
+                  color="textSecondary"
+                >
                   Treatments:
                 </Typography>
                 <Typography component="dd" variant="body2">
-                  <Box component="ul" pl={0} m={0} style={{ listStyleType: 'none' }}>
+                  <Box
+                    component="ul"
+                    pl={0}
+                    m={0}
+                    style={{ listStyleType: "none" }}
+                  >
                     {treatmentStrings.map((item, index) => (
                       <li key={index}>{item}</li>
                     ))}
@@ -171,7 +208,7 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
           <Divider />
           <Box mt={1}>
             <Typography variant="body2" color="textSecondary">
-              {currentTreatmentDetail.comments || 'No comments'}
+              {currentTreatmentDetail.comments || "No comments"}
             </Typography>
           </Box>
         </Box>
@@ -179,7 +216,9 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
     );
   };
 
-  const formatYearsTreatmentsBox = (treatmentsByYear: Record<string, string>) => {
+  const formatYearsTreatmentsBox = (
+    treatmentsByYear: Record<string, string>
+  ) => {
     const formattedTreatments: ReactElement[] = [];
 
     const treatmentEntries = Object.entries(treatmentsByYear);
@@ -210,7 +249,11 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
     <>
       <Box display="flex" flexDirection="column" height="100%">
         <Box component={TableContainer}>
-          <Table stickyHeader sx={pageStyles.treatmentsTable} aria-label="treatments-list-table">
+          <Table
+            stickyHeader
+            sx={pageStyles.treatmentsTable}
+            aria-label="treatments-list-table"
+          >
             <TableHead>
               <TableRow>
                 <TableCell width="50">ID</TableCell>
@@ -249,7 +292,9 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
                         <TableCell>{row.id}</TableCell>
                         <TableCell>{row.type}</TableCell>
                         <TableCell colSpan={2}>
-                          {formatYearsTreatmentsBox(groupTreatmentsByYear(row.treatments))}
+                          {formatYearsTreatmentsBox(
+                            groupTreatmentsByYear(row.treatments)
+                          )}
                         </TableCell>
                         <TableCell align="right">{row.width}</TableCell>
                         <TableCell align="right">{row.length}</TableCell>
@@ -263,7 +308,10 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
                               title="View treatment unit details"
                               aria-label="view treatment unit details"
                               data-testid="view-treatment-unit-details"
-                              onClick={() => viewTreatmentUnitDetailsDialog(row)}>
+                              onClick={() =>
+                                viewTreatmentUnitDetailsDialog(row)
+                              }
+                            >
                               Details
                             </Button>
                           </Box>

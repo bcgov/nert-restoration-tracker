@@ -1,59 +1,59 @@
-import ArrowBack from '@mui/icons-material/ArrowBack';
-import Box from '@mui/material/Box';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
-import { EditProjectI18N } from 'constants/i18n';
-import { DialogContext } from 'contexts/dialogContext';
-import ProjectContactForm from 'features/projects/components/ProjectContactForm';
-import ProjectFundingForm from 'features/projects/components/ProjectFundingForm';
-import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
-import ProjectIUCNForm from 'features/projects/components/ProjectIUCNForm';
-import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
-import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
-import ProjectPermitForm from 'features/projects/components/ProjectPermitForm';
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import Box from "@mui/material/Box";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { IErrorDialogProps } from "../../components/dialog/ErrorDialog";
+import { ScrollToFormikError } from "../../components/formik/ScrollToFormikError";
+import { EditProjectI18N } from "../../constants/i18n";
+import { DialogContext } from "../../contexts/dialogContext";
+import ProjectContactForm from "../../features/projects/components/ProjectContactForm";
+import ProjectFundingForm from "../../features/projects/components/ProjectFundingForm";
+import ProjectGeneralInformationForm from "../../features/projects/components/ProjectGeneralInformationForm";
+import ProjectIUCNForm from "../../features/projects/components/ProjectIUCNForm";
+import ProjectLocationForm from "../../features/projects/components/ProjectLocationForm";
+import ProjectPartnershipsForm from "../../features/projects/components/ProjectPartnershipsForm";
+import ProjectPermitForm from "../../features/projects/components/ProjectPermitForm";
 import {
   ProjectFormInitialValues,
-  ProjectFormYupSchema
-} from 'features/projects/create/CreateProjectPage';
-import { Form, Formik, FormikProps } from 'formik';
-import History from 'history';
-import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import { Prompt } from 'react-router-dom';
+  ProjectFormYupSchema,
+} from "../../features/projects/create/CreateProjectPage";
+import { Form, Formik, FormikProps } from "formik";
+import History from "history";
+import { APIError } from "../../hooks/api/useAxios";
+import useCodes from "../../hooks/useCodes";
+import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
+import { IGetProjectForViewResponse } from "../../interfaces/useProjectApi.interface";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useHistory, useParams } from "react-router";
+import { Prompt } from "react-router-dom";
 
 const pageStyles = {
   actionButton: {
-    minWidth: '6rem',
-    '& + button': {
-      marginLeft: '0.5rem'
-    }
+    minWidth: "6rem",
+    "& + button": {
+      marginLeft: "0.5rem",
+    },
   },
   formButtons: {
-    '& button': {
-      margin: '0.5rem'
-    }
+    "& button": {
+      margin: "0.5rem",
+    },
   },
   breadCrumbLink: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer'
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
   },
   breadCrumbLinkIcon: {
-    marginRight: '0.25rem'
-  }
+    marginRight: "0.25rem",
+  },
 };
 
 /**
@@ -81,13 +81,16 @@ const EditProjectPage: React.FC = () => {
 
   const dialogContext = useContext(DialogContext);
 
-  const [initialProjectFormData, setInitialProjectFormData] = useState<IGetProjectForViewResponse>(
-    ProjectFormInitialValues as unknown as IGetProjectForViewResponse
-  );
+  const [initialProjectFormData, setInitialProjectFormData] =
+    useState<IGetProjectForViewResponse>(
+      ProjectFormInitialValues as unknown as IGetProjectForViewResponse
+    );
 
   useEffect(() => {
     const getEditProjectFields = async () => {
-      const response = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+      const response = await restorationTrackerApi.project.getProjectById(
+        urlParams["id"]
+      );
 
       setInitialProjectFormData(response);
 
@@ -110,13 +113,17 @@ const EditProjectPage: React.FC = () => {
    */
   const handleProjectEdits = async (values: IGetProjectForViewResponse) => {
     try {
-      const id = urlParams['id'];
+      const id = urlParams["id"];
 
-      const response = await restorationTrackerApi.project.updateProject(id, values);
+      const response = await restorationTrackerApi.project.updateProject(
+        id,
+        values
+      );
 
       if (!response?.id) {
         showEditErrorDialog({
-          dialogError: 'The response from the server was null, or did not contain a project ID.'
+          dialogError:
+            "The response from the server was null, or did not contain a project ID.",
         });
         return;
       }
@@ -126,16 +133,16 @@ const EditProjectPage: React.FC = () => {
       history.push(`/admin/projects/${response.id}`);
     } catch (error) {
       showEditErrorDialog({
-        dialogTitle: 'Error Editing Project',
+        dialogTitle: "Error Editing Project",
         dialogError: (error as APIError)?.message,
-        dialogErrorDetails: (error as APIError)?.errors
+        dialogErrorDetails: (error as APIError)?.errors,
       });
     }
   };
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push(`/admin/projects/${urlParams['id']}`);
+    history.push(`/admin/projects/${urlParams["id"]}`);
   };
 
   const defaultErrorDialogProps = {
@@ -144,7 +151,7 @@ const EditProjectPage: React.FC = () => {
     },
     onOk: () => {
       dialogContext.setErrorDialog({ open: false });
-    }
+    },
   };
 
   const defaultCancelDialogProps = {
@@ -159,17 +166,19 @@ const EditProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push(`/admin/projects/${urlParams['id']}`);
-    }
+      history.push(`/admin/projects/${urlParams["id"]}`);
+    },
   };
 
-  const showEditErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
+  const showEditErrorDialog = (
+    textDialogProps?: Partial<IErrorDialogProps>
+  ) => {
     dialogContext.setErrorDialog({
       dialogTitle: EditProjectI18N.editErrorTitle,
       dialogText: EditProjectI18N.editErrorText,
       ...defaultErrorDialogProps,
       ...textDialogProps,
-      open: true
+      open: true,
     });
   };
 
@@ -194,7 +203,7 @@ const EditProjectPage: React.FC = () => {
           dialogContext.setYesNoDialog({ open: false });
           history.push(location.pathname);
         },
-        open: true
+        open: true,
       });
       return false;
     }
@@ -214,8 +223,13 @@ const EditProjectPage: React.FC = () => {
               color="primary"
               onClick={handleCancel}
               aria-current="page"
-              sx={pageStyles.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
+              sx={pageStyles.breadCrumbLink}
+            >
+              <ArrowBack
+                color="primary"
+                fontSize="small"
+                sx={pageStyles.breadCrumbLinkIcon}
+              />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
           </Breadcrumbs>
@@ -238,7 +252,8 @@ const EditProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
-            onSubmit={handleProjectEdits}>
+            onSubmit={handleProjectEdits}
+          >
             <>
               <ScrollToFormikError />
 
@@ -267,7 +282,7 @@ const EditProjectPage: React.FC = () => {
                                 return {
                                   value: item.id,
                                   iucn1_id: item.iucn1_id,
-                                  label: item.name
+                                  label: item.name,
                                 };
                               }
                             ) || []
@@ -278,7 +293,7 @@ const EditProjectPage: React.FC = () => {
                                 return {
                                   value: item.id,
                                   iucn2_id: item.iucn2_id,
-                                  label: item.name
+                                  label: item.name,
                                 };
                               }
                             ) || []
@@ -299,7 +314,9 @@ const EditProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                        coordinator_agency={codes.codes.coordinator_agency.map(
+                          (item) => item.name
+                        )}
                       />
                     </Grid>
                   </Grid>
@@ -324,18 +341,26 @@ const EditProjectPage: React.FC = () => {
                 <Box my={5}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Funding and Partnerships</Typography>
+                      <Typography variant="h2">
+                        Funding and Partnerships
+                      </Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
                       <Box component="fieldset" mx={0}>
                         <ProjectFundingForm
-                          fundingSources={codes.codes.funding_source.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
+                          fundingSources={codes.codes.funding_source.map(
+                            (item) => {
+                              return { value: item.id, label: item.name };
+                            }
+                          )}
                           investment_action_category={codes.codes.investment_action_category.map(
                             (item) => {
-                              return { value: item.id, label: item.name, fs_id: item.fs_id };
+                              return {
+                                value: item.id,
+                                label: item.name,
+                                fs_id: item.fs_id,
+                              };
                             }
                           )}
                         />
@@ -343,12 +368,16 @@ const EditProjectPage: React.FC = () => {
 
                       <Box component="fieldset" mt={5} mx={0}>
                         <ProjectPartnershipsForm
-                          first_nations={codes.codes.first_nations.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          stakeholder_partnerships={codes.codes.funding_source.map((item) => {
-                            return { value: item.name, label: item.name };
-                          })}
+                          first_nations={codes.codes.first_nations.map(
+                            (item) => {
+                              return { value: item.id, label: item.name };
+                            }
+                          )}
+                          stakeholder_partnerships={codes.codes.funding_source.map(
+                            (item) => {
+                              return { value: item.name, label: item.name };
+                            }
+                          )}
                         />
                       </Box>
                     </Grid>
@@ -378,13 +407,19 @@ const EditProjectPage: React.FC = () => {
 
                 <Divider></Divider>
 
-                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                <Box
+                  mt={5}
+                  sx={pageStyles.formButtons}
+                  display="flex"
+                  justifyContent="flex-end"
+                >
                   <Button
                     variant="contained"
                     color="primary"
                     size="large"
                     type="submit"
-                    data-testid="project-save-button">
+                    data-testid="project-save-button"
+                  >
                     Save Project
                   </Button>
                   <Button
@@ -392,7 +427,8 @@ const EditProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}>
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </Button>
                 </Box>

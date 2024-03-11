@@ -1,20 +1,20 @@
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
-import CustomTextField from 'components/fields/CustomTextField';
-import DollarAmountField from 'components/fields/DollarAmountField';
-import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/StartEndDateFields';
-import { useFormikContext } from 'formik';
-import React from 'react';
-import yup from 'utils/YupSchema';
-import { IInvestmentActionCategoryOption } from './ProjectFundingForm';
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+import CustomTextField from "../../../components/fields/CustomTextField";
+import DollarAmountField from "../../../components/fields/DollarAmountField";
+import { IMultiAutocompleteFieldOption } from "../../../components/fields/MultiAutocompleteFieldVariableSize";
+import StartEndDateFields from "../../../components/fields/StartEndDateFields";
+import { useFormikContext } from "formik";
+import React from "react";
+import yup from "../../../utils/YupSchema";
+import { IInvestmentActionCategoryOption } from "./ProjectFundingForm";
 
 export interface IProjectFundingFormArrayItem {
   id: number;
@@ -29,39 +29,44 @@ export interface IProjectFundingFormArrayItem {
   revision_count: number;
 }
 
-export const ProjectFundingFormArrayItemInitialValues: IProjectFundingFormArrayItem = {
-  id: 0,
-  agency_id: '' as unknown as number,
-  agency_name: '',
-  investment_action_category: '' as unknown as number,
-  investment_action_category_name: '',
-  agency_project_id: '',
-  funding_amount: '' as unknown as number,
-  start_date: '',
-  end_date: '',
-  revision_count: 0
-};
+export const ProjectFundingFormArrayItemInitialValues: IProjectFundingFormArrayItem =
+  {
+    id: 0,
+    agency_id: "" as unknown as number,
+    agency_name: "",
+    investment_action_category: "" as unknown as number,
+    investment_action_category_name: "",
+    agency_project_id: "",
+    funding_amount: "" as unknown as number,
+    start_date: "",
+    end_date: "",
+    revision_count: 0,
+  };
 
 export const ProjectFundingFormArrayItemYupSchema = yup.object().shape({
   agency_id: yup
     .number()
     .transform((value) => (isNaN(value) && null) || value)
-    .required('Required'),
-  investment_action_category: yup.number().required('Required'),
-  agency_project_id: yup.string().max(50, 'Cannot exceed 50 characters').nullable().notRequired(),
+    .required("Required"),
+  investment_action_category: yup.number().required("Required"),
+  agency_project_id: yup
+    .string()
+    .max(50, "Cannot exceed 50 characters")
+    .nullable()
+    .notRequired(),
   funding_amount: yup
     .number()
     .transform((value) => (isNaN(value) && null) || value)
-    .typeError('Must be a number')
-    .min(0, 'Must be a positive number')
-    .max(9999999999, 'Must be less than $9,999,999,999')
-    .required('Required'),
-  start_date: yup.string().isValidDateString().required('Required'),
+    .typeError("Must be a number")
+    .min(0, "Must be a positive number")
+    .max(9999999999, "Must be less than $9,999,999,999")
+    .required("Required"),
+  start_date: yup.string().isValidDateString().required("Required"),
   end_date: yup
     .string()
     .isValidDateString()
-    .required('Required')
-    .isEndDateAfterStartDate('start_date')
+    .required("Required")
+    .isEndDateAfterStartDate("start_date"),
 });
 
 export interface IProjectFundingItemFormProps {
@@ -78,16 +83,19 @@ export interface IProjectFundingItemFormProps {
  * @return {*}
  */
 
-const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) => {
+const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (
+  props
+) => {
   const formikProps = useFormikContext<IProjectFundingFormArrayItem>();
 
-  const { values, touched, errors, handleChange, handleSubmit, setFieldValue } = formikProps;
+  const { values, touched, errors, handleChange, handleSubmit, setFieldValue } =
+    formikProps;
 
   // Only show investment_action_category if certain agency_id values are selected
   // Toggle investment_action_category label and dropdown values based on chosen agency_id
   const investment_action_category_label =
-    (values.agency_id === 1 && 'Investment Action') ||
-    (values.agency_id === 2 && 'Investment Category') ||
+    (values.agency_id === 1 && "Investment Action") ||
+    (values.agency_id === 2 && "Investment Category") ||
     null;
 
   return (
@@ -98,7 +106,11 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <FormControl variant="outlined" required={true} style={{ width: '100%' }}>
+            <FormControl
+              variant="outlined"
+              required={true}
+              style={{ width: "100%" }}
+            >
               <InputLabel id="agency_id-label">Agency Name</InputLabel>
               <Select
                 id="agency_id"
@@ -110,7 +122,7 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   handleChange(event);
                   // investment_action_category is dependent on agency_id, so reset it if agency_id changes
                   setFieldValue(
-                    'investment_action_category',
+                    "investment_action_category",
                     ProjectFundingFormArrayItemInitialValues.investment_action_category
                   );
 
@@ -118,7 +130,7 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   // it for the user.
                   if (event.target.value !== 1 && event.target.value !== 2) {
                     setFieldValue(
-                      'investment_action_category',
+                      "investment_action_category",
                       props.investment_action_category.find(
                         (item) => item.fs_id === event.target.value
                       )?.value || 0
@@ -127,7 +139,11 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                 }}
                 error={touched.agency_id && Boolean(errors.agency_id)}
                 displayEmpty
-                inputProps={{ 'aria-label': 'Agency Name', 'data-testid': 'agency-id' }}>
+                inputProps={{
+                  "aria-label": "Agency Name",
+                  "data-testid": "agency-id",
+                }}
+              >
                 {props.fundingSources.map((item) => (
                   <MenuItem key={item.value} value={item.value}>
                     {item.label}
@@ -139,7 +155,12 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
           </Grid>
           {investment_action_category_label && (
             <Grid item xs={12}>
-              <FormControl fullWidth variant="outlined" required={true} style={{ width: '100%' }}>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                required={true}
+                style={{ width: "100%" }}
+              >
                 <InputLabel id="investment_action_category-label">
                   {investment_action_category_label}
                 </InputLabel>
@@ -151,13 +172,15 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   value={values.investment_action_category}
                   onChange={handleChange}
                   error={
-                    touched.investment_action_category && Boolean(errors.investment_action_category)
+                    touched.investment_action_category &&
+                    Boolean(errors.investment_action_category)
                   }
                   displayEmpty
                   inputProps={{
-                    'aria-label': `${investment_action_category_label}`,
-                    'data-testid': 'investment_action_category'
-                  }}>
+                    "aria-label": `${investment_action_category_label}`,
+                    "data-testid": "investment_action_category",
+                  }}
+                >
                   {props.investment_action_category
                     // Only show the investment action categories whose fs_id matches the agency_id id
                     .filter((item) => item.fs_id === values.agency_id)
@@ -167,12 +190,17 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                       </MenuItem>
                     ))}
                 </Select>
-                <FormHelperText>{errors.investment_action_category}</FormHelperText>
+                <FormHelperText>
+                  {errors.investment_action_category}
+                </FormHelperText>
               </FormControl>
             </Grid>
           )}
           <Grid item xs={12}>
-            <CustomTextField name="agency_project_id" label="Agency Project ID" />
+            <CustomTextField
+              name="agency_project_id"
+              label="Agency Project ID"
+            />
           </Grid>
         </Grid>
       </Box>
@@ -189,8 +217,8 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
           </Grid>
           <StartEndDateFields
             formikProps={formikProps}
-            startName={'start_date'}
-            endName={'end_date'}
+            startName={"start_date"}
+            endName={"end_date"}
             startRequired={true}
             endRequired={true}
           />

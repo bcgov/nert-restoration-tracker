@@ -1,14 +1,14 @@
-import Grid from '@mui/material/Grid';
-import CustomTextField from 'components/fields/CustomTextField';
+import Grid from "@mui/material/Grid";
+import CustomTextField from "../../../components/fields/CustomTextField";
 import MultiAutocompleteFieldVariableSize, {
-  IMultiAutocompleteFieldOption
-} from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/StartEndDateFields';
-import { useFormikContext } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { debounce } from 'lodash-es';
-import React, { useCallback } from 'react';
-import yup from 'utils/YupSchema';
+  IMultiAutocompleteFieldOption,
+} from "../../../components/fields/MultiAutocompleteFieldVariableSize";
+import StartEndDateFields from "../../../components/fields/StartEndDateFields";
+import { useFormikContext } from "formik";
+import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerApi";
+import { debounce } from "lodash-es";
+import React, { useCallback } from "react";
+import yup from "../../../utils/YupSchema";
 
 export interface IProjectGeneralInformationForm {
   project: {
@@ -22,28 +22,36 @@ export interface IProjectGeneralInformationForm {
   };
 }
 
-export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformationForm = {
-  project: {
-    project_name: '',
-    start_date: '',
-    end_date: '',
-    objectives: ''
-  },
-  species: {
-    focal_species: []
-  }
-};
+export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformationForm =
+  {
+    project: {
+      project_name: "",
+      start_date: "",
+      end_date: "",
+      objectives: "",
+    },
+    species: {
+      focal_species: [],
+    },
+  };
 
 export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   project: yup.object().shape({
-    project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
-    start_date: yup.string().isValidDateString().required('Required'),
-    end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
+    project_name: yup
+      .string()
+      .max(300, "Cannot exceed 300 characters")
+      .required("Required"),
+    start_date: yup.string().isValidDateString().required("Required"),
+    end_date: yup
+      .string()
+      .nullable()
+      .isValidDateString()
+      .isEndDateAfterStartDate("start_date"),
     objectives: yup
       .string()
-      .max(3000, 'Cannot exceed 3000 characters')
-      .required('You must provide objectives for the project')
-  })
+      .max(3000, "Cannot exceed 3000 characters")
+      .required("You must provide objectives for the project"),
+  }),
   // This part of the form is not yet implemented
   // species: yup.object().shape({
   //   focal_species: yup.array().min(1, 'You must specify a focal species').required('Required')
@@ -67,7 +75,9 @@ const ProjectGeneralInformationForm: React.FC = () => {
     });
 
   const handleGetInitList = async (initialvalues: number[]) => {
-    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(initialvalues);
+    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(
+      initialvalues
+    );
     return convertOptions(response.searchResponse);
   };
 
@@ -78,7 +88,9 @@ const ProjectGeneralInformationForm: React.FC = () => {
         existingValues: (string | number)[],
         callback: (searchedValues: IMultiAutocompleteFieldOption[]) => void
       ) => {
-        const response = await restorationTrackerApi.taxonomy.searchSpecies(inputValue);
+        const response = await restorationTrackerApi.taxonomy.searchSpecies(
+          inputValue
+        );
         const newOptions = convertOptions(response.searchResponse).filter(
           (item) => !existingValues.includes(item.value)
         );
@@ -98,14 +110,14 @@ const ProjectGeneralInformationForm: React.FC = () => {
               name="project.project_name"
               label="Project Name"
               other={{
-                required: true
+                required: true,
               }}
             />
           </Grid>
           <StartEndDateFields
             formikProps={formikProps}
-            startName={'project.start_date'}
-            endName={'project.end_date'}
+            startName={"project.start_date"}
+            endName={"project.end_date"}
             startRequired={true}
             endRequired={false}
           />

@@ -1,18 +1,18 @@
-import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Typography from '@mui/material/Typography';
-import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
-import CustomTextField from 'components/fields/CustomTextField';
-import { useFormikContext } from 'formik';
-import React from 'react';
-import yup from 'utils/YupSchema';
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import Grid from "@mui/material/Grid";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import Typography from "@mui/material/Typography";
+import AutocompleteFreeSoloField from "../../../components/fields/AutocompleteFreeSoloField";
+import CustomTextField from "../../../components/fields/CustomTextField";
+import { useFormikContext } from "formik";
+import React from "react";
+import yup from "../../../utils/YupSchema";
 
 export interface IProjectContactItemForm {
   first_name: string;
@@ -24,25 +24,35 @@ export interface IProjectContactItemForm {
 }
 
 export const ProjectContactItemInitialValues: IProjectContactItemForm = {
-  first_name: '',
-  last_name: '',
-  email_address: '',
-  agency: '',
-  is_public: 'false',
-  is_primary: 'false'
+  first_name: "",
+  last_name: "",
+  email_address: "",
+  agency: "",
+  is_public: "false",
+  is_primary: "false",
 };
 
 export const ProjectContactItemYupSchema = yup.object().shape({
-  first_name: yup.string().max(50, 'Cannot exceed 50 characters').required('Required'),
-  last_name: yup.string().max(50, 'Cannot exceed 50 characters').required('Required'),
+  first_name: yup
+    .string()
+    .max(50, "Cannot exceed 50 characters")
+    .required("Required"),
+  last_name: yup
+    .string()
+    .max(50, "Cannot exceed 50 characters")
+    .required("Required"),
   email_address: yup
     .string()
-    .max(500, 'Cannot exceed 500 characters')
-    .email('Must be a valid email address')
-    .required('Required'),
-  agency: yup.string().max(300, 'Cannot exceed 300 characters').required('Required').nullable(),
-  is_public: yup.string().required('Required'),
-  is_primary: yup.string().required('Required')
+    .max(500, "Cannot exceed 500 characters")
+    .email("Must be a valid email address")
+    .required("Required"),
+  agency: yup
+    .string()
+    .max(300, "Cannot exceed 300 characters")
+    .required("Required")
+    .nullable(),
+  is_public: yup.string().required("Required"),
+  is_primary: yup.string().required("Required"),
 });
 
 export interface IProjectContactItemFormProps {
@@ -56,8 +66,11 @@ export interface IProjectContactItemFormProps {
  *
  * @return {*}
  */
-const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) => {
-  const { values, touched, errors, handleChange } = useFormikContext<IProjectContactItemForm>();
+const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (
+  props
+) => {
+  const { values, touched, errors, handleChange } =
+    useFormikContext<IProjectContactItemForm>();
 
   return (
     <form data-testid="contact-item-form">
@@ -71,7 +84,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               name="first_name"
               label="First Name"
               other={{
-                required: true
+                required: true,
               }}
             />
           </Grid>
@@ -80,7 +93,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               name="last_name"
               label="Last Name"
               other={{
-                required: true
+                required: true,
               }}
             />
           </Grid>
@@ -89,7 +102,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               name="email_address"
               label="Business Email Address"
               other={{
-                required: true
+                required: true,
               }}
             />
           </Grid>
@@ -128,7 +141,8 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
         <FormControl
           required={true}
           component="fieldset"
-          error={touched.is_public && Boolean(errors.is_public)}>
+          error={touched.is_public && Boolean(errors.is_public)}
+        >
           <Typography id="share_contact_details" component="legend">
             Share Contact Details
           </Typography>
@@ -140,7 +154,8 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               name="is_public"
               aria-label="Share Contact Details"
               value={values.is_public}
-              onChange={handleChange}>
+              onChange={handleChange}
+            >
               <FormControlLabel
                 value="true"
                 control={<Radio color="primary" size="small" />}
