@@ -8,7 +8,7 @@ import React from 'react';
 import { Redirect, Switch } from 'react-router';
 import AppRoute from 'utils/AppRoute';
 import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
-import ProjectsPage from './ProjectsPlansListPage';
+import ProjectsPlansListPage from './ProjectsPlansListPage';
 
 /**
  * Router for all `/admin/project/*` pages.
@@ -20,7 +20,7 @@ const ProjectsRouter: React.FC = () => {
   return (
     <Switch>
       <AppRoute exact path="/admin/projects" layout={ProjectsLayout}>
-        <ProjectsPage />
+        <ProjectsPlansListPage />
       </AppRoute>
 
       <AppRoute exact path="/admin/projects/create" layout={ProjectsLayout}>

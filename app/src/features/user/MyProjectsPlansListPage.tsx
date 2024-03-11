@@ -12,7 +12,7 @@ import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-// import PlanListPage from '../projects/list/PlanListPage';
+import PlanListPage from '../projects/list/PlanListPage';
 import ProjectsListPage from '../projects/list/ProjectsListPage';
 
 const MyProjectsPage: React.FC = () => {
@@ -84,7 +84,7 @@ const MyProjectsPage: React.FC = () => {
 
       <ProjectsListPage projects={projects} drafts={drafts} />
 
-      {/* <Box mt={5} mb={2} display="flex" justifyContent="space-between">
+      <Box mt={5} mb={2} display="flex" justifyContent="space-between">
         <Box mb={1}>
           <Typography variant="h1">My Plans</Typography>
           <Typography variant="body1" color="textSecondary">
@@ -92,7 +92,11 @@ const MyProjectsPage: React.FC = () => {
           </Typography>
         </Box>
         <SystemRoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR]}>
+          validSystemRoles={[
+            SYSTEM_ROLE.SYSTEM_ADMIN,
+            SYSTEM_ROLE.DATA_ADMINISTRATOR,
+            SYSTEM_ROLE.PROJECT_CREATOR
+          ]}>
           <Button
             variant="contained"
             color="primary"
@@ -104,7 +108,7 @@ const MyProjectsPage: React.FC = () => {
         </SystemRoleGuard>
       </Box>
 
-      <PlanListPage projects={projects} drafts={drafts} /> */}
+      <PlanListPage projects={projects} drafts={drafts} />
     </Container>
   );
 };
