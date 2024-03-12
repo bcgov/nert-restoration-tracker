@@ -60,7 +60,7 @@ import { useRestorationTrackerApi } from "../../../hooks/useRestorationTrackerAp
 import { ICreateProjectRequest } from "../../../interfaces/useProjectApi.interface";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { Prompt } from "react-router-dom";
+import ReactRouterPrompt from "react-router-prompt";
 import yup from "../../../utils/YupSchema";
 
 const pageStyles = {
@@ -348,7 +348,24 @@ const CreateProjectPage: React.FC = () => {
 
   return (
     <>
-      <Prompt when={enableCancelCheck} message={handleLocationChange} />
+      {/* <Prompt when={enableCancelCheck} message={handleLocationChange} /> */}
+      {/* <ReactRouterPrompt when={enableCancelCheck}>
+        {({isActive, onConfirm, onCancel}) => {
+          if (isActive) {
+            return (
+              <EditDialog
+                dialogTitle="Are you sure you want to cancel?"
+                dialogText="You have unsaved changes. Are you sure you want to leave this page?"
+                open={true}
+                onNo={onCancel}
+                onYes={onConfirm}
+              />
+            );
+          }
+          return null;
+        }
+      }
+      </ReactRouterPrompt> */}
 
       <EditDialog
         dialogTitle="Save Incomplete Project as a Draft"

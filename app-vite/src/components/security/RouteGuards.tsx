@@ -2,7 +2,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { AuthStateContext } from "../../contexts/authStateContext";
 import qs from "qs";
 import React, { useContext } from "react";
-import { Redirect, Route, RouteProps, useLocation } from "react-router";
+import { Navigate, Route, RouteProps, useLocation } from "react-router";
 
 /**
  * Special route guard that requires the user to be authenticated, but also accounts for routes that are exceptions to
@@ -68,7 +68,7 @@ const CheckForAuthLoginParam: React.FC = ({ children }) => {
       keycloakWrapper?.keycloak.login({ redirectUri: redirectUri });
     }
 
-    return <Redirect to="/" />;
+    return <Navigate replace to="/" />;
   }
 
   return <>{children}</>;

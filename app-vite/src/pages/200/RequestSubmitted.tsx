@@ -7,10 +7,10 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { AuthStateContext } from "../../contexts/authStateContext";
 import React, { useContext } from "react";
-import { Redirect, useHistory } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 const RequestSubmitted = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -21,12 +21,12 @@ const RequestSubmitted = () => {
 
   if (keycloakWrapper?.systemRoles.length) {
     // User already has a role
-    return <Redirect to={{ pathname: "/admin/projects" }} />;
+    return <Navigate to={{ pathname: "/admin/projects" }} />;
   }
 
   if (!keycloakWrapper.hasAccessRequest) {
     // User has no pending access request
-    return <Redirect to={{ pathname: "/" }} />;
+    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (
@@ -40,7 +40,7 @@ const RequestSubmitted = () => {
         <Box pt={4}>
           <Button
             onClick={() => {
-              history.push("/logout");
+              navigate("/logout");
             }}
             type="submit"
             size="large"

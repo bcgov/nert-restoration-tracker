@@ -31,8 +31,8 @@ import useCodes from "../../hooks/useCodes";
 import { useRestorationTrackerApi } from "../../hooks/useRestorationTrackerApi";
 import { IGetProjectForViewResponse } from "../../interfaces/useProjectApi.interface";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router";
-import { Prompt } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
+// import { Prompt } from "react-router-dom";
 
 const pageStyles = {
   actionButton: {
@@ -62,7 +62,7 @@ const pageStyles = {
  * @return {*}
  */
 const EditProjectPage: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
@@ -130,7 +130,7 @@ const EditProjectPage: React.FC = () => {
 
       setEnableCancelCheck(false);
 
-      history.push(`/admin/projects/${response.id}`);
+      navigate(`/admin/projects/${response.id}`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: "Error Editing Project",
@@ -142,7 +142,7 @@ const EditProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push(`/admin/projects/${urlParams["id"]}`);
+    navigate(`/admin/projects/${urlParams["id"]}`);
   };
 
   const defaultErrorDialogProps = {
@@ -166,7 +166,7 @@ const EditProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push(`/admin/projects/${urlParams["id"]}`);
+      navigate(`/admin/projects/${urlParams["id"]}`);
     },
   };
 
@@ -201,7 +201,7 @@ const EditProjectPage: React.FC = () => {
         ...defaultCancelDialogProps,
         onYes: () => {
           dialogContext.setYesNoDialog({ open: false });
-          history.push(location.pathname);
+          navigate(location.pathname);
         },
         open: true,
       });
@@ -214,7 +214,7 @@ const EditProjectPage: React.FC = () => {
 
   return (
     <>
-      <Prompt when={enableCancelCheck} message={handleLocationChange} />
+      {/* <Prompt when={enableCancelCheck} message={handleLocationChange} /> */}
 
       <Container maxWidth="xl">
         <Box mb={3}>

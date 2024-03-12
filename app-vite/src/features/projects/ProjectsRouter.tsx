@@ -5,7 +5,7 @@ import CreateProjectPage from "../../features/projects/create/CreateProjectPage"
 import ProjectsLayout from "../../features/projects/ProjectsLayout";
 import ViewProjectPage from "../../features/projects/view/ViewProjectPage";
 import React from "react";
-import { Redirect, Routes } from "react-router";
+import { Navigate, Routes } from "react-router";
 import AppRoute from "../../utils/AppRoute";
 import ProjectParticipantsPage from "./participants/ProjectParticipantsPage";
 import ProjectsPage from "./ProjectsPlansListPage";
@@ -19,24 +19,24 @@ import ProjectsPage from "./ProjectsPlansListPage";
 const ProjectsRouter: React.FC = () => {
   return (
     <Routes>
-      <AppRoute exact path="/admin/projects" layout={ProjectsLayout}>
+      <AppRoute path="/admin/projects" layout={ProjectsLayout}>
         <ProjectsPage />
       </AppRoute>
 
-      <AppRoute exact path="/admin/projects/create" layout={ProjectsLayout}>
+      <AppRoute path="/admin/projects/create" layout={ProjectsLayout}>
         <SystemRoleGuard
           validSystemRoles={[
             SYSTEM_ROLE.SYSTEM_ADMIN,
             SYSTEM_ROLE.DATA_ADMINISTRATOR,
             SYSTEM_ROLE.PROJECT_CREATOR,
           ]}
-          fallback={<Redirect to={"/projects"} />}
+          fallback={<Navigate replace to={"/projects"} />}
         >
           <CreateProjectPage />
         </SystemRoleGuard>
       </AppRoute>
 
-      <AppRoute exact path="/admin/projects/:id/edit" layout={ProjectsLayout}>
+      <AppRoute path="/admin/projects/:id/edit" layout={ProjectsLayout}>
         <RoleGuard
           validSystemRoles={[
             SYSTEM_ROLE.SYSTEM_ADMIN,
@@ -47,24 +47,16 @@ const ProjectsRouter: React.FC = () => {
             PROJECT_ROLE.PROJECT_EDITOR,
           ]}
           fallback={(projectId) => (
-            <Redirect to={`/projects/${projectId}`} path="" />
+            <Navigate to={`/projects/${projectId}`} replace />
           )}
         >
           <EditProjectPage />
         </RoleGuard>
       </AppRoute>
 
-      <Redirect
-        exact
-        from="/admin/projects/:id"
-        to="/admin/projects/:id/details"
-      />
+      <Navigate to="/admin/projects/:id/details" replace />
 
-      <AppRoute
-        exact
-        path="/admin/projects/:id/details"
-        layout={ProjectsLayout}
-      >
+      <AppRoute path="/admin/projects/:id/details" layout={ProjectsLayout}>
         <RoleGuard
           validSystemRoles={[
             SYSTEM_ROLE.SYSTEM_ADMIN,
@@ -75,13 +67,15 @@ const ProjectsRouter: React.FC = () => {
             PROJECT_ROLE.PROJECT_EDITOR,
             PROJECT_ROLE.PROJECT_VIEWER,
           ]}
-          fallback={(projectId) => <Redirect to={`/projects/${projectId}`} />}
+          fallback={(projectId) => (
+            <Navigate to={`/projects/${projectId}`} replace />
+          )}
         >
           <ViewProjectPage />
         </RoleGuard>
       </AppRoute>
 
-      <AppRoute exact path="/admin/projects/:id/users" layout={ProjectsLayout}>
+      <AppRoute path="/admin/projects/:id/users" layout={ProjectsLayout}>
         <RoleGuard
           validSystemRoles={[
             SYSTEM_ROLE.SYSTEM_ADMIN,
@@ -91,7 +85,9 @@ const ProjectsRouter: React.FC = () => {
             PROJECT_ROLE.PROJECT_LEAD,
             PROJECT_ROLE.PROJECT_EDITOR,
           ]}
-          fallback={(projectId) => <Redirect to={`/projects/${projectId}`} />}
+          fallback={(projectId) => (
+            <Navigate to={`/projects/${projectId}`} replace />
+          )}
         >
           <ProjectParticipantsPage />
         </RoleGuard>
@@ -99,7 +95,7 @@ const ProjectsRouter: React.FC = () => {
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}
       <AppRoute path="/admin/projects/*">
-        <Redirect to="/page-not-found" />
+        <Navigate to="/page-not-found" replace />
       </AppRoute>
     </Routes>
   );

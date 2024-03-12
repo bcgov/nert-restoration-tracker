@@ -1,6 +1,6 @@
 import AdminUsersLayout from "../../features/admin/AdminUsersLayout";
 import React from "react";
-import { Redirect, Routes } from "react-router";
+import { Navigate, Routes } from "react-router";
 import AppRoute from "../../utils/AppRoute";
 import ManageUsersPage from "./users/ManageUsersPage";
 import UsersDetailPage from "./users/UsersDetailPage";
@@ -14,17 +14,17 @@ import UsersDetailPage from "./users/UsersDetailPage";
 const AdminUsersRouter: React.FC = () => {
   return (
     <Routes>
-      <AppRoute exact path="/admin/users" layout={AdminUsersLayout}>
+      <AppRoute path="/admin/users" layout={AdminUsersLayout}>
         <ManageUsersPage />
       </AppRoute>
 
-      <AppRoute exact path="/admin/users/:id" layout={AdminUsersLayout}>
+      <AppRoute path="/admin/users/:id" layout={AdminUsersLayout}>
         <UsersDetailPage />
       </AppRoute>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}
       <AppRoute path="/admin/users/*">
-        <Redirect to="/page-not-found" />
+        <Navigate replace to="/page-not-found" />
       </AppRoute>
     </Routes>
   );

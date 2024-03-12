@@ -14,7 +14,8 @@ import NotFoundPage from "./pages/404/NotFoundPage";
 import AccessRequestPage from "./pages/access/AccessRequestPage";
 import LogOutPage from "./pages/logout/LogOutPage";
 import React, { useContext } from "react";
-import { Redirect, Routes, useLocation } from "react-router-dom";
+import { Routes, useLocation } from "react-router-dom";
+import { Navigate } from "react-router";
 import AppRoute from "./utils/AppRoute";
 
 const AppRouter: React.FC = () => {
@@ -29,18 +30,17 @@ const AppRouter: React.FC = () => {
 
   return (
     <Routes>
-      <Redirect
-        from="/:url*(/+)"
+      <Navigate
         to={{ ...location, pathname: location.pathname.slice(0, -1) }}
       />
 
       {/* Redirect to admin search if user is authenticated */}
       {authenticated ? (
-        <Redirect exact from="/" to="/admin/search" />
+        <Navigate to="/admin/search" />
       ) : (
-        <Redirect exact from="/" to="/search" />
+        <Navigate to="/search" />
       )}
-      {authenticated && <Redirect exact from="/search" to="/admin/search" />}
+      {authenticated && <Navigate to="/admin/search" />}
 
       <AppRoute
         path="/projects"
@@ -92,7 +92,7 @@ const AppRouter: React.FC = () => {
         </AuthenticatedRouteGuard>
       </AppRoute>
 
-      <Redirect exact from="/admin" to="/admin/search" />
+      <Navigate to="/admin/search" />
 
       <AppRoute
         path="/admin/projects"
@@ -143,7 +143,7 @@ const AppRouter: React.FC = () => {
       </AppRoute>
 
       <AppRoute title="*" path="*">
-        <Redirect to="/page-not-found" />
+        <Navigate to="/page-not-found" />
       </AppRoute>
     </Routes>
   );

@@ -7,16 +7,16 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { AuthStateContext } from "../../contexts/authStateContext";
 import React, { useContext } from "react";
-import { Redirect, useHistory } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 const AccessDenied = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (!keycloakWrapper?.keycloak.authenticated) {
     // User is not logged in
-    return <Redirect to={{ pathname: "/" }} />;
+    return <Navigate to={{ pathname: "/" }} />;
   }
 
   if (!keycloakWrapper.hasLoadedAllUserInfo) {
@@ -26,7 +26,7 @@ const AccessDenied = () => {
 
   if (keycloakWrapper.hasAccessRequest) {
     // User already has a pending access request
-    return <Redirect to={{ pathname: "/request-submitted" }} />;
+    return <Navigate to={{ pathname: "/request-submitted" }} />;
   }
 
   const userHasARole = !!keycloakWrapper?.systemRoles?.length;
@@ -44,7 +44,7 @@ const AccessDenied = () => {
         <Box pt={4}>
           {!userHasARole && (
             <Button
-              onClick={() => history.push("/access-request")}
+              onClick={() => navigate("/access-request")}
               type="submit"
               size="large"
               variant="contained"

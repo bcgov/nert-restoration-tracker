@@ -4,7 +4,7 @@ import ProjectsLayout from "../../features/projects/ProjectsLayout";
 import PublicProjectPage from "../../pages/public/PublicProjectPage";
 import PublicProjectsListPage from "../../pages/public/PublicProjectsPlansListPage";
 import React from "react";
-import { Redirect, Routes } from "react-router";
+import { Navigate, Routes } from "react-router";
 import AppRoute from "../../utils/AppRoute";
 
 /**
@@ -16,13 +16,13 @@ import AppRoute from "../../utils/AppRoute";
 const PublicProjectsRouter: React.FC = () => {
   return (
     <Routes>
-      <AppRoute exact path="/projects">
+      <AppRoute path="/projects">
         <PublicProjectsListPage />
       </AppRoute>
 
-      <Redirect exact from="/projects/:id" to="/projects/:id/details" />
+      <Navigate to="/projects/:id/details" replace />
 
-      <AppRoute exact path="/projects/:id/details">
+      <AppRoute path="/projects/:id/details">
         {/* Catches Logged in users and redirects them to admin page */}
         <NoRoleGuard
           validSystemRoles={[
@@ -35,7 +35,7 @@ const PublicProjectsRouter: React.FC = () => {
             PROJECT_ROLE.PROJECT_VIEWER,
           ]}
           fallback={(projectId) => (
-            <Redirect to={`/admin/projects/${projectId}`} />
+            <Navigate to={`/admin/projects/${projectId}`} replace />
           )}
         >
           <ProjectsLayout>
@@ -46,7 +46,7 @@ const PublicProjectsRouter: React.FC = () => {
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}
       <AppRoute path="/projects/*">
-        <Redirect to="/page-not-found" />
+        <Navigate to="/page-not-found" replace />
       </AppRoute>
     </Routes>
   );
