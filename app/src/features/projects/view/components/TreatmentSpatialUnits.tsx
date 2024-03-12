@@ -48,8 +48,8 @@ export interface IProjectSpatialUnitsProps {
  */
 const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
   const { getTreatments, getAttachments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

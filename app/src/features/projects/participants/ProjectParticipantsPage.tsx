@@ -49,7 +49,7 @@ const pageStyles = {
 };
 
 const ProjectParticipantsPage: React.FC = () => {
-  const urlParams = useParams();
+  const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
   const restorationTrackerApi = useRestorationTrackerApi();
 
@@ -62,7 +62,7 @@ const ProjectParticipantsPage: React.FC = () => {
     IGetProjectParticipantsResponseArrayItem[] | null
   >(null);
 
-  const projectId = urlParams['id'];
+  const projectId = Number(urlParams['id']);
 
   const defaultErrorDialogProps: Partial<IErrorDialogProps> = {
     onClose: () => dialogContext.setErrorDialog({ open: false }),
@@ -95,7 +95,7 @@ const ProjectParticipantsPage: React.FC = () => {
 
   const getProject = useCallback(async () => {
     const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
-      urlParams['id']
+      projectId
     );
 
     if (!projectWithDetailsResponse) {

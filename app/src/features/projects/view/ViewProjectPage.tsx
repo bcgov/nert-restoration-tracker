@@ -59,8 +59,16 @@ const pageStyles = {
  */
 const ViewProjectPage: React.FC = () => {
   const history = useHistory();
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+
+  if (!urlParams['id']) {
+    throw new Error(
+      "The project ID found in ProjectContextProvider was invalid. Does your current React route provide an 'id' parameter?"
+    );
+  }
+
+  const projectId = Number(urlParams['id']);
+
   const dialogContext = useContext(DialogContext);
 
   const [openFullScreen, setOpenFullScreen] = React.useState(false);
@@ -78,7 +86,7 @@ const ViewProjectPage: React.FC = () => {
 
   const getProject = useCallback(async () => {
     const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
-      urlParams['id']
+      projectId
     );
 
     if (!projectWithDetailsResponse) {

@@ -45,8 +45,8 @@ const pageStyles = {
  * @return {*}
  */
 const PublicProjectPage = () => {
-  const { id } = useParams();
-  const projectId = id;
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
 
   const [openFullScreen, setOpenFullScreen] = React.useState(false);
 

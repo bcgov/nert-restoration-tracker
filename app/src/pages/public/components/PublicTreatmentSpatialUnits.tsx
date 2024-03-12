@@ -35,8 +35,8 @@ export interface IProjectSpatialUnitsProps {
  */
 const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
   const { getTreatments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -132,7 +132,6 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
             <Menu
               id="treatment-menu"
               anchorEl={anchorEl}
-              getContentAnchorEl={null}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorEl)}
