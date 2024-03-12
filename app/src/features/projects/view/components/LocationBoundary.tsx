@@ -6,6 +6,7 @@ import {
   IGetProjectForViewResponse,
   IGetProjectTreatment
 } from 'interfaces/useProjectApi.interface';
+import { LatLngBoundsExpression } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';
@@ -56,7 +57,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     treatmentList
   } = props;
 
-  const [bounds, setBounds] = useState<any[] | undefined>([]);
+  const [bounds, setBounds] = useState<LatLngBoundsExpression | undefined>(undefined);
   const [staticLayers, setStaticLayers] = useState<IStaticLayer[]>([]);
 
   useEffect(() => {
