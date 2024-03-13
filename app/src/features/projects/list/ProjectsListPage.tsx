@@ -99,7 +99,9 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                 <TableCell>Authorization Ref.</TableCell>
                 <TableCell>Organization</TableCell>
                 <TableCell>Planned Start Date</TableCell>
+                <TableCell>Actual Start Date</TableCell>
                 <TableCell>Planned End Date</TableCell>
+                <TableCell>Actual Start Date</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell width="105" align="left">
                   <FormControlLabel
@@ -173,9 +175,11 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                   <TableCell>
                     {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}
                   </TableCell>
+                  <TableCell>Jan 5, 2024</TableCell>
                   <TableCell>
                     {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}
                   </TableCell>
+                  <TableCell>Feb 10, 2025</TableCell>
                   <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
                   <TableCell>
                     <FormControlLabel

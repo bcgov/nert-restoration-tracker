@@ -9,7 +9,7 @@
     "url": "https://github.com/bcgov/restoration-tracker.git"
   },
   "scripts": {
-    "start": "ts-node --max-old-space-size=1000 src/app",
+    "start": "NODE_OPTIONS='--max-old-space-size=1000' ts-node src/app",
     "clean": "gulp clean",
     "build": "gulp build",
     "start-reload": "./node_modules/.bin/nodemon src/app.ts --exec ts-node",

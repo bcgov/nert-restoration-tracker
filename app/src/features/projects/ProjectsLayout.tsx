@@ -3,7 +3,7 @@ import React from 'react';
 
 const pageStyles = {
   projectsLayoutRoot: {
-    paddingTop: '20px',
+    paddingTop: '10px',
     position: 'relative',
     width: 'inherit',
     height: '100%',
@@ -18,7 +18,7 @@ const pageStyles = {
  * @param {*} props
  * @return {*}
  */
-const ProjectsLayout: React.FC = (props) => {
+const ProjectsLayout: React.FC<React.PropsWithChildren> = (props) => {
   return <Box sx={pageStyles.projectsLayoutRoot}>{props.children}</Box>;
 };
 
