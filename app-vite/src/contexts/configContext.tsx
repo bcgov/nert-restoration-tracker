@@ -37,30 +37,31 @@ export const ConfigContext = React.createContext<IConfig | undefined>({
  * @return {*}  {IConfig}
  */
 const getLocalConfig = (): IConfig => {
-  const API_HOST = process.env.REACT_APP_API_HOST;
-  const API_PORT = process.env.REACT_APP_API_PORT;
+  const API_HOST = import.meta.env.REACT_APP_API_HOST;
+  const API_PORT = import.meta.env.REACT_APP_API_PORT;
 
   const API_URL =
     (API_PORT && `${API_HOST}:${API_PORT}`) || API_HOST || "localhost";
 
   return {
     API_HOST: ensureProtocol(API_URL, "http://"),
-    CHANGE_VERSION: process.env.CHANGE_VERSION || "NA",
-    NODE_ENV: process.env.NODE_ENV,
-    REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || "dev",
-    VERSION: `${process.env.VERSION || "NA"}(build #${
-      process.env.CHANGE_VERSION || "NA"
+    CHANGE_VERSION: import.meta.env.CHANGE_VERSION || "NA",
+    NODE_ENV: import.meta.env.NODE_ENV,
+    REACT_APP_NODE_ENV: import.meta.env.REACT_APP_NODE_ENV || "dev",
+    VERSION: `${import.meta.env.VERSION || "NA"}(build #${
+      import.meta.env.CHANGE_VERSION || "NA"
     })`,
     KEYCLOAK_CONFIG: {
-      url: process.env.REACT_APP_KEYCLOAK_HOST || "",
-      realm: process.env.REACT_APP_KEYCLOAK_REALM || "",
-      clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || "",
+      url: import.meta.env.REACT_APP_KEYCLOAK_HOST || "",
+      realm: import.meta.env.REACT_APP_KEYCLOAK_REALM || "",
+      clientId: import.meta.env.REACT_APP_KEYCLOAK_CLIENT_ID || "",
     },
-    SITEMINDER_LOGOUT_URL: process.env.REACT_APP_SITEMINDER_LOGOUT_URL || "",
+    SITEMINDER_LOGOUT_URL:
+      import.meta.env.REACT_APP_SITEMINDER_LOGOUT_URL || "",
     MAX_UPLOAD_NUM_FILES:
-      Number(process.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
+      Number(import.meta.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
     MAX_UPLOAD_FILE_SIZE:
-      Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800,
+      Number(import.meta.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800,
   };
 };
 
@@ -81,7 +82,7 @@ const getDeployedConfig = async (): Promise<IConfig> => {
  * @return {*}  {boolean}
  */
 const isDevelopment = (): boolean => {
-  if (process.env.NODE_ENV === "development") {
+  if (import.meta.env.NODE_ENV === "development") {
     return true;
   }
 
@@ -91,7 +92,7 @@ const isDevelopment = (): boolean => {
 /**
  * Provides environment variables.
  *
- * This will fetch env vars from either `process.env` if running with NODE_ENV=development, or from
+ * This will fetch env vars from either `import.meta.env` if running with NODE_ENV=development, or from
  * `app/server/index.js` if running as a deployed NODE_ENV=production build.
  *
  * @param {*} props

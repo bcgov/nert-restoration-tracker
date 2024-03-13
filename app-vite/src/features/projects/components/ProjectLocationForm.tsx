@@ -24,7 +24,7 @@ import React, { useState } from "react";
 import {
   handleGPXUpload,
   handleKMLUpload,
-  handleShapefileUpload,
+  // handleShapefileUpload,
 } from "../../../utils/mapBoundaryUploadHelpers";
 import yup from "../../../utils/YupSchema";
 
@@ -78,7 +78,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
       if (file?.type.includes("zip") || file?.name.includes(".zip")) {
-        handleShapefileUpload(file, "location.geometry", formikProps);
+        console.log("Zip file uploaded");
+        // handleShapefileUpload(file, "location.geometry", formikProps);
       } else if (file?.type.includes("gpx") || file?.name.includes(".gpx")) {
         handleGPXUpload(file, "location.geometry", formikProps);
       } else if (file?.type.includes("kml") || file?.name.includes(".kml")) {
