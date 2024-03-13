@@ -107,7 +107,7 @@ _Note: Run all commands in a terminal that supports make. On Mac you can use the
 
 This will copy `./env_config/env.docker` to `./.env`.  
 This should only need to be run once.  
-This file may need additional editing to provide secrets for external services (like S3).
+This file may need additional editing to provide secrets for external services (like keycloak and S3). These can be found in the OpenShift dev namespace secrets of the NERT.  
 
 ```
 make env

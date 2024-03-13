@@ -27,15 +27,14 @@ export const RoleGuard: React.FC<
     React.PropsWithChildren
 > = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
-
-  const urlParams = useParams();
-
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
 
   if (hasSystemRole) {
     // User has a matching system role
     return <>{props.children}</>;
   }
+
+  const urlParams: Record<string, string | number | undefined> = useParams();
 
   const projectId = Number(urlParams['id']);
   const hasProjectRole = keycloakWrapper?.hasProjectRole(projectId, props.validProjectRoles);
@@ -50,8 +49,6 @@ export const RoleGuard: React.FC<
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
-
-    return props.fallback(projectId);
   }
 
   return <></>;
@@ -71,10 +68,9 @@ export const NoRoleGuard: React.FC<
 > = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
-  const urlParams = useParams();
-
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
 
+  const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
   const hasProjectRole = keycloakWrapper?.hasProjectRole(projectId, props.validProjectRoles);
 
@@ -88,8 +84,6 @@ export const NoRoleGuard: React.FC<
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
-
-    return props.fallback(projectId);
   }
 
   return <></>;
@@ -118,8 +112,6 @@ export const SystemRoleGuard: React.FC<
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
-
-    return props.fallback();
   }
 
   return <></>;
@@ -138,7 +130,7 @@ export const ProjectRoleGuard: React.FC<
 > = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
-  const urlParams = useParams();
+  const urlParams: Record<string, string | number | undefined> = useParams();
 
   const projectId = Number(urlParams['id']);
   const hasProjectRole = keycloakWrapper?.hasProjectRole(projectId, props.validProjectRoles);
@@ -153,8 +145,6 @@ export const ProjectRoleGuard: React.FC<
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
-
-    return props.fallback(projectId);
   }
 
   return <></>;
@@ -179,8 +169,6 @@ export const AuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
-
-    return props.fallback();
   }
 
   return <></>;
@@ -192,7 +180,7 @@ export const AuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props
  * @param {*} props
  * @return {*}
  */
-export const UnAuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props) => {
+export const UnAuthGuard: React.FC<React.PropsWithChildren<IGuardProps>> = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (!isAuthenticated(keycloakWrapper)) {
@@ -205,8 +193,6 @@ export const UnAuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (pro
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
-
-    return props.fallback();
   }
 
   return <></>;

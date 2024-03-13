@@ -14,19 +14,19 @@ import UsersDetailProjects from './UsersDetailProjects';
  * @return {*}
  */
 const UsersDetailPage: React.FC = () => {
-  const urlParams = useParams();
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [selectedUser, setSelectedUser] = useState<IGetUserResponse | null>(null);
 
+  const urlParams: Record<string, string | number | undefined> = useParams();
   useEffect(() => {
     if (selectedUser) {
       return;
     }
 
     const getUser = async () => {
-      const id = urlParams['id'];
-      const user = await restorationTrackerApi.user.getUserById(Number(id));
+      const id = Number(urlParams['id']);
+      const user = await restorationTrackerApi.user.getUserById(id);
       setSelectedUser(user);
     };
 

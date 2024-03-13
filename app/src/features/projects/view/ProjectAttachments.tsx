@@ -25,8 +25,8 @@ export interface IProjectAttachmentsProps {
  */
 const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const { attachmentsList, getAttachments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);

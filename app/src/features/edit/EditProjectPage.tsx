@@ -66,7 +66,8 @@ const EditProjectPage: React.FC = () => {
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
-  const urlParams = useParams();
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
 
   const codes = useCodes();
 
@@ -87,7 +88,7 @@ const EditProjectPage: React.FC = () => {
 
   useEffect(() => {
     const getEditProjectFields = async () => {
-      const response = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+      const response = await restorationTrackerApi.project.getProjectById(projectId);
 
       setInitialProjectFormData(response);
 
@@ -110,9 +111,7 @@ const EditProjectPage: React.FC = () => {
    */
   const handleProjectEdits = async (values: IGetProjectForViewResponse) => {
     try {
-      const id = urlParams['id'];
-
-      const response = await restorationTrackerApi.project.updateProject(id, values);
+      const response = await restorationTrackerApi.project.updateProject(projectId, values);
 
       if (!response?.id) {
         showEditErrorDialog({
@@ -135,7 +134,7 @@ const EditProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push(`/admin/projects/${urlParams['id']}`);
+    history.push(`/admin/projects/${projectId}`);
   };
 
   const defaultErrorDialogProps = {
@@ -159,7 +158,7 @@ const EditProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push(`/admin/projects/${urlParams['id']}`);
+      history.push(`/admin/projects/${projectId}`);
     }
   };
 
