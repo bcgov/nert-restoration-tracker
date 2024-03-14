@@ -14,7 +14,7 @@ import NotFoundPage from "./pages/404/NotFoundPage";
 import AccessRequestPage from "./pages/access/AccessRequestPage";
 import LogOutPage from "./pages/logout/LogOutPage";
 import React, { useContext } from "react";
-import { Routes, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Navigate } from "react-router";
 import AppRoute from "./utils/AppRoute";
 
@@ -30,121 +30,131 @@ const AppRouter: React.FC = () => {
 
   return (
     <Routes>
-      <Navigate
-        to={{ ...location, pathname: location.pathname.slice(0, -1) }}
-      />
+      {/* Not sure if I need this. */}
+      <Route path="/" element={<Navigate to="/" />} />
 
       {/* Redirect to admin search if user is authenticated */}
       {authenticated ? (
-        <Navigate to="/admin/search" />
+        <Route path="/admin/search" />
       ) : (
-        <Navigate to="/search" />
+        <Route path="/search" />
       )}
-      {authenticated && <Navigate to="/admin/search" />}
+      {authenticated && <Route path="/admin/search" />}
 
-      <AppRoute
+      <Route
         path="/projects"
-        title={getTitle("All Projects/All Plans")}
-        layout={PublicLayout}
-      >
-        <PublicProjectsRouter />
-      </AppRoute>
+        // title={getTitle("All Projects/All Plans")}
+        // layout={PublicLayout}
+        element={<PublicProjectsRouter />}
+      />
 
-      <AppRoute path="/search" title={getTitle("Search")} layout={PublicLayout}>
-        <UnAuthGuard>
-          <SearchPage />
-        </UnAuthGuard>
-      </AppRoute>
+      {/* <AppRoute
+        path="/search"
+        title={getTitle("Search")}
+        layout={PublicLayout}
+        element={
+          <UnAuthGuard>
+            <SearchPage />
+          </UnAuthGuard>
+        }
+      />
 
       <AppRoute
         path="/page-not-found"
         title={getTitle("Page Not Found")}
         layout={PublicLayout}
-      >
-        <NotFoundPage />
-      </AppRoute>
+        element={<NotFoundPage />}
+      />
 
       <AppRoute
         path="/forbidden"
         title={getTitle("Forbidden")}
         layout={PublicLayout}
-      >
-        <AccessDenied />
-      </AppRoute>
+        element={<AccessDenied />}
+      />
 
       <AppRoute
         path="/access-request"
         title={getTitle("Access Request")}
         layout={PublicLayout}
-      >
-        <AuthenticatedRouteGuard>
-          <AccessRequestPage />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+        element={
+          <UnAuthGuard>
+            <AccessRequestPage />
+          </UnAuthGuard>
+        }
+      />
 
       <AppRoute
         path="/request-submitted"
         title={getTitle("Request submitted")}
         layout={PublicLayout}
-      >
-        <AuthenticatedRouteGuard>
-          <RequestSubmitted />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+        element={
+          <AuthenticatedRouteGuard>
+            <RequestSubmitted />
+          </AuthenticatedRouteGuard>
+        }
+      />
 
-      <Navigate to="/admin/search" />
+      <Route path="/admin/search" />
 
       <AppRoute
         path="/admin/projects"
         title={getTitle("All Projects/All Plans")}
         layout={PublicLayout}
-      >
-        <AuthenticatedRouteGuard>
-          <ProjectsRouter />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+        element={
+          <AuthenticatedRouteGuard>
+            <ProjectsRouter />
+          </AuthenticatedRouteGuard>
+        }
+      />
 
       <AppRoute
         path="/admin/user"
         title={getTitle("My Projects/My Plans")}
         layout={PublicLayout}
-      >
-        <AuthenticatedRouteGuard>
-          <UserRouter />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+        element={
+          <AuthenticatedRouteGuard>
+            <UserRouter />
+          </AuthenticatedRouteGuard>
+        }
+      />
 
       <AppRoute
         path="/admin/users"
         title={getTitle("Users")}
         layout={PublicLayout}
-      >
-        <AuthenticatedRouteGuard>
-          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-            <AdminUsersRouter />
-          </SystemRoleGuard>
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+        element={
+          <AuthenticatedRouteGuard>
+            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+              <AdminUsersRouter />
+            </SystemRoleGuard>
+          </AuthenticatedRouteGuard>
+        }
+      />
 
       <AppRoute
         path="/admin/search"
         title={getTitle("Search")}
         layout={PublicLayout}
-      >
-        <AuthenticatedRouteGuard>
-          <SearchPage />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+        element={
+          <AuthenticatedRouteGuard>
+            <SearchPage />
+          </AuthenticatedRouteGuard>
+        }
+      />
 
-      <AppRoute path="/logout" title={getTitle("Logout")} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <LogOutPage />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
+      <AppRoute
+        path="/logout"
+        title={getTitle("Logout")}
+        layout={PublicLayout}
+        element={
+          <AuthenticatedRouteGuard>
+            <LogOutPage />
+          </AuthenticatedRouteGuard>
+        }
+      />
 
-      <AppRoute title="*" path="*">
-        <Navigate to="/page-not-found" />
-      </AppRoute>
+      <AppRoute title="*" path="*" element={<Route path="/page-not-found" />} /> */}
     </Routes>
   );
 };

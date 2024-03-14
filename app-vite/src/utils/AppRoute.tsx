@@ -1,23 +1,21 @@
-import React from 'react';
-import { Route, RouteProps } from 'react-router-dom';
+import React from "react";
+import { Route, useLocation } from "react-router-dom";
 
-export type IAppRouteProps = RouteProps & {
-  /**
-   * The title for the browser window/tab.
-   *
-   * @type {string}
-   */
+export type IAppRouteProps = {
+  path: string;
+  element: React.ReactElement;
   title?: string;
-  /**
-   * If specified, the `component` will be rendered as a child of the `layout`.
-   *
-   * @type {React.ComponentType<any>}
-   */
   layout?: React.ComponentType<any>;
 };
 
-const AppRoute: React.FC<IAppRouteProps> = ({ children, layout, title, ...rest }) => {
-  const Layout = layout === undefined ? (props: any) => <>{props.children}</> : layout;
+const AppRoute: React.FC<IAppRouteProps> = ({
+  element,
+  layout,
+  title,
+  ...rest
+}) => {
+  const Layout = layout === undefined ? React.Fragment : layout;
+  const location = useLocation();
 
   if (title) {
     document.title = title;
@@ -26,13 +24,9 @@ const AppRoute: React.FC<IAppRouteProps> = ({ children, layout, title, ...rest }
   return (
     <Route
       {...rest}
-      render={(props) => (
-        <Layout>
-          {React.Children.map(children, (child: any) => {
-            return React.cloneElement(child, props);
-          })}
-        </Layout>
-      )}
+      element={
+        <Layout>{React.cloneElement(element, { key: location.key })}</Layout>
+      }
     />
   );
 };
