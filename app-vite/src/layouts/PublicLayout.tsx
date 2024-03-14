@@ -4,6 +4,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Footer from "../components/layout/Footer";
 import Header from "../components/layout/Header";
 import { DialogContextProvider } from "../contexts/dialogContext";
+import { Outlet } from "react-router-dom";
 import React from "react";
 
 const PublicLayout: React.FC = (props) => {
@@ -21,7 +22,7 @@ const PublicLayout: React.FC = (props) => {
   }
 
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100vh" width="100vw" display="flex" flexDirection="column">
       <CssBaseline />
       {/* @ts-ignore  */}
       <DialogContextProvider>
@@ -34,12 +35,7 @@ const PublicLayout: React.FC = (props) => {
 
         <Header />
 
-        <Box component="main" flex="1 1 auto" py={4} sx={{ padding: 0 }}>
-          {/* @ts-ignore  */}
-          {React.Children.map(props.children, (child: any) => {
-            return React.cloneElement(child);
-          })}
-        </Box>
+        <Outlet />
 
         <Footer />
       </DialogContextProvider>
