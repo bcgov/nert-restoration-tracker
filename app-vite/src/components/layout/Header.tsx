@@ -26,12 +26,6 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { getFormattedIdentitySource } from "../../utils/Utils";
 
-const nert_version = import.meta.env.NERT_VERSION || "0.0.0.0";
-const nert_environment =
-  import.meta.env.NODE_ENV === "development"
-    ? "local"
-    : import.meta.env.NODE_ENV || "undefined";
-
 const pageStyles = {
   govHeaderToolbar: {
     height: "70px",
@@ -67,12 +61,6 @@ const pageStyles = {
     wrapText: {
       display: "block",
     },
-  },
-  appVersionTag: {
-    marginLeft: "0.5rem",
-    color: "#fcba19",
-    fontSize: "0.75rem",
-    fontWeight: 400,
   },
   userProfile: {
     color: "white",
@@ -202,21 +190,21 @@ const Header: React.FC = () => {
     setOpen(false);
   };
 
-  const VersionEnvironmentLabel = () => {
-    return (
-      <span
-        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}
-      >
-        v{nert_version} {nert_environment}
-      </span>
-    );
-  };
+  const nert_version = APP_VERSION || "0.0.0.0";
+  const nert_environment = import.meta.env.DEV
+    ? "development"
+    : import.meta.env.NODE_ENV || "published";
 
   return (
     <>
       <AppBar position="sticky" style={{ boxShadow: "none" }}>
         <Toolbar sx={pageStyles.govHeaderToolbar}>
-          <Box display="flex" justifyContent="space-between" width="100%">
+          <Box
+            sx={pageStyles.brand}
+            display="flex"
+            justifyContent="space-between"
+            width="100%"
+          >
             <Link
               to="/"
               style={pageStyles.brand}
@@ -236,12 +224,7 @@ const Header: React.FC = () => {
                   alt={"Government of British Columbia"}
                 />
               </picture>
-              <span>
-                Northeast Restoration Tracker
-                <sup style={pageStyles.appVersionTag}>
-                  <VersionEnvironmentLabel />
-                </sup>
-              </span>
+              <span>Northeast Restoration Tracker</span>
             </Link>
             <UnAuthGuard>
               <PublicViewUser />
