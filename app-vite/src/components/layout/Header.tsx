@@ -94,7 +94,7 @@ const pageStyles = {
     "& a:hover": {
       textDecoration: "underline",
     },
-    "& a:first-child": {
+    "& a:first-of-type": {
       marginLeft: "-1rem",
     },
   },
