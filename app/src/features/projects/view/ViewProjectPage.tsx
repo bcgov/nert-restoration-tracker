@@ -25,7 +25,7 @@ import {
   IGetProjectForViewResponse,
   IGetProjectTreatment,
   TreatmentSearchCriteria
-} from 'interfaces/useProjectApi.interface';
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import TreatmentList from './components/TreatmentList';

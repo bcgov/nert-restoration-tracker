@@ -7,7 +7,7 @@ import React from 'react';
 import { Router } from 'react-router';
 import { codes } from 'test-helpers/code-helpers';
 import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
+import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectPlanApi.interface';
 import UsersDetailProjects from './UsersDetailProjects';
 
 const history = createMemoryHistory();
