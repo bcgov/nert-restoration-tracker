@@ -19,7 +19,7 @@ import {
   IGetProjectForViewResponse,
   IGetProjectTreatment,
   TreatmentSearchCriteria
-} from 'interfaces/useProjectApi.interface';
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import PublicProjectAttachments from './components/PublicProjectAttachments';

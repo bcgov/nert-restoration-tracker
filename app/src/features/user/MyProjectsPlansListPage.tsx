@@ -9,13 +9,13 @@ import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import PlanListPage from '../projects/list/PlanListPage';
 import ProjectsListPage from '../projects/list/ProjectsListPage';
 
-const MyProjectsPage: React.FC = () => {
+const MyProjectsPlansListPage: React.FC = () => {
   const history = useHistory();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
@@ -108,9 +108,9 @@ const MyProjectsPage: React.FC = () => {
         </SystemRoleGuard>
       </Box>
 
-      <PlanListPage projects={projects} drafts={drafts} />
+      <PlanListPage plans={projects} drafts={drafts} />
     </Container>
   );
 };
 
-export default MyProjectsPage;
+export default MyProjectsPlansListPage;

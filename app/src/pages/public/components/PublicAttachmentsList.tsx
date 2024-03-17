@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
+import { IGetProjectAttachment } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedFileSize } from 'utils/Utils';

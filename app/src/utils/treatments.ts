@@ -1,4 +1,4 @@
-import { IGetTreatmentItem } from 'interfaces/useProjectApi.interface';
+import { IGetTreatmentItem } from 'interfaces/useProjectPlanApi.interface';
 
 export const groupTreatmentsByYear = (treatments: IGetTreatmentItem[]): Record<string, string> => {
   const treatmentsByYearSet: { [key: string]: Set<string> } = {};

@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { Feature } from 'geojson';
-import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
+import { IGetProjectTreatment } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import TreatmentList from './TreatmentList';
 
