@@ -22,6 +22,7 @@
     "@turf/centroid": "^6.5.0",
     "axios": "^1.6.7",
     "dayjs": "^1.11.10",
+    "dotenv": "^16.4.5",
     "formik": "^2.4.5",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",

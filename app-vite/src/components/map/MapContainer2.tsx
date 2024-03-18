@@ -15,6 +15,11 @@ export interface IMapContainerProps {
   zoom?: any;
 }
 
+const pageStyle = {
+  width: "100%",
+  height: "100%",
+};
+
 let map: maplibre.Map;
 
 const initializeMap = (mapId: string, center: any, zoom: number) => {
@@ -30,6 +35,13 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
       customAttribution: 'Powered by <a href="https://esri.com">Esri</a>',
     },
   });
+  map.on("load", () => {
+    map.addSource("maptiler.raster-dem", {
+      type: "raster-dem",
+      url: `https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=${MAPTILER_API_KEY}`,
+    });
+    map.setTerrain({ source: "maptiler.raster-dem" });
+  });
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
@@ -38,7 +50,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     initializeMap(mapId, center, zoom);
   });
-  return <div id={mapId}></div>;
+  return <div id={mapId} style={pageStyle}></div>;
 };
 
 export default MapContainer;
