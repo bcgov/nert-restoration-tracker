@@ -23,7 +23,7 @@ const App: React.FC = () => {
           <Route path="/" element={<SearchPage />} />
           <Route path="/search" element={<SearchPage />} />
 
-          {/* TODO: This require authentication to show any data */}
+          {/* TODO: This requires authentication to show any data */}
           <Route element={<ProjectsLayout />}>
             <Route path="/projects" element={<PublicProjectsListPage />} />
           </Route>

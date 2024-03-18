@@ -4,6 +4,8 @@ import maplibre from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import ne_boundary from "./layers/north_east_boundary.json";
 
+const { Map, Popup, NavigationControl } = maplibre;
+
 export interface IMapDrawControlsProps {
   features?: FeatureCollection[];
   onChange?: (ref: any) => void;
@@ -26,7 +28,7 @@ const pageStyle = {
 let map: maplibre.Map;
 
 const initializeMap = (mapId: string, center: any, zoom: number) => {
-  map = new maplibre.Map({
+  map = new Map({
     container: mapId,
     style: "/styles/ortho.json",
     center: center,
@@ -38,6 +40,15 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
       customAttribution: 'Powered by <a href="https://esri.com">Esri</a>',
     },
   });
+
+  map.addControl(
+    new NavigationControl({
+      showCompass: true,
+      showZoom: true,
+      visualizePitch: true,
+    })
+  );
+
   map.on("load", () => {
     /* The base layer */
     map.addSource("maptiler.raster-dem", {
