@@ -1,11 +1,11 @@
-import { Feature } from "geojson";
+import { FeatureCollection } from "geojson";
 import React, { useEffect } from "react";
 import maplibre from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import ne_boundary from "./layers/north_east_boundary.json";
 
 export interface IMapDrawControlsProps {
-  features?: Feature[];
+  features?: FeatureCollection[];
   onChange?: (ref: any) => void;
 }
 
@@ -14,6 +14,9 @@ export interface IMapContainerProps {
   center?: any;
   zoom?: any;
 }
+
+// Typescript needs this to be declared
+declare const MAPTILER_API_KEY: string;
 
 const pageStyle = {
   width: "100%",
@@ -36,11 +39,31 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
     },
   });
   map.on("load", () => {
+    /* The base layer */
     map.addSource("maptiler.raster-dem", {
       type: "raster-dem",
       url: `https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=${MAPTILER_API_KEY}`,
     });
     map.setTerrain({ source: "maptiler.raster-dem" });
+
+    /* The boundary layer */
+    map.addSource("ne_boundary", {
+      type: "geojson",
+      data: ne_boundary as FeatureCollection,
+    });
+    map.addLayer({
+      id: "ne_boundary",
+      type: "line",
+      source: "ne_boundary",
+      layout: {
+        "line-join": "round",
+        "line-cap": "round",
+      },
+      paint: {
+        "line-color": "yellow",
+        "line-width": 2,
+      },
+    });
   });
 };
 
