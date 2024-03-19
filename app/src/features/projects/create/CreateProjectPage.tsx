@@ -54,7 +54,7 @@ import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
+import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Prompt } from 'react-router-dom';

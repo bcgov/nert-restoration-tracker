@@ -8,7 +8,7 @@ import {
   IGetProjectForViewResponse,
   IGetProjectTreatmentsResponse,
   TreatmentSearchCriteria
-} from 'interfaces/useProjectApi.interface';
+} from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import { Router } from 'react-router';
 import { codes } from 'test-helpers/code-helpers';

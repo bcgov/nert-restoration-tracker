@@ -5,7 +5,7 @@ import MapContainer from 'components/map/MapContainer';
 import {
   IGetProjectForViewResponse,
   IGetProjectTreatment
-} from 'interfaces/useProjectApi.interface';
+} from 'interfaces/useProjectPlanApi.interface';
 import { LatLngBoundsExpression } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';

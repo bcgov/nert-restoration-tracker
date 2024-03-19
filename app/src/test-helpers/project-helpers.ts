@@ -1,4 +1,4 @@
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 
 export const getProjectForViewResponse: IGetProjectForViewResponse = {
   project: {

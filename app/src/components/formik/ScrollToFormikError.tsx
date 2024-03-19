@@ -1,7 +1,7 @@
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { useFormikContext } from 'formik';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useEffect, useState } from 'react';
 
 export const ScrollToFormikError: React.FC = () => {

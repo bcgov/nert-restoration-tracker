@@ -2,7 +2,7 @@ import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
 import { Redirect, Switch } from 'react-router';
 import AppRoute from 'utils/AppRoute';
-import MyProjectsPage from './MyProjectsPlansListPage';
+import MyProjectsPlansListPage from './MyProjectsPlansListPage';
 
 /**
  * Router for all user specific pages.
@@ -17,7 +17,7 @@ const UserRouter: React.FC = () => {
 
       <AppRoute exact path="/admin/user/projects" layout={ProjectsLayout}>
         <ProjectsLayout>
-          <MyProjectsPage />
+          <MyProjectsPlansListPage />
         </ProjectsLayout>
       </AppRoute>
 

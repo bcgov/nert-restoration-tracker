@@ -29,7 +29,7 @@ import History from 'history';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { Prompt } from 'react-router-dom';

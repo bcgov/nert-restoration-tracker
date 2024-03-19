@@ -4,7 +4,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse
-} from 'interfaces/useProjectApi.interface';
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import PublicAttachmentsList from './PublicAttachmentsList';

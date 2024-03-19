@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router';
 import ProjectsListPage from './ProjectsListPage';

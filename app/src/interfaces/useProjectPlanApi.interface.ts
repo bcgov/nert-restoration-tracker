@@ -29,6 +29,20 @@ export interface IProjectAdvancedFilterRequest {
 }
 
 /**
+ * An interface for an instance of filter fields for plan advanced filter search
+ */
+// [OI] This will need to be updated with Plan data model
+export interface IPlanAdvancedFilterRequest {
+  keyword?: string;
+  contact_agency?: string | string[];
+  funding_agency?: number | number[];
+  permit_number?: string;
+  species?: number | number[];
+  start_date?: string;
+  end_date?: string;
+}
+
+/**
  * Get project attachments response object.
  *
  * @export
@@ -204,7 +218,20 @@ export interface IGetProjectForViewResponse {
   partnerships: IGetProjectForViewResponsePartnerships;
 }
 
+export interface IGetPlanForViewResponse {
+  // [OI] this will require updating to the plan data model
+  project: IGetProjectForViewResponseDetails;
+  species: IGetProjectForViewResponseSpecies;
+  permit: IGetProjectForViewResponsePermit;
+  location: IGetProjectForViewResponseLocation;
+  contact: IGetProjectForViewResponseContact;
+  iucn: IGetProjectForViewResponseIUCN;
+  funding: IGetProjectForViewResponseFundingData;
+  partnerships: IGetProjectForViewResponsePartnerships;
+}
+
 export interface IGetProjectForViewResponseDetails {
+  status_code: number;
   project_id: number;
   project_name: string;
   start_date: string;

@@ -3,11 +3,11 @@ import { AuthStateContext } from 'contexts/authStateContext';
 import { createMemoryHistory } from 'history';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import { Router } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
-import MyProjectsPage from './MyProjectsPlansListPage';
+import MyProjectsPlansListPage from './MyProjectsPlansListPage';
 
 const history = createMemoryHistory();
 
@@ -28,7 +28,7 @@ const mockRestorationTrackerApi = (
   useRestorationTrackerApi as unknown as jest.Mock<typeof mockUseRestorationTrackerApi>
 ).mockReturnValue(mockUseRestorationTrackerApi);
 
-describe('MyProjectsPage', () => {
+describe('MyProjectsPlansListPage', () => {
   afterEach(() => {
     cleanup();
   });
@@ -51,7 +51,7 @@ describe('MyProjectsPage', () => {
     const { getByText, getByTestId } = render(
       <Router history={history}>
         <AuthStateContext.Provider value={authState}>
-          <MyProjectsPage />
+          <MyProjectsPlansListPage />
         </AuthStateContext.Provider>
       </Router>
     );
@@ -73,7 +73,7 @@ describe('MyProjectsPage', () => {
     const { getByText, queryByTestId } = render(
       <Router history={history}>
         <AuthStateContext.Provider value={authState}>
-          <MyProjectsPage />
+          <MyProjectsPlansListPage />
         </AuthStateContext.Provider>
       </Router>
     );

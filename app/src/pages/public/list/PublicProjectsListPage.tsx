@@ -18,7 +18,7 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectStatusType } from 'constants/misc';
 import dayjs from 'dayjs';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectsListResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectsListResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
