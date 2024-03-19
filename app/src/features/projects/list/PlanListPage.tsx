@@ -1,6 +1,7 @@
 import { mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -23,7 +24,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
+import { SystemRoleGuard } from 'components/security/Guards';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { SYSTEM_ROLE } from 'constants/roles';
 import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
@@ -38,6 +41,7 @@ interface Data {
   endDate: string;
   statusCode: number;
   statusLabel: string;
+  archive: string;
 }
 
 const getStatusLabelFromCode = (statusCode: number) => {
@@ -78,14 +82,15 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     return {
       id: index,
       planId: row.project.project_id,
-      planName: row.project.project_name,
-      term: row.permit.permits.map((item: { permit_number: any }) => item.permit_number).join(', '),
+      planName: row.project.project_name.replace('Project', 'Plan'),
+      term: 'Annual',
       org: row.contact.contacts.map((item) => item.agency).join(', '),
       startDate: row.project.start_date,
       endDate: row.project.end_date,
       statusCode: row.project.status_code,
       statusLabel: getStatusLabelFromCode(row.project.status_code),
-      statusStyle: getStatusStyle(row.project.status_code)
+      statusStyle: getStatusStyle(row.project.status_code),
+      archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
     } as Data;
   });
 
@@ -165,6 +170,12 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
       numeric: false,
       disablePadding: false,
       label: 'Status'
+    },
+    {
+      id: 'archive',
+      numeric: false,
+      disablePadding: false,
+      label: 'Archive'
     }
   ];
 
@@ -186,44 +197,44 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     return (
       <TableHead>
         <TableRow>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'normal'}
-              sortDirection={orderBy === headCell.id ? order : false}>
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}>
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
+          {headCells.map((headCell) => {
+            if ('archive' !== headCell.id)
+              return (
+                <TableCell
+                  key={headCell.id}
+                  align={headCell.numeric ? 'right' : 'left'}
+                  padding={headCell.disablePadding ? 'none' : 'normal'}
+                  sortDirection={orderBy === headCell.id ? order : false}>
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}>
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                      <Box component="span" sx={visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                    ) : null}
+                  </TableSortLabel>
+                </TableCell>
+              );
+          })}
+          <SystemRoleGuard
+            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+            <TableCell>Archive</TableCell>
+          </SystemRoleGuard>
           <TableCell padding="checkbox">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  indeterminate={numSelected > 0 && numSelected < rowCount}
-                  checked={rowCount > 0 && numSelected === rowCount}
-                  onChange={onSelectAllClick}
-                  inputProps={{
-                    'aria-label': 'select all plans'
-                  }}
-                />
-              }
-              label={
-                <Typography noWrap variant="inherit">
-                  Select All
-                </Typography>
-              }
-            />
+            <Tooltip title="Export all plans" placement="right">
+              <Checkbox
+                color="primary"
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={rowCount > 0 && numSelected === rowCount}
+                onChange={onSelectAllClick}
+                inputProps={{
+                  'aria-label': 'select all plans for export'
+                }}
+              />
+            </Tooltip>
           </TableCell>
         </TableRow>
       </TableHead>
@@ -272,11 +283,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             <strong>Export maps</strong>
           </Button>
         ) : (
-          <Tooltip title="Filter plans">
-            <IconButton>
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
+          <></>
         )}
       </Toolbar>
     );
@@ -407,20 +414,31 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         label={row.statusLabel}
                       />
                     </TableCell>
+                    <SystemRoleGuard
+                      validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+                      <TableCell align="left">
+                        <Tooltip
+                          title={8 !== row.statusCode ? 'Archive' : 'Unarchive'}
+                          placement="right">
+                          <IconButton>
+                            {8 !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </SystemRoleGuard>
                     <TableCell padding="checkbox">
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId
-                            }}
-                            onClick={(event) => handleClick(event, row.id)}
-                          />
-                        }
-                        label={<Typography variant="inherit">Export</Typography>}
-                      />
+                      <Tooltip
+                        title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                        placement="right">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                          onClick={(event) => handleClick(event, row.id)}
+                        />
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );
