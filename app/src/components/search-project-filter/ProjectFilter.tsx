@@ -226,8 +226,8 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <Box m={3}>
-          <Box mb={3}>
+        <Box my={2} mx={3}>
+          <Box mb={2}>
             <Typography variant="h2">Filter Projects</Typography>
           </Box>
           <Box display="flex">

@@ -226,8 +226,8 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <Box m={3}>
-          <Box mb={3}>
+        <Box my={2} mx={3}>
+          <Box mb={2}>
             <Typography variant="h2">Filter Plans</Typography>
           </Box>
           <Box display="flex">
