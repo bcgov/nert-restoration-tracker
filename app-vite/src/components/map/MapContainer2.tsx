@@ -76,17 +76,19 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
       },
     });
 
-    map.addSource("uwr-boundary", {
+    /* The WMS layers from the BCGW */
+    map.addSource("wildlife-areas", {
       type: "raster",
       tiles: [
-        "https://openmaps.gov.bc.ca/geo/pub/WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP/ows?service=WMS&request=GetCapabilities",
+        "https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY",
       ],
       tileSize: 256,
+      minzoom: 10,
     });
     map.addLayer({
-      id: "wms-uwr-boundary",
+      id: "wms-wildlife-areas",
       type: "raster",
-      source: "uwr-boundary",
+      source: "wildlife-areas",
     });
   });
 };
