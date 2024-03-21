@@ -43,19 +43,15 @@ export default function Projects() {
         contact_agency: urlParams.contact_agency,
         funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
-        species: urlParams.species,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
-        ranges: urlParams.ranges,
-        region: urlParams.region
+        region: urlParams.region,
+        project_status: urlParams.project_status,
+        project_focus: urlParams.project_focus
       } as IProjectAdvancedFilters;
 
       if (values.funding_agency === undefined) {
         values.funding_agency = [];
-      }
-
-      if (values.species === undefined) {
-        values.species = [];
       }
 
       return values;
@@ -220,16 +216,67 @@ export default function Projects() {
                   return { value: item.id, label: item.name };
                 }) || []
               }
-              ranges={
-                codes.codes.ranges.map((item: { id: any; name: any }) => {
-                  return { value: item.id, label: item.name };
-                }) || []
-              }
               region={
                 codes.codes.regions.map((item: { id: any; name: any }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }
+              project_status={[
+                {
+                  value: 1,
+                  label: 'PLANNING'
+                },
+                {
+                  value: 2,
+                  label: 'AUTHORIZATION'
+                },
+                {
+                  value: 3,
+                  label: 'ACTIVE'
+                },
+                {
+                  value: 4,
+                  label: 'REPORTING'
+                },
+                {
+                  value: 5,
+                  label: 'MONITORING'
+                },
+                {
+                  value: 6,
+                  label: 'REPORTING2'
+                },
+                {
+                  value: 7,
+                  label: 'COMPLETED'
+                },
+                {
+                  value: 8,
+                  label: 'ARCHIVED'
+                },
+                {
+                  value: 9,
+                  label: 'DRAFT'
+                }
+              ]}
+              project_focus={[
+                {
+                  value: 1,
+                  label: 'Healing the Land'
+                },
+                {
+                  value: 2,
+                  label: 'Healing the People'
+                },
+                {
+                  value: 3,
+                  label: 'Land Based Restoration Initiative'
+                },
+                {
+                  value: 4,
+                  label: 'Cultural or Community Investment Initiative'
+                }
+              ]}
               filterChipParams={filterChipValues}
             />
           </Formik>

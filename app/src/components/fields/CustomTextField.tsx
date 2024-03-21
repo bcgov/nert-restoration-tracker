@@ -15,6 +15,7 @@ const CustomTextField: React.FC<ICustomTextField> = (props) => {
 
   return (
     <TextField
+      size="small"
       name={name}
       label={label}
       id={name}

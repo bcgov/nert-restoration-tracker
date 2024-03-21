@@ -257,6 +257,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
 
   return (
     <Autocomplete
+      size="small"
       multiple
       noOptionsText="Type to start searching"
       autoHighlight={true}

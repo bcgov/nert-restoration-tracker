@@ -31,6 +31,7 @@ import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interfa
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { getFormattedDate } from 'utils/Utils';
+import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine'
 
 interface Data {
   id: number;
@@ -47,41 +48,7 @@ interface Data {
   archive: string;
 }
 
-const getStatusLabelFromCode = (statusCode: number) => {
-  return (
-    {
-      0: 'DRAFT',
-      1: 'PLANNING',
-      2: 'AUTHORIZATION',
-      3: 'ACTIVE',
-      4: 'REPORTING',
-      5: 'MONITORING',
-      6: 'REPORTING2',
-      7: 'COMPLETED',
-      8: 'ARCHIVED'
-    }[statusCode] ?? 'UNDEFINED'
-  );
-};
 
-const setStatusBgColor = (statusCode: number) => {
-  return (
-    {
-      0: '#A6A6A6',
-      1: '#AA72D4',
-      2: '#FFD85B',
-      3: '#A2B9E2',
-      4: '#7395D3',
-      5: '#5F86CD',
-      6: '#AAD292',
-      7: '#70AD47',
-      8: '#FF5D5D'
-    }[statusCode] ?? 'black'
-  );
-};
-
-const getStatusStyle = (statusCode: number) => {
-  return { color: 'white', backgroundColor: setStatusBgColor(statusCode) };
-};
 interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
 }

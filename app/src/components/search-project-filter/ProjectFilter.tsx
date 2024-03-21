@@ -21,7 +21,7 @@ const pageStyles = {
     }
   },
   keywordSearch: {
-    height: '52px',
+    height: '42px',
     flex: '1 1 auto',
     paddingLeft: '1rem',
     display: 'flex',
@@ -65,11 +65,11 @@ export const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
   contact_agency: '',
   funding_agency: [],
   permit_number: '',
-  species: [],
   start_date: '',
   end_date: '',
-  ranges: '',
-  region: ''
+  region: '',
+  project_status: '',
+  project_focus: ''
 };
 
 export interface IProjectAdvancedFilters {
@@ -77,31 +77,32 @@ export interface IProjectAdvancedFilters {
   contact_agency?: string | string[];
   funding_agency?: number | number[];
   permit_number?: string;
-  species?: number | number[];
   start_date?: string;
   end_date?: string;
-  ranges?: string | string[];
   region?: string | string[];
+  project_status?: string | string[];
+  project_focus?: string | string[];
 }
 
 export const ProjectAdvancedFiltersKeyLabels = {
   keyword: { label: 'Keyword' },
-  contact_agency: { label: 'Contact Agency' },
-  funding_agency: { label: 'Funding Agency', codeSet: 'funding_agency' },
-  permit_number: { label: 'Permit Number' },
-  species: { label: 'Species' },
+  contact_agency: { label: 'Project Name' },
+  funding_agency: { label: 'Funding Organizations', codeSet: 'funding_agency' },
+  permit_number: { label: 'Authorization Reference' },
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
-  ranges: { label: 'Caribou Ranges', codeSet: 'ranges' },
-  region: { label: 'FLNRO Region', codeSet: 'region' }
+  region: { label: 'Region', codeSet: 'region' },
+  project_status: { label: 'Project Status', codeSet: 'project_status' },
+  project_focus: { label: 'Project Focus', codeSet: 'project_focus' }
 };
 
 export interface IProjectAdvancedFiltersProps {
   filterChipParams: IProjectAdvancedFilters;
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
-  ranges: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
+  project_status: IMultiAutocompleteFieldOption[];
+  project_focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -110,7 +111,14 @@ export interface IProjectAdvancedFiltersProps {
  * @return {*}
  */
 const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
-  const { filterChipParams, contact_agency, funding_agency, region, ranges } = props;
+  const {
+    filterChipParams,
+    contact_agency,
+    funding_agency,
+    region,
+    project_status,
+    project_focus
+  } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [isFiltersChipsOpen, setIsFiltersChipsOpen] = useState(false);
@@ -200,8 +208,10 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
 
   const getFilterChips = (key: string, value: string) => {
     const ChipArray = [];
-
+    console.log("key", key)
+    console.log("value", value)
     const filterChip = (chipValue: string) => {
+      console.log("ChipValue", chipValue)
       return (
         <Grid item xs="auto" key={`${key}${chipValue}`}>
           <Chip
@@ -299,8 +309,9 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
               <ProjectAdvancedFilters
                 contact_agency={contact_agency}
                 funding_agency={funding_agency}
-                ranges={ranges}
                 region={region}
+                project_status={project_status}
+                project_focus={project_focus}
               />
 
               <Box textAlign="right" mt={3}>
