@@ -30,7 +30,7 @@ let map: maplibre.Map;
 const initializeMap = (mapId: string, center: any, zoom: number) => {
   map = new Map({
     container: mapId,
-    style: "/styles/ortho.json",
+    style: "/styles/hybrid.json",
     center: center,
     zoom: zoom,
     maxPitch: 80,
@@ -76,7 +76,7 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
       },
     });
 
-    /* The WMS layers from the BCGW */
+    /* Protected Areas as WMS layers from the BCGW */
     map.addSource("wildlife-areas", {
       type: "raster",
       tiles: [
@@ -89,6 +89,27 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
       id: "wms-wildlife-areas",
       type: "raster",
       source: "wildlife-areas",
+      paint: {
+        "raster-opacity": 0.5,
+      },
+    });
+
+    /* Indigenous Areas as WMS layers from the BCGW */
+    map.addSource("indigenous-areas", {
+      type: "raster",
+      tiles: [
+        "https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW",
+      ],
+      tileSize: 256,
+      minzoom: 4,
+    });
+    map.addLayer({
+      id: "wms-indigenous-areas",
+      type: "raster",
+      source: "indigenous-areas",
+      paint: {
+        "raster-opacity": 0.5,
+      },
     });
   });
 };
