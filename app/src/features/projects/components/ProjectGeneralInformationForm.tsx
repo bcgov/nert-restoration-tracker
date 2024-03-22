@@ -3,7 +3,7 @@ import CustomTextField from 'components/fields/CustomTextField';
 import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/StartEndDateFields';
+import StartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { useFormikContext } from 'formik';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { debounce } from 'lodash-es';

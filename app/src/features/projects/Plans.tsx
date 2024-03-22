@@ -43,19 +43,15 @@ export default function Plans() {
         contact_agency: urlParams.contact_agency,
         funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
-        species: urlParams.species,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
-        ranges: urlParams.ranges,
-        region: urlParams.region
+        region: urlParams.region,
+        plan_status: urlParams.plan_status,
+        plan_focus: urlParams.plan_focus
       } as IPlanAdvancedFilters;
 
       if (values.funding_agency === undefined) {
         values.funding_agency = [];
-      }
-
-      if (values.species === undefined) {
-        values.species = [];
       }
 
       return values;
@@ -217,16 +213,47 @@ export default function Plans() {
                   return { value: item.id, label: item.name };
                 }) || []
               }
-              ranges={
-                codes.codes.ranges.map((item: { id: any; name: any }) => {
-                  return { value: item.id, label: item.name };
-                }) || []
-              }
               region={
                 codes.codes.regions.map((item: { id: any; name: any }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }
+              plan_status={[
+                {
+                  value: 1,
+                  label: 'PLANNING'
+                },
+                {
+                  value: 7,
+                  label: 'COMPLETED'
+                },
+                {
+                  value: 8,
+                  label: 'ARCHIVED'
+                },
+                {
+                  value: 9,
+                  label: 'DRAFT'
+                }
+              ]}
+              plan_focus={[
+                {
+                  value: 1,
+                  label: 'Healing the Land'
+                },
+                {
+                  value: 2,
+                  label: 'Healing the People'
+                },
+                {
+                  value: 3,
+                  label: 'Land Based Restoration Initiative'
+                },
+                {
+                  value: 4,
+                  label: 'Cultural or Community Investment Initiative'
+                }
+              ]}
               filterChipParams={filterChipValues}
             />
           </Formik>

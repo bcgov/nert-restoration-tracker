@@ -19,7 +19,7 @@ interface IStartEndDateFieldsProps {
  * Start/end date fields - commonly used throughout forms
  *
  */
-const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
+const PlanStartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
   const {
     formikProps: { values, handleChange, errors, touched },
     startName,
@@ -46,9 +46,10 @@ const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
     '';
 
   return (
-    <Grid container item spacing={3}>
+    <Grid container item spacing={1.5}>
       <Grid item xs={12} md={6}>
         <TextField
+          size="small"
           fullWidth
           id="start_date"
           data-testid="start_date"
@@ -78,6 +79,7 @@ const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField
+          size="small"
           fullWidth
           id="end_date"
           data-testid="end_date"
@@ -113,4 +115,4 @@ const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
   );
 };
 
-export default StartEndDateFields;
+export default PlanStartEndDateFields;
