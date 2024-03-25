@@ -1,15 +1,17 @@
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { useFormikContext } from 'formik';
+import TextField from '@mui/material/TextField';
+import { FormikContextType, useFormikContext } from 'formik';
 import get from 'lodash-es/get';
 import React from 'react';
 export interface ICustomTextField {
   label: string;
   name: string;
-  other?: TextFieldProps;
+  other?: any;
+  handleBlur?: FormikContextType<any>['handleBlur'];
+  maxLength?: number;
 }
 
-const CustomTextField: React.FC<ICustomTextField> = (props) => {
-  const { touched, errors, values, handleChange } = useFormikContext<any>();
+const CustomTextField: React.FC<React.PropsWithChildren<ICustomTextField>> = (props) => {
+  const { touched, errors, values, handleChange, handleBlur } = useFormikContext<any>();
 
   const { name, label, other } = props;
 
@@ -19,10 +21,11 @@ const CustomTextField: React.FC<ICustomTextField> = (props) => {
       name={name}
       label={label}
       id={name}
-      data-testid={name}
+      inputProps={{ 'data-testid': name, maxLength: props.maxLength || undefined }}
       onChange={handleChange}
+      onBlur={handleBlur}
       variant="outlined"
-      value={get(values, name)}
+      value={get(values, name) ?? ''}
       fullWidth={true}
       error={get(touched, name) && Boolean(get(errors, name))}
       helperText={get(touched, name) && (get(errors, name) as string)}

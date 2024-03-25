@@ -15,8 +15,8 @@ export interface IProjectAdvancedFiltersProps {
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
-  project_status: IMultiAutocompleteFieldOption[];
-  project_focus: IMultiAutocompleteFieldOption[];
+  status: IMultiAutocompleteFieldOption[];
+  focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -41,10 +41,10 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
             </Grid>
             <Grid item xs={6}>
               <MultiAutocompleteFieldVariableSize
-                id="project_status"
-                data-testid="project_status"
+                id="status"
+                data-testid="status"
                 label="Status"
-                options={props.project_status}
+                options={props.status}
                 required={false}
               />
             </Grid>
@@ -60,10 +60,14 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
             <Grid item xs={12}>
               <ProjectStartEndDateFields
                 formikProps={formikProps}
-                startName={'start_date'}
-                endName={'end_date'}
-                startRequired={false}
-                endRequired={false}
+                plannedStartName={'planned_start_date'}
+                plannedEndName={'planned_end_date'}
+                plannedStartRequired={false}
+                plannedEndRequired={false}
+                actualStartName={'actual_start_date'}
+                actualEndName={'actual_end_date'}
+                actualStartRequired={false}
+                actualEndRequired={false}
               />
             </Grid>
             <Grid item xs={12}>
@@ -77,10 +81,10 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
             </Grid>
             <Grid item xs={12}>
               <MultiAutocompleteFieldVariableSize
-                id="project_focus"
-                data-testid="project_focus"
-                label="Project Focus"
-                options={props.project_focus}
+                id="focus"
+                data-testid="focus"
+                label="Focus"
+                options={props.focus}
                 required={false}
               />
             </Grid>

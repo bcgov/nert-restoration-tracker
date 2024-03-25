@@ -25,25 +25,14 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import { SystemRoleGuard } from 'components/security/Guards';
+import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine'
-interface Data {
-  id: number;
-  planId: number;
-  planName: string;
-  term: string;
-  org: string;
-  startDate: string;
-  endDate: string;
-  statusCode: number;
-  statusLabel: string;
-  archive: string;
-}
 
 interface IPlansListProps {
   plans: IGetPlanForViewResponse[];
@@ -67,113 +56,20 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
       statusLabel: getStatusLabelFromCode(row.project.status_code),
       statusStyle: getStatusStyle(row.project.status_code),
       archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
-    } as Data;
+    } as utils.PlanData;
   });
 
-  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  }
-
-  type Order = 'asc' | 'desc';
-
-  function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key
-  ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-
-  function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) {
-        return order;
-      }
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-  }
-
-  interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-  }
-
-  const headCells: readonly HeadCell[] = [
-    {
-      id: 'planName',
-      numeric: false,
-      disablePadding: true,
-      label: 'Plan Name'
-    },
-    {
-      id: 'term',
-      numeric: false,
-      disablePadding: false,
-      label: 'Term'
-    },
-    {
-      id: 'org',
-      numeric: false,
-      disablePadding: false,
-      label: 'Organizations'
-    },
-    {
-      id: 'startDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'Start Date'
-    },
-    {
-      id: 'endDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'End Date'
-    },
-    {
-      id: 'statusLabel',
-      numeric: false,
-      disablePadding: false,
-      label: 'Status'
-    },
-    {
-      id: 'archive',
-      numeric: false,
-      disablePadding: false,
-      label: 'Archive'
-    }
-  ];
-
-  interface PlansTableProps {
-    numSelected: number;
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    order: Order;
-    orderBy: string;
-    rowCount: number;
-  }
-
-  function PlansTableHead(props: PlansTableProps) {
+  function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+    const createSortHandler =
+      (property: keyof utils.PlanData) => (event: React.MouseEvent<unknown>) => {
+        onRequestSort(event, property);
+      };
 
     return (
       <TableHead>
         <TableRow>
-          {headCells.map((headCell) => {
+          {utils.planHeadCells.map((headCell) => {
             if ('archive' !== headCell.id)
               return (
                 <TableCell
@@ -266,14 +162,17 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   }
 
   function PlanTable() {
-    const [order, setOrder] = useState<Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof Data>('planName');
+    const [order, setOrder] = useState<utils.Order>('asc');
+    const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
     const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+    const handleRequestSort = (
+      event: React.MouseEvent<unknown>,
+      property: keyof utils.PlanData
+    ) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(property);
@@ -327,10 +226,9 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
     const visibleRows = React.useMemo(
       () =>
-        stableSort(rows, getComparator(order, orderBy)).slice(
-          page * rowsPerPage,
-          page * rowsPerPage + rowsPerPage
-        ),
+        utils
+          .stableSort(rows, utils.getComparator(order, orderBy))
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
       [order, orderBy, page, rowsPerPage]
     );
 

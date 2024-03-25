@@ -46,8 +46,8 @@ export default function Projects() {
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
         region: urlParams.region,
-        project_status: urlParams.project_status,
-        project_focus: urlParams.project_focus
+        status: urlParams.status,
+        focus: urlParams.focus
       } as IProjectAdvancedFilters;
 
       if (values.funding_agency === undefined) {
@@ -221,7 +221,7 @@ export default function Projects() {
                   return { value: item.id, label: item.name };
                 }) || []
               }
-              project_status={[
+              status={[
                 {
                   value: 1,
                   label: 'PLANNING'
@@ -259,7 +259,7 @@ export default function Projects() {
                   label: 'DRAFT'
                 }
               ]}
-              project_focus={[
+              focus={[
                 {
                   value: 1,
                   label: 'Healing the Land'

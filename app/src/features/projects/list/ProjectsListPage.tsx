@@ -25,29 +25,14 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import { SystemRoleGuard } from 'components/security/Guards';
+import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine'
-
-interface Data {
-  id: number;
-  projectId: number;
-  projectName: string;
-  authRef: string;
-  org: string;
-  plannedStartDate: string;
-  plannedEndDate: string;
-  actualStartDate: string;
-  actualEndDate: string;
-  statusCode: number;
-  statusLabel: string;
-  archive: string;
-}
-
 
 interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
@@ -75,125 +60,20 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       statusLabel: getStatusLabelFromCode(row.project.status_code),
       statusStyle: getStatusStyle(row.project.status_code),
       archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
-    } as Data;
+    } as utils.ProjectData;
   });
 
-  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  }
-
-  type Order = 'asc' | 'desc';
-
-  function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key
-  ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-
-  function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) {
-        return order;
-      }
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-  }
-
-  interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-  }
-
-  const headCells: readonly HeadCell[] = [
-    {
-      id: 'projectName',
-      numeric: false,
-      disablePadding: true,
-      label: 'Project Name'
-    },
-    {
-      id: 'authRef',
-      numeric: false,
-      disablePadding: false,
-      label: 'Authorization Ref.'
-    },
-    {
-      id: 'org',
-      numeric: false,
-      disablePadding: false,
-      label: 'Organizations'
-    },
-    {
-      id: 'plannedStartDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'Planned Start Date'
-    },
-    {
-      id: 'actualStartDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'Actual Start Date'
-    },
-    {
-      id: 'plannedEndDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'Planned End Date'
-    },
-    {
-      id: 'actualEndDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'Actual End Date'
-    },
-    {
-      id: 'statusLabel',
-      numeric: false,
-      disablePadding: false,
-      label: 'Status'
-    },
-    {
-      id: 'archive',
-      numeric: false,
-      disablePadding: false,
-      label: 'Archive'
-    }
-  ];
-
-  interface ProjectsTableProps {
-    numSelected: number;
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    order: Order;
-    orderBy: string;
-    rowCount: number;
-  }
-
-  function ProjectsTableHead(props: ProjectsTableProps) {
+  function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+    const createSortHandler =
+      (property: keyof utils.ProjectData) => (event: React.MouseEvent<unknown>) => {
+        onRequestSort(event, property);
+      };
 
     return (
       <TableHead>
         <TableRow>
-          {headCells.map((headCell) => {
+          {utils.projectHeadCells.map((headCell) => {
             if ('archive' !== headCell.id)
               return (
                 <TableCell
@@ -237,11 +117,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     );
   }
 
-  interface ProjectsTableToolbarProps {
-    numSelected: number;
-  }
-
-  function ProjectsTableToolbar(props: ProjectsTableToolbarProps) {
+  function ProjectsTableToolbar(props: utils.TableToolbarProps) {
     const { numSelected } = props;
 
     return (
@@ -286,14 +162,17 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   }
 
   function ProjectsTable() {
-    const [order, setOrder] = useState<Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof Data>('projectName');
+    const [order, setOrder] = useState<utils.Order>('asc');
+    const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
     const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+    const handleRequestSort = (
+      event: React.MouseEvent<unknown>,
+      property: keyof utils.ProjectData
+    ) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(property);
@@ -347,10 +226,9 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
     const visibleRows = React.useMemo(
       () =>
-        stableSort(rows, getComparator(order, orderBy)).slice(
-          page * rowsPerPage,
-          page * rowsPerPage + rowsPerPage
-        ),
+        utils
+          .stableSort(rows, utils.getComparator(order, orderBy))
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
       [order, orderBy, page, rowsPerPage]
     );
 

@@ -68,8 +68,8 @@ export const PlanAdvancedFiltersInitialValues: IPlanAdvancedFilters = {
   start_date: '',
   end_date: '',
   region: '',
-  plan_status: '',
-  plan_focus: ''
+  status: '',
+  focus: ''
 };
 
 export interface IPlanAdvancedFilters {
@@ -80,8 +80,8 @@ export interface IPlanAdvancedFilters {
   start_date?: string;
   end_date?: string;
   region?: string | string[];
-  plan_status?: string | string[];
-  plan_focus?: string | string[];
+  status?: string | string[];
+  focus?: string | string[];
 }
 
 export const PlanAdvancedFiltersKeyLabels = {
@@ -92,8 +92,8 @@ export const PlanAdvancedFiltersKeyLabels = {
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
   region: { label: 'Region', codeSet: 'region' },
-  plan_status: { label: 'Plan Status', codeSet: 'plan_status' },
-  plan_focus: { label: 'Plan Focus', codeSet: 'plan_focus' }
+  status: { label: 'Status', codeSet: 'status' },
+  focus: { label: 'Focus', codeSet: 'focus' }
 };
 
 export interface IPlanAdvancedFiltersProps {
@@ -101,8 +101,8 @@ export interface IPlanAdvancedFiltersProps {
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
-  plan_status: IMultiAutocompleteFieldOption[];
-  plan_focus: IMultiAutocompleteFieldOption[];
+  status: IMultiAutocompleteFieldOption[];
+  focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -111,8 +111,7 @@ export interface IPlanAdvancedFiltersProps {
  * @return {*}
  */
 const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
-  const { filterChipParams, contact_agency, funding_agency, region, plan_status, plan_focus } =
-    props;
+  const { filterChipParams, contact_agency, funding_agency, region, status, focus } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [isFiltersChipsOpen, setIsFiltersChipsOpen] = useState(false);
@@ -302,8 +301,8 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 contact_agency={contact_agency}
                 funding_agency={funding_agency}
                 region={region}
-                plan_status={plan_status}
-                plan_focus={plan_focus}
+                status={status}
+                focus={focus}
               />
 
               <Box textAlign="right" mt={3}>
