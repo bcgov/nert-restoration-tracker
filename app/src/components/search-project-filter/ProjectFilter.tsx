@@ -55,7 +55,7 @@ const pageStyles = {
   },
   chipStyle: {
     color: 'white',
-    backgroundColor: '#38598a',
+    backgroundColor: '#005980',
     textTransform: 'capitalize'
   }
 };
@@ -68,8 +68,8 @@ export const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
   start_date: '',
   end_date: '',
   region: '',
-  project_status: '',
-  project_focus: ''
+  status: '',
+  focus: ''
 };
 
 export interface IProjectAdvancedFilters {
@@ -80,8 +80,8 @@ export interface IProjectAdvancedFilters {
   start_date?: string;
   end_date?: string;
   region?: string | string[];
-  project_status?: string | string[];
-  project_focus?: string | string[];
+  status?: string | string[];
+  focus?: string | string[];
 }
 
 export const ProjectAdvancedFiltersKeyLabels = {
@@ -92,8 +92,8 @@ export const ProjectAdvancedFiltersKeyLabels = {
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
   region: { label: 'Region', codeSet: 'region' },
-  project_status: { label: 'Project Status', codeSet: 'project_status' },
-  project_focus: { label: 'Project Focus', codeSet: 'project_focus' }
+  status: { label: 'Status', codeSet: 'status' },
+  focus: { label: 'Focus', codeSet: 'focus' }
 };
 
 export interface IProjectAdvancedFiltersProps {
@@ -101,8 +101,8 @@ export interface IProjectAdvancedFiltersProps {
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
-  project_status: IMultiAutocompleteFieldOption[];
-  project_focus: IMultiAutocompleteFieldOption[];
+  status: IMultiAutocompleteFieldOption[];
+  focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -111,14 +111,7 @@ export interface IProjectAdvancedFiltersProps {
  * @return {*}
  */
 const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
-  const {
-    filterChipParams,
-    contact_agency,
-    funding_agency,
-    region,
-    project_status,
-    project_focus
-  } = props;
+  const { filterChipParams, contact_agency, funding_agency, region, status, focus } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [isFiltersChipsOpen, setIsFiltersChipsOpen] = useState(false);
@@ -208,10 +201,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
 
   const getFilterChips = (key: string, value: string) => {
     const ChipArray = [];
-    console.log("key", key)
-    console.log("value", value)
     const filterChip = (chipValue: string) => {
-      console.log("ChipValue", chipValue)
       return (
         <Grid item xs="auto" key={`${key}${chipValue}`}>
           <Chip
@@ -310,8 +300,8 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                 contact_agency={contact_agency}
                 funding_agency={funding_agency}
                 region={region}
-                project_status={project_status}
-                project_focus={project_focus}
+                status={status}
+                focus={focus}
               />
 
               <Box textAlign="right" mt={3}>

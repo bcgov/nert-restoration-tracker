@@ -46,8 +46,8 @@ export default function Plans() {
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
         region: urlParams.region,
-        plan_status: urlParams.plan_status,
-        plan_focus: urlParams.plan_focus
+        status: urlParams.status,
+        focus: urlParams.focus
       } as IPlanAdvancedFilters;
 
       if (values.funding_agency === undefined) {
@@ -218,7 +218,7 @@ export default function Plans() {
                   return { value: item.id, label: item.name };
                 }) || []
               }
-              plan_status={[
+              status={[
                 {
                   value: 1,
                   label: 'PLANNING'
@@ -236,7 +236,7 @@ export default function Plans() {
                   label: 'DRAFT'
                 }
               ]}
-              plan_focus={[
+              focus={[
                 {
                   value: 1,
                   label: 'Healing the Land'

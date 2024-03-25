@@ -1,7 +1,11 @@
+import { mdiCalendarEnd, mdiCalendarStart } from '@mdi/js';
+import Icon from '@mdi/react';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DATE_FORMAT, DATE_LIMIT } from 'constants/dateTimeFormats';
-import dayjs from 'dayjs';
+import { default as dayjs } from 'dayjs';
 import get from 'lodash-es/get';
 import React from 'react';
 
@@ -11,9 +15,15 @@ interface IStartEndDateFieldsProps {
   endName: string;
   startRequired: boolean;
   endRequired: boolean;
-  startDateHelperText?: string;
-  endDateHelperText?: string;
 }
+
+const CalendarStartIcon = () => {
+  return <Icon path={mdiCalendarStart} size={1} />;
+};
+
+const CalendarEndIcon = () => {
+  return <Icon path={mdiCalendarEnd} size={1} />;
+};
 
 /**
  * Start/end date fields - commonly used throughout forms
@@ -21,13 +31,11 @@ interface IStartEndDateFieldsProps {
  */
 const PlanStartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
   const {
-    formikProps: { values, handleChange, errors, touched },
+    formikProps: { values, errors, touched, setFieldValue },
     startName,
     endName,
     startRequired,
-    endRequired,
-    startDateHelperText,
-    endDateHelperText
+    endRequired
   } = props;
 
   const rawStartDateValue = get(values, startName);
@@ -35,83 +43,101 @@ const PlanStartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
 
   const formattedStartDateValue =
     (rawStartDateValue &&
-      dayjs(rawStartDateValue).isValid() &&
-      dayjs(rawStartDateValue).format(DATE_FORMAT.ShortDateFormat)) ||
-    '';
+      dayjs(rawStartDateValue, DATE_FORMAT.ShortDateFormat).isValid() &&
+      dayjs(rawStartDateValue, DATE_FORMAT.ShortDateFormat)) ||
+    null;
 
   const formattedEndDateValue =
     (rawEndDateValue &&
-      dayjs(rawEndDateValue).isValid() &&
-      dayjs(rawEndDateValue).format(DATE_FORMAT.ShortDateFormat)) ||
-    '';
+      dayjs(rawEndDateValue, DATE_FORMAT.ShortDateFormat).isValid() &&
+      dayjs(rawEndDateValue, DATE_FORMAT.ShortDateFormat)) ||
+    null;
 
   return (
-    <Grid container item spacing={1.5}>
-      <Grid item xs={12} md={6}>
-        <TextField
-          size="small"
-          fullWidth
-          id="start_date"
-          data-testid="start_date"
-          name={startName}
-          label="Start Date"
-          variant="outlined"
-          required={startRequired}
-          value={formattedStartDateValue}
-          type="date"
-          InputProps={{
-            // Chrome min/max dates
-            inputProps: { min: DATE_LIMIT.min, max: DATE_LIMIT.max, 'data-testid': 'start-date' }
-          }}
-          inputProps={{
-            // Firefox min/max dates
-            min: DATE_LIMIT.min,
-            max: DATE_LIMIT.max,
-            'data-testid': 'start-date'
-          }}
-          onChange={handleChange}
-          error={get(touched, startName) && Boolean(get(errors, startName))}
-          helperText={(get(touched, startName) && get(errors, startName)) || startDateHelperText}
-          InputLabelProps={{
-            shrink: true
-          }}
-        />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Grid container item spacing={1.5}>
+        <Grid item xs={6}>
+          <DatePicker
+            slots={{
+              openPickerIcon: CalendarStartIcon
+            }}
+            slotProps={{
+              textField: {
+                size: 'small',
+                id: 'start_date',
+                name: startName,
+                required: startRequired,
+                variant: 'outlined',
+                error: get(touched, startName) && Boolean(get(errors, startName)),
+                helperText: get(touched, startName) && get(errors, startName),
+                inputProps: {
+                  'data-testid': 'start_date'
+                },
+                InputLabelProps: {
+                  shrink: true
+                },
+                fullWidth: true
+              }
+            }}
+            label="Start Date"
+            format={DATE_FORMAT.ShortDateFormat}
+            minDate={dayjs(DATE_LIMIT.min)}
+            maxDate={dayjs(DATE_LIMIT.max)}
+            value={formattedStartDateValue}
+            onChange={(value) => {
+              if (!value || String(value) === 'Invalid Date') {
+                // The creation input value will be 'Invalid Date' when the date field is cleared (empty), and will
+                // contain an actual date string value if the field is not empty but is invalid.
+                setFieldValue(startName, null);
+                return;
+              }
+
+              setFieldValue(startName, dayjs(value).format(DATE_FORMAT.ShortDateFormat));
+            }}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <DatePicker
+            slots={{
+              openPickerIcon: CalendarEndIcon
+            }}
+            slotProps={{
+              textField: {
+                size: 'small',
+                id: 'end_date',
+                name: endName,
+                required: endRequired,
+                variant: 'outlined',
+                error: get(touched, endName) && Boolean(get(errors, endName)),
+                helperText: get(touched, endName) && get(errors, endName),
+                inputProps: {
+                  'data-testid': 'end_date'
+                },
+                InputLabelProps: {
+                  shrink: true
+                },
+                fullWidth: true
+              }
+            }}
+            label="End Date"
+            format={DATE_FORMAT.ShortDateFormat}
+            minDate={dayjs(DATE_LIMIT.min)}
+            maxDate={dayjs(DATE_LIMIT.max)}
+            value={formattedEndDateValue}
+            onChange={(value: dayjs.Dayjs | null) => {
+              if (!value || String(value) === 'Invalid Date') {
+                // The creation input value will be 'Invalid Date' when the date field is cleared (empty), and will
+                // contain an actual date string value if the field is not empty but is invalid.
+                setFieldValue(endName, null);
+                return;
+              }
+
+              setFieldValue(endName, dayjs(value).format(DATE_FORMAT.ShortDateFormat));
+            }}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          size="small"
-          fullWidth
-          id="end_date"
-          data-testid="end_date"
-          name={endName}
-          label="End Date"
-          variant="outlined"
-          required={endRequired}
-          value={formattedEndDateValue}
-          type="date"
-          InputProps={{
-            // Chrome min/max dates
-            inputProps: {
-              min: formattedStartDateValue,
-              max: DATE_LIMIT.max,
-              'data-testid': 'end-date'
-            }
-          }}
-          inputProps={{
-            // Firefox min/max dates
-            min: formattedStartDateValue,
-            max: DATE_LIMIT.max,
-            'data-testid': 'end-date'
-          }}
-          onChange={handleChange}
-          error={get(touched, endName) && Boolean(get(errors, endName))}
-          helperText={(get(touched, endName) && get(errors, endName)) || endDateHelperText}
-          InputLabelProps={{
-            shrink: true
-          }}
-        />
-      </Grid>
-    </Grid>
+    </LocalizationProvider>
   );
 };
 

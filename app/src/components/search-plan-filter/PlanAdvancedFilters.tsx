@@ -15,8 +15,8 @@ export interface IPlanAdvancedFiltersProps {
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
-  plan_status: IMultiAutocompleteFieldOption[];
-  plan_focus: IMultiAutocompleteFieldOption[];
+  status: IMultiAutocompleteFieldOption[];
+  focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -41,10 +41,10 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             </Grid>
             <Grid item xs={6}>
               <MultiAutocompleteFieldVariableSize
-                id="plan_status"
-                data-testid="plan_status"
+                id="status"
+                data-testid="status"
                 label="Status"
-                options={props.plan_status}
+                options={props.status}
                 required={false}
               />
             </Grid>
@@ -71,10 +71,10 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             </Grid>
             <Grid item xs={12}>
               <MultiAutocompleteFieldVariableSize
-                id="plan_focus"
-                data-testid="plan_focus"
-                label="Project Focus"
-                options={props.plan_focus}
+                id="focus"
+                data-testid="focus"
+                label="Focus"
+                options={props.focus}
                 required={false}
               />
             </Grid>

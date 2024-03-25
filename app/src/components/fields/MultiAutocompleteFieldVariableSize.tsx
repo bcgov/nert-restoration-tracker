@@ -82,11 +82,11 @@ const ListboxComponent = React.forwardRef<HTMLDivElement, React.PropsWithChildre
     const { children, ...other } = props;
     const itemData = React.Children.toArray(children);
     const itemCount = itemData.length;
-    const itemSize = 54;
+    const itemSize = 42;
 
     const getChildSize = (child: React.ReactNode) => {
       if (React.isValidElement(child) && child.type === ListSubheader) {
-        return 48;
+        return 36;
       }
 
       return itemSize;
@@ -217,7 +217,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     const selectedOptionsValue = selectedOptions.map((item) => item.value);
     const remainingOptions = options.filter((item) => !selectedOptionsValue.includes(item.value));
 
-    // when type is api-search and no input, dont show any options
+    // when type is api-search and no input, don't show any options
     // as options gets populated as searched by keyword.
     if (!inputValue && props.type === 'api-search') {
       setOptions(selectedOptions);
@@ -249,7 +249,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     state: FilterOptionsState<IMultiAutocompleteFieldOption>
   ) => {
     // For api-search selected will be always on top and options doesn't need to be filtered
-    // as search funciton maintains both of this.
+    // as search function maintains both of this.
     return props.type === 'api-search'
       ? optionsList
       : filterOptionsKeepingSelectedOnTop(optionsList, state);
@@ -259,7 +259,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     <Autocomplete
       size="small"
       multiple
-      noOptionsText="Type to start searching"
+      noOptionsText="No matching options"
       autoHighlight={true}
       value={getExistingValue(get(values, props.id))}
       ListboxComponent={ListboxComponent as React.ComponentType<React.HTMLAttributes<HTMLElement>>}
@@ -277,7 +277,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
       filterOptions={handleFiltering}
       renderOption={(
         renderProps: React.HTMLAttributes<HTMLLIElement>,
-        option: IMultiAutocompleteFieldOption,
+        renderOption: IMultiAutocompleteFieldOption,
         { selected }: any
       ) => {
         return (
@@ -287,11 +287,11 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
               checkedIcon={<CheckBox fontSize="small" />}
               style={{ marginRight: 8 }}
               checked={selected}
-              disabled={(props.options && props.options?.indexOf(option) !== -1) || false}
-              value={option.value}
+              disabled={props.options?.includes(renderOption) || false}
+              value={renderOption.value}
               color="default"
             />
-            {option.label}
+            {renderOption.label}
           </Box>
         );
       }}
@@ -303,6 +303,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
           label={props.label}
           variant="outlined"
           fullWidth
+          placeholder="Type to start searching"
           error={get(touched, props.id) && Boolean(get(errors, props.id))}
           helperText={get(touched, props.id) && get(errors, props.id)}
         />

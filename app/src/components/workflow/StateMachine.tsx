@@ -1,4 +1,3 @@
-
 const states = {
   PLANNING: 'PLANNING',
   AUTHORIZATION: 'AUTHORIZATION',
@@ -44,19 +43,18 @@ const setStatusBgColor = (statusCode: number) => {
 };
 
 export const getStatusStyle = (statusCode: number) => {
-  return { 
+  return {
     color: 'white',
     fontWeight: 600,
     letterSpacing: '0.02rem',
-    backgroundColor: setStatusBgColor(statusCode) 
+    backgroundColor: setStatusBgColor(statusCode)
   };
 };
 
-const StateMachine = (type: boolean, currentState: number,) => {
+const StateMachine = (type: boolean, currentState: number) => {
   //[OI] TODO
   let nextState = currentState;
-  if (type)
-    nextState = 5;
+  if (type) nextState = 5;
 
   return nextState as number;
 };
