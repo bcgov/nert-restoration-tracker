@@ -88,6 +88,7 @@ const initializeMap = (mapId: string, center: any, zoom: number) => {
 
   map.on("load", () => {
     // Add the well layers
+    // TODO: Hmmm... Maybe I should be leveraging the maplibre geojson fetch functionality
     fetch(orphanedWellsURL)
       .then((res) => res.json())
       .then((data) => drawOrphanedWells(map, data));
