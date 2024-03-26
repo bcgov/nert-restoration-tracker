@@ -25,7 +25,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import { SystemRoleGuard } from 'components/security/Guards';
-import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
@@ -57,7 +57,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       actualStartDate: row.project.start_date,
       actualEndDate: row.project.end_date,
       statusCode: row.project.status_code,
-      statusLabel: getStatusLabelFromCode(row.project.status_code),
+      statusLabel: getStateLabelFromCode(row.project.status_code),
       statusStyle: getStatusStyle(row.project.status_code),
       archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
     } as utils.ProjectData;
