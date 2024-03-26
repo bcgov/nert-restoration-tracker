@@ -21,7 +21,7 @@ const pageStyles = {
     }
   },
   keywordSearch: {
-    height: '52px',
+    height: '42px',
     flex: '1 1 auto',
     paddingLeft: '1rem',
     display: 'flex',
@@ -65,11 +65,11 @@ export const PlanAdvancedFiltersInitialValues: IPlanAdvancedFilters = {
   contact_agency: '',
   funding_agency: [],
   permit_number: '',
-  species: [],
   start_date: '',
   end_date: '',
-  ranges: '',
-  region: ''
+  region: '',
+  status: '',
+  focus: ''
 };
 
 export interface IPlanAdvancedFilters {
@@ -77,31 +77,32 @@ export interface IPlanAdvancedFilters {
   contact_agency?: string | string[];
   funding_agency?: number | number[];
   permit_number?: string;
-  species?: number | number[];
   start_date?: string;
   end_date?: string;
-  ranges?: string | string[];
   region?: string | string[];
+  status?: string | string[];
+  focus?: string | string[];
 }
 
 export const PlanAdvancedFiltersKeyLabels = {
   keyword: { label: 'Keyword' },
-  contact_agency: { label: 'Contact Agency' },
+  contact_agency: { label: 'Plan name' },
   funding_agency: { label: 'Funding Agency', codeSet: 'funding_agency' },
   permit_number: { label: 'Permit Number' },
-  species: { label: 'Species' },
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
-  ranges: { label: 'Caribou Ranges', codeSet: 'ranges' },
-  region: { label: 'FLNRO Region', codeSet: 'region' }
+  region: { label: 'Region', codeSet: 'region' },
+  status: { label: 'Status', codeSet: 'status' },
+  focus: { label: 'Focus', codeSet: 'focus' }
 };
 
 export interface IPlanAdvancedFiltersProps {
   filterChipParams: IPlanAdvancedFilters;
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
-  ranges: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
+  status: IMultiAutocompleteFieldOption[];
+  focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -110,7 +111,7 @@ export interface IPlanAdvancedFiltersProps {
  * @return {*}
  */
 const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
-  const { filterChipParams, contact_agency, funding_agency, region, ranges } = props;
+  const { filterChipParams, contact_agency, funding_agency, region, status, focus } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [isFiltersChipsOpen, setIsFiltersChipsOpen] = useState(false);
@@ -226,8 +227,8 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <Box m={3}>
-          <Box mb={3}>
+        <Box my={2} mx={3}>
+          <Box mb={2}>
             <Typography variant="h2">Filter Plans</Typography>
           </Box>
           <Box display="flex">
@@ -299,8 +300,9 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
               <PlanAdvancedFilters
                 contact_agency={contact_agency}
                 funding_agency={funding_agency}
-                ranges={ranges}
                 region={region}
+                status={status}
+                focus={focus}
               />
 
               <Box textAlign="right" mt={3}>

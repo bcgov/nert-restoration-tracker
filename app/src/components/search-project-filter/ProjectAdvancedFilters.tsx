@@ -1,27 +1,22 @@
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
-import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
+import AreaSizeFields from 'components/fields/AreaSizeFields';
 import CustomTextField from 'components/fields/CustomTextField';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteField';
 import MultiAutocompleteFieldVariableSize from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/StartEndDateFields';
+import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { useFormikContext } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { debounce } from 'lodash-es';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { IProjectAdvancedFilters } from './ProjectFilter';
 
 export interface IProjectAdvancedFiltersProps {
   contact_agency: string[];
   funding_agency: IMultiAutocompleteFieldOption[];
-  ranges: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
+  status: IMultiAutocompleteFieldOption[];
+  focus: IMultiAutocompleteFieldOption[];
 }
 
 /**
@@ -31,115 +26,25 @@ export interface IProjectAdvancedFiltersProps {
  */
 const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) => {
   const formikProps = useFormikContext<IProjectAdvancedFilters>();
-  const { handleChange, values } = formikProps;
-
-  const restorationTrackerApi = useRestorationTrackerApi();
-
-  const convertOptions = (value: any): IMultiAutocompleteFieldOption[] =>
-    value.map((item: any) => {
-      return { value: parseInt(item.id), label: item.label };
-    });
-
-  const handleGetInitList = async (initialvalues: number[]) => {
-    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(initialvalues);
-    return convertOptions(response.searchResponse);
-  };
-
-  const handleSearch = useCallback(
-    debounce(
-      async (
-        inputValue: string,
-        existingValues: (string | number)[],
-        callback: (searchedValues: IMultiAutocompleteFieldOption[]) => void
-      ) => {
-        const response = await restorationTrackerApi.taxonomy.searchSpecies(
-          inputValue.toLowerCase()
-        );
-        const newOptions = convertOptions(response.searchResponse).filter(
-          (item) => !existingValues.includes(item.value)
-        );
-        callback(newOptions);
-      },
-      500
-    ),
-    []
-  );
-
   return (
     <Box data-testid="advancedFilters">
-      <Grid container spacing={3} justifyContent="flex-start">
-        <Grid item xs={12} md={3}>
+      <Grid container spacing={0.5} justifyContent="flex-start">
+        <Grid item xs={12} md={2}>
           <Typography variant="subtitle1" component="h3">
             <strong>Project Details</strong>
           </Typography>
         </Grid>
-        <Grid item xs={12} md={9}>
-          <Grid container spacing={3}>
+        <Grid item xs={12} md={10}>
+          <Grid container spacing={1.5}>
             <Grid item xs={12}>
-              <AutocompleteFreeSoloField
-                id="contact_agency"
-                name="contact_agency"
-                label="Contact Agency"
-                options={props.contact_agency}
-                required={false}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <StartEndDateFields
-                formikProps={formikProps}
-                startName={'start_date'}
-                endName={'end_date'}
-                startRequired={false}
-                endRequired={false}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth variant="outlined" required={false}>
-                <InputLabel id="funding_agency-label">Funding Agencies</InputLabel>
-                <Select
-                  data-testid="funding_agency"
-                  id="funding_agency"
-                  name="funding_agency"
-                  labelId="funding_agency-label"
-                  label="Funding Agencies"
-                  value={
-                    (values.funding_agency?.toString() ? values.funding_agency : []) as
-                      | number
-                      | ''
-                      | undefined
-                  }
-                  onChange={handleChange}
-                  defaultValue={[] as unknown as number | undefined}
-                  multiple
-                  displayEmpty
-                  inputProps={{
-                    'aria-label': 'Funding Agency Name',
-                    'data-testid': 'funding_agency'
-                  }}>
-                  {props.funding_agency.map((item) => (
-                    <MenuItem key={item.value} value={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <MultiAutocompleteFieldVariableSize
-                id="species"
-                label="Species"
-                required={false}
-                type="api-search"
-                getInitList={handleGetInitList}
-                search={handleSearch}
-              />
+              <CustomTextField name="project_name" label="Name" />
             </Grid>
             <Grid item xs={6}>
               <MultiAutocompleteFieldVariableSize
-                id="ranges"
-                data-testid="ranges"
-                label="Caribou Ranges"
-                options={props.ranges}
+                id="status"
+                data-testid="status"
+                label="Status"
+                options={props.status}
                 required={false}
               />
             </Grid>
@@ -147,9 +52,52 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
               <MultiAutocompleteFieldVariableSize
                 id="region"
                 data-testid="region"
-                label="FLNRO Region"
+                label="Region"
                 options={props.region}
                 required={false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <ProjectStartEndDateFields
+                formikProps={formikProps}
+                plannedStartName={'planned_start_date'}
+                plannedEndName={'planned_end_date'}
+                plannedStartRequired={false}
+                plannedEndRequired={false}
+                actualStartName={'actual_start_date'}
+                actualEndName={'actual_end_date'}
+                actualStartRequired={false}
+                actualEndRequired={false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField name="project_objectives" label="Objectives" />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField name="project_organizations" label="Organizations" />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField name="project_funding_organizations" label="Funding Organizations" />
+            </Grid>
+            <Grid item xs={12}>
+              <MultiAutocompleteFieldVariableSize
+                id="focus"
+                data-testid="focus"
+                label="Focus"
+                options={props.focus}
+                required={false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography mb={1} variant="subtitle1" component="h3">
+                Area Size in Hectares
+              </Typography>
+              <AreaSizeFields
+                formikProps={formikProps}
+                minName={'from'}
+                maxName={'to'}
+                minRequired={false}
+                maxRequired={false}
               />
             </Grid>
           </Grid>
@@ -160,14 +108,14 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
         <Divider></Divider>
       </Box>
 
-      <Grid container spacing={3} justifyContent="flex-start">
-        <Grid item xs={12} md={3}>
+      <Grid container spacing={0.5} justifyContent="flex-start">
+        <Grid item xs={12} md={2}>
           <Typography variant="subtitle1" component="h3">
-            <strong>Permits</strong>
+            <strong>Authorization</strong>
           </Typography>
         </Grid>
-        <Grid item xs={12} md={9}>
-          <CustomTextField name="permit_number" label="Permit Number" />
+        <Grid item xs={12} md={10}>
+          <CustomTextField name="permit_number" label="Authorization Reference" />
         </Grid>
       </Grid>
     </Box>

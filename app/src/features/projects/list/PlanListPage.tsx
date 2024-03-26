@@ -1,6 +1,7 @@
 import { mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -23,48 +24,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
+import { SystemRoleGuard } from 'components/security/Guards';
+import { getStatusLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { SYSTEM_ROLE } from 'constants/roles';
 import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-interface Data {
-  id: number;
-  planId: number;
-  planName: string;
-  term: string;
-  org: string;
-  startDate: string;
-  endDate: string;
-  statusCode: number;
-  statusLabel: string;
-}
 
-const getStatusLabelFromCode = (statusCode: number) => {
-  return (
-    {
-      0: 'DRAFT',
-      1: 'PLANNING',
-      7: 'COMPLETED',
-      8: 'ARCHIVED'
-    }[statusCode] ?? 'UNDEFINED'
-  );
-};
-
-const setStatusBgColor = (statusCode: number) => {
-  return (
-    {
-      0: '#A6A6A6',
-      1: '#AA72D4',
-      7: '#70AD47',
-      8: '#FF5D5D'
-    }[statusCode] ?? 'black'
-  );
-};
-
-const getStatusStyle = (statusCode: number) => {
-  return { color: 'white', backgroundColor: setStatusBgColor(statusCode) };
-};
 interface IPlansListProps {
   plans: IGetPlanForViewResponse[];
 }
@@ -78,152 +47,66 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     return {
       id: index,
       planId: row.project.project_id,
-      planName: row.project.project_name,
-      term: row.permit.permits.map((item: { permit_number: any }) => item.permit_number).join(', '),
+      planName: row.project.project_name.replace('Project', 'Plan'),
+      term: 'Annual',
       org: row.contact.contacts.map((item) => item.agency).join(', '),
       startDate: row.project.start_date,
       endDate: row.project.end_date,
       statusCode: row.project.status_code,
       statusLabel: getStatusLabelFromCode(row.project.status_code),
-      statusStyle: getStatusStyle(row.project.status_code)
-    } as Data;
+      statusStyle: getStatusStyle(row.project.status_code),
+      archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
+    } as utils.PlanData;
   });
 
-  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  }
-
-  type Order = 'asc' | 'desc';
-
-  function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key
-  ): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-
-  function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) {
-        return order;
-      }
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-  }
-
-  interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-  }
-
-  const headCells: readonly HeadCell[] = [
-    {
-      id: 'planName',
-      numeric: false,
-      disablePadding: true,
-      label: 'Plan Name'
-    },
-    {
-      id: 'term',
-      numeric: false,
-      disablePadding: false,
-      label: 'Term'
-    },
-    {
-      id: 'org',
-      numeric: false,
-      disablePadding: false,
-      label: 'Organizations'
-    },
-    {
-      id: 'startDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'Start Date'
-    },
-    {
-      id: 'endDate',
-      numeric: false,
-      disablePadding: false,
-      label: 'End Date'
-    },
-    {
-      id: 'statusLabel',
-      numeric: false,
-      disablePadding: false,
-      label: 'Status'
-    }
-  ];
-
-  interface PlansTableProps {
-    numSelected: number;
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    order: Order;
-    orderBy: string;
-    rowCount: number;
-  }
-
-  function PlansTableHead(props: PlansTableProps) {
+  function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+    const createSortHandler =
+      (property: keyof utils.PlanData) => (event: React.MouseEvent<unknown>) => {
+        onRequestSort(event, property);
+      };
 
     return (
       <TableHead>
         <TableRow>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'normal'}
-              sortDirection={orderBy === headCell.id ? order : false}>
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}>
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
+          {utils.planHeadCells.map((headCell) => {
+            if ('archive' !== headCell.id)
+              return (
+                <TableCell
+                  key={headCell.id}
+                  align={headCell.numeric ? 'right' : 'left'}
+                  padding={headCell.disablePadding ? 'none' : 'normal'}
+                  sortDirection={orderBy === headCell.id ? order : false}>
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}>
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                      <Box component="span" sx={visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                    ) : null}
+                  </TableSortLabel>
+                </TableCell>
+              );
+          })}
+          <SystemRoleGuard
+            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+            <TableCell>Archive</TableCell>
+          </SystemRoleGuard>
           <TableCell padding="checkbox">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  indeterminate={numSelected > 0 && numSelected < rowCount}
-                  checked={rowCount > 0 && numSelected === rowCount}
-                  onChange={onSelectAllClick}
-                  inputProps={{
-                    'aria-label': 'select all plans'
-                  }}
-                />
-              }
-              label={
-                <Typography noWrap variant="inherit">
-                  Select All
-                </Typography>
-              }
-            />
+            <Tooltip title="Export all plans" placement="right">
+              <Checkbox
+                color="primary"
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={rowCount > 0 && numSelected === rowCount}
+                onChange={onSelectAllClick}
+                inputProps={{
+                  'aria-label': 'select all plans for export'
+                }}
+              />
+            </Tooltip>
           </TableCell>
         </TableRow>
       </TableHead>
@@ -272,25 +155,24 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             <strong>Export maps</strong>
           </Button>
         ) : (
-          <Tooltip title="Filter plans">
-            <IconButton>
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
+          <></>
         )}
       </Toolbar>
     );
   }
 
   function PlanTable() {
-    const [order, setOrder] = useState<Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof Data>('planName');
+    const [order, setOrder] = useState<utils.Order>('asc');
+    const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
     const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+    const handleRequestSort = (
+      event: React.MouseEvent<unknown>,
+      property: keyof utils.PlanData
+    ) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(property);
@@ -344,10 +226,9 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
     const visibleRows = React.useMemo(
       () =>
-        stableSort(rows, getComparator(order, orderBy)).slice(
-          page * rowsPerPage,
-          page * rowsPerPage + rowsPerPage
-        ),
+        utils
+          .stableSort(rows, utils.getComparator(order, orderBy))
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
       [order, orderBy, page, rowsPerPage]
     );
 
@@ -407,20 +288,31 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         label={row.statusLabel}
                       />
                     </TableCell>
+                    <SystemRoleGuard
+                      validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+                      <TableCell align="left">
+                        <Tooltip
+                          title={8 !== row.statusCode ? 'Archive' : 'Unarchive'}
+                          placement="right">
+                          <IconButton>
+                            {8 !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </SystemRoleGuard>
                     <TableCell padding="checkbox">
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId
-                            }}
-                            onClick={(event) => handleClick(event, row.id)}
-                          />
-                        }
-                        label={<Typography variant="inherit">Export</Typography>}
-                      />
+                      <Tooltip
+                        title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                        placement="right">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                          onClick={(event) => handleClick(event, row.id)}
+                        />
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );

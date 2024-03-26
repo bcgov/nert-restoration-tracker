@@ -140,7 +140,7 @@ const appTheme = createTheme(
       },
       MuiTableCell: {
         root: {
-          "&:first-child": {
+          "&:first-of-type": {
             paddingLeft: "24px",
           },
           "&:last-child": {
