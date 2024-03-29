@@ -43,25 +43,27 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
   const history = useHistory();
 
-  const rows = projects?.map((row, index) => {
-    return {
-      id: index,
-      projectId: row.project.project_id,
-      projectName: row.project.project_name,
-      authRef: row.permit.permits
-        .map((item: { permit_number: any }) => item.permit_number)
-        .join(', '),
-      org: row.contact.contacts.map((item) => item.agency).join(', '),
-      plannedStartDate: row.project.start_date,
-      plannedEndDate: row.project.end_date,
-      actualStartDate: row.project.start_date,
-      actualEndDate: row.project.end_date,
-      statusCode: row.project.status_code,
-      statusLabel: getStateLabelFromCode(row.project.status_code),
-      statusStyle: getStatusStyle(row.project.status_code),
-      archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
-    } as utils.ProjectData;
-  });
+  const rows = projects
+    ?.filter((proj) => proj.project.is_project)
+    .map((row, index) => {
+      return {
+        id: index,
+        projectId: row.project.project_id,
+        projectName: row.project.project_name,
+        authRef: row.permit.permits
+          .map((item: { permit_number: any }) => item.permit_number)
+          .join(', '),
+        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        plannedStartDate: row.project.start_date,
+        plannedEndDate: row.project.end_date,
+        actualStartDate: row.project.start_date,
+        actualEndDate: row.project.end_date,
+        statusCode: row.project.state_code,
+        statusLabel: getStateLabelFromCode(row.project.state_code),
+        statusStyle: getStatusStyle(row.project.state_code),
+        archive: row.project.state_code !== 8 ? 'Archive' : 'Unarchive'
+      } as utils.ProjectData;
+    });
 
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -140,7 +142,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             variant="h2"
             id="tableTitle"
             component="div">
-            Found {projects?.length} {projects?.length !== 1 ? 'projects' : 'project'}
+            Found {rows?.length} {rows?.length !== 1 ? 'projects' : 'project'}
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -300,7 +302,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         <Tooltip
                           title={8 !== row.statusCode ? 'Archive' : 'Unarchive'}
                           placement="right">
-                          <IconButton>
+                          <IconButton color={8 !== row.statusCode ? 'info' : 'warning'}>
                             {8 !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                           </IconButton>
                         </Tooltip>

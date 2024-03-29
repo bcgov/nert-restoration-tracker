@@ -4,7 +4,7 @@ import { getSpatialSearchResultsSQL } from './search-queries';
 
 describe('getSpatialSearchResultsSQL', () => {
   it('returns null when no systemUserId provided', () => {
-    const response = getSpatialSearchResultsSQL(false, (null as unknown) as number);
+    const response = getSpatialSearchResultsSQL(false, null as unknown as number);
 
     expect(response).to.be.null;
   });

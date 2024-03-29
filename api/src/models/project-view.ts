@@ -13,8 +13,10 @@ export type ProjectObject = {
 
 export class GetProjectData {
   project_id: number;
+  is_project: boolean;
   uuid: string;
   project_name: string;
+  state_code: number;
   start_date: string;
   end_date: string;
   objectives: string;
@@ -23,8 +25,10 @@ export class GetProjectData {
 
   constructor(projectData?: any) {
     this.project_id = projectData?.project_id || null;
+    this.is_project = projectData?.is_project || null;
     this.uuid = projectData?.uuid || null;
     this.project_name = projectData?.name || '';
+    this.state_code = projectData?.state_code || null;
     this.start_date = projectData?.start_date || null;
     this.end_date = projectData?.end_date || null;
     this.objectives = projectData?.objectives || '';
@@ -111,10 +115,9 @@ export class GetLocationData {
       locationData && locationData?.length && locationData[0]?.priority && locationData[0]?.priority === 'Y'
         ? 'true'
         : 'false';
-    this.region = (regionData && regionData?.length && regionData[0]?.objectid) || (('' as unknown) as number);
+    this.region = (regionData && regionData?.length && regionData[0]?.objectid) || ('' as unknown as number);
     this.range =
-      (rangeData && rangeData?.length && rangeData[0]?.caribou_population_unit_id) ||
-      ((undefined as unknown) as number);
+      (rangeData && rangeData?.length && rangeData[0]?.caribou_population_unit_id) || (undefined as unknown as number);
   }
 }
 

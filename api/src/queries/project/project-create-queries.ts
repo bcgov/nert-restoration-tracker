@@ -21,11 +21,15 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
   const sqlStatement: SQLStatement = SQL`
     INSERT INTO project (
       name,
+      is_project,
+      state_code,
       start_date,
       end_date,
       objectives
     ) VALUES (
       ${project.name},
+      ${project.is_project},
+      ${project.state_code},
       ${project.start_date},
       ${project.end_date},
       ${project.objectives}

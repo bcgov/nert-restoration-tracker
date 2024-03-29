@@ -3,10 +3,10 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
 import project_queries from '../../../../queries/project';
-import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as addFunding from './add';
 
 chai.use(sinonChai);
@@ -53,8 +53,8 @@ describe('add a funding source', () => {
       const result = addFunding.addFundingSource();
       await result(
         { ...sampleReq, params: { ...sampleReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -74,7 +74,7 @@ describe('add a funding source', () => {
     try {
       const result = addFunding.addFundingSource();
 
-      await result({ ...sampleReq, body: null }, (null as unknown) as any, (null as unknown) as any);
+      await result({ ...sampleReq, body: null }, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -100,7 +100,7 @@ describe('add a funding source', () => {
     try {
       const result = addFunding.addFundingSource();
 
-      await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+      await result(sampleReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -121,7 +121,7 @@ describe('add a funding source', () => {
     try {
       const result = addFunding.addFundingSource();
 
-      await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+      await result(sampleReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -147,7 +147,7 @@ describe('add a funding source', () => {
     try {
       const result = addFunding.addFundingSource();
 
-      await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+      await result(sampleReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -172,7 +172,7 @@ describe('add a funding source', () => {
 
     const result = addFunding.addFundingSource();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql({ id: 23 });
   });

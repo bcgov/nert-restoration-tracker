@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
 import { TaxonomyService } from '../../../services/taxonomy-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import { GET, getSpeciesFromIds } from './list';
 
 chai.use(sinonChai);
@@ -16,7 +16,7 @@ describe('list', () => {
     const ajv = new Ajv();
 
     it('is valid openapi v3 schema', () => {
-      expect(ajv.validateSchema((GET.apiDoc as unknown) as object)).to.be.true;
+      expect(ajv.validateSchema(GET.apiDoc as unknown as object)).to.be.true;
     });
   });
 
@@ -52,8 +52,8 @@ describe('list', () => {
 
       sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
 
-      const mock1 = ({ id: '1', label: 'something' } as unknown) as any;
-      const mock2 = ({ id: '2', label: 'anything' } as unknown) as any;
+      const mock1 = { id: '1', label: 'something' } as unknown as any;
+      const mock2 = { id: '2', label: 'anything' } as unknown as any;
 
       const getSpeciesFromIdsStub = sinon.stub(TaxonomyService.prototype, 'getSpeciesFromIds').resolves([mock1, mock2]);
 

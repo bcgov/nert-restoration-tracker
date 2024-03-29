@@ -66,7 +66,7 @@ describe('postTreatmentUnitSQL', () => {
 
 describe('postTreatmentDataSQL', () => {
   it('returns null response when null provided', () => {
-    const response = postTreatmentDataSQL((null as unknown) as number, (null as unknown) as number, null);
+    const response = postTreatmentDataSQL(null as unknown as number, null as unknown as number, null);
 
     expect(response).to.be.null;
   });
@@ -80,7 +80,7 @@ describe('postTreatmentDataSQL', () => {
 
 describe('postTreatmentTypeSQL', () => {
   it('returns null response when null  provided', () => {
-    const response = postTreatmentTypeSQL((null as unknown) as number, (null as unknown) as number);
+    const response = postTreatmentTypeSQL(null as unknown as number, null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -95,9 +95,9 @@ describe('postTreatmentTypeSQL', () => {
 describe('getTreatmentUnitExistSQL', () => {
   it('returns null response when null  provided', () => {
     const response = getTreatmentUnitExistSQL(
-      (null as unknown) as number,
-      (null as unknown) as number,
-      (null as unknown) as number
+      null as unknown as number,
+      null as unknown as number,
+      null as unknown as number
     );
 
     expect(response).to.be.null;
@@ -112,7 +112,7 @@ describe('getTreatmentUnitExistSQL', () => {
 
 describe('getTreatmentDataYearExistSQL', () => {
   it('returns null response when null  provided', () => {
-    const response = getTreatmentDataYearExistSQL((null as unknown) as number, (null as unknown) as number);
+    const response = getTreatmentDataYearExistSQL(null as unknown as number, null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -126,7 +126,7 @@ describe('getTreatmentDataYearExistSQL', () => {
 
 describe('getProjectTreatmentsSQL', () => {
   it('returns null response when null  provided', () => {
-    const response = getProjectTreatmentsSQL((null as unknown) as number);
+    const response = getProjectTreatmentsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -140,7 +140,7 @@ describe('getProjectTreatmentsSQL', () => {
 
 describe('getProjectTreatmentsYearsSQL', () => {
   it('returns null response when null  provided', () => {
-    const response = getProjectTreatmentsYearsSQL((null as unknown) as number);
+    const response = getProjectTreatmentsYearsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });

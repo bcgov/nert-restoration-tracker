@@ -3,8 +3,8 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { HTTPError } from '../../errors/custom-error';
 import { getRequestHandlerMocks } from '../../__mocks__/db';
+import { HTTPError } from '../../errors/custom-error';
 import * as notify from './send';
 
 chai.use(sinonChai);

@@ -3,9 +3,9 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
 import public_queries from '../../queries/public';
-import { getMockDBConnection } from '../../__mocks__/db';
 import * as projects from './projects';
 
 chai.use(sinonChai);
@@ -61,7 +61,7 @@ describe('getPublicProjectsList', () => {
 
     const result = projects.getPublicProjectsList();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql([
       {

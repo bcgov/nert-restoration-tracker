@@ -10,6 +10,7 @@ import ProjectFilter, {
   IProjectAdvancedFilters,
   ProjectAdvancedFiltersInitialValues
 } from 'components/search-project-filter/ProjectFilter';
+import { focusOptions, projectStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -221,62 +222,8 @@ export default function Projects() {
                   return { value: item.id, label: item.name };
                 }) || []
               }
-              status={[
-                {
-                  value: 1,
-                  label: 'PLANNING'
-                },
-                {
-                  value: 2,
-                  label: 'AUTHORIZATION'
-                },
-                {
-                  value: 3,
-                  label: 'ACTIVE'
-                },
-                {
-                  value: 4,
-                  label: 'REPORTING'
-                },
-                {
-                  value: 5,
-                  label: 'MONITORING'
-                },
-                {
-                  value: 6,
-                  label: 'REPORTING2'
-                },
-                {
-                  value: 7,
-                  label: 'COMPLETED'
-                },
-                {
-                  value: 8,
-                  label: 'ARCHIVED'
-                },
-                {
-                  value: 9,
-                  label: 'DRAFT'
-                }
-              ]}
-              focus={[
-                {
-                  value: 1,
-                  label: 'Healing the Land'
-                },
-                {
-                  value: 2,
-                  label: 'Healing the People'
-                },
-                {
-                  value: 3,
-                  label: 'Land Based Restoration Initiative'
-                },
-                {
-                  value: 4,
-                  label: 'Cultural or Community Investment Initiative'
-                }
-              ]}
+              status={projectStatusOptions}
+              focus={focusOptions}
               filterChipParams={filterChipValues}
             />
           </Formik>

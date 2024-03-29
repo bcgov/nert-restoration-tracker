@@ -3,10 +3,10 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
 import draft_queries from '../../../queries/project/draft';
-import { getMockDBConnection } from '../../../__mocks__/db';
 import * as deleteDraftProject from './delete';
 
 chai.use(sinonChai);
@@ -45,8 +45,8 @@ describe('delete a draft project', () => {
       const result = deleteDraftProject.deleteDraft();
       await result(
         { ...sampleReq, params: { ...sampleReq.params, draftId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -68,7 +68,7 @@ describe('delete a draft project', () => {
     try {
       const result = deleteDraftProject.deleteDraft();
 
-      await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+      await result(sampleReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -93,7 +93,7 @@ describe('delete a draft project', () => {
 
     const result = deleteDraftProject.deleteDraft();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql(1);
   });

@@ -16,7 +16,7 @@ import {
 
 describe('deleteIUCNSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteIUCNSQL((null as unknown) as number);
+    const response = deleteIUCNSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -30,7 +30,7 @@ describe('deleteIUCNSQL', () => {
 
 describe('deletePermitSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deletePermitSQL((null as unknown) as number);
+    const response = deletePermitSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -44,7 +44,7 @@ describe('deletePermitSQL', () => {
 
 describe('deleteIndigenousPartnershipsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteIndigenousPartnershipsSQL((null as unknown) as number);
+    const response = deleteIndigenousPartnershipsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -58,7 +58,7 @@ describe('deleteIndigenousPartnershipsSQL', () => {
 
 describe('deleteStakeholderPartnershipsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteStakeholderPartnershipsSQL((null as unknown) as number);
+    const response = deleteStakeholderPartnershipsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -72,7 +72,7 @@ describe('deleteStakeholderPartnershipsSQL', () => {
 
 describe('deleteProjectSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteProjectSQL((null as unknown) as number);
+    const response = deleteProjectSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -86,7 +86,7 @@ describe('deleteProjectSQL', () => {
 
 describe('deleteProjectFundingSourceSQL', () => {
   it('returns null response when null pfsId (project funding source) provided', () => {
-    const response = deleteProjectFundingSourceSQL((null as unknown) as number, (null as unknown) as number);
+    const response = deleteProjectFundingSourceSQL(null as unknown as number, null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -100,7 +100,7 @@ describe('deleteProjectFundingSourceSQL', () => {
 
 describe('deleteContactSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteContactSQL((null as unknown) as number);
+    const response = deleteContactSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -114,7 +114,7 @@ describe('deleteContactSQL', () => {
 
 describe('deleteProjectSpatialSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteProjectSpatialSQL((null as unknown) as number);
+    const response = deleteProjectSpatialSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -128,7 +128,7 @@ describe('deleteProjectSpatialSQL', () => {
 
 describe('deleteProjectRegionSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteProjectRegionSQL((null as unknown) as number);
+    const response = deleteProjectRegionSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -142,7 +142,7 @@ describe('deleteProjectRegionSQL', () => {
 
 describe('deleteProjectRangeSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteProjectRangeSQL((null as unknown) as number);
+    const response = deleteProjectRangeSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -156,7 +156,7 @@ describe('deleteProjectRangeSQL', () => {
 
 describe('deleteProjectSpeciesSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteProjectSpeciesSQL((null as unknown) as number);
+    const response = deleteProjectSpeciesSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });

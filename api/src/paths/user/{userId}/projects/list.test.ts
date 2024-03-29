@@ -2,11 +2,11 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
 import { ProjectService } from '../../../../services/project-service';
 import { SearchService } from '../../../../services/search-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
 import { getUserProjectsList } from './list';
 
 chai.use(sinonChai);
@@ -35,8 +35,8 @@ describe('list', () => {
         .resolves([{ project_id: 1 }, { project_id: 2 }]);
 
       const expectedResponse = [
-        ({ project_id: 1, project_name: 'project1' } as unknown) as any,
-        ({ project_id: 2, project_name: 'project2' } as unknown) as any
+        { project_id: 1, project_name: 'project1' } as unknown as any,
+        { project_id: 2, project_name: 'project2' } as unknown as any
       ];
 
       sinon.stub(ProjectService.prototype, 'getProjectsByIds').resolves(expectedResponse);

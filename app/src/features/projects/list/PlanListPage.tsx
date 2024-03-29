@@ -32,7 +32,7 @@ import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface'
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
-import { getFormattedDate } from 'utils/Utils';
+import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 
 interface IPlansListProps {
   plans: IGetPlanForViewResponse[];
@@ -43,21 +43,26 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
   const history = useHistory();
 
-  const rows = plans?.map((row, index) => {
-    return {
-      id: index,
-      planId: row.project.project_id,
-      planName: row.project.project_name.replace('Project', 'Plan'),
-      term: 'Annual',
-      org: row.contact.contacts.map((item) => item.agency).join(', '),
-      startDate: row.project.start_date,
-      endDate: row.project.end_date,
-      statusCode: row.project.status_code,
-      statusLabel: getStateLabelFromCode(row.project.status_code),
-      statusStyle: getStatusStyle(row.project.status_code),
-      archive: row.project.status_code !== 8 ? 'Archive' : 'Unarchive'
-    } as utils.PlanData;
-  });
+  const rows = plans
+    ?.filter((plan) => !plan.project.is_project)
+    .map((row, index) => {
+      return {
+        id: index,
+        planId: row.project.project_id,
+        planName: row.project.project_name,
+        term:
+          getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
+            ? 'Multi-Year'
+            : 'Annual',
+        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        startDate: row.project.start_date,
+        endDate: row.project.end_date,
+        statusCode: row.project.state_code,
+        statusLabel: getStateLabelFromCode(row.project.state_code),
+        statusStyle: getStatusStyle(row.project.state_code),
+        archive: row.project.state_code !== 8 ? 'Archive' : 'Unarchive'
+      } as utils.PlanData;
+    });
 
   function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -140,7 +145,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             variant="h2"
             id="tableTitle"
             component="div">
-            Found {plans?.length} {plans?.length !== 1 ? 'plans' : 'plan'}
+            Found {rows?.length} {rows?.length !== 1 ? 'plans' : 'plan'}
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -294,7 +299,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         <Tooltip
                           title={8 !== row.statusCode ? 'Archive' : 'Unarchive'}
                           placement="right">
-                          <IconButton>
+                          <IconButton color={8 !== row.statusCode ? 'info' : 'warning'}>
                             {8 !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                           </IconButton>
                         </Tooltip>
