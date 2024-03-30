@@ -16,7 +16,7 @@ describe('GetPartnershipsData', () => {
     let data: GetPartnershipsData;
 
     before(() => {
-      data = new GetPartnershipsData((null as unknown) as any[], (null as unknown) as any[]);
+      data = new GetPartnershipsData(null as unknown as any[], null as unknown as any[]);
     });
 
     it('sets indigenous_partnerships', function () {
@@ -105,7 +105,7 @@ describe('GetPartnershipsData', () => {
 describe('GetIUCNClassificationData', () => {
   describe('No values provided', () => {
     it('sets classification details', function () {
-      const iucnClassificationData = new GetIUCNClassificationData((null as unknown) as any[]);
+      const iucnClassificationData = new GetIUCNClassificationData(null as unknown as any[]);
 
       expect(iucnClassificationData.classificationDetails).to.eql([]);
     });
@@ -147,7 +147,7 @@ describe('GetContactData', () => {
     let projectContactData: GetContactData;
 
     before(() => {
-      projectContactData = new GetContactData((null as unknown) as any[]);
+      projectContactData = new GetContactData(null as unknown as any[]);
     });
 
     it('sets contacts', function () {
@@ -374,7 +374,7 @@ describe('GetPermitData', () => {
     let projectPermitData: GetPermitData;
 
     before(() => {
-      projectPermitData = new GetPermitData((null as unknown) as any[]);
+      projectPermitData = new GetPermitData(null as unknown as any[]);
     });
 
     it('sets permits', function () {
@@ -412,7 +412,7 @@ describe('GetFundingData', () => {
     let fundingData: GetFundingData;
 
     before(() => {
-      fundingData = new GetFundingData((null as unknown) as any[]);
+      fundingData = new GetFundingData(null as unknown as any[]);
     });
 
     it('sets project funding sources', function () {

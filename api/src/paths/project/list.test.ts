@@ -3,11 +3,11 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../__mocks__/db';
 import * as db from '../../database/db';
 import { HTTPError } from '../../errors/custom-error';
 import { ProjectService } from '../../services/project-service';
 import { SearchService } from '../../services/search-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../__mocks__/db';
 import { GET, getProjectList } from './list';
 
 chai.use(sinonChai);
@@ -17,7 +17,7 @@ describe('list', () => {
     const ajv = new Ajv();
 
     it('is valid openapi v3 schema', () => {
-      expect(ajv.validateSchema((GET.apiDoc as unknown) as object)).to.be.true;
+      expect(ajv.validateSchema(GET.apiDoc as unknown as object)).to.be.true;
     });
   });
 
@@ -56,8 +56,8 @@ describe('list', () => {
 
       sinon.stub(SearchService.prototype, 'findProjectIdsByCriteria').resolves([{ project_id: 1 }, { project_id: 2 }]);
 
-      const mockProject1 = ({ project: { project_id: 1 } } as unknown) as any;
-      const mockProject2 = ({ project: { project_id: 2 } } as unknown) as any;
+      const mockProject1 = { project: { project_id: 1 } } as unknown as any;
+      const mockProject2 = { project: { project_id: 2 } } as unknown as any;
 
       const getProjectsByIdsStub = sinon
         .stub(ProjectService.prototype, 'getProjectsByIds')

@@ -719,10 +719,16 @@ NOTE: there are conceptual problems with associating permits to projects early i
 CREATE TABLE project(
     project_id           integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     uuid                 uuid              DEFAULT public.gen_random_uuid(),
+    is_project           boolean           NOT NULL,
     name                 varchar(300),
+    brief_desc           varchar(3000)     DEFAULT 'Remove this default in db table' NOT NULL,
     objectives           varchar(3000)     NOT NULL,
-    start_date           date              NOT NULL,
+    start_date           date,
     end_date             date,
+    actual_start_date    date,
+    actual_end_date      date,
+    state_code           integer           NOT NULL,
+    people_involved      integer,
     publish_timestamp    TIMESTAMPTZ,
     create_date          timestamptz(6)    DEFAULT now() NOT NULL,
     create_user          integer           NOT NULL,
@@ -739,13 +745,25 @@ COMMENT ON COLUMN project.project_id IS 'System generated surrogate primary key 
 ;
 COMMENT ON COLUMN project.uuid IS 'The universally unique identifier for the record.'
 ;
-COMMENT ON COLUMN project.name IS 'Name given to a project.'
+COMMENT ON COLUMN project.is_project IS 'When true project, when false plan.'
+;
+COMMENT ON COLUMN project.name IS 'Name given to a project or plan.'
+;
+COMMENT ON COLUMN project.brief_desc IS 'Brief description of a project or plan.'
 ;
 COMMENT ON COLUMN project.objectives IS 'The objectives for the project.'
 ;
-COMMENT ON COLUMN project.start_date IS 'The start date of the project.'
+COMMENT ON COLUMN project.start_date IS 'The planned start date of a project or a plan.'
 ;
-COMMENT ON COLUMN project.end_date IS 'The end date of the project.'
+COMMENT ON COLUMN project.end_date IS 'The planned end date of a project or plan.'
+;
+COMMENT ON COLUMN project.actual_start_date IS 'The actual start date of a project.'
+;
+COMMENT ON COLUMN project.actual_end_date IS 'The actual end date of a project.'
+;
+COMMENT ON COLUMN project.state_code IS 'The state of a project or plan within their corresponding workflows.'
+;
+COMMENT ON COLUMN project.people_involved IS 'The number of people involved in a Healing the People project.'
 ;
 COMMENT ON COLUMN project.publish_timestamp IS 'A timestamp that indicates that the project metadata has been approved for discovery. If the timestamp is not null then project metadata is public. If the timestamp is null the project metadata is not yet public.'
 ;

@@ -4,12 +4,12 @@ import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../__mocks__/db';
 import { getKnexQueryBuilder } from '../database/db';
 import { HTTPError } from '../errors/custom-error';
 import { GetAttachmentsData } from '../models/project-attachments';
 import { queries } from '../queries/queries';
 import * as file_utils from '../utils/file-utils';
-import { getMockDBConnection } from '../__mocks__/db';
 import { AttachmentService } from './attachment-service';
 
 chai.use(sinonChai);
@@ -41,7 +41,7 @@ describe('AttachmentService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectAttachmentSQL').returns(SQL`valid sql`);
@@ -64,7 +64,7 @@ describe('AttachmentService', () => {
 
     it('returns row on success', async () => {
       const mockRowObj = [{ id: 123, revision_count: 0 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectAttachmentSQL').returns(SQL`valid sql`);
@@ -106,7 +106,7 @@ describe('AttachmentService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'putProjectAttachmentSQL').returns(SQL`valid sql`);
@@ -127,7 +127,7 @@ describe('AttachmentService', () => {
 
     it('returns row on success', async () => {
       const mockRowObj = [{ id: 123, revision_count: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'putProjectAttachmentSQL').returns(SQL`valid sql`);
@@ -168,7 +168,7 @@ describe('AttachmentService', () => {
 
     it('should return true when file with the same name already exist', async () => {
       const mockRowObj = [{ id: 123 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentByFileNameSQL').returns(SQL`valid sql`);
@@ -184,7 +184,7 @@ describe('AttachmentService', () => {
     });
 
     it('should return false when file with the same name does not exist', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: [] } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentByFileNameSQL').returns(SQL`valid sql`);
@@ -252,7 +252,7 @@ describe('AttachmentService', () => {
     });
 
     it('should return an empty array when no attachments are found', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: [] } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentsKnex').returns(getKnexQueryBuilder());
@@ -269,7 +269,7 @@ describe('AttachmentService', () => {
     it('should return an array when attachments are found', async () => {
       const mockRowObj = [{ id: 123, file_name: 'sample', create_date: Date.now(), file_size: 1 }];
       const expectedResult = new GetAttachmentsData([{ ...mockRowObj[0], url: 'https://somthing.com/anything' }]);
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ knex: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentsKnex').returns(getKnexQueryBuilder());
@@ -309,7 +309,7 @@ describe('AttachmentService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'deleteProjectAttachmentSQL').returns(SQL`valid sql`);
@@ -330,11 +330,11 @@ describe('AttachmentService', () => {
 
     it('returns void on success', async () => {
       const mockRowObj = [{ key: 123 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'deleteProjectAttachmentSQL').returns(SQL`valid sql`);
-      sinon.stub(file_utils, 'deleteFileFromS3').resolves((null as any) as DeleteObjectOutput);
+      sinon.stub(file_utils, 'deleteFileFromS3').resolves(null as any as DeleteObjectOutput);
 
       const projectId = 1;
       const attachmentId = 1;
@@ -353,7 +353,7 @@ describe('AttachmentService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ knex: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentsKnex').returns(getKnexQueryBuilder());
@@ -374,11 +374,11 @@ describe('AttachmentService', () => {
 
     it('returns void on success', async () => {
       const mockRowObj = [{ key: 123 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ knex: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentsKnex').returns(getKnexQueryBuilder());
-      sinon.stub(file_utils, 'deleteFileFromS3').resolves((null as any) as DeleteObjectOutput);
+      sinon.stub(file_utils, 'deleteFileFromS3').resolves(null as any as DeleteObjectOutput);
       sinon.stub(AttachmentService.prototype, 'deleteAttachment').resolves();
 
       const projectId = 1;
@@ -415,7 +415,7 @@ describe('AttachmentService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ knex: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentsKnex').returns(getKnexQueryBuilder());
@@ -435,11 +435,11 @@ describe('AttachmentService', () => {
 
     it('returns void on success', async () => {
       const mockRowObj = [{ key: 123 }, { key: 234 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ knex: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectAttachmentsKnex').returns(getKnexQueryBuilder());
-      sinon.stub(file_utils, 'deleteFileFromS3').resolves((null as any) as DeleteObjectOutput);
+      sinon.stub(file_utils, 'deleteFileFromS3').resolves(null as any as DeleteObjectOutput);
 
       const projectId = 1;
 

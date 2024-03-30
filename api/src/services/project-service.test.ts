@@ -5,13 +5,13 @@ import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../__mocks__/db';
 import { HTTPError } from '../errors/custom-error';
 import * as projectCreateModels from '../models/project-create';
 import * as projectUpdateModels from '../models/project-update';
 import * as projectViewModels from '../models/project-view';
 import { IUpdateProject } from '../paths/project/{projectId}/update';
 import { queries } from '../queries/queries';
-import { getMockDBConnection } from '../__mocks__/db';
 import { ProjectService } from './project-service';
 
 chai.use(sinonChai);
@@ -88,7 +88,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ sql: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'getAllUserProjectsSQL').returns(SQL`valid sql`);
@@ -108,7 +108,7 @@ describe('ProjectService', () => {
     });
 
     it('returns null if there are no rows', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: [] } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ sql: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'getAllUserProjectsSQL').returns(SQL`valid sql`);
@@ -125,7 +125,7 @@ describe('ProjectService', () => {
 
     it('returns the first row on success', async () => {
       const mockRowObj = { id: 123 };
-      const mockQueryResponse = ({ rows: [mockRowObj] } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: [mockRowObj] } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ sql: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'getAllUserProjectsSQL').returns(SQL`valid sql`);
@@ -165,7 +165,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'getAllProjectParticipantsSQL').returns(SQL`valid sql`);
@@ -184,7 +184,7 @@ describe('ProjectService', () => {
     });
 
     it('returns empty array if there are no rows', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: [] } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'getAllProjectParticipantsSQL').returns(SQL`valid sql`);
@@ -200,7 +200,7 @@ describe('ProjectService', () => {
 
     it('returns rows on success', async () => {
       const mockRowObj = [{ id: 123 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'getAllProjectParticipantsSQL').returns(SQL`valid sql`);
@@ -241,7 +241,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = ({ rowCount: 0 } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rowCount: 0 } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.projectParticipation, 'addProjectRoleByRoleIdSQL').returns(SQL`valid sql`);
@@ -262,7 +262,7 @@ describe('ProjectService', () => {
     });
 
     it('should not throw an error on success', async () => {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rowCount: 1 } as unknown as QueryResult<any>;
       const mockQuery = sinon.fake.resolves(mockQueryResponse);
       const mockDBConnection = getMockDBConnection({ query: mockQuery });
 
@@ -307,7 +307,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -326,7 +326,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when there are no rows', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: [] } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -347,7 +347,7 @@ describe('ProjectService', () => {
     it('returns row on success', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -368,7 +368,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -387,7 +387,7 @@ describe('ProjectService', () => {
     it('returns row on success', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -408,7 +408,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -427,7 +427,7 @@ describe('ProjectService', () => {
     it('returns row on success when isPublic is false', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -494,7 +494,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -513,7 +513,7 @@ describe('ProjectService', () => {
     it('returns row on success when isPublic is false', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -530,7 +530,7 @@ describe('ProjectService', () => {
     it('returns empty permit data when isPublic is true', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -590,7 +590,7 @@ describe('ProjectService', () => {
     it('returns row on success', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -609,7 +609,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -628,7 +628,7 @@ describe('ProjectService', () => {
     it('returns row on success', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -649,7 +649,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no geometry data', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -692,7 +692,7 @@ describe('ProjectService', () => {
     it('returns row on success', async () => {
       const mockRowObj = [{ project_id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -713,7 +713,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no species data', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -732,7 +732,7 @@ describe('ProjectService', () => {
     it('returns row on success', async () => {
       const mockRowObj = [{ focal_species: [1], focal_species_names: ['name'] }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -754,8 +754,8 @@ describe('ProjectService', () => {
 
     it('returns project id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponseGeneral = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
-      const mockQueryResponseForAddProjectRole = ({ rowCount: 1 } as unknown) as QueryResult<any>;
+      const mockQueryResponseGeneral = { rows: mockRowObj } as unknown as QueryResult<any>;
+      const mockQueryResponseForAddProjectRole = { rowCount: 1 } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async (a) =>
           a === 'valid sql projectParticipation' ? mockQueryResponseForAddProjectRole : mockQueryResponseGeneral,
@@ -786,8 +786,8 @@ describe('ProjectService', () => {
 
     it('works as expected with full project details', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponseGeneral = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
-      const mockQueryResponseForAddProjectRole = ({ rowCount: 1 } as unknown) as QueryResult<any>;
+      const mockQueryResponseGeneral = { rows: mockRowObj } as unknown as QueryResult<any>;
+      const mockQueryResponseForAddProjectRole = { rowCount: 1 } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async (a) =>
           a === 'valid sql projectParticipation' ? mockQueryResponseForAddProjectRole : mockQueryResponseGeneral,
@@ -841,7 +841,7 @@ describe('ProjectService', () => {
           stakeholder_partnerships: ['Canada Nature Fund', 'BC Parks Living Labs']
         },
         location: {
-          geometry: [({} as unknown) as Feature],
+          geometry: [{} as unknown as Feature],
           priority: true,
           region: 3640,
           range: 1234
@@ -882,7 +882,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectData = {
@@ -904,7 +904,7 @@ describe('ProjectService', () => {
     it('returns project id on success', async () => {
       const mockRowObj = [{ id: 1 }];
 
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'getProjectSQL').returns(SQL`valid sql`);
@@ -944,7 +944,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectBoundarySQL').returns(SQL`valid sql`);
@@ -964,7 +964,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectBoundarySQL').returns(SQL`valid sql`);
@@ -985,7 +985,7 @@ describe('ProjectService', () => {
 
     it('returns project id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectBoundarySQL').returns(SQL`valid sql`);
@@ -1026,7 +1026,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectFundingSourceSQL').returns(SQL`valid sql`);
@@ -1046,7 +1046,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectFundingSourceSQL').returns(SQL`valid sql`);
@@ -1067,7 +1067,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectFundingSourceSQL').returns(SQL`valid sql`);
@@ -1089,7 +1089,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const indigenousNationId = 1;
@@ -1108,7 +1108,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const indigenousNationId = 1;
@@ -1128,7 +1128,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const stakeholderPartner = 'something';
@@ -1147,7 +1147,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const stakeholderPartner = 'something';
@@ -1168,10 +1168,10 @@ describe('ProjectService', () => {
 
     it('should throw a 400 response when failed to identify system user ID', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
-        systemUserId: () => (null as any) as number
+        systemUserId: () => null as any as number
       });
 
       const permitNumber = '123456';
@@ -1190,7 +1190,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
         systemUserId: () => 1
@@ -1213,7 +1213,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
         systemUserId: () => 1
@@ -1256,7 +1256,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectBoundarySQL').returns(SQL`valid sql`);
@@ -1277,7 +1277,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'postProjectBoundarySQL').returns(SQL`valid sql`);
@@ -1300,10 +1300,10 @@ describe('ProjectService', () => {
 
     it('should throw a 400 response when failed to identify system user ID', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
-        systemUserId: () => (null as any) as number
+        systemUserId: () => null as any as number
       });
 
       const projectId = 1;
@@ -1322,7 +1322,7 @@ describe('ProjectService', () => {
 
     it('should throw a 400 error when no sql statement produced', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
         systemUserId: () => 1
@@ -1345,7 +1345,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = (null as unknown) as QueryResult<any>;
+      const mockQueryResponse = null as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
         systemUserId: () => 1
@@ -1374,10 +1374,10 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when failed to identify system user ID', async () => {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rowCount: 1 } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
-        systemUserId: () => (null as any) as number
+        systemUserId: () => null as any as number
       });
 
       const species_id = 1;
@@ -1395,7 +1395,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 error when no sql statement produced', async () => {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rowCount: 1 } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
         systemUserId: () => 1
@@ -1418,7 +1418,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no rowCount', async () => {
-      const mockQueryResponse = ({ rowCount: null } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rowCount: null } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({
         query: async () => mockQueryResponse,
         systemUserId: () => 1
@@ -1447,7 +1447,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const regionNumber = 1;
@@ -1466,7 +1466,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const regionNumber = 1;
@@ -1486,7 +1486,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const rangeNumber = 1;
@@ -1505,7 +1505,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const rangeNumber = 1;
@@ -1525,7 +1525,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -1553,7 +1553,7 @@ describe('ProjectService', () => {
 
     it('returns id on success', async () => {
       const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = ({ rows: mockRowObj } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       const projectId = 1;
@@ -1673,7 +1673,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when no sql statement produced', async () => {
-      const mockQueryResponse = ({ noId: true } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'putProjectSQL').returns(null);
@@ -1699,7 +1699,7 @@ describe('ProjectService', () => {
     });
 
     it('should throw a 400 response when no sql statement produced', async () => {
-      const mockQueryResponse = ({ rowCount: null } as unknown) as QueryResult<any>;
+      const mockQueryResponse = { rowCount: null } as unknown as QueryResult<any>;
       const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
       sinon.stub(queries.project, 'putProjectSQL').returns(SQL`valid sql`);
@@ -2328,7 +2328,7 @@ describe('ProjectService', () => {
       const entities: IUpdateProject = {
         ...entitiesInitValue,
         location: {
-          geometry: [({} as unknown) as Feature],
+          geometry: [{} as unknown as Feature],
           priority: 'true',
           region: 3640,
           range: 1234
@@ -2392,7 +2392,7 @@ describe('ProjectService', () => {
       const entities: IUpdateProject = {
         ...entitiesInitValue,
         location: {
-          geometry: [({} as unknown) as Feature],
+          geometry: [{} as unknown as Feature],
           priority: 'true',
           region: 3640,
           range: 1234
@@ -2453,7 +2453,7 @@ describe('ProjectService', () => {
       const entities: IUpdateProject = {
         ...entitiesInitValue,
         location: {
-          geometry: [({} as unknown) as Feature],
+          geometry: [{} as unknown as Feature],
           priority: 'true',
           region: 3640,
           range: 1234

@@ -3,11 +3,11 @@ import { Feature } from 'geojson';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
 import { GetTreatmentData } from '../../../../models/treatment-view';
 import { TreatmentService } from '../../../../services/treatment-service';
-import { getMockDBConnection } from '../../../../__mocks__/db';
 import { getTreatments } from './list';
 
 chai.use(sinonChai);
@@ -45,8 +45,8 @@ describe('getTreatments', () => {
     try {
       await getTreatments()(
         { ...sampleReq, params: { ...sampleReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -91,7 +91,7 @@ describe('getTreatments', () => {
       .stub(TreatmentService.prototype, 'getTreatmentsByCriteria')
       .resolves(new GetTreatmentData(sampleTreatmentList));
 
-    await getTreatments()(sampleReq, sampleRes as any, (null as unknown) as any);
+    await getTreatments()(sampleReq, sampleRes as any, null as unknown as any);
 
     const resultItem = {
       treatmentList: [

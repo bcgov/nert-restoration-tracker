@@ -1,4 +1,4 @@
-const states = {
+export const states = {
   PLANNING: 'PLANNING',
   AUTHORIZATION: 'AUTHORIZATION',
   ACTIVE: 'ACTIVE',

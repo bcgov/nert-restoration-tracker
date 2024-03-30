@@ -3,10 +3,10 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../../../../../__mocks__/db';
 import * as db from '../../../../../database/db';
 import { HTTPError } from '../../../../../errors/custom-error';
 import project_queries from '../../../../../queries/project';
-import { getMockDBConnection } from '../../../../../__mocks__/db';
 import * as deleteFundingSource from './delete';
 
 chai.use(sinonChai);
@@ -46,8 +46,8 @@ describe('delete a funding source', () => {
       const result = deleteFundingSource.deleteFundingSource();
       await result(
         { ...sampleReq, params: { ...sampleReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -63,8 +63,8 @@ describe('delete a funding source', () => {
       const result = deleteFundingSource.deleteFundingSource();
       await result(
         { ...sampleReq, params: { ...sampleReq.params, pfsId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -86,7 +86,7 @@ describe('delete a funding source', () => {
     try {
       const result = deleteFundingSource.deleteFundingSource();
 
-      await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+      await result(sampleReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -111,7 +111,7 @@ describe('delete a funding source', () => {
 
     const result = deleteFundingSource.deleteFundingSource();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql(1);
   });

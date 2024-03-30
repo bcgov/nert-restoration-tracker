@@ -3,9 +3,9 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection, getRequestHandlerMocks } from '../__mocks__/db';
 import * as db from '../database/db';
 import administrative_queries from '../queries/administrative-activity';
-import { getMockDBConnection, getRequestHandlerMocks } from '../__mocks__/db';
 import * as administrative_activities from './administrative-activities';
 
 chai.use(sinonChai);

@@ -4,7 +4,7 @@ import multer from 'multer';
 import { OpenAPIV3 } from 'openapi-types';
 import swaggerUIExpress from 'swagger-ui-express';
 import { defaultPoolConfig, initDBPool } from './database/db';
-import { ensureHTTPError, HTTPErrorType } from './errors/custom-error';
+import { HTTPErrorType, ensureHTTPError } from './errors/custom-error';
 import { rootAPIDoc } from './openapi/root-api-doc';
 import { authenticateRequest } from './request-handlers/security/authentication';
 import { getLogger } from './utils/logger';

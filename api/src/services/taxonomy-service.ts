@@ -6,7 +6,7 @@ import {
   SearchResponse
 } from '@elastic/elasticsearch/lib/api/types';
 import { getLogger } from '../utils/logger';
-import { ElasticSearchIndices, ESService } from './es-service';
+import { ESService, ElasticSearchIndices } from './es-service';
 
 const defaultLog = getLogger('services/taxonomy-service');
 

@@ -48,12 +48,12 @@ describe('getAdministrativeActivitiesSQL', () => {
 
 describe('postAdministrativeActivitySQL', () => {
   it('Null systemUserId', () => {
-    const response = postAdministrativeActivitySQL((null as unknown) as number, {});
+    const response = postAdministrativeActivitySQL(null as unknown as number, {});
     expect(response).to.be.null;
   });
 
   it('has null data', () => {
-    const response = postAdministrativeActivitySQL((null as unknown) as number, null);
+    const response = postAdministrativeActivitySQL(null as unknown as number, null);
     expect(response).to.be.null;
   });
 
@@ -65,7 +65,7 @@ describe('postAdministrativeActivitySQL', () => {
 
 describe('countPendingAdministrativeActivitiesSQL', () => {
   it('has a null userIdentifier', () => {
-    const response = countPendingAdministrativeActivitiesSQL((null as unknown) as string);
+    const response = countPendingAdministrativeActivitiesSQL(null as unknown as string);
     expect(response).to.be.null;
   });
 
