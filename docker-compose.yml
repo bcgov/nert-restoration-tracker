@@ -114,7 +114,7 @@ services:
       - REACT_APP_KEYCLOAK_HOST=${KEYCLOAK_HOST}
       - REACT_APP_KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - REACT_APP_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-      - REACT_MAPTILER_API_KEY=1234
+      - REACT_APP_MAPTILER_API_KEY=${MAPTILER_API_KEY}
     volumes:
       - ./app:/opt/app-root/src
       - /opt/app-root/src/node_modules # prevents local node_modules overriding container node_modules

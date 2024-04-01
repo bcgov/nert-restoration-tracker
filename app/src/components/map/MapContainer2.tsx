@@ -1,11 +1,8 @@
-import dotenv from 'dotenv';
 import { FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
-
-dotenv.config();
 
 const { Map, NavigationControl } = maplibre;
 
@@ -21,14 +18,7 @@ export interface IMapContainerProps {
   markers?: any;
 }
 
-// Typescript needs this to be declared
-// declare const MAPTILER_API_KEY: string;
-
-// TODO: Not working yet
-const MAPTILER_API_KEY = process.env.MAPTILER_API_KEY;
-
-console.log(MAPTILER_API_KEY);
-console.log(process.env);
+const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
 
 const pageStyle = {
   width: '100%',
@@ -97,6 +87,7 @@ const drawWells = (map: maplibre.Map) => {
 let map: maplibre.Map;
 
 const initializeMap = (mapId: string, center: any, zoom: number, markers: any) => {
+  console.log('markers in initializeMap', markers);
   map = new Map({
     container: mapId,
     style: '/styles/hybrid.json',
@@ -192,7 +183,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   useEffect(() => {
     initializeMap(mapId, center, zoom, markers);
-    console.log('markers in useEffect', markers);
   });
 
   return <div id={mapId} style={pageStyle}></div>;
