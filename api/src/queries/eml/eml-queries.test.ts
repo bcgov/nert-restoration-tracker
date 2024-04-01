@@ -4,7 +4,7 @@ import { getIUCNClassificationsDetailsSQL, getProjectFirstNationsSQL } from './e
 
 describe('getProjectFirstNationsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = getProjectFirstNationsSQL((null as unknown) as number);
+    const response = getProjectFirstNationsSQL(null as unknown as number);
 
     expect(response).to.not.be.null;
   });
@@ -18,7 +18,7 @@ describe('getProjectFirstNationsSQL', () => {
 
 describe('getIUCNClassificationsDetailsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = getIUCNClassificationsDetailsSQL((null as unknown) as number);
+    const response = getIUCNClassificationsDetailsSQL(null as unknown as number);
 
     expect(response).to.not.be.null;
   });

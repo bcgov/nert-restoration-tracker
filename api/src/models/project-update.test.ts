@@ -62,7 +62,7 @@ describe('PutIUCNData', () => {
     let data: PutIUCNData;
 
     before(() => {
-      data = new PutIUCNData((null as unknown) as any[]);
+      data = new PutIUCNData(null as unknown as any[]);
     });
 
     it('sets classification details', () => {

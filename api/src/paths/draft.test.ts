@@ -4,10 +4,10 @@ import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../__mocks__/db';
 import * as db from '../database/db';
 import { HTTPError } from '../errors/custom-error';
 import draft_queries from '../queries/project/draft';
-import { getMockDBConnection } from '../__mocks__/db';
 import * as draft from './draft';
 
 chai.use(sinonChai);
@@ -50,7 +50,7 @@ describe('draft', () => {
       try {
         const result = draft.createDraft();
 
-        await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+        await result(sampleReq, null as unknown as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -70,7 +70,7 @@ describe('draft', () => {
       try {
         const result = draft.createDraft();
 
-        await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+        await result(sampleReq, null as unknown as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -91,8 +91,8 @@ describe('draft', () => {
 
         await result(
           { ...sampleReq, body: { ...sampleReq.body, name: null } },
-          (null as unknown) as any,
-          (null as unknown) as any
+          null as unknown as any,
+          null as unknown as any
         );
         expect.fail();
       } catch (actualError) {
@@ -114,8 +114,8 @@ describe('draft', () => {
 
         await result(
           { ...sampleReq, body: { ...sampleReq.body, data: null } },
-          (null as unknown) as any,
-          (null as unknown) as any
+          null as unknown as any,
+          null as unknown as any
         );
         expect.fail();
       } catch (actualError) {
@@ -147,7 +147,7 @@ describe('draft', () => {
       try {
         const result = draft.createDraft();
 
-        await result(sampleReq, sampleRes as any, (null as unknown) as any);
+        await result(sampleReq, sampleRes as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -173,7 +173,7 @@ describe('draft', () => {
       try {
         const result = draft.createDraft();
 
-        await result(sampleReq, sampleRes as any, (null as unknown) as any);
+        await result(sampleReq, sampleRes as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -205,7 +205,7 @@ describe('draft', () => {
 
       const result = draft.createDraft();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult.id).to.equal(1);
       expect(actualResult.date).to.equal('2020/05/05');
@@ -234,7 +234,7 @@ describe('draft', () => {
 
       const result = draft.createDraft();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult.id).to.equal(1);
       expect(actualResult.date).to.equal('2020/04/04');
@@ -253,7 +253,7 @@ describe('draft', () => {
       try {
         const result = draft.createDraft();
 
-        await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+        await result(sampleReq, null as unknown as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).message).to.equal(expectedError.message);
@@ -279,8 +279,8 @@ describe('draft', () => {
 
         await result(
           { ...sampleReq, body: { ...sampleReq.body, id: null } },
-          (null as unknown) as any,
-          (null as unknown) as any
+          null as unknown as any,
+          null as unknown as any
         );
         expect.fail();
       } catch (actualError) {
@@ -302,8 +302,8 @@ describe('draft', () => {
 
         await result(
           { ...sampleReq, body: { ...sampleReq.body, name: null } },
-          (null as unknown) as any,
-          (null as unknown) as any
+          null as unknown as any,
+          null as unknown as any
         );
         expect.fail();
       } catch (actualError) {
@@ -325,8 +325,8 @@ describe('draft', () => {
 
         await result(
           { ...sampleReq, body: { ...sampleReq.body, data: null } },
-          (null as unknown) as any,
-          (null as unknown) as any
+          null as unknown as any,
+          null as unknown as any
         );
         expect.fail();
       } catch (actualError) {
@@ -347,7 +347,7 @@ describe('draft', () => {
       try {
         const result = draft.updateDraft();
 
-        await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+        await result(sampleReq, null as unknown as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -378,7 +378,7 @@ describe('draft', () => {
       try {
         const result = draft.updateDraft();
 
-        await result(sampleReq, sampleRes as any, (null as unknown) as any);
+        await result(sampleReq, sampleRes as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -404,7 +404,7 @@ describe('draft', () => {
       try {
         const result = draft.updateDraft();
 
-        await result(sampleReq, sampleRes as any, (null as unknown) as any);
+        await result(sampleReq, sampleRes as any, null as unknown as any);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
@@ -436,7 +436,7 @@ describe('draft', () => {
 
       const result = draft.updateDraft();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult.id).to.equal(1);
       expect(actualResult.date).to.equal('2020/05/05');
@@ -465,7 +465,7 @@ describe('draft', () => {
 
       const result = draft.updateDraft();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult.id).to.equal(1);
       expect(actualResult.date).to.equal('2020/04/04');

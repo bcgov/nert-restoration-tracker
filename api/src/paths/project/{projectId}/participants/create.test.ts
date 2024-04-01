@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
 import { UserService } from '../../../../services/user-service';
-import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as create_project_participants from './create';
 
 chai.use(sinonChai);
@@ -34,8 +34,8 @@ describe('createProjectParticipants', () => {
       const result = create_project_participants.createProjectParticipants();
       await result(
         { ...sampleReq, params: { ...sampleReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -51,8 +51,8 @@ describe('createProjectParticipants', () => {
       const result = create_project_participants.createProjectParticipants();
       await result(
         { ...sampleReq, body: { ...sampleReq.body, participants: [] } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -73,7 +73,7 @@ describe('createProjectParticipants', () => {
 
     try {
       const result = create_project_participants.createProjectParticipants();
-      await result({ ...sampleReq }, (null as unknown) as any, (null as unknown) as any);
+      await result({ ...sampleReq }, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).message).to.equal('an error');

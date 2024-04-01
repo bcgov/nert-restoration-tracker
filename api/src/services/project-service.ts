@@ -138,25 +138,17 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async getProjectById(projectId: number, isPublic = false): Promise<ProjectObject> {
-    const [
-      projectData,
-      speciesData,
-      iucnData,
-      contactData,
-      permitData,
-      partnershipsData,
-      fundingData,
-      locationData
-    ] = await Promise.all([
-      this.getProjectData(projectId),
-      this.getSpeciesData(projectId),
-      this.getIUCNClassificationData(projectId),
-      this.getContactData(projectId, isPublic),
-      this.getPermitData(projectId, isPublic),
-      this.getPartnershipsData(projectId),
-      this.getFundingData(projectId),
-      this.getLocationData(projectId)
-    ]);
+    const [projectData, speciesData, iucnData, contactData, permitData, partnershipsData, fundingData, locationData] =
+      await Promise.all([
+        this.getProjectData(projectId),
+        this.getSpeciesData(projectId),
+        this.getIUCNClassificationData(projectId),
+        this.getContactData(projectId, isPublic),
+        this.getPermitData(projectId, isPublic),
+        this.getPartnershipsData(projectId),
+        this.getFundingData(projectId),
+        this.getLocationData(projectId)
+      ]);
 
     return {
       project: projectData,

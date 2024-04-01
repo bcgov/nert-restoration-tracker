@@ -66,6 +66,22 @@ export const getFormattedDate = (dateFormat: DATE_FORMAT, date: string): string 
 };
 
 /**
+ * Get the difference in months between 2 dates.
+ *
+ * @param {string} startDate ISO 8601 date string
+ * @param {string} endDate ISO 8601 date string
+ * @return {number} 0 if start date is after end date, otherwise number of months
+ */
+export const getDateDiffInMonths = (startDate: string, endDate: string): number => {
+  const d1 = new Date(startDate);
+  const d2 = new Date(endDate);
+
+  if (d2 <= d1) return 0;
+
+  return Math.max((d2.getFullYear() - d1.getFullYear()) * 12 + d2.getMonth() - d1.getMonth(), 0);
+};
+
+/**
  * Get a formatted time string.
  *
  * @param {TIME_FORMAT} timeFormat

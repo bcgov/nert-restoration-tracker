@@ -16,7 +16,7 @@ The Northeast Restoration Tracker (NERT) will provide an integrated, science-bas
 
 ## Install Node/NPM
 
-- Requires Node version 14+
+- Requires Node version 20+
 - https://nodejs.org/en/download/
 
 ## Install Git

@@ -6,7 +6,7 @@ describe('getProjectSQL', () => {
   describe('Null project id param provided', () => {
     it('returns null', () => {
       // force the function to accept a null value
-      const response = getProjectSQL((null as unknown) as number);
+      const response = getProjectSQL(null as unknown as number);
 
       expect(response).to.be.null;
     });

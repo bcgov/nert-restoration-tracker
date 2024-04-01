@@ -231,7 +231,8 @@ export interface IGetPlanForViewResponse {
 }
 
 export interface IGetProjectForViewResponseDetails {
-  status_code: number;
+  state_code: number;
+  is_project: boolean;
   project_id: number;
   project_name: string;
   start_date: string;

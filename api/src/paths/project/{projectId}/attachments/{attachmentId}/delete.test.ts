@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import * as db from '../../../../../database/db';
 import { HTTPError } from '../../../../../errors/custom-error';
 import { AttachmentService } from '../../../../../services/attachment-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import * as delete_attachment from './delete';
 
 chai.use(sinonChai);
@@ -48,8 +48,8 @@ describe('deleteAttachment', () => {
 
       await result(
         { ...sampleReq, params: { ...sampleReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -66,8 +66,8 @@ describe('deleteAttachment', () => {
 
       await result(
         { ...sampleReq, params: { ...sampleReq.params, attachmentId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -88,7 +88,7 @@ describe('deleteAttachment', () => {
 
     const result = delete_attachment.deleteAttachment();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.equal(null);
   });

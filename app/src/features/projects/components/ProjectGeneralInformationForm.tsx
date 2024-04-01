@@ -3,7 +3,7 @@ import CustomTextField from 'components/fields/CustomTextField';
 import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/ProjectStartEndDateFields';
+import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { useFormikContext } from 'formik';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { debounce } from 'lodash-es';
@@ -13,6 +13,8 @@ import yup from 'utils/YupSchema';
 export interface IProjectGeneralInformationForm {
   project: {
     project_name: string;
+    is_project: boolean;
+    state_code: number;
     start_date: string;
     end_date: string;
     objectives: string;
@@ -25,6 +27,8 @@ export interface IProjectGeneralInformationForm {
 export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformationForm = {
   project: {
     project_name: '',
+    is_project: true,
+    state_code: 0,
     start_date: '',
     end_date: '',
     objectives: ''
@@ -102,12 +106,16 @@ const ProjectGeneralInformationForm: React.FC = () => {
               }}
             />
           </Grid>
-          <StartEndDateFields
+          <ProjectStartEndDateFields
             formikProps={formikProps}
-            startName={'project.start_date'}
-            endName={'project.end_date'}
-            startRequired={true}
-            endRequired={false}
+            plannedStartName={'project.start_date'}
+            plannedEndName={'project.end_date'}
+            plannedStartRequired={false}
+            plannedEndRequired={false}
+            actualStartName={'actual_start_date'}
+            actualEndName={'actual_end_date'}
+            actualStartRequired={false}
+            actualEndRequired={false}
           />
           <Grid item xs={12}>
             <Grid item xs={12}>

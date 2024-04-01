@@ -2,11 +2,11 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
 import { AttachmentService } from '../../../../services/attachment-service';
 import * as file_utils from '../../../../utils/file-utils';
-import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as upload from './upload';
 
 chai.use(sinonChai);
@@ -56,8 +56,8 @@ describe('uploadMedia', () => {
 
       await result(
         { ...mockReq, params: { ...mockReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -72,7 +72,7 @@ describe('uploadMedia', () => {
     try {
       const result = upload.uploadAttachment();
 
-      await result({ ...mockReq, files: [] }, (null as unknown) as any, (null as unknown) as any);
+      await result({ ...mockReq, files: [] }, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -93,7 +93,7 @@ describe('uploadMedia', () => {
     try {
       const result = upload.uploadAttachment();
 
-      await result({ ...mockReq, files: ['file1'] }, (null as unknown) as any, (null as unknown) as any);
+      await result({ ...mockReq, files: ['file1'] }, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -114,7 +114,7 @@ describe('uploadMedia', () => {
     try {
       const result = upload.uploadAttachment();
 
-      await result(mockReq, (null as unknown) as any, (null as unknown) as any);
+      await result(mockReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -135,7 +135,7 @@ describe('uploadMedia', () => {
 
     const result = upload.uploadAttachment();
 
-    await result(mockReq, mockRes as any, (null as unknown) as any);
+    await result(mockReq, mockRes as any, null as unknown as any);
 
     expect(actualResult).to.eql({ id: 1, revision_count: 0 });
   });

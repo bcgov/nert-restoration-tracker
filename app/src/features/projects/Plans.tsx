@@ -10,6 +10,7 @@ import PlanFilter, {
   IPlanAdvancedFilters,
   PlanAdvancedFiltersInitialValues
 } from 'components/search-plan-filter/PlanFilter';
+import { focusOptions, planStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -218,42 +219,8 @@ export default function Plans() {
                   return { value: item.id, label: item.name };
                 }) || []
               }
-              status={[
-                {
-                  value: 1,
-                  label: 'PLANNING'
-                },
-                {
-                  value: 7,
-                  label: 'COMPLETED'
-                },
-                {
-                  value: 8,
-                  label: 'ARCHIVED'
-                },
-                {
-                  value: 9,
-                  label: 'DRAFT'
-                }
-              ]}
-              focus={[
-                {
-                  value: 1,
-                  label: 'Healing the Land'
-                },
-                {
-                  value: 2,
-                  label: 'Healing the People'
-                },
-                {
-                  value: 3,
-                  label: 'Land Based Restoration Initiative'
-                },
-                {
-                  value: 4,
-                  label: 'Cultural or Community Investment Initiative'
-                }
-              ]}
+              status={planStatusOptions}
+              focus={focusOptions}
               filterChipParams={filterChipValues}
             />
           </Formik>

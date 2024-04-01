@@ -49,13 +49,23 @@ POST.apiDoc = {
                 project_name: {
                   type: 'string'
                 },
+                is_project: {
+                  type: 'boolean',
+                  description: 'True is project, False is plan'
+                },
+                state_code: {
+                  type: 'number',
+                  description: 'Workflow project or plan state'
+                },
                 start_date: {
                   type: 'string',
-                  description: 'ISO 8601 date string'
+                  description: 'ISO 8601 date string',
+                  nullable: true
                 },
                 end_date: {
                   type: 'string',
-                  description: 'ISO 8601 date string'
+                  description: 'ISO 8601 date string',
+                  nullable: true
                 },
                 objectives: {
                   type: 'string'

@@ -5,7 +5,7 @@ import { putProjectSQL } from './project-update-queries';
 
 describe('putProjectSQL', () => {
   it('returns null when an invalid projectId is provided', () => {
-    const response = putProjectSQL((null as unknown) as number, null, 1);
+    const response = putProjectSQL(null as unknown as number, null, 1);
 
     expect(response).to.be.null;
   });

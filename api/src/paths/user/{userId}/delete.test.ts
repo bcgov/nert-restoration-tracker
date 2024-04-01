@@ -3,11 +3,11 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import SQL from 'sql-template-strings';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
 import project_participation_queries from '../../../queries/project-participation';
 import { UserService } from '../../../services/user-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import * as delete_endpoint from './delete';
 
 chai.use(sinonChai);
