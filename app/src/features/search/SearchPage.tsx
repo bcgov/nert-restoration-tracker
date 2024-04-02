@@ -2,7 +2,8 @@ import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer';
+// import MapContainer from 'components/map/MapContainer';
+import MapContainer from 'components/map/MapContainer2';
 import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
@@ -89,12 +90,7 @@ const SearchPage: React.FC = () => {
    */
   return (
     <Box sx={{ height: '100%' }}>
-      <MapContainer
-        mapId="search_boundary_map"
-        fullScreenControl={false}
-        scrollWheelZoom={true}
-        markers={geometries}
-      />
+      <MapContainer mapId="search_boundary_map" center={[-124, 57]} zoom={6} markers={geometries} />
     </Box>
   );
 };
