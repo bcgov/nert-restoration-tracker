@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
 
-const { Map, NavigationControl } = maplibre;
+const { Map, Popup, NavigationControl } = maplibre;
 
 export interface IMapDrawControlsProps {
   features?: FeatureCollection[];
@@ -84,10 +84,39 @@ const drawWells = (map: maplibre.Map) => {
   });
 };
 
+/*
+ * This function converts the feature data to GeoJSON
+ * @param array - the feature data
+ * @returns object - the GeoJSON object
+ */
+const convertToGeoJSON = (features: any) => {
+  const geojson = {
+    type: 'FeatureCollection',
+    features: features.map((feature: any) => {
+      const f = feature.popup.props.featureData;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: f.geometry[0].type,
+          coordinates: f.geometry[0].coordinates
+        },
+        properties: {
+          id: f.id,
+          name: f.name
+        }
+      };
+    })
+  };
+  return geojson;
+};
+
 let map: maplibre.Map;
 
 const initializeMap = (mapId: string, center: any, zoom: number, markers: any) => {
   console.log('markers in initializeMap', markers);
+  const markerGeoJSON = convertToGeoJSON(markers);
+  console.log('geojson', markerGeoJSON);
+
   map = new Map({
     container: mapId,
     style: '/styles/hybrid.json',
@@ -134,6 +163,27 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
         'line-color': 'yellow',
         'line-width': 2
       }
+    });
+
+    /* Add the markers */
+    map.addSource('markers', {
+      type: 'geojson',
+      data: markerGeoJSON as FeatureCollection
+    });
+    map.addLayer({
+      id: 'markers',
+      type: 'circle',
+      source: 'markers',
+      paint: {
+        'circle-radius': 5,
+        'circle-color': 'yellow'
+      }
+    });
+    /* Add the popup */
+    map.on('click', 'markers', (e: any) => {
+      const prop = e.features![0].properties;
+
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
     });
 
     /* Protected Areas as WMS layers from the BCGW */
