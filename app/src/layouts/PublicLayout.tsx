@@ -3,10 +3,9 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Footer from 'components/layout/Footer';
 import Header from 'components/layout/Header';
-import { DialogContextProvider } from 'contexts/dialogContext';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 
-const PublicLayout: React.FC = (props) => {
+const PublicLayout: React.FC = (props: PropsWithChildren) => {
   function isSupportedBrowser() {
     if (
       navigator.userAgent.indexOf('Chrome') !== -1 ||
@@ -21,25 +20,23 @@ const PublicLayout: React.FC = (props) => {
   }
 
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <CssBaseline />
-      <DialogContextProvider>
-        {!isSupportedBrowser() && (
-          <Alert severity="error">
-            This is an unsupported browser. Some functionality may not work as expected.
-          </Alert>
-        )}
+      {!isSupportedBrowser() && (
+        <Alert severity="error">
+          This is an unsupported browser. Some functionality may not work as expected.
+        </Alert>
+      )}
 
-        <Header />
+      <Header />
 
-        <Box component="main" flex="1 1 auto" py={4} sx={{ padding: 0 }}>
-          {React.Children.map(props.children, (child: any) => {
-            return React.cloneElement(child);
-          })}
-        </Box>
+      <Box component="main" flex="1 1 auto" py={4} sx={{ padding: 0 }}>
+        {React.Children.map(props.children, (child: any) => {
+          return React.cloneElement(child);
+        })}
+      </Box>
 
-        <Footer />
-      </DialogContextProvider>
+      <Footer />
     </Box>
   );
 };

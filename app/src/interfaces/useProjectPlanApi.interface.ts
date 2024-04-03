@@ -201,6 +201,10 @@ export interface IGetProjectForUpdateResponsePartnerships {
   stakeholder_partnerships: string[];
 }
 
+export interface IProjectsListProps {
+  projects: IGetProjectForViewResponse[];
+}
+
 /**
  * An interface for a single instance of project metadata, for view-only use cases.
  *
@@ -218,6 +222,9 @@ export interface IGetProjectForViewResponse {
   partnerships: IGetProjectForViewResponsePartnerships;
 }
 
+export interface IPlansListProps {
+  plans: IGetPlanForViewResponse[];
+}
 export interface IGetPlanForViewResponse {
   // [OI] this will require updating to the plan data model
   project: IGetProjectForViewResponseDetails;

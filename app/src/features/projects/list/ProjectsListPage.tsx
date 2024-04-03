@@ -28,15 +28,11 @@ import { SystemRoleGuard } from 'components/security/Guards';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-
-interface IProjectsListProps {
-  projects: IGetProjectForViewResponse[];
-}
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;

@@ -21,6 +21,7 @@ import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
+import { alpha } from '@mui/material/styles';
 
 const nert_version = process.env.NERT_VERSION || '0.0.0.0';
 const nert_environment =
@@ -98,7 +99,8 @@ const pageStyles = {
       textDecoration: 'none'
     },
     '& a:hover': {
-      textDecoration: 'underline'
+      textDecoration: 'underline',
+      backgroundColor: (theme: { palette: { primary: { main: string; }; action: { activatedOpacity: number; }; }; }) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
     },
     '& a:first-of-type': {
       marginLeft: '-1rem'

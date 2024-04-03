@@ -13,7 +13,7 @@ import React from 'react';
 import { Router } from 'react-router';
 import { codes } from 'test-helpers/code-helpers';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
-import PublicProjectPage from './PublicProjectPage';
+import PublicProjectPageView from './PublicProjectsView';
 
 const history = createMemoryHistory({ initialEntries: ['/admin/projects/1'] });
 
@@ -58,7 +58,7 @@ describe('PublicProjectPage', () => {
       const { asFragment } = render(
         <DialogContextProvider>
           <Router history={history}>
-            <PublicProjectPage />
+            <PublicProjectPageView />
           </Router>
         </DialogContextProvider>
       );
@@ -78,7 +78,7 @@ describe('PublicProjectPage', () => {
     const { getByTestId } = render(
       <DialogContextProvider>
         <Router history={history}>
-          <PublicProjectPage />
+          <PublicProjectPageView />
         </Router>
       </DialogContextProvider>
     );
@@ -104,7 +104,7 @@ describe('PublicProjectPage', () => {
     const { asFragment, findByText } = render(
       <DialogContextProvider>
         <Router history={history}>
-          <PublicProjectPage />
+          <PublicProjectPageView />
         </Router>
       </DialogContextProvider>
     );
@@ -128,7 +128,7 @@ describe('PublicProjectPage', () => {
     const { asFragment, findByText } = render(
       <DialogContextProvider>
         <Router history={history}>
-          <PublicProjectPage />
+          <PublicProjectPageView />
         </Router>
       </DialogContextProvider>
     );
@@ -154,7 +154,7 @@ describe('PublicProjectPage', () => {
 
     const { asFragment, findByText } = render(
       <Router history={history}>
-        <PublicProjectPage />
+        <PublicProjectPageView />
       </Router>
     );
 
