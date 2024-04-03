@@ -10,7 +10,7 @@ import * as projects from './projects';
 
 chai.use(sinonChai);
 
-describe('getPublicProjectsList', () => {
+describe('getPublicProjectsPlansList', () => {
   afterEach(() => {
     sinon.restore();
   });
@@ -59,7 +59,7 @@ describe('getPublicProjectsList', () => {
 
     sinon.stub(public_queries, 'getPublicProjectListSQL').returns(SQL`some query`);
 
-    const result = projects.getPublicProjectsList();
+    const result = projects.getPublicProjectsPlansList();
 
     await result(sampleReq, sampleRes as any, null as unknown as any);
 

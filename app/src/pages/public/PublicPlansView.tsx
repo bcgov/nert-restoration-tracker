@@ -39,12 +39,15 @@ const pageStyles = {
   }
 };
 
+// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View 
+// currently only shows the same project view not the plan view.
+
 /**
- * Page to display a single Public (published) Project.
+ * Page to display a single Public (published) Plans.
  *
  * @return {*}
  */
-const PublicProjectPage = () => {
+export default function PublicPlansView() {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
 
@@ -257,6 +260,4 @@ const PublicProjectPage = () => {
       </Dialog>
     </>
   );
-};
-
-export default PublicProjectPage;
+}

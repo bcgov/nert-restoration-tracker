@@ -19,11 +19,11 @@ export const GET: Operation = [
       ]
     };
   }),
-  getProjectList()
+  getProjectsPlansList()
 ];
 
 GET.apiDoc = {
-  description: 'Gets a list of projects based on search parameters if passed in.',
+  description: 'Gets a list of projects and plans based on search parameters if passed in.',
   tags: ['projects'],
   security: [
     {
@@ -185,7 +185,7 @@ GET.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'Project response object.',
+      description: 'Project Plans response object.',
       content: {
         'application/json': {
           schema: {
@@ -451,8 +451,9 @@ GET.apiDoc = {
  *
  * @returns {RequestHandler}
  */
-export function getProjectList(): RequestHandler {
+export function getProjectsPlansList(): RequestHandler {
   return async (req, res) => {
+    defaultLog.debug({ label: 'getProjectsPlansList' });
     const connection = getDBConnection(req['keycloak_token']);
 
     const searchCriteria: ProjectSearchCriteria = req.query || {};
@@ -476,7 +477,7 @@ export function getProjectList(): RequestHandler {
 
       return res.status(200).json(projects);
     } catch (error) {
-      defaultLog.error({ label: 'getProjectList', message: 'error', error });
+      defaultLog.error({ label: 'getProjectsPlansList', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {

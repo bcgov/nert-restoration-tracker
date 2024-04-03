@@ -1,187 +1,342 @@
-import CheckBox from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
+import { mdiExport } from '@mdi/js';
+import Icon from '@mdi/react';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
+import { alpha } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { visuallyHidden } from '@mui/utils';
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { ProjectStatusType } from 'constants/misc';
-import dayjs from 'dayjs';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectsListResponse } from 'interfaces/useProjectPlanApi.interface';
-import React, { useEffect, useState } from 'react';
+import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
-const pageStyles = {
-  linkButton: {
-    textAlign: 'left'
-  },
-  chipActive: {
-    color: 'white',
-    fontWeight: 600,
-    backgroundColor: '#A2B9E2'
-  },
-  chipPublishedCompleted: {
-    color: 'white',
-    backgroundColor: '#70AD47'
-  },
-  chipDraft: {
-    color: 'white',
-    backgroundColor: '#A6A6A6'
-  }
-};
-
-const PublicProjectsListPage = () => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
+  const { projects } = props;
   const history = useHistory();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [projects, setProjects] = useState<IGetProjectsListResponse[]>([]);
+  const rows = projects
+    ?.filter((proj) => proj.project.is_project)
+    .map((row, index) => {
+      return {
+        id: index,
+        projectId: row.project.project_id,
+        projectName: row.project.project_name,
+        authRef: row.permit.permits
+          .map((item: { permit_number: any }) => item.permit_number)
+          .join(', '),
+        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        plannedStartDate: row.project.start_date,
+        plannedEndDate: row.project.end_date,
+        actualStartDate: row.project.start_date,
+        actualEndDate: row.project.end_date,
+        statusCode: row.project.state_code,
+        statusLabel: getStateLabelFromCode(row.project.state_code),
+        statusStyle: getStatusStyle(row.project.state_code),
+        archive: ''
+      } as utils.ProjectData;
+    });
 
-  useEffect(() => {
-    const getProjects = async () => {
-      const projectsResponse = await restorationTrackerApi.public.project.getProjectsList();
+  function ProjectsTableHead(props: utils.ProjectsTableProps) {
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const createSortHandler =
+      (property: keyof utils.ProjectData) => (event: React.MouseEvent<unknown>) => {
+        onRequestSort(event, property);
+      };
 
-      setProjects(() => {
-        setIsLoading(false);
-        return projectsResponse;
-      });
+    return (
+      <TableHead>
+        <TableRow>
+          {utils.projectHeadCells.map((headCell) => {
+            if ('archive' !== headCell.id)
+              return (
+                <TableCell
+                  key={headCell.id}
+                  align={headCell.numeric ? 'right' : 'left'}
+                  padding={headCell.disablePadding ? 'none' : 'normal'}
+                  sortDirection={orderBy === headCell.id ? order : false}>
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}>
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                      <Box component="span" sx={visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                    ) : null}
+                  </TableSortLabel>
+                </TableCell>
+              );
+          })}
+          <TableCell padding="checkbox">
+            <Tooltip title="Export all projects" placement="right">
+              <Checkbox
+                color="primary"
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={rowCount > 0 && numSelected === rowCount}
+                onChange={onSelectAllClick}
+                inputProps={{
+                  'aria-label': 'select all projects for export'
+                }}
+              />
+            </Tooltip>
+          </TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  }
+
+  function ProjectsTableToolbar(props: utils.TableToolbarProps) {
+    const { numSelected } = props;
+
+    return (
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+          })
+        }}>
+        {numSelected > 0 ? (
+          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+            {numSelected} {numSelected !== 1 ? 'projects' : 'project'} selected to export
+          </Typography>
+        ) : (
+          <Typography
+            sx={{ mx: '0.5rem', flex: '1 1 100%' }}
+            variant="h2"
+            id="tableTitle"
+            component="div">
+            Found {rows?.length} {rows?.length !== 1 ? 'projects' : 'project'}
+          </Typography>
+        )}
+        {numSelected > 0 ? (
+          <Button
+            sx={{ height: '3rem', width: '11rem' }}
+            color="primary"
+            variant="outlined"
+            disableElevation
+            data-testid="export-project-button"
+            aria-label={'export projects area map'}
+            startIcon={<Icon path={mdiExport} size={1} />}>
+            <strong>Export maps</strong>
+          </Button>
+        ) : (
+          <></>
+        )}
+      </Toolbar>
+    );
+  }
+
+  function PublicProjectsTable() {
+    const [order, setOrder] = useState<utils.Order>('asc');
+    const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
+    const [selected, setSelected] = useState<readonly number[]>([]);
+    const [page, setPage] = useState(0);
+    const [dense, setDense] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const handleRequestSort = (
+      event: React.MouseEvent<unknown>,
+      property: keyof utils.ProjectData
+    ) => {
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
     };
 
-    if (isLoading) {
-      getProjects();
-    }
-  }, [restorationTrackerApi, isLoading]);
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.checked) {
+        const newSelected = rows.map((n) => n.id);
+        setSelected(newSelected);
+        return;
+      }
+      setSelected([]);
+    };
 
-  const getProjectStatusType = (projectData: IGetProjectsListResponse): ProjectStatusType => {
-    if (projectData.end_date && dayjs(projectData.end_date).endOf('day').isBefore(dayjs())) {
-      return ProjectStatusType.COMPLETED;
-    }
+    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+      const selectedIndex = selected.indexOf(id);
+      let newSelected: readonly number[] = [];
 
-    return ProjectStatusType.ACTIVE;
-  };
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, id);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1)
+        );
+      }
+      setSelected(newSelected);
+    };
 
-  const getChipIcon = (statusType: ProjectStatusType) => {
-    let chipLabel;
-    let chipStatusClass;
+    const handleChangePage = (event: unknown, newPage: number) => {
+      setPage(newPage);
+    };
 
-    if (ProjectStatusType.ACTIVE === statusType) {
-      chipLabel = 'Active';
-      chipStatusClass = pageStyles.chipActive;
-    } else if (ProjectStatusType.COMPLETED === statusType) {
-      chipLabel = 'Completed';
-      chipStatusClass = pageStyles.chipPublishedCompleted;
-    } else if (ProjectStatusType.DRAFT === statusType) {
-      chipLabel = 'Draft';
-      chipStatusClass = pageStyles.chipDraft;
-    }
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
 
-    return <Chip size="small" sx={chipStatusClass} label={chipLabel} />;
-  };
+    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setDense(event.target.checked);
+    };
 
-  const navigateToPublicProjectPage = (id: number) => {
-    history.push(`/projects/${id}`);
-  };
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
-  return (
-    <Card>
-      <Box mt={1} mb={1} sx={{ paddingTop: '20px' }}>
-        <Typography variant="h1">Projects</Typography>
-        <Typography variant="body1" color="textSecondary">
-          BC restoration projects and related data.
-        </Typography>
-      </Box>
-      <Paper>
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+    const visibleRows = React.useMemo(
+      () =>
+        utils
+          .stableSort(rows, utils.getComparator(order, orderBy))
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      [order, orderBy, page, rowsPerPage]
+    );
+
+    return (
+      <Box sx={{ width: '100%' }}>
+        <ProjectsTableToolbar numSelected={selected.length} />
         <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Project Name</TableCell>
-                <TableCell>Authorization Ref.</TableCell>
-                <TableCell>Organization</TableCell>
-                <TableCell>Planned Start Date</TableCell>
-                <TableCell>Planned End Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell width="105" align="left">
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        id="select_all_projects_export"
-                        name="is_select_all_projects_export"
-                        aria-label="Select All Projects to Export"
-                        icon={<CheckBoxOutlineBlank fontSize="small" />}
-                        checkedIcon={<CheckBox fontSize="small" />}
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={dense ? 'small' : 'medium'}>
+            <ProjectsTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {visibleRows.map((row, index) => {
+                const isItemSelected = isSelected(row.id);
+                const labelId = `projects-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={isItemSelected}
+                    sx={{ cursor: 'pointer' }}>
+                    <TableCell component="th" id={labelId} scope="row" padding="normal">
+                      <Link
+                        data-testid={row.projectName}
+                        underline="always"
+                        component="button"
+                        sx={{ textAlign: 'left' }}
+                        variant="body2"
+                        onClick={() => history.push(`/projects/${row.projectId}`)}>
+                        {row.projectName}
+                      </Link>
+                    </TableCell>
+                    <TableCell align="left">{row.authRef}</TableCell>
+                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualStartDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedEndDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualEndDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      <Chip
+                        size="small"
+                        sx={getStatusStyle(row.statusCode)}
+                        label={row.statusLabel}
                       />
-                    }
-                    label={
-                      <Typography noWrap variant="inherit">
-                        Select All
-                      </Typography>
-                    }
-                  />
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody data-testid="project-table">
-              {!projects?.length && (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <Box display="flex" justifyContent="center">
-                      No Results
-                    </Box>
-                  </TableCell>
+                    </TableCell>
+                    <TableCell padding="checkbox">
+                      <Tooltip
+                        title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                        placement="right">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                          onClick={(event) => handleClick(event, row.id)}
+                        />
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * emptyRows
+                  }}>
+                  <TableCell colSpan={9} />
                 </TableRow>
               )}
-              {projects?.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    <Link
-                      data-testid={row.name}
-                      underline="always"
-                      component="button"
-                      sx={pageStyles.linkButton}
-                      variant="body2"
-                      onClick={() => navigateToPublicProjectPage(row.id)}>
-                      {row.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{row.permits_list}</TableCell>
-                  <TableCell>{row.contact_agency_list}</TableCell>
-                  <TableCell>
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.start_date)}
-                  </TableCell>
-                  <TableCell>
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.end_date)}
-                  </TableCell>
-                  <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
-                  <TableCell>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          icon={<CheckBoxOutlineBlank fontSize="small" />}
-                          checkedIcon={<CheckBox fontSize="small" />}
-                        />
-                      }
-                      label={<Typography variant="inherit">Export</Typography>}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
+        <Box display="flex" justifyContent="space-between" sx={{ backgroundColor: '#E9FBFF' }}>
+          <FormControlLabel
+            sx={{ ml: '0.5rem' }}
+            control={<Switch size="small" checked={dense} onChange={handleChangeDense} />}
+            label={<Typography variant="caption">Dense padding</Typography>}
+          />
+          <TablePagination
+            sx={{ backgroundColor: '#E9FBFF' }}
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Box>
+      </Box>
+    );
+  }
+
+  /**
+   * Displays project list.
+   */
+  return (
+    <Card>
+      <PublicProjectsTable />
     </Card>
   );
 };

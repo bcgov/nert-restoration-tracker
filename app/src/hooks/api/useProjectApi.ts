@@ -8,7 +8,6 @@ import {
   IGetProjectAttachmentsResponse,
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponse,
-  IGetProjectsListResponse,
   IGetProjectTreatmentsResponse,
   IGetUserProjectsListResponse,
   IPlanAdvancedFilterRequest,
@@ -481,12 +480,23 @@ export default useProjectApi;
  */
 export const usePublicProjectApi = (axios: AxiosInstance) => {
   /**
-   * Get public facing (published) projects list.
+   * Get projects list (potentially based on filter criteria).
    *
-   * @return {*}  {Promise<IGetProjectsListResponse[]>}
+   * @param {IProjectAdvancedFilterRequest} filterFieldData
+   * @return {*}  {Promise<IGetProjectForViewResponse[]>}
    */
-  const getProjectsList = async (): Promise<IGetProjectsListResponse[]> => {
-    const { data } = await axios.get(`/api/public/projects`);
+  const getProjectsList = async (
+    filterFieldData?: IProjectAdvancedFilterRequest
+  ): Promise<IGetProjectForViewResponse[]> => {
+    const { data } = await axios.get(`/api/public/projects`, {
+      params: filterFieldData,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
+      }
+    });
 
     return data;
   };
