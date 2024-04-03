@@ -144,7 +144,16 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       type: 'raster-dem',
       url: `https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=${MAPTILER_API_KEY}`
     });
-    map.setTerrain({ source: 'maptiler.raster-dem' });
+
+    /*
+      If there is no auth token for the terrain, catch the error.
+      Otherwise the rest of the layers will not load.
+     */
+    try {
+      map.setTerrain({ source: 'maptiler.raster-dem' });
+    } catch (err) {
+      console.log('Error setting terrain:', err);
+    }
 
     /* The boundary layer */
     map.addSource('ne_boundary', {
