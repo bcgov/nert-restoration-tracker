@@ -113,9 +113,9 @@ const convertToGeoJSON = (features: any) => {
 let map: maplibre.Map;
 
 const initializeMap = (mapId: string, center: any, zoom: number, markers: any) => {
-  console.log('markers in initializeMap', markers);
+  if (markers.length === 0) return;
+
   const markerGeoJSON = convertToGeoJSON(markers);
-  console.log('geojson', markerGeoJSON);
 
   map = new Map({
     container: mapId,
@@ -152,7 +152,7 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
     try {
       map.setTerrain({ source: 'maptiler.raster-dem' });
     } catch (err) {
-      console.log('Error setting terrain:', err);
+      console.error('Error setting terrain:', err);
     }
 
     /* The boundary layer */
@@ -180,19 +180,72 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       data: markerGeoJSON as FeatureCollection
     });
     map.addLayer({
-      id: 'markers',
+      id: 'markers.polygons',
+      type: 'fill',
+      source: 'markers',
+      filter: ['==', '$type', 'Polygon'],
+      paint: {
+        'fill-color': 'yellow',
+        'fill-opacity': 0.4
+      }
+    });
+    map.addLayer({
+      id: 'markers.lines',
+      type: 'line',
+      source: 'markers',
+      filter: ['==', '$type', 'LineString'],
+      paint: {
+        'line-color': 'yellow',
+        'line-width': 3
+      }
+    });
+    map.addLayer({
+      id: 'markers.points',
       type: 'circle',
       source: 'markers',
+      filter: ['==', '$type', 'Point'],
       paint: {
-        'circle-radius': 5,
-        'circle-color': 'yellow'
+        'circle-color': 'yellow',
+        'circle-radius': 5
       }
     });
     /* Add the popup */
-    map.on('click', 'markers', (e: any) => {
+    map.on('click', 'markers.polygons', (e: any) => {
       const prop = e.features![0].properties;
 
       new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+    });
+    map.on('mousemove', 'markers.polygons', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markers.polygons', () => {
+      map.getCanvas().style.cursor = '';
+    });
+
+    /* Add popup for the lines */
+    map.on('click', 'markers.lines', (e: any) => {
+      const prop = e.features![0].properties;
+
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+    });
+    map.on('mousemove', 'markers.lines', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markers.lines', () => {
+      map.getCanvas().style.cursor = '';
+    });
+
+    /* Add popup for the points */
+    map.on('click', 'markers.points', (e: any) => {
+      const prop = e.features![0].properties;
+
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+    });
+    map.on('mousemove', 'markers.points', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markers.points', () => {
+      map.getCanvas().style.cursor = '';
     });
 
     /* Protected Areas as WMS layers from the BCGW */
