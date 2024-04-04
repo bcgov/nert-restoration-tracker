@@ -174,7 +174,7 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       }
     });
 
-    /* Add the markers */
+    /*****************Project/Plans********************/
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection
@@ -247,6 +247,7 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
     map.on('mouseleave', 'markers.points', () => {
       map.getCanvas().style.cursor = '';
     });
+    /**************************************************/
 
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
