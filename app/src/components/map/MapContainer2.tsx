@@ -16,6 +16,7 @@ export interface IMapContainerProps {
   center?: any;
   zoom?: any;
   markers?: any;
+  layerVisibility?: any;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -29,7 +30,7 @@ const pageStyle = {
  * This function draws the wells on the map
  * @param map - the map object
  */
-const drawWells = (map: maplibre.Map) => {
+const drawWells = (map: maplibre.Map, wells: any) => {
   /* The following are the URLs to the geojson data */
   const orphanedWellsURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_WELL_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
@@ -47,6 +48,9 @@ const drawWells = (map: maplibre.Map) => {
     id: 'orphanedWellsLayer',
     type: 'circle',
     source: 'orphanedWells',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 5,
       'circle-color': 'red'
@@ -62,6 +66,9 @@ const drawWells = (map: maplibre.Map) => {
     id: 'orphanedActivitiesLayer',
     type: 'circle',
     source: 'orphanedActivities',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 5,
       'circle-color': 'blue'
@@ -77,6 +84,9 @@ const drawWells = (map: maplibre.Map) => {
     id: 'surfaceStateLayer',
     type: 'circle',
     source: 'surfaceState',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 5,
       'circle-color': 'green'
@@ -112,8 +122,17 @@ const convertToGeoJSON = (features: any) => {
 
 let map: maplibre.Map;
 
-const initializeMap = (mapId: string, center: any, zoom: number, markers: any) => {
+const initializeMap = (
+  mapId: string,
+  center: any,
+  zoom: number,
+  markers: any,
+  layerVisibility?: any
+) => {
   if (markers.length === 0) return;
+
+  const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
+  console.log(boundary, wells, projects, wildlife, indigenous);
 
   const markerGeoJSON = convertToGeoJSON(markers);
 
@@ -166,7 +185,8 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       source: 'ne_boundary',
       layout: {
         'line-join': 'round',
-        'line-cap': 'round'
+        'line-cap': 'round',
+        visibility: boundary[0] ? 'visible' : 'none'
       },
       paint: {
         'line-color': 'yellow',
@@ -184,6 +204,9 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       type: 'fill',
       source: 'markers',
       filter: ['==', '$type', 'Polygon'],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none'
+      },
       paint: {
         'fill-color': 'yellow',
         'fill-opacity': 0.4
@@ -194,6 +217,9 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       type: 'line',
       source: 'markers',
       filter: ['==', '$type', 'LineString'],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none'
+      },
       paint: {
         'line-color': 'yellow',
         'line-width': 3
@@ -204,6 +230,9 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       type: 'circle',
       source: 'markers',
       filter: ['==', '$type', 'Point'],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none'
+      },
       paint: {
         'circle-color': 'yellow',
         'circle-radius': 5
@@ -213,7 +242,10 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
     map.on('click', 'markers.polygons', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+      new Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
     });
     map.on('mousemove', 'markers.polygons', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -226,7 +258,10 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
     map.on('click', 'markers.lines', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+      new Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
     });
     map.on('mousemove', 'markers.lines', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -239,7 +274,10 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
     map.on('click', 'markers.points', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+      new Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
     });
     map.on('mousemove', 'markers.points', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -262,6 +300,9 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       id: 'wms-wildlife-areas',
       type: 'raster',
       source: 'wildlife-areas',
+      layout: {
+        visibility: wildlife[0] ? 'visible' : 'none'
+      },
       paint: {
         'raster-opacity': 0.5
       }
@@ -282,21 +323,33 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       id: 'wms-indigenous-areas',
       type: 'raster',
       source: 'indigenous-areas',
+      layout: {
+        visibility: indigenous[0] ? 'visible' : 'none'
+      },
       paint: {
         'raster-opacity': 0.5
       }
     });
     // Add the well layers
-    drawWells(map);
+    drawWells(map, wells);
   });
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, markers } = props;
+  const { mapId, center, zoom, markers, layerVisibility } = props;
 
+  // Update the map if the markers change
   useEffect(() => {
-    initializeMap(mapId, center, zoom, markers);
-  });
+    initializeMap(mapId, center, zoom, markers, layerVisibility);
+  }, [markers]);
+
+  // Listen to layer changes
+  useEffect(() => {
+    // TODO: Implement layer visibility changes
+    console.log('layers changed');
+    console.log('map', map);
+    console.log('layerVisibility', layerVisibility);
+  }, [layerVisibility]);
 
   return <div id={mapId} style={pageStyle}></div>;
 };
