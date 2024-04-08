@@ -19,7 +19,7 @@ interface IPagedTableInfoDialogProps {
   isProject: boolean;
 }
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+const VideoDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2)
   },
@@ -60,7 +60,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
         </IconButton>
       </Tooltip>
 
-      <BootstrapDialog
+      <VideoDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
@@ -107,7 +107,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
             Close
           </Button>
         </DialogActions>
-      </BootstrapDialog>
+      </VideoDialog>
     </Fragment>
   );
 };
