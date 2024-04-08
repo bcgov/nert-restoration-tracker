@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import OtherLink from '@mui/material/Link';
+import { alpha } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
@@ -21,7 +22,6 @@ import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
-import { alpha } from '@mui/material/styles';
 
 const nert_version = process.env.NERT_VERSION || '0.0.0.0';
 const nert_environment =
@@ -100,7 +100,9 @@ const pageStyles = {
     },
     '& a:hover': {
       textDecoration: 'underline',
-      backgroundColor: (theme: { palette: { primary: { main: string; }; action: { activatedOpacity: number; }; }; }) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+      backgroundColor: (theme: {
+        palette: { primary: { main: string }; action: { activatedOpacity: number } };
+      }) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
     },
     '& a:first-of-type': {
       marginLeft: '-1rem'
