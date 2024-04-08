@@ -336,11 +336,14 @@ const initializeMap = (
 
 /**
  * # checkLayerVisibility
+ *
  * Loop through the layer visibility object and check the visibility
  * of the layers. It is important to make sure the map is initialized
  * along with each layer.
+ *
  * The individual layers are grouped together in a custom fashion, so
  * we need to check the visibility of each group.
+ *
  * @param layers Layer visibility object
  * @returns void
  */
