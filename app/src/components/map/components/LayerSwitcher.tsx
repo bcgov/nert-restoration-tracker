@@ -31,7 +31,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
     props.layerVisibility;
   return (
     <Box sx={style}>
-      Layer Switcher
+      Context Layers
       <FormGroup>
         <FormControlLabel
           control={

@@ -132,7 +132,6 @@ const initializeMap = (
   if (markers.length === 0) return;
 
   const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
-  console.log(boundary, wells, projects, wildlife, indigenous);
 
   const markerGeoJSON = convertToGeoJSON(markers);
 
@@ -335,6 +334,97 @@ const initializeMap = (
   });
 };
 
+/**
+ * # checkLayerVisibility
+ * Loop through the layer visibility object and check the visibility
+ * of the layers. It is important to make sure the map is initialized
+ * along with each layer.
+ * The individual layers are grouped together in a custom fashion, so
+ * we need to check the visibility of each group.
+ * @param layers Layer visibility object
+ * @returns void
+ */
+const checkLayerVisibility = (layers: any) => {
+  if (!map) return; // Exist if map is not initialized
+
+  Object.keys(layers).forEach((layer) => {
+    // The boundary layer is simple enough.
+    if (layer === 'boundary' && map.getLayer('ne_boundary')) {
+      map.setLayoutProperty(
+        'ne_boundary',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // Wells is a group of three different point layers
+    if (
+      layer === 'wells' &&
+      map.getLayer('orphanedWellsLayer') &&
+      map.getLayer('orphanedActivitiesLayer') &&
+      map.getLayer('surfaceStateLayer')
+    ) {
+      map.setLayoutProperty(
+        'orphanedWellsLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'orphanedActivitiesLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'surfaceStateLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // This is a concatenated (server side) WMS layer from the BCGW
+    if (layer === 'wildlife' && map.getLayer('wms-wildlife-areas')) {
+      map.setLayoutProperty(
+        'wms-wildlife-areas',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // This will be extended to include indigenous community point locations
+    if (layer === 'indigenous' && map.getLayer('wms-indigenous-areas')) {
+      map.setLayoutProperty(
+        'wms-indigenous-areas',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // Projects and plans can have three separate geometry types
+    if (
+      layer === 'projects' &&
+      map.getLayer('markers.polygons') &&
+      map.getLayer('markers.lines') &&
+      map.getLayer('markers.points')
+    ) {
+      map.setLayoutProperty(
+        'markers.polygons',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'markers.lines',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'markers.points',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+  });
+};
+
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const { mapId, center, zoom, markers, layerVisibility } = props;
 
@@ -345,10 +435,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Listen to layer changes
   useEffect(() => {
-    // TODO: Implement layer visibility changes
-    console.log('layers changed');
-    console.log('map', map);
-    console.log('layerVisibility', layerVisibility);
+    checkLayerVisibility(layerVisibility);
   }, [layerVisibility]);
 
   return <div id={mapId} style={pageStyle}></div>;
