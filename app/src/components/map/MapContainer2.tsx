@@ -239,10 +239,7 @@ const initializeMap = (
     map.on('click', 'markers.polygons', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(`<div>${prop.name}</div>`)
-        .addTo(map);
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
     });
     map.on('mousemove', 'markers.polygons', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -255,10 +252,7 @@ const initializeMap = (
     map.on('click', 'markers.lines', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(`<div>${prop.name}</div>`)
-        .addTo(map);
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
     });
     map.on('mousemove', 'markers.lines', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -271,10 +265,7 @@ const initializeMap = (
     map.on('click', 'markers.points', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(`<div>${prop.name}</div>`)
-        .addTo(map);
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
     });
     map.on('mousemove', 'markers.points', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -351,11 +342,7 @@ const checkLayerVisibility = (layers: any) => {
   Object.keys(layers).forEach((layer) => {
     // The boundary layer is simple enough.
     if (layer === 'boundary' && map.getLayer('ne_boundary')) {
-      map.setLayoutProperty(
-        'ne_boundary',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
+      map.setLayoutProperty('ne_boundary', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
 
     // Wells is a group of three different point layers
@@ -412,16 +399,8 @@ const checkLayerVisibility = (layers: any) => {
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
-      map.setLayoutProperty(
-        'markers.lines',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
-      map.setLayoutProperty(
-        'markers.points',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
+      map.setLayoutProperty('markers.lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
+      map.setLayoutProperty('markers.points', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
   });
 };

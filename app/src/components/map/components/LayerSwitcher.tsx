@@ -27,51 +27,30 @@ const style = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, wildlife, indigenous } =
-    props.layerVisibility;
+  const { boundary, wells, projects, wildlife, indigenous } = props.layerVisibility;
   return (
     <Box sx={style}>
       Context Layers
       <FormGroup>
         <FormControlLabel
-          control={
-            <Checkbox
-              checked={boundary[0]}
-              onClick={() => boundary[1](!boundary[0])}
-            />
-          }
+          control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
           label="Project Boundary"
         />
         <FormControlLabel
-          control={
-            <Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />
-          }
+          control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
           label="Wells"
         />
         <FormControlLabel
-          control={
-            <Checkbox
-              checked={projects[0]}
-              onClick={() => projects[1](!projects[0])}
-            />
-          }
+          control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
           label="Projects"
         />
         <FormControlLabel
-          control={
-            <Checkbox
-              checked={wildlife[0]}
-              onClick={() => wildlife[1](!wildlife[0])}
-            />
-          }
+          control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
           label="Wildlife"
         />
         <FormControlLabel
           control={
-            <Checkbox
-              checked={indigenous[0]}
-              onClick={() => indigenous[1](!indigenous[0])}
-            />
+            <Checkbox checked={indigenous[0]} onClick={() => indigenous[1](!indigenous[0])} />
           }
           label="Indigenous"
         />

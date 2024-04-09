@@ -58,14 +58,11 @@ const SearchPage: React.FC = () => {
       const clusteredPointGeometries: IMarker[] = [];
 
       response.forEach((result: any) => {
-        const feature = generateValidGeometryCollection(
-          result.geometry,
-          result.id
-        ).geometryCollection[0];
+        const feature = generateValidGeometryCollection(result.geometry, result.id)
+          .geometryCollection[0];
 
         clusteredPointGeometries.push({
-          position: centroid(feature as any).geometry
-            .coordinates as LatLngTuple,
+          position: centroid(feature as any).geometry.coordinates as LatLngTuple,
           popup: <SearchFeaturePopup featureData={result} />
         });
       });
@@ -80,12 +77,7 @@ const SearchPage: React.FC = () => {
         dialogErrorDetails: apiError?.errors
       });
     }
-  }, [
-    restorationApi.search,
-    restorationApi.public.search,
-    showFilterErrorDialog,
-    keycloakWrapper
-  ]);
+  }, [restorationApi.search, restorationApi.public.search, showFilterErrorDialog, keycloakWrapper]);
 
   useEffect(() => {
     if (performSearch) {
