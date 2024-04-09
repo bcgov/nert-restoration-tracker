@@ -42,7 +42,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
         />
         <FormControlLabel
           control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
-          label="Projects"
+          label="Projects & Plans"
         />
         <FormControlLabel
           control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
