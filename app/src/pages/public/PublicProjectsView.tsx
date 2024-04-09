@@ -39,7 +39,7 @@ const pageStyles = {
   }
 };
 
-// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View 
+// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View
 // currently only shows the same project view for both projects and plans.
 
 /**
@@ -63,7 +63,7 @@ export default function PublicProjectsView() {
   const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
-console.log('Proj1', projectWithDetails)
+
   const getProject = useCallback(async () => {
     const projectWithDetailsResponse = await restorationTrackerApi.public.project.getProjectForView(
       projectId

@@ -39,7 +39,7 @@ const pageStyles = {
   }
 };
 
-// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View 
+// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View
 // currently only shows the same project view not the plan view.
 
 /**

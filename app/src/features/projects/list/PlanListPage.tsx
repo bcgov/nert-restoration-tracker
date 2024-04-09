@@ -24,6 +24,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
+import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
@@ -156,7 +157,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             <strong>Export maps</strong>
           </Button>
         ) : (
-          <></>
+          <PagedTableInfoDialog isProject={false} />
         )}
       </Toolbar>
     );

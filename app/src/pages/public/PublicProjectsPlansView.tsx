@@ -39,7 +39,7 @@ const pageStyles = {
   }
 };
 
-// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View 
+// [OI] TODO this function is not implemented, part of the Project/Plan Non authenticated View
 // currently only shows the same project view for both projects and plans.
 
 /**
@@ -76,7 +76,7 @@ export default function PublicProjectsPlansView() {
 
     setProjectWithDetails(projectWithDetailsResponse);
   }, [restorationTrackerApi.public.project, projectId]);
-console.log('Proj3', projectWithDetails)
+
   const getAttachments = useCallback(
     async (forceFetch: boolean) => {
       if (attachmentsList.length && !forceFetch) return;
