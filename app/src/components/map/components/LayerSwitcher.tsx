@@ -19,8 +19,8 @@ export interface ILayerSwitcherProps {
 
 const switcherStyle = {
   position: 'absolute',
-  bottom: '90px',
-  left: '20px',
+  bottom: '120px',
+  right: '10px',
   zIndex: 1000,
   padding: '10px',
   backgroundColor: 'white',
@@ -35,8 +35,8 @@ const switcherCloseStyle = {
 
 const buttonStyle = {
   position: 'absolute',
-  bottom: '90px',
-  left: '20px',
+  bottom: '120px',
+  right: '10px',
   zIndex: 1000,
   backgroundColor: 'white',
   borderRadius: '5px',
@@ -53,19 +53,19 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
   return (
     <div>
       {switcherOpen ? (
-        <Box sx={buttonStyle}>
+        <Box title="Open Layer Picker" sx={buttonStyle}>
           <IconButton onClick={toggleLayerswitcher}>
             <LayersIcon />
           </IconButton>
         </Box>
       ) : (
         <Box sx={switcherStyle}>
-          <Box sx={switcherCloseStyle}>
+          <Box title="Close Layer Picker" sx={switcherCloseStyle}>
             <IconButton onClick={toggleLayerswitcher}>
               <CloseIcon />
             </IconButton>
           </Box>
-          Context Layers
+          <b>Context Layers</b>
           <FormGroup>
             <FormControlLabel
               control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
