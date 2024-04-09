@@ -129,8 +129,6 @@ const initializeMap = (
   markers: any,
   layerVisibility?: any
 ) => {
-  if (markers.length === 0) return;
-
   const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
 
   const markerGeoJSON = convertToGeoJSON(markers);
