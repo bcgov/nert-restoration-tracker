@@ -2,8 +2,10 @@
  * Layer Switcher Component
  * Turn layers on and off
  */
-import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
-import React from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import LayersIcon from '@mui/icons-material/Layers';
+import { Box, Checkbox, FormControlLabel, FormGroup, IconButton } from '@mui/material';
+import React, { useState } from 'react';
 
 export interface ILayerSwitcherProps {
   layerVisibility: {
@@ -15,7 +17,7 @@ export interface ILayerSwitcherProps {
   };
 }
 
-const style = {
+const switcherStyle = {
   position: 'absolute',
   bottom: '90px',
   left: '20px',
@@ -25,37 +27,72 @@ const style = {
   borderRadius: '5px',
   boxShadow: '0 0 10px rgba(0,0,0,0.5)'
 };
+const switcherCloseStyle = {
+  position: 'absolute',
+  right: '2px',
+  top: '2px'
+};
+
+const buttonStyle = {
+  position: 'absolute',
+  bottom: '90px',
+  left: '20px',
+  zIndex: 1000,
+  backgroundColor: 'white',
+  borderRadius: '5px',
+  boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+};
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
   const { boundary, wells, projects, wildlife, indigenous } = props.layerVisibility;
+
+  const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
+
+  const [switcherOpen, setSwitcherOpen] = useState(false);
+
   return (
-    <Box sx={style}>
-      Context Layers
-      <FormGroup>
-        <FormControlLabel
-          control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
-          label="Project Boundary"
-        />
-        <FormControlLabel
-          control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
-          label="Wells"
-        />
-        <FormControlLabel
-          control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
-          label="Projects & Plans"
-        />
-        <FormControlLabel
-          control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
-          label="Wildlife"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox checked={indigenous[0]} onClick={() => indigenous[1](!indigenous[0])} />
-          }
-          label="Indigenous"
-        />
-      </FormGroup>
-    </Box>
+    <div>
+      {switcherOpen ? (
+        <Box sx={buttonStyle}>
+          <IconButton onClick={toggleLayerswitcher}>
+            <LayersIcon />
+          </IconButton>
+        </Box>
+      ) : (
+        <Box sx={switcherStyle}>
+          <Box sx={switcherCloseStyle}>
+            <IconButton onClick={toggleLayerswitcher}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          Context Layers
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
+              label="Project Boundary"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
+              label="Wells"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
+              label="Projects & Plans"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
+              label="Wildlife"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox checked={indigenous[0]} onClick={() => indigenous[1](!indigenous[0])} />
+              }
+              label="Indigenous"
+            />
+          </FormGroup>
+        </Box>
+      )}
+    </div>
   );
 };
 
