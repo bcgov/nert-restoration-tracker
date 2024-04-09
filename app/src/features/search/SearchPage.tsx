@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IMarker } from 'components/map/components/MarkerCluster';
-// import MapContainer from 'components/map/MapContainer';
 import MapContainer from 'components/map/MapContainer2';
 import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
@@ -86,11 +86,35 @@ const SearchPage: React.FC = () => {
   }, [performSearch, getSearchResults]);
 
   /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    wildlife,
+    indigenous
+  };
+
+  /**
    * Displays search results visualized on a map spatially.
    */
   return (
     <Box sx={{ height: '100%' }}>
-      <MapContainer mapId="search_boundary_map" center={[-124, 57]} zoom={6} markers={geometries} />
+      <MapContainer
+        mapId="search_boundary_map"
+        center={[-124, 57]}
+        zoom={6}
+        markers={geometries}
+        layerVisibility={layerVisibility}
+      />
+      <LayerSwitcher layerVisibility={layerVisibility} />
     </Box>
   );
 };

@@ -16,6 +16,7 @@ export interface IMapContainerProps {
   center?: any;
   zoom?: any;
   markers?: any;
+  layerVisibility?: any;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -29,7 +30,7 @@ const pageStyle = {
  * This function draws the wells on the map
  * @param map - the map object
  */
-const drawWells = (map: maplibre.Map) => {
+const drawWells = (map: maplibre.Map, wells: any) => {
   /* The following are the URLs to the geojson data */
   const orphanedWellsURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_WELL_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
@@ -47,6 +48,9 @@ const drawWells = (map: maplibre.Map) => {
     id: 'orphanedWellsLayer',
     type: 'circle',
     source: 'orphanedWells',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 5,
       'circle-color': 'red'
@@ -62,6 +66,9 @@ const drawWells = (map: maplibre.Map) => {
     id: 'orphanedActivitiesLayer',
     type: 'circle',
     source: 'orphanedActivities',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 5,
       'circle-color': 'blue'
@@ -77,6 +84,9 @@ const drawWells = (map: maplibre.Map) => {
     id: 'surfaceStateLayer',
     type: 'circle',
     source: 'surfaceState',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 5,
       'circle-color': 'green'
@@ -112,10 +122,16 @@ const convertToGeoJSON = (features: any) => {
 
 let map: maplibre.Map;
 
-const initializeMap = (mapId: string, center: any, zoom: number, markers: any) => {
-  console.log('markers in initializeMap', markers);
+const initializeMap = (
+  mapId: string,
+  center: any,
+  zoom: number,
+  markers: any,
+  layerVisibility?: any
+) => {
+  const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
+
   const markerGeoJSON = convertToGeoJSON(markers);
-  console.log('geojson', markerGeoJSON);
 
   map = new Map({
     container: mapId,
@@ -152,7 +168,7 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
     try {
       map.setTerrain({ source: 'maptiler.raster-dem' });
     } catch (err) {
-      console.log('Error setting terrain:', err);
+      console.error('Error setting terrain:', err);
     }
 
     /* The boundary layer */
@@ -166,7 +182,8 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       source: 'ne_boundary',
       layout: {
         'line-join': 'round',
-        'line-cap': 'round'
+        'line-cap': 'round',
+        visibility: boundary[0] ? 'visible' : 'none'
       },
       paint: {
         'line-color': 'yellow',
@@ -174,26 +191,89 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       }
     });
 
-    /* Add the markers */
+    /*****************Project/Plans********************/
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection
     });
     map.addLayer({
-      id: 'markers',
+      id: 'markers.polygons',
+      type: 'fill',
+      source: 'markers',
+      filter: ['==', '$type', 'Polygon'],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none'
+      },
+      paint: {
+        'fill-color': 'yellow',
+        'fill-opacity': 0.4
+      }
+    });
+    map.addLayer({
+      id: 'markers.lines',
+      type: 'line',
+      source: 'markers',
+      filter: ['==', '$type', 'LineString'],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none'
+      },
+      paint: {
+        'line-color': 'yellow',
+        'line-width': 3
+      }
+    });
+    map.addLayer({
+      id: 'markers.points',
       type: 'circle',
       source: 'markers',
+      filter: ['==', '$type', 'Point'],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none'
+      },
       paint: {
-        'circle-radius': 5,
-        'circle-color': 'yellow'
+        'circle-color': 'yellow',
+        'circle-radius': 5
       }
     });
     /* Add the popup */
-    map.on('click', 'markers', (e: any) => {
+    map.on('click', 'markers.polygons', (e: any) => {
       const prop = e.features![0].properties;
 
       new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
     });
+    map.on('mousemove', 'markers.polygons', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markers.polygons', () => {
+      map.getCanvas().style.cursor = '';
+    });
+
+    /* Add popup for the lines */
+    map.on('click', 'markers.lines', (e: any) => {
+      const prop = e.features![0].properties;
+
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+    });
+    map.on('mousemove', 'markers.lines', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markers.lines', () => {
+      map.getCanvas().style.cursor = '';
+    });
+
+    /* Add popup for the points */
+    map.on('click', 'markers.points', (e: any) => {
+      const prop = e.features![0].properties;
+
+      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+    });
+    map.on('mousemove', 'markers.points', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markers.points', () => {
+      map.getCanvas().style.cursor = '';
+    });
+    /**************************************************/
 
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
@@ -208,6 +288,9 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       id: 'wms-wildlife-areas',
       type: 'raster',
       source: 'wildlife-areas',
+      layout: {
+        visibility: wildlife[0] ? 'visible' : 'none'
+      },
       paint: {
         'raster-opacity': 0.5
       }
@@ -228,21 +311,112 @@ const initializeMap = (mapId: string, center: any, zoom: number, markers: any) =
       id: 'wms-indigenous-areas',
       type: 'raster',
       source: 'indigenous-areas',
+      layout: {
+        visibility: indigenous[0] ? 'visible' : 'none'
+      },
       paint: {
         'raster-opacity': 0.5
       }
     });
     // Add the well layers
-    drawWells(map);
+    drawWells(map, wells);
+  });
+};
+
+/**
+ * # checkLayerVisibility
+ *
+ * Loop through the layer visibility object and check the visibility
+ * of the layers. It is important to make sure the map is initialized
+ * along with each layer.
+ *
+ * The individual layers are grouped together in a custom fashion, so
+ * we need to check the visibility of each group.
+ *
+ * @param layers Layer visibility object
+ * @returns void
+ */
+const checkLayerVisibility = (layers: any) => {
+  if (!map) return; // Exist if map is not initialized
+
+  Object.keys(layers).forEach((layer) => {
+    // The boundary layer is simple enough.
+    if (layer === 'boundary' && map.getLayer('ne_boundary')) {
+      map.setLayoutProperty('ne_boundary', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    }
+
+    // Wells is a group of three different point layers
+    if (
+      layer === 'wells' &&
+      map.getLayer('orphanedWellsLayer') &&
+      map.getLayer('orphanedActivitiesLayer') &&
+      map.getLayer('surfaceStateLayer')
+    ) {
+      map.setLayoutProperty(
+        'orphanedWellsLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'orphanedActivitiesLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'surfaceStateLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // This is a concatenated (server side) WMS layer from the BCGW
+    if (layer === 'wildlife' && map.getLayer('wms-wildlife-areas')) {
+      map.setLayoutProperty(
+        'wms-wildlife-areas',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // This will be extended to include indigenous community point locations
+    if (layer === 'indigenous' && map.getLayer('wms-indigenous-areas')) {
+      map.setLayoutProperty(
+        'wms-indigenous-areas',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // Projects and plans can have three separate geometry types
+    if (
+      layer === 'projects' &&
+      map.getLayer('markers.polygons') &&
+      map.getLayer('markers.lines') &&
+      map.getLayer('markers.points')
+    ) {
+      map.setLayoutProperty(
+        'markers.polygons',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty('markers.lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
+      map.setLayoutProperty('markers.points', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    }
   });
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, markers } = props;
+  const { mapId, center, zoom, markers, layerVisibility } = props;
 
+  // Update the map if the markers change
   useEffect(() => {
-    initializeMap(mapId, center, zoom, markers);
-  });
+    initializeMap(mapId, center, zoom, markers, layerVisibility);
+  }, [markers]);
+
+  // Listen to layer changes
+  useEffect(() => {
+    checkLayerVisibility(layerVisibility);
+  }, [layerVisibility]);
 
   return <div id={mapId} style={pageStyle}></div>;
 };
