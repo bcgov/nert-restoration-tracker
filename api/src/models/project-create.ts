@@ -109,6 +109,8 @@ export class PostProjectData {
   state_code: number;
   start_date: string;
   end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
   objectives: string;
 
   constructor(obj?: any) {
@@ -119,6 +121,8 @@ export class PostProjectData {
     this.state_code = obj?.state_code || 0;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;
+    this.actual_start_date = obj?.actual_start_date || null;
+    this.actual_end_date = obj?.actual_end_date || null;
     this.objectives = obj?.objectives || null;
   }
 }

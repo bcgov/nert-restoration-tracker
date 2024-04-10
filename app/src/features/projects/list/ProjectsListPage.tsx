@@ -26,7 +26,12 @@ import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import {
+  getStateCodeFromLabel,
+  getStateLabelFromCode,
+  getStatusStyle,
+  states
+} from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
@@ -36,11 +41,12 @@ import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
-  const { projects } = props;
+  const { projects, drafts } = props;
 
   const history = useHistory();
 
-  const rows = projects
+  const archCode = getStateCodeFromLabel(states.ARCHIVED);
+  const rowsProject = projects
     ?.filter((proj) => proj.project.is_project)
     .map((row, index) => {
       return {
@@ -53,14 +59,40 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         org: row.contact.contacts.map((item) => item.agency).join(', '),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
-        actualStartDate: row.project.start_date,
-        actualEndDate: row.project.end_date,
+        actualStartDate: row.project.actual_start_date,
+        actualEndDate: row.project.actual_end_date,
         statusCode: row.project.state_code,
         statusLabel: getStateLabelFromCode(row.project.state_code),
         statusStyle: getStatusStyle(row.project.state_code),
-        archive: row.project.state_code !== 8 ? 'Archive' : 'Unarchive'
+        archive: row.project.state_code !== archCode ? 'Archive' : 'Unarchive'
       } as utils.ProjectData;
     });
+
+  const draftCode = getStateCodeFromLabel(states.DRAFT);
+  const draftStatusStyle = getStatusStyle(draftCode);
+  const rowsDraft = drafts
+    ? drafts
+        .filter((draft) => draft.is_project)
+        .map((row, index) => {
+          return {
+            id: index + rowsProject.length,
+            projectId: row.id,
+            projectName: row.name,
+            authRef: '',
+            org: '',
+            plannedStartDate: '',
+            plannedEndDate: '',
+            actualStartDate: '',
+            actualEndDate: '',
+            statusCode: draftCode,
+            statusLabel: states.DRAFT,
+            statusStyle: draftStatusStyle,
+            archive: ''
+          } as utils.ProjectData;
+        })
+    : [];
+
+  const rows = rowsDraft.concat(rowsProject);
 
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -268,7 +300,11 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history.push(`/admin/projects/${row.projectId}`)}>
+                        onClick={
+                          draftCode != row.statusCode
+                            ? () => history.push(`/admin/projects/${row.projectId}`)
+                            : () => history.push(`/admin/projects/create?draftId=${row.projectId}`)
+                        }>
                         {row.projectName}
                       </Link>
                     </TableCell>
@@ -297,10 +333,10 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                       validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
                       <TableCell align="left">
                         <Tooltip
-                          title={8 !== row.statusCode ? 'Archive' : 'Unarchive'}
+                          title={archCode !== row.statusCode ? 'Archive' : 'Unarchive'}
                           placement="right">
-                          <IconButton color={8 !== row.statusCode ? 'info' : 'warning'}>
-                            {8 !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                          <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                            {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                           </IconButton>
                         </Tooltip>
                       </TableCell>

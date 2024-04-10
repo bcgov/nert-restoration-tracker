@@ -25,6 +25,8 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
       state_code,
       start_date,
       end_date,
+      actual_start_date,
+      actual_end_date,
       objectives
     ) VALUES (
       ${project.name},
@@ -32,6 +34,8 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
       ${project.state_code},
       ${project.start_date},
       ${project.end_date},
+      ${project.actual_start_date},
+      ${project.actual_end_date},
       ${project.objectives}
     )
     RETURNING
