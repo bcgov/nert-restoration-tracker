@@ -223,19 +223,17 @@ const initializeMap = (
     /*****************Project/Plans********************/
     map.addSource('markers', {
       type: 'geojson',
-      data: markerGeoJSON as FeatureCollection
+      data: markerGeoJSON as FeatureCollection,
+      cluster: true,
+      clusterRadius: 50
     });
     map.addLayer({
       id: 'markers.points',
-      type: 'circle',
+      type: 'symbol',
       source: 'markers',
       filter: ['==', '$type', 'Point'],
       layout: {
         visibility: projects[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'circle-color': 'yellow',
-        'circle-radius': 5
       }
     });
 
@@ -366,18 +364,7 @@ const checkLayerVisibility = (layers: any) => {
     }
 
     // Projects and plans can have three separate geometry types
-    if (
-      layer === 'projects' &&
-      map.getLayer('markers.polygons') &&
-      map.getLayer('markers.lines') &&
-      map.getLayer('markers.points')
-    ) {
-      map.setLayoutProperty(
-        'markers.polygons',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
-      map.setLayoutProperty('markers.lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    if (layer === 'projects' && map.getLayer('markers.points')) {
       map.setLayoutProperty('markers.points', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
   });
