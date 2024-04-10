@@ -21,6 +21,7 @@ export const getSpatialSearchResultsSQL = (isUserAdmin: boolean, systemUserId?: 
     SELECT
       p.project_id as id,
       p.name,
+      p.is_project,
       public.ST_asGeoJSON(psc.geography) as geometry
     FROM
       project p
