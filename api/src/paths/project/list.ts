@@ -144,6 +144,28 @@ GET.apiDoc = {
     },
     {
       in: 'query',
+      name: 'actual_start_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'actual_end_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
       name: 'ranges',
       schema: {
         oneOf: [
@@ -198,7 +220,15 @@ GET.apiDoc = {
                 project: {
                   description: 'Basic project metadata',
                   type: 'object',
-                  required: ['project_id', 'project_name', 'start_date', 'end_date', 'publish_date'],
+                  required: [
+                    'project_id',
+                    'project_name',
+                    'start_date',
+                    'end_date',
+                    'actual_start_date',
+                    'actual_end_date',
+                    'publish_date'
+                  ],
                   properties: {
                     id: {
                       description: 'Project id',
@@ -214,6 +244,16 @@ GET.apiDoc = {
                     end_date: {
                       oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                       description: 'ISO 8601 date string for the project end date',
+                      nullable: true
+                    },
+                    actual_start_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual start date',
+                      nullable: true
+                    },
+                    actual_end_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual end date',
                       nullable: true
                     },
                     objectives: {

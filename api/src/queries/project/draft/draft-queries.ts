@@ -7,24 +7,32 @@ const defaultLog = getLogger('queries/draft-queries');
  * SQL query to insert a row in the webform_draft table.
  *
  * @param {number} systemUserId the ID of the user in context
+ * @param {boolean} isProject name of the draft record
  * @param {string} name name of the draft record
  * @param {unknown} data JSON data blob
  * @return {*}  {(SQLStatement | null)}
  */
-export const postDraftSQL = (systemUserId: number, name: string, data: unknown): SQLStatement | null => {
-  defaultLog.debug({ label: 'postDraftSQL', message: 'params', name, data });
+export const postDraftSQL = (
+  systemUserId: number,
+  isProject: boolean,
+  name: string,
+  data: unknown
+): SQLStatement | null => {
+  defaultLog.debug({ label: 'postDraftSQL', message: 'params', isProject, name, data });
 
-  if (!systemUserId || !name || !data) {
+  if (!systemUserId || !isProject || !name || !data) {
     return null;
   }
 
   const sqlStatement: SQLStatement = SQL`
     INSERT INTO webform_draft (
       system_user_id,
+      is_project,
       name,
       data
     ) VALUES (
       ${systemUserId},
+      ${isProject},
       ${name},
       ${data}
     )
@@ -99,6 +107,7 @@ export const getDraftsSQL = (systemUserId: number): SQLStatement | null => {
   const sqlStatement: SQLStatement = SQL`
     SELECT
       webform_draft_id as id,
+      is_project,
       name
     FROM
       webform_draft
@@ -132,6 +141,7 @@ export const getDraftSQL = (draftId: number): SQLStatement | null => {
   const sqlStatement: SQLStatement = SQL`
     SELECT
       webform_draft_id as id,
+      is_project,
       name,
       data
     FROM

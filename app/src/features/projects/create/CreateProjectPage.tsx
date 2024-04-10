@@ -201,6 +201,7 @@ const CreateProjectPage: React.FC = () => {
         );
       } else {
         response = await restorationTrackerApi.draft.createDraft(
+          true,
           values.draft_name,
           formikRef.current?.values
         );

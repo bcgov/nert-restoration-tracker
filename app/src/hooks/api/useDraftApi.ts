@@ -15,12 +15,21 @@ const useDraftApi = (axios: AxiosInstance) => {
   /**
    * Create a new draft record.
    *
+   * @param {boolean} draftIsProject
    * @param {string} draftName
    * @param {unknown} draftData
    * @return {*}  {Promise<IDraftResponse>}
    */
-  const createDraft = async (draftName: string, draftData: unknown): Promise<IDraftResponse> => {
-    const { data } = await axios.post('/api/draft', { name: draftName, data: draftData });
+  const createDraft = async (
+    draftIsProject: boolean,
+    draftName: string,
+    draftData: unknown
+  ): Promise<IDraftResponse> => {
+    const { data } = await axios.post('/api/draft', {
+      is_project: draftIsProject,
+      name: draftName,
+      data: draftData
+    });
 
     return data;
   };

@@ -22,7 +22,12 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import {
+  getStateCodeFromLabel,
+  getStateLabelFromCode,
+  getStatusStyle,
+  states
+} from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
@@ -35,7 +40,10 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const history = useHistory();
 
   const rows = projects
-    ?.filter((proj) => proj.project.is_project)
+    ?.filter(
+      (proj) =>
+        proj.project.is_project && proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+    )
     .map((row, index) => {
       return {
         id: index,
@@ -47,8 +55,8 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         org: row.contact.contacts.map((item) => item.agency).join(', '),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
-        actualStartDate: row.project.start_date,
-        actualEndDate: row.project.end_date,
+        actualStartDate: row.project.actual_start_date,
+        actualEndDate: row.project.actual_end_date,
         statusCode: row.project.state_code,
         statusLabel: getStateLabelFromCode(row.project.state_code),
         statusStyle: getStatusStyle(row.project.state_code),

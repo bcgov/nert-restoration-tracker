@@ -46,7 +46,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
 
   const { keycloakWrapper } = useContext(AuthStateContext);
   const userPath = isAuthenticated(keycloakWrapper)
-    ? keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN])
+    ? keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
       ? 'auth/admin'
       : 'auth/user'
     : 'public';

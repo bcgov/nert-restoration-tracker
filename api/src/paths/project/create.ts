@@ -67,6 +67,16 @@ POST.apiDoc = {
                   description: 'ISO 8601 date string',
                   nullable: true
                 },
+                actual_start_date: {
+                  type: 'string',
+                  description: 'ISO 8601 date string',
+                  nullable: true
+                },
+                actual_end_date: {
+                  type: 'string',
+                  description: 'ISO 8601 date string',
+                  nullable: true
+                },
                 objectives: {
                   type: 'string'
                 }

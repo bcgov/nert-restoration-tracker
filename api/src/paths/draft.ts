@@ -55,8 +55,12 @@ POST.apiDoc = {
         schema: {
           title: 'Draft request object',
           type: 'object',
-          required: ['name', 'data'],
+          required: ['is_project', 'name', 'data'],
           properties: {
+            is_project: {
+              title: 'True is project, False is plan',
+              type: 'boolean'
+            },
             name: {
               title: 'Draft name',
               type: 'string'
@@ -204,6 +208,10 @@ export function createDraft(): RequestHandler {
         throw new HTTP400('Failed to identify system user ID');
       }
 
+      if (!req.body.is_project) {
+        throw new HTTP400('Missing required param is_project');
+      }
+
       if (!req.body.name) {
         throw new HTTP400('Missing required param name');
       }
@@ -212,7 +220,12 @@ export function createDraft(): RequestHandler {
         throw new HTTP400('Missing required param data');
       }
 
-      const postDraftSQLStatement = queries.project.draft.postDraftSQL(systemUserId, req.body.name, req.body.data);
+      const postDraftSQLStatement = queries.project.draft.postDraftSQL(
+        systemUserId,
+        req.body.is_project,
+        req.body.name,
+        req.body.data
+      );
 
       if (!postDraftSQLStatement) {
         throw new HTTP400('Failed to build SQL insert statement');

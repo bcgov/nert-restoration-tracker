@@ -1770,6 +1770,7 @@ COMMENT ON TABLE user_identity_source IS 'The source of the user identifier. Thi
 CREATE TABLE webform_draft(
     webform_draft_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     system_user_id      integer           NOT NULL,
+    is_project          boolean           NOT NULL,
     name                varchar(300)      NOT NULL,
     data                json              NOT NULL,
     security_token      uuid,
@@ -1787,6 +1788,8 @@ CREATE TABLE webform_draft(
 COMMENT ON COLUMN webform_draft.webform_draft_id IS 'System generated surrogate primary key identifier.'
 ;
 COMMENT ON COLUMN webform_draft.system_user_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN webform_draft.is_project IS 'When true project, when false plan.'
 ;
 COMMENT ON COLUMN webform_draft.name IS 'The name of the record.'
 ;

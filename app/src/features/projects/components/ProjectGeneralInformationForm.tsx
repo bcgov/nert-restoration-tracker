@@ -17,6 +17,8 @@ export interface IProjectGeneralInformationForm {
     state_code: number;
     start_date: string;
     end_date: string;
+    actual_start_date: string;
+    actual_end_date: string;
     objectives: string;
   };
   species: {
@@ -31,6 +33,8 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     state_code: 0,
     start_date: '',
     end_date: '',
+    actual_start_date: '',
+    actual_end_date: '',
     objectives: ''
   },
   species: {
@@ -112,8 +116,8 @@ const ProjectGeneralInformationForm: React.FC = () => {
             plannedEndName={'project.end_date'}
             plannedStartRequired={false}
             plannedEndRequired={false}
-            actualStartName={'actual_start_date'}
-            actualEndName={'actual_end_date'}
+            actualStartName={'project.actual_start_date'}
+            actualEndName={'project.actual_end_date'}
             actualStartRequired={false}
             actualEndRequired={false}
           />

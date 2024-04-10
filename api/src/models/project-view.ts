@@ -19,6 +19,8 @@ export class GetProjectData {
   state_code: number;
   start_date: string;
   end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
   objectives: string;
   publish_date: string;
   revision_count: number;
@@ -31,6 +33,8 @@ export class GetProjectData {
     this.state_code = projectData?.state_code || null;
     this.start_date = projectData?.start_date || null;
     this.end_date = projectData?.end_date || null;
+    this.actual_start_date = projectData?.actual_start_date || null;
+    this.actual_end_date = projectData?.actual_end_date || null;
     this.objectives = projectData?.objectives || '';
     this.publish_date = projectData?.publish_timestamp || null;
     this.revision_count = projectData?.revision_count ?? 0;
