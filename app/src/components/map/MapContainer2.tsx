@@ -221,6 +221,13 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
+    map.loadImage('/assets/icon/marker-icon.png').then((image) => {
+      map.addImage('blue-marker', image.data);
+    });
+    map.loadImage('/assets/icon/marker-icon2.png').then((image) => {
+      map.addImage('orange-marker', image.data);
+    });
+
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
@@ -231,17 +238,35 @@ const initializeMap = (
       id: 'markers.points',
       type: 'symbol',
       source: 'markers',
-      filter: ['==', '$type', 'Point'],
+      filter: ['all', ['==', '$type', 'Point'], ['==', 'is_project', true]],
       layout: {
-        visibility: projects[0] ? 'visible' : 'none'
+        visibility: projects[0] ? 'visible' : 'none',
+        'icon-image': 'blue-marker',
+        'icon-size': 1
+      }
+    });
+    map.addLayer({
+      id: 'markers.points2',
+      type: 'symbol',
+      source: 'markers',
+      filter: ['all', ['==', '$type', 'Point'], ['==', 'is_project', false]],
+      layout: {
+        visibility: projects[0] ? 'visible' : 'none',
+        'icon-image': 'orange-marker',
+        'icon-size': 1
       }
     });
 
     /* Add popup for the points */
     map.on('click', 'markers.points', (e: any) => {
       const prop = e.features![0].properties;
+      console.log('prop', prop);
 
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+      // @ts-ignore
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
     });
     map.on('mousemove', 'markers.points', () => {
       map.getCanvas().style.cursor = 'pointer';
