@@ -99,6 +99,7 @@ const drawWells = (map: maplibre.Map, wells: any) => {
  * @param array - the feature data
  * @returns object - the GeoJSON object
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const convertToGeoJSON = (features: any) => {
   const geojson = {
     type: 'FeatureCollection',
@@ -112,7 +113,35 @@ const convertToGeoJSON = (features: any) => {
         },
         properties: {
           id: f.id,
-          name: f.name
+          name: f.name,
+          is_project: f.is_project
+        }
+      };
+    })
+  };
+  return geojson;
+};
+
+/**
+ * # convertToCentroidGeoJSON
+ * @param array - the feature data
+ * @returns object - the GeoJSON object
+ */
+const convertToCentroidGeoJSON = (features: any) => {
+  const geojson = {
+    type: 'FeatureCollection',
+    features: features.map((feature: any) => {
+      const f = feature.popup.props.featureData;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: feature.position
+        },
+        properties: {
+          id: f.id,
+          name: f.name,
+          is_project: f.is_project
         }
       };
     })
@@ -131,7 +160,7 @@ const initializeMap = (
 ) => {
   const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
 
-  const markerGeoJSON = convertToGeoJSON(markers);
+  const markerGeoJSON = convertToCentroidGeoJSON(markers);
 
   map = new Map({
     container: mapId,
@@ -197,32 +226,6 @@ const initializeMap = (
       data: markerGeoJSON as FeatureCollection
     });
     map.addLayer({
-      id: 'markers.polygons',
-      type: 'fill',
-      source: 'markers',
-      filter: ['==', '$type', 'Polygon'],
-      layout: {
-        visibility: projects[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'fill-color': 'yellow',
-        'fill-opacity': 0.4
-      }
-    });
-    map.addLayer({
-      id: 'markers.lines',
-      type: 'line',
-      source: 'markers',
-      filter: ['==', '$type', 'LineString'],
-      layout: {
-        visibility: projects[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'line-color': 'yellow',
-        'line-width': 3
-      }
-    });
-    map.addLayer({
       id: 'markers.points',
       type: 'circle',
       source: 'markers',
@@ -234,31 +237,6 @@ const initializeMap = (
         'circle-color': 'yellow',
         'circle-radius': 5
       }
-    });
-    /* Add the popup */
-    map.on('click', 'markers.polygons', (e: any) => {
-      const prop = e.features![0].properties;
-
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
-    });
-    map.on('mousemove', 'markers.polygons', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'markers.polygons', () => {
-      map.getCanvas().style.cursor = '';
-    });
-
-    /* Add popup for the lines */
-    map.on('click', 'markers.lines', (e: any) => {
-      const prop = e.features![0].properties;
-
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
-    });
-    map.on('mousemove', 'markers.lines', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'markers.lines', () => {
-      map.getCanvas().style.cursor = '';
     });
 
     /* Add popup for the points */
