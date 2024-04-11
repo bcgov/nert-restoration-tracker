@@ -158,7 +158,7 @@ const initializeMap = (
   markers: any,
   layerVisibility?: any
 ) => {
-  const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
+  const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
   const markerGeoJSON = convertToCentroidGeoJSON(markers);
 
@@ -232,10 +232,10 @@ const initializeMap = (
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
       cluster: true,
-      clusterRadius: 50
+      clusterRadius: 10
     });
     map.addLayer({
-      id: 'markers.points',
+      id: 'markerProjects.points',
       type: 'symbol',
       source: 'markers',
       filter: ['all', ['==', '$type', 'Point'], ['==', 'is_project', true]],
@@ -246,21 +246,20 @@ const initializeMap = (
       }
     });
     map.addLayer({
-      id: 'markers.points2',
+      id: 'markerPlans.points',
       type: 'symbol',
       source: 'markers',
       filter: ['all', ['==', '$type', 'Point'], ['==', 'is_project', false]],
       layout: {
-        visibility: projects[0] ? 'visible' : 'none',
+        visibility: plans[0] ? 'visible' : 'none',
         'icon-image': 'orange-marker',
         'icon-size': 1
       }
     });
 
     /* Add popup for the points */
-    map.on('click', 'markers.points', (e: any) => {
+    map.on('click', 'markerProjects.points', (e: any) => {
       const prop = e.features![0].properties;
-      console.log('prop', prop);
 
       // @ts-ignore
       new Popup({ offset: { bottom: [0, -14] } })
@@ -268,10 +267,27 @@ const initializeMap = (
         .setHTML(`<div>${prop.name}</div>`)
         .addTo(map);
     });
-    map.on('mousemove', 'markers.points', () => {
+    map.on('mousemove', 'markerProjects.points', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
-    map.on('mouseleave', 'markers.points', () => {
+    map.on('mouseleave', 'markerProjects.points', () => {
+      map.getCanvas().style.cursor = '';
+    });
+
+    /* Add popup for the points */
+    map.on('click', 'markerPlans.points', (e: any) => {
+      const prop = e.features![0].properties;
+
+      // @ts-ignore
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
+    });
+    map.on('mousemove', 'markerPlans.points', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'markerPlans.points', () => {
       map.getCanvas().style.cursor = '';
     });
     /**************************************************/
@@ -388,9 +404,22 @@ const checkLayerVisibility = (layers: any) => {
       );
     }
 
-    // Projects and plans can have three separate geometry types
-    if (layer === 'projects' && map.getLayer('markers.points')) {
-      map.setLayoutProperty('markers.points', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    // Projects
+    if (layer === 'projects' && map.getLayer('markerProjects.points')) {
+      map.setLayoutProperty(
+        'markerProjects.points',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    // Plans
+    if (layer === 'plans' && map.getLayer('markerPlans.points')) {
+      map.setLayoutProperty(
+        'markerPlans.points',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
     }
   });
 };
