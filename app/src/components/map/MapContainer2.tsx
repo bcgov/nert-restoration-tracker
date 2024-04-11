@@ -232,7 +232,7 @@ const initializeMap = (
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
       cluster: true,
-      clusterRadius: 10
+      clusterRadius: 100
     });
     map.addLayer({
       id: 'markerProjects.points',
@@ -257,8 +257,40 @@ const initializeMap = (
       }
     });
 
+    // TODO: These both need to filter based on layer visibility
+    map.addLayer({
+      id: 'markerClusters.points',
+      type: 'circle',
+      source: 'markers',
+      filter: ['has', 'point_count'],
+      layout: {
+        visibility: 'visible'
+      },
+      paint: {
+        'circle-color': 'rgba(0,0,0,0.5)',
+        'circle-radius': 18,
+        'circle-stroke-width': 3,
+        'circle-stroke-color': '#fff'
+      }
+    });
+    map.addLayer({
+      id: 'markerClusterLabels',
+      type: 'symbol',
+      source: 'markers',
+      filter: ['has', 'point_count'],
+      layout: {
+        visibility: 'visible',
+        'text-field': '{point_count_abbreviated}',
+        'text-size': 16
+      },
+      paint: {
+        'text-color': '#fff'
+      }
+    });
+
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', (e: any) => {
+      console.log(e.features[0]);
       const prop = e.features![0].properties;
 
       // @ts-ignore
