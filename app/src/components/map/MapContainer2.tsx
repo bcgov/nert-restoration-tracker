@@ -308,7 +308,6 @@ const initializeMap = (
 
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', (e: any) => {
-      console.log(e.features[0]);
       const prop = e.features![0].properties;
 
       // @ts-ignore
@@ -403,7 +402,7 @@ const initializeMap = (
  * @param layers Layer visibility object
  * @returns void
  */
-const checkLayerVisibility = (layers: any) => {
+const checkLayerVisibility = (layers: any, features: any) => {
   if (!map) return; // Exist if map is not initialized
 
   Object.keys(layers).forEach((layer) => {
@@ -472,6 +471,22 @@ const checkLayerVisibility = (layers: any) => {
       );
     }
   });
+
+  /**
+   * In order for the cluster layer to work, we need to filter the source here.
+   * Only run once if either plan or project layer is toggled.
+   */
+  const plansVisible = layers.plans[0];
+  const projectsVisible = layers.projects[0];
+  const filteredFeatures = features.features.filter((feature: any) => {
+    return plansVisible && !feature.properties.is_project
+      ? feature
+      : projectsVisible && feature.properties.is_project
+      ? feature
+      : null;
+  });
+  console.log('filteredFeatures', filteredFeatures);
+  // TODO: Update the marker source with the filtered features
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
@@ -484,7 +499,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Listen to layer changes
   useEffect(() => {
-    checkLayerVisibility(layerVisibility);
+    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(markers));
   }, [layerVisibility]);
 
   return <div id={mapId} style={pageStyle}></div>;
