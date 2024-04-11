@@ -474,7 +474,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 
   /**
    * In order for the cluster layer to work, we need to filter the source here.
-   * Only run once if either plan or project layer is toggled.
+   * Only run once for both projects and plans.
    */
   const plansVisible = layers.plans[0];
   const projectsVisible = layers.projects[0];
