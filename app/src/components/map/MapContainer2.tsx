@@ -262,7 +262,7 @@ const initializeMap = (
       id: 'markerClusters.points',
       type: 'circle',
       source: 'markers',
-      filter: ['has', 'point_count'],
+      filter: ['all', ['has', 'point_count']],
       layout: {
         visibility: 'visible'
       },
@@ -277,7 +277,7 @@ const initializeMap = (
       id: 'markerClusterLabels',
       type: 'symbol',
       source: 'markers',
-      filter: ['has', 'point_count'],
+      filter: ['all', ['has', 'point_count']],
       layout: {
         visibility: 'visible',
         'text-field': '{point_count_abbreviated}',
@@ -286,6 +286,24 @@ const initializeMap = (
       paint: {
         'text-color': '#fff'
       }
+    });
+
+    // Zoom in until cluster breaks apart.
+    map.on('click', 'markerClusters.points', (e: any) => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const clusterId = e.features[0].properties.cluster_id;
+
+      // @ts-ignore
+      map
+        .getSource('markers')
+        // @ts-ignore
+        .getClusterExpansionZoom(clusterId)
+        .then((zoom: any) => {
+          map.easeTo({
+            center: coordinates,
+            zoom: zoom
+          });
+        });
     });
 
     /* Add popup for the points */
