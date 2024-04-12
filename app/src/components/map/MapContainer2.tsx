@@ -99,6 +99,7 @@ const drawWells = (map: maplibre.Map, wells: any) => {
  * @param array - the feature data
  * @returns object - the GeoJSON object
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const convertToGeoJSON = (features: any) => {
   const geojson = {
     type: 'FeatureCollection',
@@ -112,7 +113,35 @@ const convertToGeoJSON = (features: any) => {
         },
         properties: {
           id: f.id,
-          name: f.name
+          name: f.name,
+          is_project: f.is_project
+        }
+      };
+    })
+  };
+  return geojson;
+};
+
+/**
+ * # convertToCentroidGeoJSON
+ * @param array - the feature data
+ * @returns object - the GeoJSON object
+ */
+const convertToCentroidGeoJSON = (features: any) => {
+  const geojson = {
+    type: 'FeatureCollection',
+    features: features.map((feature: any) => {
+      const f = feature.popup.props.featureData;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: feature.position
+        },
+        properties: {
+          id: f.id,
+          name: f.name,
+          is_project: f.is_project
         }
       };
     })
@@ -129,9 +158,9 @@ const initializeMap = (
   markers: any,
   layerVisibility?: any
 ) => {
-  const { boundary, wells, projects, wildlife, indigenous } = layerVisibility;
+  const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
-  const markerGeoJSON = convertToGeoJSON(markers);
+  const markerGeoJSON = convertToCentroidGeoJSON(markers);
 
   map = new Map({
     container: mapId,
@@ -192,85 +221,122 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
+    map.loadImage('/assets/icon/marker-icon.png').then((image) => {
+      map.addImage('blue-marker', image.data);
+    });
+    map.loadImage('/assets/icon/marker-icon2.png').then((image) => {
+      map.addImage('orange-marker', image.data);
+    });
+
     map.addSource('markers', {
       type: 'geojson',
-      data: markerGeoJSON as FeatureCollection
+      data: markerGeoJSON as FeatureCollection,
+      cluster: true,
+      clusterRadius: 100
     });
+
     map.addLayer({
-      id: 'markers.polygons',
-      type: 'fill',
+      id: 'markerProjects.points',
+      type: 'symbol',
       source: 'markers',
-      filter: ['==', '$type', 'Polygon'],
+      filter: ['all', ['==', '$type', 'Point'], ['==', 'is_project', true]],
       layout: {
-        visibility: projects[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'fill-color': 'yellow',
-        'fill-opacity': 0.4
+        visibility: projects[0] ? 'visible' : 'none',
+        'icon-image': 'blue-marker',
+        'icon-size': 1
       }
     });
     map.addLayer({
-      id: 'markers.lines',
-      type: 'line',
+      id: 'markerPlans.points',
+      type: 'symbol',
       source: 'markers',
-      filter: ['==', '$type', 'LineString'],
+      filter: ['all', ['==', '$type', 'Point'], ['==', 'is_project', false]],
       layout: {
-        visibility: projects[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'line-color': 'yellow',
-        'line-width': 3
+        visibility: plans[0] ? 'visible' : 'none',
+        'icon-image': 'orange-marker',
+        'icon-size': 1
       }
     });
+
     map.addLayer({
-      id: 'markers.points',
+      id: 'markerClusters.points',
       type: 'circle',
       source: 'markers',
-      filter: ['==', '$type', 'Point'],
+      filter: ['all', ['has', 'point_count']],
       layout: {
-        visibility: projects[0] ? 'visible' : 'none'
+        visibility: 'visible'
       },
       paint: {
-        'circle-color': 'yellow',
-        'circle-radius': 5
+        'circle-color': 'rgba(127,222,122,0.8)',
+        'circle-radius': 18,
+        'circle-stroke-width': 5,
+        'circle-stroke-color': 'rgba(127,222,122,0.3)'
       }
     });
-    /* Add the popup */
-    map.on('click', 'markers.polygons', (e: any) => {
+    map.addLayer({
+      id: 'markerClusterLabels',
+      type: 'symbol',
+      source: 'markers',
+      filter: ['all', ['has', 'point_count']],
+      layout: {
+        visibility: 'visible',
+        'text-field': '{point_count_abbreviated}',
+        'text-size': 16
+      },
+      paint: {
+        'text-color': '#000'
+      }
+    });
+
+    // Zoom in until cluster breaks apart.
+    map.on('click', 'markerClusters.points', (e: any) => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const clusterId = e.features[0].properties.cluster_id;
+
+      // @ts-ignore
+      map
+        .getSource('markers')
+        // @ts-ignore
+        .getClusterExpansionZoom(clusterId)
+        .then((zoom: any) => {
+          map.easeTo({
+            center: coordinates,
+            zoom: zoom
+          });
+        });
+    });
+
+    /* Add popup for the points */
+    map.on('click', 'markerProjects.points', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+      // @ts-ignore
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
     });
-    map.on('mousemove', 'markers.polygons', () => {
+    map.on('mousemove', 'markerProjects.points', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
-    map.on('mouseleave', 'markers.polygons', () => {
-      map.getCanvas().style.cursor = '';
-    });
-
-    /* Add popup for the lines */
-    map.on('click', 'markers.lines', (e: any) => {
-      const prop = e.features![0].properties;
-
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
-    });
-    map.on('mousemove', 'markers.lines', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'markers.lines', () => {
+    map.on('mouseleave', 'markerProjects.points', () => {
       map.getCanvas().style.cursor = '';
     });
 
     /* Add popup for the points */
-    map.on('click', 'markers.points', (e: any) => {
+    map.on('click', 'markerPlans.points', (e: any) => {
       const prop = e.features![0].properties;
 
-      new Popup().setLngLat(e.lngLat).setHTML(`<div>${prop.name}</div>`).addTo(map);
+      // @ts-ignore
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(`<div>${prop.name}</div>`)
+        .addTo(map);
     });
-    map.on('mousemove', 'markers.points', () => {
+    map.on('mousemove', 'markerPlans.points', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
-    map.on('mouseleave', 'markers.points', () => {
+    map.on('mouseleave', 'markerPlans.points', () => {
       map.getCanvas().style.cursor = '';
     });
     /**************************************************/
@@ -336,7 +402,7 @@ const initializeMap = (
  * @param layers Layer visibility object
  * @returns void
  */
-const checkLayerVisibility = (layers: any) => {
+const checkLayerVisibility = (layers: any, features: any) => {
   if (!map) return; // Exist if map is not initialized
 
   Object.keys(layers).forEach((layer) => {
@@ -387,22 +453,42 @@ const checkLayerVisibility = (layers: any) => {
       );
     }
 
-    // Projects and plans can have three separate geometry types
-    if (
-      layer === 'projects' &&
-      map.getLayer('markers.polygons') &&
-      map.getLayer('markers.lines') &&
-      map.getLayer('markers.points')
-    ) {
+    // Projects
+    if (layer === 'projects' && map.getLayer('markerProjects.points')) {
       map.setLayoutProperty(
-        'markers.polygons',
+        'markerProjects.points',
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
-      map.setLayoutProperty('markers.lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
-      map.setLayoutProperty('markers.points', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    }
+
+    // Plans
+    if (layer === 'plans' && map.getLayer('markerPlans.points')) {
+      map.setLayoutProperty(
+        'markerPlans.points',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
     }
   });
+
+  /**
+   * In order for the cluster layer to work, we need to filter the source here.
+   * Only run once for both projects and plans.
+   */
+  const plansVisible = layers.plans[0];
+  const projectsVisible = layers.projects[0];
+  const filteredFeatures = features.features.filter((feature: any) => {
+    return plansVisible && !feature.properties.is_project
+      ? feature
+      : projectsVisible && feature.properties.is_project
+      ? feature
+      : null;
+  });
+  if (map.getSource('markers')) {
+    // @ts-ignore
+    map.getSource('markers').setData({ type: 'FeatureCollection', features: filteredFeatures });
+  }
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
@@ -415,7 +501,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Listen to layer changes
   useEffect(() => {
-    checkLayerVisibility(layerVisibility);
+    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(markers));
   }, [layerVisibility]);
 
   return <div id={mapId} style={pageStyle}></div>;

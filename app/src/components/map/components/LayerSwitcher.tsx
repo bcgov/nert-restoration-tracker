@@ -12,6 +12,7 @@ export interface ILayerSwitcherProps {
     boundary: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     wells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
   };
@@ -44,7 +45,7 @@ const buttonStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, wildlife, indigenous } = props.layerVisibility;
+  const { boundary, wells, projects, plans, wildlife, indigenous } = props.layerVisibility;
 
   const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
 
@@ -77,7 +78,11 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
             />
             <FormControlLabel
               control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
-              label="Projects & Plans"
+              label="Projects"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={plans[0]} onClick={() => plans[1](!plans[0])} />}
+              label="Plans"
             />
             <FormControlLabel
               control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
