@@ -20,6 +20,10 @@ export interface IProjectGeneralInformationForm {
     actual_start_date: string;
     actual_end_date: string;
     objectives: string;
+    is_healing_land: boolean;
+    is_healing_people: boolean;
+    is_land_initiative: boolean;
+    is_cultural_initiative: boolean;
   };
   species: {
     focal_species: number[];
@@ -35,7 +39,11 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     end_date: '',
     actual_start_date: '',
     actual_end_date: '',
-    objectives: ''
+    objectives: '',
+    is_healing_land: false,
+    is_healing_people: false,
+    is_land_initiative: false,
+    is_cultural_initiative: false
   },
   species: {
     focal_species: []

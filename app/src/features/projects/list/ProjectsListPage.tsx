@@ -1,6 +1,7 @@
 import { mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -41,10 +42,11 @@ import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
-  const { projects, drafts } = props;
+  const { projects, drafts, myproject } = props;
 
   const history = useHistory();
 
+  const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
   const rowsProject = projects
     ?.filter((proj) => proj.project.is_project)
@@ -128,21 +130,39 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
           })}
           <SystemRoleGuard
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-            <TableCell>Archive</TableCell>
+            <TableCell>
+              {!myProject ? (
+                <Typography variant="inherit">Archive</Typography>
+              ) : (
+                <>
+                  <Typography variant="inherit">Archive</Typography>
+                  <Typography variant="inherit">Delete</Typography>
+                </>
+              )}
+            </TableCell>
           </SystemRoleGuard>
-          <TableCell padding="checkbox">
-            <Tooltip title="Export all projects" placement="right">
-              <Checkbox
-                color="primary"
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={rowCount > 0 && numSelected === rowCount}
-                onChange={onSelectAllClick}
-                inputProps={{
-                  'aria-label': 'select all projects for export'
-                }}
-              />
-            </Tooltip>
-          </TableCell>
+          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
+            <TableCell>
+              {!myProject ? <></> : <Typography variant="inherit">Delete</Typography>}
+            </TableCell>
+          </SystemRoleGuard>
+          {!myProject ? (
+            <TableCell padding="checkbox">
+              <Tooltip title="Export all projects" placement="right">
+                <Checkbox
+                  color="primary"
+                  indeterminate={numSelected > 0 && numSelected < rowCount}
+                  checked={rowCount > 0 && numSelected === rowCount}
+                  onChange={onSelectAllClick}
+                  inputProps={{
+                    'aria-label': 'select all projects for export'
+                  }}
+                />
+              </Tooltip>
+            </TableCell>
+          ) : (
+            <></>
+          )}
         </TableRow>
       </TableHead>
     );
@@ -150,7 +170,6 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
   function ProjectsTableToolbar(props: utils.TableToolbarProps) {
     const { numSelected } = props;
-
     return (
       <Toolbar
         sx={{
@@ -329,32 +348,48 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         label={row.statusLabel}
                       />
                     </TableCell>
-                    <SystemRoleGuard
-                      validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-                      <TableCell align="left">
-                        <Tooltip
-                          title={archCode !== row.statusCode ? 'Archive' : 'Unarchive'}
-                          placement="right">
-                          <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
-                            {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                    <TableCell align="left">
+                      {draftCode !== row.statusCode ? (
+                        <SystemRoleGuard
+                          validSystemRoles={[
+                            SYSTEM_ROLE.SYSTEM_ADMIN,
+                            SYSTEM_ROLE.DATA_ADMINISTRATOR
+                          ]}>
+                          <Tooltip
+                            title={archCode !== row.statusCode ? 'Archive' : 'Unarchive'}
+                            placement="right">
+                            <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                              {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                        </SystemRoleGuard>
+                      ) : (
+                        <Tooltip title="Delete draft" placement="right">
+                          <IconButton color="error">
+                            <DeleteForeverIcon />
                           </IconButton>
                         </Tooltip>
-                      </TableCell>
-                    </SystemRoleGuard>
-                    <TableCell padding="checkbox">
-                      <Tooltip
-                        title={isItemSelected ? 'Export selected' : 'Export not selected'}
-                        placement="right">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                          onClick={(event) => handleClick(event, row.id)}
-                        />
-                      </Tooltip>
+                      )}
                     </TableCell>
+
+                    {!myProject ? (
+                      <TableCell padding="checkbox">
+                        <Tooltip
+                          title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                          placement="right">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId
+                            }}
+                            onClick={(event) => handleClick(event, row.id)}
+                          />
+                        </Tooltip>
+                      </TableCell>
+                    ) : (
+                      <></>
+                    )}
                   </TableRow>
                 );
               })}
