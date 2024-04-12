@@ -3,9 +3,6 @@ import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
-// TODO: Import the marker icon
-// import markerBlue from '/assets/icon/marker-icon.png';
-// console.log(markerBlue);
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -270,10 +267,10 @@ const initializeMap = (
         visibility: 'visible'
       },
       paint: {
-        'circle-color': 'rgba(0,0,0,0.5)',
+        'circle-color': 'rgba(127,222,122,0.8)',
         'circle-radius': 18,
-        'circle-stroke-width': 3,
-        'circle-stroke-color': '#fff'
+        'circle-stroke-width': 5,
+        'circle-stroke-color': 'rgba(127,222,122,0.3)'
       }
     });
     map.addLayer({
@@ -287,7 +284,7 @@ const initializeMap = (
         'text-size': 16
       },
       paint: {
-        'text-color': '#fff'
+        'text-color': '#000'
       }
     });
 

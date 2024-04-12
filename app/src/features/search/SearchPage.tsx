@@ -90,7 +90,7 @@ const SearchPage: React.FC = () => {
    */
   const boundary = useState<boolean>(true);
   const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
+  const projects = useState<boolean>(false);
   const plans = useState<boolean>(false);
   const wildlife = useState<boolean>(false);
   const indigenous = useState<boolean>(false);
