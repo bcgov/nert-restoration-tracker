@@ -3,6 +3,9 @@ import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
+// TODO: Import the marker icon
+// import markerBlue from '/assets/icon/marker-icon.png';
+// console.log(markerBlue);
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -234,6 +237,7 @@ const initializeMap = (
       cluster: true,
       clusterRadius: 100
     });
+
     map.addLayer({
       id: 'markerProjects.points',
       type: 'symbol',
@@ -257,7 +261,6 @@ const initializeMap = (
       }
     });
 
-    // TODO: These both need to filter based on layer visibility
     map.addLayer({
       id: 'markerClusters.points',
       type: 'circle',
@@ -485,8 +488,10 @@ const checkLayerVisibility = (layers: any, features: any) => {
       ? feature
       : null;
   });
-  console.log('filteredFeatures', filteredFeatures);
-  // TODO: Update the marker source with the filtered features
+  if (map.getSource('markers')) {
+    // @ts-ignore
+    map.getSource('markers').setData({ type: 'FeatureCollection', features: filteredFeatures });
+  }
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
