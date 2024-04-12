@@ -6,6 +6,7 @@ import { IProjectLocationForm } from 'features/projects/components/ProjectLocati
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
 import { IProjectPermitForm } from 'features/projects/components/ProjectPermitForm';
 import { Feature } from 'geojson';
+import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
 export interface IGetProjectAttachment {
   id: number;
@@ -203,6 +204,8 @@ export interface IGetProjectForUpdateResponsePartnerships {
 
 export interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
+  drafts?: IGetDraftsListResponse[];
+  myproject?: boolean;
 }
 
 /**
@@ -224,6 +227,8 @@ export interface IGetProjectForViewResponse {
 
 export interface IPlansListProps {
   plans: IGetPlanForViewResponse[];
+  drafts?: IGetDraftsListResponse[];
+  myplan?: boolean;
 }
 export interface IGetPlanForViewResponse {
   // [OI] this will require updating to the plan data model
@@ -244,8 +249,14 @@ export interface IGetProjectForViewResponseDetails {
   project_name: string;
   start_date: string;
   end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
   publish_date: string;
   objectives: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
   region: string;
 }
 

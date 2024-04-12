@@ -22,7 +22,12 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import {
+  getStateCodeFromLabel,
+  getStateLabelFromCode,
+  getStatusStyle,
+  states
+} from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
@@ -35,7 +40,11 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const history = useHistory();
 
   const rows = plans
-    ?.filter((plan) => !plan.project.is_project)
+    ?.filter(
+      (plan) =>
+        !plan.project.is_project &&
+        plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+    )
     .map((row, index) => {
       return {
         id: index,

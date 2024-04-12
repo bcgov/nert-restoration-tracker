@@ -19,7 +19,13 @@ export class GetProjectData {
   state_code: number;
   start_date: string;
   end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
   objectives: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
   publish_date: string;
   revision_count: number;
 
@@ -31,7 +37,13 @@ export class GetProjectData {
     this.state_code = projectData?.state_code || null;
     this.start_date = projectData?.start_date || null;
     this.end_date = projectData?.end_date || null;
+    this.actual_start_date = projectData?.actual_start_date || null;
+    this.actual_end_date = projectData?.actual_end_date || null;
     this.objectives = projectData?.objectives || '';
+    this.is_healing_land = projectData?.is_healing_land || null;
+    this.is_healing_people = projectData?.is_healing_people || null;
+    this.is_land_initiative = projectData?.is_land_initiative || null;
+    this.is_cultural_initiative = projectData?.is_cultural_initiative || null;
     this.publish_date = projectData?.publish_timestamp || null;
     this.revision_count = projectData?.revision_count ?? 0;
   }

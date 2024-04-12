@@ -25,14 +25,26 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
       state_code,
       start_date,
       end_date,
-      objectives
+      actual_start_date,
+      actual_end_date,
+      objectives,
+      is_healing_land,
+      is_healing_people,
+      is_land_initiative,
+      is_cultural_initiative
     ) VALUES (
       ${project.name},
       ${project.is_project},
       ${project.state_code},
       ${project.start_date},
       ${project.end_date},
-      ${project.objectives}
+      ${project.actual_start_date},
+      ${project.actual_end_date},
+      ${project.objectives},
+      ${project.is_healing_land},
+      ${project.is_healing_people},
+      ${project.is_land_initiative},
+      ${project.is_cultural_initiative}
     )
     RETURNING
       project_id as id;

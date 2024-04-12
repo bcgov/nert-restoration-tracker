@@ -67,8 +67,34 @@ POST.apiDoc = {
                   description: 'ISO 8601 date string',
                   nullable: true
                 },
+                actual_start_date: {
+                  type: 'string',
+                  description: 'ISO 8601 date string',
+                  nullable: true
+                },
+                actual_end_date: {
+                  type: 'string',
+                  description: 'ISO 8601 date string',
+                  nullable: true
+                },
                 objectives: {
                   type: 'string'
+                },
+                is_healing_land: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on healing the land'
+                },
+                is_healing_people: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on healing the people'
+                },
+                is_land_initiative: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on land based restoration initiative'
+                },
+                is_cultural_initiative: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on cultural or community investment initiative'
                 }
               }
             },

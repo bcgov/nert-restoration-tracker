@@ -17,7 +17,13 @@ export interface IProjectGeneralInformationForm {
     state_code: number;
     start_date: string;
     end_date: string;
+    actual_start_date: string;
+    actual_end_date: string;
     objectives: string;
+    is_healing_land: boolean;
+    is_healing_people: boolean;
+    is_land_initiative: boolean;
+    is_cultural_initiative: boolean;
   };
   species: {
     focal_species: number[];
@@ -31,7 +37,13 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     state_code: 0,
     start_date: '',
     end_date: '',
-    objectives: ''
+    actual_start_date: '',
+    actual_end_date: '',
+    objectives: '',
+    is_healing_land: false,
+    is_healing_people: false,
+    is_land_initiative: false,
+    is_cultural_initiative: false
   },
   species: {
     focal_species: []
@@ -112,8 +124,8 @@ const ProjectGeneralInformationForm: React.FC = () => {
             plannedEndName={'project.end_date'}
             plannedStartRequired={false}
             plannedEndRequired={false}
-            actualStartName={'actual_start_date'}
-            actualEndName={'actual_end_date'}
+            actualStartName={'project.actual_start_date'}
+            actualEndName={'project.actual_end_date'}
             actualStartRequired={false}
             actualEndRequired={false}
           />

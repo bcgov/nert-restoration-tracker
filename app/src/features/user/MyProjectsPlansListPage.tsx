@@ -82,7 +82,7 @@ const MyProjectsPlansListPage: React.FC = () => {
         </SystemRoleGuard>
       </Box>
 
-      <ProjectsListPage projects={projects} drafts={drafts} />
+      <ProjectsListPage projects={projects} drafts={drafts} myproject={true} />
 
       <Box mt={5} mb={2} display="flex" justifyContent="space-between">
         <Box mb={1}>
@@ -108,7 +108,7 @@ const MyProjectsPlansListPage: React.FC = () => {
         </SystemRoleGuard>
       </Box>
 
-      <PlanListPage plans={projects} drafts={drafts} />
+      <PlanListPage plans={projects} drafts={drafts} myplan={true} />
     </Container>
   );
 };

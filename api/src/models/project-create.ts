@@ -109,7 +109,13 @@ export class PostProjectData {
   state_code: number;
   start_date: string;
   end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
   objectives: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostProjectData', message: 'params', obj });
@@ -119,7 +125,13 @@ export class PostProjectData {
     this.state_code = obj?.state_code || 0;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;
+    this.actual_start_date = obj?.actual_start_date || null;
+    this.actual_end_date = obj?.actual_end_date || null;
     this.objectives = obj?.objectives || null;
+    this.is_healing_land = obj?.is_healing_land || null;
+    this.is_healing_people = obj?.is_healing_people || null;
+    this.is_land_initiative = obj?.is_land_initiative || null;
+    this.is_cultural_initiative = obj?.is_cultural_initiative || null;
   }
 }
 

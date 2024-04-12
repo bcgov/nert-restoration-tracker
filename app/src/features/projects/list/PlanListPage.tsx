@@ -1,6 +1,7 @@
 import { mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -26,7 +27,12 @@ import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import {
+  getStateCodeFromLabel,
+  getStateLabelFromCode,
+  getStatusStyle,
+  states
+} from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
@@ -36,11 +42,13 @@ import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
-  const { plans } = props;
+  const { plans, drafts, myplan } = props;
 
   const history = useHistory();
 
-  const rows = plans
+  const myPlan = myplan && true === myplan ? true : false;
+  const archCode = getStateCodeFromLabel(states.ARCHIVED);
+  const rowsPlan = plans
     ?.filter((plan) => !plan.project.is_project)
     .map((row, index) => {
       return {
@@ -57,9 +65,33 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
         statusCode: row.project.state_code,
         statusLabel: getStateLabelFromCode(row.project.state_code),
         statusStyle: getStatusStyle(row.project.state_code),
-        archive: row.project.state_code !== 8 ? 'Archive' : 'Unarchive'
+        archive: row.project.state_code !== archCode ? 'Archive' : 'Unarchive'
       } as utils.PlanData;
     });
+
+  const draftCode = getStateCodeFromLabel(states.DRAFT);
+  const draftStatusStyle = getStatusStyle(draftCode);
+  const rowsDraft = drafts
+    ? drafts
+        .filter((draft) => !draft.is_project)
+        .map((row, index) => {
+          return {
+            id: index + rowsPlan.length,
+            planId: row.id,
+            planName: row.name,
+            term: '',
+            org: '',
+            startDate: '',
+            endDate: '',
+            statusCode: draftCode,
+            statusLabel: states.DRAFT,
+            statusStyle: draftStatusStyle,
+            archive: ''
+          } as utils.PlanData;
+        })
+    : [];
+
+  const rows = rowsDraft.concat(rowsPlan);
 
   function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -93,23 +125,43 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                 </TableCell>
               );
           })}
+
           <SystemRoleGuard
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-            <TableCell>Archive</TableCell>
+            <TableCell>
+              {!myPlan ? (
+                <Typography variant="inherit">Archive</Typography>
+              ) : (
+                <>
+                  <Typography variant="inherit">Archive</Typography>
+                  <Typography variant="inherit">Delete</Typography>
+                </>
+              )}
+            </TableCell>
           </SystemRoleGuard>
-          <TableCell padding="checkbox">
-            <Tooltip title="Export all plans" placement="right">
-              <Checkbox
-                color="primary"
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={rowCount > 0 && numSelected === rowCount}
-                onChange={onSelectAllClick}
-                inputProps={{
-                  'aria-label': 'select all plans for export'
-                }}
-              />
-            </Tooltip>
-          </TableCell>
+          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
+            <TableCell>
+              {!myPlan ? <></> : <Typography variant="inherit">Delete</Typography>}
+            </TableCell>
+          </SystemRoleGuard>
+
+          {!myPlan ? (
+            <TableCell padding="checkbox">
+              <Tooltip title="Export all plans" placement="right">
+                <Checkbox
+                  color="primary"
+                  indeterminate={numSelected > 0 && numSelected < rowCount}
+                  checked={rowCount > 0 && numSelected === rowCount}
+                  onChange={onSelectAllClick}
+                  inputProps={{
+                    'aria-label': 'select all plans for export'
+                  }}
+                />
+              </Tooltip>
+            </TableCell>
+          ) : (
+            <></>
+          )}
         </TableRow>
       </TableHead>
     );
@@ -121,7 +173,6 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
   function PlansTableToolbar(props: PlansTableToolbarProps) {
     const { numSelected } = props;
-
     return (
       <Toolbar
         sx={{
@@ -271,7 +322,11 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history.push(`/admin/projects/${row.planId}`)}>
+                        onClick={
+                          draftCode != row.statusCode
+                            ? () => history.push(`/admin/projects/${row.planId}`)
+                            : () => history.push(`/admin/projects/create?draftId=${row.planId}`)
+                        }>
                         {row.planName}
                       </Link>
                     </TableCell>
@@ -290,32 +345,47 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         label={row.statusLabel}
                       />
                     </TableCell>
-                    <SystemRoleGuard
-                      validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-                      <TableCell align="left">
-                        <Tooltip
-                          title={8 !== row.statusCode ? 'Archive' : 'Unarchive'}
-                          placement="right">
-                          <IconButton color={8 !== row.statusCode ? 'info' : 'warning'}>
-                            {8 !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                    <TableCell align="left">
+                      {draftCode !== row.statusCode ? (
+                        <SystemRoleGuard
+                          validSystemRoles={[
+                            SYSTEM_ROLE.SYSTEM_ADMIN,
+                            SYSTEM_ROLE.DATA_ADMINISTRATOR
+                          ]}>
+                          <Tooltip
+                            title={archCode !== row.statusCode ? 'Archive' : 'Unarchive'}
+                            placement="right">
+                            <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                              {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                        </SystemRoleGuard>
+                      ) : (
+                        <Tooltip title="Delete draft" placement="right">
+                          <IconButton color="error">
+                            <DeleteForeverIcon />
                           </IconButton>
                         </Tooltip>
-                      </TableCell>
-                    </SystemRoleGuard>
-                    <TableCell padding="checkbox">
-                      <Tooltip
-                        title={isItemSelected ? 'Export selected' : 'Export not selected'}
-                        placement="right">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId
-                          }}
-                          onClick={(event) => handleClick(event, row.id)}
-                        />
-                      </Tooltip>
+                      )}
                     </TableCell>
+                    {!myPlan ? (
+                      <TableCell padding="checkbox">
+                        <Tooltip
+                          title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                          placement="right">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId
+                            }}
+                            onClick={(event) => handleClick(event, row.id)}
+                          />
+                        </Tooltip>
+                      </TableCell>
+                    ) : (
+                      <></>
+                    )}
                   </TableRow>
                 );
               })}

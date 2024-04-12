@@ -112,7 +112,7 @@ begin
 
   -- test ancillary data
   delete from webform_draft;
-  insert into webform_draft (system_user_id, name, data) values ((select system_user_id from system_user limit 1), 'my draft name', '{ "customer": "John Doe", "items": {"product": "Beer","qty": 6}}');
+  insert into webform_draft (system_user_id, is_project, name, data) values ((select system_user_id from system_user limit 1), true, 'my draft name', '{ "customer": "John Doe", "items": {"product": "Beer","qty": 6}}');
   select count(1) into _count from webform_draft;
   assert _count = 1, 'FAIL webform_draft';
 
