@@ -320,10 +320,10 @@ const initializeMap = (
         '"margin-top: 1rem; font-size: 1.2em; font-weight: bold; background: #003366; cursor: pointer; border-radius: 5px; color: white; padding: 7px 20px; border: none; text-align: center; text-decoration: none; display: inline-block; font-family: Arial, sans-serif;"';
       return `
         <div style=${divStyle}>
-          <div>${name}</div>
+          <div>Project Name: <b>${name}</b></div>
           <div>
             <a href="/${isProject ? 'projects' : 'plans'}/${id}">
-              <button style=${buttonStyle}>View</button>
+              <button style=${buttonStyle}>View Project Details</button>
             </a>
           </div>
         </div>`;
