@@ -1,0 +1,16 @@
+.maplibregl-popup-content {
+  border-radius: 10px;
+  padding: 15px 20px;
+}
+
+.maplibregl-popup-content .view-btn button {
+  transition: transform 0.2s;
+}
+.maplibregl-popup-content .view-btn button:hover {
+  transform: scale(1.1) !important;
+}
+
+.maplibregl-popup-close-button {
+  color: black;
+  border-radius: 50%;
+}

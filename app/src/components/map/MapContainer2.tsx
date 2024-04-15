@@ -3,6 +3,7 @@ import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
+import './style.css'; // Custom styling
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -321,9 +322,9 @@ const initializeMap = (
       return `
         <div style=${divStyle}>
           <div>Project Name: <b>${name}</b></div>
-          <div>
-            <a href="/${isProject ? 'projects' : 'plans'}/${id}">
-              <button style=${buttonStyle}>View Project Details</button>
+          <div class="view-btn">
+            <a href="/${isProject ? 'projects' : 'plans'}/${id}" >
+              <button style=${buttonStyle} title="Take me to the details page">View Project Details</button>
             </a>
           </div>
         </div>`;
