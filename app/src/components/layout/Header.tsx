@@ -197,7 +197,7 @@ const Header: React.FC = () => {
     <>
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
         <Toolbar sx={pageStyles.govHeaderToolbar}>
-          <Box display="flex" justifyContent="space-between" width="100%">
+          <Box display="flex" justifyContent="space-between" width="100%" sx={pageStyles.brand}>
             <Link
               to="/"
               style={pageStyles.brand}
