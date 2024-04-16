@@ -99,6 +99,7 @@ export interface PlanData {
   statusCode: number;
   statusLabel: string;
   archive: string;
+  export: string;
 }
 
 export interface PlansTableProps {
@@ -159,6 +160,12 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Archive'
+  },
+  {
+    id: 'export',
+    numeric: false,
+    disablePadding: false,
+    label: 'Export'
   }
 ];
 

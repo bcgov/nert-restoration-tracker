@@ -32,7 +32,7 @@ export interface IProjectAdvancedFilterRequest {
 /**
  * An interface for an instance of filter fields for plan advanced filter search
  */
-// [OI] This will need to be updated with Plan data model
+// [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
   keyword?: string;
   contact_agency?: string | string[];

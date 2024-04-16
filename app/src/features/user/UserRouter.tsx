@@ -16,9 +16,7 @@ const UserRouter: React.FC = () => {
       <Redirect exact from="/admin/user" to="/admin/user/projects" />
 
       <AppRoute exact path="/admin/user/projects" layout={ProjectsLayout}>
-        <ProjectsLayout>
-          <MyProjectsPlansListPage />
-        </ProjectsLayout>
+        <MyProjectsPlansListPage />
       </AppRoute>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}
