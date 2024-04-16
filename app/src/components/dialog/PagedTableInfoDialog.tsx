@@ -9,6 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
+import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
 import React, { Fragment, useContext, useState } from 'react';
@@ -17,6 +18,12 @@ import { isAuthenticated } from 'utils/authUtils';
 
 interface IPagedTableInfoDialogProps {
   isProject: boolean;
+}
+
+interface ITypeItem {
+  typeLabel: string;
+  typeIcon: any;
+  typeBgColor: string;
 }
 
 const VideoDialog = styled(Dialog)(({ theme }) => ({
@@ -50,11 +57,13 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
       ? 'auth/admin'
       : 'auth/user'
     : 'public';
-  const typeLabel = !props.isProject ? 'Plan' : 'Project';
+  const item: ITypeItem = !props.isProject
+    ? { typeLabel: 'Plan', typeIcon: ICONS.PLAN_ICON, typeBgColor: '#FFF4EB' }
+    : { typeLabel: 'Project', typeIcon: ICONS.PROJECT_ICON, typeBgColor: '#E9FBFF' };
 
   return (
     <Fragment>
-      <Tooltip title={`${typeLabel} Information`} placement="right">
+      <Tooltip title={`${item.typeLabel} Information`} placement="right">
         <IconButton onClick={handleClickOpen}>
           <InfoIcon color="info" />
         </IconButton>
@@ -67,9 +76,10 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
         maxWidth="xl"
         scroll="paper">
         <DialogTitle
-          sx={{ m: 0, p: 2, backgroundColor: !props.isProject ? '#FFF4EB' : '#E9FBFF' }}
+          sx={{ m: 0, p: 2, backgroundColor: item.typeBgColor }}
           id="customized-dialog-title">
-          {typeLabel} table usage
+          <img src={item.typeIcon} width="20" height="32" alt={item.typeLabel} /> {item.typeLabel}{' '}
+          table usage
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -90,7 +100,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
           ) : (
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
               <ReactPlayer
-                url={`https://${process.env.REACT_APP_OBJECT_STORE_URL}/${process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${typeLabel}PagedTableInfo.mp4`}
+                url={`https://${process.env.REACT_APP_OBJECT_STORE_URL}/${process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${item.typeLabel}PagedTableInfo.mp4`}
                 style={{ position: 'absolute', top: 0, left: 0 }}
                 playing={true}
                 loop={true}
@@ -102,7 +112,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
             </div>
           )}
         </DialogContent>
-        <DialogActions sx={{ backgroundColor: !props.isProject ? '#FFF4EB' : '#E9FBFF' }}>
+        <DialogActions sx={{ backgroundColor: item.typeBgColor }}>
           <Button autoFocus onClick={handleClose}>
             Close
           </Button>

@@ -4,6 +4,7 @@ import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
+import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { debounce } from 'lodash-es';
@@ -34,7 +35,7 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
   project: {
     project_name: '',
     is_project: true,
-    state_code: 0,
+    state_code: getStateCodeFromLabel(states.PLANNING),
     start_date: '',
     end_date: '',
     actual_start_date: '',

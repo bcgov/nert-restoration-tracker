@@ -49,7 +49,7 @@ import ProjectPermitForm, {
   ProjectPermitFormYupSchema
 } from 'features/projects/components/ProjectPermitForm';
 import { Form, Formik, FormikProps } from 'formik';
-import History from 'history';
+// import * as History from 'history';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
@@ -57,7 +57,13 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
-import { Prompt } from 'react-router-dom';
+// import { Prompt } from 'react-router-dom';
+import {
+  events,
+  getStateCodeFromLabel,
+  StateMachine,
+  states
+} from 'components/workflow/StateMachine';
 import yup from 'utils/YupSchema';
 
 const pageStyles = {
@@ -125,7 +131,7 @@ const CreateProjectPage: React.FC = () => {
   const formikRef = useRef<FormikProps<ICreateProjectRequest>>(null);
 
   // Ability to bypass showing the 'Are you sure you want to cancel' dialog
-  const [enableCancelCheck, setEnableCancelCheck] = useState(true);
+  // const [enableCancelCheck, setEnableCancelCheck] = useState(true);
 
   const dialogContext = useContext(DialogContext);
 
@@ -166,7 +172,6 @@ const CreateProjectPage: React.FC = () => {
   useEffect(() => {
     const getDraftProjectFields = async () => {
       const response = await restorationTrackerApi.draft.getDraft(queryParams.draftId);
-
       setHasLoadedDraftData(true);
 
       if (!response || !response.data) {
@@ -194,12 +199,20 @@ const CreateProjectPage: React.FC = () => {
 
       let response;
       if (draftId) {
+        if (formikRef.current)
+          formikRef.current.values.project.state_code = getStateCodeFromLabel(
+            StateMachine(true, states.DRAFT, events.saving)
+          );
         response = await restorationTrackerApi.draft.updateDraft(
           draftId,
           values.draft_name,
           formikRef.current?.values
         );
       } else {
+        if (formikRef.current)
+          formikRef.current.values.project.state_code = getStateCodeFromLabel(
+            StateMachine(true, states.DRAFT, events.creating)
+          );
         response = await restorationTrackerApi.draft.createDraft(
           true,
           values.draft_name,
@@ -219,7 +232,7 @@ const CreateProjectPage: React.FC = () => {
       }
 
       setDraft({ id: response.id, date: response.date });
-      setEnableCancelCheck(false);
+      // setEnableCancelCheck(false);
 
       history.push('/admin/user/projects');
     } catch (error) {
@@ -238,8 +251,10 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (values: ICreateProjectRequest) => {
     try {
+      values.project.state_code = getStateCodeFromLabel(
+        StateMachine(true, states.DRAFT, events.creating)
+      );
       const response = await restorationTrackerApi.project.createProject(values);
-
       if (!response?.id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a project ID.'
@@ -249,10 +264,9 @@ const CreateProjectPage: React.FC = () => {
 
       await deleteDraft();
 
-      setEnableCancelCheck(false);
+      // setEnableCancelCheck(false);
 
       keycloakWrapper?.refresh();
-
       history.push(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({
@@ -315,27 +329,29 @@ const CreateProjectPage: React.FC = () => {
    * @param {History.Location} location
    * @return {*}
    */
-  const handleLocationChange = (location: History.Location) => {
-    if (!dialogContext.yesNoDialogProps.open) {
-      // If the cancel dialog is not open: open it
-      dialogContext.setYesNoDialog({
-        ...defaultCancelDialogProps,
-        onYes: () => {
-          dialogContext.setYesNoDialog({ open: false });
-          history.push(location.pathname);
-        },
-        open: true
-      });
-      return false;
-    }
+  // const handleLocationChange = (location: History.Location) => {
+  //   if (!dialogContext.yesNoDialogProps.open) {
+  //     // If the cancel dialog is not open: open it
+  //     dialogContext.setYesNoDialog({
+  //       ...defaultCancelDialogProps,
+  //       onYes: () => {
+  //         dialogContext.setYesNoDialog({ open: false });
+  //         history.push(location.pathname);
+  //       },
+  //       open: true
+  //     });
+  //     return false;
+  //   }
 
-    // If the cancel dialog is already open and another location change action is triggered: allow it
-    return true;
-  };
+  //   // If the cancel dialog is already open and another location change action is triggered: allow it
+  //   return true;
+  // };
+
+  // [OI] TODO Prompt component not working, breaks routing functionality commented out for now
 
   return (
     <>
-      <Prompt when={enableCancelCheck} message={handleLocationChange} />
+      {/* <Prompt when={enableCancelCheck} message={handleLocationChange} /> */}
 
       <EditDialog
         dialogTitle="Save Incomplete Project as a Draft"

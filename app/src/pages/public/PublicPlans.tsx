@@ -10,7 +10,7 @@ import PlanFilter, {
   IPlanAdvancedFilters,
   PlanAdvancedFiltersInitialValues
 } from 'components/search-plan-filter/PlanFilter';
-import { focusOptions, planStatusOptions } from 'constants/misc';
+import { focusOptions, ICONS, planStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -173,7 +173,7 @@ export default function PublicPlans() {
     <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography ml={1} variant="h1">
-          Plans
+          <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> Plans
         </Typography>
         <Box my={1} mx={1}>
           <Button
