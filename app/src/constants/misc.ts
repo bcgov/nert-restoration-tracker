@@ -96,3 +96,8 @@ export const planStatusOptions = [
     label: states.ARCHIVED
   }
 ];
+
+export const ICONS = {
+  PLAN_ICON: require('assets/images/planIcon.png'),
+  PROJECT_ICON: require('assets/images/projectIcon.png')
+};

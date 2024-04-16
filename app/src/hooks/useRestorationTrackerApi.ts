@@ -21,7 +21,7 @@ export const useRestorationTrackerApi = () => {
   const apiAxios = useAxios(config?.API_HOST);
 
   const project = useProjectApi(apiAxios);
-  // [OI] update this code for plan
+  // TODO update this code for plan
   const plan = useProjectApi(apiAxios);
 
   const search = useSearchApi(apiAxios);

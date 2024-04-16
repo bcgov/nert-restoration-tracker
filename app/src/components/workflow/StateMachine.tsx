@@ -17,7 +17,7 @@ const statesPlan = {
   DRAFT: 'DRAFT'
 };
 
-const events = {
+export const events = {
   saving: 'saving',
   creating: 'creating',
   archiving: 'archiving',
@@ -242,7 +242,7 @@ function createMachine(stateMachineDefinition: any) {
  * @param {string} string event to transition
  * @returns {string} string representing the valid next state
  */
-const StateMachine = (type: boolean, currentState: string, event: string) => {
+export const StateMachine = (type: boolean, currentState: string, event: string) => {
   // validate current state is valid
   if (!(currentState in states)) {
     return 'UNDEFINED_STATE:' + currentState;

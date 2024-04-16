@@ -10,7 +10,7 @@ import ProjectFilter, {
   IProjectAdvancedFilters,
   ProjectAdvancedFiltersInitialValues
 } from 'components/search-project-filter/ProjectFilter';
-import { focusOptions, projectStatusOptions } from 'constants/misc';
+import { focusOptions, ICONS, projectStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -172,7 +172,7 @@ export default function Projects() {
     <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography ml={1} variant="h1">
-          Projects
+          <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> Projects
         </Typography>
         <Box my={1} mx={1}>
           <Button
