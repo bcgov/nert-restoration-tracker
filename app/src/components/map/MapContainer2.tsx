@@ -3,7 +3,7 @@ import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
-import './style.css'; // Custom styling
+import './mapContainer2Style.css'; // Custom styling
 
 const { Map, Popup, NavigationControl } = maplibre;
 
