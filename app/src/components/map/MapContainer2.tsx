@@ -3,6 +3,7 @@ import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
+import './mapContainer2Style.css'; // Custom styling
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -306,15 +307,37 @@ const initializeMap = (
         });
     });
 
+    /**
+     * # makePopup
+     * Try and standardize the popup for the projects and plans
+     * @param name
+     * @param id
+     * @param isProject
+     * @returns HTML string
+     */
+    const makePopup = (name: string, id: string, isProject: boolean) => {
+      const divStyle = '"text-align: center;"';
+      const buttonStyle =
+        '"margin-top: 1rem; font-size: 1.2em; font-weight: bold; background: #003366; cursor: pointer; border-radius: 5px; color: white; padding: 7px 20px; border: none; text-align: center; text-decoration: none; display: inline-block; font-family: Arial, sans-serif;"';
+      return `
+        <div style=${divStyle}>
+          <div>Project Name: <b>${name}</b></div>
+          <div class="view-btn">
+            <a href="/${isProject ? 'projects' : 'plans'}/${id}" >
+              <button style=${buttonStyle} title="Take me to the details page">View Project Details</button>
+            </a>
+          </div>
+        </div>`;
+    };
+
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', (e: any) => {
       const prop = e.features![0].properties;
 
+      const html = makePopup(prop.name, prop.id, true);
+
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } })
-        .setLngLat(e.lngLat)
-        .setHTML(`<div>${prop.name}</div>`)
-        .addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
     });
     map.on('mousemove', 'markerProjects.points', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -327,11 +350,12 @@ const initializeMap = (
     map.on('click', 'markerPlans.points', (e: any) => {
       const prop = e.features![0].properties;
 
+      // TBD: Currently the /plans route is not available
+      // const html = makePopup(prop.name, prop.id, false);
+      const html = makePopup(prop.name, prop.id, true);
+
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } })
-        .setLngLat(e.lngLat)
-        .setHTML(`<div>${prop.name}</div>`)
-        .addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
     });
     map.on('mousemove', 'markerPlans.points', () => {
       map.getCanvas().style.cursor = 'pointer';

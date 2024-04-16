@@ -28,6 +28,7 @@ const switcherStyle = {
   borderRadius: '5px',
   boxShadow: '0 0 10px rgba(0,0,0,0.5)'
 };
+
 const switcherCloseStyle = {
   position: 'absolute',
   right: '2px',
@@ -42,6 +43,16 @@ const buttonStyle = {
   backgroundColor: 'white',
   borderRadius: '5px',
   boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+};
+
+const iconLegendStyle = {
+  display: 'flex',
+  alignItems: 'center'
+};
+
+const iconLegendIconStyle = {
+  height: '30px',
+  marginLeft: '5px'
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
@@ -78,11 +89,29 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
             />
             <FormControlLabel
               control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
-              label="Projects"
+              label={
+                <div style={iconLegendStyle}>
+                  <span>Projects</span>
+                  <img
+                    style={iconLegendIconStyle}
+                    src="/assets/icon/marker-icon.png"
+                    alt="projects"
+                  />
+                </div>
+              }
             />
             <FormControlLabel
               control={<Checkbox checked={plans[0]} onClick={() => plans[1](!plans[0])} />}
-              label="Plans"
+              label={
+                <div style={iconLegendStyle}>
+                  <span>Plans</span>
+                  <img
+                    style={iconLegendIconStyle}
+                    src="/assets/icon/marker-icon2.png"
+                    alt="plans"
+                  />
+                </div>
+              }
             />
             <FormControlLabel
               control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
