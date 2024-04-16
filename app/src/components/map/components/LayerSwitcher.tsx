@@ -4,7 +4,15 @@
  */
 import CloseIcon from '@mui/icons-material/Close';
 import LayersIcon from '@mui/icons-material/Layers';
-import { Box, Checkbox, FormControlLabel, FormGroup, IconButton } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Radio,
+  RadioGroup
+} from '@mui/material';
 import React, { useState } from 'react';
 
 export interface ILayerSwitcherProps {
@@ -61,6 +69,14 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
   const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
+
+  // Move this to the parent component
+  const [baselayer, setBaselayer] = useState('satellite');
+
+  const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setBaselayer(event.target.value);
+  };
 
   return (
     <div>
@@ -124,6 +140,13 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               label="Indigenous"
             />
           </FormGroup>
+          <hr />
+          <b>Base Layers</b>
+          <RadioGroup value={baselayer} onChange={basemapChanged}>
+            <FormControlLabel value="satellite" control={<Radio />} label="Satellite" />
+            <FormControlLabel value="terrain" control={<Radio />} label="Terrain" />
+            <FormControlLabel value="bcgov" control={<Radio />} label="BC Gov" />
+          </RadioGroup>
         </Box>
       )}
     </div>
