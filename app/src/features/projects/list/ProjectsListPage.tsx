@@ -35,20 +35,27 @@ import {
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { AuthStateContext } from 'contexts/authStateContext';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
+import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
-
+  const { keycloakWrapper } = useContext(AuthStateContext);
+  const isUserCreator =
+    isAuthenticated(keycloakWrapper) &&
+    keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
+      ? false
+      : true;
   const history = useHistory();
 
   const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-  const rowsProject = projects
+  let rowsProject = projects
     ?.filter((proj) => proj.project.is_project)
     .map((row, index) => {
       return {
@@ -69,6 +76,16 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         archive: row.project.state_code !== archCode ? 'Archive' : 'Unarchive'
       } as utils.ProjectData;
     });
+
+  if (rowsProject && isUserCreator) {
+    // [OI] TODO This needs to be fixed. The line below causes a warning when only rendering the MyList projects view with user Creator:
+    // Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    // at tbody
+    // at http://localhost:7100/static/js/bundle.js:39252:66
+    rowsProject = rowsProject.filter(
+      (proj) => proj.statusCode != getStateCodeFromLabel(states.ARCHIVED)
+    );
+  }
 
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
