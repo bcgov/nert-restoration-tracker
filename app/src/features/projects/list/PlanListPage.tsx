@@ -45,17 +45,24 @@ import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
+  const history = useHistory();
   const { keycloakWrapper } = useContext(AuthStateContext);
   const isUserCreator =
     isAuthenticated(keycloakWrapper) &&
     keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
       ? false
       : true;
-  const history = useHistory();
+
+  let rowsPlanFilterOutArchived = plans;
+  if (rowsPlanFilterOutArchived && isUserCreator) {
+    rowsPlanFilterOutArchived = plans.filter(
+      (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+    );
+  }
 
   const myPlan = myplan && true === myplan ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-  let rowsPlan = plans
+  const rowsPlan = rowsPlanFilterOutArchived
     ?.filter((plan) => !plan.project.is_project)
     .map((row, index) => {
       return {
@@ -82,10 +89,6 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             : 'Yes'
       } as utils.PlanData;
     });
-
-  if (rowsPlan && isUserCreator) {
-    rowsPlan = rowsPlan.filter((plan) => plan.statusCode != getStateCodeFromLabel(states.ARCHIVED));
-  }
 
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
