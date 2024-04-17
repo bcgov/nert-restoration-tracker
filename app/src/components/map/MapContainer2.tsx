@@ -152,6 +152,20 @@ const convertToCentroidGeoJSON = (features: any) => {
 
 let map: maplibre.Map;
 
+let activeBaselayer: string;
+
+/**
+ *
+ * @param layer
+ * If the activeBaselayer is undefined this is the first time so we load all the layers.
+ * If the activeBaselayer is defined but different from the current layer, we reload all the layers.
+ * If the activeBaselayer is defined but the same as the current layer, we do nothing.
+ */
+const changeBase = (layer: any) => {
+  console.log('Loading layers...', activeBaselayer);
+  console.log('Loading layers...', layer);
+};
+
 const initializeMap = (
   mapId: string,
   center: any,
@@ -184,6 +198,10 @@ const initializeMap = (
     })
   );
 
+  /**
+   * # loadLayers
+   * Load all custom layers here
+   */
   map.on('load', () => {
     /* The base layer */
     map.addSource('maptiler.raster-dem', {
@@ -433,6 +451,18 @@ const checkLayerVisibility = (layers: any, features: any) => {
     // The boundary layer is simple enough.
     if (layer === 'boundary' && map.getLayer('ne_boundary')) {
       map.setLayoutProperty('ne_boundary', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    }
+
+    // Changing a base layer has to reset all the styles
+    // TODO: This is still being worked on
+    if (layer === 'baselayer') {
+      changeBase(layers[layer]);
+      // TODO: If the baselayer is changed, swap out the just the raster tile layer
+      // let style = map.getStyle();
+      // style.sources['raster-tiles'].tiles[0] = 'the new base source here'
+      if (map.getStyle()) {
+        console.log(map.getStyle());
+      }
     }
 
     // Wells is a group of three different point layers

@@ -23,6 +23,7 @@ export interface ILayerSwitcherProps {
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
 }
 
@@ -64,18 +65,15 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, wildlife, indigenous } = props.layerVisibility;
+  const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
+    props.layerVisibility;
 
   const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
 
-  // Move this to the parent component
-  const [baselayer, setBaselayer] = useState('satellite');
-
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
-    setBaselayer(event.target.value);
+    baselayer[1](event.target.value);
   };
 
   return (
@@ -142,8 +140,8 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
           </FormGroup>
           <hr />
           <b>Base Layers</b>
-          <RadioGroup value={baselayer} onChange={basemapChanged}>
-            <FormControlLabel value="satellite" control={<Radio />} label="Satellite" />
+          <RadioGroup value={baselayer[0]} onChange={basemapChanged}>
+            <FormControlLabel value="hybrid" control={<Radio />} label="Satellite" />
             <FormControlLabel value="terrain" control={<Radio />} label="Terrain" />
             <FormControlLabel value="bcgov" control={<Radio />} label="BC Gov" />
           </RadioGroup>
