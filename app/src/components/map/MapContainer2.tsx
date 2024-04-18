@@ -499,6 +499,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
       );
     }
 
+    // Some sample basemap layers
     const baseLayerUrls = {
       hybrid:
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -511,19 +512,12 @@ const checkLayerVisibility = (layers: any, features: any) => {
       const currentStyle = map.getStyle();
       const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
       const currentBase = rasterSource.tiles[0];
-      console.log('baseLayerUrls', baseLayerUrls);
-      console.log('currentBase', currentBase);
-      console.log(layers[layer][0]);
       // @ts-ignore
       if (currentBase !== baseLayerUrls[layers.baselayer[0]]) {
-        console.log('changing base layer');
         // @ts-ignore
         currentStyle.sources['raster-tiles'].tiles = [baseLayerUrls[layers.baselayer[0]]];
-        console.log('currentStyle', currentStyle);
         map.setStyle(currentStyle);
       }
-      // hybrid, bcgov, terrain
-      // TODO: If the base layer is changed, we need to update the source
     }
   });
 
