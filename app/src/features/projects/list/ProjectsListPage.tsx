@@ -35,20 +35,34 @@ import {
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { AuthStateContext } from 'contexts/authStateContext';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
+import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
-
   const history = useHistory();
+  const { keycloakWrapper } = useContext(AuthStateContext);
+  const isUserCreator =
+    isAuthenticated(keycloakWrapper) &&
+    keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
+      ? false
+      : true;
+
+  let rowsProjectFilterOutArchived = projects;
+  if (rowsProjectFilterOutArchived && isUserCreator) {
+    rowsProjectFilterOutArchived = projects.filter(
+      (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+    );
+  }
 
   const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-  const rowsProject = projects
+  const rowsProject = rowsProjectFilterOutArchived
     ?.filter((proj) => proj.project.is_project)
     .map((row, index) => {
       return {

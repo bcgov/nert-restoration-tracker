@@ -35,21 +35,34 @@ import {
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { AuthStateContext } from 'contexts/authStateContext';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
+import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
-
   const history = useHistory();
+  const { keycloakWrapper } = useContext(AuthStateContext);
+  const isUserCreator =
+    isAuthenticated(keycloakWrapper) &&
+    keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
+      ? false
+      : true;
+
+  let rowsPlanFilterOutArchived = plans;
+  if (rowsPlanFilterOutArchived && isUserCreator) {
+    rowsPlanFilterOutArchived = plans.filter(
+      (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+    );
+  }
 
   const myPlan = myplan && true === myplan ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-
-  const rowsPlan = plans
+  const rowsPlan = rowsPlanFilterOutArchived
     ?.filter((plan) => !plan.project.is_project)
     .map((row, index) => {
       return {
