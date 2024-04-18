@@ -39,17 +39,7 @@
           9,
           "hsl(120, 94%, 86%)"
         ],
-        "fill-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          6,
-          0.4,
-          10,
-          0.3,
-          11,
-          0.1
-        ],
+        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 6, 0.4, 10, 0.3, 11, 0.1],
         "fill-antialias": true
       },
       "filter": ["==", "$type", "Polygon"]
@@ -65,30 +55,8 @@
       "paint": {
         "line-blur": 1,
         "line-color": "hsl(119, 68%, 77%)",
-        "line-width": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          8,
-          1,
-          10,
-          1.5,
-          11,
-          3,
-          15,
-          8
-        ],
-        "line-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          5,
-          0.5,
-          11,
-          0.4,
-          17,
-          0
-        ]
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 10, 1.5, 11, 3, 15, 8],
+        "line-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0.5, 11, 0.4, 17, 0]
       },
       "filter": ["==", "$type", "Polygon"]
     },
@@ -699,11 +667,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!=", "brunnel", "tunnel"],
-        ["in", "class", "primary", "trunk"]
-      ]
+      "filter": ["all", ["!=", "brunnel", "tunnel"], ["in", "class", "primary", "trunk"]]
     },
     {
       "id": "Highway outline",
@@ -727,29 +691,11 @@
           7,
           0.5,
           10,
-          [
-            "match",
-            ["get", "class"],
-            ["motorway"],
-            ["match", ["get", "ramp"], 1, 0, 2.5],
-            0
-          ],
+          ["match", ["get", "class"], ["motorway"], ["match", ["get", "ramp"], 1, 0, 2.5], 0],
           12,
-          [
-            "match",
-            ["get", "class"],
-            ["motorway"],
-            ["match", ["get", "ramp"], 1, 2, 6],
-            0.5
-          ],
+          ["match", ["get", "class"], ["motorway"], ["match", ["get", "ramp"], 1, 2, 6], 0.5],
           14,
-          [
-            "match",
-            ["get", "class"],
-            ["motorway"],
-            ["match", ["get", "ramp"], 1, 5, 8],
-            3
-          ],
+          ["match", ["get", "class"], ["motorway"], ["match", ["get", "ramp"], 1, 5, 8], 3],
           16,
           ["match", ["get", "class"], ["motorway"], 10, 4],
           20,
@@ -758,11 +704,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!=", "brunnel", "tunnel"],
-        ["==", "class", "motorway"]
-      ]
+      "filter": ["all", ["!=", "brunnel", "tunnel"], ["==", "class", "motorway"]]
     },
     {
       "id": "Road under construction",
@@ -823,11 +765,7 @@
             2.5,
             ["secondary_construction", "tertiary_construction"],
             1.5,
-            [
-              "minor_construction",
-              "service_construction",
-              "track_construction"
-            ],
+            ["minor_construction", "service_construction", "track_construction"],
             1,
             1
           ],
@@ -845,11 +783,7 @@
             4,
             ["tertiary_construction"],
             3,
-            [
-              "minor_construction",
-              "service_construction",
-              "track_construction"
-            ],
+            ["minor_construction", "service_construction", "track_construction"],
             2,
             2
           ],
@@ -857,21 +791,13 @@
           [
             "match",
             ["get", "class"],
-            [
-              "motorway_construction",
-              "trunk_construction",
-              "primary_construction"
-            ],
+            ["motorway_construction", "trunk_construction", "primary_construction"],
             8,
             ["secondary_construction"],
             7,
             ["tertiary_construction"],
             6,
-            [
-              "minor_construction",
-              "service_construction",
-              "track_construction"
-            ],
+            ["minor_construction", "service_construction", "track_construction"],
             4,
             4
           ],
@@ -879,21 +805,13 @@
           [
             "match",
             ["get", "class"],
-            [
-              "motorway_construction",
-              "trunk_construction",
-              "primary_construction"
-            ],
+            ["motorway_construction", "trunk_construction", "primary_construction"],
             24,
             ["secondary_construction"],
             24,
             ["tertiary_construction"],
             24,
-            [
-              "minor_construction",
-              "service_construction",
-              "track_construction"
-            ],
+            ["minor_construction", "service_construction", "track_construction"],
             16,
             16
           ]
@@ -1042,11 +960,7 @@
         ]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!=", "brunnel", "tunnel"],
-        ["in", "class", "primary", "trunk"]
-      ]
+      "filter": ["all", ["!=", "brunnel", "tunnel"], ["in", "class", "primary", "trunk"]]
     },
     {
       "id": "Highway",
@@ -1076,29 +990,11 @@
             0
           ],
           10,
-          [
-            "match",
-            ["get", "class"],
-            ["motorway"],
-            ["match", ["get", "ramp"], 1, 0, 2.5],
-            1
-          ],
+          ["match", ["get", "class"], ["motorway"], ["match", ["get", "ramp"], 1, 0, 2.5], 1],
           12,
-          [
-            "match",
-            ["get", "class"],
-            ["motorway"],
-            ["match", ["get", "ramp"], 1, 1, 4],
-            1
-          ],
+          ["match", ["get", "class"], ["motorway"], ["match", ["get", "ramp"], 1, 1, 4], 1],
           14,
-          [
-            "match",
-            ["get", "class"],
-            ["motorway"],
-            ["match", ["get", "ramp"], 1, 5, 6],
-            2
-          ],
+          ["match", ["get", "class"], ["motorway"], ["match", ["get", "ramp"], 1, 5, 6], 2],
           16,
           ["match", ["get", "class"], ["motorway"], 8, 4],
           20,
@@ -1106,11 +1002,7 @@
         ]
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["!=", "brunnel", "tunnel"],
-        ["==", "class", "motorway"]
-      ]
+      "filter": ["all", ["!=", "brunnel", "tunnel"], ["==", "class", "motorway"]]
     },
     {
       "id": "Path outline",
@@ -1379,12 +1271,7 @@
         "line-opacity": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "disputed", 0],
-        ["==", "maritime", 1]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 0], ["==", "maritime", 1]]
     },
     {
       "id": "water_name_line",
@@ -1395,12 +1282,7 @@
       "layout": {
         "text-font": ["Roboto Regular", "Noto Sans Regular"],
         "text-size": 12,
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          " ",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], " ", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-max-width": 5,
         "symbol-placement": "line"
@@ -1423,12 +1305,7 @@
       "layout": {
         "text-font": ["Roboto Regular", "Noto Sans Regular"],
         "text-size": 12,
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-max-width": 5
       },
@@ -1449,12 +1326,7 @@
       "layout": {
         "text-font": ["Roboto Regular", "Noto Sans Regular"],
         "text-size": 12,
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-max-width": 5
       },
@@ -1476,12 +1348,7 @@
         "text-font": ["Roboto Condensed Italic", "Noto Sans Italic"],
         "text-size": 12,
         "icon-image": "{subclass}_11",
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-anchor": "top",
         "text-offset": [0, 0.6],
@@ -1504,16 +1371,7 @@
           [
             "all",
             ["in", "class", "pitch"],
-            [
-              "in",
-              "subclass",
-              "soccer",
-              "tennis",
-              "baseball",
-              "basketball",
-              "swimming",
-              "golf"
-            ]
+            ["in", "subclass", "soccer", "tennis", "baseball", "basketball", "swimming", "golf"]
           ]
         ],
         ["any", ["!has", "level"], ["==", "level", 0]]
@@ -1529,12 +1387,7 @@
         "text-font": ["Roboto Condensed Italic", "Noto Sans Italic"],
         "text-size": 12,
         "icon-image": "{class}_11",
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-anchor": "top",
         "text-offset": [0, 0.6],
@@ -1558,16 +1411,7 @@
           [
             "all",
             ["in", "class", "pitch"],
-            [
-              "in",
-              "subclass",
-              "soccer",
-              "tennis",
-              "baseball",
-              "basketball",
-              "swimming",
-              "golf"
-            ]
+            ["in", "subclass", "soccer", "tennis", "baseball", "basketball", "swimming", "golf"]
           ]
         ],
         ["any", ["!has", "level"], ["==", "level", 0]]
@@ -1583,12 +1427,7 @@
         "text-font": ["Roboto Condensed Italic", "Noto Sans Italic"],
         "text-size": 12,
         "icon-image": "{class}_11",
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-anchor": "top",
         "text-offset": [0, 0.6],
@@ -1622,12 +1461,7 @@
         "text-font": ["Roboto Condensed Italic", "Noto Sans Italic"],
         "text-size": 12,
         "icon-image": "{class}_11",
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-anchor": "top",
         "text-offset": [0, 0.6],
@@ -1664,12 +1498,7 @@
             [15, 14]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "symbol-spacing": 1250,
         "text-max-width": 9,
@@ -1701,12 +1530,7 @@
             [15, 14]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-max-width": 9,
         "text-transform": "uppercase",
@@ -1718,10 +1542,7 @@
         "text-halo-width": 1.2
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["in", "class", "hamlet", "island", "islet", "neighbourhood", "suburb"]
-      ]
+      "filter": ["all", ["in", "class", "hamlet", "island", "islet", "neighbourhood", "suburb"]]
     },
     {
       "id": "place_village",
@@ -1738,12 +1559,7 @@
             [15, 22]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "text-max-width": 8
       },
       "paint": {
@@ -1846,17 +1662,7 @@
       "maxzoom": 12,
       "layout": {
         "text-font": ["Roboto Condensed Bold", "Noto Sans Bold"],
-        "text-size": [
-          "interpolate",
-          ["exponential", 1],
-          ["zoom"],
-          6,
-          9,
-          9,
-          11,
-          12,
-          13
-        ],
+        "text-size": ["interpolate", ["exponential", 1], ["zoom"], 6, 9, 9, 11, 12, 13],
         "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
         "visibility": "visible",
         "text-padding": {
@@ -1922,12 +1728,7 @@
             [10, ""]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "text-anchor": "bottom",
         "text-offset": [0, 0],
         "text-max-width": 8
@@ -1956,12 +1757,7 @@
             [6, 11]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-padding": 2,
         "text-transform": "uppercase",
@@ -1991,12 +1787,7 @@
             [6, 12]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "visibility": "visible",
         "text-padding": 2,
         "text-transform": "uppercase",
@@ -2032,12 +1823,7 @@
             [10, ""]
           ]
         },
-        "text-field": [
-          "concat",
-          ["get", "name:latin"],
-          "\n",
-          ["get", "name:nonlatin"]
-        ],
+        "text-field": ["concat", ["get", "name:latin"], "\n", ["get", "name:nonlatin"]],
         "text-anchor": "bottom",
         "text-offset": [0, 0],
         "icon-optional": false,
@@ -2102,12 +1888,7 @@
         "text-halo-width": 0.8
       },
       "metadata": {},
-      "filter": [
-        "all",
-        [">=", "rank", 3],
-        ["==", "class", "country"],
-        ["has", "iso_a2"]
-      ]
+      "filter": ["all", [">=", "rank", 3], ["==", "class", "country"], ["has", "iso_a2"]]
     },
     {
       "id": "country_2",
@@ -2133,12 +1914,7 @@
         "text-halo-width": 0.8
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "rank", 2],
-        ["==", "class", "country"],
-        ["has", "iso_a2"]
-      ]
+      "filter": ["all", ["==", "rank", 2], ["==", "class", "country"], ["has", "iso_a2"]]
     },
     {
       "id": "country_1",
@@ -2165,12 +1941,7 @@
         "text-halo-width": 0.8
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "rank", 1],
-        ["==", "class", "country"],
-        ["has", "iso_a2"]
-      ]
+      "filter": ["all", ["==", "rank", 1], ["==", "class", "country"], ["has", "iso_a2"]]
     },
     {
       "id": "continent",
@@ -2235,11 +2006,7 @@
           ]
         }
       },
-      "filter": [
-        "all",
-        ["==", "$type", "LineString"],
-        ["==", "brunnel", "bridge"]
-      ]
+      "filter": ["all", ["==", "$type", "LineString"], ["==", "brunnel", "bridge"]]
     },
     {
       "id": "Cablecar",
@@ -2310,11 +2077,7 @@
         ],
         "line-dasharray": [2, 1]
       },
-      "filter": [
-        "all",
-        ["in", "admin_level", 3, 4, 5, 6, 7, 8, 9, 10],
-        ["==", "maritime", 0]
-      ]
+      "filter": ["all", ["in", "admin_level", 3, 4, 5, 6, 7, 8, 9, 10], ["==", "maritime", 0]]
     },
     {
       "id": "Disputed border",
@@ -2339,12 +2102,7 @@
         },
         "line-dasharray": [2, 2]
       },
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "disputed", 1],
-        ["==", "maritime", 0]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 1], ["==", "maritime", 0]]
     },
     {
       "id": "Country border",
@@ -2368,12 +2126,7 @@
           ]
         }
       },
-      "filter": [
-        "all",
-        ["==", "admin_level", 2],
-        ["==", "disputed", 0],
-        ["==", "maritime", 0]
-      ]
+      "filter": ["all", ["==", "admin_level", 2], ["==", "disputed", 0], ["==", "maritime", 0]]
     },
     {
       "id": "River labels",
@@ -2463,12 +2216,7 @@
         "text-halo-width": 1
       },
       "metadata": {},
-      "filter": [
-        "all",
-        ["==", "$type", "Point"],
-        ["has", "name"],
-        ["!=", "class", "lake"]
-      ]
+      "filter": ["all", ["==", "$type", "Point"], ["has", "name"], ["!=", "class", "lake"]]
     },
     {
       "id": "Lake labels",
@@ -2605,17 +2353,7 @@
       "filter": [
         "all",
         ["has", "oneway"],
-        [
-          "in",
-          "class",
-          "motorway",
-          "trunk",
-          "primary",
-          "secondary",
-          "tertiary",
-          "minor",
-          "service"
-        ]
+        ["in", "class", "motorway", "trunk", "primary", "secondary", "tertiary", "minor", "service"]
       ]
     },
     {

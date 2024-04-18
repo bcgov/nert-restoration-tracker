@@ -94,6 +94,7 @@ const SearchPage: React.FC = () => {
   const plans = useState<boolean>(false);
   const wildlife = useState<boolean>(false);
   const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
 
   const layerVisibility = {
     boundary,
@@ -101,7 +102,8 @@ const SearchPage: React.FC = () => {
     projects,
     plans,
     wildlife,
-    indigenous
+    indigenous,
+    baselayer
   };
 
   /**

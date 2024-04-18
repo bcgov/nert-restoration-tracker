@@ -4,7 +4,15 @@
  */
 import CloseIcon from '@mui/icons-material/Close';
 import LayersIcon from '@mui/icons-material/Layers';
-import { Box, Checkbox, FormControlLabel, FormGroup, IconButton } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Radio,
+  RadioGroup
+} from '@mui/material';
 import React, { useState } from 'react';
 
 export interface ILayerSwitcherProps {
@@ -15,6 +23,7 @@ export interface ILayerSwitcherProps {
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
 }
 
@@ -56,11 +65,16 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, wildlife, indigenous } = props.layerVisibility;
+  const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
+    props.layerVisibility;
 
   const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
+
+  const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    baselayer[1](event.target.value);
+  };
 
   return (
     <div>
@@ -124,6 +138,13 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               label="Indigenous"
             />
           </FormGroup>
+          <hr />
+          <b>Base Layers</b>
+          <RadioGroup value={baselayer[0]} onChange={basemapChanged}>
+            <FormControlLabel value="hybrid" control={<Radio />} label="Satellite" />
+            <FormControlLabel value="terrain" control={<Radio />} label="Terrain" />
+            <FormControlLabel value="bcgov" control={<Radio />} label="BC Gov" />
+          </RadioGroup>
         </Box>
       )}
     </div>

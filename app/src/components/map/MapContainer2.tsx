@@ -184,6 +184,10 @@ const initializeMap = (
     })
   );
 
+  /**
+   * # loadLayers
+   * Load all custom layers here
+   */
   map.on('load', () => {
     /* The base layer */
     map.addSource('maptiler.raster-dem', {
@@ -493,6 +497,27 @@ const checkLayerVisibility = (layers: any, features: any) => {
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
+    }
+
+    // Some sample basemap layers
+    const baseLayerUrls = {
+      hybrid:
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      terrain: 'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
+      bcgov:
+        'https://maps.gov.bc.ca/arcgis/rest/services/province/roads_wm/MapServer/tile/{z}/{y}/{x}'
+    };
+    // Changing a base layer operates a little differently
+    if (layer === 'baselayer' && map.getStyle()) {
+      const currentStyle = map.getStyle();
+      const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
+      const currentBase = rasterSource.tiles[0];
+      // @ts-ignore
+      if (currentBase !== baseLayerUrls[layers.baselayer[0]]) {
+        // @ts-ignore
+        currentStyle.sources['raster-tiles'].tiles = [baseLayerUrls[layers.baselayer[0]]];
+        map.setStyle(currentStyle);
+      }
     }
   });
 
