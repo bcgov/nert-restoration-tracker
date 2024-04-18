@@ -152,20 +152,6 @@ const convertToCentroidGeoJSON = (features: any) => {
 
 let map: maplibre.Map;
 
-let activeBaselayer: string;
-
-/**
- *
- * @param layer
- * If the activeBaselayer is undefined this is the first time so we load all the layers.
- * If the activeBaselayer is defined but different from the current layer, we reload all the layers.
- * If the activeBaselayer is defined but the same as the current layer, we do nothing.
- */
-const changeBase = (layer: any) => {
-  console.log('Loading layers...', activeBaselayer);
-  console.log('Loading layers...', layer);
-};
-
 const initializeMap = (
   mapId: string,
   center: any,
@@ -453,18 +439,6 @@ const checkLayerVisibility = (layers: any, features: any) => {
       map.setLayoutProperty('ne_boundary', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
 
-    // Changing a base layer has to reset all the styles
-    // TODO: This is still being worked on
-    if (layer === 'baselayer') {
-      changeBase(layers[layer]);
-      // TODO: If the baselayer is changed, swap out the just the raster tile layer
-      // let style = map.getStyle();
-      // style.sources['raster-tiles'].tiles[0] = 'the new base source here'
-      if (map.getStyle()) {
-        console.log(map.getStyle());
-      }
-    }
-
     // Wells is a group of three different point layers
     if (
       layer === 'wells' &&
@@ -523,6 +497,33 @@ const checkLayerVisibility = (layers: any, features: any) => {
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
+    }
+
+    const baseLayerUrls = {
+      hybrid:
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      terrain: 'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
+      bcgov:
+        'https://maps.gov.bc.ca/arcgis/rest/services/province/roads_wm/MapServer/tile/{z}/{y}/{x}'
+    };
+    // Changing a base layer operates a little differently
+    if (layer === 'baselayer' && map.getStyle()) {
+      const currentStyle = map.getStyle();
+      const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
+      const currentBase = rasterSource.tiles[0];
+      console.log('baseLayerUrls', baseLayerUrls);
+      console.log('currentBase', currentBase);
+      console.log(layers[layer][0]);
+      // @ts-ignore
+      if (currentBase !== baseLayerUrls[layers.baselayer[0]]) {
+        console.log('changing base layer');
+        // @ts-ignore
+        currentStyle.sources['raster-tiles'].tiles = [baseLayerUrls[layers.baselayer[0]]];
+        console.log('currentStyle', currentStyle);
+        map.setStyle(currentStyle);
+      }
+      // hybrid, bcgov, terrain
+      // TODO: If the base layer is changed, we need to update the source
     }
   });
 
