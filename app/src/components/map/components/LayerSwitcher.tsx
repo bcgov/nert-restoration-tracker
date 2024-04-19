@@ -125,7 +125,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
           <FormGroup>
             <FormControlLabel
               control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
-              label="Project Boundary"
+              label="NERT Boundary"
             />
             <FormControlLabel
               control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
