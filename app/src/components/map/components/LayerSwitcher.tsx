@@ -91,16 +91,8 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               <CloseIcon />
             </IconButton>
           </Box>
-          <b>Context Layers</b>
+          <b>Projects & Plans</b>
           <FormGroup>
-            <FormControlLabel
-              control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
-              label="Project Boundary"
-            />
-            <FormControlLabel
-              control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
-              label="Wells"
-            />
             <FormControlLabel
               control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
               label={
@@ -126,6 +118,18 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
                   />
                 </div>
               }
+            />
+          </FormGroup>
+          <hr />
+          <b>Context Layers</b>
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
+              label="NERT Boundary"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
+              label="Wells"
             />
             <FormControlLabel
               control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
