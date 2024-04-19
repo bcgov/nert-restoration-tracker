@@ -1,7 +1,6 @@
-import { SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
+import { SystemRoleGuard } from 'components/security/Guards';
 import { AuthenticatedRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
 import ProjectsRouter from 'features/projects/ProjectsRouter';
 import PublicProjectsRouter from 'features/projects/PublicProjectsRouter';
@@ -13,40 +12,29 @@ import AccessDenied from 'pages/403/AccessDenied';
 import NotFoundPage from 'pages/404/NotFoundPage';
 import AccessRequestPage from 'pages/access/AccessRequestPage';
 import LogOutPage from 'pages/logout/LogOutPage';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Redirect, Switch, useLocation } from 'react-router-dom';
 import AppRoute from 'utils/AppRoute';
 
 const AppRouter: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
   const location = useLocation();
 
   const getTitle = (page: string) => {
     return `Northeast Restoration Tracker - ${page}`;
   };
 
-  const authenticated = keycloakWrapper?.keycloak.authenticated;
-
   return (
     <Switch>
       <Redirect from="/:url*(/+)" to={{ ...location, pathname: location.pathname.slice(0, -1) }} />
 
-      {/* Redirect to admin search if user is authenticated */}
-      {authenticated ? (
-        <Redirect exact from="/" to="/admin/search" />
-      ) : (
-        <Redirect exact from="/" to="/search" />
-      )}
-      {authenticated && <Redirect exact from="/search" to="/admin/search" />}
+      <Redirect exact from="/" to="/search" />
+
+      <AppRoute path="/search" title={getTitle('Search')} layout={PublicLayout}>
+        <SearchPage />
+      </AppRoute>
 
       <AppRoute path="/projects" title={getTitle('All Projects/All Plans')} layout={PublicLayout}>
         <PublicProjectsRouter />
-      </AppRoute>
-
-      <AppRoute path="/search" title={getTitle('Search')} layout={PublicLayout}>
-        <UnAuthGuard>
-          <SearchPage />
-        </UnAuthGuard>
       </AppRoute>
 
       <AppRoute path="/page-not-found" title={getTitle('Page Not Found')} layout={PublicLayout}>
