@@ -1,16 +1,43 @@
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
-import React, { isValidElement, ReactElement, useContext } from 'react';
+import React, { isValidElement, PropsWithChildren, ReactElement, useContext } from 'react';
 import { useParams } from 'react-router';
 import { isAuthenticated } from 'utils/authUtils';
 
-interface IGuardProps<T = never> {
+interface IGuardProps {
   /**
    * An optional backup ReactElement to render if the guard fails.
    *
    * @memberof IGuardProps
    */
-  fallback?: ((...args: T[]) => ReactElement) | ReactElement;
+  fallback?: ((projectId: number) => ReactElement) | ReactElement;
+}
+
+interface ISystemRoleGuardProps extends IGuardProps {
+  /**
+   * An array of valid system roles. The user must have 1 or more matching system roles to pass the guard.
+   *
+   * @type {SYSTEM_ROLE[]}
+   * @memberof ISystemRoleGuardProps
+   */
+  validSystemRoles: SYSTEM_ROLE[];
+}
+
+interface IProjectRoleGuardProps extends IGuardProps {
+  /**
+   * An array of valid project roles. The user may have 1 or more matching project roles to pass the guard.
+   *
+   * @type {PROJECT_ROLE[]}
+   * @memberof IProjectRoleGuardProps
+   */
+  validProjectRoles?: PROJECT_ROLE[];
+  /**
+   * An array of valid system roles. The user may have 1 or more matching system roles to override the guard.
+   *
+   * @type {SYSTEM_ROLE[]}
+   * @memberof IProjectRoleGuardProps
+   */
+  validSystemRoles?: SYSTEM_ROLE[];
 }
 
 /**
@@ -22,10 +49,7 @@ interface IGuardProps<T = never> {
  * @param {*} props
  * @return {*}
  */
-export const RoleGuard: React.FC<
-  { validSystemRoles: SYSTEM_ROLE[]; validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number> &
-    React.PropsWithChildren
-> = (props) => {
+export const RoleGuard = (props: PropsWithChildren<IProjectRoleGuardProps>) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
 
@@ -35,7 +59,6 @@ export const RoleGuard: React.FC<
   }
 
   const urlParams: Record<string, string | number | undefined> = useParams();
-
   const projectId = Number(urlParams['id']);
   const hasProjectRole = keycloakWrapper?.hasProjectRole(projectId, props.validProjectRoles);
 
@@ -49,6 +72,7 @@ export const RoleGuard: React.FC<
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
+    return <>{props.fallback(projectId)}</>;
   }
 
   return <></>;
@@ -62,10 +86,7 @@ export const RoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const NoRoleGuard: React.FC<
-  { validSystemRoles: SYSTEM_ROLE[]; validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number> &
-    React.PropsWithChildren
-> = (props) => {
+export const NoRoleGuard = (props: PropsWithChildren<IProjectRoleGuardProps>) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
@@ -84,6 +105,7 @@ export const NoRoleGuard: React.FC<
     if (isValidElement(props.fallback)) {
       return <>{props.fallback}</>;
     }
+    return props.fallback(projectId);
   }
 
   return <></>;
@@ -95,26 +117,20 @@ export const NoRoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const SystemRoleGuard: React.FC<
-  { validSystemRoles: SYSTEM_ROLE[] } & IGuardProps & React.PropsWithChildren
-> = (props) => {
+export const SystemRoleGuard = (props: PropsWithChildren<ISystemRoleGuardProps>) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
 
-  if (hasSystemRole) {
-    // User has a matching system role
-    return <>{props.children}</>;
-  }
-
-  // User has no matching system role
-  if (props.fallback) {
-    if (isValidElement(props.fallback)) {
+  if (!hasSystemRole) {
+    if (props.fallback) {
       return <>{props.fallback}</>;
+    } else {
+      return <></>;
     }
   }
 
-  return <></>;
+  return <>{props.children}</>;
 };
 
 /**
@@ -125,29 +141,24 @@ export const SystemRoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const ProjectRoleGuard: React.FC<
-  { validProjectRoles: PROJECT_ROLE[] } & IGuardProps<number> & React.PropsWithChildren
-> = (props) => {
+export const ProjectRoleGuard = (props: PropsWithChildren<IProjectRoleGuardProps>) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const urlParams: Record<string, string | number | undefined> = useParams();
-
   const projectId = Number(urlParams['id']);
   const hasProjectRole = keycloakWrapper?.hasProjectRole(projectId, props.validProjectRoles);
 
-  if (hasProjectRole) {
-    // User has a matching project role
-    return <>{props.children}</>;
-  }
-
-  // User has no matching project role
-  if (props.fallback) {
-    if (isValidElement(props.fallback)) {
+  if (!hasProjectRole) {
+    // User has no matching project role
+    if (props.fallback) {
       return <>{props.fallback}</>;
+    } else {
+      return <></>;
     }
   }
 
-  return <></>;
+  // User has a matching project role
+  return <>{props.children}</>;
 };
 
 /**
@@ -156,22 +167,20 @@ export const ProjectRoleGuard: React.FC<
  * @param {*} props
  * @return {*}
  */
-export const AuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props) => {
+export const AuthGuard = (props: PropsWithChildren<IGuardProps>) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
-  if (isAuthenticated(keycloakWrapper)) {
-    // User is logged in
-    return <>{props.children}</>;
-  }
-
-  // User is not logged in
-  if (props.fallback) {
-    if (isValidElement(props.fallback)) {
+  if (!isAuthenticated(keycloakWrapper)) {
+    // User is not logged in
+    if (props.fallback) {
       return <>{props.fallback}</>;
+    } else {
+      return <></>;
     }
   }
 
-  return <></>;
+  // User is logged in
+  return <>{props.children}</>;
 };
 
 /**
@@ -180,7 +189,7 @@ export const AuthGuard: React.FC<IGuardProps & React.PropsWithChildren> = (props
  * @param {*} props
  * @return {*}
  */
-export const UnAuthGuard: React.FC<React.PropsWithChildren<IGuardProps>> = (props) => {
+export const UnAuthGuard = (props: PropsWithChildren<IGuardProps>) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (!isAuthenticated(keycloakWrapper)) {
@@ -190,9 +199,7 @@ export const UnAuthGuard: React.FC<React.PropsWithChildren<IGuardProps>> = (prop
 
   // User is logged in
   if (props.fallback) {
-    if (isValidElement(props.fallback)) {
-      return <>{props.fallback}</>;
-    }
+    return <>{props.fallback}</>;
   }
 
   return <></>;
