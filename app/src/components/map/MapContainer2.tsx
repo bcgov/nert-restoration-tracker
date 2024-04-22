@@ -1,7 +1,7 @@
 import { FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
 
@@ -157,7 +157,11 @@ const initializeMap = (
   center: any,
   zoom: number,
   markers: any,
-  layerVisibility?: any
+  layerVisibility?: any,
+  setTooltip?: any,
+  setTooltipVisible?: any,
+  setTooltipX?: any,
+  setTooltipY?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -236,6 +240,7 @@ const initializeMap = (
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
+      promoteId: 'id',
       cluster: true,
       clusterRadius: 100
     });
@@ -361,12 +366,57 @@ const initializeMap = (
       // @ts-ignore
       new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
     });
-    map.on('mousemove', 'markerPlans.points', () => {
+
+    let hoverStatePlans: any = false;
+    const showTooltip = (e: any) => {
       map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'markerPlans.points', () => {
+
+      setTooltipVisible(true);
+
+      /**
+       * Calculate the coordinates of the tooltip based on
+       * the mouse position and icon size
+       */
+      const coordinates = e.features[0].geometry.coordinates;
+      const location = map.project(coordinates);
+      setTooltipX(location.x + 10);
+      setTooltipY(location.y - 34);
+      setTooltip(e.features[0].properties.name);
+
+      if (hoverStatePlans !== false) {
+        map.setFeatureState(
+          {
+            source: 'markers',
+            id: hoverStatePlans
+          },
+          { hover: true }
+        );
+      }
+
+      // Geometry state
+      hoverStatePlans = e.features[0].id;
+      map.setFeatureState(
+        {
+          source: 'markers',
+          id: hoverStatePlans
+        },
+        { hover: true }
+      );
+    };
+
+    const hideTooltip = () => {
       map.getCanvas().style.cursor = '';
-    });
+      setTooltipVisible(false);
+      setTooltip('');
+    };
+
+    // Hover over the plans
+    map.on('mouseenter', 'markerPlans.points', showTooltip);
+    map.on('mouseleave', 'markerPlans.points', hideTooltip);
+
+    // Hover over the projects
+    map.on('mouseenter', 'markerProjects.points', showTooltip);
+    map.on('mouseleave', 'markerProjects.points', hideTooltip);
     /**************************************************/
 
     /* Protected Areas as WMS layers from the BCGW */
@@ -543,9 +593,25 @@ const checkLayerVisibility = (layers: any, features: any) => {
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const { mapId, center, zoom, markers, layerVisibility } = props;
 
+  // Tooltip variables
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [tooltip, setTooltip] = useState('');
+  const [tooltipX, setTooltipX] = useState(0);
+  const [tooltipY, setTooltipY] = useState(0);
+
   // Update the map if the markers change
   useEffect(() => {
-    initializeMap(mapId, center, zoom, markers, layerVisibility);
+    initializeMap(
+      mapId,
+      center,
+      zoom,
+      markers,
+      layerVisibility,
+      setTooltip,
+      setTooltipVisible,
+      setTooltipX,
+      setTooltipY
+    );
   }, [markers]);
 
   // Listen to layer changes
@@ -553,7 +619,16 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(markers));
   }, [layerVisibility]);
 
-  return <div id={mapId} style={pageStyle}></div>;
+  return (
+    <div id={mapId} style={pageStyle}>
+      <div
+        id="tooltip"
+        className={tooltipVisible ? 'visible' : 'tooltip'}
+        style={{ left: tooltipX, top: tooltipY }}>
+        {tooltip}
+      </div>
+    </div>
+  );
 };
 
 export default MapContainer;
