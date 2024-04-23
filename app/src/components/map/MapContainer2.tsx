@@ -330,7 +330,7 @@ const initializeMap = (
         '"margin-top: 1rem; font-size: 1.2em; font-weight: bold; background: #003366; cursor: pointer; border-radius: 5px; color: white; padding: 7px 20px; border: none; text-align: center; text-decoration: none; display: inline-block; font-family: Arial, sans-serif;"';
       return `
         <div style=${divStyle}>
-          <div>Project Name: <b>${name}</b></div>
+          <div>${isProject ? 'Project' : 'Plan'} Name: <b>${name}</b></div>
           <div class="view-btn">
             <a href="/${isProject ? 'projects' : 'plans'}/${id}" >
               <button style=${buttonStyle} title="Take me to the details page">View Project Details</button>
@@ -361,7 +361,7 @@ const initializeMap = (
 
       // TBD: Currently the /plans route is not available
       // const html = makePopup(prop.name, prop.id, false);
-      const html = makePopup(prop.name, prop.id, true);
+      const html = makePopup(prop.name, prop.id, false);
 
       // @ts-ignore
       new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
