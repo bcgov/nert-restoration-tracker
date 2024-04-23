@@ -33,6 +33,8 @@ const pageStyle = {
  */
 const drawWells = (map: maplibre.Map, wells: any) => {
   /* The following are the URLs to the geojson data */
+  // TODO: These will be replaced with new file logic
+  // Grab the correct data from here https://geoweb-ags.bc-er.ca/arcgis/rest/services
   const orphanedWellsURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_WELL_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const orphanedActivitiesURL =
@@ -40,7 +42,13 @@ const drawWells = (map: maplibre.Map, wells: any) => {
   const surfaceStateURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
 
-  // Orphaned wells
+  // Orphaned wells - These is called "sites" on the BCER site
+  // XXX: The following will be replaced with new file logic
+  // ABAN, ABNZ, CANC, INAC, WAG
+  const assessedStyle = ['==', ['get', 'WELL_STATUS'], 'ABAN'];
+  const inactiveStyle = ['==', ['get', 'WELL_STATUS'], 'INAC'];
+  const decommissionedStyle = ['==', ['get', 'WELL_STATUS'], 'DECO'];
+  const reclaimedStyle = ['==', ['get', 'WELL_STATUS'], 'CANC'];
   map.addSource('orphanedWells', {
     type: 'geojson',
     data: orphanedWellsURL
@@ -54,11 +62,22 @@ const drawWells = (map: maplibre.Map, wells: any) => {
     },
     paint: {
       'circle-radius': 5,
-      'circle-color': 'red'
+      'circle-color': [
+        'case',
+        assessedStyle,
+        'salmon',
+        inactiveStyle,
+        'gray',
+        decommissionedStyle,
+        'blue',
+        reclaimedStyle,
+        'green',
+        'black'
+      ]
     }
   });
 
-  // Orphaned activities
+  // Orphaned activities - These are called "Activities" on the BCER site
   map.addSource('orphanedActivities', {
     type: 'geojson',
     data: orphanedActivitiesURL
@@ -68,15 +87,16 @@ const drawWells = (map: maplibre.Map, wells: any) => {
     type: 'circle',
     source: 'orphanedActivities',
     layout: {
-      visibility: wells[0] ? 'visible' : 'none'
+      visibility: 'none'
+      // visibility: wells[0] ? 'visible' : 'none'
     },
     paint: {
       'circle-radius': 5,
-      'circle-color': 'blue'
+      'circle-color': 'black'
     }
   });
 
-  // Surface state
+  // Surface state - May not need these
   map.addSource('surfaceState', {
     type: 'geojson',
     data: surfaceStateURL
@@ -86,7 +106,8 @@ const drawWells = (map: maplibre.Map, wells: any) => {
     type: 'circle',
     source: 'surfaceState',
     layout: {
-      visibility: wells[0] ? 'visible' : 'none'
+      // visibility: wells[0] ? 'visible' : 'none'
+      visibility: 'none'
     },
     paint: {
       'circle-radius': 5,
