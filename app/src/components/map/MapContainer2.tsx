@@ -33,25 +33,16 @@ const pageStyle = {
  */
 const drawWells = (map: maplibre.Map, wells: any) => {
   /* The following are the URLs to the geojson data */
-  // TODO: These will be replaced with new file logic
-  // Grab the correct data from here https://geoweb-ags.bc-er.ca/arcgis/rest/services
-  const orphanedWellsURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_WELL_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+  const orphanedSitesURL =
+    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const orphanedActivitiesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const surfaceStateURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
 
-  // Orphaned wells - These is called "sites" on the BCER site
-  // XXX: The following will be replaced with new file logic
-  // ABAN, ABNZ, CANC, INAC, WAG
-  const assessedStyle = ['==', ['get', 'WELL_STATUS'], 'ABAN'];
-  const inactiveStyle = ['==', ['get', 'WELL_STATUS'], 'INAC'];
-  const decommissionedStyle = ['==', ['get', 'WELL_STATUS'], 'DECO'];
-  const reclaimedStyle = ['==', ['get', 'WELL_STATUS'], 'CANC'];
   map.addSource('orphanedWells', {
     type: 'geojson',
-    data: orphanedWellsURL
+    data: orphanedSitesURL
   });
   map.addLayer({
     id: 'orphanedWellsLayer',
@@ -61,17 +52,21 @@ const drawWells = (map: maplibre.Map, wells: any) => {
       visibility: wells[0] ? 'visible' : 'none'
     },
     paint: {
-      'circle-radius': 5,
+      'circle-radius': 7,
+      'circle-stroke-color': 'black',
+      'circle-stroke-width': 1,
+      'circle-stroke-opacity': 0.5,
       'circle-color': [
-        'case',
-        assessedStyle,
-        'salmon',
-        inactiveStyle,
-        'gray',
-        decommissionedStyle,
-        'blue',
-        reclaimedStyle,
-        'green',
+        'match',
+        ['get', 'SITE_STATUS'],
+        'Assessed',
+        '#f0933e',
+        'Inactive',
+        '#999999',
+        'Decommissioned',
+        '#7fb2f9',
+        'Reclaimed',
+        '#adc64f',
         'black'
       ]
     }
