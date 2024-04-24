@@ -37,8 +37,6 @@ const drawWells = (map: maplibre.Map, wells: any) => {
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const orphanedActivitiesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
-  const surfaceStateURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
 
   map.addSource('orphanedWells', {
     type: 'geojson',
@@ -82,31 +80,45 @@ const drawWells = (map: maplibre.Map, wells: any) => {
     type: 'circle',
     source: 'orphanedActivities',
     layout: {
-      visibility: 'none'
-      // visibility: wells[0] ? 'visible' : 'none'
+      visibility: wells[0] ? 'visible' : 'none'
     },
     paint: {
-      'circle-radius': 5,
-      'circle-color': 'black'
-    }
-  });
-
-  // Surface state - May not need these
-  map.addSource('surfaceState', {
-    type: 'geojson',
-    data: surfaceStateURL
-  });
-  map.addLayer({
-    id: 'surfaceStateLayer',
-    type: 'circle',
-    source: 'surfaceState',
-    layout: {
-      // visibility: wells[0] ? 'visible' : 'none'
-      visibility: 'none'
-    },
-    paint: {
-      'circle-radius': 5,
-      'circle-color': 'green'
+      'circle-radius': [
+        'match',
+        ['get', 'WORKSTREAM_SHORT'],
+        'Deactivation',
+        8,
+        'Abandonment',
+        10,
+        'Decommissioning',
+        12,
+        'Investigation',
+        14,
+        'Remediation',
+        16,
+        'Reclamation',
+        18,
+        0
+      ],
+      'circle-color': 'rgba(0, 0, 0, 0)',
+      'circle-stroke-width': 3,
+      'circle-stroke-color': [
+        'match',
+        ['get', 'WORKSTREAM_SHORT'],
+        'Deactivation',
+        '#fffe7d',
+        'Abandonment',
+        '#ee212f',
+        'Decommissioning',
+        '#4a72b5',
+        'Investigation',
+        '#f6b858',
+        'Remediation',
+        '#a92fe2',
+        'Reclamation',
+        '#709958',
+        'black'
+      ]
     }
   });
 };
@@ -509,8 +521,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
     if (
       layer === 'wells' &&
       map.getLayer('orphanedWellsLayer') &&
-      map.getLayer('orphanedActivitiesLayer') &&
-      map.getLayer('surfaceStateLayer')
+      map.getLayer('orphanedActivitiesLayer')
     ) {
       map.setLayoutProperty(
         'orphanedWellsLayer',
@@ -519,11 +530,6 @@ const checkLayerVisibility = (layers: any, features: any) => {
       );
       map.setLayoutProperty(
         'orphanedActivitiesLayer',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
-      map.setLayoutProperty(
-        'surfaceStateLayer',
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
