@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 const pageStyles = {
   projectsLayoutRoot: {
@@ -15,11 +16,16 @@ const pageStyles = {
 /**
  * Layout for all project pages.
  *
- * @param {*} props
  * @return {*}
  */
-const ProjectsLayout: React.FC<React.PropsWithChildren> = (props) => {
-  return <Box sx={pageStyles.projectsLayoutRoot}>{props.children}</Box>;
+const ProjectsLayout = () => {
+  return (
+    <>
+      <Box sx={pageStyles.projectsLayoutRoot}>
+        <Outlet />
+      </Box>
+    </>
+  );
 };
 
 export default ProjectsLayout;

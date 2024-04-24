@@ -4,45 +4,40 @@ import ProjectsLayout from 'features/projects/ProjectsLayout';
 import PublicProjectsPlansListPage from 'pages/public/PublicProjectsPlansListPage';
 import PublicProjectsPlansView from 'pages/public/PublicProjectsPlansView';
 import React from 'react';
-import { Redirect, Switch } from 'react-router';
-import AppRoute from 'utils/AppRoute';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { RedirectURL } from 'utils/AppRoutesUtils';
 
 /**
  * Router for all `/projects/*` pages.
  *
- * @param {*} props
  * @return {*}
  */
 const PublicProjectsRouter: React.FC = () => {
   return (
-    <Switch>
-      <AppRoute exact path="/projects" layout={ProjectsLayout}>
-        <PublicProjectsPlansListPage />
-      </AppRoute>
-
-      <Redirect exact from="/projects/:id" to="/projects/:id/details" />
-
-      <AppRoute exact path="/projects/:id/details">
-        {/* Catches Logged in users and redirects them to admin page */}
-        <NoRoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[
-            PROJECT_ROLE.PROJECT_LEAD,
-            PROJECT_ROLE.PROJECT_EDITOR,
-            PROJECT_ROLE.PROJECT_VIEWER
-          ]}
-          fallback={(projectId) => <Redirect to={`/admin/projects/${projectId}`} />}>
-          <ProjectsLayout>
-            <PublicProjectsPlansView />
-          </ProjectsLayout>
-        </NoRoleGuard>
-      </AppRoute>
+    <Routes>
+      <Route path=":id" element={<RedirectURL basePath="/projects" />} />
+      <Route element={<ProjectsLayout />}>
+        <Route path="/" element={<PublicProjectsPlansListPage />} />
+        <Route
+          path=":id/details"
+          element={
+            <NoRoleGuard
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+              validProjectRoles={[
+                PROJECT_ROLE.PROJECT_LEAD,
+                PROJECT_ROLE.PROJECT_EDITOR,
+                PROJECT_ROLE.PROJECT_VIEWER
+              ]}
+              fallback={(projectId) => <Navigate replace to={`/admin/projects/${projectId}`} />}>
+              <PublicProjectsPlansView />
+            </NoRoleGuard>
+          }
+        />
+      </Route>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}
-      <AppRoute path="/projects/*">
-        <Redirect to="/page-not-found" />
-      </AppRoute>
-    </Switch>
+      <Route path="*" element={<Navigate replace to="/page-not-found" />} />
+    </Routes>
   );
 };
 

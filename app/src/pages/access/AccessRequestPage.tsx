@@ -18,7 +18,7 @@ import {
   IIDIRAccessRequestDataObject
 } from 'interfaces/useAdminApi.interface';
 import React, { ReactElement, useContext, useState } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import { Navigate, useNavigate } from 'react-router-dom';
 import BCeIDRequestForm, {
   BCeIDRequestFormInitialValues,
   BCeIDRequestFormYupSchema
@@ -44,7 +44,7 @@ const pageStyles = {
  */
 export const AccessRequestPage: React.FC = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
-  const history = useHistory();
+  const history = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -99,7 +99,7 @@ export const AccessRequestPage: React.FC = () => {
 
       keycloakWrapper?.refresh();
 
-      history.push('/request-submitted');
+      history('/request-submitted');
     } catch (error) {
       const apiError = error as APIError;
 
@@ -114,7 +114,7 @@ export const AccessRequestPage: React.FC = () => {
 
   if (!keycloakWrapper?.keycloak.authenticated) {
     // User is not logged in
-    return <Redirect to={{ pathname: '/' }} />;
+    return <Navigate replace to={{ pathname: '/' }} />;
   }
 
   if (!keycloakWrapper.hasLoadedAllUserInfo) {
@@ -124,7 +124,7 @@ export const AccessRequestPage: React.FC = () => {
 
   if (keycloakWrapper?.hasAccessRequest) {
     // User already has a pending access request
-    return <Redirect to={{ pathname: '/request-submitted' }} />;
+    return <Navigate replace to={{ pathname: '/request-submitted' }} />;
   }
 
   let initialValues: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject;
@@ -196,7 +196,7 @@ export const AccessRequestPage: React.FC = () => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        history.push('/logout');
+                        history('/logout');
                       }}
                       sx={pageStyles.actionButton}
                       data-testid="logout-button">

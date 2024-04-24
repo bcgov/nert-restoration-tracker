@@ -31,13 +31,13 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 
 const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans } = props;
-  const history = useHistory();
+  const history = useNavigate();
 
   const rows = plans
     ?.filter(
@@ -277,7 +277,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history.push(`/projects/${row.planId}`)}>
+                        onClick={() => history(`/projects/${row.planId}`)}>
                         {row.planName}
                       </Link>
                     </TableCell>

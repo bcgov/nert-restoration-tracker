@@ -31,13 +31,13 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
-  const history = useHistory();
+  const history = useNavigate();
 
   const rows = projects
     ?.filter(
@@ -266,7 +266,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history.push(`/projects/${row.projectId}`)}>
+                        onClick={() => history(`/projects/${row.projectId}`)}>
                         {row.projectName}
                       </Link>
                     </TableCell>

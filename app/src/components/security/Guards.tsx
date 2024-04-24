@@ -1,7 +1,7 @@
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
 import React, { isValidElement, PropsWithChildren, ReactElement, useContext } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 
 interface IGuardProps {
@@ -91,8 +91,8 @@ export const NoRoleGuard = (props: PropsWithChildren<IProjectRoleGuardProps>) =>
 
   const hasSystemRole = keycloakWrapper?.hasSystemRole(props.validSystemRoles);
 
-  const urlParams: Record<string, string | number | undefined> = useParams();
-  const projectId = Number(urlParams['id']);
+  const { id } = useParams();
+  const projectId = Number(id);
   const hasProjectRole = keycloakWrapper?.hasProjectRole(projectId, props.validProjectRoles);
 
   if (!hasSystemRole && !hasProjectRole) {

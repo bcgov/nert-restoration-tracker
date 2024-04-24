@@ -28,7 +28,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import AddSystemUsersForm, {
   AddSystemUsersFormInitialValues,
@@ -60,7 +60,7 @@ export interface IActiveUsersListProps {
 const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
   const restorationTrackerApi = useRestorationTrackerApi();
   const { activeUsers, codes } = props;
-  const history = useHistory();
+  const history = useNavigate();
 
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [page, setPage] = useState(0);
@@ -334,11 +334,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                               {
                                 menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
                                 menuLabel: 'View Users Details',
-                                menuOnClick: () =>
-                                  history.push({
-                                    pathname: `/admin/users/${row.id}`,
-                                    state: row
-                                  })
+                                menuOnClick: () => history(`/admin/users/${row.id}`, { state: row })
                               },
                               {
                                 menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,

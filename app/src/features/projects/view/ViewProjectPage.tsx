@@ -27,7 +27,7 @@ import {
   TreatmentSearchCriteria
 } from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import TreatmentList from './components/TreatmentList';
 import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
 import ProjectAttachments from './ProjectAttachments';
@@ -58,7 +58,7 @@ const pageStyles = {
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  const history = useHistory();
+  const history = useNavigate();
   const urlParams: Record<string, string | number | undefined> = useParams();
 
   if (!urlParams['id']) {
@@ -206,7 +206,7 @@ const ViewProjectPage: React.FC = () => {
         return;
       }
 
-      history.push('/admin/user/projects');
+      history('/admin/user/projects');
     } catch (error) {
       const apiError = error as APIError;
       showDeleteErrorDialog({ dialogText: apiError.message, open: true });
@@ -255,14 +255,14 @@ const ViewProjectPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history.push('users')}>
+                onClick={() => history('users')}>
                 Project Team
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                onClick={() => history.push(`/admin/projects/${urlParams['id']}/edit`)}>
+                onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
                 Edit Project
               </Button>
               <RoleGuard

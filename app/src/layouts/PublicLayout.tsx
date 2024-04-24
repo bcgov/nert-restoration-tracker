@@ -3,9 +3,10 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Footer from 'components/layout/Footer';
 import Header from 'components/layout/Header';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 
-const PublicLayout: React.FC = (props: PropsWithChildren) => {
+const PublicLayout = () => {
   function isSupportedBrowser() {
     if (
       navigator.userAgent.indexOf('Chrome') !== -1 ||
@@ -23,7 +24,12 @@ const PublicLayout: React.FC = (props: PropsWithChildren) => {
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <CssBaseline />
       {!isSupportedBrowser() && (
-        <Alert severity="error">
+        <Alert
+          severity="error"
+          sx={{
+            color: 'primary.main',
+            backgroundColor: '#fcba19'
+          }}>
           This is an unsupported browser. Some functionality may not work as expected.
         </Alert>
       )}
@@ -31,9 +37,7 @@ const PublicLayout: React.FC = (props: PropsWithChildren) => {
       <Header />
 
       <Box component="main" flex="1 1 auto" py={4} sx={{ padding: 0 }}>
-        {React.Children.map(props.children, (child: any) => {
-          return React.cloneElement(child);
-        })}
+        <Outlet />
       </Box>
 
       <Footer />

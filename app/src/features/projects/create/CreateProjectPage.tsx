@@ -50,20 +50,20 @@ import ProjectPermitForm, {
 } from 'features/projects/components/ProjectPermitForm';
 import { Form, Formik, FormikProps } from 'formik';
 // import * as History from 'history';
-import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useQuery } from 'hooks/useQuery';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router';
-// import { Prompt } from 'react-router-dom';
 import {
   events,
   getStateCodeFromLabel,
   StateMachine,
   states
 } from 'components/workflow/StateMachine';
+import { APIError } from 'hooks/api/useAxios';
+import useCodes from 'hooks/useCodes';
+import { useQuery } from 'hooks/useQuery';
+import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+// import ReactRouterPrompt from 'react-router-prompt';
 import yup from 'utils/YupSchema';
 
 const pageStyles = {
@@ -114,7 +114,8 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const history = useHistory();
+  // const location = useLocation();
+  const history = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -147,7 +148,7 @@ const CreateProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push('/admin/user/projects');
+      history('/admin/user/projects');
     }
   };
 
@@ -190,7 +191,7 @@ const CreateProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push('/admin/user/projects');
+    history('/admin/user/projects');
   };
 
   const handleSubmitDraft = async (values: IProjectDraftForm) => {
@@ -234,7 +235,7 @@ const CreateProjectPage: React.FC = () => {
       setDraft({ id: response.id, date: response.date });
       // setEnableCancelCheck(false);
 
-      history.push('/admin/user/projects');
+      history('/admin/user/projects');
     } catch (error) {
       setOpenDraftDialog(false);
 
@@ -267,7 +268,7 @@ const CreateProjectPage: React.FC = () => {
       // setEnableCancelCheck(false);
 
       keycloakWrapper?.refresh();
-      history.push(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',
@@ -329,14 +330,14 @@ const CreateProjectPage: React.FC = () => {
    * @param {History.Location} location
    * @return {*}
    */
-  // const handleLocationChange = (location: History.Location) => {
+  // const handleLocationChange = () => {
   //   if (!dialogContext.yesNoDialogProps.open) {
   //     // If the cancel dialog is not open: open it
   //     dialogContext.setYesNoDialog({
   //       ...defaultCancelDialogProps,
   //       onYes: () => {
   //         dialogContext.setYesNoDialog({ open: false });
-  //         history.push(location.pathname);
+  //         history(location.pathname);
   //       },
   //       open: true
   //     });
@@ -347,11 +348,11 @@ const CreateProjectPage: React.FC = () => {
   //   return true;
   // };
 
-  // [OI] TODO Prompt component not working, breaks routing functionality commented out for now
-
   return (
     <>
-      {/* <Prompt when={enableCancelCheck} message={handleLocationChange} /> */}
+      {/* <ReactRouterPrompt when={enableCancelCheck}>
+        {({ isActive }) => isActive && handleLocationChange()}
+      </ReactRouterPrompt> */}
 
       <EditDialog
         dialogTitle="Save Incomplete Project as a Draft"
