@@ -33,17 +33,14 @@ const pageStyle = {
  */
 const drawWells = (map: maplibre.Map, wells: any) => {
   /* The following are the URLs to the geojson data */
-  const orphanedWellsURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_WELL_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+  const orphanedSitesURL =
+    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const orphanedActivitiesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
-  const surfaceStateURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
 
-  // Orphaned wells
   map.addSource('orphanedWells', {
     type: 'geojson',
-    data: orphanedWellsURL
+    data: orphanedSitesURL
   });
   map.addLayer({
     id: 'orphanedWellsLayer',
@@ -53,12 +50,27 @@ const drawWells = (map: maplibre.Map, wells: any) => {
       visibility: wells[0] ? 'visible' : 'none'
     },
     paint: {
-      'circle-radius': 5,
-      'circle-color': 'red'
+      'circle-radius': 7,
+      'circle-stroke-color': 'black',
+      'circle-stroke-width': 1,
+      'circle-stroke-opacity': 0.5,
+      'circle-color': [
+        'match',
+        ['get', 'SITE_STATUS'],
+        'Assessed',
+        '#f0933e',
+        'Inactive',
+        '#999999',
+        'Decommissioned',
+        '#7fb2f9',
+        'Reclaimed',
+        '#adc64f',
+        'black'
+      ]
     }
   });
 
-  // Orphaned activities
+  // Orphaned activities - These are called "Activities" on the BCER site
   map.addSource('orphanedActivities', {
     type: 'geojson',
     data: orphanedActivitiesURL
@@ -71,26 +83,42 @@ const drawWells = (map: maplibre.Map, wells: any) => {
       visibility: wells[0] ? 'visible' : 'none'
     },
     paint: {
-      'circle-radius': 5,
-      'circle-color': 'blue'
-    }
-  });
-
-  // Surface state
-  map.addSource('surfaceState', {
-    type: 'geojson',
-    data: surfaceStateURL
-  });
-  map.addLayer({
-    id: 'surfaceStateLayer',
-    type: 'circle',
-    source: 'surfaceState',
-    layout: {
-      visibility: wells[0] ? 'visible' : 'none'
-    },
-    paint: {
-      'circle-radius': 5,
-      'circle-color': 'green'
+      'circle-radius': [
+        'match',
+        ['get', 'WORKSTREAM_SHORT'],
+        'Deactivation',
+        8,
+        'Abandonment',
+        10,
+        'Decommissioning',
+        12,
+        'Investigation',
+        14,
+        'Remediation',
+        16,
+        'Reclamation',
+        18,
+        0
+      ],
+      'circle-color': 'rgba(0, 0, 0, 0)',
+      'circle-stroke-width': 3,
+      'circle-stroke-color': [
+        'match',
+        ['get', 'WORKSTREAM_SHORT'],
+        'Deactivation',
+        '#fffe7d',
+        'Abandonment',
+        '#ee212f',
+        'Decommissioning',
+        '#4a72b5',
+        'Investigation',
+        '#f6b858',
+        'Remediation',
+        '#a92fe2',
+        'Reclamation',
+        '#709958',
+        'black'
+      ]
     }
   });
 };
@@ -330,7 +358,7 @@ const initializeMap = (
         '"margin-top: 1rem; font-size: 1.2em; font-weight: bold; background: #003366; cursor: pointer; border-radius: 5px; color: white; padding: 7px 20px; border: none; text-align: center; text-decoration: none; display: inline-block; font-family: Arial, sans-serif;"';
       return `
         <div style=${divStyle}>
-          <div>Project Name: <b>${name}</b></div>
+          <div>${isProject ? 'Project' : 'Plan'} Name: <b>${name}</b></div>
           <div class="view-btn">
             <a href="/${isProject ? 'projects' : 'plans'}/${id}" >
               <button style=${buttonStyle} title="Take me to the details page">View Project Details</button>
@@ -361,7 +389,7 @@ const initializeMap = (
 
       // TBD: Currently the /plans route is not available
       // const html = makePopup(prop.name, prop.id, false);
-      const html = makePopup(prop.name, prop.id, true);
+      const html = makePopup(prop.name, prop.id, false);
 
       // @ts-ignore
       new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
@@ -493,8 +521,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
     if (
       layer === 'wells' &&
       map.getLayer('orphanedWellsLayer') &&
-      map.getLayer('orphanedActivitiesLayer') &&
-      map.getLayer('surfaceStateLayer')
+      map.getLayer('orphanedActivitiesLayer')
     ) {
       map.setLayoutProperty(
         'orphanedWellsLayer',
@@ -503,11 +530,6 @@ const checkLayerVisibility = (layers: any, features: any) => {
       );
       map.setLayoutProperty(
         'orphanedActivitiesLayer',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
-      map.setLayoutProperty(
-        'surfaceStateLayer',
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
