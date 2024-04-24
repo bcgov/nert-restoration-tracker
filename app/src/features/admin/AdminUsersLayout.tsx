@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 /**
  * Layout for all admin/users pages.
@@ -6,8 +7,8 @@ import React from 'react';
  * @param {*} props
  * @return {*}
  */
-const AdminUsersLayout: React.FC = (props) => {
-  return <>{props.children}</>;
+const AdminUsersLayout: React.FC = () => {
+  return <Outlet />;
 };
 
 export default AdminUsersLayout;

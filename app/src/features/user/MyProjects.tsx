@@ -11,12 +11,12 @@ import ProjectsListPage from 'features/projects/list/ProjectsListPage';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import { useCollapse } from 'react-collapsed';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 const MyProjects: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts } = props;
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
-  const history = useHistory();
+  const history = useNavigate();
 
   return (
     <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
@@ -37,7 +37,7 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
                 variant="contained"
                 color="primary"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                onClick={() => history.push('/admin/projects/create')}
+                onClick={() => history('/admin/projects/create')}
                 data-testid="create-project-button">
                 Create Project
               </Button>

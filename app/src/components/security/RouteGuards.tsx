@@ -2,7 +2,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { AuthStateContext } from 'contexts/authStateContext';
 import qs from 'qs';
 import React, { useContext } from 'react';
-import { Redirect, Route, RouteProps, useLocation } from 'react-router';
+import { Navigate, useLocation } from 'react-router-dom';
 
 /**
  * Special route guard that requires the user to be authenticated, but also accounts for routes that are exceptions to
@@ -11,27 +11,14 @@ import { Redirect, Route, RouteProps, useLocation } from 'react-router';
  *
  * Only relevant on top-level routers. Child routers can leverage regular guards.
  *
- * @param {*} { children, ...rest }
+ * @param {*} { children }
  * @return {*}
  */
-export const AuthenticatedRouteGuard: React.FC<RouteProps> = ({ children, ...rest }) => {
+export const AuthenticatedRouteGuard = ({ children }: { children: JSX.Element }) => {
   return (
     <CheckForAuthLoginParam>
       <WaitForKeycloakToLoadUserInfo>
-        <CheckIfAuthenticatedUser>
-          <Route
-            {...rest}
-            render={(props) => {
-              return (
-                <>
-                  {React.Children.map(children, (child: any) => {
-                    return React.cloneElement(child, props);
-                  })}
-                </>
-              );
-            }}
-          />
-        </CheckIfAuthenticatedUser>
+        <CheckIfAuthenticatedUser>{children}</CheckIfAuthenticatedUser>
       </WaitForKeycloakToLoadUserInfo>
     </CheckForAuthLoginParam>
   );
@@ -45,7 +32,7 @@ export const AuthenticatedRouteGuard: React.FC<RouteProps> = ({ children, ...res
  * @param {*} { children }
  * @return {*}
  */
-const CheckForAuthLoginParam: React.FC = ({ children }) => {
+const CheckForAuthLoginParam = ({ children }: { children: JSX.Element }) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const location = useLocation();
@@ -65,7 +52,7 @@ const CheckForAuthLoginParam: React.FC = ({ children }) => {
       keycloakWrapper?.keycloak.login({ redirectUri: redirectUri });
     }
 
-    return <Redirect to="/" />;
+    return <Navigate replace to="/" />;
   }
 
   return <>{children}</>;
@@ -79,7 +66,7 @@ const CheckForAuthLoginParam: React.FC = ({ children }) => {
  * @param {*} { children }
  * @return {*}
  */
-const WaitForKeycloakToLoadUserInfo: React.FC = ({ children }) => {
+const WaitForKeycloakToLoadUserInfo = ({ children }: { children: JSX.Element }) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (!keycloakWrapper?.hasLoadedAllUserInfo) {
@@ -98,7 +85,7 @@ const WaitForKeycloakToLoadUserInfo: React.FC = ({ children }) => {
  * @param {*} { children }
  * @return {*}
  */
-const CheckIfAuthenticatedUser: React.FC = ({ children }) => {
+const CheckIfAuthenticatedUser = ({ children }: { children: JSX.Element }) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   const location = useLocation();
@@ -108,7 +95,7 @@ const CheckIfAuthenticatedUser: React.FC = ({ children }) => {
     if (keycloakWrapper?.hasAccessRequest) {
       // The user has a pending access request, restrict them to the request-submitted or logout pages
       if (location.pathname !== '/request-submitted' && location.pathname !== '/logout') {
-        return <Redirect to="/request-submitted" />;
+        return <Navigate replace to="/request-submitted" />;
       }
     } else {
       // The user does not have a pending access request, restrict them to the access-request, request-submitted or logout pages
@@ -118,7 +105,7 @@ const CheckIfAuthenticatedUser: React.FC = ({ children }) => {
         location.pathname !== '/logout'
       ) {
         // User attempted to go to restricted page
-        return <Redirect to="/forbidden" />;
+        return <Navigate replace to="/forbidden" />;
       }
     }
   }

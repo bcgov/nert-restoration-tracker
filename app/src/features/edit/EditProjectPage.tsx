@@ -25,14 +25,14 @@ import {
   ProjectFormYupSchema
 } from 'features/projects/create/CreateProjectPage';
 import { Form, Formik, FormikProps } from 'formik';
-import History from 'history';
+// import History from 'history';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import { Prompt } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import ReactRouterPrompt from 'react-router-prompt';
 
 const pageStyles = {
   actionButton: {
@@ -62,7 +62,7 @@ const pageStyles = {
  * @return {*}
  */
 const EditProjectPage: React.FC = () => {
-  const history = useHistory();
+  const history = useNavigate();
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
@@ -122,7 +122,7 @@ const EditProjectPage: React.FC = () => {
 
       setEnableCancelCheck(false);
 
-      history.push(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${response.id}`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: 'Error Editing Project',
@@ -134,7 +134,7 @@ const EditProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push(`/admin/projects/${projectId}`);
+    history(`/admin/projects/${projectId}`);
   };
 
   const defaultErrorDialogProps = {
@@ -158,7 +158,7 @@ const EditProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push(`/admin/projects/${projectId}`);
+      history(`/admin/projects/${projectId}`);
     }
   };
 
@@ -184,14 +184,14 @@ const EditProjectPage: React.FC = () => {
    * @param {History.Location} location
    * @return {*}
    */
-  const handleLocationChange = (location: History.Location) => {
+  const handleLocationChange = () => {
     if (!dialogContext.yesNoDialogProps.open) {
       // If the cancel dialog is not open: open it
       dialogContext.setYesNoDialog({
         ...defaultCancelDialogProps,
         onYes: () => {
           dialogContext.setYesNoDialog({ open: false });
-          history.push(location.pathname);
+          history(location.pathname);
         },
         open: true
       });
@@ -204,7 +204,9 @@ const EditProjectPage: React.FC = () => {
 
   return (
     <>
-      <Prompt when={enableCancelCheck} message={handleLocationChange} />
+      <ReactRouterPrompt when={enableCancelCheck}>
+        {({ isActive }) => isActive && handleLocationChange()}
+      </ReactRouterPrompt>
 
       <Container maxWidth="xl">
         <Box mb={3}>

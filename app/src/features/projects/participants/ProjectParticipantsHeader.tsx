@@ -15,7 +15,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import AddProjectParticipantsForm, {
   AddProjectParticipantsFormInitialValues,
   AddProjectParticipantsFormYupSchema,
@@ -35,7 +35,7 @@ export interface IProjectParticipantsHeaderProps {
  * @return {*}
  */
 const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (props) => {
-  const history = useHistory();
+  const history = useNavigate();
   const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
   const restorationTrackerApi = useRestorationTrackerApi();
@@ -87,16 +87,13 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
       <Container maxWidth="xl">
         <Box pb={3}>
           <Breadcrumbs>
-            <Link
-              color="primary"
-              onClick={() => history.push('/admin/projects')}
-              aria-current="page">
+            <Link color="primary" onClick={() => history('/admin/projects')} aria-current="page">
               <Typography variant="body2">Projects</Typography>
             </Link>
             <Link
               color="primary"
               onClick={() =>
-                history.push(`/admin/projects/${props.projectWithDetails.project.project_id}`)
+                history(`/admin/projects/${props.projectWithDetails.project.project_id}`)
               }
               aria-current="page">
               <Typography variant="body2">

@@ -38,14 +38,14 @@ import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
-  const history = useHistory();
+  const history = useNavigate();
   const { keycloakWrapper } = useContext(AuthStateContext);
   const isUserCreator =
     isAuthenticated(keycloakWrapper) &&
@@ -346,8 +346,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         variant="body2"
                         onClick={
                           draftCode != row.statusCode
-                            ? () => history.push(`/admin/projects/${row.planId}`)
-                            : () => history.push(`/admin/projects/create?draftId=${row.planId}`)
+                            ? () => history(`/admin/projects/${row.planId}`)
+                            : () => history(`/admin/projects/create?draftId=${row.planId}`)
                         }>
                         {row.planName}
                       </Link>

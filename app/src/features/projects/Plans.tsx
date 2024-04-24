@@ -20,12 +20,12 @@ import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface'
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';
-import { useHistory, useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PlanListPage from './list/PlanListPage';
 
 export default function Plans() {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
-  const history = useHistory();
+  const history = useNavigate();
   const location = useLocation();
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
@@ -67,13 +67,13 @@ export default function Plans() {
   //push params to url
   const handleFilterParams = () => {
     const urlParams = qs.stringify(formikRef.current?.values);
-    history.push({
+    history({
       search: `?${urlParams}`
     });
   };
 
   const handleResetFilterParams = () => {
-    history.push({
+    history({
       search: ``
     });
   };

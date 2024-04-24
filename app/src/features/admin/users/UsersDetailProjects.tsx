@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
 import { IYesNoDialogProps } from '../../../components/dialog/YesNoDialog';
 import { CustomMenuButton } from '../../../components/toolbar/ActionToolbars';
@@ -58,7 +58,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   const { userDetails } = props;
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
-  const history = useHistory();
+  const history = useNavigate();
 
   const [assignedProjects, setAssignedProjects] = useState<IGetUserProjectsListResponse[]>();
 
@@ -162,7 +162,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
               <TableCell scope="row">
                 <Link
                   color="primary"
-                  onClick={() => history.push(`/admin/projects/${row.project_id}/details`)}
+                  onClick={() => history(`/admin/projects/${row.project_id}/details`)}
                   aria-current="page">
                   <Typography variant="body2">{row.name}</Typography>
                 </Link>

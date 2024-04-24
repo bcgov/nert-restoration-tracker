@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React, { useCallback, useContext } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
 import { IYesNoDialogProps } from '../../../components/dialog/YesNoDialog';
 import { SystemUserI18N } from '../../../constants/i18n';
@@ -47,7 +47,7 @@ export interface IUsersHeaderProps {
 
 const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
   const { userDetails } = props;
-  const history = useHistory();
+  const history = useNavigate();
   const restorationTrackerApi = useRestorationTrackerApi();
   const dialogContext = useContext(DialogContext);
 
@@ -98,7 +98,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
         open: true
       });
 
-      history.push('/admin/users');
+      history('/admin/users');
     } catch (error) {
       openErrorDialog({
         dialogTitle: SystemUserI18N.removeUserErrorTitle,
@@ -114,7 +114,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
         <Breadcrumbs>
           <Link
             color="primary"
-            onClick={() => history.push('/admin/users')}
+            onClick={() => history('/admin/users')}
             aria-current="page"
             sx={pageStyles.breadCrumbLink}>
             <Typography variant="body2">Manage Users</Typography>

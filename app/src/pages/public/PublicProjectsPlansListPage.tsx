@@ -3,14 +3,14 @@ import { AuthStateContext } from 'contexts/authStateContext';
 import PublicPlans from 'pages/public/PublicPlans';
 import PublicProjects from 'pages/public/PublicProjects';
 import React, { useContext } from 'react';
-import { Redirect } from 'react-router';
+import { Navigate } from 'react-router-dom';
 
-const PublicProjectsPlansListPage = () => {
+export default function PublicProjectsPlansListPage() {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   if (keycloakWrapper?.keycloak.authenticated) {
     // User has a role
-    return <Redirect to={{ pathname: '/admin/projects' }} />;
+    return <Navigate replace to={{ pathname: '/admin/projects' }} />;
   }
 
   return (
@@ -19,6 +19,4 @@ const PublicProjectsPlansListPage = () => {
       <PublicPlans />
     </Container>
   );
-};
-
-export default PublicProjectsPlansListPage;
+}
