@@ -12,6 +12,12 @@ import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
+import {
+  events,
+  getStateCodeFromLabel,
+  StateMachine,
+  states
+} from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
@@ -49,13 +55,6 @@ import ProjectPermitForm, {
   ProjectPermitFormYupSchema
 } from 'features/projects/components/ProjectPermitForm';
 import { Form, Formik, FormikProps } from 'formik';
-// import * as History from 'history';
-import {
-  events,
-  getStateCodeFromLabel,
-  StateMachine,
-  states
-} from 'components/workflow/StateMachine';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
@@ -63,8 +62,8 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import ReactRouterPrompt from 'react-router-prompt';
 import yup from 'utils/YupSchema';
+// import YesNoDialog from 'components/dialog/YesNoDialog'
 
 const pageStyles = {
   actionButton: {
@@ -114,15 +113,9 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  // const location = useLocation();
-  const history = useNavigate();
-
   const { keycloakWrapper } = useContext(AuthStateContext);
-
   const restorationTrackerApi = useRestorationTrackerApi();
-
   const queryParams = useQuery();
-
   const codes = useCodes();
 
   const [hasLoadedDraftData, setHasLoadedDraftData] = useState(!queryParams.draftId);
@@ -136,6 +129,7 @@ const CreateProjectPage: React.FC = () => {
 
   const dialogContext = useContext(DialogContext);
 
+  const history = useNavigate();
   const defaultCancelDialogProps = {
     dialogTitle: CreateProjectI18N.cancelTitle,
     dialogText: CreateProjectI18N.cancelText,
@@ -222,19 +216,17 @@ const CreateProjectPage: React.FC = () => {
       }
 
       setOpenDraftDialog(false);
-
       if (!response?.id) {
         showCreateErrorDialog({
           dialogError:
             'The response from the server was null, or did not contain a draft project ID.'
         });
-
         return;
       }
 
       setDraft({ id: response.id, date: response.date });
       // setEnableCancelCheck(false);
-
+      keycloakWrapper?.refresh();
       history('/admin/user/projects');
     } catch (error) {
       setOpenDraftDialog(false);
@@ -250,12 +242,12 @@ const CreateProjectPage: React.FC = () => {
   /**
    * Handle project creation.
    */
-  const handleProjectCreation = async (values: ICreateProjectRequest) => {
+  const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
-      values.project.state_code = getStateCodeFromLabel(
+      projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
-      const response = await restorationTrackerApi.project.createProject(values);
+      const response = await restorationTrackerApi.project.createProject(projectPostObject);
       if (!response?.id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a project ID.'
@@ -266,7 +258,6 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
 
       // setEnableCancelCheck(false);
-
       keycloakWrapper?.refresh();
       history(`/admin/projects/${response.id}`);
     } catch (error) {
@@ -322,14 +313,14 @@ const CreateProjectPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  /**
-   * Intercepts all navigation attempts (when used with a `Prompt`).
-   *
-   * Returning true allows the navigation, returning false prevents it.
-   *
-   * @param {History.Location} location
-   * @return {*}
-   */
+  // /**
+  //  * Intercepts all navigation attempts (when used with a `Prompt`).
+  //  *
+  //  * Returning true allows the navigation, returning false prevents it.
+  //  *
+  //  * @param {History.Location} location
+  //  * @return {*}
+  //  */
   // const handleLocationChange = () => {
   //   if (!dialogContext.yesNoDialogProps.open) {
   //     // If the cancel dialog is not open: open it
@@ -350,8 +341,10 @@ const CreateProjectPage: React.FC = () => {
 
   return (
     <>
-      {/* <ReactRouterPrompt when={enableCancelCheck}>
-        {({ isActive }) => isActive && handleLocationChange()}
+      {/* <ReactRouterPrompt when={enableCancelCheck} >
+        {({ isActive, onConfirm, onCancel }) => (
+          <YesNoDialog dialogTitle="Cancel Create Project" dialogText="Are you sure you want to cancel?" open={isActive} onClose={onCancel} onNo={onCancel} onYes={onConfirm} />
+        )}
       </ReactRouterPrompt> */}
 
       <EditDialog
@@ -452,7 +445,7 @@ const CreateProjectPage: React.FC = () => {
                   </Grid>
                 </Box>
 
-                <Divider></Divider>
+                <Divider />
 
                 <Box my={5}>
                   <Grid container spacing={3}>
@@ -468,7 +461,7 @@ const CreateProjectPage: React.FC = () => {
                   </Grid>
                 </Box>
 
-                <Divider></Divider>
+                <Divider />
 
                 <Box my={5}>
                   <Grid container spacing={3}>
@@ -482,7 +475,7 @@ const CreateProjectPage: React.FC = () => {
                   </Grid>
                 </Box>
 
-                <Divider></Divider>
+                <Divider />
 
                 <Box my={5}>
                   <Grid container spacing={3}>
@@ -518,7 +511,7 @@ const CreateProjectPage: React.FC = () => {
                   </Grid>
                 </Box>
 
-                <Divider></Divider>
+                <Divider />
 
                 <Box my={5}>
                   <Grid container spacing={3}>
@@ -539,7 +532,7 @@ const CreateProjectPage: React.FC = () => {
                   </Grid>
                 </Box>
 
-                <Divider></Divider>
+                <Divider />
 
                 <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
                   <Button
@@ -555,8 +548,9 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     type="submit"
+                    // onClick={() => formikRef.current?.submitForm()}
                     data-testid="project-create-button">
-                    Create Project
+                    <span>Create Project</span>
                   </Button>
                   <Button
                     variant="text"
