@@ -76,12 +76,6 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
   const maxNumFiles = props.maxNumFiles || config?.MAX_UPLOAD_NUM_FILES;
   const maxFileSize = props.maxFileSize || config?.MAX_UPLOAD_FILE_SIZE;
   const multiple = props.multiple ?? true;
-  // const acceptedFileExtensions = props.acceptedFileExtensions;
-  const acceptedFileExtensions = {
-    'application/vnd.google-earth.kml+xml': ['.kml'],
-    'application/octet-stream': ['.gpx'],
-    'application/zip': ['.zip']
-  };
 
   return (
     <Box className="dropZoneContainer">
@@ -101,13 +95,11 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
                 <Link underline="always">Browse Files</Link>
               </Box>
               <Box textAlign="center">
-                {acceptedFileExtensions && (
-                  <Box>
-                    <Typography component="span" variant="subtitle2" color="textSecondary">
-                      {`Accepted files: ${acceptedFileExtensions}`}
-                    </Typography>
-                  </Box>
-                )}
+                <Box>
+                  <Typography component="span" variant="subtitle2" color="textSecondary">
+                    {`Accepted files: GeoJSON`}
+                  </Typography>
+                </Box>
                 {!!maxFileSize && maxFileSize !== Infinity && (
                   <Box>
                     <Typography component="span" variant="subtitle2" color="textSecondary">

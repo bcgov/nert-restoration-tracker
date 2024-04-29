@@ -140,6 +140,45 @@ export const handleKMLUpload = async <T>(
 };
 
 /**
+ *
+ * @param file File object to upload
+ * @param name Name of the formik field that the parsed geometry will be saved to
+ * @param formikProps The formik props
+ * @returns
+ */
+export const handleGeoJSONUpload = async <T>(
+  file: File,
+  name: string,
+  formikProps: FormikContextType<T>
+) => {
+  const { values, setFieldValue, setFieldError } = formikProps;
+
+  const fileAsString = await file?.text().then((jsonString: string) => {
+    return jsonString;
+  });
+
+  if (!file?.type.includes('json') && !fileAsString?.includes('FeatureCollection')) {
+    setFieldError(name, 'You must upload a GeoJSON file, please try again.');
+    return;
+  }
+
+  try {
+    const geojson = JSON.parse(fileAsString);
+
+    if (geojson?.features) {
+      setFieldValue(name, [...geojson.features, ...get(values, name)]);
+    } else {
+      setFieldError(
+        name,
+        'Error uploading your GeoJSON file, please check the file and try again.'
+      );
+    }
+  } catch (error) {
+    setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
+  }
+};
+
+/**
  * Calculates the bounding box that encompasses all of the given features
  *
  * @param features The features used to calculate the bounding box
