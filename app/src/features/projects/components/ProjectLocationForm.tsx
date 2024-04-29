@@ -21,11 +21,7 @@ import MapContainer from 'components/map/MapContainer';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
-import {
-  handleGPXUpload,
-  handleKMLUpload,
-  handleShapefileUpload
-} from 'utils/mapBoundaryUploadHelpers';
+import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 
 export interface IProjectLocationForm {
@@ -77,12 +73,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
-      if (file?.type.includes('zip') || file?.name.includes('.zip')) {
-        handleShapefileUpload(file, 'location.geometry', formikProps);
-      } else if (file?.type.includes('gpx') || file?.name.includes('.gpx')) {
-        handleGPXUpload(file, 'location.geometry', formikProps);
-      } else if (file?.type.includes('kml') || file?.name.includes('.kml')) {
-        handleKMLUpload(file, 'location.geometry', formikProps);
+      if (file?.type.includes('json') || file?.name.includes('.json')) {
+        handleGeoJSONUpload(file, 'location.geometry', formikProps);
       }
 
       return Promise.resolve();
@@ -188,8 +180,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Typography component="legend">Project Boundary *</Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
-            Upload a shapefile or use the drawing tools on the map to define your project boundary
-            (KML or shapefiles accepted).
+            Upload a GeoJSON file or use the drawing tools on the map to define your project
+            boundary.
           </Typography>
         </Box>
 
@@ -233,9 +225,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
             acceptedFileExtensions: {
-              'application/vnd.google-earth.kml+xml': ['.kml'],
-              'application/octet-stream': ['.gpx'],
-              'application/zip': ['.zip']
+              'application/json': ['.json', '.geojson']
             }
           }}
         />
