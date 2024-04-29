@@ -42,6 +42,7 @@ import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
+import { TableI18N, ProjectTableI18N } from 'constants/i18n';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
@@ -80,7 +81,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         statusCode: row.project.state_code,
         statusLabel: getStateLabelFromCode(row.project.state_code),
         statusStyle: getStatusStyle(row.project.state_code),
-        archive: row.project.state_code !== archCode ? 'Archive' : 'Unarchive'
+        archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
       } as utils.ProjectData;
     });
 
@@ -135,7 +136,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     {headCell.label}
                     {orderBy === headCell.id ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
                       </Box>
                     ) : null}
                   </TableSortLabel>
@@ -146,30 +147,30 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
             <TableCell>
               {!myProject ? (
-                <Typography variant="inherit">Archive</Typography>
+                <Typography variant="inherit">{TableI18N.archive}</Typography>
               ) : (
                 <>
-                  <Typography variant="inherit">Archive</Typography>
-                  <Typography variant="inherit">Delete</Typography>
+                  <Typography variant="inherit">{TableI18N.archive}</Typography>
+                  <Typography variant="inherit">{TableI18N.delete}</Typography>
                 </>
               )}
             </TableCell>
           </SystemRoleGuard>
           <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
             <TableCell>
-              {!myProject ? <></> : <Typography variant="inherit">Delete</Typography>}
+              {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
             </TableCell>
           </SystemRoleGuard>
           {!myProject ? (
             <TableCell padding="checkbox">
-              <Tooltip title="Export all projects" placement="right">
+              <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
                 <Checkbox
                   color="primary"
                   indeterminate={numSelected > 0 && numSelected < rowCount}
                   checked={rowCount > 0 && numSelected === rowCount}
                   onChange={onSelectAllClick}
                   inputProps={{
-                    'aria-label': 'select all projects for export'
+                    'aria-label': ProjectTableI18N.selectAllProjectsForExport
                   }}
                 />
               </Tooltip>
@@ -196,7 +197,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         }}>
         {numSelected > 0 ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? 'projects' : 'project'} selected to export
+            {numSelected} {numSelected !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project} {TableI18N.selectedToExport}
           </Typography>
         ) : (
           <Typography
@@ -204,7 +205,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             variant="h2"
             id="tableTitle"
             component="div">
-            Found {rows?.length} {rows?.length !== 1 ? 'projects' : 'project'}
+            {TableI18N.found} {rows?.length} {rows?.length !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -214,9 +215,9 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             variant="outlined"
             disableElevation
             data-testid="export-project-button"
-            aria-label={'export projects area map'}
+            aria-label={ProjectTableI18N.exportProjectsData}
             startIcon={<Icon path={mdiExport} size={1} />}>
-            <strong>Export maps</strong>
+            <strong>{TableI18N.exportData}</strong>
           </Button>
         ) : (
           <PagedTableInfoDialog isProject={true} />
@@ -370,7 +371,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                             SYSTEM_ROLE.DATA_ADMINISTRATOR
                           ]}>
                           <Tooltip
-                            title={archCode !== row.statusCode ? 'Archive' : 'Unarchive'}
+                            title={archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive}
                             placement="right">
                             <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
@@ -378,7 +379,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                           </Tooltip>
                         </SystemRoleGuard>
                       ) : (
-                        <Tooltip title="Delete draft" placement="right">
+                        <Tooltip title={TableI18N.deleteDraft} placement="right">
                           <IconButton color="error">
                             <DeleteForeverIcon />
                           </IconButton>
@@ -389,7 +390,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     {!myProject ? (
                       <TableCell padding="checkbox">
                         <Tooltip
-                          title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                          title={isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected}
                           placement="right">
                           <Checkbox
                             color="primary"
@@ -422,7 +423,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
           <FormControlLabel
             sx={{ ml: '0.5rem' }}
             control={<Switch size="small" checked={dense} onChange={handleChangeDense} />}
-            label={<Typography variant="caption">Dense padding</Typography>}
+            label={<Typography variant="caption">{TableI18N.densePadding}</Typography>}
           />
           <TablePagination
             sx={{ backgroundColor: '#E9FBFF' }}
