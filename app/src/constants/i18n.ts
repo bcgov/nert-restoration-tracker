@@ -202,3 +202,50 @@ export const DownloadEMLI18N = {
   errorText:
     'An error has occurred while attempting to download the project EML. Please try again, if the error persists please contact your system administrator.'
 };
+
+export const TableI18N = {
+  selectedToExport: 'selected to export',
+  sortedDesc: 'sorted descending',
+  sortedAsc: 'sorted ascending',
+  found: 'Found',
+  exportData: 'Export data',
+  exportSelected: 'Export selected',
+  exportNotSelected: 'Export not selected',
+  deleteDraft: 'Delete draft',
+  archive: 'Archive',
+  unarchive: 'Unarchive',
+  delete: 'Delete',
+  organizations: 'Organizations',
+  status: 'Status',
+  export: 'Export',
+  densePadding: 'Dense padding',
+  noDataToExport: 'No data to export'
+};
+
+export const ProjectTableI18N = {
+  project: 'project',
+  projects: 'projects',
+  exportProjectsData: 'export projects data',
+  exportAllProjects: 'Export all projects',
+  selectAllProjectsForExport: 'select all projects for export',
+  projectName: 'Project Name',
+  authorizationRef: 'Authorization Ref.',
+  plannedStartDate: 'Planned Start Date',
+  plannedEndDate: 'Planned End Date',
+  actualStartDate: 'Actual Start Date',
+  actualEndDate: 'Actual End Date'
+};
+
+export const PlanTableI18N = {
+  plan: 'plan',
+  plans: 'plans',
+  exportPlansData: 'export plans data',
+  exportAllPlans: 'Export all plans',
+  selectAllPlansForExport: 'select all plans for export',
+  planName: 'Plan Name',
+  term: 'Term',
+  startDate: 'Start Date',
+  endDate: 'End Date',
+  multiYear: 'Multi-Year',
+  annual: 'Annual'
+};
