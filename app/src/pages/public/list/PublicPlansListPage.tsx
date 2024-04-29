@@ -34,6 +34,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
+import { TableI18N, PlanTableI18N } from 'constants/i18n';
 
 const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans } = props;
@@ -52,8 +53,8 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         planName: row.project.project_name,
         term:
           getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
-            ? 'Multi-Year'
-            : 'Annual',
+            ? PlanTableI18N.multiYear
+            : PlanTableI18N.annual,
         org: row.contact.contacts.map((item) => item.agency).join(', '),
         startDate: row.project.start_date,
         endDate: row.project.end_date,
@@ -96,7 +97,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                     {headCell.label}
                     {orderBy === headCell.id ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
                       </Box>
                     ) : null}
                   </TableSortLabel>
@@ -104,14 +105,14 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
               );
           })}
           <TableCell padding="checkbox">
-            <Tooltip title="Export all plans" placement="right">
+            <Tooltip title={PlanTableI18N.exportAllPlans} placement="right">
               <Checkbox
                 color="primary"
                 indeterminate={numSelected > 0 && numSelected < rowCount}
                 checked={rowCount > 0 && numSelected === rowCount}
                 onChange={onSelectAllClick}
                 inputProps={{
-                  'aria-label': 'select all plans for export'
+                  'aria-label': PlanTableI18N.selectAllPlansForExport
                 }}
               />
             </Tooltip>
@@ -140,7 +141,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         }}>
         {numSelected > 0 ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? 'plans' : 'plan'} selected to export
+            {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan} {TableI18N.selectedToExport}
           </Typography>
         ) : (
           <Typography
@@ -158,9 +159,9 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
             variant="outlined"
             disableElevation
             data-testid="export-plan-button"
-            aria-label={'export plan area map'}
+            aria-label={PlanTableI18N.exportPlansData}
             startIcon={<Icon path={mdiExport} size={1} />}>
-            <strong>Export maps</strong>
+            <strong>{TableI18N.exportData}</strong>
           </Button>
         ) : (
           <PagedTableInfoDialog isProject={false} />
@@ -299,7 +300,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                     <TableCell padding="checkbox">
                       {row.export ? (
                         <Tooltip
-                          title={isItemSelected ? 'Export selected' : 'Export not selected'}
+                          title={isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected}
                           placement="right">
                           <Checkbox
                             color="primary"
@@ -311,7 +312,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                           />
                         </Tooltip>
                       ) : (
-                        <Tooltip title="No map to export" placement="right">
+                        <Tooltip title={TableI18N.noDataToExport} placement="right">
                           <span>
                             <Checkbox
                               disabled={true}
@@ -342,7 +343,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
           <FormControlLabel
             sx={{ ml: '0.5rem' }}
             control={<Switch size="small" checked={dense} onChange={handleChangeDense} />}
-            label={<Typography variant="caption">Dense padding</Typography>}
+            label={<Typography variant="caption">{TableI18N.densePadding}</Typography>}
           />
           <TablePagination
             sx={{ backgroundColor: '#FFF4EB' }}

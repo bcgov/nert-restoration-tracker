@@ -1,3 +1,5 @@
+import { TableI18N, ProjectTableI18N, PlanTableI18N } from 'constants/i18n';
+
 /**  Project related objects **/
 export interface ProjectData {
   id: number;
@@ -35,55 +37,55 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     id: 'projectName',
     numeric: false,
     disablePadding: true,
-    label: 'Project Name'
+    label: ProjectTableI18N.projectName
   },
   {
     id: 'authRef',
     numeric: false,
     disablePadding: false,
-    label: 'Authorization Ref.'
+    label: ProjectTableI18N.authorizationRef
   },
   {
     id: 'org',
     numeric: false,
     disablePadding: false,
-    label: 'Organizations'
+    label: TableI18N.organizations
   },
   {
     id: 'plannedStartDate',
     numeric: false,
     disablePadding: false,
-    label: 'Planned Start Date'
+    label: ProjectTableI18N.plannedStartDate
   },
   {
     id: 'actualStartDate',
     numeric: false,
     disablePadding: false,
-    label: 'Actual Start Date'
+    label: ProjectTableI18N.actualStartDate
   },
   {
     id: 'plannedEndDate',
     numeric: false,
     disablePadding: false,
-    label: 'Planned End Date'
+    label: ProjectTableI18N.plannedEndDate
   },
   {
     id: 'actualEndDate',
     numeric: false,
     disablePadding: false,
-    label: 'Actual End Date'
+    label: ProjectTableI18N.actualEndDate
   },
   {
     id: 'statusLabel',
     numeric: false,
     disablePadding: false,
-    label: 'Status'
+    label: TableI18N.status
   },
   {
     id: 'archive',
     numeric: false,
     disablePadding: false,
-    label: 'Archive'
+    label: TableI18N.archive
   }
 ];
 
@@ -123,49 +125,49 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     id: 'planName',
     numeric: false,
     disablePadding: true,
-    label: 'Plan Name'
+    label: PlanTableI18N.planName
   },
   {
     id: 'term',
     numeric: false,
     disablePadding: false,
-    label: 'Term'
+    label: PlanTableI18N.term
   },
   {
     id: 'org',
     numeric: false,
     disablePadding: false,
-    label: 'Organizations'
+    label: TableI18N.organizations
   },
   {
     id: 'startDate',
     numeric: false,
     disablePadding: false,
-    label: 'Start Date'
+    label: PlanTableI18N.startDate
   },
   {
     id: 'endDate',
     numeric: false,
     disablePadding: false,
-    label: 'End Date'
+    label: PlanTableI18N.endDate
   },
   {
     id: 'statusLabel',
     numeric: false,
     disablePadding: false,
-    label: 'Status'
+    label: TableI18N.status
   },
   {
     id: 'archive',
     numeric: false,
     disablePadding: false,
-    label: 'Archive'
+    label: TableI18N.archive
   },
   {
     id: 'export',
     numeric: false,
     disablePadding: false,
-    label: 'Export'
+    label: TableI18N.export
   }
 ];
 
