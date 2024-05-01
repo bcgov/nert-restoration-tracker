@@ -193,12 +193,24 @@ const initializeMap = (
   features?: any, // There's no features when first creating a record
   layerVisibility?: any,
   centroids: boolean = false,
-  setTooltip?: any,
-  setTooltipVisible?: any,
-  setTooltipX?: any,
-  setTooltipY?: any
+  tooltipState?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
+
+  const {
+    tooltip,
+    setTooltip,
+    tooltipVisible,
+    setTooltipVisible,
+    tooltipX,
+    setTooltipX,
+    tooltipY,
+    setTooltipY
+  } = tooltipState;
+  console.log('tooltip', tooltip);
+  console.log('tooltipVisible', tooltipVisible);
+  console.log('tooltipX', tooltipX);
+  console.log('tooltipY', tooltipY);
 
   const markerGeoJSON = convertToCentroidGeoJSON(features);
 
@@ -630,20 +642,21 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const [tooltipX, setTooltipX] = useState(0);
   const [tooltipY, setTooltipY] = useState(0);
 
+  // Package the tooltip state to pass to the map
+  const tooltipState = {
+    tooltip,
+    setTooltip,
+    tooltipVisible,
+    setTooltipVisible,
+    tooltipX,
+    setTooltipX,
+    tooltipY,
+    setTooltipY
+  };
+
   // Update the map if the markers change
   useEffect(() => {
-    initializeMap(
-      mapId,
-      center,
-      zoom,
-      features,
-      layerVisibility,
-      centroids,
-      setTooltip,
-      setTooltipVisible,
-      setTooltipX,
-      setTooltipY
-    );
+    initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
   }, [features]);
 
   // Listen to layer changes
