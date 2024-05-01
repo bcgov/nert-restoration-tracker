@@ -113,8 +113,6 @@ const SearchPage: React.FC = () => {
     <Box sx={{ height: '100%' }}>
       <MapContainer
         mapId="search_boundary_map"
-        center={[-124, 57]}
-        zoom={6}
         features={geometries}
         layerVisibility={layerVisibility}
         centroids={true}

@@ -179,21 +179,25 @@ const convertToCentroidGeoJSON = (features: any) => {
   return geojson;
 };
 
+const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
+  console.log('features', features);
+  console.log('centroid', centroid);
+};
+
 let map: maplibre.Map;
 
 const initializeMap = (
   mapId: string,
-  center: any,
-  zoom: number,
-  features: any,
+  center: any = [-124, 57],
+  zoom: number = 6,
+  features?: any, // There's no features when first creating a record
   layerVisibility?: any,
-  centroids?: boolean,
+  centroids: boolean = false,
   setTooltip?: any,
   setTooltipVisible?: any,
   setTooltipX?: any,
   setTooltipY?: any
 ) => {
-  console.log('layerVisibility', layerVisibility);
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
   const markerGeoJSON = convertToCentroidGeoJSON(features);
@@ -261,6 +265,8 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
+    drawFeatures(map, features, centroids);
+
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
     });
