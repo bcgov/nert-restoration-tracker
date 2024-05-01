@@ -115,8 +115,9 @@ const SearchPage: React.FC = () => {
         mapId="search_boundary_map"
         center={[-124, 57]}
         zoom={6}
-        markers={geometries}
+        features={geometries}
         layerVisibility={layerVisibility}
+        centroids={true}
       />
       <LayerSwitcher layerVisibility={layerVisibility} />
     </Box>

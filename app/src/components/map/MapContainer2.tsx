@@ -16,8 +16,9 @@ export interface IMapContainerProps {
   mapId: string;
   center?: any;
   zoom?: any;
-  markers?: any;
+  features?: any;
   layerVisibility?: any;
+  centroids?: boolean;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -184,16 +185,18 @@ const initializeMap = (
   mapId: string,
   center: any,
   zoom: number,
-  markers: any,
+  features: any,
   layerVisibility?: any,
+  centroids?: boolean,
   setTooltip?: any,
   setTooltipVisible?: any,
   setTooltipX?: any,
   setTooltipY?: any
 ) => {
+  console.log('layerVisibility', layerVisibility);
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
-  const markerGeoJSON = convertToCentroidGeoJSON(markers);
+  const markerGeoJSON = convertToCentroidGeoJSON(features);
 
   map = new Map({
     container: mapId,
@@ -613,7 +616,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, markers, layerVisibility } = props;
+  const { mapId, center, zoom, features, centroids, layerVisibility } = props;
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -627,18 +630,19 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       mapId,
       center,
       zoom,
-      markers,
+      features,
       layerVisibility,
+      centroids,
       setTooltip,
       setTooltipVisible,
       setTooltipX,
       setTooltipY
     );
-  }, [markers]);
+  }, [features]);
 
   // Listen to layer changes
   useEffect(() => {
-    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(markers));
+    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
   }, [layerVisibility]);
 
   return (
