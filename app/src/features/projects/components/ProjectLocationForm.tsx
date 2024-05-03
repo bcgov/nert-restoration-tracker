@@ -68,9 +68,11 @@ export interface IProjectLocationFormProps {
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
 
-  const { errors, touched, values, handleChange } = formikProps;
-  // const { errors, touched, values, handleChange, setFieldValue } = formikProps;
-  console.log('values', values);
+  // const { errors, touched, values, handleChange } = formikProps;
+  const { errors, touched, values, handleChange, setFieldValue } = formikProps;
+  const geometryCollection = { Type: 'GeometryCollection', geometries: values.location.geometry };
+  // TODO:  Pass this to the map component
+  console.log('geometryCollection', geometryCollection);
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
@@ -226,10 +228,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           <MapContainer
             mapId={'project_location_map'}
             layerVisibility={layerVisibility}
-            // drawControls={{
-            //   features: values.location.geometry,
-            //   onChange: (features) => setFieldValue('location.geometry', features)
-            // }}
+            drawControls={{
+              features: values.location.geometry,
+              onChange: (features) => setFieldValue('location.geometry', features)
+            }}
           />
         </Box>
         {errors?.location?.geometry && (
