@@ -17,8 +17,8 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-// import MapContainer from 'components/map/MapContainer2';
-import MapContainer from 'components/map/MapContainer';
+import MapContainer from 'components/map/MapContainer2';
+// import MapContainer from 'components/map/MapContainer';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
@@ -68,11 +68,9 @@ export interface IProjectLocationFormProps {
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
 
-  // const { errors, touched, values, handleChange } = formikProps;
-  const { errors, touched, values, handleChange, setFieldValue } = formikProps;
-  const geometryCollection = { Type: 'GeometryCollection', geometries: values.location.geometry };
-  // TODO:  Pass this to the map component
-  console.log('geometryCollection', geometryCollection);
+  const { errors, touched, values, handleChange } = formikProps;
+  console.log('values', values);
+  console.log('formikProps', formikProps);
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
@@ -228,10 +226,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           <MapContainer
             mapId={'project_location_map'}
             layerVisibility={layerVisibility}
-            drawControls={{
-              features: values.location.geometry,
-              onChange: (features) => setFieldValue('location.geometry', features)
-            }}
+            features={values.location.geometry}
           />
         </Box>
         {errors?.location?.geometry && (

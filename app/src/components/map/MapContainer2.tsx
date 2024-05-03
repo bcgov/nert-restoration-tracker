@@ -124,34 +124,6 @@ const drawWells = (map: maplibre.Map, wells: any) => {
   });
 };
 
-/*
- * This function converts the feature data to GeoJSON
- * @param array - the feature data
- * @returns object - the GeoJSON object
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const convertToGeoJSON = (features: any) => {
-  const geojson = {
-    type: 'FeatureCollection',
-    features: features.map((feature: any) => {
-      const f = feature.popup.props.featureData;
-      return {
-        type: 'Feature',
-        geometry: {
-          type: f.geometry[0].type,
-          coordinates: f.geometry[0].coordinates
-        },
-        properties: {
-          id: f.id,
-          name: f.name,
-          is_project: f.is_project
-        }
-      };
-    })
-  };
-  return geojson;
-};
-
 /**
  * # convertToCentroidGeoJSON
  * @param array - the feature data
@@ -177,6 +149,13 @@ const convertToCentroidGeoJSON = (features: any) => {
     })
   };
   return geojson;
+};
+
+const convertToGeoJSON = (features: any) => {
+  return {
+    type: 'FeatureCollection',
+    features: features
+  };
 };
 
 const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
@@ -207,12 +186,14 @@ const initializeMap = (
     tooltipY,
     setTooltipY
   } = tooltipState;
+
+  console.log('centroids', centroids);
   console.log('tooltip', tooltip);
   console.log('tooltipVisible', tooltipVisible);
   console.log('tooltipX', tooltipX);
   console.log('tooltipY', tooltipY);
 
-  const markerGeoJSON = convertToCentroidGeoJSON(features);
+  const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
   map = new Map({
     container: mapId,
@@ -661,7 +642,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Listen to layer changes
   useEffect(() => {
-    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
+    if (centroids) {
+      checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
+    } else {
+      checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
+    }
   }, [layerVisibility]);
 
   return (
