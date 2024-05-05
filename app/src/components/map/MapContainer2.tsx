@@ -174,6 +174,7 @@ const initializeMap = (
   centroids: boolean = false,
   tooltipState?: any
 ) => {
+  console.log('initialize map', mapId);
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
   const {
@@ -259,6 +260,7 @@ const initializeMap = (
 
     /*****************Project/Plans********************/
     drawFeatures(map, features, centroids);
+    console.log('drawFeatures', features, centroids);
 
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
@@ -271,7 +273,7 @@ const initializeMap = (
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
       promoteId: 'id',
-      cluster: true,
+      cluster: centroids ? true : false,
       clusterRadius: 100
     });
 
@@ -325,6 +327,21 @@ const initializeMap = (
       },
       paint: {
         'text-color': '#000'
+      }
+    });
+
+    // TODO: Add polygon layer here
+    map.addLayer({
+      id: 'markerPolygon',
+      type: 'fill',
+      source: 'markers',
+      filter: ['all', ['==', '$type', 'Polygon']],
+      layout: {
+        visibility: 'visible'
+      },
+      paint: {
+        'fill-color': 'rgba(127,222,122,0.8)',
+        'fill-outline-color': 'rgba(127,222,122,0.3)'
       }
     });
 
