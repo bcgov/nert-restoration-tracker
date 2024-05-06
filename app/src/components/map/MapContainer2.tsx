@@ -340,8 +340,7 @@ const initializeMap = (
         visibility: 'visible'
       },
       paint: {
-        'fill-color': 'rgba(127,222,122,0.8)',
-        'fill-outline-color': 'rgba(127,222,122,0.3)'
+        'fill-color': 'rgba(123,156,237,0.8)'
       }
     });
 
