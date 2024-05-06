@@ -16,8 +16,9 @@ export interface IMapContainerProps {
   mapId: string;
   center?: any;
   zoom?: any;
-  markers?: any;
+  features?: any;
   layerVisibility?: any;
+  centroids?: boolean;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -123,34 +124,6 @@ const drawWells = (map: maplibre.Map, wells: any) => {
   });
 };
 
-/*
- * This function converts the feature data to GeoJSON
- * @param array - the feature data
- * @returns object - the GeoJSON object
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const convertToGeoJSON = (features: any) => {
-  const geojson = {
-    type: 'FeatureCollection',
-    features: features.map((feature: any) => {
-      const f = feature.popup.props.featureData;
-      return {
-        type: 'Feature',
-        geometry: {
-          type: f.geometry[0].type,
-          coordinates: f.geometry[0].coordinates
-        },
-        properties: {
-          id: f.id,
-          name: f.name,
-          is_project: f.is_project
-        }
-      };
-    })
-  };
-  return geojson;
-};
-
 /**
  * # convertToCentroidGeoJSON
  * @param array - the feature data
@@ -178,22 +151,49 @@ const convertToCentroidGeoJSON = (features: any) => {
   return geojson;
 };
 
+const convertToGeoJSON = (features: any) => {
+  return {
+    type: 'FeatureCollection',
+    features: features
+  };
+};
+
+const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
+  console.log('features', features);
+  console.log('centroid', centroid);
+};
+
 let map: maplibre.Map;
 
 const initializeMap = (
   mapId: string,
-  center: any,
-  zoom: number,
-  markers: any,
+  center: any = [-124, 57],
+  zoom: number = 6,
+  features?: any, // There's no features when first creating a record
   layerVisibility?: any,
-  setTooltip?: any,
-  setTooltipVisible?: any,
-  setTooltipX?: any,
-  setTooltipY?: any
+  centroids: boolean = false,
+  tooltipState?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
-  const markerGeoJSON = convertToCentroidGeoJSON(markers);
+  const {
+    tooltip,
+    setTooltip,
+    tooltipVisible,
+    setTooltipVisible,
+    tooltipX,
+    setTooltipX,
+    tooltipY,
+    setTooltipY
+  } = tooltipState;
+
+  // To satisfy the linter until I think of a better way to use these variables
+  console.log('tooltip', tooltip);
+  console.log('tooltipVisible', tooltipVisible);
+  console.log('tooltipX', tooltipX);
+  console.log('tooltipY', tooltipY);
+
+  const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
   map = new Map({
     container: mapId,
@@ -258,6 +258,8 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
+    drawFeatures(map, features, centroids);
+
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
     });
@@ -269,7 +271,7 @@ const initializeMap = (
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
       promoteId: 'id',
-      cluster: true,
+      cluster: centroids ? true : false,
       clusterRadius: 100
     });
 
@@ -323,6 +325,19 @@ const initializeMap = (
       },
       paint: {
         'text-color': '#000'
+      }
+    });
+
+    map.addLayer({
+      id: 'markerPolygon',
+      type: 'fill',
+      source: 'markers',
+      filter: ['all', ['==', '$type', 'Polygon']],
+      layout: {
+        visibility: 'visible'
+      },
+      paint: {
+        'fill-color': 'rgba(245,149,66,0.8)'
       }
     });
 
@@ -613,7 +628,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, markers, layerVisibility } = props;
+  const { mapId, center, zoom, features, centroids, layerVisibility } = props;
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -621,24 +636,30 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const [tooltipX, setTooltipX] = useState(0);
   const [tooltipY, setTooltipY] = useState(0);
 
+  // Package the tooltip state to pass to the map
+  const tooltipState = {
+    tooltip,
+    setTooltip,
+    tooltipVisible,
+    setTooltipVisible,
+    tooltipX,
+    setTooltipX,
+    tooltipY,
+    setTooltipY
+  };
+
   // Update the map if the markers change
   useEffect(() => {
-    initializeMap(
-      mapId,
-      center,
-      zoom,
-      markers,
-      layerVisibility,
-      setTooltip,
-      setTooltipVisible,
-      setTooltipX,
-      setTooltipY
-    );
-  }, [markers]);
+    initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
+  }, [features]);
 
   // Listen to layer changes
   useEffect(() => {
-    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(markers));
+    if (centroids) {
+      checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
+    } else {
+      checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
+    }
   }, [layerVisibility]);
 
   return (

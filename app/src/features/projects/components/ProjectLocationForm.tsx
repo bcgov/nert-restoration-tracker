@@ -17,7 +17,8 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import MapContainer from 'components/map/MapContainer';
+import MapContainer from 'components/map/MapContainer2';
+// import MapContainer from 'components/map/MapContainer';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
@@ -67,7 +68,9 @@ export interface IProjectLocationFormProps {
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
 
-  const { errors, touched, values, handleChange, setFieldValue } = formikProps;
+  const { errors, touched, values, handleChange } = formikProps;
+  console.log('values', values);
+  console.log('formikProps', formikProps);
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
@@ -79,6 +82,27 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
       return Promise.resolve();
     };
+  };
+
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
   };
 
   return (
@@ -201,11 +225,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box height={500}>
           <MapContainer
             mapId={'project_location_map'}
-            fullScreenControl={true}
-            drawControls={{
-              features: values.location.geometry,
-              onChange: (features) => setFieldValue('location.geometry', features)
-            }}
+            layerVisibility={layerVisibility}
+            features={values.location.geometry}
           />
         </Box>
         {errors?.location?.geometry && (
