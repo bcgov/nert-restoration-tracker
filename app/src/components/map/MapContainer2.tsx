@@ -174,7 +174,6 @@ const initializeMap = (
   centroids: boolean = false,
   tooltipState?: any
 ) => {
-  console.log('initialize map', mapId);
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
   const {
@@ -188,7 +187,7 @@ const initializeMap = (
     setTooltipY
   } = tooltipState;
 
-  console.log('centroids', centroids);
+  // To satisfy the linter until I think of a better way to use these variables
   console.log('tooltip', tooltip);
   console.log('tooltipVisible', tooltipVisible);
   console.log('tooltipX', tooltipX);
@@ -260,7 +259,6 @@ const initializeMap = (
 
     /*****************Project/Plans********************/
     drawFeatures(map, features, centroids);
-    console.log('drawFeatures', features, centroids);
 
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
@@ -330,7 +328,6 @@ const initializeMap = (
       }
     });
 
-    // TODO: Add polygon layer here
     map.addLayer({
       id: 'markerPolygon',
       type: 'fill',
