@@ -270,7 +270,8 @@ const initializeMap = (
       data: markerGeoJSON as FeatureCollection,
       promoteId: 'id',
       cluster: true,
-      clusterRadius: 100
+      clusterRadius: 100,
+      clusterMaxZoom: 12
     });
 
     map.addLayer({
