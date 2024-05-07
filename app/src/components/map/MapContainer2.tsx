@@ -2,10 +2,13 @@ import { FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect, useState } from 'react';
+import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
 
 const { Map, Popup, NavigationControl } = maplibre;
+
+console.log('communities', communities);
 
 export interface IMapDrawControlsProps {
   features?: FeatureCollection[];
@@ -236,6 +239,34 @@ const initializeMap = (
     } catch (err) {
       console.error('Error setting terrain:', err);
     }
+
+    /**
+     * Add the custom communities layer
+     */
+    map.addSource('communities', {
+      type: 'geojson',
+      data: communities as FeatureCollection,
+      promoteId: 'fid'
+    });
+    map.addLayer({
+      id: 'communities',
+      type: 'symbol',
+      source: 'communities',
+      minzoom: 6,
+      layout: {
+        'text-field': ['get', 'name'],
+        'text-font': ['Open SansSemibold', 'Arial Unicode MS Bold'],
+        'text-size': 12,
+        'text-offset': [0, 1],
+        'text-anchor': 'top'
+      },
+      paint: {
+        'text-color': 'black',
+        'text-halo-color': 'white',
+        'text-halo-width': 1,
+        'text-halo-blur': 1
+      }
+    });
 
     /* The boundary layer */
     map.addSource('ne_boundary', {
