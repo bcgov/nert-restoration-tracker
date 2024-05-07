@@ -8,8 +8,6 @@ import './mapContainer2Style.css'; // Custom styling
 
 const { Map, Popup, NavigationControl } = maplibre;
 
-console.log('communities', communities);
-
 export interface IMapDrawControlsProps {
   features?: FeatureCollection[];
   onChange?: (ref: any) => void;
