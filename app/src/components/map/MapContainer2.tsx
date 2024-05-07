@@ -272,7 +272,8 @@ const initializeMap = (
       data: markerGeoJSON as FeatureCollection,
       promoteId: 'id',
       cluster: centroids ? true : false,
-      clusterRadius: 100
+      clusterRadius: 50,
+      clusterMaxZoom: 12
     });
 
     map.addLayer({
@@ -488,8 +489,6 @@ const initializeMap = (
       type: 'raster',
       tiles: [
         'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW'
-        // TODO: The reserve layer below will be replaced by a custom point layer. But use the WMS layer as a reference for creating this new dataset.
-        // "https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW,WHSE_ADMIN_BOUNDARIES.CLAB_INDIAN_RESERVES",
       ],
       tileSize: 256,
       minzoom: 4
