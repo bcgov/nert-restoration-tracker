@@ -3,9 +3,9 @@ import { PROJECT_ROLE } from '../constants/roles';
 import { HTTP400, HTTP409, HTTP500 } from '../errors/custom-error';
 import { models } from '../models/models';
 import {
+  IPostAuthorization,
   IPostContact,
   IPostIUCN,
-  IPostPermit,
   PostFundingSource,
   PostLocationData,
   PostProjectData,
@@ -486,7 +486,6 @@ export class ProjectService extends DBService {
 
   async createProject(postProjectData: PostProjectObject): Promise<number> {
     const projectId = await this.insertProject(postProjectData.project);
-
     const promises: Promise<any>[] = [];
 
     // Handle contacts
@@ -508,38 +507,36 @@ export class ProjectService extends DBService {
       )
     );
 
-    // Handle indigenous partners
-    promises.push(
-      Promise.all(
-        postProjectData.partnerships.indigenous_partnerships.map((indigenousNationId: number) =>
-          this.insertIndigenousNation(indigenousNationId, projectId)
-        )
-      )
-    );
-
     //Handle classifications
     promises.push(
       Promise.all(
-        postProjectData.iucn.classificationDetails?.map((iucnClassification: IPostIUCN) =>
-          this.insertClassificationDetail(iucnClassification.subClassification2, projectId)
+        postProjectData.iucn.classificationDetails?.map((iucnClassification: IPostIUCN) => {
+          console.log('[OI] classDet', iucnClassification);
+          if (
+            iucnClassification.classification &&
+            iucnClassification.subClassification1 &&
+            iucnClassification.subClassification2
+          )
+            return this.insertClassificationDetail(iucnClassification.subClassification2, projectId);
+          else return [];
+        }) || []
+      )
+    );
+
+    // Handle partners
+    promises.push(
+      Promise.all(
+        postProjectData.partnerships.partnerships?.map((partner: string) =>
+          this.insertStakeholderPartnership(partner, projectId)
         ) || []
       )
     );
 
-    // Handle stakeholder partners
+    // Handle new project authorizations
     promises.push(
       Promise.all(
-        postProjectData.partnerships.stakeholder_partnerships.map((stakeholderPartner: string) =>
-          this.insertStakeholderPartnership(stakeholderPartner, projectId)
-        )
-      )
-    );
-
-    // Handle new project permits
-    promises.push(
-      Promise.all(
-        postProjectData.permit.permits.map((permit: IPostPermit) =>
-          this.insertPermit(permit.permit_number, permit.permit_type, projectId)
+        postProjectData.authorization.authorizations.map((authorization: IPostAuthorization) =>
+          this.insertPermit(authorization.authorization_ref, authorization.authorization_type, projectId)
         )
       )
     );
@@ -555,11 +552,6 @@ export class ProjectService extends DBService {
 
     // Handle region associated to this project
     promises.push(this.insertRegion(postProjectData.location.region, projectId));
-
-    if (postProjectData.location.range) {
-      // Handle range associated to this project
-      promises.push(this.insertRange(postProjectData.location.range, projectId));
-    }
 
     await Promise.all(promises);
 
@@ -734,7 +726,7 @@ export class ProjectService extends DBService {
     return result.id;
   }
 
-  async insertClassificationDetail(iucn3_id: number, project_id: number): Promise<number> {
+  async insertClassificationDetail(iucn3_id: number | null, project_id: number): Promise<number> {
     const sqlStatement = queries.project.postProjectIUCNSQL(iucn3_id, project_id);
 
     if (!sqlStatement) {
@@ -876,7 +868,6 @@ export class ProjectService extends DBService {
     if (entities?.location) {
       promises.push(this.updateProjectSpatialData(projectId, entities));
       promises.push(this.updateProjectRegionData(projectId, entities));
-      promises.push(this.updateProjectRangeData(projectId, entities));
     }
     if (entities?.species) {
       promises.push(this.updateProjectSpeciesData(projectId, entities));
@@ -938,7 +929,7 @@ export class ProjectService extends DBService {
       throw new HTTP400('Missing request body entity `permit`');
     }
 
-    const putPermitData = new models.project.PostPermitData(entities.permit);
+    const putAuthorizationData = new models.project.PostAuthorizationData(entities.permit);
 
     const sqlDeleteStatement = queries.project.deletePermitSQL(projectId);
 
@@ -952,12 +943,12 @@ export class ProjectService extends DBService {
       throw new HTTP409('Failed to delete project permit data');
     }
 
-    const insertPermitPromises =
-      putPermitData?.permits?.map((permit: IPostPermit) => {
-        return this.insertPermit(permit.permit_number, permit.permit_type, projectId);
+    const insertAuthorizationPromises =
+      putAuthorizationData?.authorizations?.map((authorization: IPostAuthorization) => {
+        return this.insertPermit(authorization.authorization_ref, authorization.authorization_type, projectId);
       }) || [];
 
-    await Promise.all([insertPermitPromises]);
+    await Promise.all([insertAuthorizationPromises]);
   }
 
   async updateProjectIUCNData(projectId: number, entities: IUpdateProject): Promise<void> {
@@ -1105,23 +1096,6 @@ export class ProjectService extends DBService {
       return;
     }
     await this.insertRegion(putRegionData.region, projectId);
-  }
-
-  async updateProjectRangeData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putRangeData = entities?.location && new models.project.PutLocationData(entities.location);
-
-    const projectRangeDeleteStatement = queries.project.deleteProjectRangeSQL(projectId);
-
-    if (!projectRangeDeleteStatement) {
-      throw new HTTP500('Failed to build SQL delete statement');
-    }
-
-    await this.connection.query(projectRangeDeleteStatement.text, projectRangeDeleteStatement.values);
-
-    if (!putRangeData?.range) {
-      return;
-    }
-    await this.insertRange(putRangeData.range, projectId);
   }
 
   async updateProjectSpeciesData(projectId: number, entities: IUpdateProject): Promise<void> {

@@ -713,6 +713,47 @@ NOTE: there are conceptual problems with associating permits to projects early i
 ;
 
 -- 
+-- TABLE: objectives 
+--
+
+CREATE TABLE objective(
+    objective_id                 integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    system_user_id               integer           NOT NULL,
+    project_id                   integer,
+    objective                    varchar(500)      NOT NULL,
+    create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                  integer           NOT NULL,
+    update_date                  timestamptz(6),
+    update_user                  integer,
+    revision_count               integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT objective_pk PRIMARY KEY (objective_id)
+)
+;
+
+
+
+COMMENT ON COLUMN objective.objective_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.system_user_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.project_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.objective IS 'Project or plan objective'
+;
+COMMENT ON COLUMN objective.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN objective.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN objective.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN objective.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN objective.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE objective IS 'Provides project objectives.'
+;
+
+-- 
 -- TABLE: project 
 --
 
@@ -721,8 +762,7 @@ CREATE TABLE project(
     uuid                   uuid              DEFAULT public.gen_random_uuid(),
     is_project             boolean           NOT NULL,
     name                   varchar(300),
-    brief_desc             varchar(3000)     DEFAULT 'Remove this default in db table' NOT NULL,
-    objectives             varchar(3000)     NOT NULL,
+    brief_desc             varchar(3000)     NOT NULL,
     start_date             date,
     end_date               date,
     actual_start_date      date,
@@ -754,8 +794,6 @@ COMMENT ON COLUMN project.is_project IS 'When true project, when false plan.'
 COMMENT ON COLUMN project.name IS 'Name given to a project or plan.'
 ;
 COMMENT ON COLUMN project.brief_desc IS 'Brief description of a project or plan.'
-;
-COMMENT ON COLUMN project.objectives IS 'The objectives for the project.'
 ;
 COMMENT ON COLUMN project.start_date IS 'The planned start date of a project or a plan.'
 ;
@@ -1035,7 +1073,7 @@ COMMENT ON TABLE project_funding_source IS 'A associative entity that joins proj
 CREATE TABLE project_iucn_action_classification(
     project_iucn_action_classification_id                    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     project_id                                               integer           NOT NULL,
-    iucn_conservation_action_level_3_subclassification_id    integer           NOT NULL,
+    iucn_conservation_action_level_3_subclassification_id    integer,
     create_date                                              timestamptz(6)    DEFAULT now() NOT NULL,
     create_user                                              integer           NOT NULL,
     update_date                                              timestamptz(6),
@@ -1165,7 +1203,9 @@ CREATE TABLE project_spatial_component(
     name                                 varchar(50)                 NOT NULL,
     description                          varchar(3000),
     geometry                             geometry(geometry, 3005),
-    priority                             character(1)                DEFAULT 'N' NOT NULL,
+    is_within_overlapping                character(1)                DEFAULT 'N' NOT NULL,
+    number_sites                         integer                     NOT NULL,
+    size_ha                              integer,      
     geography                            geography(geometry),
     geojson                              jsonb,
     create_date                          timestamptz(6)              DEFAULT now() NOT NULL,
@@ -1191,7 +1231,11 @@ COMMENT ON COLUMN project_spatial_component.description IS 'The description of t
 ;
 COMMENT ON COLUMN project_spatial_component.geometry IS 'The containing geometry of the record.'
 ;
-COMMENT ON COLUMN project_spatial_component.priority IS 'Indicates that the boundary contains treatment units that are considered high value restoration targets.'
+COMMENT ON COLUMN project_spatial_component.is_within_overlapping IS 'Indicates that the area contains or overlaps a known area of cultural or conservation priority.'
+;
+COMMENT ON COLUMN project_spatial_component.number_sites IS 'Total number of projects sites.'
+;
+COMMENT ON COLUMN project_spatial_component.size_ha IS 'Total area in hectars of all project sites.'
 ;
 COMMENT ON COLUMN project_spatial_component.geography IS 'The containing geography of the record.'
 ;

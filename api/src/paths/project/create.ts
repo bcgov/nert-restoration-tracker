@@ -39,7 +39,19 @@ POST.apiDoc = {
         schema: {
           title: 'Project post request object',
           type: 'object',
-          required: ['project', 'iucn', 'contact', 'permit', 'funding', 'partnerships', 'location'],
+          required: [
+            'project',
+            'objective',
+            'focus',
+            'contact',
+            'species',
+            'iucn',
+            'authorization',
+            'funding',
+            'partnership',
+            'location',
+            'restoration_plan'
+          ],
           additionalProperties: false,
           properties: {
             project: {
@@ -52,6 +64,9 @@ POST.apiDoc = {
                 is_project: {
                   type: 'boolean',
                   description: 'True is project, False is plan'
+                },
+                brief_description: {
+                  type: 'string'
                 },
                 state_code: {
                   type: 'number',
@@ -77,9 +92,6 @@ POST.apiDoc = {
                   description: 'ISO 8601 date string',
                   nullable: true
                 },
-                objectives: {
-                  type: 'string'
-                },
                 is_healing_land: {
                   type: 'boolean',
                   description: 'Project or plan focused on healing the land'
@@ -95,6 +107,44 @@ POST.apiDoc = {
                 is_cultural_initiative: {
                   type: 'boolean',
                   description: 'Project or plan focused on cultural or community investment initiative'
+                }
+              }
+            },
+            objective: {
+              title: 'Project objectives',
+              type: 'object',
+              required: ['objectives'],
+              additionalProperties: false,
+              properties: {
+                objectives: {
+                  type: 'array',
+                  required: ['objective'],
+                  items: {
+                    title: 'Project objective',
+                    type: 'object',
+                    properties: {
+                      objective: {
+                        type: 'string'
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            focus: {
+              title: 'Project focuses',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                focuses: {
+                  type: 'array',
+                  items: {
+                    type: 'number'
+                  }
+                },
+                number_people_involved: {
+                  type: 'number',
+                  nullable: true
                 }
               }
             },
@@ -125,13 +175,16 @@ POST.apiDoc = {
                     required: ['classification', 'subClassification1', 'subClassification2'],
                     properties: {
                       classification: {
-                        type: 'number'
+                        type: 'number',
+                        nullable: true
                       },
                       subClassification1: {
-                        type: 'number'
+                        type: 'number',
+                        nullable: true
                       },
                       subClassification2: {
-                        type: 'number'
+                        type: 'number',
+                        nullable: true
                       }
                     }
                   }
@@ -176,23 +229,23 @@ POST.apiDoc = {
                 }
               }
             },
-            permit: {
-              title: 'Project permits',
+            authorization: {
+              title: 'Project authorizations',
               type: 'object',
-              required: ['permits'],
+              required: ['authorizations'],
               additionalProperties: false,
               properties: {
-                permits: {
+                authorizations: {
                   type: 'array',
-                  required: ['permit_number', 'permit_type'],
+                  required: ['authorization_ref', 'authorization_type'],
                   items: {
-                    title: 'Project permit',
+                    title: 'Project authorization',
                     type: 'object',
                     properties: {
-                      permit_number: {
+                      authorization_ref: {
                         type: 'string'
                       },
-                      permit_type: {
+                      authorization_type: {
                         type: 'string'
                       }
                     }
@@ -238,18 +291,12 @@ POST.apiDoc = {
                 }
               }
             },
-            partnerships: {
+            partnership: {
               title: 'Project partnerships',
               type: 'object',
               additionalProperties: false,
               properties: {
-                indigenous_partnerships: {
-                  type: 'array',
-                  items: {
-                    type: 'number'
-                  }
-                },
-                stakeholder_partnerships: {
+                partnerships: {
                   type: 'array',
                   items: {
                     type: 'string'
@@ -260,16 +307,26 @@ POST.apiDoc = {
             location: {
               title: 'Location',
               type: 'object',
-              required: ['geometry', 'region'],
+              required: ['geometry', 'region', 'number_sites'],
               additionalProperties: false,
               properties: {
-                range: {
+                is_within_overlapping: {
+                  type: 'string',
+                  enum: ['true', 'false', 'dont_know']
+                },
+                size_ha: {
                   type: 'number',
                   nullable: true
                 },
-                priority: {
-                  type: 'string',
-                  enum: ['true', 'false']
+                number_sites: {
+                  type: 'number'
+                },
+                name_area_conservation_priority: {
+                  type: 'array',
+                  items: {
+                    title: 'Cultural or conservation area name',
+                    type: 'string'
+                  }
                 },
                 geometry: {
                   type: 'array',
@@ -279,6 +336,16 @@ POST.apiDoc = {
                 },
                 region: {
                   type: 'number'
+                }
+              }
+            },
+            restoration_plan: {
+              title: 'Project related to public plan',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                is_project_part_public_plan: {
+                  type: 'boolean'
                 }
               }
             }
@@ -331,9 +398,8 @@ POST.apiDoc = {
 export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
-
     const sanitizedProjectPostData = new PostProjectObject(req.body);
-
+    console.log('[OI] sanitized req.body', sanitizedProjectPostData);
     try {
       await connection.open();
 

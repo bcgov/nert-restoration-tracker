@@ -1,22 +1,22 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
 import React from 'react';
-import ProjectPermitForm, {
-  IProjectPermitForm,
-  ProjectPermitFormInitialValues,
-  ProjectPermitFormYupSchema
-} from './ProjectPermitForm';
+import ProjectAuthorizationForm, {
+  IProjectAuthorizationForm,
+  ProjectAuthorizationFormInitialValues,
+  ProjectAuthorizationFormYupSchema
+} from './ProjectAuthorizationForm';
 
-describe('ProjectPermitForm', () => {
+describe('ProjectAuthorizationForm', () => {
   it('renders correctly with default empty values', () => {
     const { getByTestId } = render(
       <Formik
-        initialValues={ProjectPermitFormInitialValues}
-        validationSchema={ProjectPermitFormYupSchema}
+        initialValues={ProjectAuthorizationFormInitialValues}
+        validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
         onSubmit={async () => {}}>
-        {() => <ProjectPermitForm />}
+        {() => <ProjectAuthorizationForm />}
       </Formik>
     );
 
@@ -24,7 +24,7 @@ describe('ProjectPermitForm', () => {
   });
 
   it('renders correctly with existing permit values', () => {
-    const existingFormValues: IProjectPermitForm = {
+    const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [
           {
@@ -42,11 +42,11 @@ describe('ProjectPermitForm', () => {
     const { getByTestId, getByText } = render(
       <Formik
         initialValues={existingFormValues}
-        validationSchema={ProjectPermitFormYupSchema}
+        validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
         onSubmit={async () => {}}>
-        {() => <ProjectPermitForm />}
+        {() => <ProjectAuthorizationForm />}
       </Formik>
     );
 
@@ -56,7 +56,7 @@ describe('ProjectPermitForm', () => {
   });
 
   it('renders correctly with errors on the permit_number and permit_type fields', () => {
-    const existingFormValues: IProjectPermitForm = {
+    const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [
           {
@@ -70,7 +70,7 @@ describe('ProjectPermitForm', () => {
     const { asFragment } = render(
       <Formik
         initialValues={existingFormValues}
-        validationSchema={ProjectPermitFormYupSchema}
+        validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
         initialErrors={{
@@ -80,7 +80,7 @@ describe('ProjectPermitForm', () => {
           permits: [{ permit_number: true, permit_type: true }]
         }}
         onSubmit={async () => {}}>
-        {() => <ProjectPermitForm />}
+        {() => <ProjectAuthorizationForm />}
       </Formik>
     );
 
@@ -88,7 +88,7 @@ describe('ProjectPermitForm', () => {
   });
 
   it('renders correctly with error on the permits field due to duplicates', () => {
-    const existingFormValues: IProjectPermitForm = {
+    const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [
           {
@@ -106,12 +106,12 @@ describe('ProjectPermitForm', () => {
     const { asFragment } = render(
       <Formik
         initialValues={existingFormValues}
-        validationSchema={ProjectPermitFormYupSchema}
+        validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
         initialErrors={{ permits: 'Error is here' }}
         onSubmit={async () => {}}>
-        {() => <ProjectPermitForm />}
+        {() => <ProjectAuthorizationForm />}
       </Formik>
     );
 
@@ -119,7 +119,7 @@ describe('ProjectPermitForm', () => {
   });
 
   it('deletes existing permits when delete icon is clicked', async () => {
-    const existingFormValues: IProjectPermitForm = {
+    const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [
           {
@@ -133,11 +133,11 @@ describe('ProjectPermitForm', () => {
     const { getByTestId, queryByText } = render(
       <Formik
         initialValues={existingFormValues}
-        validationSchema={ProjectPermitFormYupSchema}
+        validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
         onSubmit={async () => {}}>
-        {() => <ProjectPermitForm />}
+        {() => <ProjectAuthorizationForm />}
       </Formik>
     );
 

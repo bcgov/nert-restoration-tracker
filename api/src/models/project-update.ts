@@ -37,15 +37,20 @@ export class PutProjectData {
 export class PutLocationData {
   geometry: Feature[];
   region: number;
-  range: number;
-  priority: boolean;
+  is_within_overlapping: string;
+  number_sites: number;
+  size_ha: number;
+  name_area_conservation_priority: string[];
   revision_count: number;
 
   constructor(obj?: any) {
     this.geometry = (obj?.geometry?.length && obj.geometry) || [];
     this.region = obj?.region || null;
-    this.range = obj?.range || null;
-    this.priority = (obj?.priority && JSON.parse(obj.priority)) || false;
+    this.number_sites = obj?.number_sites || null;
+    this.size_ha = obj?.size_ha || null;
+    this.is_within_overlapping = (obj?.is_within_overlapping && JSON.parse(obj.is_within_overlapping)) || null;
+    this.name_area_conservation_priority =
+      (obj?.name_area_conservation_priority?.length && obj.name_area_conservation_priority) || [];
     this.revision_count = obj?.revision_count ?? null;
   }
 }

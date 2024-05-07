@@ -12,6 +12,7 @@
  create or replace view iucn_conservation_action_level_3_subclassification as select * from restoration.iucn_conservation_action_level_3_subclassification;
  create or replace view nrm_region as select * from restoration.nrm_region;
  create or replace view permit as select * from restoration.permit;
+ create or replace view objective as select * from restoration.objective;
  create or replace view project as select * from restoration.project;
  create or replace view project_attachment as select * from restoration.project_attachment;
  create or replace view project_caribou_population_unit as select * from restoration.project_caribou_population_unit;

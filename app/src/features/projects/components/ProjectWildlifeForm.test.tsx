@@ -5,10 +5,10 @@ import React from 'react';
 import ProjectIUCNForm, {
   IIUCNSubClassification1Option,
   IIUCNSubClassification2Option,
-  IProjectIUCNForm,
-  ProjectIUCNFormInitialValues,
-  ProjectIUCNFormYupSchema
-} from './ProjectIUCNForm';
+  IProjectWildlifeForm,
+  ProjectIUCNFormYupSchema,
+  ProjectWildlifeFormInitialValues
+} from './ProjectWildlifeForm';
 
 const classifications: IMultiAutocompleteFieldOption[] = [
   {
@@ -51,7 +51,7 @@ describe('ProjectIUCNForm', () => {
   it('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik
-        initialValues={ProjectIUCNFormInitialValues}
+        initialValues={ProjectWildlifeFormInitialValues}
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
@@ -70,7 +70,7 @@ describe('ProjectIUCNForm', () => {
   });
 
   it('renders correctly with existing details values', () => {
-    const existingFormValues: IProjectIUCNForm = {
+    const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
           {
@@ -105,7 +105,7 @@ describe('ProjectIUCNForm', () => {
   it('changes fields on the IUCN menu items as expected', async () => {
     const { getAllByText, queryAllByTestId, getAllByRole, getByRole } = render(
       <Formik
-        initialValues={ProjectIUCNFormInitialValues}
+        initialValues={ProjectWildlifeFormInitialValues}
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
@@ -142,7 +142,7 @@ describe('ProjectIUCNForm', () => {
   it('adds an IUCN classification when the add button is clicked', async () => {
     const { getByText, queryAllByTestId } = render(
       <Formik
-        initialValues={ProjectIUCNFormInitialValues}
+        initialValues={ProjectWildlifeFormInitialValues}
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
@@ -167,7 +167,7 @@ describe('ProjectIUCNForm', () => {
   });
 
   it('renders correctly with error on the iucn classifications due to duplicates', () => {
-    const existingFormValues: IProjectIUCNForm = {
+    const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
           {
@@ -206,7 +206,7 @@ describe('ProjectIUCNForm', () => {
   });
 
   it('renders correctly with error on the iucn classification individual fields', () => {
-    const existingFormValues: IProjectIUCNForm = {
+    const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
           {
@@ -253,7 +253,7 @@ describe('ProjectIUCNForm', () => {
   });
 
   it('deletes existing iucn classifications when delete icon is clicked', async () => {
-    const existingFormValues: IProjectIUCNForm = {
+    const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
           {

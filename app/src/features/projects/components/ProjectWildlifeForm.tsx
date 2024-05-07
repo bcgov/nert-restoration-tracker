@@ -10,10 +10,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
+import MultiAutocompleteFieldVariableSize, {
+  IMultiAutocompleteFieldOption
+} from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL } from 'constants/misc';
 import { FieldArray, useFormikContext } from 'formik';
-import React, { useState } from 'react';
+import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { debounce } from 'lodash-es';
+import React, { useCallback, useState } from 'react';
 import yup from 'utils/YupSchema';
 
 const pageStyles = {
@@ -33,24 +37,30 @@ const pageStyles = {
 };
 
 export interface IProjectIUCNFormArrayItem {
-  classification: number;
-  subClassification1: number;
-  subClassification2: number;
+  classification: number | null;
+  subClassification1: number | null;
+  subClassification2: number | null;
 }
 
-export interface IProjectIUCNForm {
+export interface IProjectWildlifeForm {
+  species: {
+    focal_species: number[];
+  };
   iucn: {
     classificationDetails: IProjectIUCNFormArrayItem[];
   };
 }
 
 export const ProjectIUCNFormArrayItemInitialValues: IProjectIUCNFormArrayItem = {
-  classification: '' as unknown as number,
-  subClassification1: '' as unknown as number,
-  subClassification2: '' as unknown as number
+  classification: null,
+  subClassification1: null,
+  subClassification2: null
 };
 
-export const ProjectIUCNFormInitialValues: IProjectIUCNForm = {
+export const ProjectWildlifeFormInitialValues: IProjectWildlifeForm = {
+  species: {
+    focal_species: []
+  },
   iucn: {
     classificationDetails: [ProjectIUCNFormArrayItemInitialValues]
   }
@@ -68,13 +78,12 @@ export const ProjectIUCNFormYupSchema = yup.object().shape({
   iucn: yup.object().shape({
     classificationDetails: yup
       .array()
-      .min(1)
-      .required('Required')
+      .min(0)
       .of(
         yup.object().shape({
-          classification: yup.number().required('You must specify a classification'),
-          subClassification1: yup.number().required('You must specify a sub-classification'),
-          subClassification2: yup.number().required('You must specify a sub-classification')
+          classification: yup.number().nullable(),
+          subClassification1: yup.number().nullable(),
+          subClassification2: yup.number().nullable()
         })
       )
       .isUniqueIUCNClassificationDetail('IUCN Classifications must be unique')
@@ -92,14 +101,57 @@ export interface IProjectIUCNFormProps {
  *
  * @return {*}
  */
-const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
-  const { values, handleChange, getFieldMeta, errors } = useFormikContext<IProjectIUCNForm>();
+const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
+  const { values, handleChange, getFieldMeta, errors } = useFormikContext<IProjectWildlifeForm>();
 
   const [openDialog, setOpenDialog] = useState(false);
   const openAttachment = async (attachment: string) => window.open(attachment);
+
+  const restorationTrackerApi = useRestorationTrackerApi();
+
+  const convertOptions = (value: any): IMultiAutocompleteFieldOption[] =>
+    value.map((item: any) => {
+      return { value: parseInt(item.id), label: item.label };
+    });
+
+  const handleGetInitList = async (initialvalues: number[]) => {
+    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(initialvalues);
+    return convertOptions(response.searchResponse);
+  };
+
+  const handleSearch = useCallback(
+    debounce(
+      async (
+        inputValue: string,
+        existingValues: (string | number)[],
+        callback: (searchedValues: IMultiAutocompleteFieldOption[]) => void
+      ) => {
+        const response = await restorationTrackerApi.taxonomy.searchSpecies(inputValue);
+        const newOptions = convertOptions(response.searchResponse).filter(
+          (item) => !existingValues.includes(item.value)
+        );
+        callback(newOptions);
+      },
+      500
+    ),
+    []
+  );
+
   return (
     <>
-      <Typography component="legend">IUCN Conservation Actions Classifications *</Typography>
+      <Typography component="legend">Wildlife and/or Fish to Benefit from Project</Typography>
+      <Box mb={3} maxWidth={'72ch'}>
+        <MultiAutocompleteFieldVariableSize
+          id="species.focal_species"
+          label="Focal Species"
+          required={false}
+          type="api-search"
+          getInitList={handleGetInitList}
+          search={handleSearch}
+        />
+      </Box>
+
+      <Typography component="legend">IUCN Conservation Actions Classifications</Typography>
 
       <Box mb={3} maxWidth={'72ch'}>
         <Typography variant="body1" color="textSecondary">
@@ -140,17 +192,17 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                   key={index}>
                   <Box display="flex" alignItems="center" sx={pageStyles.iucnInputContainer} mr={1}>
                     <Box sx={pageStyles.iucnInput} py={1}>
-                      <FormControl variant="outlined" fullWidth required={true}>
+                      <FormControl variant="outlined" fullWidth size="small" required={false}>
                         <InputLabel id="classification">Classification</InputLabel>
                         <Select
                           id={`iucn.classificationDetails.[${index}].classification`}
                           name={`iucn.classificationDetails.[${index}].classification`}
                           labelId="classification"
                           label="Classification"
-                          value={classificationDetail.classification}
+                          value={classificationDetail.classification ?? ''}
                           onChange={(e: any) => {
-                            classificationDetail.subClassification1 = '' as unknown as number;
-                            classificationDetail.subClassification2 = '' as unknown as number;
+                            classificationDetail.subClassification1 = null;
+                            classificationDetail.subClassification2 = null;
                             handleChange(e);
                           }}
                           error={classificationMeta.touched && Boolean(classificationMeta.error)}
@@ -172,16 +224,16 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                     </Box>
 
                     <Box sx={pageStyles.iucnInput} py={1}>
-                      <FormControl variant="outlined" fullWidth required={true}>
+                      <FormControl variant="outlined" fullWidth size="small" required={false}>
                         <InputLabel id="subClassification1">Sub-classification</InputLabel>
                         <Select
                           id={`iucn.classificationDetails.[${index}].subClassification1`}
                           name={`iucn.classificationDetails.[${index}].subClassification1`}
                           labelId="subClassification1"
                           label="Sub-classification"
-                          value={classificationDetail.subClassification1}
+                          value={classificationDetail.subClassification1 ?? ''}
                           onChange={(e: any) => {
-                            classificationDetail.subClassification2 = '' as unknown as number;
+                            classificationDetail.subClassification2 = null;
                             handleChange(e);
                           }}
                           disabled={!classificationDetail.classification}
@@ -211,14 +263,14 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                     </Box>
 
                     <Box sx={pageStyles.iucnInput} py={1}>
-                      <FormControl variant="outlined" fullWidth required={true}>
+                      <FormControl variant="outlined" fullWidth size="small" required={false}>
                         <InputLabel id="subClassification2">Sub-classification</InputLabel>
                         <Select
                           id={`iucn.classificationDetails.[${index}].subClassification2`}
                           name={`iucn.classificationDetails.[${index}].subClassification2`}
                           labelId="subClassification2"
                           label="Sub-classification2"
-                          value={classificationDetail.subClassification2}
+                          value={classificationDetail.subClassification2 ?? ''}
                           onChange={handleChange}
                           disabled={!classificationDetail.subClassification1}
                           error={
@@ -268,7 +320,7 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
                 </Box>
               )}
 
-            <Box>
+            <Box mt={-0.5}>
               <Button
                 type="button"
                 variant="outlined"
@@ -327,4 +379,4 @@ const ProjectIUCNForm: React.FC<IProjectIUCNFormProps> = (props) => {
   );
 };
 
-export default ProjectIUCNForm;
+export default ProjectWildlifeForm;

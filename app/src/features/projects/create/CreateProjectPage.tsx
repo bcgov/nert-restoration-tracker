@@ -2,8 +2,8 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
 import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
+// import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import {
   events,
   getStateCodeFromLabel,
@@ -19,8 +19,13 @@ import {
   states
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
+import { ICONS } from 'constants/misc';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
+import ProjectAuthorizationForm, {
+  ProjectAuthorizationFormInitialValues,
+  ProjectAuthorizationFormYupSchema
+} from 'features/projects/components/ProjectAuthorizationForm';
 import ProjectContactForm, {
   ProjectContactInitialValues,
   ProjectContactYupSchema
@@ -30,6 +35,10 @@ import ProjectDraftForm, {
   ProjectDraftFormInitialValues,
   ProjectDraftFormYupSchema
 } from 'features/projects/components/ProjectDraftForm';
+import ProjectFocusForm, {
+  ProjectFocusFormInitialValues,
+  ProjectFocusFormYupSchema
+} from 'features/projects/components/ProjectFocusForm';
 import ProjectFundingForm, {
   ProjectFundingFormInitialValues,
   ProjectFundingFormYupSchema
@@ -38,22 +47,26 @@ import ProjectGeneralInformationForm, {
   ProjectGeneralInformationFormInitialValues,
   ProjectGeneralInformationFormYupSchema
 } from 'features/projects/components/ProjectGeneralInformationForm';
-import ProjectIUCNForm, {
-  ProjectIUCNFormInitialValues,
-  ProjectIUCNFormYupSchema
-} from 'features/projects/components/ProjectIUCNForm';
 import ProjectLocationForm, {
   ProjectLocationFormInitialValues,
   ProjectLocationFormYupSchema
 } from 'features/projects/components/ProjectLocationForm';
+import ProjectObjectivesForm, {
+  ProjectObjectiveFormInitialValues,
+  ProjectObjectiveFormYupSchema
+} from 'features/projects/components/ProjectObjectivesForm';
 import ProjectPartnershipsForm, {
   ProjectPartnershipsFormInitialValues,
   ProjectPartnershipsFormYupSchema
 } from 'features/projects/components/ProjectPartnershipsForm';
-import ProjectPermitForm, {
-  ProjectPermitFormInitialValues,
-  ProjectPermitFormYupSchema
-} from 'features/projects/components/ProjectPermitForm';
+import ProjectRestorationPlanForm, {
+  ProjectRestorationPlanFormInitialValues,
+  ProjectRestorationPlanFormYupSchema
+} from 'features/projects/components/ProjectRestorationPlanForm';
+import ProjectWildlifeForm, {
+  ProjectIUCNFormYupSchema,
+  ProjectWildlifeFormInitialValues
+} from 'features/projects/components/ProjectWildlifeForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
@@ -89,23 +102,29 @@ const pageStyles = {
 
 export const ProjectFormInitialValues = {
   ...ProjectGeneralInformationFormInitialValues,
-  ...ProjectIUCNFormInitialValues,
+  ...ProjectObjectiveFormInitialValues,
+  ...ProjectFocusFormInitialValues,
   ...ProjectContactInitialValues,
-  ...ProjectPermitFormInitialValues,
+  ...ProjectWildlifeFormInitialValues,
+  ...ProjectAuthorizationFormInitialValues,
   ...ProjectFundingFormInitialValues,
   ...ProjectPartnershipsFormInitialValues,
-  ...ProjectLocationFormInitialValues
+  ...ProjectLocationFormInitialValues,
+  ...ProjectRestorationPlanFormInitialValues
 };
 
 export const ProjectFormYupSchema = yup
   .object()
   .concat(ProjectGeneralInformationFormYupSchema)
-  .concat(ProjectIUCNFormYupSchema)
+  .concat(ProjectObjectiveFormYupSchema)
+  .concat(ProjectFocusFormYupSchema)
   .concat(ProjectContactYupSchema)
-  .concat(ProjectPermitFormYupSchema)
+  .concat(ProjectIUCNFormYupSchema)
+  .concat(ProjectAuthorizationFormYupSchema)
   .concat(ProjectFundingFormYupSchema)
   .concat(ProjectPartnershipsFormYupSchema)
-  .concat(ProjectLocationFormYupSchema);
+  .concat(ProjectLocationFormYupSchema)
+  .concat(ProjectRestorationPlanFormYupSchema);
 
 /**
  * Page for creating a new project.
@@ -208,6 +227,7 @@ const CreateProjectPage: React.FC = () => {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.creating)
           );
+
         response = await restorationTrackerApi.draft.createDraft(
           true,
           values.draft_name,
@@ -364,30 +384,34 @@ const CreateProjectPage: React.FC = () => {
         onSave={handleSubmitDraft}
       />
 
-      <Container maxWidth="xl">
-        <Box mb={3}>
-          <Breadcrumbs>
-            <Link
-              color="primary"
-              onClick={handleCancel}
-              aria-current="page"
-              sx={pageStyles.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
-              <Typography variant="body2">Cancel and Exit</Typography>
-            </Link>
-          </Breadcrumbs>
-        </Box>
+      <Box mb={1} ml={3}>
+        <Breadcrumbs>
+          <Link
+            color="primary"
+            onClick={handleCancel}
+            aria-current="page"
+            sx={pageStyles.breadCrumbLink}>
+            <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
+            <Typography variant="body2">Cancel and Exit</Typography>
+          </Link>
+        </Breadcrumbs>
+      </Box>
 
-        <Box mb={5}>
-          <Box mb={1}>
-            <Typography variant="h1">Create Restoration Project</Typography>
+      {/* <Container maxWidth="xl"> */}
+      <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
+        <Box mb={3} ml={1}>
+          <Box mb={0.5} mt={0.9}>
+            <Typography variant="h1">
+              <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> Create
+              Restoration Project
+            </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
             Configure and submit a new restoration project
           </Typography>
         </Box>
 
-        <Box component={Paper} p={4}>
+        <Box component={Paper} mx={1}>
           <Formik<ICreateProjectRequest>
             innerRef={formikRef}
             enableReinitialize={true}
@@ -397,19 +421,53 @@ const CreateProjectPage: React.FC = () => {
             validateOnChange={false}
             onSubmit={handleProjectCreation}>
             <>
-              <ScrollToFormikError />
+              {/* <ScrollToFormikError /> */}
               <Form noValidate>
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
+                <Box ml={1}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={2.5}>
                       <Typography variant="h2">General Information</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
                       <ProjectGeneralInformationForm />
+                      <Box component="fieldset" my={2} mx={0}>
+                        <ProjectObjectivesForm />
+                      </Box>
+                      <ProjectFocusForm />
+                    </Grid>
+                  </Grid>
+                </Box>
 
-                      <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectIUCNForm
+                <Divider />
+
+                <Box ml={1} my={3}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={2.5}>
+                      <Typography variant="h2">Contacts</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} md={9}>
+                      <ProjectContactForm
+                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                <Divider />
+
+                <Box ml={1} my={3}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={2.5}>
+                      <Typography variant="h2">
+                        Actions Beneficial to Wildlife and/or Fish
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} md={9}>
+                      <Box component="fieldset" mx={0}>
+                        <ProjectWildlifeForm
                           classifications={
                             codes.codes.iucn_conservation_action_level_1_classification?.map(
                               (item) => {
@@ -447,39 +505,23 @@ const CreateProjectPage: React.FC = () => {
 
                 <Divider />
 
-                <Box my={5}>
+                <Box ml={1} my={3}>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Contacts</Typography>
+                    <Grid item xs={12} md={2.5}>
+                      <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
-                      <ProjectContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
-                      />
+                      <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>
                 </Box>
 
                 <Divider />
 
-                <Box my={5}>
+                <Box ml={1} my={3}>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Permits</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectPermitForm />
-                    </Grid>
-                  </Grid>
-                </Box>
-
-                <Divider />
-
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={2.5}>
                       <Typography variant="h2">Funding and Partnerships</Typography>
                     </Grid>
 
@@ -497,15 +539,8 @@ const CreateProjectPage: React.FC = () => {
                         />
                       </Box>
 
-                      <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectPartnershipsForm
-                          first_nations={codes.codes.first_nations.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          stakeholder_partnerships={codes.codes.funding_source.map((item) => {
-                            return { value: item.name, label: item.name };
-                          })}
-                        />
+                      <Box component="fieldset" mt={4} mx={0}>
+                        <ProjectPartnershipsForm />
                       </Box>
                     </Grid>
                   </Grid>
@@ -513,17 +548,14 @@ const CreateProjectPage: React.FC = () => {
 
                 <Divider />
 
-                <Box my={5}>
+                <Box ml={1} my={3}>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={2.5}>
                       <Typography variant="h2">Location</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
                       <ProjectLocationForm
-                        ranges={codes.codes.ranges.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
                         regions={codes.codes.regions.map((item) => {
                           return { value: item.id, label: item.name };
                         })}
@@ -534,7 +566,21 @@ const CreateProjectPage: React.FC = () => {
 
                 <Divider />
 
-                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                <Box ml={1} mt={3}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={3}>
+                      <Typography variant="h2">Restoration Plan</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} md={9}>
+                      <ProjectRestorationPlanForm />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                <Divider />
+
+                <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
                   <Button
                     variant="outlined"
                     color="primary"
@@ -565,7 +611,8 @@ const CreateProjectPage: React.FC = () => {
             </>
           </Formik>
         </Box>
-      </Container>
+        {/* </Container> */}
+      </Card>
     </>
   );
 };
