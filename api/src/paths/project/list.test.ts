@@ -8,7 +8,7 @@ import * as db from '../../database/db';
 import { HTTPError } from '../../errors/custom-error';
 import { ProjectService } from '../../services/project-service';
 import { SearchService } from '../../services/search-service';
-import { GET, getProjectList } from './list';
+import { GET, getProjectsPlansList } from './list';
 
 chai.use(sinonChai);
 
@@ -21,7 +21,7 @@ describe('list', () => {
     });
   });
 
-  describe('getProjectList', () => {
+  describe('getProjectsPlansList', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -38,7 +38,7 @@ describe('list', () => {
       const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
       try {
-        const requestHandler = getProjectList();
+        const requestHandler = getProjectsPlansList();
 
         await requestHandler(mockReq, mockRes, mockNext);
       } catch (actualError) {
@@ -66,7 +66,7 @@ describe('list', () => {
       const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
       try {
-        const requestHandler = getProjectList();
+        const requestHandler = getProjectsPlansList();
 
         await requestHandler(mockReq, mockRes, mockNext);
       } catch (actualError) {
@@ -89,7 +89,7 @@ describe('list', () => {
       const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
       try {
-        const requestHandler = getProjectList();
+        const requestHandler = getProjectsPlansList();
 
         await requestHandler(mockReq, mockRes, mockNext);
         expect.fail();

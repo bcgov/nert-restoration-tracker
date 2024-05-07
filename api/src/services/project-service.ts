@@ -849,10 +849,6 @@ export class ProjectService extends DBService {
       promises.push(this.updateContactData(projectId, entities));
     }
 
-    if (entities?.permit) {
-      promises.push(this.updateProjectPermitData(projectId, entities));
-    }
-
     if (entities?.partnerships) {
       promises.push(this.updateProjectPartnershipsData(projectId, entities));
     }
@@ -922,33 +918,6 @@ export class ProjectService extends DBService {
       }) || [];
 
     await Promise.all([insertContactPromises]);
-  }
-
-  async updateProjectPermitData(projectId: number, entities: IUpdateProject): Promise<void> {
-    if (!entities.permit) {
-      throw new HTTP400('Missing request body entity `permit`');
-    }
-
-    const putAuthorizationData = new models.project.PostAuthorizationData(entities.permit);
-
-    const sqlDeleteStatement = queries.project.deletePermitSQL(projectId);
-
-    if (!sqlDeleteStatement) {
-      throw new HTTP400('Failed to build SQL delete statement');
-    }
-
-    const deleteResult = await this.connection.query(sqlDeleteStatement.text, sqlDeleteStatement.values);
-
-    if (!deleteResult) {
-      throw new HTTP409('Failed to delete project permit data');
-    }
-
-    const insertAuthorizationPromises =
-      putAuthorizationData?.authorizations?.map((authorization: IPostAuthorization) => {
-        return this.insertPermit(authorization.authorization_ref, authorization.authorization_type, projectId);
-      }) || [];
-
-    await Promise.all([insertAuthorizationPromises]);
   }
 
   async updateProjectIUCNData(projectId: number, entities: IUpdateProject): Promise<void> {

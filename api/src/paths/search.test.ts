@@ -110,6 +110,7 @@ describe('search', () => {
         {
           id: 1,
           name: 'name',
+          is_project: false,
           geometry: '{"type":"Point","coordinates":[50.7,60.9]}'
         }
       ];
@@ -136,6 +137,7 @@ describe('search', () => {
         {
           id: searchList[0].id,
           name: searchList[0].name,
+          is_project: false,
           geometry: [
             {
               type: 'Point',

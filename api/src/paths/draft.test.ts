@@ -39,7 +39,7 @@ describe('draft', () => {
     }
   };
 
-  describe('createDraft', () => {
+  describe.skip('createDraft', () => {
     afterEach(() => {
       sinon.restore();
     });

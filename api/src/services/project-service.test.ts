@@ -19,7 +19,7 @@ chai.use(sinonChai);
 const entitiesInitValue = {
   project: null,
   contact: null,
-  permit: null,
+  authorization: null,
   partnerships: null,
   iucn: null,
   funding: null,
@@ -769,12 +769,12 @@ describe('ProjectService', () => {
       const projectData = {
         contact: new projectCreateModels.PostContactData(),
         species: new projectCreateModels.PostSpeciesData(),
-        permit: new projectCreateModels.PostPermitData(),
         project: new projectCreateModels.PostProjectData(),
         location: new projectCreateModels.PostLocationData({ geometry: [{ something: true }] }),
         funding: new projectCreateModels.PostFundingData(),
         iucn: new projectCreateModels.PostIUCNData(),
-        partnerships: new projectCreateModels.PostPartnershipsData()
+        partnerships: new projectCreateModels.PostPartnershipsData(),
+        authorization: new projectCreateModels.PostAuthorizationData()
       };
 
       const projectService = new ProjectService(mockDBConnection);
@@ -800,10 +800,18 @@ describe('ProjectService', () => {
 
       const projectData = {
         project: {
+          is_project: true,
           name: 'My project',
+          state_code: 123,
           start_date: '1955-02-15',
           end_date: '2084-06-23',
-          objectives: 'Culpa sint ex iust'
+          actual_start_date: 'string',
+          actual_end_date: 'string',
+          brief_description: 'string',
+          is_healing_land: true,
+          is_healing_people: true,
+          is_land_initiative: true,
+          is_cultural_initiative: true
         },
         species: { focal_species: [15573] },
         iucn: { classificationDetails: [{ classification: 3, subClassification1: 6, subClassification2: 35 }] },
@@ -819,7 +827,6 @@ describe('ProjectService', () => {
             }
           ]
         },
-        permit: { permits: [{ permit_number: '849', permit_type: 'Road Use Permit' }] },
         funding: {
           funding_sources: [
             {
@@ -836,15 +843,22 @@ describe('ProjectService', () => {
             }
           ]
         },
-        partnerships: {
-          indigenous_partnerships: [5, 123],
-          stakeholder_partnerships: ['Canada Nature Fund', 'BC Parks Living Labs']
-        },
+        partnerships: { partnerships: ['Canada Nature Fund', 'BC Parks Living Labs'] },
         location: {
           geometry: [{} as unknown as Feature],
-          priority: true,
+          is_within_overlapping: 'string',
           region: 3640,
-          range: 1234
+          number_sites: 123,
+          size_ha: 123,
+          name_area_conservation_priority: ['string']
+        },
+        authorization: {
+          authorizations: [
+            {
+              authorization_ref: 'authorization_ref',
+              authorization_type: 'authorization_type'
+            }
+          ]
         }
       };
       const projectService = new ProjectService(mockDBConnection);
@@ -1594,13 +1608,11 @@ describe('ProjectService', () => {
       await projectService.updateProject(projectId, entities);
       expect(projectServiceSpy.updateProjectData).not.to.have.been.called;
       expect(projectServiceSpy.updateContactData).not.to.have.been.called;
-      expect(projectServiceSpy.updateProjectPermitData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectIUCNData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectPartnershipsData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectFundingData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectSpatialData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectRegionData).not.to.have.been.called;
-      expect(projectServiceSpy.updateProjectRangeData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectSpeciesData).not.to.have.been.called;
     });
 
@@ -1611,7 +1623,7 @@ describe('ProjectService', () => {
       const entities: IUpdateProject = {
         project: new projectUpdateModels.PutProjectData(),
         contact: new projectCreateModels.PostContactData(),
-        permit: new projectCreateModels.PostPermitData(),
+        authorization: new projectCreateModels.PostAuthorizationData(),
         partnerships: new projectUpdateModels.PutPartnershipsData(),
         iucn: new projectUpdateModels.PutIUCNData(),
         funding: new projectUpdateModels.PutFundingData(),
@@ -1628,13 +1640,11 @@ describe('ProjectService', () => {
       } catch (actualError) {
         expect(projectServiceSpy.updateProjectData).to.have.been.called;
         expect(projectServiceSpy.updateContactData).to.have.been.called;
-        expect(projectServiceSpy.updateProjectPermitData).to.have.been.called;
         expect(projectServiceSpy.updateProjectIUCNData).to.have.been.called;
         expect(projectServiceSpy.updateProjectPartnershipsData).to.have.been.called;
         expect(projectServiceSpy.updateProjectFundingData).to.have.been.called;
         expect(projectServiceSpy.updateProjectSpatialData).to.have.been.called;
         expect(projectServiceSpy.updateProjectRegionData).to.have.been.called;
-        expect(projectServiceSpy.updateProjectRangeData).to.have.been.called;
         expect(projectServiceSpy.updateProjectSpeciesData).to.have.been.called;
         expect((actualError as HTTPError).status).to.equal(400);
       }
@@ -1815,121 +1825,6 @@ describe('ProjectService', () => {
       await projectService.updateContactData(projectId, entities);
 
       expect(insertContactStub).to.have.been.calledOnce;
-    });
-  });
-
-  describe('updateProjectPermitData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should throw a 400 response when there is no permit data', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([]));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      sinon.stub(queries.project, 'deletePermitSQL').returns(null);
-
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue
-      };
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      try {
-        await projectService.updateProjectPermitData(projectId, entities);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Missing request body entity `permit`');
-        expect((actualError as HTTPError).status).to.equal(400);
-      }
-    });
-
-    it('should throw a 400 response when no sql statement produced', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([]));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      sinon.stub(queries.project, 'deletePermitSQL').returns(null);
-
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue,
-        permit: new projectCreateModels.PostPermitData()
-      };
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      try {
-        await projectService.updateProjectPermitData(projectId, entities);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL delete statement');
-        expect((actualError as HTTPError).status).to.equal(400);
-      }
-    });
-
-    it('should throw a 409 response when delete permit fails', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve(null));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue,
-        contact: new projectCreateModels.PostPermitData()
-      };
-
-      sinon.stub(queries.project, 'deletePermitSQL').returns(SQL`valid sql`);
-
-      sinon.stub(ProjectService.prototype, 'updateProjectPermitData');
-      const projectService = new ProjectService(mockDBConnection);
-
-      try {
-        await projectService.updateContactData(projectId, entities);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Failed to delete project contact data');
-        expect((actualError as HTTPError).status).to.equal(409);
-      }
-    });
-
-    it('should insert the new permit information', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([]));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue,
-        permit: {
-          permits: [
-            {
-              permit_number: 1,
-              permit_type: 'License of occupation'
-            }
-          ]
-        }
-      };
-
-      sinon.stub(queries.project, 'deletePermitSQL').returns(SQL`valid sql`);
-
-      const insertPermitStub = sinon.stub(ProjectService.prototype, 'insertPermit').resolves(1);
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      await projectService.updateProjectPermitData(projectId, entities);
-
-      expect(insertPermitStub).to.have.been.calledOnce;
     });
   });
 
@@ -2188,11 +2083,11 @@ describe('ProjectService', () => {
       const projectService = new ProjectService(mockDBConnection);
 
       try {
-        await projectService.updateProjectPermitData(projectId, entities);
+        await projectService.updateProjectFundingData(projectId, entities);
         expect.fail();
       } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Missing request body entity `permit`');
-        expect((actualError as HTTPError).status).to.equal(400);
+        expect((actualError as HTTPError).message).to.equal('Failed to delete project funding data');
+        expect((actualError as HTTPError).status).to.equal(409);
       }
     });
 
@@ -2408,67 +2303,6 @@ describe('ProjectService', () => {
       await projectService.updateProjectRegionData(projectId, entities);
 
       expect(insertRegionStub).to.have.been.calledOnce;
-    });
-  });
-
-  describe('updateProjectRangeData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should throw a 400 response when no sql statement produced for deleteProjectRangeSQL', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve([]));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      sinon.stub(queries.project, 'deleteProjectRangeSQL').returns(null);
-
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue,
-        location: new projectUpdateModels.PutLocationData()
-      };
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      try {
-        await projectService.updateProjectRangeData(projectId, entities);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL delete statement');
-        expect((actualError as HTTPError).status).to.equal(500);
-      }
-    });
-
-    it('should insert the new range information', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve([]));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue,
-        location: {
-          geometry: [{} as unknown as Feature],
-          priority: 'true',
-          region: 3640,
-          range: 1234
-        }
-      };
-
-      sinon.stub(queries.project, 'deleteProjectRangeSQL').returns(SQL`valid sql`);
-
-      const insertRangeStub = sinon.stub(ProjectService.prototype, 'insertRange').resolves(1);
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      await projectService.updateProjectRangeData(projectId, entities);
-
-      expect(insertRangeStub).to.have.been.calledOnce;
     });
   });
 

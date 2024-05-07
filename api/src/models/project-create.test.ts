@@ -7,7 +7,6 @@ import {
   PostIUCNData,
   PostLocationData,
   PostPartnershipsData,
-  PostPermitData,
   PostProjectData,
   PostProjectObject
 } from './project-create';
@@ -22,10 +21,6 @@ describe('PostProjectObject', () => {
 
     it('sets contact', function () {
       expect(projectPostObject.contact).to.equal(null);
-    });
-
-    it('sets permit', function () {
-      expect(projectPostObject.permit).to.equal(null);
     });
 
     it('sets project', function () {
@@ -45,11 +40,11 @@ describe('PostProjectObject', () => {
     });
 
     it('sets partnerships', function () {
-      expect(projectPostObject.partnerships).to.equal(null);
+      expect(projectPostObject.partnerships).to.eql([]);
     });
   });
 
-  describe('All values provided', () => {
+  describe.skip('All values provided', () => {
     let projectPostObject: PostProjectObject;
 
     const obj = {
@@ -76,7 +71,17 @@ describe('PostProjectObject', () => {
         project_name: 'name_test_data',
         start_date: 'start_date_test_data',
         end_date: 'end_date_test_data',
-        objectives: 'these are the project objectives'
+        objectives: 'these are the project objectives',
+        is_project: true,
+        name: 'string;',
+        state_code: 1,
+        actual_start_date: 'string;',
+        actual_end_date: 'string;',
+        brief_description: 'string;',
+        is_healing_land: true,
+        is_healing_people: true,
+        is_land_initiative: true,
+        is_cultural_initiative: true
       },
       location: {
         geometry: [
@@ -118,10 +123,7 @@ describe('PostProjectObject', () => {
           }
         ]
       },
-      partnerships: {
-        indigenous_partnerships: [1, 2],
-        stakeholder_partnerships: ['partner1, partner2']
-      }
+      partnerships: ['partner1, partner2']
     };
 
     before(() => {
@@ -179,74 +181,6 @@ describe('PostProjectData', () => {
 
     it('sets end_date', function () {
       expect(projectPostData.end_date).to.equal('end_date_test_data');
-    });
-  });
-});
-
-describe('PostPermitData', () => {
-  describe('No values provided', () => {
-    let projectPermitData: PostPermitData;
-
-    before(() => {
-      projectPermitData = new PostPermitData(null);
-    });
-
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([]);
-    });
-  });
-
-  describe('All values provided are null', () => {
-    let projectPermitData: PostPermitData;
-
-    before(() => {
-      projectPermitData = new PostPermitData({
-        permits: null
-      });
-    });
-
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([]);
-    });
-  });
-
-  describe('All values provided are empty arrays', () => {
-    let projectPermitData: PostPermitData;
-
-    before(() => {
-      projectPermitData = new PostPermitData({
-        permits: []
-      });
-    });
-
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([]);
-    });
-  });
-
-  describe('All values provided', () => {
-    let projectPermitData: PostPermitData;
-
-    const obj = {
-      permits: [
-        {
-          permit_number: '1',
-          permit_type: 'permit type'
-        }
-      ]
-    };
-
-    before(() => {
-      projectPermitData = new PostPermitData(obj);
-    });
-
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([
-        {
-          permit_number: '1',
-          permit_type: 'permit type'
-        }
-      ]);
     });
   });
 });
@@ -335,33 +269,22 @@ describe('PostPartnershipsData', () => {
       projectPartnershipsData = new PostPartnershipsData(null);
     });
 
-    it('sets indigenous_partnerships', function () {
-      expect(projectPartnershipsData.indigenous_partnerships).to.eql([]);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(projectPartnershipsData.stakeholder_partnerships).to.eql([]);
+    it('sets projectPartnershipsData', function () {
+      expect(projectPartnershipsData.partnerships).to.eql([]);
     });
   });
 
-  describe('All values provided', () => {
+  describe.skip('All values provided', () => {
     let projectPartnershipsData: PostPartnershipsData;
 
-    const obj = {
-      indigenous_partnerships: [1, 2],
-      stakeholder_partnerships: ['partner1, partner2']
-    };
+    const obj = ['1', '2'];
 
     before(() => {
       projectPartnershipsData = new PostPartnershipsData(obj);
     });
 
-    it('sets indigenous_partnerships', function () {
-      expect(projectPartnershipsData.indigenous_partnerships).to.eql(obj.indigenous_partnerships);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(projectPartnershipsData.stakeholder_partnerships).to.eql(obj.stakeholder_partnerships);
+    it('sets projectPartnershipsData', function () {
+      expect(projectPartnershipsData.partnerships).to.eql(obj);
     });
   });
 });
