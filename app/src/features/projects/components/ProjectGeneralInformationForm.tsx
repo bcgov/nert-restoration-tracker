@@ -1,14 +1,12 @@
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
-import MultiAutocompleteFieldVariableSize, {
-  IMultiAutocompleteFieldOption
-} from 'components/fields/MultiAutocompleteFieldVariableSize';
+
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
-import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
+import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { debounce } from 'lodash-es';
-import React, { useCallback } from 'react';
+
+import React from 'react';
 import yup from 'utils/YupSchema';
 
 export interface IProjectGeneralInformationForm {
@@ -16,18 +14,15 @@ export interface IProjectGeneralInformationForm {
     project_name: string;
     is_project: boolean;
     state_code: number;
+    brief_description: string;
     start_date: string;
     end_date: string;
     actual_start_date: string;
     actual_end_date: string;
-    objectives: string;
     is_healing_land: boolean;
     is_healing_people: boolean;
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
-  };
-  species: {
-    focal_species: number[];
   };
 }
 
@@ -35,36 +30,29 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
   project: {
     project_name: '',
     is_project: true,
-    state_code: getStateCodeFromLabel(states.PLANNING),
+    state_code: getStateCodeFromLabel(states.DRAFT),
+    brief_description: '',
     start_date: '',
     end_date: '',
     actual_start_date: '',
     actual_end_date: '',
-    objectives: '',
     is_healing_land: false,
     is_healing_people: false,
     is_land_initiative: false,
     is_cultural_initiative: false
-  },
-  species: {
-    focal_species: []
   }
 };
 
 export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   project: yup.object().shape({
     project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
-    start_date: yup.string().isValidDateString().required('Required'),
+    start_date: yup.string().nullable().isValidDateString(),
     end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
-    objectives: yup
+    brief_description: yup
       .string()
-      .max(3000, 'Cannot exceed 3000 characters')
-      .required('You must provide objectives for the project')
+      .max(500, 'Cannot exceed 500 characters')
+      .required('You must provide a brief description for the project')
   })
-  // This part of the form is not yet implemented
-  // species: yup.object().shape({
-  //   focal_species: yup.array().min(1, 'You must specify a focal species').required('Required')
-  // })
 });
 
 /**
@@ -75,36 +63,6 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
-
-  const restorationTrackerApi = useRestorationTrackerApi();
-
-  const convertOptions = (value: any): IMultiAutocompleteFieldOption[] =>
-    value.map((item: any) => {
-      return { value: parseInt(item.id), label: item.label };
-    });
-
-  const handleGetInitList = async (initialvalues: number[]) => {
-    const response = await restorationTrackerApi.taxonomy.getSpeciesFromIds(initialvalues);
-    return convertOptions(response.searchResponse);
-  };
-
-  const handleSearch = useCallback(
-    debounce(
-      async (
-        inputValue: string,
-        existingValues: (string | number)[],
-        callback: (searchedValues: IMultiAutocompleteFieldOption[]) => void
-      ) => {
-        const response = await restorationTrackerApi.taxonomy.searchSpecies(inputValue);
-        const newOptions = convertOptions(response.searchResponse).filter(
-          (item) => !existingValues.includes(item.value)
-        );
-        callback(newOptions);
-      },
-      500
-    ),
-    []
-  );
 
   return (
     <Grid container spacing={3}>
@@ -119,6 +77,34 @@ const ProjectGeneralInformationForm: React.FC = () => {
               }}
             />
           </Grid>
+          <Grid item xs={12}>
+            <CustomTextField
+              name="project.no_data"
+              label="Project Status"
+              other={{
+                InputProps: {
+                  readOnly: true,
+                  startAdornment: (
+                    <Chip
+                      size="small"
+                      sx={getStatusStyle(getStateCodeFromLabel(states.DRAFT))}
+                      label={states.DRAFT}
+                    />
+                  )
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid item xs={12}>
+              <CustomTextField
+                name="project.brief_description"
+                label="Brief Description"
+                other={{ required: true, multiline: true, maxRows: 5 }}
+                maxLength={500}
+              />
+            </Grid>
+          </Grid>
           <ProjectStartEndDateFields
             formikProps={formikProps}
             plannedStartName={'project.start_date'}
@@ -130,27 +116,6 @@ const ProjectGeneralInformationForm: React.FC = () => {
             actualStartRequired={false}
             actualEndRequired={false}
           />
-          <Grid item xs={12}>
-            <Grid item xs={12}>
-              <CustomTextField
-                name="project.objectives"
-                label="Objectives"
-                other={{ required: true, multiline: true, rowsmax: 24 }}
-              />
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid item xs={12}>
-              <MultiAutocompleteFieldVariableSize
-                id="species.focal_species"
-                label="Focal Species"
-                required={false}
-                type="api-search"
-                getInitList={handleGetInitList}
-                search={handleSearch}
-              />
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
     </Grid>

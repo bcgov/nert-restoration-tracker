@@ -34,6 +34,7 @@ import {
   states
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
@@ -42,7 +43,6 @@ import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
-import { TableI18N, PlanTableI18N } from 'constants/i18n';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
@@ -208,7 +208,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
         }}>
         {numSelected > 0 ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan} {TableI18N.selectedToExport}
+            {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}{' '}
+            {TableI18N.selectedToExport}
           </Typography>
         ) : (
           <Typography
@@ -216,7 +217,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             variant="h2"
             id="tableTitle"
             component="div">
-            {TableI18N.found} {rows?.length} {rows?.length !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}
+            {TableI18N.found} {rows?.length}{' '}
+            {rows?.length !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -376,7 +378,9 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                             SYSTEM_ROLE.DATA_ADMINISTRATOR
                           ]}>
                           <Tooltip
-                            title={archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive}
+                            title={
+                              archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive
+                            }
                             placement="right">
                             <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
@@ -395,7 +399,11 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                       <TableCell padding="checkbox">
                         {row.export ? (
                           <Tooltip
-                            title={isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected}
+                            title={
+                              isItemSelected
+                                ? TableI18N.exportSelected
+                                : TableI18N.exportNotSelected
+                            }
                             placement="right">
                             <Checkbox
                               color="primary"

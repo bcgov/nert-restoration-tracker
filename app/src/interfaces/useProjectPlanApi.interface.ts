@@ -1,10 +1,13 @@
+import { IProjectAuthorizationForm } from 'features/projects/components/ProjectAuthorizationForm';
 import { IProjectContactForm } from 'features/projects/components/ProjectContactForm';
+import { IProjectFocusForm } from 'features/projects/components/ProjectFocusForm';
 import { IProjectFundingForm } from 'features/projects/components/ProjectFundingForm';
 import { IProjectGeneralInformationForm } from 'features/projects/components/ProjectGeneralInformationForm';
-import { IProjectIUCNForm } from 'features/projects/components/ProjectIUCNForm';
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
+import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
-import { IProjectPermitForm } from 'features/projects/components/ProjectPermitForm';
+import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';
+import { IProjectWildlifeForm } from 'features/projects/components/ProjectWildlifeForm';
 import { Feature } from 'geojson';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
@@ -100,11 +103,14 @@ export interface ICreateProjectResponse {
  */
 export interface ICreateProjectRequest
   extends IProjectGeneralInformationForm,
-    IProjectIUCNForm,
+    IProjectObjectivesForm,
+    IProjectFocusForm,
     IProjectContactForm,
-    IProjectPermitForm,
+    IProjectWildlifeForm,
+    IProjectAuthorizationForm,
     IProjectFundingForm,
     IProjectPartnershipsForm,
+    IProjectRestorationPlanForm,
     IProjectLocationForm {}
 
 export enum UPDATE_GET_ENTITIES {

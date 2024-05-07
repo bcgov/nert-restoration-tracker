@@ -1,4 +1,4 @@
-import { TableI18N, ProjectTableI18N, PlanTableI18N } from 'constants/i18n';
+import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
 
 /**  Project related objects **/
 export interface ProjectData {

@@ -13,13 +13,13 @@ import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import { EditProjectI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
+import ProjectAuthorizationForm from 'features/projects/components/ProjectAuthorizationForm';
 import ProjectContactForm from 'features/projects/components/ProjectContactForm';
 import ProjectFundingForm from 'features/projects/components/ProjectFundingForm';
 import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
-import ProjectIUCNForm from 'features/projects/components/ProjectIUCNForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
 import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
-import ProjectPermitForm from 'features/projects/components/ProjectPermitForm';
+import ProjectIUCNForm from 'features/projects/components/ProjectWildlifeForm';
 import {
   ProjectFormInitialValues,
   ProjectFormYupSchema
@@ -311,11 +311,11 @@ const EditProjectPage: React.FC = () => {
                 <Box my={5}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Permits</Typography>
+                      <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
-                      <ProjectPermitForm />
+                      <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>
                 </Box>

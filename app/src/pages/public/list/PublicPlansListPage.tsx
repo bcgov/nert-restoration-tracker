@@ -29,12 +29,12 @@ import {
   states
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
-import { TableI18N, PlanTableI18N } from 'constants/i18n';
 
 const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans } = props;
@@ -141,7 +141,8 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         }}>
         {numSelected > 0 ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan} {TableI18N.selectedToExport}
+            {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}{' '}
+            {TableI18N.selectedToExport}
           </Typography>
         ) : (
           <Typography
@@ -300,7 +301,9 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                     <TableCell padding="checkbox">
                       {row.export ? (
                         <Tooltip
-                          title={isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected}
+                          title={
+                            isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
+                          }
                           placement="right">
                           <Checkbox
                             color="primary"
