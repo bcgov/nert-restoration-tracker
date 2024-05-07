@@ -8,12 +8,12 @@ import {
   waitFor
 } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
+import { ProjectAuthorizationFormInitialValues } from 'features/projects/components/ProjectAuthorizationForm';
 import { ProjectFundingFormInitialValues } from 'features/projects/components/ProjectFundingForm';
 import { ProjectGeneralInformationFormInitialValues } from 'features/projects/components/ProjectGeneralInformationForm';
-import { ProjectIUCNFormInitialValues } from 'features/projects/components/ProjectIUCNForm';
 import { ProjectLocationFormInitialValues } from 'features/projects/components/ProjectLocationForm';
 import { ProjectPartnershipsFormInitialValues } from 'features/projects/components/ProjectPartnershipsForm';
-import { ProjectPermitFormInitialValues } from 'features/projects/components/ProjectPermitForm';
+import { ProjectWildlifeFormInitialValues } from 'features/projects/components/ProjectWildlifeForm';
 import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import { createMemoryHistory } from 'history';
 import useCodes from 'hooks/useCodes';
@@ -165,10 +165,10 @@ describe('CreateProjectPage', () => {
               }
             ]
           },
-          ...ProjectPermitFormInitialValues,
+          ...ProjectAuthorizationFormInitialValues,
           ...ProjectGeneralInformationFormInitialValues,
           ...ProjectLocationFormInitialValues,
-          ...ProjectIUCNFormInitialValues,
+          ...ProjectWildlifeFormInitialValues,
           ...ProjectFundingFormInitialValues,
           ...ProjectPartnershipsFormInitialValues
         }

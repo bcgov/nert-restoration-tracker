@@ -21,26 +21,26 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
   const sqlStatement: SQLStatement = SQL`
     INSERT INTO project (
       name,
+      brief_desc,
       is_project,
       state_code,
       start_date,
       end_date,
       actual_start_date,
       actual_end_date,
-      objectives,
       is_healing_land,
       is_healing_people,
       is_land_initiative,
       is_cultural_initiative
     ) VALUES (
       ${project.name},
+      ${project.brief_description},
       ${project.is_project},
       ${project.state_code},
       ${project.start_date},
       ${project.end_date},
       ${project.actual_start_date},
       ${project.actual_end_date},
-      ${project.objectives},
       ${project.is_healing_land},
       ${project.is_healing_people},
       ${project.is_land_initiative},
@@ -91,14 +91,20 @@ export const postProjectBoundarySQL = (locationData: PostLocationData, projectId
       project_id,
       project_spatial_component_type_id,
       name,
-      priority,
+      is_within_overlapping,
+      number_sites,
+      size_ha,
       geojson,
       geography
     ) VALUES (
       ${projectId},
       (SELECT project_spatial_component_type_id from project_spatial_component_type WHERE name = ${componentTypeName}),
       ${componentName},
-      ${locationData.priority ? 'Y' : 'N'},
+      ${
+        locationData.is_within_overlapping === 'false' ? 'N' : locationData.is_within_overlapping === 'true' ? 'Y' : 'D'
+      },
+      ${locationData.number_sites},
+      ${locationData.size_ha},
       ${JSON.stringify(locationData.geometry)}
   `;
 
@@ -185,7 +191,7 @@ export const postProjectFundingSourceSQL = (
  * @param project_id
  * @returns {SQLStatement} sql query object
  */
-export const postProjectIUCNSQL = (iucn3_id: number, project_id: number): SQLStatement | null => {
+export const postProjectIUCNSQL = (iucn3_id: number | null, project_id: number): SQLStatement | null => {
   defaultLog.debug({
     label: 'postProjectIUCNSQL',
     message: 'params',

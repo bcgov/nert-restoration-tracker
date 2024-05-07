@@ -29,12 +29,12 @@ import {
   states
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-import { TableI18N, ProjectTableI18N } from 'constants/i18n';
 
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
@@ -138,7 +138,8 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             variant="h2"
             id="tableTitle"
             component="div">
-            {TableI18N.found} {rows?.length} {rows?.length !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
+            {TableI18N.found} {rows?.length}{' '}
+            {rows?.length !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -294,7 +295,9 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     </TableCell>
                     <TableCell padding="checkbox">
                       <Tooltip
-                        title={isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected}
+                        title={
+                          isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
+                        }
                         placement="right">
                         <Checkbox
                           color="primary"

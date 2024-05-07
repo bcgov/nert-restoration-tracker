@@ -14,7 +14,6 @@ const CustomTextField: React.FC<React.PropsWithChildren<ICustomTextField>> = (pr
   const { touched, errors, values, handleChange, handleBlur } = useFormikContext<any>();
 
   const { name, label, other } = props;
-
   return (
     <TextField
       size="small"

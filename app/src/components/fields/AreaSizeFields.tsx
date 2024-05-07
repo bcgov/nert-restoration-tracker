@@ -1,6 +1,7 @@
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
+import { AREA_SIZE_MIN_MAX } from 'constants/misc';
 import get from 'lodash-es/get';
 import React from 'react';
 
@@ -12,11 +13,6 @@ interface IAreaSizeFieldsProps {
   maxRequired: boolean;
   minHelperText?: string;
   maxHelperText?: string;
-}
-
-enum AREA_SIZE_MIN_MAX {
-  min = 0,
-  max = 10000
 }
 
 /**
