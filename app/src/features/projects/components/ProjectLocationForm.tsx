@@ -84,8 +84,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
-      console.log('file object being loaded', file);
-      if (file?.type.includes('json') || file?.name.includes('.json')) {
+      if (file?.name.includes('json')) {
         handleGeoJSONUpload(file, 'location.geometry', formikProps);
       }
 
