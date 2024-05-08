@@ -320,13 +320,13 @@ PUT.apiDoc = {
 
 export interface IUpdateProject {
   contact: object | null;
-  permit: object | null;
+  species: object | null;
+  authorization: object | null;
   project: object | null;
   location: object | null;
   iucn: object | null;
   funding: object | null;
   partnerships: object | null;
-  species: object | null;
 }
 
 /**
