@@ -23,7 +23,7 @@ export const handleGeoJSONUpload = async <T>(
     return jsonString;
   });
 
-  if (!file?.type.includes('json') && !fileAsString?.includes('FeatureCollection')) {
+  if (!file?.name.includes('json') && !fileAsString?.includes('FeatureCollection')) {
     setFieldError(name, 'You must upload a GeoJSON file, please try again.');
     return;
   }
