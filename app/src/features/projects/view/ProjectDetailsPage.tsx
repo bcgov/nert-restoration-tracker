@@ -16,7 +16,6 @@ import ProjectPermits from './components/ProjectPermits';
 export interface IProjectDetailsProps {
   projectForViewData: IGetProjectForViewResponse;
   codes: IGetAllCodeSetsResponse;
-  refresh: () => void;
 }
 
 const pageStyles = {
@@ -74,7 +73,8 @@ const pageStyles = {
  * @return {*}
  */
 const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
-  const { projectForViewData, codes, refresh } = props;
+  const { projectForViewData, codes } = props;
+  const refresh = () => {};
 
   return (
     <Box sx={pageStyles.projectMetadata} p={3}>

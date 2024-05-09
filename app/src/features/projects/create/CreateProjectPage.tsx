@@ -213,20 +213,22 @@ const CreateProjectPage: React.FC = () => {
 
       let response;
       if (draftId) {
-        if (formikRef.current)
+        if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.saving)
           );
+        }
         response = await restorationTrackerApi.draft.updateDraft(
           draftId,
           values.draft_name,
           formikRef.current?.values
         );
       } else {
-        if (formikRef.current)
+        if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.creating)
           );
+        }
 
         response = await restorationTrackerApi.draft.createDraft(
           true,
@@ -264,6 +266,8 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      projectPostObject.restoration_plan.is_project_part_public_plan =
+        !!projectPostObject.restoration_plan.is_project_part_public_plan;
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );

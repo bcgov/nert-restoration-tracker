@@ -758,27 +758,28 @@ COMMENT ON TABLE objective IS 'Provides project objectives.'
 --
 
 CREATE TABLE project(
-    project_id             integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    uuid                   uuid              DEFAULT public.gen_random_uuid(),
-    is_project             boolean           NOT NULL,
-    name                   varchar(300),
-    brief_desc             varchar(3000)     NOT NULL,
-    start_date             date,
-    end_date               date,
-    actual_start_date      date,
-    actual_end_date        date,
-    state_code             integer           NOT NULL,
-    people_involved        integer,
-    is_healing_land        boolean           DEFAULT false,
-    is_healing_people      boolean           DEFAULT false,
-    is_land_initiative     boolean           DEFAULT false,
-    is_cultural_initiative boolean           DEFAULT false,
-    publish_timestamp      TIMESTAMPTZ,
-    create_date            timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user            integer           NOT NULL,
-    update_date            timestamptz(6),
-    update_user            integer,
-    revision_count         integer           DEFAULT 0 NOT NULL,
+    project_id                  integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    uuid                        uuid              DEFAULT public.gen_random_uuid(),
+    is_project                  boolean           NOT NULL,
+    name                        varchar(300),
+    brief_desc                  varchar(3000)     NOT NULL,
+    start_date                  date,
+    end_date                    date,
+    actual_start_date           date,
+    actual_end_date             date,
+    state_code                  integer           NOT NULL,
+    people_involved             integer,
+    is_healing_land             boolean           DEFAULT false,
+    is_healing_people           boolean           DEFAULT false,
+    is_land_initiative          boolean           DEFAULT false,
+    is_cultural_initiative      boolean           DEFAULT false,
+    is_project_part_public_plan boolean           DEFAULT false,
+    publish_timestamp           TIMESTAMPTZ,
+    create_date                 timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                 integer           NOT NULL,
+    update_date                 timestamptz(6),
+    update_user                 integer,
+    revision_count              integer           DEFAULT 0 NOT NULL,
     CONSTRAINT project_pk PRIMARY KEY (project_id)
 )
 ;
@@ -814,6 +815,8 @@ COMMENT ON COLUMN project.is_healing_people IS 'Project or plan focused on heali
 COMMENT ON COLUMN project.is_land_initiative IS 'Project or plan focused on land based restoration initiative.'
 ;
 COMMENT ON COLUMN project.is_cultural_initiative IS 'Project or plan focused on cultural or community investment initiative.'
+;
+COMMENT ON COLUMN project.is_project_part_public_plan IS 'Project is or not part of a publicly available restoration plan.'
 ;
 COMMENT ON COLUMN project.publish_timestamp IS 'A timestamp that indicates that the project metadata has been approved for discovery. If the timestamp is not null then project metadata is public. If the timestamp is null the project metadata is not yet public.'
 ;

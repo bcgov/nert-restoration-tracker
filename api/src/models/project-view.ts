@@ -21,11 +21,13 @@ export class GetProjectData {
   end_date: string;
   actual_start_date: string;
   actual_end_date: string;
-  objectives: string;
+  brief_desc: string;
   is_healing_land: boolean;
   is_healing_people: boolean;
   is_land_initiative: boolean;
   is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
   publish_date: string;
   revision_count: number;
 
@@ -39,11 +41,13 @@ export class GetProjectData {
     this.end_date = projectData?.end_date || null;
     this.actual_start_date = projectData?.actual_start_date || null;
     this.actual_end_date = projectData?.actual_end_date || null;
-    this.objectives = projectData?.objectives || '';
+    this.brief_desc = projectData?.brief_desc || '';
     this.is_healing_land = projectData?.is_healing_land || null;
     this.is_healing_people = projectData?.is_healing_people || null;
     this.is_land_initiative = projectData?.is_land_initiative || null;
     this.is_cultural_initiative = projectData?.is_cultural_initiative || null;
+    this.people_involved = projectData?.people_involved || null;
+    this.is_project_part_public_plan = projectData?.is_project_part_public_plan || null;
     this.publish_date = projectData?.publish_timestamp || null;
     this.revision_count = projectData?.revision_count ?? 0;
   }
@@ -116,20 +120,19 @@ export class GetPermitData {
 
 export class GetLocationData {
   geometry?: Feature[];
-  priority?: string;
+  is_within_overlapping?: string;
   region?: number;
-  range?: number;
+  number_sites?: number;
+  size_ha?: number;
 
-  constructor(locationData?: any[], regionData?: any[], rangeData?: any[]) {
+  constructor(locationData?: any[], regionData?: any[]) {
     const locationDataItem = locationData && locationData.length && locationData[0];
     this.geometry = (locationDataItem?.geojson?.length && locationDataItem.geojson) || [];
-    this.priority =
-      locationData && locationData?.length && locationData[0]?.priority && locationData[0]?.priority === 'Y'
-        ? 'true'
-        : 'false';
+    this.is_within_overlapping = locationData && locationData?.length && locationData[0]?.is_within_overlapping;
     this.region = (regionData && regionData?.length && regionData[0]?.objectid) || ('' as unknown as number);
-    this.range =
-      (rangeData && rangeData?.length && rangeData[0]?.caribou_population_unit_id) || (undefined as unknown as number);
+    this.number_sites =
+      (locationData && locationData?.length && locationData[0]?.number_sites) || ('' as unknown as number);
+    this.size_ha = (locationData && locationData?.length && locationData[0]?.size_ha) || ('' as unknown as number);
   }
 }
 

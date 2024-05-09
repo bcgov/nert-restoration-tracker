@@ -65,7 +65,7 @@ POST.apiDoc = {
                   type: 'boolean',
                   description: 'True is project, False is plan'
                 },
-                brief_description: {
+                brief_desc: {
                   type: 'string'
                 },
                 state_code: {
@@ -142,8 +142,9 @@ POST.apiDoc = {
                     type: 'number'
                   }
                 },
-                number_people_involved: {
+                people_involved: {
                   type: 'number',
+                  description: 'Number of people involved in the project',
                   nullable: true
                 }
               }
@@ -399,7 +400,6 @@ export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedProjectPostData = new PostProjectObject(req.body);
-    console.log('[OI] sanitized req.body', sanitizedProjectPostData);
     try {
       await connection.open();
 
