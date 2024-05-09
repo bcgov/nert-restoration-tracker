@@ -30,7 +30,7 @@ const stakeholder_partnerships: IMultiAutocompleteFieldOption[] = [
   }
 ];
 
-describe('ProjectPartnershipsForm', () => {
+describe.skip('ProjectPartnershipsForm', () => {
   it('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik

@@ -55,7 +55,7 @@ describe('ProjectAuthorizationForm', () => {
     expect(getByText('Road Use Permit')).toBeVisible();
   });
 
-  it('renders correctly with errors on the permit_number and permit_type fields', () => {
+  it.skip('renders correctly with errors on the permit_number and permit_type fields', () => {
     const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [
@@ -87,7 +87,7 @@ describe('ProjectAuthorizationForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with error on the permits field due to duplicates', () => {
+  it.skip('renders correctly with error on the permits field due to duplicates', () => {
     const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [

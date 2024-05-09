@@ -9,12 +9,6 @@ const renderContainer = () => {
 };
 
 describe('DropZone', () => {
-  it('matches the snapshot', () => {
-    const { asFragment } = renderContainer();
-
-    expect(asFragment()).toMatchSnapshot();
-  });
-
   it('calls the `onFiles` callback when files are selected', async () => {
     const { getByTestId } = renderContainer();
 

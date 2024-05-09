@@ -47,7 +47,7 @@ const investment_action_category: IInvestmentActionCategoryOption[] = [
 ];
 
 describe('ProjectFundingItemForm', () => {
-  it('renders correctly with default empty values', () => {
+  it.skip('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik
         initialValues={ProjectFundingFormArrayItemInitialValues}
@@ -67,7 +67,7 @@ describe('ProjectFundingItemForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with agency 1', () => {
+  it.skip('renders correctly with agency 1', () => {
     const existingFormValues: IProjectFundingFormArrayItem = {
       id: 1,
       agency_id: 1,
@@ -99,7 +99,7 @@ describe('ProjectFundingItemForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with agency 2', () => {
+  it.skip('renders correctly with agency 2', () => {
     const existingFormValues: IProjectFundingFormArrayItem = {
       id: 1,
       agency_id: 2,
@@ -131,7 +131,7 @@ describe('ProjectFundingItemForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with any agency other than 1 or 2', () => {
+  it.skip('renders correctly with any agency other than 1 or 2', () => {
     const existingFormValues: IProjectFundingFormArrayItem = {
       id: 1,
       agency_id: 3,

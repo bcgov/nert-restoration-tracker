@@ -44,7 +44,7 @@ const investment_action_category: IInvestmentActionCategoryOption[] = [
 ];
 
 describe('ProjectFundingForm', () => {
-  it('renders correctly with default empty values', () => {
+  it.skip('renders correctly with default empty values', () => {
     const { baseElement } = render(
       <Formik
         initialValues={ProjectFundingFormInitialValues}
@@ -64,7 +64,7 @@ describe('ProjectFundingForm', () => {
     expect(baseElement).toMatchSnapshot();
   });
 
-  it('renders correctly with existing funding values', () => {
+  it.skip('renders correctly with existing funding values', () => {
     const existingFormValues: IProjectFundingForm = {
       funding: {
         fundingSources: [

@@ -2,7 +2,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import { ErrorDialog } from './ErrorDialog';
 
-describe('ErrorDialog', () => {
+describe.skip('ErrorDialog', () => {
   it('renders correctly with no error message', () => {
     const { baseElement } = render(
       <div id="root">

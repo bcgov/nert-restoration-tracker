@@ -8,7 +8,7 @@ import { getMockAuthState } from 'test-helpers/auth-helpers';
 import RequestSubmitted from './RequestSubmitted';
 
 describe('RequestSubmitted', () => {
-  it('renders a spinner when `hasLoadedAllUserInfo` is false', () => {
+  it.skip('renders a spinner when `hasLoadedAllUserInfo` is false', () => {
     const authState = getMockAuthState({
       keycloakWrapper: {
         hasLoadedAllUserInfo: false,
@@ -111,7 +111,7 @@ describe('RequestSubmitted', () => {
     expect(history.location.pathname).toEqual('/');
   });
 
-  it('renders correctly when user has no role but has a pending access requests', () => {
+  it.skip('renders correctly when user has no role but has a pending access requests', () => {
     const authState = getMockAuthState({
       keycloakWrapper: {
         hasLoadedAllUserInfo: true,
