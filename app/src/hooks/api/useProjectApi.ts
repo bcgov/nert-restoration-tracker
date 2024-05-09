@@ -502,12 +502,12 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
-   * Get public (published) project details based on its ID for viewing purposes.
+   * Get public (published) project or plan details based on its ID for viewing purposes.
    *
    * @param {number} projectId
-   * @return {*} {Promise<IGetProjectForViewResponse>}
+   * @return {*} {any>}  could be a project or a plan response
    */
-  const getProjectForView = async (projectId: number): Promise<IGetProjectForViewResponse> => {
+  const getProjectPlanForView = async (projectId: number): Promise<any> => {
     const { data } = await axios.get(`/api/public/project/${projectId}/view`);
 
     return data;
@@ -585,7 +585,7 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
 
   return {
     getProjectsList,
-    getProjectForView,
+    getProjectPlanForView,
     getProjectAttachments,
     getProjectTreatments,
     getProjectTreatmentsYears,

@@ -238,7 +238,7 @@ export interface IPlansListProps {
 }
 export interface IGetPlanForViewResponse {
   // [OI] this will require updating to the plan data model
-  project: IGetProjectForViewResponseDetails;
+  plan: IGetProjectForViewResponseDetails;
   species: IGetProjectForViewResponseSpecies;
   permit: IGetProjectForViewResponsePermit;
   location: IGetProjectForViewResponseLocation;
@@ -249,6 +249,8 @@ export interface IGetPlanForViewResponse {
 }
 
 export interface IGetProjectForViewResponseDetails {
+  plan: any;
+  project: any;
   state_code: number;
   is_project: boolean;
   project_id: number;
@@ -258,7 +260,24 @@ export interface IGetProjectForViewResponseDetails {
   actual_start_date: string;
   actual_end_date: string;
   publish_date: string;
-  objectives: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
+  region: string;
+}
+export interface IGetPlanForViewResponseDetails {
+  state_code: number;
+  is_project: boolean;
+  project_id: number;
+  project_name: string;
+  start_date: string;
+  end_date: string;
+  publish_date: string;
+  brief_desc: string;
   is_healing_land: boolean;
   is_healing_people: boolean;
   is_land_initiative: boolean;
@@ -282,9 +301,11 @@ export interface IGetProjectForViewResponsePermit {
 
 export interface IGetProjectForViewResponseLocation {
   geometry: Feature[];
-  priority: string;
+  is_within_overlapping: string;
   region: number;
-  range: number;
+  number_sites: number;
+  size_ha: number;
+  name_area_conservation_priority: string[];
 }
 
 export interface IGetProjectForViewResponseContactArrayItem {

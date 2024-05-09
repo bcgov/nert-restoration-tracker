@@ -31,15 +31,6 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
     );
   };
 
-  const getRangeName = (rangeNumber: number) => {
-    const codeValue = props.codes.ranges.find((code) => code.id === rangeNumber);
-    return (
-      <Typography variant="body2" component="dd" data-testid="project-region">
-        {codeValue?.name}
-      </Typography>
-    );
-  };
-
   return (
     <Box component="dl" data-testid="general_info_component">
       <div>
@@ -48,14 +39,16 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
         </Typography>
         {getRegionName(location.region)}
       </div>
-      {location && location.range && (
-        <div>
-          <Typography variant="body2" component="dt" color="textSecondary">
-            Caribou Range:
-          </Typography>
-          {getRangeName(location.range)}
-        </div>
-      )}
+
+      <div>
+        <Typography variant="body2" component="dt" color="textSecondary">
+          Brief Description:
+        </Typography>
+        <Typography variant="body2" component="dd">
+          {project.brief_desc}
+        </Typography>
+      </div>
+
       <div>
         <Typography variant="body2" component="dt" color="textSecondary">
           Start Date:
