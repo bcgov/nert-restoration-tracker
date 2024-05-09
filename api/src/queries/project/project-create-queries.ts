@@ -1,5 +1,12 @@
 import { SQL, SQLStatement } from 'sql-template-strings';
-import { PostFundingSource, PostLocationData, PostProjectData, PostProjectObject } from '../../models/project-create';
+import {
+  PostFocusData,
+  PostFundingSource,
+  PostLocationData,
+  PostProjectData,
+  PostProjectObject,
+  PostRestPlanData
+} from '../../models/project-create';
 import { getLogger } from '../../utils/logger';
 import { queries } from '../queries';
 
@@ -31,10 +38,11 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
       is_healing_land,
       is_healing_people,
       is_land_initiative,
-      is_cultural_initiative
+      is_cultural_initiative,
+      people_involved
     ) VALUES (
       ${project.name},
-      ${project.brief_description},
+      ${project.brief_desc},
       ${project.is_project},
       ${project.state_code},
       ${project.start_date},
@@ -44,7 +52,8 @@ export const postProjectSQL = (project: PostProjectData): SQLStatement | null =>
       ${project.is_healing_land},
       ${project.is_healing_people},
       ${project.is_land_initiative},
-      ${project.is_cultural_initiative}
+      ${project.is_cultural_initiative},
+      ${project.people_involved}
     )
     RETURNING
       project_id as id;
@@ -130,6 +139,103 @@ export const postProjectBoundarySQL = (locationData: PostLocationData, projectId
 
   defaultLog.debug({
     label: 'postProjectBoundarySQL',
+    message: 'sql',
+    'sqlStatement.text': sqlStatement.text,
+    'sqlStatement.values': sqlStatement.values
+  });
+
+  return sqlStatement;
+};
+
+/**
+ * SQL query to update a project row.
+ *
+ * @param {PostFocusData} focusData
+ * @param {number} projectId
+ * @returns {SQLStatement} sql query object
+ */
+export const postProjectFocusSQL = (focusData: PostFocusData, projectId: number): SQLStatement | null => {
+  defaultLog.debug({
+    label: 'postProjectFocusSQL',
+    message: 'params',
+    obj: { ...focusData }
+  });
+
+  if (!focusData || !focusData.focuses.length || !projectId) {
+    return null;
+  }
+
+  let is_healing_land = false;
+  let is_healing_people = false;
+  let is_land_initiative = false;
+  let is_cultural_initiative = false;
+  focusData.focuses?.map((focus: number) => {
+    switch (focus) {
+      case 1:
+        is_healing_land = true;
+        break;
+      case 2:
+        is_healing_people = true;
+        break;
+      case 3:
+        is_land_initiative = true;
+        break;
+      case 4:
+        is_cultural_initiative = true;
+        break;
+    }
+  }) || [];
+
+  const sqlStatement: SQLStatement = SQL`
+    UPDATE project 
+    SET is_healing_land = ${is_healing_land},
+        is_healing_people = ${is_healing_people},
+        is_land_initiative = ${is_land_initiative},
+        is_cultural_initiative = ${is_cultural_initiative},
+        people_involved = ${focusData.people_involved}
+    WHERE project_id = ${projectId}   
+    RETURNING
+      project_id as id;
+  `;
+
+  defaultLog.debug({
+    label: 'postProjectFocusSQL',
+    message: 'sql',
+    'sqlStatement.text': sqlStatement.text,
+    'sqlStatement.values': sqlStatement.values
+  });
+
+  return sqlStatement;
+};
+
+/**
+ * SQL query to update a project row.
+ *
+ * @param {PostRestPlanData} restPlanData
+ * @param {number} projectId
+ * @returns {SQLStatement} sql query object
+ */
+export const postProjectRestPlanSQL = (restPlanData: PostRestPlanData, projectId: number): SQLStatement | null => {
+  defaultLog.debug({
+    label: 'postProjectRestPlanSQL',
+    message: 'params',
+    obj: { ...restPlanData }
+  });
+
+  if (!restPlanData || !projectId) {
+    return null;
+  }
+
+  const sqlStatement: SQLStatement = SQL`
+    UPDATE project 
+    SET is_project_part_public_plan = ${restPlanData.is_project_part_public_plan}
+    WHERE project_id = ${projectId}   
+    RETURNING
+      project_id as id;
+  `;
+
+  defaultLog.debug({
+    label: 'postProjectRestPlanSQL',
     message: 'sql',
     'sqlStatement.text': sqlStatement.text,
     'sqlStatement.values': sqlStatement.values

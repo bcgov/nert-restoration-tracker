@@ -1,8 +1,8 @@
 import { NoRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
+import PublicProjectPlanView from 'pages/public/PublicProjectPlanView';
 import PublicProjectsPlansListPage from 'pages/public/PublicProjectsPlansListPage';
-import PublicProjectsPlansView from 'pages/public/PublicProjectsPlansView';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { RedirectURL } from 'utils/AppRoutesUtils';
@@ -29,7 +29,7 @@ const PublicProjectsRouter: React.FC = () => {
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
               fallback={(projectId) => <Navigate replace to={`/admin/projects/${projectId}`} />}>
-              <PublicProjectsPlansView />
+              <PublicProjectPlanView />
             </NoRoleGuard>
           }
         />

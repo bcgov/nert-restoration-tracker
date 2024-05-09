@@ -78,7 +78,7 @@ GET.apiDoc = {
                     description: 'ISO 8601 date string for the project end date',
                     nullable: true
                   },
-                  objectives: {
+                  brief_desc: {
                     type: 'string'
                   },
                   publish_date: {

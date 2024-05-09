@@ -306,11 +306,7 @@ const ViewProjectPage: React.FC = () => {
                     />
                   </Box>
                   <Box height="500px" position="relative">
-                    <LocationBoundary
-                      projectForViewData={projectWithDetails}
-                      treatmentList={treatmentList}
-                      refresh={getProject}
-                    />
+                    <LocationBoundary locationData={projectWithDetails.location} />
                     <Box position="absolute" top="80px" left="10px" zIndex="999">
                       <IconButton
                         aria-label="view full screen map"
@@ -335,11 +331,7 @@ const ViewProjectPage: React.FC = () => {
             </Grid>
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage
-                  projectForViewData={projectWithDetails}
-                  codes={codes.codes}
-                  refresh={getProject}
-                />
+                <ProjectDetailsPage projectForViewData={projectWithDetails} codes={codes.codes} />
               </Paper>
             </Grid>
           </Grid>
@@ -359,12 +351,7 @@ const ViewProjectPage: React.FC = () => {
         </Box>
         <Box display="flex" height="100%" flexDirection="column">
           <Box flex="1 1 auto">
-            <LocationBoundary
-              projectForViewData={projectWithDetails}
-              treatmentList={treatmentList}
-              refresh={getProject}
-              scrollWheelZoom={true}
-            />
+            <LocationBoundary locationData={projectWithDetails.location} scrollWheelZoom={true} />
           </Box>
           <Box flex="0 0 auto" height="300px">
             <TreatmentList treatmentList={treatmentList} />

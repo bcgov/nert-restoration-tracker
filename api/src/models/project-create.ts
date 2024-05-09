@@ -18,6 +18,8 @@ export class PostProjectObject {
   iucn: PostIUCNData;
   funding: PostFundingData;
   partnerships: PostPartnershipsData;
+  focus: PostFocusData;
+  restoration_plan: PostRestPlanData;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
@@ -30,6 +32,8 @@ export class PostProjectObject {
     this.funding = (obj?.funding && new PostFundingData(obj.funding)) || null;
     this.iucn = (obj?.iucn && new PostIUCNData(obj.iucn)) || null;
     this.partnerships = (obj?.partnerships && new PostPartnershipsData(obj.partnerships)) || [];
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
+    this.restoration_plan = (obj?.restoration_plan && new PostRestPlanData(obj.restoration_plan)) || null;
   }
 }
 
@@ -111,11 +115,13 @@ export class PostProjectData {
   end_date: string;
   actual_start_date: string;
   actual_end_date: string;
-  brief_description: string;
+  brief_desc: string;
   is_healing_land: boolean;
   is_healing_people: boolean;
   is_land_initiative: boolean;
   is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostProjectData', message: 'params', obj });
@@ -127,11 +133,13 @@ export class PostProjectData {
     this.end_date = obj?.end_date || null;
     this.actual_start_date = obj?.actual_start_date || null;
     this.actual_end_date = obj?.actual_end_date || null;
-    this.brief_description = obj?.brief_description || null;
+    this.brief_desc = obj?.brief_desc || '';
     this.is_healing_land = obj?.is_healing_land || null;
     this.is_healing_people = obj?.is_healing_people || null;
     this.is_land_initiative = obj?.is_land_initiative || null;
     this.is_cultural_initiative = obj?.is_cultural_initiative || null;
+    this.people_involved = obj?.people_involved || null;
+    this.is_project_part_public_plan = obj?.is_project_part_public_plan || null;
   }
 }
 
@@ -273,5 +281,39 @@ export class PostPartnershipsData {
     defaultLog.debug({ label: 'PostPartnershipsData', message: 'params', obj });
 
     this.partnerships = (obj?.partnerships.length && obj.partnerships) || [];
+  }
+}
+
+/**
+ * Processes POST /project focus data
+ *
+ * @export
+ * @class PostFocusData
+ */
+export class PostFocusData {
+  focuses: number[];
+  people_involved: number;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostFocusData', message: 'params', obj });
+
+    this.focuses = (obj?.focuses.length && obj.focuses) || [];
+    this.people_involved = obj?.people_involved || null;
+  }
+}
+
+/**
+ * Processes POST /project restoration_plan data
+ *
+ * @export
+ * @class PostRestPlanData
+ */
+export class PostRestPlanData {
+  is_project_part_public_plan: boolean;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostRestPlanData', message: 'params', obj });
+
+    this.is_project_part_public_plan = obj?.is_project_part_public_plan || null;
   }
 }

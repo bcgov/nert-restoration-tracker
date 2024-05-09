@@ -14,7 +14,7 @@ export interface IProjectGeneralInformationForm {
     project_name: string;
     is_project: boolean;
     state_code: number;
-    brief_description: string;
+    brief_desc: string;
     start_date: string;
     end_date: string;
     actual_start_date: string;
@@ -23,6 +23,7 @@ export interface IProjectGeneralInformationForm {
     is_healing_people: boolean;
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
+    people_involved: number | null;
   };
 }
 
@@ -31,7 +32,7 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     project_name: '',
     is_project: true,
     state_code: getStateCodeFromLabel(states.DRAFT),
-    brief_description: '',
+    brief_desc: '',
     start_date: '',
     end_date: '',
     actual_start_date: '',
@@ -39,7 +40,8 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     is_healing_land: false,
     is_healing_people: false,
     is_land_initiative: false,
-    is_cultural_initiative: false
+    is_cultural_initiative: false,
+    people_involved: null
   }
 };
 
@@ -48,7 +50,7 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
     project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
     start_date: yup.string().nullable().isValidDateString(),
     end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
-    brief_description: yup
+    brief_desc: yup
       .string()
       .max(500, 'Cannot exceed 500 characters')
       .required('You must provide a brief description for the project')
@@ -98,7 +100,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
           <Grid item xs={12}>
             <Grid item xs={12}>
               <CustomTextField
-                name="project.brief_description"
+                name="project.brief_desc"
                 label="Brief Description"
                 other={{ required: true, multiline: true, maxRows: 5 }}
                 maxLength={500}

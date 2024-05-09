@@ -807,7 +807,7 @@ describe('ProjectService', () => {
           end_date: '2084-06-23',
           actual_start_date: 'string',
           actual_end_date: 'string',
-          brief_description: 'string',
+          brief_desc: 'string',
           is_healing_land: true,
           is_healing_people: true,
           is_land_initiative: true,

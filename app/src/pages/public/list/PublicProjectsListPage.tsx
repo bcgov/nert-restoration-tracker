@@ -268,7 +268,9 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history(`/projects/${row.projectId}`)}>
+                        onClick={() => {
+                          history(`/projects/${row.projectId}`);
+                        }}>
                         {row.projectName}
                       </Link>
                     </TableCell>

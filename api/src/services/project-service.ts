@@ -6,10 +6,12 @@ import {
   IPostAuthorization,
   IPostContact,
   IPostIUCN,
+  PostFocusData,
   PostFundingSource,
   PostLocationData,
   PostProjectData,
-  PostProjectObject
+  PostProjectObject,
+  PostRestPlanData
 } from '../models/project-create';
 import {
   GetContactData,
@@ -416,10 +418,9 @@ export class ProjectService extends DBService {
   }
 
   async getLocationData(projectId: number): Promise<GetLocationData> {
-    const [geometryRows, regionRows, rangeRows] = await Promise.all([
+    const [geometryRows, regionRows] = await Promise.all([
       this.getGeometryData(projectId),
-      this.getRegionData(projectId),
-      this.getRangeData(projectId)
+      this.getRegionData(projectId)
     ]);
 
     if (!geometryRows) {
@@ -430,7 +431,7 @@ export class ProjectService extends DBService {
       throw new HTTP400('Failed to get region data');
     }
 
-    return new GetLocationData(geometryRows, regionRows, rangeRows);
+    return new GetLocationData(geometryRows, regionRows);
   }
 
   async getGeometryData(projectId: number): Promise<any[]> {
@@ -450,7 +451,6 @@ export class ProjectService extends DBService {
     `;
 
     const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
     return (response && response.rows) || null;
   }
 
@@ -511,7 +511,6 @@ export class ProjectService extends DBService {
     promises.push(
       Promise.all(
         postProjectData.iucn.classificationDetails?.map((iucnClassification: IPostIUCN) => {
-          console.log('[OI] classDet', iucnClassification);
           if (
             iucnClassification.classification &&
             iucnClassification.subClassification1 &&
@@ -552,6 +551,12 @@ export class ProjectService extends DBService {
 
     // Handle region associated to this project
     promises.push(this.insertRegion(postProjectData.location.region, projectId));
+
+    // Handle focus
+    promises.push(this.insertFocus(postProjectData.focus, projectId));
+
+    // Handle restorationPlan data
+    promises.push(this.insertRestPlan(postProjectData.restoration_plan, projectId));
 
     await Promise.all(promises);
 
@@ -621,6 +626,42 @@ export class ProjectService extends DBService {
 
     if (!result || !result.id) {
       throw new HTTP400('Failed to insert project boundary data');
+    }
+
+    return result.id;
+  }
+
+  async insertFocus(focusData: PostFocusData, project_id: number): Promise<number> {
+    const sqlStatement = queries.project.postProjectFocusSQL(focusData, project_id);
+
+    if (!sqlStatement) {
+      throw new HTTP400('Failed to build SQL update statement');
+    }
+
+    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+    const result = (response && response.rows && response.rows[0]) || null;
+
+    if (!result || !result.id) {
+      throw new HTTP400('Failed to update project focus data');
+    }
+
+    return result.id;
+  }
+
+  async insertRestPlan(restPlanData: PostRestPlanData, project_id: number): Promise<number> {
+    const sqlStatement = queries.project.postProjectRestPlanSQL(restPlanData, project_id);
+
+    if (!sqlStatement) {
+      throw new HTTP400('Failed to build SQL update statement');
+    }
+
+    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+    const result = (response && response.rows && response.rows[0]) || null;
+
+    if (!result || !result.id) {
+      throw new HTTP400('Failed to update project rest plan data');
     }
 
     return result.id;
