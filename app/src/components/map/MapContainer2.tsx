@@ -1,3 +1,4 @@
+import * as turf from '@turf/turf';
 import { FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -5,6 +6,8 @@ import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
+
+console.log(turf);
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -195,6 +198,7 @@ const initializeMap = (
   console.log('tooltipY', tooltipY);
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
+  console.log('markerGeoJSON', markerGeoJSON);
 
   map = new Map({
     container: mapId,
