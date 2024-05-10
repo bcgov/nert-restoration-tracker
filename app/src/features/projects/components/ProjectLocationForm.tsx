@@ -243,8 +243,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Typography component="legend">Project Areas *</Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
-            Upload a GeoJSON file or use the drawing tools on the map to define your project
-            boundary.
+            Upload a GeoJSON file to define your project boundary.
           </Typography>
           <Tooltip title="GeoJSON Properties Information" placement="right">
             <IconButton>
