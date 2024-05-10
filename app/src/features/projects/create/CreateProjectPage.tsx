@@ -20,7 +20,6 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -76,7 +75,7 @@ import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
-// import YesNoDialog from 'components/dialog/YesNoDialog'
+import YesNoDialog from 'components/dialog/YesNoDialog';
 
 const pageStyles = {
   actionButton: {
@@ -132,7 +131,6 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useRestorationTrackerApi();
   const queryParams = useQuery();
   const codes = useCodes();
@@ -177,6 +175,9 @@ const CreateProjectPage: React.FC = () => {
   // Whether or not to show the 'Save as draft' dialog
   const [openDraftDialog, setOpenDraftDialog] = useState(false);
 
+  // Whether or not to show the creation confirmation Yes/No dialog
+  const [openYesNoDialog, setOpenYesNoDialog] = useState(false);
+
   const [draft, setDraft] = useState({ id: 0, date: '' });
 
   const [initialProjectFormData, setInitialProjectFormData] =
@@ -205,6 +206,10 @@ const CreateProjectPage: React.FC = () => {
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
     history('/admin/user/projects');
+  };
+
+  const handleCancelConfirmation = () => {
+    setOpenYesNoDialog(false);   
   };
 
   const handleSubmitDraft = async (values: IProjectDraftForm) => {
@@ -248,7 +253,7 @@ const CreateProjectPage: React.FC = () => {
 
       setDraft({ id: response.id, date: response.date });
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
+
       history('/admin/user/projects');
     } catch (error) {
       setOpenDraftDialog(false);
@@ -261,7 +266,7 @@ const CreateProjectPage: React.FC = () => {
     }
   };
 
-  /**
+   /**
    * Handle project creation.
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
@@ -282,7 +287,6 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
 
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
       history(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({
@@ -387,6 +391,13 @@ const CreateProjectPage: React.FC = () => {
         onCancel={() => setOpenDraftDialog(false)}
         onSave={handleSubmitDraft}
       />
+
+      <YesNoDialog 
+        dialogTitle="Create Project Confirmation" 
+        dialogText="Please make sure there is no PI in the data. Creating a project means it will be published (publicly available). Are you sure you want to create this project?" 
+        open={openYesNoDialog} onClose={handleCancelConfirmation} 
+        onNo={handleCancelConfirmation} 
+        onYes={() => formikRef.current?.submitForm()} />
 
       <Box mb={1} ml={3}>
         <Breadcrumbs>
@@ -597,8 +608,7 @@ const CreateProjectPage: React.FC = () => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    type="submit"
-                    // onClick={() => formikRef.current?.submitForm()}
+                    onClick={() => setOpenYesNoDialog(true)}
                     data-testid="project-create-button">
                     <span>Create Project</span>
                   </Button>
