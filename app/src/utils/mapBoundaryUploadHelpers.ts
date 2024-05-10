@@ -1,6 +1,6 @@
 import bbox from '@turf/bbox';
 import { FormikContextType } from 'formik';
-import { BBox, Feature, GeoJSON } from 'geojson';
+import { BBox, Feature, FeatureCollection, GeoJSON } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +23,27 @@ export const handleGeoJSONUpload = async <T>(
     return jsonString;
   });
 
+  const cleanFeature = (feature: Feature) => {
+    // This where we can add additional properties to the feature
+    return feature;
+  };
+
+  const cleanGeoJSON = (geojson: GeoJSON | FeatureCollection, callback?: any) => {
+    if (geojson.type === 'Feature') {
+      return cleanFeature(geojson);
+    } else if (geojson.type === 'FeatureCollection') {
+      const cleanFeatures = geojson.features.map(cleanFeature);
+      geojson.features = cleanFeatures;
+      return geojson;
+    } else {
+      if (callback) {
+        callback(
+          'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
+        );
+      }
+    }
+  };
+
   if (!file?.name.includes('json') && !fileAsString?.includes('FeatureCollection')) {
     setFieldError(name, 'You must upload a GeoJSON file, please try again.');
     return;
@@ -32,6 +53,8 @@ export const handleGeoJSONUpload = async <T>(
     const geojson = JSON.parse(fileAsString);
 
     if (geojson?.features) {
+      const geojsonWithAttributes = cleanGeoJSON(geojson);
+      console.log('geojsonWithAttributes: ', geojsonWithAttributes);
       setFieldValue(name, [...geojson.features, ...get(values, name)]);
     } else {
       setFieldError(
