@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 // import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
+import YesNoDialog from 'components/dialog/YesNoDialog';
 import {
   events,
   getStateCodeFromLabel,
@@ -75,7 +76,6 @@ import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
-import YesNoDialog from 'components/dialog/YesNoDialog';
 
 const pageStyles = {
   actionButton: {
@@ -209,7 +209,7 @@ const CreateProjectPage: React.FC = () => {
   };
 
   const handleCancelConfirmation = () => {
-    setOpenYesNoDialog(false);   
+    setOpenYesNoDialog(false);
   };
 
   const handleSubmitDraft = async (values: IProjectDraftForm) => {
@@ -266,7 +266,7 @@ const CreateProjectPage: React.FC = () => {
     }
   };
 
-   /**
+  /**
    * Handle project creation.
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
@@ -392,12 +392,14 @@ const CreateProjectPage: React.FC = () => {
         onSave={handleSubmitDraft}
       />
 
-      <YesNoDialog 
-        dialogTitle="Create Project Confirmation" 
-        dialogText="Please make sure there is no PI in the data. Creating a project means it will be published (publicly available). Are you sure you want to create this project?" 
-        open={openYesNoDialog} onClose={handleCancelConfirmation} 
-        onNo={handleCancelConfirmation} 
-        onYes={() => formikRef.current?.submitForm()} />
+      <YesNoDialog
+        dialogTitle="Create Project Confirmation"
+        dialogText="Please make sure there is no PI in the data. Creating a project means it will be published (publicly available). Are you sure you want to create this project?"
+        open={openYesNoDialog}
+        onClose={handleCancelConfirmation}
+        onNo={handleCancelConfirmation}
+        onYes={() => formikRef.current?.submitForm()}
+      />
 
       <Box mb={1} ml={3}>
         <Breadcrumbs>
