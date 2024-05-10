@@ -7,8 +7,6 @@ import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
 
-console.log(turf);
-
 const { Map, Popup, NavigationControl } = maplibre;
 
 export interface IMapDrawControlsProps {
@@ -167,6 +165,10 @@ const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
   console.log('centroid', centroid);
 };
 
+const initializeFeatures = (features: any) => {
+  console.log('features', features);
+};
+
 let map: maplibre.Map;
 
 const initializeMap = (
@@ -199,6 +201,8 @@ const initializeMap = (
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
   console.log('markerGeoJSON', markerGeoJSON);
+  console.log('turf', turf);
+  console.log('area', turf.area(markerGeoJSON.features[0]) / 10000);
 
   map = new Map({
     container: mapId,
@@ -682,7 +686,9 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Update the map if the markers change
   useEffect(() => {
+    // TODO: Maybe change this so only the features get redrawn.. not the whole map.
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
+    if (features.length > 0) initializeFeatures(features);
   }, [features]);
 
   // Listen to layer changes

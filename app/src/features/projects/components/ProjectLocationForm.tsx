@@ -266,6 +266,19 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </Button>
         </Box>
 
+        <Box>
+          {/* Create a list element for each feature within values.location.geometry */}
+          {values.location.geometry.map((feature, index) => (
+            <div className="feature-list">
+              <div className="feature-name">
+                {feature.properties?.siteName || `Area ${index + 1}`}
+              </div>
+              <div className="feature-size">{feature.properties?.areaHectares || 'Hectares'}</div>
+              <div className="maskedLocation">{feature.properties?.maskedLocation || 'false'}</div>
+            </div>
+          ))}
+        </Box>
+
         <Box height={500}>
           <MapContainer
             mapId={'project_location_map'}
