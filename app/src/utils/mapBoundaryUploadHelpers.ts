@@ -1,4 +1,5 @@
 import bbox from '@turf/bbox';
+import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
 import { BBox, Feature, FeatureCollection, GeoJSON } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
@@ -24,23 +25,44 @@ export const handleGeoJSONUpload = async <T>(
   });
 
   const cleanFeature = (feature: Feature) => {
-    // This where we can add additional properties to the feature
+    const area = turf.area(feature);
+    const p = feature.properties || {};
+
+    p.siteName = p.siteName || p.Site_Name || '';
+    p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 10000);
+    p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
+
+    feature.properties = p;
     return feature;
   };
 
-  const cleanGeoJSON = (geojson: GeoJSON | FeatureCollection, callback?: any) => {
+  /**
+   * If the object is a single Feature, clean it.
+   * If the object is a FeatureCollection, clean all features.
+   * If the object is not a Feature or FeatureCollection, run the callback
+   * @param geojson
+   * @param callback
+   * @returns Cleaned GeoJSON
+   */
+  const cleanGeoJSON = (geojson: GeoJSON | FeatureCollection) => {
     if (geojson.type === 'Feature') {
+      // TODO: Need to catch non-polygons here.
       return cleanFeature(geojson);
     } else if (geojson.type === 'FeatureCollection') {
-      const cleanFeatures = geojson.features.map(cleanFeature);
+      const cleanFeatures = geojson.features
+        .filter((feature) => {
+          // Remove if not a Polygon or MultiPolygon
+          return feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon';
+        })
+        .map(cleanFeature);
+
       geojson.features = cleanFeatures;
       return geojson;
     } else {
-      if (callback) {
-        callback(
-          'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
-        );
-      }
+      setFieldError(
+        name,
+        'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
+      );
     }
   };
 

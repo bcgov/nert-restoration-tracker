@@ -160,16 +160,76 @@ const convertToGeoJSON = (features: any) => {
   };
 };
 
-const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
-  console.log('features', features);
-  console.log('centroid', centroid);
-};
+let map: maplibre.Map;
+
+// const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
+//   console.log('features', features);
+//   console.log('centroid', centroid);
+// };
 
 const initializeFeatures = (features: any) => {
-  console.log('features', features);
-};
+  const centroid = turf.centroid(features[0]);
+  const bbox = turf.bbox(features[0]);
+  console.log('centroid', centroid);
 
-let map: maplibre.Map;
+  const p1 = turf.point([bbox[0], bbox[1]]);
+  const p2 = turf.point([bbox[2], bbox[3]]);
+  const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
+  const area = turf.area(features[0]) * 100;
+  const innerRadius = Math.sqrt(area / Math.PI);
+  const outerRadius = innerRadius + buffer;
+
+  // Calculate the random centroid within the innerRadius
+  const rr = innerRadius * Math.sqrt(Math.random());
+  const rt = Math.random() * 2 * Math.PI;
+  const rx = rr * Math.cos(rt);
+  const ry = rr * Math.sin(rt);
+  console.log('rx', rx);
+  console.log('ry', ry);
+
+  const innerMask = turf.circle(centroid, innerRadius, {
+    steps: 64,
+    units: 'meters',
+    properties: features[0].properties
+  });
+  const outerMask = turf.circle(centroid, outerRadius, {
+    steps: 64,
+    units: 'meters',
+    properties: features[0].properties
+  });
+
+  // Add the mask to the map
+  map.addSource('mask', {
+    type: 'geojson',
+    data: innerMask
+  });
+  map.addLayer({
+    id: 'mask',
+    type: 'line',
+    source: 'mask',
+    layout: {},
+    paint: {
+      'line-width': 2,
+      'line-color': 'aqua'
+    }
+  });
+
+  // Add the mask to the map
+  map.addSource('outermask', {
+    type: 'geojson',
+    data: outerMask
+  });
+  map.addLayer({
+    id: 'outermask',
+    type: 'line',
+    source: 'outermask',
+    layout: {},
+    paint: {
+      'line-width': 2,
+      'line-color': 'aqua'
+    }
+  });
+};
 
 const initializeMap = (
   mapId: string,
@@ -200,9 +260,6 @@ const initializeMap = (
   console.log('tooltipY', tooltipY);
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
-  console.log('markerGeoJSON', markerGeoJSON);
-  console.log('turf', turf);
-  console.log('area', turf.area(markerGeoJSON.features[0]) / 10000);
 
   map = new Map({
     container: mapId,
@@ -246,6 +303,7 @@ const initializeMap = (
       console.error('Error setting terrain:', err);
     }
 
+    initializeFeatures(features);
     /**
      * Add the custom communities layer
      */
@@ -295,7 +353,7 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
-    drawFeatures(map, features, centroids);
+    // drawFeatures(map, features, centroids);
 
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
@@ -500,6 +558,28 @@ const initializeMap = (
     map.on('mouseleave', 'markerProjects.points', hideTooltip);
     /**************************************************/
 
+    /*******************Fires**************************/
+    map.addSource('forestfire-areas', {
+      type: 'raster',
+      tiles: [
+        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_FOREST_VEGETATION.VEG_BURN_SEVERITY_SP,WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP'
+      ],
+      tileSize: 256,
+      minzoom: 10
+    });
+    map.addLayer({
+      id: 'wms-forestfire-areas',
+      type: 'raster',
+      source: 'forestfire-areas',
+      // layout: {
+      //   visibility: wildlife[0] ? 'visible' : 'none'
+      // },
+      paint: {
+        'raster-opacity': 0.9
+      }
+    });
+    /*******************Fires**************************/
+
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
       type: 'raster',
@@ -688,7 +768,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     // TODO: Maybe change this so only the features get redrawn.. not the whole map.
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
-    if (features.length > 0) initializeFeatures(features);
+    if (map.loaded() && features.length > 0) initializeFeatures(features);
   }, [features]);
 
   // Listen to layer changes
