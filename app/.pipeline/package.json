@@ -29,6 +29,9 @@
     "pipeline-cli": "git+https://github.com/NickPhura/pipeline-cli.git"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
     "prettier": "~2.3.2"
   }
 }
