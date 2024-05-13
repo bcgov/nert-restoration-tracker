@@ -187,6 +187,8 @@ const initializeFeatures = (features: any) => {
   console.log('rx', rx);
   console.log('ry', ry);
 
+  // TODO: Calculate the lat and long of the random point at rx and ry
+
   const innerMask = turf.circle(centroid, innerRadius, {
     steps: 64,
     units: 'meters',
