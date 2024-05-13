@@ -188,6 +188,7 @@ const initializeFeatures = (features: any) => {
   console.log('ry', ry);
 
   // TODO: Calculate the lat and long of the random point at rx and ry
+  // Look into this function https://www.npmjs.com/package/@turf/projection
 
   const innerMask = turf.circle(centroid, innerRadius, {
     steps: 64,
