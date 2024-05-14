@@ -1,5 +1,5 @@
-kind: Template
 apiVersion: template.openshift.io/v1
+kind: Template
 metadata:
   name: restoration-tracker-db-setup-bc
   labels:
@@ -14,16 +14,16 @@ parameters:
     displayName: Name Suffix
     description: A suffix appended to all objects
     required: true
-    value: "-dev"
+    value: '-dev'
   - name: VERSION
     required: true
-    value: "1.0"
+    value: '1.0'
   - name: SOURCE_CONTEXT_DIR
     required: true
     value: database
   - name: DB_SETUP_DOCKERFILE_PATH
     required: true
-    value: './.docker/db/Dockerfile.migrate'
+    value: './.docker/db/Dockerfile.setup'
   - name: SOURCE_REPOSITORY_URL
     required: true
     value: https://github.com/bcgov/nert-restoration-tracker
@@ -32,23 +32,30 @@ parameters:
     value: dev
   - name: BASE_IMAGE_URL
     required: true
-    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:14-ubi8
+    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs-18:1-98.1711398651
   - name: SOURCE_IMAGE_NAME
     required: true
-    value: nodejs
+    value: nodejs-18
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: 14-ubi8
+    value: 1-98.1711398651
+  - name: CPU_REQUEST
+    value: '50m'
+  - name: CPU_LIMIT
+    value: '1000m'
+  - name: MEMORY_REQUEST
+    value: '100Mi'
+  - name: MEMORY_LIMIT
+    value: '1.5Gi'
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
       name: ${SOURCE_IMAGE_NAME}
-      creationTimestamp: null
       annotations:
         description: Nodejs Base Image
       labels:
-        shared: "true"
+        shared: 'true'
     spec:
       lookupPolicy:
         local: false
@@ -64,20 +71,18 @@ objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
-      name: "${NAME}"
-      creationTimestamp:
+      name: '${NAME}'
       annotations:
         description: Nodejs Runtime Image
       labels:
-        shared: "true"
+        shared: 'true'
     spec:
       lookupPolicy:
         local: false
-  - kind: BuildConfig
-    apiVersion: build.openshift.io/v1
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
     metadata:
-      name: "${NAME}${SUFFIX}"
-      creationTimestamp:
+      name: '${NAME}${SUFFIX}'
       labels: {}
       annotations: {}
     spec:
@@ -86,21 +91,21 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: "${NAME}:${VERSION}"
+          name: '${NAME}:${VERSION}'
       postCommit: {}
       resources:
-        limits:
-          cpu: '1'
-          memory: 1.5Gi
         requests:
-          cpu: 100m
-          memory: 512Mi
+          cpu: ${CPU_REQUEST}
+          memory: ${MEMORY_REQUEST}
+        limits:
+          cpu: ${CPU_LIMIT}
+          memory: ${MEMORY_LIMIT}
       runPolicy: SerialLatestOnly
       source:
-        contextDir: "${SOURCE_CONTEXT_DIR}"
+        contextDir: '${SOURCE_CONTEXT_DIR}'
         git:
-          uri: "${SOURCE_REPOSITORY_URL}"
-          ref: "${SOURCE_REPOSITORY_REF}"
+          uri: '${SOURCE_REPOSITORY_URL}'
+          ref: '${SOURCE_REPOSITORY_REF}'
         type: Git
       strategy:
         dockerStrategy:
@@ -113,5 +118,3 @@ objects:
       triggers:
         - type: ConfigChange
         - type: ImageChange
-    status:
-      lastVersion: 7
