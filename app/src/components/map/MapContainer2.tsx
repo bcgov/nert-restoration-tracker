@@ -162,15 +162,14 @@ const convertToGeoJSON = (features: any) => {
 
 let map: maplibre.Map;
 
-// const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
-//   console.log('features', features);
-//   console.log('centroid', centroid);
-// };
-
-const initializeFeatures = (features: any) => {
+/**
+ * initializeMasks
+ * Draw the mask polygons around the features if required.
+ * @param features Array of features
+ */
+const initializeMasks = (features: any) => {
   const centroid = turf.centroid(features[0]);
   const bbox = turf.bbox(features[0]);
-  console.log('centroid', centroid);
 
   const p1 = turf.point([bbox[0], bbox[1]]);
   const p2 = turf.point([bbox[2], bbox[3]]);
@@ -285,7 +284,7 @@ const initializeMap = (
       console.error('Error setting terrain:', err);
     }
 
-    initializeFeatures(features);
+    initializeMasks(features);
     /**
      * Add the custom communities layer
      */
@@ -335,7 +334,6 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
-    // drawFeatures(map, features, centroids);
 
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
@@ -751,7 +749,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     // TODO: Maybe change this so only the features get redrawn.. not the whole map.
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
-    if (map.loaded() && features.length > 0) initializeFeatures(features);
+    if (map.loaded() && features.length > 0) initializeMasks(features);
   }, [features]);
 
   // Listen to layer changes
