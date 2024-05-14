@@ -167,14 +167,14 @@ let map: maplibre.Map;
  * Draw the mask polygons around the features if required.
  * @param features Array of features
  */
-const initializeMasks = (features: any) => {
-  const centroid = turf.centroid(features[0]);
-  const bbox = turf.bbox(features[0]);
+const initializeMasks = (feature: any) => {
+  const centroid = turf.centroid(feature);
+  const bbox = turf.bbox(feature);
 
   const p1 = turf.point([bbox[0], bbox[1]]);
   const p2 = turf.point([bbox[2], bbox[3]]);
   const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
-  const area = turf.area(features[0]) * 100;
+  const area = turf.area(feature) * 100;
   const innerRadius = Math.sqrt(area / Math.PI);
   const outerRadius = innerRadius + buffer;
 
@@ -191,7 +191,7 @@ const initializeMasks = (features: any) => {
   const mask = turf.circle(newCentroid, outerRadius, {
     steps: 64,
     units: 'meters',
-    properties: features[0].properties
+    properties: feature.properties
   });
 
   // refresh9
@@ -284,7 +284,11 @@ const initializeMap = (
       console.error('Error setting terrain:', err);
     }
 
-    initializeMasks(features);
+    features.forEach((feature: any, index: any) => {
+      // TODO: For testing purposes, we are only going to mask the first feature and overide the mask boolean
+      if (!feature.properties.maskedLocation && index === 0) initializeMasks(feature);
+    });
+    // initializeMasks(features);
     /**
      * Add the custom communities layer
      */
@@ -749,7 +753,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     // TODO: Maybe change this so only the features get redrawn.. not the whole map.
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
-    if (map.loaded() && features.length > 0) initializeMasks(features);
+    // if (map.loaded() && features.length > 0) initializeMasks(features);
   }, [features]);
 
   // Listen to layer changes

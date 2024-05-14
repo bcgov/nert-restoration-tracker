@@ -3,6 +3,7 @@ import Icon from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -23,7 +24,6 @@ import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import CustomTextField from 'components/fields/CustomTextField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
-// import MapContainer from 'components/map/MapContainer';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
@@ -273,6 +273,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>
               <div className="feature-size">{feature.properties?.areaHectares || 'Hectares'}</div>
+              <Checkbox checked={feature.properties?.maskedLocation} />
               <div className="maskedLocation">{feature.properties?.maskedLocation || 'false'}</div>
             </div>
           ))}
