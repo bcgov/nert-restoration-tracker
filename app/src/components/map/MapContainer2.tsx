@@ -168,13 +168,14 @@ let map: maplibre.Map;
  * @param features Array of features
  */
 const initializeMasks = (feature: any) => {
+  // TODO: abstract this out to a separate function. If the feature already has a mask object, use that. Otherwise create a new one. Input feature... output centroid and radius
   const centroid = turf.centroid(feature);
   const bbox = turf.bbox(feature);
 
   const p1 = turf.point([bbox[0], bbox[1]]);
   const p2 = turf.point([bbox[2], bbox[3]]);
   const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
-  const area = turf.area(feature) * 100;
+  const area = turf.area(feature) * 100; // TODO: Maybe make this a variable?
   const innerRadius = Math.sqrt(area / Math.PI);
   const outerRadius = innerRadius + buffer;
 
@@ -188,12 +189,16 @@ const initializeMasks = (feature: any) => {
   mercCentroid.geometry.coordinates[1] += ry;
   const newCentroid = turf.toWgs84(mercCentroid);
 
+  // TODO: This should stay I imagine.
   const mask = turf.circle(newCentroid, outerRadius, {
     steps: 64,
     units: 'meters',
     properties: feature.properties
   });
 
+  //TODO: Add the mask feature to the mask layer.
+
+  // TODO: Move this definition to the map init function and only add new features here.
   // refresh9
   map.addSource('mask', {
     type: 'geojson',
@@ -284,11 +289,11 @@ const initializeMap = (
       console.error('Error setting terrain:', err);
     }
 
-    features.forEach((feature: any, index: any) => {
-      // TODO: For testing purposes, we are only going to mask the first feature and overide the mask boolean
-      if (!feature.properties.maskedLocation && index === 0) initializeMasks(feature);
+    // TODO: Create a universal mask layer and have initializeMasks all features there.
+    features.forEach((feature: any) => {
+      if (feature.properties.maskedLocation) initializeMasks(feature);
     });
-    // initializeMasks(features);
+
     /**
      * Add the custom communities layer
      */

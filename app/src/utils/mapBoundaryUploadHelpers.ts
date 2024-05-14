@@ -29,6 +29,7 @@ export const handleGeoJSONUpload = async <T>(
     return;
   }
 
+  // TODO: Add the mask generation step here.
   const cleanFeature = (feature: Feature) => {
     // Exit out if the feature is not a Polygon or MultiPolygon
     if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
@@ -40,6 +41,8 @@ export const handleGeoJSONUpload = async <T>(
     p.siteName = p.siteName || p.Site_Name || '';
     p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 10000);
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
+
+    // TODO: if maskedLocation is true and there is not mask object.... generate a mask for the geometry: p.mask = { centroid: [lat, long], radius: 1000 }
 
     feature.properties = p;
     return feature;
