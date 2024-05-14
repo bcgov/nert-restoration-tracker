@@ -21,6 +21,7 @@
     "format-fix": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@rushstack/eslint-patch": "^1.10.2",
     "debug": "^4.2.0",
     "lodash.isempty": "^4.0.1",
     "lodash.isfunction": "^3.0.9",
