@@ -24,7 +24,16 @@ export const handleGeoJSONUpload = async <T>(
     return jsonString;
   });
 
+  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
+    setFieldError(name, 'You must upload a GeoJSON file, please try again.');
+    return;
+  }
+
   const cleanFeature = (feature: Feature) => {
+    // Exit out if the feature is not a Polygon or MultiPolygon
+    if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+      return;
+    }
     const area = turf.area(feature);
     const p = feature.properties || {};
 
@@ -39,29 +48,23 @@ export const handleGeoJSONUpload = async <T>(
   /**
    * If the object is a single Feature, clean it.
    * If the object is a FeatureCollection, clean all features.
-   * If the object is not a Feature or FeatureCollection, run the callback
+   * If the object is not a Feature or FeatureCollection, display an error.
+   * Always return a clean FeatureCollection.
    * @param geojson
    * @param callback
    * @returns Cleaned GeoJSON
    */
   const cleanGeoJSON = (geojson: GeoJSON) => {
-    console.log('cleanGeoJSON: ', geojson);
     if (geojson.type === 'Feature') {
-      // TODO: Need to catch non-polygons here. and wrap into a FeatureCollection.
-      console.log('Im just a feature', geojson);
       const cleanF = cleanFeature(geojson);
       return { type: 'FeatureCollection', features: [cleanF] };
     } else if (geojson.type === 'FeatureCollection') {
-      console.log('Im a feature collection', geojson);
-      const cleanFeatures = geojson.features
-        .filter((feature) => {
-          // Remove if not a Polygon or MultiPolygon
-          return feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon';
-        })
-        .map(cleanFeature);
-
-      geojson.features = cleanFeatures;
-      return geojson;
+      const cleanFeatures = geojson.features.map(cleanFeature);
+      if (cleanFeatures.length === 0) {
+        return { type: 'FeatureCollection', features: [] };
+      } else {
+        return { type: 'FeatureCollection', features: cleanFeatures };
+      }
     } else {
       setFieldError(
         name,
@@ -71,20 +74,17 @@ export const handleGeoJSONUpload = async <T>(
     }
   };
 
-  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
-    setFieldError(name, 'You must upload a GeoJSON file, please try again.');
-    return;
-  }
-
   try {
     const geojson = JSON.parse(fileAsString);
 
     const geojsonWithAttributes = cleanGeoJSON(geojson);
     console.log('geojsonWithAttributes: ', geojsonWithAttributes);
-    // if (geojsonWithAttributes?.features) {
-    //   setFieldValue(name, [...geojsonWithAttributes.features, ...get(values, name)]);
-    // }
-    // setFieldValue(name, [...geojsonWithAttributes?.features || geojsonWithAttributes, ...get(values, name)]);
+    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
+
+    if (geojsonWithAttributes?.features.length <= 0) {
+      setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
+      return;
+    }
     setFieldValue(name, [...geojsonWithAttributes.features, ...get(values, name)]);
   } catch (error) {
     setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
