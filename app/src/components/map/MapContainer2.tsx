@@ -179,17 +179,6 @@ const initializeFeatures = (features: any) => {
   const innerRadius = Math.sqrt(area / Math.PI);
   const outerRadius = innerRadius + buffer;
 
-  const innerMask = turf.circle(centroid, innerRadius, {
-    steps: 64,
-    units: 'meters',
-    properties: features[0].properties
-  });
-  const outerMask = turf.circle(centroid, outerRadius, {
-    steps: 64,
-    units: 'meters',
-    properties: features[0].properties
-  });
-
   // Calculate the random centroid within the innerRadius
   const rr = innerRadius * Math.sqrt(Math.random());
   const rt = Math.random() * 2 * Math.PI;
@@ -206,7 +195,7 @@ const initializeFeatures = (features: any) => {
     properties: features[0].properties
   });
 
-  // refresh5
+  // refresh9
   map.addSource('mask', {
     type: 'geojson',
     data: mask
@@ -215,44 +204,11 @@ const initializeFeatures = (features: any) => {
     id: 'mask',
     type: 'line',
     source: 'mask',
-    layout: {},
     paint: {
       'line-width': 4,
       'line-color': 'aqua',
       'line-dasharray': [3, 2],
       'line-blur': 2
-    }
-  });
-
-  // Add the mask to the map
-  map.addSource('mask_old', {
-    type: 'geojson',
-    data: innerMask
-  });
-  map.addLayer({
-    id: 'mask_old',
-    type: 'line',
-    source: 'mask_old',
-    layout: {},
-    paint: {
-      'line-width': 2,
-      'line-color': 'aqua'
-    }
-  });
-
-  // Add the mask to the map
-  map.addSource('outermask', {
-    type: 'geojson',
-    data: outerMask
-  });
-  map.addLayer({
-    id: 'outermask',
-    type: 'line',
-    source: 'outermask',
-    layout: {},
-    paint: {
-      'line-width': 2,
-      'line-color': 'aqua'
     }
   });
 };
