@@ -26,7 +26,7 @@ parameters:
     value: './.docker/db/Dockerfile.migrate'
   - name: SOURCE_REPOSITORY_URL
     required: true
-    value: https://github.com/bcgov/restoration-tracker
+    value: https://github.com/bcgov/nert-restoration-tracker
   - name: SOURCE_REPOSITORY_REF
     required: false
     value: dev
