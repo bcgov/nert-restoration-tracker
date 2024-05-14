@@ -23,7 +23,7 @@ parameters:
     value: database
   - name: DB_SETUP_DOCKERFILE_PATH
     required: true
-    value: './.docker/db/Dockerfile.setup'
+    value: './.docker/db/Dockerfile.migrate'
   - name: SOURCE_REPOSITORY_URL
     required: true
     value: https://github.com/bcgov/nert-restoration-tracker
@@ -35,23 +35,16 @@ parameters:
     value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:14-ubi8
   - name: SOURCE_IMAGE_NAME
     required: true
-    value: nodejs-18
+    value: nodejs
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: 1-98.1711398651
-  - name: CPU_REQUEST
-    value: '50m'
-  - name: CPU_LIMIT
-    value: '1000m'
-  - name: MEMORY_REQUEST
-    value: '100Mi'
-  - name: MEMORY_LIMIT
-    value: '1.5Gi'
+    value: 14-ubi8
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
       name: ${SOURCE_IMAGE_NAME}
+      creationTimestamp: null
       annotations:
         description: Nodejs Base Image
       labels:
@@ -72,6 +65,7 @@ objects:
     apiVersion: image.openshift.io/v1
     metadata:
       name: '${NAME}'
+      creationTimestamp:
       annotations:
         description: Nodejs Runtime Image
       labels:
@@ -79,10 +73,11 @@ objects:
     spec:
       lookupPolicy:
         local: false
-  - apiVersion: build.openshift.io/v1
-    kind: BuildConfig
+  - kind: BuildConfig
+    apiVersion: build.openshift.io/v1
     metadata:
       name: '${NAME}${SUFFIX}'
+      creationTimestamp:
       labels: {}
       annotations: {}
     spec:
@@ -94,12 +89,12 @@ objects:
           name: '${NAME}:${VERSION}'
       postCommit: {}
       resources:
-        requests:
-          cpu: ${CPU_REQUEST}
-          memory: ${MEMORY_REQUEST}
         limits:
-          cpu: ${CPU_LIMIT}
-          memory: ${MEMORY_LIMIT}
+          cpu: '1'
+          memory: 1.5Gi
+        requests:
+          cpu: 100m
+          memory: 512Mi
       runPolicy: SerialLatestOnly
       source:
         contextDir: '${SOURCE_CONTEXT_DIR}'
@@ -118,3 +113,5 @@ objects:
       triggers:
         - type: ConfigChange
         - type: ImageChange
+    status:
+      lastVersion: 7
