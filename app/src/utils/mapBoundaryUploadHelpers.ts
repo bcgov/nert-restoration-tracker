@@ -1,7 +1,7 @@
 import bbox from '@turf/bbox';
 import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
-import { BBox, Feature, FeatureCollection, GeoJSON } from 'geojson';
+import { BBox, Feature, GeoJSON } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
@@ -44,11 +44,15 @@ export const handleGeoJSONUpload = async <T>(
    * @param callback
    * @returns Cleaned GeoJSON
    */
-  const cleanGeoJSON = (geojson: GeoJSON | FeatureCollection) => {
+  const cleanGeoJSON = (geojson: GeoJSON) => {
+    console.log('cleanGeoJSON: ', geojson);
     if (geojson.type === 'Feature') {
-      // TODO: Need to catch non-polygons here.
-      return cleanFeature(geojson);
+      // TODO: Need to catch non-polygons here. and wrap into a FeatureCollection.
+      console.log('Im just a feature', geojson);
+      const cleanF = cleanFeature(geojson);
+      return { type: 'FeatureCollection', features: [cleanF] };
     } else if (geojson.type === 'FeatureCollection') {
+      console.log('Im a feature collection', geojson);
       const cleanFeatures = geojson.features
         .filter((feature) => {
           // Remove if not a Polygon or MultiPolygon
@@ -63,10 +67,11 @@ export const handleGeoJSONUpload = async <T>(
         name,
         'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
       );
+      return { type: 'FeatureCollection', features: [] };
     }
   };
 
-  if (!file?.name.includes('json') && !fileAsString?.includes('FeatureCollection')) {
+  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
     setFieldError(name, 'You must upload a GeoJSON file, please try again.');
     return;
   }
@@ -74,16 +79,13 @@ export const handleGeoJSONUpload = async <T>(
   try {
     const geojson = JSON.parse(fileAsString);
 
-    if (geojson?.features) {
-      const geojsonWithAttributes = cleanGeoJSON(geojson);
-      console.log('geojsonWithAttributes: ', geojsonWithAttributes);
-      setFieldValue(name, [...geojson.features, ...get(values, name)]);
-    } else {
-      setFieldError(
-        name,
-        'Error uploading your GeoJSON file, please check the file and try again.'
-      );
-    }
+    const geojsonWithAttributes = cleanGeoJSON(geojson);
+    console.log('geojsonWithAttributes: ', geojsonWithAttributes);
+    // if (geojsonWithAttributes?.features) {
+    //   setFieldValue(name, [...geojsonWithAttributes.features, ...get(values, name)]);
+    // }
+    // setFieldValue(name, [...geojsonWithAttributes?.features || geojsonWithAttributes, ...get(values, name)]);
+    setFieldValue(name, [...geojsonWithAttributes.features, ...get(values, name)]);
   } catch (error) {
     setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
   }
