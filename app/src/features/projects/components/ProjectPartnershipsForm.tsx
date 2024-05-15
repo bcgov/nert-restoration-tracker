@@ -25,7 +25,7 @@ export const ProjectPartnershipsFormInitialValues: IProjectPartnershipsForm = {
 
 export const ProjectPartnershipsFormYupSchema = yup.object().shape({
   partnership: yup.object().shape({
-    partnerships: yup.array().nullable()
+    //partnerships: yup.array().nullable()
   })
 });
 
@@ -57,7 +57,7 @@ const ProjectPartnershipsForm: React.FC = () => {
           type="button"
           variant="outlined"
           color="primary"
-          aria-label="add authorization"
+          aria-label="add partnership"
           startIcon={<Icon path={mdiPlus} size={1}></Icon>}
           // onClick={() => arrayHelpers.push(ProjectPartnershipsFormInitialValues)}
         >
