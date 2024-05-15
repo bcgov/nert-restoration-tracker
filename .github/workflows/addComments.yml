@@ -19,6 +19,6 @@ jobs:
           issue-number: ${{ github.event.number }}
           body: |
             Openshift URLs for the PR Deployment:
-            - App Route: https://nert-restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca/
-            - Api Route: https://nert-restoration-tracker-api-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca/
+            - App Route: https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca/
+            - Api Route: https://restoration-tracker-api-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca/
             - Pods: https://console.apps.silver.devops.gov.bc.ca/k8s/ns/d83219-dev/pods?name=${{ github.event.number }}

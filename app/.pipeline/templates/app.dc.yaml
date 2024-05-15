@@ -47,6 +47,9 @@ parameters:
   - name: REACT_APP_KEYCLOAK_CLIENT_ID
     description: Client Id for application
     required: true
+  - name: REACT_APP_MAPTILER_API_KEY
+    description: Maptiler API key
+    required: true
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT

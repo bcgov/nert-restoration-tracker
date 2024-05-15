@@ -23,9 +23,11 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
-const nert_version = process.env.NERT_VERSION || '0.0.0.0';
+const nert_version = process.env.REACT_APP_NERT_VERSION || '0.0.0.0';
 const nert_environment =
-  process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
+  process.env.REACT_APP_NODE_ENV === 'development'
+    ? 'local'
+    : process.env.REACT_APP_NODE_ENV || 'undefined';
 
 const pageStyles = {
   govHeaderToolbar: {
