@@ -296,7 +296,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>
-              <div className="feature-size">{feature.properties?.areaHectares || 'Hectares'}</div>
+              <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
               <Checkbox
                 key={index}
                 checked={feature.properties?.maskedLocation}
