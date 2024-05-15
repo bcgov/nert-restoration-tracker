@@ -219,6 +219,12 @@ const initializeMasks = (feature: any) => {
   });
 };
 
+const updateMasks = (mask: number, maskState: boolean[]) => {
+  if (!map) return;
+  console.log('maskState', maskState);
+  console.log('mask', mask);
+};
+
 const initializeMap = (
   mapId: string,
   center: any = [-124, 57],
@@ -759,7 +765,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setTooltipY
   };
 
-  // Update the map if the markers change
+  // Update the map if the features change
   useEffect(() => {
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
   }, [features]);
@@ -773,10 +779,9 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     }
   }, [layerVisibility]);
 
+  // Listen for masks being turned on and off
   useEffect(() => {
-    // if (mask === null) return;
-    console.log('mask', mask);
-    console.log('mask changed', maskState[mask]);
+    updateMasks(mask, maskState);
   }, [maskState]);
 
   return (

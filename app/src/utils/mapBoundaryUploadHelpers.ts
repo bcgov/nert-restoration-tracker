@@ -39,7 +39,7 @@ export const handleGeoJSONUpload = async <T>(
     const p = feature.properties || {};
 
     p.siteName = p.siteName || p.Site_Name || '';
-    p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 10000);
+    p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 100) / 100;
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
     // TODO: if maskedLocation is true and there is not mask object.... generate a mask for the geometry: p.mask = { centroid: [lat, long], radius: 1000 }
