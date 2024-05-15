@@ -33,6 +33,7 @@ const pageStyles = {
     marginTop: '0.5rem'
   }
 };
+
 export interface IAttachmentsListProps {
   projectId: number;
   attachmentsList: IGetProjectAttachment[];
