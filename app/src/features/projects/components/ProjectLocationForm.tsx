@@ -82,6 +82,14 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
+  // Mask state array
+  const [maskState, setMaskState] = useState<boolean[]>(
+    values.location.geometry.map((feature) => feature.properties?.maskedLocation)
+  );
+
+  // Mask change indicator
+  const [mask, setMask] = useState<null | number>(null);
+
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
       if (file?.name.includes('json')) {
@@ -113,12 +121,20 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     baselayer
   };
 
-  // TODO: Keep track of mask state somehow and use it to
-  // TODO:   1 Update the mask data in the formik state
-  // TODO:   2 Update the mask data in the map
-  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: any) => {
-    console.log('maskChanged', event, index);
-    console.log('index', index);
+  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    // Update the formik values
+    // @ts-ignore
+    values.location.geometry[index].properties.maskedLocation = event.target.checked;
+
+    // Update the local state
+    setMaskState(() => {
+      const newState = [...maskState];
+      newState[index] = event.target.checked;
+      return newState;
+    });
+
+    // Make sure children know what has changed
+    setMask(index);
   };
 
   return (
@@ -276,16 +292,16 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box>
           {/* Create a list element for each feature within values.location.geometry */}
           {values.location.geometry.map((feature, index) => (
-            <div className="feature-list" key={index}>
+            <div className="feature-list">
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>
               <div className="feature-size">{feature.properties?.areaHectares || 'Hectares'}</div>
               <Checkbox
+                key={index}
                 checked={feature.properties?.maskedLocation}
-                onClick={(event) => maskChanged(event, key)}
+                onChange={(event) => maskChanged(event, index)}
               />
-              <div className="maskedLocation">{feature.properties?.maskedLocation || 'false'}</div>
             </div>
           ))}
         </Box>
@@ -295,6 +311,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             mapId={'project_location_map'}
             layerVisibility={layerVisibility}
             features={values.location.geometry}
+            mask={mask}
+            maskState={maskState}
           />
         </Box>
         {errors?.location?.geometry && (

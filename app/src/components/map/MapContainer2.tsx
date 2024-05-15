@@ -21,6 +21,8 @@ export interface IMapContainerProps {
   features?: any;
   layerVisibility?: any;
   centroids?: boolean;
+  mask?: null | number; // Store what mask just changed
+  maskState?: boolean[]; // Store which features are masked
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -736,6 +738,9 @@ const checkLayerVisibility = (layers: any, features: any) => {
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const { mapId, center, zoom, features, centroids, layerVisibility } = props;
 
+  const maskState = props.maskState || [];
+  const mask = props.mask || 0;
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -756,9 +761,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Update the map if the markers change
   useEffect(() => {
-    // TODO: Maybe change this so only the features get redrawn.. not the whole map.
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
-    // if (map.loaded() && features.length > 0) initializeMasks(features);
   }, [features]);
 
   // Listen to layer changes
@@ -769,6 +772,12 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
     }
   }, [layerVisibility]);
+
+  useEffect(() => {
+    // if (mask === null) return;
+    console.log('mask', mask);
+    console.log('mask changed', maskState[mask]);
+  }, [maskState]);
 
   return (
     <div id={mapId} style={pageStyle}>
