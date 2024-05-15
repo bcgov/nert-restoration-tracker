@@ -6,7 +6,7 @@
   "main": "app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bcgov/restoration-tracker.git"
+    "url": "https://github.com/bcgov/nert-restoration-tracker.git"
   },
   "scripts": {
     "start": "NODE_OPTIONS='--max-old-space-size=2000' ts-node src/app",

@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bcgov/restoration-tracker.git"
+    "url": "https://github.com/bcgov/nert-restoration-tracker.git"
   },
   "engines": {
     "node": ">= 20.0.0",

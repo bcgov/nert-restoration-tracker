@@ -47,6 +47,9 @@ parameters:
   - name: REACT_APP_KEYCLOAK_CLIENT_ID
     description: Client Id for application
     required: true
+  - name: REACT_APP_MAPTILER_SECRET
+    description: Secrets used to read and write to the Maptiler API
+    value: 'restoration-tracker-maptiler-cred'
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
@@ -134,6 +137,11 @@ objects:
                   value: ${REACT_APP_KEYCLOAK_REALM}
                 - name: REACT_APP_KEYCLOAK_CLIENT_ID
                   value: ${REACT_APP_KEYCLOAK_CLIENT_ID}
+                - name: REACT_APP_MAPTILER_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: key_value
+                      name: ${REACT_APP_MAPTILER_SECRET}
               image: ' '
               imagePullPolicy: Always
               name: app
@@ -236,7 +244,7 @@ objects:
     status:
       ingress: null
   - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v2beta2
+    apiVersion: autoscaling/v2
     metadata:
       annotations: {}
       creationTimestamp: null
