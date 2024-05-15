@@ -10,26 +10,24 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+// import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { RoleGuard } from 'components/security/Guards';
-import { DeleteProjectI18N } from 'constants/i18n';
+// import { DeleteProjectI18N } from 'constants/i18n';
 import { attachmentType } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import { DialogContext } from 'contexts/dialogContext';
+// import { DialogContext } from 'contexts/dialogContext';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
-import { APIError } from 'hooks/api/useAxios';
+// import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
-  IGetProjectForViewResponse,
-  IGetProjectTreatment,
-  TreatmentSearchCriteria
+  IGetProjectForViewResponse
 } from 'interfaces/useProjectPlanApi.interface';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import TreatmentList from './components/TreatmentList';
-import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
+// import TreatmentList from './components/TreatmentList';
+// import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
 import ProjectAttachments from './ProjectAttachments';
 import ProjectDetailsPage from './ProjectDetailsPage';
 
@@ -69,7 +67,7 @@ const ViewProjectPage: React.FC = () => {
 
   const projectId = Number(urlParams['id']);
 
-  const dialogContext = useContext(DialogContext);
+  // const dialogContext = useContext(DialogContext);
 
   const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
@@ -80,7 +78,7 @@ const ViewProjectPage: React.FC = () => {
     null
   );
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
-  const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
+  // const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
 
   const codes = useCodes();
 
@@ -117,102 +115,102 @@ const ViewProjectPage: React.FC = () => {
     [restorationTrackerApi.project, projectId, attachmentsList.length]
   );
 
-  const getTreatments = useCallback(
-    async (forceFetch: boolean, selectedYears?: TreatmentSearchCriteria) => {
-      if (treatmentList.length && !forceFetch) return;
+  // const getTreatments = useCallback(
+  //   async (forceFetch: boolean, selectedYears?: TreatmentSearchCriteria) => {
+  //     if (treatmentList.length && !forceFetch) return;
 
-      try {
-        const response = await restorationTrackerApi.project.getProjectTreatments(
-          projectId,
-          selectedYears
-        );
+  //     try {
+  //       const response = await restorationTrackerApi.project.getProjectTreatments(
+  //         projectId,
+  //         selectedYears
+  //       );
 
-        if (!response?.treatmentList) return;
+  //       if (!response?.treatmentList) return;
 
-        setTreatmentList([...response.treatmentList]);
-      } catch (error) {
-        return error;
-      }
-    },
-    [restorationTrackerApi.project, projectId, treatmentList.length]
-  );
+  //       setTreatmentList([...response.treatmentList]);
+  //     } catch (error) {
+  //       return error;
+  //     }
+  //   },
+  //   [restorationTrackerApi.project, projectId, treatmentList.length]
+  // );
 
   useEffect(() => {
     if (!isLoadingProject && !projectWithDetails) {
       getProject();
       getAttachments(false);
-      getTreatments(false);
+      // getTreatments(false);
       setIsLoadingProject(true);
     }
-  }, [isLoadingProject, projectWithDetails, getProject, getAttachments, getTreatments]);
+  }, [isLoadingProject, projectWithDetails, getProject, getAttachments]);
   if (!codes.isReady || !codes.codes || !projectWithDetails) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
-  const defaultYesNoDialogProps = {
-    dialogTitle: DeleteProjectI18N.deleteTitle,
-    dialogText: DeleteProjectI18N.deleteText,
+  // const defaultYesNoDialogProps = {
+  //   dialogTitle: DeleteProjectI18N.deleteTitle,
+  //   dialogText: DeleteProjectI18N.deleteText,
 
-    open: false,
-    onClose: () => dialogContext.setYesNoDialog({ open: false }),
-    onNo: () => dialogContext.setYesNoDialog({ open: false }),
-    onYes: () => dialogContext.setYesNoDialog({ open: false })
-  };
+  //   open: false,
+  //   onClose: () => dialogContext.setYesNoDialog({ open: false }),
+  //   onNo: () => dialogContext.setYesNoDialog({ open: false }),
+  //   onYes: () => dialogContext.setYesNoDialog({ open: false })
+  // };
 
   const isPriority = projectWithDetails.location.priority === 'true';
 
-  const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-    dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
-  };
+  // const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
+  //   dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
+  // };
 
-  const deleteErrorDialogProps = {
-    dialogTitle: DeleteProjectI18N.deleteErrorTitle,
-    dialogText: DeleteProjectI18N.deleteErrorText,
-    open: false,
-    onClose: () => {
-      dialogContext.setErrorDialog({ open: false });
-    },
-    onOk: () => {
-      dialogContext.setErrorDialog({ open: false });
-    }
-  };
+  // const deleteErrorDialogProps = {
+  //   dialogTitle: DeleteProjectI18N.deleteErrorTitle,
+  //   dialogText: DeleteProjectI18N.deleteErrorText,
+  //   open: false,
+  //   onClose: () => {
+  //     dialogContext.setErrorDialog({ open: false });
+  //   },
+  //   onOk: () => {
+  //     dialogContext.setErrorDialog({ open: false });
+  //   }
+  // };
 
-  const showDeleteProjectDialog = () => {
-    dialogContext.setYesNoDialog({
-      ...defaultYesNoDialogProps,
-      open: true,
-      yesButtonLabel: 'Delete',
-      yesButtonProps: { color: 'secondary' },
-      noButtonLabel: 'Cancel',
-      onYes: () => {
-        deleteProject();
-        dialogContext.setYesNoDialog({ open: false });
-      }
-    });
-  };
+  // const showDeleteProjectDialog = () => {
+  //   dialogContext.setYesNoDialog({
+  //     ...defaultYesNoDialogProps,
+  //     open: true,
+  //     yesButtonLabel: 'Delete',
+  //     yesButtonProps: { color: 'secondary' },
+  //     noButtonLabel: 'Cancel',
+  //     onYes: () => {
+  //       deleteProject();
+  //       dialogContext.setYesNoDialog({ open: false });
+  //     }
+  //   });
+  // };
 
-  const deleteProject = async () => {
-    if (!projectWithDetails) {
-      return;
-    }
+  // const deleteProject = async () => {
+  //   if (!projectWithDetails) {
+  //     return;
+  //   }
 
-    try {
-      const response = await restorationTrackerApi.project.deleteProject(
-        projectWithDetails.project.project_id
-      );
+  //   try {
+  //     const response = await restorationTrackerApi.project.deleteProject(
+  //       projectWithDetails.project.project_id
+  //     );
 
-      if (!response) {
-        showDeleteErrorDialog({ open: true });
-        return;
-      }
+  //     if (!response) {
+  //       showDeleteErrorDialog({ open: true });
+  //       return;
+  //     }
 
-      history('/admin/user/projects');
-    } catch (error) {
-      const apiError = error as APIError;
-      showDeleteErrorDialog({ dialogText: apiError.message, open: true });
-      return error;
-    }
-  };
+  //     history('/admin/user/projects');
+  //   } catch (error) {
+  //     const apiError = error as APIError;
+  //     showDeleteErrorDialog({ dialogText: apiError.message, open: true });
+  //     return error;
+  //   }
+  // };
 
   // Full Screen Map Dialog
   const openMapDialog = () => {
@@ -262,7 +260,8 @@ const ViewProjectPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
+                // onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}
+              >
                 Edit Project
               </Button>
               <RoleGuard
@@ -272,8 +271,9 @@ const ViewProjectPage: React.FC = () => {
                   aria-label="delete project"
                   variant="outlined"
                   color="primary"
-                  onClick={showDeleteProjectDialog}>
-                  Delete
+                  // onClick={showDeleteProjectDialog}
+                >
+                  Print
                 </Button>
               </RoleGuard>
             </Box>
@@ -300,10 +300,10 @@ const ViewProjectPage: React.FC = () => {
               <Box mb={3}>
                 <Paper elevation={2}>
                   <Box px={3}>
-                    <TreatmentSpatialUnits
+                    {/* <TreatmentSpatialUnits
                       getTreatments={getTreatments}
                       getAttachments={getAttachments}
-                    />
+                    /> */}
                   </Box>
                   <Box height="500px" position="relative">
                     <LocationBoundary locationData={projectWithDetails.location} />
@@ -318,7 +318,7 @@ const ViewProjectPage: React.FC = () => {
                       </IconButton>
                     </Box>
                   </Box>
-                  <TreatmentList treatmentList={treatmentList} />
+                  {/* <TreatmentList treatmentList={treatmentList} /> */}
                 </Paper>
               </Box>
               {/* Documents */}
@@ -345,17 +345,17 @@ const ViewProjectPage: React.FC = () => {
               <Icon path={mdiArrowLeft} size={1} />
             </IconButton>
           </Box>
-          <Box flex="1 1 auto">
+          {/* <Box flex="1 1 auto">
             <TreatmentSpatialUnits getTreatments={getTreatments} getAttachments={getAttachments} />
-          </Box>
+          </Box> */}
         </Box>
         <Box display="flex" height="100%" flexDirection="column">
           <Box flex="1 1 auto">
             <LocationBoundary locationData={projectWithDetails.location} scrollWheelZoom={true} />
           </Box>
-          <Box flex="0 0 auto" height="300px">
+          {/* <Box flex="0 0 auto" height="300px">
             <TreatmentList treatmentList={treatmentList} />
-          </Box>
+          </Box> */}
         </Box>
       </Dialog>
     </>
