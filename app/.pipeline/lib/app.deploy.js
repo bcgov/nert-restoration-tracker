@@ -33,7 +33,6 @@ const appDeploy = async (settings) => {
         REACT_APP_KEYCLOAK_HOST: phases[phase].sso.url,
         REACT_APP_KEYCLOAK_REALM: phases[phase].sso.realm,
         REACT_APP_KEYCLOAK_CLIENT_ID: phases[phase].sso.clientId,
-        REACT_APP_MAPTILER_API_KEY: phases[phase].sso.maptilerApiKey,
         CPU_REQUEST: phases[phase].cpuRequest,
         CPU_LIMIT: phases[phase].cpuLimit,
         MEMORY_REQUEST: phases[phase].memoryRequest,

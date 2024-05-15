@@ -42,9 +42,7 @@
       "adminUserName": "nert-5355",
       "apiHost": "https://api.loginproxy.gov.bc.ca/api/v1",
       "keycloakSecret": "keycloak-dev-service",
-      "keycloakSecretAdminPassword": "key_value",
-      "maptilerSecret": "restoration-tracker-maptiler-cred",
-      "maptilerApiKey": "key_value"
+      "keycloakSecretAdminPassword": "key_value"
     },
     "test": {
       "url": "https://test.loginproxy.gov.bc.ca/auth",
@@ -55,9 +53,7 @@
       "adminUserName": "nert-5355",
       "apiHost": "https://api.loginproxy.gov.bc.ca/api/v1",
       "keycloakSecret": "keycloak-test-service",
-      "keycloakSecretAdminPassword": "key_value",
-      "maptilerSecret": "restoration-tracker-maptiler-cred",
-      "maptilerApiKey": "key_value"
+      "keycloakSecretAdminPassword": "key_value"
     },
     "prod": {
       "url": "https://loginproxy.gov.bc.ca/auth",
@@ -68,9 +64,7 @@
       "adminUserName": "nert-5355",
       "apiHost": "https://api.loginproxy.gov.bc.ca/api/v1",
       "keycloakSecret": "keycloak-prod-service",
-      "keycloakSecretAdminPassword": "key_value",
-      "maptilerSecret": "restoration-tracker-maptiler-cred",
-      "maptilerApiKey": "key_value"
+      "keycloakSecretAdminPassword": "key_value"
     }
   }
 }
