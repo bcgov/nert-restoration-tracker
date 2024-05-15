@@ -113,6 +113,14 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     baselayer
   };
 
+  // TODO: Keep track of mask state somehow and use it to
+  // TODO:   1 Update the mask data in the formik state
+  // TODO:   2 Update the mask data in the map
+  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: any) => {
+    console.log('maskChanged', event, index);
+    console.log('index', index);
+  };
+
   return (
     <>
       <Box mb={5} mt={0}>
@@ -268,12 +276,15 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box>
           {/* Create a list element for each feature within values.location.geometry */}
           {values.location.geometry.map((feature, index) => (
-            <div className="feature-list">
+            <div className="feature-list" key={index}>
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>
               <div className="feature-size">{feature.properties?.areaHectares || 'Hectares'}</div>
-              <Checkbox checked={feature.properties?.maskedLocation} />
+              <Checkbox
+                checked={feature.properties?.maskedLocation}
+                onClick={(event) => maskChanged(event, key)}
+              />
               <div className="maskedLocation">{feature.properties?.maskedLocation || 'false'}</div>
             </div>
           ))}
