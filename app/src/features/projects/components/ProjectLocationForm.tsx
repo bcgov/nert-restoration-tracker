@@ -292,13 +292,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box>
           {/* Create a list element for each feature within values.location.geometry */}
           {values.location.geometry.map((feature, index) => (
-            <div className="feature-list">
+            <div className="feature-list" key={index}>
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>
               <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
               <Checkbox
-                key={index}
                 checked={feature.properties?.maskedLocation}
                 onChange={(event) => maskChanged(event, index)}
               />
