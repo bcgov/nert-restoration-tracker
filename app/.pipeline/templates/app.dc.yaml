@@ -50,9 +50,6 @@ parameters:
   - name: REACT_APP_MAPTILER_SECRET
     description: Secrets used to read and write to the Maptiler API
     value: 'restoration-tracker-maptiler-cred'
-  - name: REACT_APP_MAPTILER_API_KEY
-    description: API key for Maptiler
-    required: true
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
