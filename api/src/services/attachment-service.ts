@@ -6,6 +6,16 @@ import { deleteFileFromS3, getS3SignedURL, S3FileType, uploadFileToS3 } from '..
 import { DBService } from './service';
 
 export class AttachmentService extends DBService {
+  /**
+   * Insert project attachment
+   *
+   * @param {number} projectId
+   * @param {string} s3Key
+   * @param {Express.Multer.File} file
+   * @param {S3FileType} attachmentType
+   * @return {*}  {Promise<{ id: number; revision_count: number }>}
+   * @memberof AttachmentService
+   */
   async insertProjectAttachment(
     projectId: number,
     s3Key: string,
