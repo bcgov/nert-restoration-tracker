@@ -29,13 +29,13 @@ parameters:
     value: dev
   - name: BASE_IMAGE_URL
     required: true
-    value: image-registry.openshift-image-registry.svc:5000/d83219-tools/nodejs-20-minimal
+    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs-20-minimal:1-41.1712567743
   - name: SOURCE_IMAGE_NAME
     required: true
     value: nodejs
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: nodejs-20-minimal:1-41.1712567743
+    value: 1-41.1712567743
   - name: CPU_REQUEST
     value: '100m'
   - name: CPU_LIMIT
