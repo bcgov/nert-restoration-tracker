@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf';
-import { FeatureCollection } from 'geojson';
+import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect, useState } from 'react';
@@ -168,16 +168,19 @@ let map: maplibre.Map;
  * initializeMasks
  * Draw the mask polygons around the features if required.
  * @param features Array of features
+ * @return Array containing the mask centroid and radius
  */
-const initializeMasks = (feature: any) => {
-  // TODO: abstract this out to a separate function. If the feature already has a mask object, use that. Otherwise create a new one. Input feature... output centroid and radius
-  const centroid = turf.centroid(feature);
+type radiusType = number;
+type maskParams = [any, radiusType];
+
+const initializeMasks = (feature: Feature) => {
+  const centroid = turf.centroid(feature as any);
   const bbox = turf.bbox(feature);
 
   const p1 = turf.point([bbox[0], bbox[1]]);
   const p2 = turf.point([bbox[2], bbox[3]]);
   const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
-  const area = turf.area(feature) * 100; // TODO: Maybe make this a variable?
+  const area = turf.area(feature) * 100;
   const innerRadius = Math.sqrt(area / Math.PI);
   const outerRadius = innerRadius + buffer;
 
@@ -191,38 +194,47 @@ const initializeMasks = (feature: any) => {
   mercCentroid.geometry.coordinates[1] += ry;
   const newCentroid = turf.toWgs84(mercCentroid);
 
-  // TODO: This should stay I imagine.
-  const mask = turf.circle(newCentroid, outerRadius, {
+  return [newCentroid.geometry.coordinates, outerRadius];
+};
+
+const createMask = (params: maskParams, feature: Feature) => {
+  const properties = feature.properties || {};
+  properties.mask = { centroid: params[0], radius: params[1] };
+  const centroid = turf.point(params[0]);
+
+  return turf.circle(centroid, params[1], {
     steps: 64,
     units: 'meters',
-    properties: feature.properties
-  });
-
-  //TODO: Add the mask feature to the mask layer.
-
-  // TODO: Move this definition to the map init function and only add new features here.
-  // refresh9
-  map.addSource('mask', {
-    type: 'geojson',
-    data: mask
-  });
-  map.addLayer({
-    id: 'mask',
-    type: 'line',
-    source: 'mask',
-    paint: {
-      'line-width': 4,
-      'line-color': 'aqua',
-      'line-dasharray': [3, 2],
-      'line-blur': 2
-    }
+    properties: properties
   });
 };
 
-const updateMasks = (mask: number, maskState: boolean[]) => {
-  if (!map) return;
-  console.log('maskState', maskState);
-  console.log('mask', mask);
+/**
+ * If the mask is turned off, remove the mask object
+ * If the mask is turned on... pass through the mask object
+ * If the mask is turned on... but has no mask object... build the mask object
+ */
+const updateMasks = (mask: number, maskState: boolean[], features: any) => {
+  if (!map.getSource('mask')) return;
+  const maskGeojson: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: features
+      .filter((feature: any) => feature.properties.maskedLocation)
+      .map((feature: any, index: any) => {
+        console.log('I think this one needs to be updated', mask);
+        let specs;
+        if (index === mask) {
+          console.log('update the mask', index);
+          specs = initializeMasks(feature);
+        } else {
+          specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
+        }
+        const maskPolygon = createMask(specs, feature);
+        return maskPolygon;
+      })
+  };
+  // @ts-ignore
+  map.getSource('mask').setData(maskGeojson);
 };
 
 const initializeMap = (
@@ -297,9 +309,36 @@ const initializeMap = (
       console.error('Error setting terrain:', err);
     }
 
-    // TODO: Create a universal mask layer and have initializeMasks all features there.
-    features.forEach((feature: any) => {
-      if (feature.properties.maskedLocation) initializeMasks(feature);
+    /**
+     * Draw the masked polygons
+     */
+    const maskGeojson: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: []
+    };
+
+    features
+      .filter((feature: any) => feature.properties.maskedLocation)
+      .forEach((feature: any) => {
+        const specs: any = initializeMasks(feature);
+        const maskPolygon = createMask(specs, feature);
+        maskGeojson.features.push(maskPolygon);
+      });
+
+    map.addSource('mask', {
+      type: 'geojson',
+      data: maskGeojson
+    });
+    map.addLayer({
+      id: 'mask',
+      type: 'line',
+      source: 'mask',
+      paint: {
+        'line-width': 4,
+        'line-color': 'aqua',
+        'line-dasharray': [3, 2],
+        'line-blur': 2
+      }
     });
 
     /**
@@ -781,7 +820,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Listen for masks being turned on and off
   useEffect(() => {
-    updateMasks(mask, maskState);
+    updateMasks(mask, maskState, features);
   }, [maskState]);
 
   return (

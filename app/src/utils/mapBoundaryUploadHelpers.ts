@@ -36,16 +36,11 @@ export const handleGeoJSONUpload = async <T>(
       return;
     }
     const area = turf.area(feature);
-    console.log('feature: ', feature);
     const p = feature.properties || {};
-    console.log('feature: ', feature);
 
     p.siteName = p.siteName || p.Site_Name || '';
     p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 100) / 100;
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
-    console.log('feature: ', feature);
-
-    // TODO: if maskedLocation is true and there is not mask object.... generate a mask for the geometry: p.mask = { centroid: [lat, long], radius: 1000 }
 
     feature.properties = p;
     return feature;
@@ -65,7 +60,6 @@ export const handleGeoJSONUpload = async <T>(
       const cleanF = cleanFeature(geojson);
       return { type: 'FeatureCollection', features: [cleanF] };
     } else if (geojson.type === 'FeatureCollection') {
-      console.log('geojson: ', geojson);
       const cleanFeatures = geojson.features.map(cleanFeature);
       if (cleanFeatures.length === 0) {
         return { type: 'FeatureCollection', features: [] };
