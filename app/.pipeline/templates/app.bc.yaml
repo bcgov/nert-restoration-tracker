@@ -32,10 +32,10 @@ parameters:
     value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs-20-minimal:1-41.1712567743
   - name: SOURCE_IMAGE_NAME
     required: true
-    value: nodejs
+    value: nodejs-20-minimal
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: nodejs:nodejs-20-minimal:1-41.1712567743
+    value: 1-41.1712567743
   - name: CPU_REQUEST
     value: '100m'
   - name: CPU_LIMIT
