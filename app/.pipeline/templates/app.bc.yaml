@@ -35,7 +35,7 @@ parameters:
     value: nodejs
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: 1-41.1712567743
+    value: nodejs:nodejs-20-minimal:1-41.1712567743
   - name: CPU_REQUEST
     value: '100m'
   - name: CPU_LIMIT
