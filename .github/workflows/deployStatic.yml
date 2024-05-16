@@ -69,7 +69,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -123,7 +123,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -177,7 +177,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -229,7 +229,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -283,7 +283,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -338,7 +338,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -393,7 +393,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -447,7 +447,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
@@ -503,7 +503,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 20
 
       # Cache Node modules
       - name: Cache node modules
