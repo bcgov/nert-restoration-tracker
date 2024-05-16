@@ -23,6 +23,7 @@ export interface IMapContainerProps {
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
+console.log('process.env', process.env);
 console.log("MAPTILER_API_KEY", MAPTILER_API_KEY);
 
 const pageStyle = {
