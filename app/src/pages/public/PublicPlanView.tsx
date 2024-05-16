@@ -100,7 +100,8 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                         title="View full screen map"
                         sx={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
-                        size="large">
+                        size="large"
+                      >
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>

@@ -43,7 +43,8 @@ describe('Project Contact Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}>
+        }}
+      >
         {() => <ProjectContactForm coordinator_agency={[]} />}
       </Formik>
     );
@@ -60,7 +61,8 @@ describe('Project Contact Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}>
+        }}
+      >
         {() => <ProjectContactForm coordinator_agency={agencies} />}
       </Formik>
     );

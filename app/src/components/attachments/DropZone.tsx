@@ -84,7 +84,8 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
         maxSize={maxFileSize}
         multiple={multiple}
         onDrop={props.onFiles}
-        accept={props.acceptedFileExtensions}>
+        accept={props.acceptedFileExtensions}
+      >
         {({ getRootProps, getInputProps }) => (
           <Box {...getRootProps()}>
             <input {...getInputProps()} data-testid="drop-zone-input" />

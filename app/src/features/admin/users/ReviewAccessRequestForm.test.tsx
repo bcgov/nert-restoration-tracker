@@ -39,7 +39,8 @@ describe('ReviewAccessRequestForm', () => {
           validationSchema={ReviewAccessRequestFormYupSchema}
           validateOnBlur={true}
           validateOnChange={false}
-          onSubmit={() => {}}>
+          onSubmit={() => {}}
+        >
           {() => (
             <ReviewAccessRequestForm
               request={requestData}
@@ -89,7 +90,8 @@ describe('ReviewAccessRequestForm', () => {
           validationSchema={ReviewAccessRequestFormYupSchema}
           validateOnBlur={true}
           validateOnChange={false}
-          onSubmit={() => {}}>
+          onSubmit={() => {}}
+        >
           {() => (
             <ReviewAccessRequestForm
               request={requestData}
