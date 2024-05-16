@@ -24,6 +24,8 @@ import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
 const nert_version = process.env.REACT_APP_NERT_VERSION || '0.0.0.0';
+console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+console.log("process.env.REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV);
 const nert_environment =
   process.env.REACT_APP_NODE_ENV === 'development'
     ? 'local'
