@@ -11,6 +11,6 @@ export default defineConfig({
   define: {
     global: {},
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
-    MAPTILER_API_KEY: JSON.stringify(process.env.MAPTILER_API_KEY),
+    REACT_APP_MAPTILER_API_KEY: JSON.stringify(process.env.REACT_APP_MAPTILER_API_KEY),
   },
 });

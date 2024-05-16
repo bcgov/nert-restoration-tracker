@@ -43,7 +43,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
           variant="body2"
           color="textSecondary"
           data-testid="indigenousData"
-          aria-label="Indigenous Partnerships">
+          aria-label="Indigenous Partnerships"
+        >
           Indigenous:
         </Typography>
 
@@ -57,7 +58,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
                 <span
                   key={index}
                   data-testid="indigenous_partners_data"
-                  style={pageStyles.partnerItem['&:last-child .seperator']}>
+                  style={pageStyles.partnerItem['&:last-child .seperator']}
+                >
                   {codeValue?.name}
                   <span className="seperator">,&nbsp;</span>
                 </span>
@@ -75,7 +77,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
           variant="body2"
           color="textSecondary"
           data-testid="stakeholderData"
-          aria-label="Other Partnerships">
+          aria-label="Other Partnerships"
+        >
           Other:
         </Typography>
 
@@ -86,7 +89,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
                 <span
                   key={index}
                   data-testid="stakeholder_partners_data"
-                  style={pageStyles.partnerItem['&:last-child .seperator']}>
+                  style={pageStyles.partnerItem['&:last-child .seperator']}
+                >
                   {stakeholderPartnership}
                   <span className="seperator">,&nbsp;</span>
                 </span>

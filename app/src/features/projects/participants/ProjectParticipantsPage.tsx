@@ -224,7 +224,8 @@ const ProjectParticipantsPage: React.FC = () => {
                         }
                       })
                     }
-                    size="large">
+                    size="large"
+                  >
                     <Icon path={mdiTrashCanOutline} size={1} aria-label="remove team member" />
                   </IconButton>
                 </Box>

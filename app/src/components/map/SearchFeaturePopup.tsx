@@ -27,7 +27,8 @@ export const SearchFeaturePopup: React.FC<{ featureData: any }> = (props) => {
           } else {
             history(`/projects/${featureData.id}`);
           }
-        }}>
+        }}
+      >
         View Project Details
       </Button>
     </Popup>

@@ -188,7 +188,8 @@ export default function PublicPlans() {
                 size={1}
               />
             }
-            {...getToggleProps()}>
+            {...getToggleProps()}
+          >
             <strong>{isExpanded ? 'Collapse Plans' : 'Expand Plans'}</strong>
           </Button>
         </Box>
@@ -206,7 +207,8 @@ export default function PublicPlans() {
             initialValues={formikValues}
             onSubmit={handleSubmit}
             onReset={handleReset}
-            enableReinitialize={true}>
+            enableReinitialize={true}
+          >
             <PlanFilter
               contact_agency={
                 codes.codes.coordinator_agency?.map((item: any) => {

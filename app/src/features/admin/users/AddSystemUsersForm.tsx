@@ -85,7 +85,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           fullWidth
                           variant="outlined"
                           required={true}
-                          style={{ width: '100%' }}>
+                          style={{ width: '100%' }}
+                        >
                           <InputLabel id="loginMethod" required={false}>
                             Login Method
                           </InputLabel>
@@ -99,20 +100,24 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             onChange={handleChange}
                             error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}
                             displayEmpty
-                            inputProps={{ 'aria-label': 'Login Method' }}>
+                            inputProps={{ 'aria-label': 'Login Method' }}
+                          >
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.IDIR}
-                              value={SYSTEM_IDENTITY_SOURCE.IDIR}>
+                              value={SYSTEM_IDENTITY_SOURCE.IDIR}
+                            >
                               IDIR
                             </MenuItem>
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
-                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}>
+                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
+                            >
                               BCeID Basic
                             </MenuItem>
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
-                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}>
+                              value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
+                            >
                               BCeID Business
                             </MenuItem>
                           </Select>
@@ -126,7 +131,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           fullWidth
                           variant="outlined"
                           required={true}
-                          style={{ width: '100%' }}>
+                          style={{ width: '100%' }}
+                        >
                           <InputLabel id="Id" required={false}>
                             System Role
                           </InputLabel>
@@ -140,7 +146,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             onChange={handleChange}
                             error={systemRoleMeta.touched && Boolean(systemRoleMeta.error)}
                             displayEmpty
-                            inputProps={{ 'aria-label': 'System Role' }}>
+                            inputProps={{ 'aria-label': 'System Role' }}
+                          >
                             {props?.system_roles?.map((item) => (
                               <MenuItem key={item.value} value={item.value}>
                                 {item.label}
@@ -158,7 +165,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                           data-testid="delete-icon"
                           aria-label="remove participant"
                           onClick={() => arrayHelpers.remove(index)}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Box>
@@ -175,7 +183,8 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                 aria-label="add participant"
                 data-testid="add-participant-button"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                onClick={() => arrayHelpers.push(AddSystemUsersFormArrayItemInitialValues)}>
+                onClick={() => arrayHelpers.push(AddSystemUsersFormArrayItemInitialValues)}
+              >
                 <strong>Add New</strong>
               </Button>
             </Box>

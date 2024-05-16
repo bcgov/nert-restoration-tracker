@@ -87,7 +87,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                             fullWidth
                             variant="outlined"
                             required={true}
-                            error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}>
+                            error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}
+                          >
                             <InputLabel id="loginMethod" required={false}>
                               Login Method
                             </InputLabel>
@@ -100,20 +101,24 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               labelWidth={300}
                               onChange={handleChange}
                               displayEmpty
-                              inputProps={{ 'aria-label': 'Login Method' }}>
+                              inputProps={{ 'aria-label': 'Login Method' }}
+                            >
                               <MenuItem
                                 key={SYSTEM_IDENTITY_SOURCE.IDIR}
-                                value={SYSTEM_IDENTITY_SOURCE.IDIR}>
+                                value={SYSTEM_IDENTITY_SOURCE.IDIR}
+                              >
                                 IDIR
                               </MenuItem>
                               <MenuItem
                                 key={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
-                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}>
+                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC}
+                              >
                                 BCeID Basic
                               </MenuItem>
                               <MenuItem
                                 key={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
-                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}>
+                                value={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS}
+                              >
                                 BCeID Business
                               </MenuItem>
                             </Select>
@@ -127,7 +132,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                             fullWidth
                             variant="outlined"
                             required={true}
-                            error={roleIdMeta.touched && Boolean(roleIdMeta.error)}>
+                            error={roleIdMeta.touched && Boolean(roleIdMeta.error)}
+                          >
                             <InputLabel id="Id" required={false}>
                               Project Role
                             </InputLabel>
@@ -140,7 +146,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               labelWidth={300}
                               onChange={handleChange}
                               displayEmpty
-                              inputProps={{ 'aria-label': 'Project Role' }}>
+                              inputProps={{ 'aria-label': 'Project Role' }}
+                            >
                               {props.project_roles.map((item) => (
                                 <MenuItem key={item.value} value={item.value}>
                                   {item.label}
@@ -158,7 +165,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                           data-testid="delete-icon"
                           aria-label="remove participant"
                           onClick={() => arrayHelpers.remove(index)}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Box>
@@ -175,7 +183,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                 aria-label="add new team member"
                 data-testid="add-participant-button"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                onClick={() => arrayHelpers.push(AddProjectParticipantsFormArrayItemInitialValues)}>
+                onClick={() => arrayHelpers.push(AddProjectParticipantsFormArrayItemInitialValues)}
+              >
                 <strong>Add New</strong>
               </Button>
             </Box>

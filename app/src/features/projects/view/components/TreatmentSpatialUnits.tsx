@@ -214,7 +214,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
           getAttachments(true);
           getTreatmentYears(true);
         }}
-        dialogProps={{ maxWidth: 'md' }}>
+        dialogProps={{ maxWidth: 'md' }}
+      >
         {!!yearList.length && (
           <Box mb={2}>
             <Alert severity="error" variant="filled">
@@ -253,7 +254,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                 title="Import treatment shapefile"
                 aria-label="import treatment shapefile"
                 startIcon={<Icon path={mdiImport} size={1} />}
-                onClick={handleImportTreatmentClick}>
+                onClick={handleImportTreatmentClick}
+              >
                 Import Treatments
               </Button>
             </Box>
@@ -269,7 +271,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     title="Export treatment shapefile"
                     aria-label="export treatment shapefile"
                     startIcon={<Icon path={mdiExport} size={1} />}
-                    onClick={handleExportTreatmentClick}>
+                    onClick={handleExportTreatmentClick}
+                  >
                     Download Treatments
                   </Button>
                 </Box>
@@ -282,7 +285,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     title={'Filter by year'}
                     aria-label={'filter by year'}
                     endIcon={<Icon path={mdiMenuDown} size={1} />}
-                    onClick={handleClick}>
+                    onClick={handleClick}
+                  >
                     Filter Years ({yearList?.length})
                   </Button>
                 </Box>
@@ -294,7 +298,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     onClick={() => {
                       showDeleteTreatmentsDialog();
                     }}
-                    size="large">
+                    size="large"
+                  >
                     <Icon path={mdiTrashCanOutline} size={0.9375} />
                   </IconButton>
                 </Box>
@@ -309,7 +314,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              sx={pageStyles.treatmentFilterList}>
+              sx={pageStyles.treatmentFilterList}
+            >
               {!yearList.length && (
                 <Box flexGrow={1} m={0.5}>
                   <Typography>No Treatment Years Available</Typography>
@@ -324,7 +330,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                       sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
-                      onClick={() => handleSelectedSwitch(year.year)}>
+                      onClick={() => handleSelectedSwitch(year.year)}
+                    >
                       <ListItemIcon>
                         <Checkbox checked={selectedSpatialLayer[year.year]} color="primary" />
                       </ListItemIcon>

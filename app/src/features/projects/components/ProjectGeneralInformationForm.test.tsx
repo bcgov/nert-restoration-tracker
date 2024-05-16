@@ -34,7 +34,8 @@ describe('ProjectGeneralInformationForm', () => {
         validationSchema={ProjectGeneralInformationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectGeneralInformationForm />}
       </Formik>
     );
@@ -66,7 +67,8 @@ describe('ProjectGeneralInformationForm', () => {
         validationSchema={ProjectGeneralInformationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectGeneralInformationForm />}
       </Formik>
     );

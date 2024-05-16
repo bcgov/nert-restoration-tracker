@@ -151,7 +151,8 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                       flexGrow={1}
                       justifyContent="center"
                       alignContent="middle"
-                      p={2}>
+                      p={2}
+                    >
                       <Typography variant="subtitle2">No Funding Sources</Typography>
                     </Box>
                   </ListItem>
@@ -191,7 +192,8 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                               });
                               setIsModalOpen(true);
                             }}
-                            size="large">
+                            size="large"
+                          >
                             <Icon path={mdiPencilOutline} size={1} />
                           </IconButton>
                           <IconButton
@@ -200,7 +202,8 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                             title="Remove Funding Source"
                             aria-label="Remove Funding Source"
                             onClick={() => arrayHelpers.remove(index)}
-                            size="large">
+                            size="large"
+                          >
                             <Icon path={mdiTrashCanOutline} size={1} />
                           </IconButton>
                         </Toolbar>
@@ -260,7 +263,8 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
             values: ProjectFundingFormArrayItemInitialValues
           });
           setIsModalOpen(true);
-        }}>
+        }}
+      >
         Add Funding Source
       </Button>
     </>
