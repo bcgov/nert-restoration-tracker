@@ -117,7 +117,7 @@ pg_restore dumpFileName
   - If it does not exist, or the image stream exists but has no matching tag, run the following command using the OC CLI.
 
     ```
-    oc import-image crunchy-postgres-gis:ubi8-14.2-3.1-0 --from=registry.connect.redhat.com/crunchydata/crunchy-postgres-gis:ubi8-14.2-3.1-0 --confirm
+    oc import-image crunchydata/crunchy-postgres-gis:ubi8-14.11-3.2-0 --from=registry.connect.redhat.com/crunchydata/crunchy-postgres-gis:ubi8-14.11-3.2-0 --confirm
     ```
 
-  - Note: At the time of writing this, the image is `crunchy-postgres-gis:ubi8-14.2-3.1-0`, update the above command as needed if the image or version has since changed.
+  - Note: At the time of writing this, the image is `crunchy-postgres-gis:ubi8-14.11-3.2-0`, update the above command as needed if the image or version has since changed.
