@@ -113,7 +113,8 @@ const ListboxComponent = React.forwardRef<HTMLDivElement, React.PropsWithChildre
             innerElementType="ul"
             itemSize={(index: number) => getChildSize(itemData[index])}
             overscanCount={5}
-            itemCount={itemCount}>
+            itemCount={itemCount}
+          >
             {renderRow}
           </VariableSizeList>
         </OuterElementContext.Provider>

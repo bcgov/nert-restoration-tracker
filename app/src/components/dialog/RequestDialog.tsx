@@ -72,12 +72,14 @@ const RequestDialog: React.FC<IRequestDialog> = (props) => {
         validateOnChange={false}
         onSubmit={(values) => {
           props.onApprove(values);
-        }}>
+        }}
+      >
         {(formikProps) => (
           <Dialog
             open={props.open}
             aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description">
+            aria-describedby="alert-dialog-description"
+          >
             <DialogTitle id="access-request-dialog-title">{props.dialogTitle}</DialogTitle>
             <DialogContent>
               <Box py={2}>{props.component.element}</Box>
@@ -89,7 +91,8 @@ const RequestDialog: React.FC<IRequestDialog> = (props) => {
                 onClick={formikProps.submitForm}
                 color="primary"
                 variant="contained"
-                autoFocus>
+                autoFocus
+              >
                 Approve
               </Button>
               <Button
@@ -97,7 +100,8 @@ const RequestDialog: React.FC<IRequestDialog> = (props) => {
                 startIcon={<Icon path={mdiWindowClose} size={1} />}
                 onClick={props.onDeny}
                 color="primary"
-                variant="outlined">
+                variant="outlined"
+              >
                 Deny
               </Button>
               <Box pl={3}>

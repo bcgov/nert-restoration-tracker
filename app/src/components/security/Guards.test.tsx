@@ -71,7 +71,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -93,7 +94,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -118,7 +120,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -142,7 +145,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -166,7 +170,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -190,7 +195,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -216,7 +222,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -240,7 +247,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -264,7 +272,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -288,7 +297,8 @@ describe('Guards', () => {
                 <RoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </RoleGuard>
               </AuthStateContext.Provider>
@@ -336,7 +346,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <NoRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
+                >
                   <div data-testid="child-component" />
                 </NoRoleGuard>
               </AuthStateContext.Provider>
@@ -361,7 +372,8 @@ describe('Guards', () => {
                 <NoRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </NoRoleGuard>
               </AuthStateContext.Provider>
@@ -385,7 +397,8 @@ describe('Guards', () => {
                 <NoRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </NoRoleGuard>
               </AuthStateContext.Provider>
@@ -411,7 +424,8 @@ describe('Guards', () => {
                 <NoRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </NoRoleGuard>
               </AuthStateContext.Provider>
@@ -435,7 +449,8 @@ describe('Guards', () => {
                 <NoRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </NoRoleGuard>
               </AuthStateContext.Provider>
@@ -505,7 +520,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <SystemRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </SystemRoleGuard>
               </AuthStateContext.Provider>
@@ -528,7 +544,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <SystemRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </SystemRoleGuard>
               </AuthStateContext.Provider>
@@ -553,7 +570,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <SystemRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  fallback={() => <div data-testid="fallback-child-component" />}>
+                  fallback={() => <div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </SystemRoleGuard>
               </AuthStateContext.Provider>
@@ -576,7 +594,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <SystemRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}
-                  fallback={() => <div data-testid="fallback-child-component" />}>
+                  fallback={() => <div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </SystemRoleGuard>
               </AuthStateContext.Provider>
@@ -645,7 +664,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <ProjectRoleGuard
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </ProjectRoleGuard>
               </AuthStateContext.Provider>
@@ -668,7 +688,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <ProjectRoleGuard
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={<div data-testid="fallback-child-component" />}>
+                  fallback={<div data-testid="fallback-child-component" />}
+                >
                   <div data-testid="child-component" />
                 </ProjectRoleGuard>
               </AuthStateContext.Provider>
@@ -693,7 +714,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <ProjectRoleGuard
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </ProjectRoleGuard>
               </AuthStateContext.Provider>
@@ -716,7 +738,8 @@ describe('Guards', () => {
               <AuthStateContext.Provider value={authState}>
                 <ProjectRoleGuard
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}>
+                  fallback={(id) => <div data-testid="fallback-child-component">{id}</div>}
+                >
                   <div data-testid="child-component" />
                 </ProjectRoleGuard>
               </AuthStateContext.Provider>
