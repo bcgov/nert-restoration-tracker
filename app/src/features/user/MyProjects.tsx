@@ -30,8 +30,7 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
               SYSTEM_ROLE.SYSTEM_ADMIN,
               SYSTEM_ROLE.DATA_ADMINISTRATOR,
               SYSTEM_ROLE.PROJECT_CREATOR
-            ]}
-          >
+            ]}>
             {isExpanded && (
               <Button
                 sx={{ mr: '1rem' }}
@@ -39,8 +38,7 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
                 color="primary"
                 startIcon={<Icon path={mdiPlus} size={1} />}
                 onClick={() => history('/admin/projects/create')}
-                data-testid="create-project-button"
-              >
+                data-testid="create-project-button">
                 Create Project
               </Button>
             )}
@@ -58,8 +56,7 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
                 size={1}
               />
             }
-            {...getToggleProps()}
-          >
+            {...getToggleProps()}>
             <strong>{isExpanded ? 'Collapse Projects' : 'Expand Projects'}</strong>
           </Button>
         </Box>

@@ -38,8 +38,7 @@ describe('ProjectPartnershipsForm', () => {
         validationSchema={ProjectPartnershipsFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectPartnershipsForm
             first_nations={first_nations}
@@ -66,8 +65,7 @@ describe('ProjectPartnershipsForm', () => {
         validationSchema={ProjectPartnershipsFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectPartnershipsForm
             first_nations={first_nations}

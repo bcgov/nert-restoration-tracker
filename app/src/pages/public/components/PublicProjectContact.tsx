@@ -55,8 +55,7 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
                       }
                     }
                   : {}
-              }
-            >
+              }>
               <Box
                 display="flex"
                 pl={1}
@@ -70,8 +69,7 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
                         }
                       }
                     : {}
-                }
-              >
+                }>
                 <Icon
                   color={pageStyles.contactIcon.color}
                   path={JSON.parse(contactDetails.is_public) ? mdiAccountCircleOutline : mdiDomain}

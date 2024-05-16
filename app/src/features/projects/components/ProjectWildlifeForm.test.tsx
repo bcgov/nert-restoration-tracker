@@ -55,8 +55,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -89,8 +88,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -111,8 +109,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -149,8 +146,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -195,8 +191,7 @@ describe('ProjectIUCNForm', () => {
         validateOnBlur={true}
         validateOnChange={false}
         initialErrors={{ classificationDetails: 'Error is here' }}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -243,8 +238,7 @@ describe('ProjectIUCNForm', () => {
             { classification: true, subClassification1: true, subClassification2: true }
           ]
         }}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -282,8 +276,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}

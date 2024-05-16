@@ -695,8 +695,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       <div
         id="tooltip"
         className={tooltipVisible ? 'visible' : 'tooltip'}
-        style={{ left: tooltipX, top: tooltipY }}
-      >
+        style={{ left: tooltipX, top: tooltipY }}>
         {tooltip}
       </div>
     </div>

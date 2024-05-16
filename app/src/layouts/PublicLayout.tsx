@@ -29,8 +29,7 @@ const PublicLayout = () => {
           sx={{
             color: 'primary.main',
             backgroundColor: '#fcba19'
-          }}
-        >
+          }}>
           This is an unsupported browser. Some functionality may not work as expected.
         </Alert>
       )}

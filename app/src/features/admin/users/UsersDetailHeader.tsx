@@ -116,8 +116,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
             color="primary"
             onClick={() => history('/admin/users')}
             aria-current="page"
-            sx={pageStyles.breadCrumbLink}
-          >
+            sx={pageStyles.breadCrumbLink}>
             <Typography variant="body2">Manage Users</Typography>
           </Link>
           <Typography variant="body2">{userDetails.user_identifier}</Typography>
@@ -135,8 +134,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
             <Chip
               sx={pageStyles.roleChip}
               size="small"
-              label={userDetails.role_names[0] || 'Unassigned'}
-            ></Chip>
+              label={userDetails.role_names[0] || 'Unassigned'}></Chip>
           </Box>
         </Box>
         <Box ml={2}>
@@ -171,8 +169,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
                       dialogContext.setYesNoDialog({ open: false });
                     }
                   })
-                }
-              >
+                }>
                 Remove User
               </Button>
             </>

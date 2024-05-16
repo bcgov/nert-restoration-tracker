@@ -128,8 +128,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
         <FormControl
           required={true}
           component="fieldset"
-          error={touched.is_public && Boolean(errors.is_public)}
-        >
+          error={touched.is_public && Boolean(errors.is_public)}>
           <Typography id="share_contact_details" component="legend">
             Share Contact Details
           </Typography>
@@ -141,8 +140,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               name="is_public"
               aria-label="Share Contact Details"
               value={values.is_public}
-              onChange={handleChange}
-            >
+              onChange={handleChange}>
               <FormControlLabel
                 value="true"
                 control={<Radio color="primary" size="small" />}
