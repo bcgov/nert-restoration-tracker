@@ -18,7 +18,7 @@ export interface IMapContainerProps {
 }
 
 // Typescript needs this to be declared
-declare const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
+declare const MAPTILER_API_KEY: string;
 
 const pageStyle = {
   width: "100%",
