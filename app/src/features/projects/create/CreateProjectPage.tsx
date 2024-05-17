@@ -21,7 +21,7 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
+// import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -132,7 +132,7 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  // const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useRestorationTrackerApi();
   const queryParams = useQuery();
   const codes = useCodes();
@@ -275,6 +275,7 @@ const CreateProjectPage: React.FC = () => {
     try {
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
+      projectPostObject.location.size_ha = projectPostObject.location.size_ha ? projectPostObject.location.size_ha : 0;   
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
@@ -289,7 +290,7 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
 
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
+      // keycloakWrapper?.refresh();
       history(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({
