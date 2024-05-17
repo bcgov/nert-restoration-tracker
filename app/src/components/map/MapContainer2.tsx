@@ -213,17 +213,21 @@ const createMask = (params: maskParams, feature: Feature) => {
  * If the mask is turned off, remove the mask object
  * If the mask is turned on... pass through the mask object
  * If the mask is turned on... but has no mask object... build the mask object
+ * TODO: Print out maskState and maskedLocation
  */
 const updateMasks = (mask: number, maskState: boolean[], features: any) => {
   if (!map.getSource('mask')) return;
+  console.log('maskState', maskState);
   const maskGeojson: FeatureCollection = {
     type: 'FeatureCollection',
     features: features
+      // TODO: This filter is removing items for an array that is supposed to match `maskState`.
       .filter((feature: any) => feature.properties?.maskedLocation)
       .map((feature: any, index: any) => {
-        console.log('I think this one needs to be updated', mask);
+        console.log(`feature ${index}`, feature.properties.maskedLocation);
         let specs;
-        if (index === mask) {
+        if (index === mask && feature.properties?.maskedLocation === true) {
+          // If this is the new mask
           console.log('update the mask', index);
           specs = initializeMasks(feature);
         } else {
