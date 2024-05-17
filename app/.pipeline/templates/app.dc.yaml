@@ -28,7 +28,7 @@ parameters:
     value: '52428800'
   - name: NODE_ENV
     description: NODE_ENV specification variable
-    value: 'dev'
+    value: 'development'
   - name: REACT_APP_NODE_ENV
     description: NODE_ENV specification variable for React app
     value: 'dev'
@@ -49,7 +49,10 @@ parameters:
     required: true
   - name: REACT_APP_MAPTILER_SECRET
     description: Secrets used to read and write to the Maptiler API
-    value: 'restoration-tracker-maptiler-cred'
+    required: true
+  - name: REACT_APP_MAPTILER_API_KEY
+    description: Maptiler API key
+    required: true
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
@@ -140,8 +143,8 @@ objects:
                 - name: REACT_APP_MAPTILER_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      key: key_value
                       name: ${REACT_APP_MAPTILER_SECRET}
+                      key: ${REACT_APP_MAPTILER_API_KEY}
               image: ' '
               imagePullPolicy: Always
               name: app

@@ -32,6 +32,20 @@
     "test": "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi",
     "prod": "https://logon7.gov.bc.ca/clp-cgi/logoff.cgi"
   },
+  "mapTiler": {
+    "dev": {
+      "mapTilerSecret": "restoration-tracker-maptiler-cred",
+      "mapTilerSecretApiKey": "key_value"
+    },
+    "test": {
+      "mapTilerSecret": "restoration-tracker-maptiler-cred",
+      "mapTilerSecretApiKey": "key_value"
+    },
+    "prod": {
+      "mapTilerSecret": "restoration-tracker-maptiler-cred",
+      "mapTilerSecretApiKey": "key_value"
+    }
+  },
   "sso": {
     "dev": {
       "url": "https://dev.loginproxy.gov.bc.ca/auth",
