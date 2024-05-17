@@ -28,7 +28,7 @@ parameters:
     value: '52428800'
   - name: NODE_ENV
     description: NODE_ENV specification variable
-    value: 'dev'
+    value: 'development'
   - name: REACT_APP_NODE_ENV
     description: NODE_ENV specification variable for React app
     value: 'dev'
@@ -53,6 +53,7 @@ parameters:
   - name: REACT_APP_MAPTILER_API_KEY
     description: Maptiler API key
     required: true
+    value: jVvhFsK95PHfmDVzMZbT
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
