@@ -50,6 +50,9 @@ parameters:
   - name: REACT_APP_MAPTILER_SECRET
     description: Secrets used to read and write to the Maptiler API
     required: true
+  - name: REACT_APP_MAPTILER_API_KEY
+    description: Maptiler API key
+    required: true
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
