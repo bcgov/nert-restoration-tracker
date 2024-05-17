@@ -29,7 +29,6 @@ export const handleGeoJSONUpload = async <T>(
     return;
   }
 
-  // TODO: Add the mask generation step here.
   const cleanFeature = (feature: Feature) => {
     // Exit out if the feature is not a Polygon or MultiPolygon
     if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
@@ -79,14 +78,13 @@ export const handleGeoJSONUpload = async <T>(
     const geojson = JSON.parse(fileAsString);
 
     const geojsonWithAttributes = cleanGeoJSON(geojson);
-    console.log('geojsonWithAttributes: ', geojsonWithAttributes);
     // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
 
     if (geojsonWithAttributes?.features.length <= 0) {
       setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
       return;
     }
-    setFieldValue(name, [...geojsonWithAttributes.features, ...get(values, name)]);
+    setFieldValue(name, [...get(values, name), ...geojsonWithAttributes.features]);
   } catch (error) {
     setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
   }

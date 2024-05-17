@@ -210,32 +210,44 @@ const createMask = (params: maskParams, feature: Feature) => {
 };
 
 /**
- * If the mask is turned off, remove the mask object
- * If the mask is turned on... pass through the mask object
- * If the mask is turned on... but has no mask object... build the mask object
- * TODO: Print out maskState and maskedLocation
+ * # updateMasks
+ * This is when the user has clicked on a widget to turn on or off a mask.
  */
 const updateMasks = (mask: number, maskState: boolean[], features: any) => {
   if (!map.getSource('mask')) return;
-  console.log('maskState', maskState);
   const maskGeojson: FeatureCollection = {
     type: 'FeatureCollection',
     features: features
-      // TODO: This filter is removing items for an array that is supposed to match `maskState`.
-      .filter((feature: any) => feature.properties?.maskedLocation)
       .map((feature: any, index: any) => {
-        console.log(`feature ${index}`, feature.properties.maskedLocation);
-        let specs;
+        let specs: any;
+
+        // Clicked to turn on
         if (index === mask && feature.properties?.maskedLocation === true) {
-          // If this is the new mask
-          console.log('update the mask', index);
           specs = initializeMasks(feature);
-        } else {
+
+          // Clicked to turn off
+        } else if (index === mask && feature.properties?.maskedLocation === false) {
           specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
+
+          // Not clicked but has an existing mask
+        } else if (feature.properties?.maskedLocation) {
+          specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
+
+          // Not clicked and no mask
+        } else {
+          specs = [];
         }
-        const maskPolygon = createMask(specs, feature);
-        return maskPolygon;
+
+        // @ts-ignore
+        if (specs.length > 0) {
+          const maskPolygon = createMask(specs, feature);
+          return maskPolygon;
+        } else {
+          // If there is no mask, return the original to get removed below
+          return feature;
+        }
       })
+      .filter((feature: any) => feature.properties?.maskedLocation)
   };
   // @ts-ignore
   map.getSource('mask').setData(maskGeojson);
