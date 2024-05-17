@@ -219,7 +219,7 @@ const updateMasks = (mask: number, maskState: boolean[], features: any) => {
   const maskGeojson: FeatureCollection = {
     type: 'FeatureCollection',
     features: features
-      .filter((feature: any) => feature.properties.maskedLocation)
+      .filter((feature: any) => feature.properties?.maskedLocation)
       .map((feature: any, index: any) => {
         console.log('I think this one needs to be updated', mask);
         let specs;
@@ -318,7 +318,7 @@ const initializeMap = (
     };
 
     features
-      .filter((feature: any) => feature.properties.maskedLocation)
+      .filter((feature: any) => feature.properties?.maskedLocation)
       .forEach((feature: any) => {
         const specs: any = initializeMasks(feature);
         const maskPolygon = createMask(specs, feature);
