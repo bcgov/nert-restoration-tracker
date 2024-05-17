@@ -39,6 +39,7 @@ const appDeploy = async (settings) => {
         MEMORY_LIMIT: phases[phase].memoryLimit,
         REPLICAS: phases[phase].replicas,
         REPLICAS_MAX: phases[phase].replicasMax,
+        REACT_APP_MAPTILER_SECRET: phases[phase].mapTiler.mapTilerSecret,
         REACT_APP_MAPTILER_API_KEY: phases[phase].mapTiler.mapTilerSecretApiKey
       }
     })
