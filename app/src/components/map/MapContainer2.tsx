@@ -1,7 +1,8 @@
+import { ConfigContext } from 'contexts/configContext';
 import { FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
@@ -22,9 +23,11 @@ export interface IMapContainerProps {
   centroids?: boolean;
 }
 
-const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
+const config = useContext(ConfigContext);
+
+const MAPTILER_API_KEY = config?.REACT_APP_MAPTILER_API_KEY;
 console.log('process.env', process.env);
-console.log("MAPTILER_API_KEY", MAPTILER_API_KEY);
+console.log('MAPTILER_API_KEY', MAPTILER_API_KEY);
 
 const pageStyle = {
   width: '100%',
@@ -697,8 +700,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       <div
         id="tooltip"
         className={tooltipVisible ? 'visible' : 'tooltip'}
-        style={{ left: tooltipX, top: tooltipY }}
-      >
+        style={{ left: tooltipX, top: tooltipY }}>
         {tooltip}
       </div>
     </div>
