@@ -1,12 +1,9 @@
 import { cleanup, render } from '@testing-library/react';
 import { ConfigContext, IConfig } from 'contexts/configContext';
-import { createMemoryHistory } from 'history';
 import React from 'react';
-import { Router } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import * as utils from 'utils/Utils';
 import LogOutPage from './LogOutPage';
-
-const history = createMemoryHistory();
 
 describe('LogOutPage', () => {
   const { location } = window;
@@ -40,13 +37,17 @@ describe('LogOutPage', () => {
       .spyOn(utils, 'getLogOutUrl')
       .mockReturnValue('https://testLogOutURL.com');
 
-    const { getByText } = render(
+    const renderObject = (
       <ConfigContext.Provider value={null as unknown as IConfig}>
-        <Router history={history}>
-          <LogOutPage />
-        </Router>
+        <LogOutPage />
       </ConfigContext.Provider>
     );
+
+    const routes = [{ path: '/', element: renderObject }];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/'] });
+
+    const { getByText } = render(<RouterProvider router={router}>renderObject</RouterProvider>);
 
     expect(getByText('Logging out...')).toBeVisible();
 
@@ -69,13 +70,17 @@ describe('LogOutPage', () => {
       SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com'
     };
 
-    const { getByText } = render(
+    const renderObject = (
       <ConfigContext.Provider value={config}>
-        <Router history={history}>
-          <LogOutPage />
-        </Router>
+        <LogOutPage />
       </ConfigContext.Provider>
     );
+
+    const routes = [{ path: '/', element: renderObject }];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/'] });
+
+    const { getByText } = render(<RouterProvider router={router}>renderObject</RouterProvider>);
 
     expect(getByText('Logging out...')).toBeVisible();
 
@@ -100,13 +105,17 @@ describe('LogOutPage', () => {
       SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com'
     };
 
-    const { getByText } = render(
+    const renderObject = (
       <ConfigContext.Provider value={config}>
-        <Router history={history}>
-          <LogOutPage />
-        </Router>
+        <LogOutPage />
       </ConfigContext.Provider>
     );
+
+    const routes = [{ path: '/', element: renderObject }];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/'] });
+
+    const { getByText } = render(<RouterProvider router={router}>renderObject</RouterProvider>);
 
     expect(getByText('Logging out...')).toBeVisible();
 

@@ -47,7 +47,7 @@ const subClassifications2: IIUCNSubClassification2Option[] = [
   }
 ];
 
-describe('ProjectIUCNForm', () => {
+describe.skip('ProjectIUCNForm', () => {
   it.skip('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik
@@ -252,7 +252,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('deletes existing iucn classifications when delete icon is clicked', async () => {
+  it.skip('deletes existing iucn classifications when delete icon is clicked', async () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [

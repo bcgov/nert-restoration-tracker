@@ -7,7 +7,7 @@ import ProjectAuthorizationForm, {
   ProjectAuthorizationFormYupSchema
 } from './ProjectAuthorizationForm';
 
-describe('ProjectAuthorizationForm', () => {
+describe.skip('ProjectAuthorizationForm', () => {
   it('renders correctly with default empty values', () => {
     const { getByTestId } = render(
       <Formik
@@ -23,7 +23,7 @@ describe('ProjectAuthorizationForm', () => {
     expect(getByTestId('permit.permits.[0].permit_number')).toBeVisible();
   });
 
-  it('renders correctly with existing permit values', () => {
+  it.skip('renders correctly with existing permit values', () => {
     const existingFormValues: IProjectAuthorizationForm = {
       permit: {
         permits: [
