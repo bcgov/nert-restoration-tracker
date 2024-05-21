@@ -10,7 +10,7 @@
  */
 const getResourceByName = (resourceName, oc) => {
   console.log(`1 - getResourceByName - Fetching resource: ${resourceName}`);
-  const matches = oc.get(resourceName); // oc --namespace=b1d40d-dev get pod/restoration-tracker-db-setup-dev-108 --output=json
+  const matches = oc.get(resourceName); // oc --namespace=d83219-dev get pod/restoration-tracker-db-setup-dev-108 --output=json
 
   if (!matches || !matches.length) {
     return null;

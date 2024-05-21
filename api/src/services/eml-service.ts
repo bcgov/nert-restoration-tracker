@@ -171,7 +171,7 @@ export class EmlService extends DBService {
           $: { id: this.projectData.project.uuid, system: this.constants.EML_PROVIDER_URL },
           title: this.projectData.project.project_name,
           personnel: this.getProjectPersonnel(),
-          abstract: { section: { title: 'Objectives', para: this.projectData.project.objectives } },
+          abstract: { section: { title: 'Objectives', para: this.projectData.project.brief_desc } },
           studyAreaDescription: {
             coverage: {
               geographicCoverage: await this.getGeographicCoverageEML(),
@@ -232,7 +232,7 @@ export class EmlService extends DBService {
         describes: this.packageId,
         metadata: {
           priorityArea: {
-            isPriority: this.projectData.location.priority
+            isPriority: this.projectData.location.is_within_overlapping
           }
         }
       }

@@ -52,7 +52,7 @@ options = processOptions(options);
 
 const phases = {
   build: {
-    namespace: 'b1d40d-tools',
+    namespace: 'd83219-tools',
     name: `${name}`,
     phase: 'build',
     changeId: changeId,
@@ -68,7 +68,7 @@ const phases = {
     memoryLimit: '3Gi'
   },
   dev: {
-    namespace: 'b1d40d-dev',
+    namespace: 'd83219-dev',
     name: `${name}`,
     phase: 'dev',
     changeId: deployChangeId,
@@ -76,13 +76,14 @@ const phases = {
     instance: `${name}-dev-${deployChangeId}`,
     version: `${deployChangeId}-${changeId}`,
     tag: `dev-${version}-${deployChangeId}`,
-    host: (isStaticDeployment && staticUrls.dev) || `${name}-${changeId}-b1d40d-dev.apps.silver.devops.gov.bc.ca`,
+    host: (isStaticDeployment && staticUrls.dev) || `${name}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     apiHost:
-      (isStaticDeployment && staticUrlsAPI.dev) || `${apiName}-${changeId}-b1d40d-dev.apps.silver.devops.gov.bc.ca`,
+      (isStaticDeployment && staticUrlsAPI.dev) || `${apiName}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     siteminderLogoutURL: config.siteminderLogoutURL.dev,
     maxUploadNumFiles,
     maxUploadFileSize,
-    env: 'dev',
+    env: 'development',
+    mapTiler: config.mapTiler.dev,
     sso: config.sso.dev,
     cpuRequest: '50m',
     cpuLimit: (isStaticDeployment && '300m') || '200m',
@@ -92,7 +93,7 @@ const phases = {
     replicasMax: (isStaticDeployment && '2') || '1'
   },
   test: {
-    namespace: 'b1d40d-test',
+    namespace: 'd83219-test',
     name: `${name}`,
     phase: 'test',
     changeId: deployChangeId,
@@ -106,6 +107,7 @@ const phases = {
     maxUploadNumFiles,
     maxUploadFileSize,
     env: 'test',
+    mapTiler: config.mapTiler.test,
     sso: config.sso.test,
     cpuRequest: '100m',
     cpuLimit: '400m',
@@ -115,7 +117,7 @@ const phases = {
     replicasMax: '3'
   },
   prod: {
-    namespace: 'b1d40d-prod',
+    namespace: 'd83219-prod',
     name: `${name}`,
     phase: 'prod',
     changeId: deployChangeId,
@@ -129,6 +131,7 @@ const phases = {
     maxUploadNumFiles,
     maxUploadFileSize,
     env: 'prod',
+    mapTiler: config.mapTiler.prod,
     sso: config.sso.prod,
     cpuRequest: '100m',
     cpuLimit: '400m',

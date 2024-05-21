@@ -105,7 +105,8 @@ const YesNoDialog: React.FC<IYesNoDialogProps> = (props) => {
       onClose={props.onClose}
       data-testid="yes-no-dialog"
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
       <DialogContent>
         {props.dialogText && (
@@ -119,7 +120,8 @@ const YesNoDialog: React.FC<IYesNoDialogProps> = (props) => {
           onClick={props.onYes}
           color="primary"
           variant="contained"
-          {...props.yesButtonProps}>
+          {...props.yesButtonProps}
+        >
           {props.yesButtonLabel ? props.yesButtonLabel : 'Yes'}
         </Button>
 
@@ -128,7 +130,8 @@ const YesNoDialog: React.FC<IYesNoDialogProps> = (props) => {
           onClick={props.onNo}
           color="primary"
           variant="outlined"
-          {...props.noButtonProps}>
+          {...props.noButtonProps}
+        >
           {props.noButtonLabel ? props.noButtonLabel : 'No'}
         </Button>
       </DialogActions>

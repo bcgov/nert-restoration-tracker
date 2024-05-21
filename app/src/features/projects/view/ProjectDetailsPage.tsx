@@ -16,7 +16,6 @@ import ProjectPermits from './components/ProjectPermits';
 export interface IProjectDetailsProps {
   projectForViewData: IGetProjectForViewResponse;
   codes: IGetAllCodeSetsResponse;
-  refresh: () => void;
 }
 
 const pageStyles = {
@@ -74,7 +73,8 @@ const pageStyles = {
  * @return {*}
  */
 const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
-  const { projectForViewData, codes, refresh } = props;
+  const { projectForViewData, codes } = props;
+  const refresh = () => {};
 
   return (
     <Box sx={pageStyles.projectMetadata} p={3}>
@@ -106,7 +106,8 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           ]}
           fallback={
             <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
-          }>
+          }
+        >
           <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
         </RoleGuard>
       </Box>
@@ -128,7 +129,8 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           PROJECT_ROLE.PROJECT_LEAD,
           PROJECT_ROLE.PROJECT_EDITOR,
           PROJECT_ROLE.PROJECT_VIEWER
-        ]}>
+        ]}
+      >
         <Box component="section">
           <Typography variant="body1" component={'h3'} data-testid="PermitsTitle">
             Permits

@@ -140,7 +140,8 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
                             underline="always"
                             component="button"
                             variant="body2"
-                            onClick={() => openAttachment(row)}>
+                            onClick={() => openAttachment(row)}
+                          >
                             {row.fileName}
                           </Link>
                         </TableCell>
@@ -212,7 +213,8 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
             size="small"
             aria-label="document actions"
             onClick={handleClick}
-            data-testid="attachment-action-menu">
+            data-testid="attachment-action-menu"
+          >
             <Icon path={mdiDotsVertical} size={1} />
           </IconButton>
           <Menu
@@ -231,13 +233,15 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
             onClose={handleClose}
             MenuListProps={{
               'aria-labelledby': 'basic-button'
-            }}>
+            }}
+          >
             <MenuItem
               onClick={() => {
                 props.handleDownloadFileClick(props.attachment);
                 setAnchorEl(null);
               }}
-              data-testid="attachment-action-menu-download">
+              data-testid="attachment-action-menu-download"
+            >
               <ListItemIcon>
                 <Icon path={mdiDownload} size={1} />
               </ListItemIcon>
@@ -248,7 +252,8 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
                 props.handleDeleteFileClick(props.attachment);
                 setAnchorEl(null);
               }}
-              data-testid="attachment-action-menu-delete">
+              data-testid="attachment-action-menu-delete"
+            >
               <ListItemIcon>
                 <Icon path={mdiTrashCanOutline} size={1} />
               </ListItemIcon>

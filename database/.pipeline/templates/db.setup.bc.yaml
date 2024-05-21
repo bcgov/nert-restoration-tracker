@@ -1,5 +1,5 @@
-kind: Template
 apiVersion: template.openshift.io/v1
+kind: Template
 metadata:
   name: restoration-tracker-db-setup-bc
   labels:
@@ -14,10 +14,10 @@ parameters:
     displayName: Name Suffix
     description: A suffix appended to all objects
     required: true
-    value: "-dev"
+    value: '-dev'
   - name: VERSION
     required: true
-    value: "1.0"
+    value: '1.0'
   - name: SOURCE_CONTEXT_DIR
     required: true
     value: database
@@ -26,7 +26,7 @@ parameters:
     value: './.docker/db/Dockerfile.migrate'
   - name: SOURCE_REPOSITORY_URL
     required: true
-    value: https://github.com/bcgov/restoration-tracker
+    value: https://github.com/bcgov/nert-restoration-tracker
   - name: SOURCE_REPOSITORY_REF
     required: false
     value: dev
@@ -48,7 +48,7 @@ objects:
       annotations:
         description: Nodejs Base Image
       labels:
-        shared: "true"
+        shared: 'true'
     spec:
       lookupPolicy:
         local: false
@@ -64,19 +64,19 @@ objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
-      name: "${NAME}"
+      name: '${NAME}'
       creationTimestamp:
       annotations:
         description: Nodejs Runtime Image
       labels:
-        shared: "true"
+        shared: 'true'
     spec:
       lookupPolicy:
         local: false
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: "${NAME}${SUFFIX}"
+      name: '${NAME}${SUFFIX}'
       creationTimestamp:
       labels: {}
       annotations: {}
@@ -86,7 +86,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: "${NAME}:${VERSION}"
+          name: '${NAME}:${VERSION}'
       postCommit: {}
       resources:
         limits:
@@ -97,10 +97,10 @@ objects:
           memory: 512Mi
       runPolicy: SerialLatestOnly
       source:
-        contextDir: "${SOURCE_CONTEXT_DIR}"
+        contextDir: '${SOURCE_CONTEXT_DIR}'
         git:
-          uri: "${SOURCE_REPOSITORY_URL}"
-          ref: "${SOURCE_REPOSITORY_REF}"
+          uri: '${SOURCE_REPOSITORY_URL}'
+          ref: '${SOURCE_REPOSITORY_REF}'
         type: Git
       strategy:
         dockerStrategy:

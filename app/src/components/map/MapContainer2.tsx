@@ -26,6 +26,8 @@ export interface IMapContainerProps {
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
+console.log('process.env', process.env);
+console.log("MAPTILER_API_KEY", MAPTILER_API_KEY);
 
 const pageStyle = {
   width: '100%',
@@ -256,10 +258,10 @@ const updateMasks = (mask: number, maskState: boolean[], features: any) => {
 const initializeMap = (
   mapId: string,
   center: any = [-124, 57],
-  zoom: number = 6,
+  zoom = 6,
   features?: any, // There's no features when first creating a record
   layerVisibility?: any,
-  centroids: boolean = false,
+  centroids = false,
   tooltipState?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
@@ -844,7 +846,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       <div
         id="tooltip"
         className={tooltipVisible ? 'visible' : 'tooltip'}
-        style={{ left: tooltipX, top: tooltipY }}>
+        style={{ left: tooltipX, top: tooltipY }}
+      >
         {tooltip}
       </div>
     </div>

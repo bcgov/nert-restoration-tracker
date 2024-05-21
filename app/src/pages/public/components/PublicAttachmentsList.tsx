@@ -52,7 +52,8 @@ const PublicAttachmentsList: React.FC<IPublicAttachmentsListProps> = (props) => 
                         underline="always"
                         component="button"
                         variant="body2"
-                        onClick={() => openAttachment(row)}>
+                        onClick={() => openAttachment(row)}
+                      >
                         {row.fileName}
                       </Link>
                     </TableCell>

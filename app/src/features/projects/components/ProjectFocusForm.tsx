@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import CustomTextField from 'components/fields/CustomTextField';
+import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
@@ -13,22 +13,22 @@ import yup from 'utils/YupSchema';
 export interface IProjectFocusForm {
   focus: {
     focuses: IMultiAutocompleteFieldOption[];
-    number_people_involved: number | null;
+    people_involved: number | null;
   };
 }
 
 export const ProjectFocusFormInitialValues: IProjectFocusForm = {
   focus: {
     focuses: [],
-    number_people_involved: null
+    people_involved: null
   }
 };
 
 export const ProjectFocusFormYupSchema = yup.object().shape({
   focus: yup.object().shape({
     focuses: yup.array().min(1, 'You must select at least one option').required('Required'),
-    // number_people_involved: yup.number().positive().integer().nullable().required(`Required when selecting "${focus.HEALING_THE_PEOPLE}"`)
-    number_people_involved: yup.number().positive().integer().nullable()
+    // people_involved: yup.number().positive().integer().nullable().required(`Required when selecting "${focus.HEALING_THE_PEOPLE}"`)
+    people_involved: yup.number().positive().integer().nullable()
   })
 });
 
@@ -58,19 +58,18 @@ const ProjectFocusForm: React.FC = () => {
             </Grid>
             <Grid item xs={12}>
               <Grid item xs={12}>
-                <CustomTextField
-                  name="focus.number_people_involved"
+                <IntegerSingleField
+                  name="focus.people_involved"
                   label="Number of People Involved"
-                  other={{
-                    required:
-                      values.focus.focuses &&
-                      values.focus.focuses.some((values) => {
-                        // @ts-ignore
-                        return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
-                      })
-                        ? true
-                        : false
-                  }}
+                  required={
+                    values.focus.focuses &&
+                    values.focus.focuses.some((values) => {
+                      // @ts-ignore
+                      return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
+                    })
+                      ? true
+                      : false
+                  }
                 />
               </Grid>
             </Grid>

@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 // import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
+import YesNoDialog from 'components/dialog/YesNoDialog';
 import {
   events,
   getStateCodeFromLabel,
@@ -20,7 +21,7 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
+// import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -76,7 +77,6 @@ import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
-// import YesNoDialog from 'components/dialog/YesNoDialog'
 
 const pageStyles = {
   actionButton: {
@@ -132,7 +132,7 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  // const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useRestorationTrackerApi();
   const queryParams = useQuery();
   const codes = useCodes();
@@ -177,6 +177,9 @@ const CreateProjectPage: React.FC = () => {
   // Whether or not to show the 'Save as draft' dialog
   const [openDraftDialog, setOpenDraftDialog] = useState(false);
 
+  // Whether or not to show the creation confirmation Yes/No dialog
+  const [openYesNoDialog, setOpenYesNoDialog] = useState(false);
+
   const [draft, setDraft] = useState({ id: 0, date: '' });
 
   const [initialProjectFormData, setInitialProjectFormData] =
@@ -207,26 +210,32 @@ const CreateProjectPage: React.FC = () => {
     history('/admin/user/projects');
   };
 
+  const handleCancelConfirmation = () => {
+    setOpenYesNoDialog(false);
+  };
+
   const handleSubmitDraft = async (values: IProjectDraftForm) => {
     try {
       const draftId = Number(queryParams.draftId) || draft?.id;
 
       let response;
       if (draftId) {
-        if (formikRef.current)
+        if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.saving)
           );
+        }
         response = await restorationTrackerApi.draft.updateDraft(
           draftId,
           values.draft_name,
           formikRef.current?.values
         );
       } else {
-        if (formikRef.current)
+        if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.creating)
           );
+        }
 
         response = await restorationTrackerApi.draft.createDraft(
           true,
@@ -246,7 +255,7 @@ const CreateProjectPage: React.FC = () => {
 
       setDraft({ id: response.id, date: response.date });
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
+
       history('/admin/user/projects');
     } catch (error) {
       setOpenDraftDialog(false);
@@ -264,6 +273,9 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      projectPostObject.restoration_plan.is_project_part_public_plan =
+        !!projectPostObject.restoration_plan.is_project_part_public_plan;
+      projectPostObject.location.size_ha = projectPostObject.location.size_ha ? projectPostObject.location.size_ha : 0;   
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
@@ -278,7 +290,7 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
 
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
+      // keycloakWrapper?.refresh();
       history(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({
@@ -384,13 +396,23 @@ const CreateProjectPage: React.FC = () => {
         onSave={handleSubmitDraft}
       />
 
+      <YesNoDialog
+        dialogTitle="Create Project Confirmation"
+        dialogText="Please make sure there is no PI in the data. Creating a project means it will be published (publicly available). Are you sure you want to create this project?"
+        open={openYesNoDialog}
+        onClose={handleCancelConfirmation}
+        onNo={handleCancelConfirmation}
+        onYes={() => formikRef.current?.submitForm()}
+      />
+
       <Box mb={1} ml={3}>
         <Breadcrumbs>
           <Link
             color="primary"
             onClick={handleCancel}
             aria-current="page"
-            sx={pageStyles.breadCrumbLink}>
+            sx={pageStyles.breadCrumbLink}
+          >
             <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
             <Typography variant="body2">Cancel and Exit</Typography>
           </Link>
@@ -419,7 +441,8 @@ const CreateProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
-            onSubmit={handleProjectCreation}>
+            onSubmit={handleProjectCreation}
+          >
             <>
               {/* <ScrollToFormikError /> */}
               <Form noValidate>
@@ -586,16 +609,17 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     onClick={() => setOpenDraftDialog(true)}
-                    data-testid="project-save-draft-button">
+                    data-testid="project-save-draft-button"
+                  >
                     Save Draft
                   </Button>
                   <Button
                     variant="contained"
                     color="primary"
                     size="large"
-                    type="submit"
-                    // onClick={() => formikRef.current?.submitForm()}
-                    data-testid="project-create-button">
+                    onClick={() => setOpenYesNoDialog(true)}
+                    data-testid="project-create-button"
+                  >
                     <span>Create Project</span>
                   </Button>
                   <Button
@@ -603,7 +627,8 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}>
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </Button>
                 </Box>

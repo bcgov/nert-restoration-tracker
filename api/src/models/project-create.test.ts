@@ -77,7 +77,7 @@ describe('PostProjectObject', () => {
         state_code: 1,
         actual_start_date: 'string;',
         actual_end_date: 'string;',
-        brief_description: 'string;',
+        brief_desc: 'string;',
         is_healing_land: true,
         is_healing_people: true,
         is_land_initiative: true,

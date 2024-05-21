@@ -217,7 +217,8 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
               flexDirection="row"
               flex="1 1 auto"
               alignItems="center"
-              height="3rem">
+              height="3rem"
+            >
               <Box flex="1 1 auto">
                 <Typography variant="body2" component="div">
                   <strong>{file.name}</strong>
@@ -235,7 +236,8 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
                   <ComponentDialog
                     open={openDialog}
                     dialogTitle="Treatment File Errors"
-                    onClose={() => setOpenDialog(false)}>
+                    onClose={() => setOpenDialog(false)}
+                  >
                     {props.errorDetailHandler(errors)}
                   </ComponentDialog>
                 </Box>
@@ -278,7 +280,8 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         title="Remove File"
         aria-label="remove file"
         onClick={() => props.onCancel()}
-        size="large">
+        size="large"
+      >
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -290,7 +293,8 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         title="Cancel Upload"
         aria-label="cancel upload"
         onClick={() => props.onCancel()}
-        size="large">
+        size="large"
+      >
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
@@ -311,7 +315,8 @@ const ActionButton: React.FC<IActionButtonProps> = (props) => {
         aria-label="remove file"
         onClick={() => props.onCancel()}
         sx={pageStyles.errorColor}
-        size="large">
+        size="large"
+      >
         <Icon path={mdiTrashCanOutline} size={1} />
       </IconButton>
     );
