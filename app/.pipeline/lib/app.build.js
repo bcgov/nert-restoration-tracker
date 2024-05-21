@@ -21,9 +21,7 @@ const appBuild = (settings) => {
         SUFFIX: phases[phase].suffix,
         VERSION: phases[phase].tag,
         SOURCE_REPOSITORY_URL: oc.git.http_url,
-        SOURCE_REPOSITORY_REF: phases[phase].branch || oc.git.ref,
-        REACT_APP_MAPTILER_SECRET: phases[phase].mapTiler.mapTilerSecret,
-        REACT_APP_MAPTILER_API_KEY: phases[phase].mapTiler.mapTilerSecretApiKey
+        SOURCE_REPOSITORY_REF: phases[phase].branch || oc.git.ref
       }
     })
   );

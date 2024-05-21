@@ -21,7 +21,7 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-// import { AuthStateContext } from 'contexts/authStateContext';
+import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -132,7 +132,7 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  // const { keycloakWrapper } = useContext(AuthStateContext);
+  const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useRestorationTrackerApi();
   const queryParams = useQuery();
   const codes = useCodes();
@@ -290,7 +290,7 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
-      // keycloakWrapper?.refresh();
+      keycloakWrapper?.refresh();
       history(`/admin/projects/${response.id}`);
     } catch (error) {
       showCreateErrorDialog({

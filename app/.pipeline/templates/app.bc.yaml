@@ -44,12 +44,6 @@ parameters:
     value: '512Mi'
   - name: MEMORY_LIMIT
     value: '5Gi'
-  - name: REACT_APP_MAPTILER_SECRET
-    description: Secrets used to read and write to the Maptiler API
-    required: true
-  - name: REACT_APP_MAPTILER_API_KEY
-    description: Maptiler API key
-    required: true
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
@@ -115,12 +109,6 @@ objects:
         type: Git
       strategy:
         dockerStrategy:
-          env:
-          - name: REACT_APP_MAPTILER_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: ${REACT_APP_MAPTILER_SECRET}
-                key: ${REACT_APP_MAPTILER_API_KEY}
           from:
             kind: ImageStreamTag
             name: ${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}

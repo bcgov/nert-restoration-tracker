@@ -65,8 +65,7 @@ const phases = {
     cpuRequest: '100m',
     cpuLimit: '1000m',
     memoryRequest: '512Mi',
-    memoryLimit: '3Gi',
-    mapTiler: config.mapTiler.dev
+    memoryLimit: '3Gi'
   },
   dev: {
     namespace: 'd83219-dev',
