@@ -1,19 +1,20 @@
 import { render, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import React from 'react';
-import { Router } from 'react-router';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import ActiveUsersList, { IActiveUsersListProps } from './ActiveUsersList';
 
 jest.mock('../../../hooks/useRestorationTrackerApi');
 
-const history = createMemoryHistory();
-
 const renderContainer = (props: IActiveUsersListProps) => {
+  const routes = [{ path: '/123', element: <ActiveUsersList {...props} /> }];
+
+  const router = createMemoryRouter(routes, { initialEntries: ['/123'] });
+
   return render(
-    <Router history={history}>
+    <RouterProvider router={router}>
       <ActiveUsersList {...props} />
-    </Router>
+    </RouterProvider>
   );
 };
 
@@ -32,19 +33,25 @@ describe('ActiveUsersList', () => {
   });
 
   it('shows a table row for an active user with all fields having values', async () => {
-    const mockGetUsers = jest.fn();
-
     const { getByText } = renderContainer({
       activeUsers: [
         {
           id: 1,
           user_identifier: 'username',
           record_end_date: '2020-10-10',
-          role_names: ['role 1', 'role 2']
+          role_names: ['role 1', 'role 2'],
+          project_id: 1,
+          name: 'name',
+          system_user_id: 1,
+          project_role_id: 1,
+          project_role_name: 'project role name',
+          project_participation_id: 1,
+          role_ids: ['1', '2'],
+          projects: []
         }
       ],
       codes: codes,
-      getUsers: mockGetUsers
+      refresh: jest.fn()
     });
 
     await waitFor(() => {
@@ -54,18 +61,25 @@ describe('ActiveUsersList', () => {
   });
 
   it('shows a table row for an active user with fields not having values', async () => {
-    const mockGetUsers = jest.fn();
     const { getByTestId } = renderContainer({
       activeUsers: [
         {
           id: 1,
           user_identifier: 'username',
           record_end_date: '2020-10-10',
-          role_names: []
+          role_names: [],
+          project_id: 1,
+          name: 'name',
+          system_user_id: 1,
+          project_role_id: 1,
+          project_role_name: 'project role name',
+          project_participation_id: 1,
+          role_ids: ['1', '2'],
+          projects: []
         }
       ],
       codes: codes,
-      getUsers: mockGetUsers
+      refresh: jest.fn()
     });
 
     await waitFor(() => {
@@ -74,11 +88,25 @@ describe('ActiveUsersList', () => {
   });
 
   it('renders the add new users button correctly', async () => {
-    const mockGetUsers = jest.fn();
     const { getByTestId } = renderContainer({
-      activeUsers: [],
+      activeUsers: [
+        {
+          id: 1,
+          user_identifier: 'username',
+          record_end_date: '2020-10-10',
+          role_names: ['role 1', 'role 2'],
+          project_id: 1,
+          name: 'name',
+          system_user_id: 1,
+          project_role_id: 1,
+          project_role_name: 'project role name',
+          project_participation_id: 1,
+          role_ids: ['1', '2'],
+          projects: []
+        }
+      ],
       codes: codes,
-      getUsers: mockGetUsers
+      refresh: jest.fn()
     });
 
     await waitFor(() => {

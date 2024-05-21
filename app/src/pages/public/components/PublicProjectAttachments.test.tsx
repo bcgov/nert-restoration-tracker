@@ -1,14 +1,12 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React from 'react';
-import { Router } from 'react-router';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import PublicProjectAttachments from './PublicProjectAttachments';
 
-const history = createMemoryHistory();
 jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockuseRestorationTrackerApi = {
+const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+const mockUseApi = {
   public: {
     project: {
       getProjectAttachments: jest.fn()
@@ -16,14 +14,10 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = (
-  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
-).mockReturnValue(mockuseRestorationTrackerApi);
-
 describe('PublicProjectAttachments', () => {
   beforeEach(() => {
     // clear mocks before each test
-    mockRestorationTrackerApi().public.project.getProjectAttachments.mockClear();
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
   });
 
   afterEach(() => {
@@ -36,9 +30,7 @@ describe('PublicProjectAttachments', () => {
     });
 
     const { getByText } = render(
-      <Router history={history}>
-        <PublicProjectAttachments projectForViewData={getProjectForViewResponse} />
-      </Router>
+      <PublicProjectAttachments projectForViewData={getProjectForViewResponse} />
     );
 
     await waitFor(() => {
@@ -59,9 +51,7 @@ describe('PublicProjectAttachments', () => {
     });
 
     const { getByText } = render(
-      <Router history={history}>
-        <PublicProjectAttachments projectForViewData={getProjectForViewResponse} />
-      </Router>
+      <PublicProjectAttachments projectForViewData={getProjectForViewResponse} />
     );
 
     await waitFor(() => {

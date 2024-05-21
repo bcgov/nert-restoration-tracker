@@ -1,14 +1,10 @@
 import { render, waitFor } from '@testing-library/react';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { createMemoryHistory } from 'history';
 import React from 'react';
-import { Router } from 'react-router';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
 import { codes } from 'test-helpers/code-helpers';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import ProjectDetailsPage from './ProjectDetailsPage';
-
-const history = createMemoryHistory();
 
 describe('ProjectDetailsPage', () => {
   getProjectForViewResponse.location.geometry.push({
@@ -29,15 +25,9 @@ describe('ProjectDetailsPage', () => {
     });
 
     const { getByTestId, queryByTestId } = render(
-      <Router history={history}>
-        <AuthStateContext.Provider value={authState}>
-          <ProjectDetailsPage
-            projectForViewData={getProjectForViewResponse}
-            codes={codes}
-            refresh={jest.fn()}
-          />
-        </AuthStateContext.Provider>
-      </Router>
+      <AuthStateContext.Provider value={authState}>
+        <ProjectDetailsPage projectForViewData={getProjectForViewResponse} codes={codes} />
+      </AuthStateContext.Provider>
     );
 
     await waitFor(() => {
@@ -56,15 +46,9 @@ describe('ProjectDetailsPage', () => {
     });
 
     const { getByTestId } = render(
-      <Router history={history}>
-        <AuthStateContext.Provider value={authState}>
-          <ProjectDetailsPage
-            projectForViewData={getProjectForViewResponse}
-            codes={codes}
-            refresh={jest.fn()}
-          />
-        </AuthStateContext.Provider>
-      </Router>
+      <AuthStateContext.Provider value={authState}>
+        <ProjectDetailsPage projectForViewData={getProjectForViewResponse} codes={codes} />
+      </AuthStateContext.Provider>
     );
 
     await waitFor(() => {
@@ -83,15 +67,9 @@ describe('ProjectDetailsPage', () => {
     });
 
     const { getByTestId } = render(
-      <Router history={history}>
-        <AuthStateContext.Provider value={authState}>
-          <ProjectDetailsPage
-            projectForViewData={getProjectForViewResponse}
-            codes={codes}
-            refresh={jest.fn()}
-          />
-        </AuthStateContext.Provider>
-      </Router>
+      <AuthStateContext.Provider value={authState}>
+        <ProjectDetailsPage projectForViewData={getProjectForViewResponse} codes={codes} />
+      </AuthStateContext.Provider>
     );
 
     await waitFor(() => {
