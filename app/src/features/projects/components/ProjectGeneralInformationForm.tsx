@@ -6,6 +6,7 @@ import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFiel
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
 
+import ImageUpload from 'components/attachments/ImageUpload';
 import React from 'react';
 import yup from 'utils/YupSchema';
 
@@ -66,6 +67,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
 
   return (
     <Grid container spacing={3}>
+      <ImageUpload />
       <Grid item xs={12} md={9}>
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>
