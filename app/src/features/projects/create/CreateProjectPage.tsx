@@ -288,7 +288,7 @@ const CreateProjectPage: React.FC = () => {
       }
 
       await deleteDraft();
-
+      setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
       // keycloakWrapper?.refresh();
       history(`/admin/projects/${response.id}`);
