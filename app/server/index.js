@@ -40,6 +40,8 @@ const request = require('request');
   app.use('/config', (_, resp) => {
     const config = {
       API_HOST: process.env.REACT_APP_API_HOST || 'localhost',
+      REACT_APP_OBJECT_STORE_URL: process.env.REACT_APP_OBJECT_STORE_URL,
+      REACT_APP_OBJECT_STORE_BUCKET_NAME: process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME,
       CHANGE_VERSION: process.env.CHANGE_VERSION || 'NA',
       NODE_ENV: process.env.NODE_ENV || 'development',
       REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || 'dev',
