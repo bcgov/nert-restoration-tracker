@@ -32,21 +32,21 @@ export const rootAPIDoc = {
       description: 'local api via docker via nginx'
     },
     {
-      url: 'https://api-dev-restoration-tracker.apps.silver.devops.gov.bc.ca',
+      url: 'https://api-dev-nert-restoration-tracker.apps.silver.devops.gov.bc.ca',
       description: 'deployed api in dev environment'
     },
     {
-      url: 'https://api-test-restoration-tracker.apps.silver.devops.gov.bc.ca',
+      url: 'https://api-test-nert-restoration-tracker.apps.silver.devops.gov.bc.ca',
       description: 'deployed api in test environment'
     },
     {
-      url: 'https://api-restoration-tracker.apps.silver.devops.gov.bc.ca',
+      url: 'https://api-nert-restoration-tracker.apps.silver.devops.gov.bc.ca',
       description: 'deployed api in prod environment'
     }
   ],
   externalDocs: {
     description: 'Visit GitHub to find out more about this API',
-    url: 'https://github.com/bcgov/restoration-tracker.git'
+    url: 'https://github.com/bcgov/nert-restoration-tracker.git'
   },
   paths: {},
   components: {

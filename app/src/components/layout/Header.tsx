@@ -23,9 +23,13 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
-const nert_version = process.env.NERT_VERSION || '0.0.0.0';
+const nert_version = process.env.REACT_APP_NERT_VERSION || '0.0.0.0';
+console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+console.log("process.env.REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV);
 const nert_environment =
-  process.env.NODE_ENV === 'development' ? 'local' : process.env.NODE_ENV || 'undefined';
+  process.env.REACT_APP_NODE_ENV === 'development'
+    ? 'local'
+    : process.env.REACT_APP_NODE_ENV || 'undefined';
 
 const pageStyles = {
   govHeaderToolbar: {
@@ -252,12 +256,12 @@ const Header: React.FC = () => {
               <Link to="/admin/search" id="menu_search">
                 Map
               </Link>
+              <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+                <Link to="/admin/users" id="menu_admin_users">
+                  Manage Users
+                </Link>
+              </SystemRoleGuard>
             </AuthGuard>
-            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-              <Link to="/admin/users" id="menu_admin_users">
-                Manage Users
-              </Link>
-            </SystemRoleGuard>
           </Toolbar>
         </Box>
       </AppBar>

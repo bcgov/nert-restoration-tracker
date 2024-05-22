@@ -37,7 +37,7 @@ export interface IProjectLocationForm {
     region: number;
     is_within_overlapping: string;
     name_area_conservation_priority: string[];
-    size_ha: number | null;
+    size_ha: number;
   };
 }
 
@@ -48,19 +48,19 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
     number_sites: '' as unknown as number,
     is_within_overlapping: 'false',
     name_area_conservation_priority: [],
-    size_ha: null
+    size_ha: '' as unknown as number
   }
 };
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
+    // region: yup.string().required('Required'),
     geometry: yup
       .array()
       .min(1, 'You must specify a project boundary')
       .required('You must specify a project boundary'),
     is_within_overlapping: yup.string().notRequired(),
-    name_area_conservation_priority: yup.array(),
-    region: yup.number().required('Required'),
+    // name_area_conservation_priority: yup.array().nullable(),
     size_ha: yup.number().nullable(),
     number_sites: yup.number().min(1, 'At least one site is required').required('Required')
   })
@@ -201,6 +201,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               <CustomTextField
                 name={'location.name_area_conservation_priority'}
                 label={'Area of Cultural or Conservation Priority Name'}
+                other={{
+                  disabled: true
+                }}
               />
             </Grid>
           </Grid>

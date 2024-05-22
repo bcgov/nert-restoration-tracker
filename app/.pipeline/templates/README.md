@@ -1,19 +1,19 @@
-# API OpenShift Templates
+# APP OpenShift Templates
 
-This folder contains yaml templates for the api builds, deployments, etc.
+This folder contains yaml templates for the app builds, deployments, etc.
 
-## API Prerequisites For Deploying On OpenShift
+## APP Prerequisites For Deploying On OpenShift
 
 The pipeline code builds and deploys all pods/images/storage/etc needed to deploy the application. However, there are some secrets that cannot be automatically deployed (as they cannot be committed to GitHub). You must manually create and populate these secrets.
 
-- Create Database Secret (restoration-tracker-creds)
+- Create Maptiler Secret (restoration-tracker-maptiler-cred)
 - Create ObjectStore Secret (restoration-tracker-object-store)
 
 The included templates under `prereqs` can be imported via the "Import YAML" page in OpenShift.
 
-## API Node image stream and version 
+## APP Node image stream and version 
 
-The imagestreamtag `image-registry.openshift-image-registry.svc:5000/openshift/nodejs-20-minimal:1-41.1712567743` listed in the `api.bc.yaml` must exists in the OpenShift tools environment.
+The imagestreamtag `image-registry.openshift-image-registry.svc:5000/openshift/nodejs-20-minimal:1-41.1712567743` listed in the `app.bc.yaml` must exists in the OpenShift tools environment.
 
  - If the required imagestreamtag does not exist, or the image stream exists but has no matching tag, run the following command using the OC CLI.
 

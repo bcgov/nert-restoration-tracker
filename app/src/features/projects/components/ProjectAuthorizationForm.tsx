@@ -62,18 +62,16 @@ export const ProjectAuthorizationFormInitialValues: IProjectAuthorizationForm = 
 
 export const ProjectAuthorizationFormYupSchema = yup.object().shape({
   authorization: yup.object().shape({
-    authorizations: yup
-      .array()
-      .of(
-        yup.object().shape({
-          authorization_ref: yup
-            .string()
-            .max(100, 'Cannot exceed 100 characters')
-            .required('Required'),
-          authorization_type: yup.string().required('Required')
-        })
-      )
-      .isUniquePermitNumber('Authorization reference must be unique')
+    authorizations: yup.array().of(
+      yup.object().shape({
+        authorization_ref: yup
+          .string()
+          .max(100, 'Cannot exceed 100 characters')
+          .required('Required'),
+        authorization_type: yup.string().required('Required')
+      })
+    )
+    // .isUniquePermitNumber('Authorization reference must be unique')
   })
 });
 
