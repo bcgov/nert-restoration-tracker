@@ -327,7 +327,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={maskState[index]}
+                      checked={feature.properties?.maskedLocation || false}
                       onChange={(event) => maskChanged(event, index)}
                     />
                   }
