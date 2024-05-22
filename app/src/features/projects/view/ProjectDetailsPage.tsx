@@ -130,8 +130,8 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           PROJECT_ROLE.PROJECT_VIEWER
         ]}>
         <Box component="section">
-          <Typography variant="body1" component={'h3'} data-testid="PermitsTitle">
-            Permits
+          <Typography variant="body1" component={'h3'} data-testid="AuthorizationsTitle">
+            Authorizations
           </Typography>
           <ProjectPermits projectForViewData={projectForViewData} refresh={refresh} />
         </Box>

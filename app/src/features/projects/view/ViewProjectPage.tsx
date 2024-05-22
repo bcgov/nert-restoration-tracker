@@ -25,7 +25,7 @@ import {
   IGetProjectForViewResponse
 } from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // import TreatmentList from './components/TreatmentList';
 // import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
 import ProjectAttachments from './ProjectAttachments';
@@ -56,7 +56,7 @@ const pageStyles = {
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  const history = useNavigate();
+  // const history = useNavigate();
   const urlParams: Record<string, string | number | undefined> = useParams();
 
   if (!urlParams['id']) {
@@ -252,7 +252,8 @@ const ViewProjectPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history('users')}>
+                // onClick={() => history('users')}
+              >
                 Project Team
               </Button>
               <Button

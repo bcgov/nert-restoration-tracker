@@ -26,8 +26,6 @@ export interface IMapContainerProps {
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
-console.log('process.env', process.env);
-console.log('MAPTILER_API_KEY', MAPTILER_API_KEY);
 
 const pageStyle = {
   width: '100%',
@@ -267,21 +265,15 @@ const initializeMap = (
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
   const {
-    tooltip,
+    // tooltip,
     setTooltip,
-    tooltipVisible,
+    // tooltipVisible,
     setTooltipVisible,
-    tooltipX,
+    // tooltipX,
     setTooltipX,
-    tooltipY,
+    // tooltipY,
     setTooltipY
   } = tooltipState;
-
-  // To satisfy the linter until I think of a better way to use these variables
-  console.log('tooltip', tooltip);
-  console.log('tooltipVisible', tooltipVisible);
-  console.log('tooltipX', tooltipX);
-  console.log('tooltipY', tooltipY);
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
@@ -846,7 +838,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       <div
         id="tooltip"
         className={tooltipVisible ? 'visible' : 'tooltip'}
-        style={{ left: tooltipX, top: tooltipY }}>
+        style={{ left: tooltipX, top: tooltipY }}
+      >
         {tooltip}
       </div>
     </div>

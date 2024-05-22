@@ -6,7 +6,7 @@ import Header from 'components/layout/Header';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-const PublicLayout = () => {
+const PublicLayout: React.FC<{ children: any }> = () => {
   function isSupportedBrowser() {
     if (
       navigator.userAgent.indexOf('Chrome') !== -1 ||

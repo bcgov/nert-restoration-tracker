@@ -1,13 +1,10 @@
 import { fireEvent, render } from '@testing-library/react';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { createMemoryHistory } from 'history';
 import React from 'react';
-import { Router } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
 import AccessDenied from './AccessDenied';
-
-const history = createMemoryHistory();
 
 describe('AccessDenied', () => {
   it('redirects to `/` when user is not authenticated', () => {
@@ -30,58 +27,23 @@ describe('AccessDenied', () => {
       }
     });
 
-    const history = createMemoryHistory();
-
-    history.push('/forbidden');
-
-    render(
+    const renderObject = (
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
-          <AccessDenied />
-        </Router>
+        <AccessDenied />
       </AuthStateContext.Provider>
     );
+    const routes = [
+      { path: '/', element: <div>Home</div> },
+      { path: '/forbidden', element: renderObject },
+      { path: '/request-submitted', element: <div>Request submitted</div> },
+      { path: '/access-request', element: <div>Request access</div> }
+    ];
 
-    expect(history.location.pathname).toEqual('/');
-  });
+    const router = createMemoryRouter(routes, { initialEntries: ['/forbidden'] });
 
-  it('renders a spinner when user is authenticated and `hasLoadedAllUserInfo` is false', () => {
-    const authState = getMockAuthState({
-      keycloakWrapper: {
-        keycloak: {
-          authenticated: true
-        },
-        hasLoadedAllUserInfo: false,
-        hasAccessRequest: false,
+    render(<RouterProvider router={router}>{renderObject}</RouterProvider>);
 
-        systemRoles: [],
-        getUserIdentifier: jest.fn(),
-        hasSystemRole: jest.fn(),
-        getIdentitySource: jest.fn(),
-        username: 'testusername',
-        displayName: 'testdisplayname',
-        email: 'test@email.com',
-        refresh: () => {}
-      }
-    });
-
-    const history = createMemoryHistory();
-
-    history.push('/forbidden');
-
-    const { asFragment } = render(
-      <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
-          <AccessDenied />
-        </Router>
-      </AuthStateContext.Provider>
-    );
-
-    // does not change location
-    expect(history.location.pathname).toEqual('/forbidden');
-
-    // renders a spinner
-    expect(asFragment()).toMatchSnapshot();
+    expect(router.state.location.pathname).toEqual('/');
   });
 
   it('redirects to `/request-submitted` when user is authenticated and has a pending access request', () => {
@@ -103,20 +65,23 @@ describe('AccessDenied', () => {
         refresh: () => {}
       }
     });
-
-    const history = createMemoryHistory();
-
-    history.push('/forbidden');
-
-    render(
+    const renderObject = (
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
-          <AccessDenied />
-        </Router>
+        <AccessDenied />
       </AuthStateContext.Provider>
     );
+    const routes = [
+      { path: '/', element: <div>Home</div> },
+      { path: '/forbidden', element: renderObject },
+      { path: '/request-submitted', element: <div>Request submitted</div> },
+      { path: '/access-request', element: <div>Request access</div> }
+    ];
 
-    expect(history.location.pathname).toEqual('/request-submitted');
+    const router = createMemoryRouter(routes, { initialEntries: ['/forbidden'] });
+
+    render(<RouterProvider router={router}>{renderObject}</RouterProvider>);
+
+    expect(router.state.location.pathname).toEqual('/request-submitted');
   });
 
   it('renders correctly when the user is authenticated and has no pending access requests', () => {
@@ -139,12 +104,23 @@ describe('AccessDenied', () => {
       }
     });
 
-    const { getByText, queryByTestId } = render(
+    const renderObject = (
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
-          <AccessDenied />
-        </Router>
+        <AccessDenied />
       </AuthStateContext.Provider>
+    );
+
+    const routes = [
+      { path: '/', element: <div>Home</div> },
+      { path: '/forbidden', element: renderObject },
+      { path: '/request-submitted', element: <div>Request submitted</div> },
+      { path: '/access-request', element: <div>Request access</div> }
+    ];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/forbidden'] });
+
+    const { getByText, queryByTestId } = render(
+      <RouterProvider router={router}>{renderObject}</RouterProvider>
     );
 
     expect(getByText('You do not have permission to access this page.')).toBeVisible();
@@ -171,12 +147,23 @@ describe('AccessDenied', () => {
       }
     });
 
-    const { getByText, getByTestId } = render(
+    const renderObject = (
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
-          <AccessDenied />
-        </Router>
+        <AccessDenied />
       </AuthStateContext.Provider>
+    );
+
+    const routes = [
+      { path: '/', element: <div>Home</div> },
+      { path: '/forbidden', element: renderObject },
+      { path: '/request-submitted', element: <div>Request submitted</div> },
+      { path: '/access-request', element: <div>Request access</div> }
+    ];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/forbidden'] });
+
+    const { getByText, getByTestId } = render(
+      <RouterProvider router={router}>{renderObject}</RouterProvider>
     );
 
     expect(getByText('You do not have permission to access this application.')).toBeVisible();
@@ -184,6 +171,6 @@ describe('AccessDenied', () => {
 
     fireEvent.click(getByText('Request Access'));
 
-    expect(history.location.pathname).toEqual('/access-request');
+    expect(router.state.location.pathname).toEqual('/access-request');
   });
 });

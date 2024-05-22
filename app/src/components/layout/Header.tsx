@@ -18,18 +18,11 @@ import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
+import { ConfigContext } from 'contexts/configContext';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
-
-const nert_version = process.env.REACT_APP_NERT_VERSION || '0.0.0.0';
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-console.log('process.env.REACT_APP_NODE_ENV', process.env.REACT_APP_NODE_ENV);
-const nert_environment =
-  process.env.REACT_APP_NODE_ENV === 'development'
-    ? 'local'
-    : process.env.REACT_APP_NODE_ENV || 'undefined';
 
 const pageStyles = {
   govHeaderToolbar: {
@@ -120,6 +113,12 @@ const pageStyles = {
 };
 
 const Header: React.FC = () => {
+  const config = useContext(ConfigContext);
+
+  const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  const nert_version = config?.CHANGE_VERSION ? mmm ? `${mmm}.${config.CHANGE_VERSION}` : `0.0.0.${config.CHANGE_VERSION}` : '0.0.0.NA';
+  const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
+
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   // Authenticated view
