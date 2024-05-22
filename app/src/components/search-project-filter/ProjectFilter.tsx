@@ -256,8 +256,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                   (!isAdvancedFiltersOpen && <Icon path={mdiMenuDown} size={1} />) ||
                   (isAdvancedFiltersOpen && <Icon path={mdiMenuUp} size={1} />)
                 }
-                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
-              >
+                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}>
                 Advanced
               </Button>
             </Box>
@@ -268,8 +267,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                 variant="contained"
                 color="primary"
                 sx={pageStyles.filterApplyBtn}
-                onClick={handleFilterUpdate}
-              >
+                onClick={handleFilterUpdate}>
                 Apply
               </Button>
             </Box>
@@ -282,8 +280,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="center"
-                spacing={1}
-              >
+                spacing={1}>
                 <Grid item>
                   <Typography variant="h4">Filters </Typography>
                 </Grid>
@@ -314,8 +311,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                   color="primary"
                   size="medium"
                   sx={pageStyles.actionButton}
-                  onClick={handleFilterReset}
-                >
+                  onClick={handleFilterReset}>
                   Reset
                 </Button>
               </Box>

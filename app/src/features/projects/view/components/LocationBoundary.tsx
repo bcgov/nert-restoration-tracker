@@ -68,8 +68,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
       height="100%"
       overflow="hidden"
       data-testid="map_container"
-      sx={pageStyles.mapContainer}
-    >
+      sx={pageStyles.mapContainer}>
       <MapContainer
         mapId="project_location_form_map"
         staticLayers={staticLayers}

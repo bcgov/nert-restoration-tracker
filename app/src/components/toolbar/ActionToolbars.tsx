@@ -26,8 +26,7 @@ export const H3ButtonToolbar: React.FC<IButtonToolbarProps> = (props) => {
     <ActionToolbar
       label={props.label}
       labelProps={{ variant: 'h3' }}
-      toolbarProps={props.toolbarProps}
-    >
+      toolbarProps={props.toolbarProps}>
       <Button
         id={id}
         data-testid={id}
@@ -39,8 +38,7 @@ export const H3ButtonToolbar: React.FC<IButtonToolbarProps> = (props) => {
         startIcon={props.buttonStartIcon}
         endIcon={props.buttonEndIcon}
         onClick={() => props.buttonOnClick()}
-        {...props.buttonProps}
-      >
+        {...props.buttonProps}>
         <strong>{props.buttonLabel}</strong>
       </Button>
     </ActionToolbar>
@@ -54,8 +52,7 @@ export const H2ButtonToolbar: React.FC<IButtonToolbarProps> = (props) => {
     <ActionToolbar
       label={props.label}
       labelProps={{ variant: 'h2' }}
-      toolbarProps={props.toolbarProps}
-    >
+      toolbarProps={props.toolbarProps}>
       <Button
         id={id}
         data-testid={id}
@@ -66,8 +63,7 @@ export const H2ButtonToolbar: React.FC<IButtonToolbarProps> = (props) => {
         startIcon={props.buttonStartIcon}
         endIcon={props.buttonEndIcon}
         onClick={() => props.buttonOnClick()}
-        {...props.buttonProps}
-      >
+        {...props.buttonProps}>
         {props.buttonLabel}
       </Button>
     </ActionToolbar>
@@ -87,8 +83,7 @@ export const H2MenuToolbar: React.FC<IMenuToolbarProps> = (props) => {
     <ActionToolbar
       label={props.label}
       labelProps={{ variant: 'h2' }}
-      toolbarProps={props.toolbarProps}
-    >
+      toolbarProps={props.toolbarProps}>
       <CustomMenuButton {...props} />
     </ActionToolbar>
   );
@@ -137,8 +132,7 @@ export const CustomMenuButton: React.FC<ICustomMenuButtonProps> = (props) => {
         startIcon={props.buttonStartIcon}
         endIcon={props.buttonEndIcon}
         onClick={handleClick}
-        {...props.buttonProps}
-      >
+        {...props.buttonProps}>
         {props.buttonLabel}
       </Button>
       <Menu
@@ -155,8 +149,7 @@ export const CustomMenuButton: React.FC<ICustomMenuButtonProps> = (props) => {
         }}
         MenuListProps={{
           'aria-labelledby': 'basic-button'
-        }}
-      >
+        }}>
         {props.menuItems.map((menuItem) => {
           const menuItemId = `custom-menu-button-item-${menuItem.menuLabel.replace(/\s/g, '')}`;
           return (
@@ -164,8 +157,7 @@ export const CustomMenuButton: React.FC<ICustomMenuButtonProps> = (props) => {
               id={menuItemId}
               key={menuItemId}
               data-testid={menuItemId}
-              onClick={() => closeMenuOnItemClick(menuItem.menuOnClick)}
-            >
+              onClick={() => closeMenuOnItemClick(menuItem.menuOnClick)}>
               {menuItem.menuIcon && <ListItemIcon>{menuItem.menuIcon}</ListItemIcon>}
               {menuItem.menuLabel}
             </MenuItem>
@@ -214,8 +206,7 @@ export const CustomMenuIconButton: React.FC<ICustomMenuIconButtonProps> = (props
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        size="large"
-      >
+        size="large">
         {props.buttonIcon}
       </IconButton>
       <Menu
@@ -232,8 +223,7 @@ export const CustomMenuIconButton: React.FC<ICustomMenuIconButtonProps> = (props
         }}
         MenuListProps={{
           'aria-labelledby': 'basic-button'
-        }}
-      >
+        }}>
         {props.menuItems.map((menuItem) => {
           const menuItemId = `custom-menu-icon-item-${menuItem.menuLabel.replace(/\s/g, '')}`;
           return (
@@ -241,8 +231,7 @@ export const CustomMenuIconButton: React.FC<ICustomMenuIconButtonProps> = (props
               id={menuItemId}
               key={menuItemId}
               data-testid={menuItemId}
-              onClick={() => closeMenuOnItemClick(menuItem.menuOnClick)}
-            >
+              onClick={() => closeMenuOnItemClick(menuItem.menuOnClick)}>
               {menuItem.menuIcon && <ListItemIcon>{menuItem.menuIcon}</ListItemIcon>}
               {menuItem.menuLabel}
             </MenuItem>

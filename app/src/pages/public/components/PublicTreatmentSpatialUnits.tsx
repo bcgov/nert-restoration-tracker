@@ -128,8 +128,7 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
               title={'Filter Treaatments'}
               aria-label={'Filter Treatments'}
               endIcon={<Icon path={mdiMenuDown} size={1} />}
-              onClick={handleClick}
-            >
+              onClick={handleClick}>
               Filter Treatments ({yearList?.length})
             </Button>
 
@@ -139,8 +138,7 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
               anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
+              onClose={handleClose}>
               {!yearList && <Typography>No Treatment Years Available</Typography>}
               {yearList.length >= 1 &&
                 yearList.map((year) => {
@@ -151,8 +149,7 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
                       sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
-                      onClick={() => handleSelectedSwitch(year.year)}
-                    >
+                      onClick={() => handleSelectedSwitch(year.year)}>
                       <Checkbox checked={selectedSpatialLayer[year.year]} color="primary" />
                       <Box flexGrow={1} ml={0.5}>
                         {year.year}

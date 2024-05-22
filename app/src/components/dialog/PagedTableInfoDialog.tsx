@@ -74,12 +74,10 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
         aria-labelledby="customized-dialog-title"
         open={open}
         maxWidth="xl"
-        scroll="paper"
-      >
+        scroll="paper">
         <DialogTitle
           sx={{ m: 0, p: 2, backgroundColor: item.typeBgColor }}
-          id="customized-dialog-title"
-        >
+          id="customized-dialog-title">
           <img src={item.typeIcon} width="20" height="32" alt={item.typeLabel} /> {item.typeLabel}{' '}
           table usage
         </DialogTitle>
@@ -91,8 +89,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
             right: 8,
             top: 8,
             color: (theme) => theme.palette.grey[500]
-          }}
-        >
+          }}>
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>

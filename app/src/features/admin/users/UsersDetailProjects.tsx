@@ -163,8 +163,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
                 <Link
                   color="primary"
                   onClick={() => history(`/admin/projects/${row.project_id}/details`)}
-                  aria-current="page"
-                >
+                  aria-current="page">
                   <Typography variant="body2">{row.name}</Typography>
                 </Link>
               </TableCell>
@@ -210,8 +209,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
                         }
                       })
                     }
-                    size="large"
-                  >
+                    size="large">
                     <Icon path={mdiTrashCanOutline} size={1} />
                   </IconButton>
                 </Box>

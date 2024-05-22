@@ -155,8 +155,7 @@ export const AccessRequestPage: React.FC = () => {
           onSubmit={(values) => {
             setIsSubmittingRequest(true);
             handleSubmitAccessRequest(values);
-          }}
-        >
+          }}>
           {({ handleSubmit }) => (
             <Box component={Paper} p={3}>
               <Typography variant="h1">Request Access</Typography>
@@ -176,8 +175,7 @@ export const AccessRequestPage: React.FC = () => {
                         variant="contained"
                         color="primary"
                         sx={pageStyles.actionButton}
-                        disabled={isSubmittingRequest}
-                      >
+                        disabled={isSubmittingRequest}>
                         <strong>Submit Request</strong>
                       </Button>
                       {isSubmittingRequest && (
@@ -201,8 +199,7 @@ export const AccessRequestPage: React.FC = () => {
                         history('/logout');
                       }}
                       sx={pageStyles.actionButton}
-                      data-testid="logout-button"
-                    >
+                      data-testid="logout-button">
                       Log out
                     </Button>
                   </Box>
