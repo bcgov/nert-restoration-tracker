@@ -24,14 +24,6 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
-const nert_version = process.env.REACT_APP_NERT_VERSION || '0.0.1.0';
-console.log('process.env', process.env);
-
-const nert_environment =
-  process.env.REACT_APP_NODE_ENV === 'development'
-    ? 'local'
-    : process.env.REACT_APP_NODE_ENV || 'undefined';
-
 const pageStyles = {
   govHeaderToolbar: {
     height: '70px'
@@ -122,7 +114,11 @@ const pageStyles = {
 
 const Header: React.FC = () => {
   const config = useContext(ConfigContext);
-  console.log('config', config);
+
+  const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  const nert_version = config?.CHANGE_VERSION ? mmm ? `${mmm}.${config.CHANGE_VERSION}` : `0.0.0.${config.CHANGE_VERSION}` : '0.0.0.NA';
+  const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
+
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   // Authenticated view
