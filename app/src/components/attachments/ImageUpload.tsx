@@ -53,6 +53,7 @@ const ImageUpload = () => {
   };
   // Fixing a lame typescript error
   const centerText = 'center' as const;
+  const fitObject = 'cover' as const;
 
   // Styles for the component
   const styles = {
@@ -76,7 +77,7 @@ const ImageUpload = () => {
     image: {
       height: '200px',
       width: '100%',
-      objectFit: 'cover'
+      objectFit: fitObject
     }
   };
 
