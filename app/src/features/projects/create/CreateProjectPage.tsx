@@ -275,7 +275,9 @@ const CreateProjectPage: React.FC = () => {
     try {
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
-      projectPostObject.location.size_ha = projectPostObject.location.size_ha ? projectPostObject.location.size_ha : 0;   
+      projectPostObject.location.size_ha = projectPostObject.location.size_ha
+        ? projectPostObject.location.size_ha
+        : 0;
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
