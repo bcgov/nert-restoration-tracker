@@ -26,6 +26,8 @@ const appDeploy = async (settings) => {
         CHANGE_ID: phases.build.changeId || changeId,
         REACT_APP_API_HOST: phases[phase].apiHost,
         REACT_APP_SITEMINDER_LOGOUT_URL: phases[phase].siteminderLogoutURL,
+        REACT_APP_OBJECT_STORE_URL: phases[phase].objectStorageURL,
+        REACT_APP_OBJECT_STORE_BUCKET_NAME: phases[phase].objectStorageBucket,
         REACT_APP_MAX_UPLOAD_NUM_FILES: phases[phase].maxUploadNumFiles,
         REACT_APP_MAX_UPLOAD_FILE_SIZE: phases[phase].maxUploadFileSize,
         NODE_ENV: phases[phase].env || 'dev',
