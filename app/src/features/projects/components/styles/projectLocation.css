@@ -10,3 +10,8 @@
     background-color: #e2fbff;
   }
 }
+
+.feature-box > :first-child {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}

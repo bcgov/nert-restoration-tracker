@@ -84,10 +84,16 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
-  // Mask state array
+  const maskStateArray =
+    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || [];
+
+  console.log('maskStateArray', maskStateArray);
+
   const [maskState, setMaskState] = useState<boolean[]>(
-    values.location.geometry.map((feature) => feature.properties?.maskedLocation)
+    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
+
+  console.log('maskState', maskState);
 
   // Mask change indicator
   const [mask, setMask] = useState<null | number>(null);
@@ -97,7 +103,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       if (file?.name.includes('json')) {
         handleGeoJSONUpload(file, 'location.geometry', formikProps);
       }
-
       return Promise.resolve();
     };
   };
@@ -145,6 +150,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
     // Make sure children know what has changed
     setMask(index);
+  };
+
+  const mouseEnterListItem = (index: number) => {
+    console.log('mouse enter', index);
   };
 
   return (
@@ -302,10 +311,14 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </Button>
         </Box>
 
-        <Box>
+        <Box className="feature-box">
           {/* Create a list element for each feature within values.location.geometry */}
           {values.location.geometry.map((feature, index) => (
-            <div style={featureStyle.parent} className="feature-item" key={index}>
+            <div
+              style={featureStyle.parent}
+              className="feature-item"
+              key={index}
+              onMouseEnter={() => mouseEnterListItem(index)}>
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>

@@ -42,6 +42,7 @@ export const handleGeoJSONUpload = async <T>(
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
     feature.properties = p;
+    console.log('feature', feature);
     return feature;
   };
 
