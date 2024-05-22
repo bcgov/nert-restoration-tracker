@@ -11,16 +11,13 @@ import React from 'react';
 import { codes } from 'test-helpers/code-helpers';
 
 jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockuseRestorationTrackerApi = {
+const mockUseApi = {
   admin: {
     approveAccessRequest: jest.fn(),
     denyAccessRequest: jest.fn()
   }
 };
-
-const mockRestorationTrackerApi = (
-  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
-).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
 
 const renderContainer = (
   accessRequests: IGetAccessRequestsListResponse[],
@@ -35,8 +32,7 @@ const renderContainer = (
 describe('AccessRequestList', () => {
   beforeEach(() => {
     // clear mocks before each test
-    mockRestorationTrackerApi().admin.approveAccessRequest.mockClear();
-    mockRestorationTrackerApi().admin.denyAccessRequest.mockClear();
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
   });
 
   afterEach(() => {

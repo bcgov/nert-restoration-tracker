@@ -18,7 +18,7 @@ const pageStyles = {
  *
  * @return {*}
  */
-const ProjectsLayout = () => {
+const ProjectsLayout: React.FC<{ children: any }> = () => {
   return (
     <>
       <Box sx={pageStyles.projectsLayoutRoot}>

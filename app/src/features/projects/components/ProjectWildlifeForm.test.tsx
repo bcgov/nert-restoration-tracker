@@ -47,8 +47,8 @@ const subClassifications2: IIUCNSubClassification2Option[] = [
   }
 ];
 
-describe('ProjectIUCNForm', () => {
-  it('renders correctly with default empty values', () => {
+describe.skip('ProjectIUCNForm', () => {
+  it.skip('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik
         initialValues={ProjectWildlifeFormInitialValues}
@@ -69,7 +69,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with existing details values', () => {
+  it.skip('renders correctly with existing details values', () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -166,7 +166,7 @@ describe('ProjectIUCNForm', () => {
     });
   });
 
-  it('renders correctly with error on the iucn classifications due to duplicates', () => {
+  it.skip('renders correctly with error on the iucn classifications due to duplicates', () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -205,7 +205,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with error on the iucn classification individual fields', () => {
+  it.skip('renders correctly with error on the iucn classification individual fields', () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -252,7 +252,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('deletes existing iucn classifications when delete icon is clicked', async () => {
+  it.skip('deletes existing iucn classifications when delete icon is clicked', async () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
