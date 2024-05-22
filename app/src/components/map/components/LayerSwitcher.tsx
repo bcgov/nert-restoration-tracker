@@ -139,7 +139,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               control={
                 <Checkbox checked={indigenous[0]} onClick={() => indigenous[1](!indigenous[0])} />
               }
-              label="Indigenous"
+              label="MKMA"
             />
           </FormGroup>
           <hr />
