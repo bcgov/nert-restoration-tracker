@@ -54,7 +54,8 @@ const IDIRRequestForm: React.FC<IIDIRRequestFormProps> = (props) => {
                 onChange={handleChange}
                 error={touched.role && Boolean(errors.role)}
                 displayEmpty
-                inputProps={{ 'aria-label': 'Role' }}>
+                inputProps={{ 'aria-label': 'Role' }}
+              >
                 {codes?.system_roles.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
                     {item.name}

@@ -127,7 +127,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                 size="small"
                 required={true}
                 fullWidth
-                variant="outlined">
+                variant="outlined"
+              >
                 <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
                 <Select
                   id="nrm-region-select"
@@ -137,7 +138,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                   value={values.location.region ?? ''}
                   onChange={handleChange}
                   error={touched?.location?.region && Boolean(errors?.location?.region)}
-                  inputProps={{ 'aria-label': 'NRM Region' }}>
+                  inputProps={{ 'aria-label': 'NRM Region' }}
+                >
                   {props.regions.map((item) => (
                     <MenuItem key={item.value} value={item.value}>
                       {item.label}
@@ -156,7 +158,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             error={
               touched.location?.is_within_overlapping &&
               Boolean(errors.location?.is_within_overlapping)
-            }>
+            }
+          >
             <FormLabel component="legend">
               Is the project within or overlapping a known area of cultural or conservation ?
             </FormLabel>
@@ -166,7 +169,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                 name="location.is_within_overlapping"
                 aria-label="project within or overlapping a known area of cultural or conservation"
                 value={values.location.is_within_overlapping || 'false'}
-                onChange={handleChange}>
+                onChange={handleChange}
+              >
                 <FormControlLabel
                   value="false"
                   control={<Radio color="primary" size="small" />}
@@ -261,7 +265,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             component="span"
             startIcon={<Icon path={mdiTrayArrowUp} size={1}></Icon>}
             onClick={() => setOpenUploadBoundary(true)}
-            data-testid="project-boundary-upload">
+            data-testid="project-boundary-upload"
+          >
             Upload Areas
           </Button>
         </Box>
@@ -285,7 +290,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       <ComponentDialog
         open={openUploadBoundary}
         dialogTitle="Upload Project Areas"
-        onClose={() => setOpenUploadBoundary(false)}>
+        onClose={() => setOpenUploadBoundary(false)}
+      >
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{

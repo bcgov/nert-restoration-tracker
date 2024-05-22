@@ -248,31 +248,36 @@ const ViewProjectPage: React.FC = () => {
           </Box>
           <RoleGuard
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+          >
             <Box sx={pageStyles.titleContainerActions}>
               <Button
                 aria-label="manage project team"
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history('users')}>
+                onClick={() => history('users')}
+              >
                 Project Team
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
+                onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}
+              >
                 Edit Project
               </Button>
               <RoleGuard
                 validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
+              >
                 <Button
                   aria-label="delete project"
                   variant="outlined"
                   color="primary"
-                  onClick={showDeleteProjectDialog}>
+                  onClick={showDeleteProjectDialog}
+                >
                   Delete
                 </Button>
               </RoleGuard>
@@ -313,7 +318,8 @@ const ViewProjectPage: React.FC = () => {
                         title="View full screen map"
                         style={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
-                        size="large">
+                        size="large"
+                      >
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>

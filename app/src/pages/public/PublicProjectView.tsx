@@ -166,7 +166,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           sx={{ fontWeight: 'bold' }}
                           variant="subtitle2"
                           component="span"
-                          color="textPrimary">
+                          color="textPrimary"
+                        >
                           {project.location.size_ha}
                         </Typography>
                       </Box>
@@ -180,7 +181,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           sx={{ fontWeight: 'bold' }}
                           variant="subtitle2"
                           component="span"
-                          color="textPrimary">
+                          color="textPrimary"
+                        >
                           {project.location.number_sites}
                         </Typography>
                       </Box>
@@ -194,7 +196,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           sx={{ fontWeight: 'bold' }}
                           variant="subtitle2"
                           component="span"
-                          color="textPrimary">
+                          color="textPrimary"
+                        >
                           {project.project.people_involved}
                         </Typography>
                       </Box>
@@ -209,7 +212,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           sx={{ fontWeight: 'bold' }}
                           variant="subtitle2"
                           component="span"
-                          color="textPrimary">
+                          color="textPrimary"
+                        >
                           {project.location.is_within_overlapping === 'D'
                             ? "Don't know"
                             : project.location.is_within_overlapping === 'Y'
@@ -227,7 +231,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           sx={{ fontWeight: 'bold' }}
                           variant="subtitle2"
                           component="span"
-                          color="textPrimary">
+                          color="textPrimary"
+                        >
                           {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
                         </Typography>
                       </Box>
@@ -252,7 +257,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           title="View full screen map"
                           sx={pageStyles.fullScreenBtn}
                           onClick={openMapDialog}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiFullscreen} size={1} />
                         </IconButton>
                       </Box>

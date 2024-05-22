@@ -22,7 +22,8 @@ describe.skip('DollarAmountField', () => {
         }}
         onSubmit={async () => {}}
         initialErrors={{ amount: 'error is here' }}
-        initialTouched={{ amount: true }}>
+        initialTouched={{ amount: true }}
+      >
         {() => <DollarAmountField id="amount" label="amount" name="amount" required={true} />}
       </Formik>
     );

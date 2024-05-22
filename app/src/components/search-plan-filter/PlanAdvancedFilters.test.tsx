@@ -108,7 +108,8 @@ describe.skip('ProjectAdvancedFilters', () => {
       <MemoryRouter>
         <Formik<IPlanAdvancedFilters>
           initialValues={ProjectAdvancedFiltersInitialValues}
-          onSubmit={() => {}}>
+          onSubmit={() => {}}
+        >
           <PlanAdvancedFilters
             funding_agency={funding_agency}
             contact_agency={contact_agency}

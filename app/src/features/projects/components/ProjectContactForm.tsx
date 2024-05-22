@@ -145,7 +145,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                       flexGrow={1}
                       justifyContent="center"
                       alignContent="middle"
-                      p={2}>
+                      p={2}
+                    >
                       <Typography variant="subtitle2">No Contacts</Typography>
                     </Box>
                   </ListItem>
@@ -176,7 +177,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                             });
                             setIsModalOpen(true);
                           }}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiPencilOutline} size={1} />
                         </IconButton>
                         <IconButton
@@ -185,7 +187,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                           title="Remove Contact"
                           aria-label="Remove Contact"
                           onClick={() => arrayHelpers.remove(index)}
-                          size="large">
+                          size="large"
+                        >
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Toolbar>
@@ -227,7 +230,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
             values: ProjectContactItemInitialValues
           });
           setIsModalOpen(true);
-        }}>
+        }}
+      >
         Add Contact
       </Button>
     </>

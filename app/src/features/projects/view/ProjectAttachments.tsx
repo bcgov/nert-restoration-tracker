@@ -52,7 +52,8 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         onClose={() => {
           setOpenUploadAttachments(false);
           getAttachments(true);
-        }}>
+        }}
+      >
         <FileUpload uploadHandler={getUploadHandler()} />
       </ComponentDialog>
 

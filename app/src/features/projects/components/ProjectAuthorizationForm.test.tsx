@@ -15,7 +15,8 @@ describe.skip('ProjectAuthorizationForm', () => {
         validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectAuthorizationForm />}
       </Formik>
     );
@@ -45,7 +46,8 @@ describe.skip('ProjectAuthorizationForm', () => {
         validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectAuthorizationForm />}
       </Formik>
     );
@@ -79,7 +81,8 @@ describe.skip('ProjectAuthorizationForm', () => {
         initialTouched={{
           permits: [{ permit_number: true, permit_type: true }]
         }}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectAuthorizationForm />}
       </Formik>
     );
@@ -110,7 +113,8 @@ describe.skip('ProjectAuthorizationForm', () => {
         validateOnBlur={true}
         validateOnChange={false}
         initialErrors={{ permits: 'Error is here' }}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectAuthorizationForm />}
       </Formik>
     );
@@ -136,7 +140,8 @@ describe.skip('ProjectAuthorizationForm', () => {
         validationSchema={ProjectAuthorizationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => <ProjectAuthorizationForm />}
       </Formik>
     );

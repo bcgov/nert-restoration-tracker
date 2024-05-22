@@ -127,7 +127,8 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                 }}
                 error={touched.agency_id && Boolean(errors.agency_id)}
                 displayEmpty
-                inputProps={{ 'aria-label': 'Agency Name', 'data-testid': 'agency-id' }}>
+                inputProps={{ 'aria-label': 'Agency Name', 'data-testid': 'agency-id' }}
+              >
                 {props.fundingSources.map((item) => (
                   <MenuItem key={item.value} value={item.value}>
                     {item.label}
@@ -157,7 +158,8 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   inputProps={{
                     'aria-label': `${investment_action_category_label}`,
                     'data-testid': 'investment_action_category'
-                  }}>
+                  }}
+                >
                   {props.investment_action_category
                     // Only show the investment action categories whose fs_id matches the agency_id id
                     .filter((item) => item.fs_id === values.agency_id)

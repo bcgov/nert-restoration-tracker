@@ -38,7 +38,8 @@ describe.skip('ProjectPartnershipsForm', () => {
         validationSchema={ProjectPartnershipsFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => (
           <ProjectPartnershipsForm
             first_nations={first_nations}
@@ -65,7 +66,8 @@ describe.skip('ProjectPartnershipsForm', () => {
         validationSchema={ProjectPartnershipsFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}>
+        onSubmit={async () => {}}
+      >
         {() => (
           <ProjectPartnershipsForm
             first_nations={first_nations}

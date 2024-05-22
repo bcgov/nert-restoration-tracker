@@ -189,7 +189,8 @@ export default function PublicProjects() {
                 size={1}
               />
             }
-            {...getToggleProps()}>
+            {...getToggleProps()}
+          >
             <strong>{isExpanded ? 'Collapse Projects' : 'Expand Projects'}</strong>
           </Button>
         </Box>
@@ -207,7 +208,8 @@ export default function PublicProjects() {
             initialValues={formikValues}
             onSubmit={handleSubmit}
             onReset={handleReset}
-            enableReinitialize={true}>
+            enableReinitialize={true}
+          >
             <ProjectFilter
               contact_agency={
                 codes.codes.coordinator_agency?.map((item: any) => {

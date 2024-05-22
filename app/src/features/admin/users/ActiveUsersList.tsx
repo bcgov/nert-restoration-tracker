@@ -254,7 +254,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
           <Grid
             justifyContent="space-between" // Add it here :)
             container
-            alignItems="center">
+            alignItems="center"
+          >
             <Grid item>
               <Box px={2}>
                 <Typography variant="h2">Active Users ({activeUsers?.length || 0})</Typography>
@@ -270,7 +271,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                   data-testid="invite-system-users-button"
                   aria-label={'Add Users'}
                   startIcon={<Icon path={mdiPlus} size={1} />}
-                  onClick={() => setOpenAddUserDialog(true)}>
+                  onClick={() => setOpenAddUserDialog(true)}
+                >
                   <strong>Add Users</strong>
                 </Button>
               </Box>

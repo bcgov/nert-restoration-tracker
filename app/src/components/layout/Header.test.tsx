@@ -7,8 +7,10 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
 import Header from './Header';
 
-const routes = [{ path: '/', element: <Header /> },
-{ path: '/logout', element: <div>Log out</div> }];
+const routes = [
+  { path: '/', element: <Header /> },
+  { path: '/logout', element: <div>Log out</div> }
+];
 
 const router = createMemoryRouter(routes, { initialEntries: ['/'] });
 

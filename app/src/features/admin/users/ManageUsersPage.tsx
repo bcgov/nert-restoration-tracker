@@ -98,7 +98,8 @@ const ManageUsersPage: React.FC = () => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        sx={{ paddingTop: '20px' }}>
+        sx={{ paddingTop: '20px' }}
+      >
         <Typography variant="h1">Manage Users</Typography>
       </Box>
 

@@ -82,7 +82,8 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
         onClose={() => {
           setOpenTreatmentDetails(false);
           setCurrentTreatmentDetail(undefined);
-        }}>
+        }}
+      >
         <Box component="section" mb={3}>
           <Box my={1}>
             <Typography variant="h3">GENERAL INFORMATION</Typography>
@@ -263,7 +264,8 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
                               title="View treatment unit details"
                               aria-label="view treatment unit details"
                               data-testid="view-treatment-unit-details"
-                              onClick={() => viewTreatmentUnitDetailsDialog(row)}>
+                              onClick={() => viewTreatmentUnitDetailsDialog(row)}
+                            >
                               Details
                             </Button>
                           </Box>
