@@ -10,7 +10,7 @@ import ProjectFilter, {
   IProjectAdvancedFilters,
   ProjectAdvancedFiltersInitialValues
 } from 'components/search-project-filter/ProjectFilter';
-import { focusOptions, ICONS, projectStatusOptions } from 'constants/misc';
+import { ICONS, focusOptions, projectStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -140,9 +140,8 @@ export default function PublicProjects() {
   //projects
   useEffect(() => {
     const getFilteredProjects = async () => {
-      const projectsResponse = await restorationTrackerApi.public.project.getProjectsList(
-        formikValues
-      );
+      const projectsResponse =
+        await restorationTrackerApi.public.project.getProjectsList(formikValues);
 
       setIsLoading(false);
       setProjects(projectsResponse);

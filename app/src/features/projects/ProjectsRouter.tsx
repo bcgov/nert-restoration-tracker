@@ -1,14 +1,14 @@
 import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import EditProjectPage from 'features/edit/EditProjectPage';
-import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
+import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import ViewProjectPage from 'features/projects/view/ViewProjectPage';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { RedirectURL } from 'utils/AppRoutesUtils';
-import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
 import ProjectsPlansListPage from './ProjectsPlansListPage';
+import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
 
 /**
  * Router for all `/admin/project/*` pages.
