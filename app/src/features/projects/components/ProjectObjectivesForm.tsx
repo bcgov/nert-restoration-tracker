@@ -113,8 +113,7 @@ const ProjectObjectivesForm: React.FC = () => {
                               aria-label="remove objective"
                               onClick={() => arrayHelpers.remove(index)}
                               edge="end"
-                              size="large"
-                            >
+                              size="large">
                               <Icon path={mdiTrashCanOutline} size={1} />
                             </IconButton>
                           </ListItemSecondaryAction>
@@ -136,8 +135,7 @@ const ProjectObjectivesForm: React.FC = () => {
                 color="primary"
                 aria-label="add objective"
                 startIcon={<Icon path={mdiPlus} size={1}></Icon>}
-                onClick={() => arrayHelpers.push(ProjectObjectivesFormArrayItemInitialValues)}
-              >
+                onClick={() => arrayHelpers.push(ProjectObjectivesFormArrayItemInitialValues)}>
                 Add New Objective
               </Button>
             </Box>

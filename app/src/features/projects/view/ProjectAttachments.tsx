@@ -31,7 +31,8 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 
-  const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
+  // const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
+  const handleUploadAttachmentClick = () => true;
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
     return (file, cancelToken, handleFileUploadProgress) => {
@@ -52,8 +53,7 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         onClose={() => {
           setOpenUploadAttachments(false);
           getAttachments(true);
-        }}
-      >
+        }}>
         <FileUpload uploadHandler={getUploadHandler()} />
       </ComponentDialog>
 

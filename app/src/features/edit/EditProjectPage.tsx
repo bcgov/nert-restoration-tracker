@@ -215,8 +215,7 @@ const EditProjectPage: React.FC = () => {
               color="primary"
               onClick={handleCancel}
               aria-current="page"
-              sx={pageStyles.breadCrumbLink}
-            >
+              sx={pageStyles.breadCrumbLink}>
               <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
@@ -240,8 +239,7 @@ const EditProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
-            onSubmit={handleProjectEdits}
-          >
+            onSubmit={handleProjectEdits}>
             <>
               <ScrollToFormikError />
 
@@ -387,8 +385,7 @@ const EditProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     type="submit"
-                    data-testid="project-save-button"
-                  >
+                    data-testid="project-save-button">
                     Save Project
                   </Button>
                   <Button
@@ -396,8 +393,7 @@ const EditProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}
-                  >
+                    onClick={handleCancel}>
                     Cancel
                   </Button>
                 </Box>

@@ -161,8 +161,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
             color="primary"
             sx={pageStyles.learnMoreBtn}
             data-testid="prop-dialog-btn"
-            onClick={() => setOpenDialog(true)}
-          >
+            onClick={() => setOpenDialog(true)}>
             <Typography component="span">Learn more.</Typography>
           </Button>
         </Typography>
@@ -190,8 +189,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
                   mt={-1}
                   mb={1}
                   data-testid="iucn-classification-grid"
-                  key={index}
-                >
+                  key={index}>
                   <Box display="flex" alignItems="center" sx={pageStyles.iucnInputContainer} mr={1}>
                     <Box sx={pageStyles.iucnInput} py={1}>
                       <FormControl variant="outlined" fullWidth size="small" required={false}>
@@ -208,8 +206,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
                             handleChange(e);
                           }}
                           error={classificationMeta.touched && Boolean(classificationMeta.error)}
-                          inputProps={{ 'aria-label': 'Classification' }}
-                        >
+                          inputProps={{ 'aria-label': 'Classification' }}>
                           {props.classifications.map((item: any) => (
                             <MenuItem key={item.value} value={item.value}>
                               {item.label}
@@ -243,8 +240,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
                           error={
                             subClassification1Meta.touched && Boolean(subClassification1Meta.error)
                           }
-                          inputProps={{ 'aria-label': 'subClassification1' }}
-                        >
+                          inputProps={{ 'aria-label': 'subClassification1' }}>
                           {props.subClassifications1
                             // Only show the sub-classification 1 categories whose iucn1_id matches the classification id
                             .filter(
@@ -280,8 +276,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
                           error={
                             subClassification2Meta.touched && Boolean(subClassification2Meta.error)
                           }
-                          inputProps={{ 'aria-label': 'subClassification2' }}
-                        >
+                          inputProps={{ 'aria-label': 'subClassification2' }}>
                           {props.subClassifications2
                             // Only show the sub-classification 2 categories whose iucn1_id matches the sub-classification 1 iucn2_id
                             .filter(
@@ -307,8 +302,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
                         color="primary"
                         aria-label="delete"
                         onClick={() => arrayHelpers.remove(index)}
-                        size="large"
-                      >
+                        size="large">
                         <Icon path={mdiTrashCanOutline} size={1} />
                       </IconButton>
                     </Box>
@@ -333,8 +327,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
                 color="primary"
                 startIcon={<Icon path={mdiPlus} size={1} />}
                 aria-label="Add Another"
-                onClick={() => arrayHelpers.push(ProjectIUCNFormArrayItemInitialValues)}
-              >
+                onClick={() => arrayHelpers.push(ProjectIUCNFormArrayItemInitialValues)}>
                 Add Classification
               </Button>
             </Box>
@@ -345,8 +338,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
       <ComponentDialog
         open={openDialog}
         dialogTitle="IUCN Information"
-        onClose={() => setOpenDialog(false)}
-      >
+        onClose={() => setOpenDialog(false)}>
         <Typography variant="body1">
           The taxonomies presented here began with a collaborative effort between the World
           Conservation Union (IUCN) and CMP to create standard classifications of the conservation
@@ -378,8 +370,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
             color="primary"
             sx={pageStyles.learnMoreBtn}
             data-testid="prop-dialog-btn"
-            onClick={() => openAttachment(ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL)}
-          >
+            onClick={() => openAttachment(ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL)}>
             <Typography component="span">Download CMP Classificiations</Typography>
           </Button>
         </Typography>

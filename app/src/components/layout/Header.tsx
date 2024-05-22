@@ -18,18 +18,11 @@ import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
+import { ConfigContext } from 'contexts/configContext';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
-
-const nert_version = process.env.REACT_APP_NERT_VERSION || '0.0.0.0';
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-console.log('process.env.REACT_APP_NODE_ENV', process.env.REACT_APP_NODE_ENV);
-const nert_environment =
-  process.env.REACT_APP_NODE_ENV === 'development'
-    ? 'local'
-    : process.env.REACT_APP_NODE_ENV || 'undefined';
 
 const pageStyles = {
   govHeaderToolbar: {
@@ -120,6 +113,12 @@ const pageStyles = {
 };
 
 const Header: React.FC = () => {
+  const config = useContext(ConfigContext);
+
+  const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  const nert_version = config?.CHANGE_VERSION ? mmm ? `${mmm}.${config.CHANGE_VERSION}` : `0.0.0.${config.CHANGE_VERSION}` : '0.0.0.NA';
+  const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
+
   const { keycloakWrapper } = useContext(AuthStateContext);
 
   // Authenticated view
@@ -150,8 +149,7 @@ const Header: React.FC = () => {
           aria-label="need help"
           sx={pageStyles.govHeaderIconButton}
           onClick={showSupportDialog}
-          size="large"
-        >
+          size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -169,8 +167,7 @@ const Header: React.FC = () => {
           color="primary"
           disableElevation
           startIcon={<Icon path={mdiLoginVariant} size={1.12} />}
-          data-testid="login"
-        >
+          data-testid="login">
           Log In
         </Button>
         <IconButton sx={pageStyles.govHeaderIconButton} onClick={showSupportDialog} size="large">
@@ -193,8 +190,7 @@ const Header: React.FC = () => {
   const VersionEnvironmentLabel = () => {
     return (
       <span
-        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}
-      >
+        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
         v{nert_version} {nert_environment}
       </span>
     );
@@ -208,8 +204,7 @@ const Header: React.FC = () => {
             <Link
               to="/"
               style={pageStyles.brand}
-              aria-label="Go to Northeast Restoration Tracker Home"
-            >
+              aria-label="Go to Northeast Restoration Tracker Home">
               <picture>
                 <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                 <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
@@ -236,8 +231,7 @@ const Header: React.FC = () => {
             variant="dense"
             sx={pageStyles.mainNavToolbar}
             role="navigation"
-            aria-label="Main Navigation"
-          >
+            aria-label="Main Navigation">
             <UnAuthGuard>
               <Link to="/projects" id="menu_projects">
                 All Projects/All Plans
@@ -273,8 +267,7 @@ const Header: React.FC = () => {
             For technical support or questions about this application, please email:&nbsp;
             <OtherLink
               href="mailto:oinostro@gov.bc.ca?subject=Northeast Restoration Tracker - Support Request"
-              underline="always"
-            >
+              underline="always">
               oinostro@gov.bc.ca
             </OtherLink>
             .

@@ -149,8 +149,7 @@ export const DialogContextProvider: React.FC<React.PropsWithChildren> = (props) 
         errorDialogProps,
         setSnackbar,
         snackbarProps
-      }}
-    >
+      }}>
       {props.children}
       <YesNoDialog {...yesNoDialogProps} />
       <ErrorDialog {...errorDialogProps} />
@@ -168,8 +167,7 @@ export const DialogContextProvider: React.FC<React.PropsWithChildren> = (props) 
             size="small"
             aria-label="close"
             color="inherit"
-            onClick={() => setSnackbar({ open: false })}
-          >
+            onClick={() => setSnackbar({ open: false })}>
             <CloseIcon fontSize="small" />
           </IconButton>
         }

@@ -43,8 +43,7 @@ describe.skip('Project Contact Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectContactForm coordinator_agency={[]} />}
       </Formik>
     );
@@ -61,8 +60,7 @@ describe.skip('Project Contact Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectContactForm coordinator_agency={agencies} />}
       </Formik>
     );

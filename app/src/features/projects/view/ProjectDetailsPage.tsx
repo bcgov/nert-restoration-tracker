@@ -106,8 +106,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           ]}
           fallback={
             <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
-          }
-        >
+          }>
           <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
         </RoleGuard>
       </Box>
@@ -129,11 +128,10 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           PROJECT_ROLE.PROJECT_LEAD,
           PROJECT_ROLE.PROJECT_EDITOR,
           PROJECT_ROLE.PROJECT_VIEWER
-        ]}
-      >
+        ]}>
         <Box component="section">
-          <Typography variant="body1" component={'h3'} data-testid="PermitsTitle">
-            Permits
+          <Typography variant="body1" component={'h3'} data-testid="AuthorizationsTitle">
+            Authorizations
           </Typography>
           <ProjectPermits projectForViewData={projectForViewData} refresh={refresh} />
         </Box>
