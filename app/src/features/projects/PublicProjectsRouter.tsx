@@ -28,8 +28,7 @@ const PublicProjectsRouter: React.FC = () => {
                 PROJECT_ROLE.PROJECT_EDITOR,
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
-              fallback={(projectId) => <Navigate replace to={`/admin/projects/${projectId}`} />}
-            >
+              fallback={(projectId) => <Navigate replace to={`/admin/projects/${projectId}`} />}>
               <PublicProjectPlanView />
             </NoRoleGuard>
           }

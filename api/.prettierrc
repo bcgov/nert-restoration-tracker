@@ -6,11 +6,11 @@
   "singleQuote": true,
   "trailingComma": "none",
   "bracketSpacing": true,
-  "jsxBracketSameLine": true,
+  "htmlWhitespaceSensitivity": "ignore",
+  "bracketSameLine": true,
   "requirePragma": false,
   "insertPragma": false,
   "proseWrap": "never",
   "endOfLine": "lf",
-  "arrowParens": "always",
-  "htmlWhitespaceSensitivity": "ignore"
+  "arrowParens": "always"
 }

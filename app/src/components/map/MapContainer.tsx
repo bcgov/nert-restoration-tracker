@@ -1,8 +1,8 @@
 import { Feature } from 'geojson';
 import L, { LeafletEventHandlerFnMap } from 'leaflet';
 import 'leaflet-draw/dist/leaflet.draw.css';
-import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen.js';
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -81,8 +81,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       zoomControl={false}
       maxBoundsViscosity={1}
       fullscreenControl={fullscreenControlProp}
-      {...LeafletMapContainerProps}
-    >
+      {...LeafletMapContainerProps}>
       <FullScreenScrollingEventHandler bounds={bounds} scrollWheelZoom={scrollWheelZoom || false} />
 
       <MapBounds bounds={bounds} />

@@ -10,7 +10,7 @@ import ProjectFilter, {
   IProjectAdvancedFilters,
   ProjectAdvancedFiltersInitialValues
 } from 'components/search-project-filter/ProjectFilter';
-import { focusOptions, ICONS, projectStatusOptions } from 'constants/misc';
+import { ICONS, focusOptions, projectStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -187,8 +187,7 @@ export default function Projects() {
                 size={1}
               />
             }
-            {...getToggleProps()}
-          >
+            {...getToggleProps()}>
             <strong>{isExpanded ? 'Collapse Projects' : 'Expand Projects'}</strong>
           </Button>
         </Box>
@@ -206,8 +205,7 @@ export default function Projects() {
             initialValues={formikValues}
             onSubmit={handleSubmit}
             onReset={handleReset}
-            enableReinitialize={true}
-          >
+            enableReinitialize={true}>
             <ProjectFilter
               contact_agency={
                 codes.codes.coordinator_agency?.map((item: any) => {

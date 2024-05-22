@@ -82,13 +82,11 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                   key={headCell.id}
                   align={headCell.numeric ? 'right' : 'left'}
                   padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}
-                >
+                  sortDirection={orderBy === headCell.id ? order : false}>
                   <TableSortLabel
                     active={orderBy === headCell.id}
                     direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                  >
+                    onClick={createSortHandler(headCell.id)}>
                     {headCell.label}
                     {orderBy === headCell.id ? (
                       <Box component="span" sx={visuallyHidden}>
@@ -129,8 +127,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             bgcolor: (theme) =>
               alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
           })
-        }}
-      >
+        }}>
         {numSelected > 0 ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
             {numSelected} {numSelected !== 1 ? 'projects' : 'project'} {TableI18N.selectedToExport}
@@ -140,8 +137,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ mx: '0.5rem', flex: '1 1 100%' }}
             variant="h2"
             id="tableTitle"
-            component="div"
-          >
+            component="div">
             {TableI18N.found} {rows?.length}{' '}
             {rows?.length !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
           </Typography>
@@ -154,8 +150,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
-            startIcon={<Icon path={mdiExport} size={1} />}
-          >
+            startIcon={<Icon path={mdiExport} size={1} />}>
             <strong>{TableI18N.exportData}</strong>
           </Button>
         ) : (
@@ -243,8 +238,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-          >
+            size={dense ? 'small' : 'medium'}>
             <ProjectsTableHead
               numSelected={selected.length}
               order={order}
@@ -266,8 +260,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
+                    sx={{ cursor: 'pointer' }}>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       <Link
                         data-testid={row.projectName}
@@ -277,8 +270,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         variant="body2"
                         onClick={() => {
                           history(`/projects/${row.projectId}`);
-                        }}
-                      >
+                        }}>
                         {row.projectName}
                       </Link>
                     </TableCell>
@@ -308,8 +300,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         title={
                           isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
                         }
-                        placement="right"
-                      >
+                        placement="right">
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
@@ -327,8 +318,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows
-                  }}
-                >
+                  }}>
                   <TableCell colSpan={9} />
                 </TableRow>
               )}

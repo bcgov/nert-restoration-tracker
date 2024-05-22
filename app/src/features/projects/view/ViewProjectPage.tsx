@@ -83,9 +83,8 @@ const ViewProjectPage: React.FC = () => {
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
-      projectId
-    );
+    const projectWithDetailsResponse =
+      await restorationTrackerApi.project.getProjectById(projectId);
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -246,16 +245,14 @@ const ViewProjectPage: React.FC = () => {
           </Box>
           <RoleGuard
             validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-          >
+            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
             <Box sx={pageStyles.titleContainerActions}>
               <Button
                 aria-label="manage project team"
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history('users')}
-              >
+                onClick={() => history('users')}>
                 Project Team
               </Button>
               <Button
@@ -268,8 +265,7 @@ const ViewProjectPage: React.FC = () => {
               </Button>
               <RoleGuard
                 validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-              >
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
                 <Button
                   aria-label="delete project"
                   variant="outlined"
@@ -316,8 +312,7 @@ const ViewProjectPage: React.FC = () => {
                         title="View full screen map"
                         style={pageStyles.fullScreenBtn}
                         onClick={openMapDialog}
-                        size="large"
-                      >
+                        size="large">
                         <Icon path={mdiFullscreen} size={1} />
                       </IconButton>
                     </Box>

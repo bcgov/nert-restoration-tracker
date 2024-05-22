@@ -10,7 +10,7 @@ import PlanFilter, {
   IPlanAdvancedFilters,
   PlanAdvancedFiltersInitialValues
 } from 'components/search-plan-filter/PlanFilter';
-import { focusOptions, ICONS, planStatusOptions } from 'constants/misc';
+import { ICONS, focusOptions, planStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -184,8 +184,7 @@ export default function Plans() {
                 size={1}
               />
             }
-            {...getToggleProps()}
-          >
+            {...getToggleProps()}>
             <strong>{isExpanded ? 'Collapse Plans' : 'Expand Plans'}</strong>
           </Button>
         </Box>
@@ -203,8 +202,7 @@ export default function Plans() {
             initialValues={formikValues}
             onSubmit={handleSubmit}
             onReset={handleReset}
-            enableReinitialize={true}
-          >
+            enableReinitialize={true}>
             <PlanFilter
               contact_agency={
                 codes.codes.coordinator_agency?.map((item: any) => {

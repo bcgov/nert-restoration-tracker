@@ -37,8 +37,7 @@ export const FullScreenViewMapDialog: React.FC<IFullScreenViewMapProps> = (props
             color="primary"
             variant="text"
             startIcon={<Icon path={mdiArrowLeft} size={1} />}
-            onClick={props.onClose}
-          >
+            onClick={props.onClose}>
             {props.backButtonTitle}
           </Button>
         </Toolbar>

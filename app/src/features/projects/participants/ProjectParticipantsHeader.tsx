@@ -95,8 +95,7 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
               onClick={() =>
                 history(`/admin/projects/${props.projectWithDetails.project.project_id}`)
               }
-              aria-current="page"
-            >
+              aria-current="page">
               <Typography variant="body2">
                 {props.projectWithDetails.project.project_name}
               </Typography>
@@ -114,8 +113,7 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
               data-testid="invite-project-users-button"
               aria-label={'Add Team Members'}
               startIcon={<Icon path={mdiPlus} size={1} />}
-              onClick={() => setOpenAddParticipantsDialog(true)}
-            >
+              onClick={() => setOpenAddParticipantsDialog(true)}>
               Add Team Members
             </Button>
           </Box>
