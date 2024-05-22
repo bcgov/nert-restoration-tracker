@@ -91,6 +91,8 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
+        app.openshift.io/connects-to: >-
+          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"restoration-tracker-api-dev-deploy"}]
         openshift.io/generated-by: OpenShiftWebConsole
       creationTimestamp: null
       generation: 0
