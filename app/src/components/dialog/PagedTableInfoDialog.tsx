@@ -38,7 +38,7 @@ const VideoDialog = styled(Dialog)(({ theme }) => ({
 
 const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
   const config = useContext(ConfigContext);
-  console.log(config);
+
   const [isError, setIsError] = useState(false);
   const [open, setOpen] = useState(false);
 
