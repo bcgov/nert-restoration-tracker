@@ -275,7 +275,9 @@ const CreateProjectPage: React.FC = () => {
     try {
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
-      projectPostObject.location.size_ha = projectPostObject.location.size_ha ? projectPostObject.location.size_ha : 0;   
+      projectPostObject.location.size_ha = projectPostObject.location.size_ha
+        ? projectPostObject.location.size_ha
+        : 0;
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
@@ -411,8 +413,7 @@ const CreateProjectPage: React.FC = () => {
             color="primary"
             onClick={handleCancel}
             aria-current="page"
-            sx={pageStyles.breadCrumbLink}
-          >
+            sx={pageStyles.breadCrumbLink}>
             <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
             <Typography variant="body2">Cancel and Exit</Typography>
           </Link>
@@ -441,8 +442,7 @@ const CreateProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
-            onSubmit={handleProjectCreation}
-          >
+            onSubmit={handleProjectCreation}>
             <>
               {/* <ScrollToFormikError /> */}
               <Form noValidate>
@@ -609,8 +609,7 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     onClick={() => setOpenDraftDialog(true)}
-                    data-testid="project-save-draft-button"
-                  >
+                    data-testid="project-save-draft-button">
                     Save Draft
                   </Button>
                   <Button
@@ -618,8 +617,7 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     onClick={() => setOpenYesNoDialog(true)}
-                    data-testid="project-create-button"
-                  >
+                    data-testid="project-create-button">
                     <span>Create Project</span>
                   </Button>
                   <Button
@@ -627,8 +625,7 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}
-                  >
+                    onClick={handleCancel}>
                     Cancel
                   </Button>
                 </Box>

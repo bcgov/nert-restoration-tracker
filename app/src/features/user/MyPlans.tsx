@@ -11,12 +11,12 @@ import PlanListPage from 'features/projects/list/PlanListPage';
 import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import { useCollapse } from 'react-collapsed';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 const MyPlans: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts } = props;
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
-  const history = useNavigate();
+  // const history = useNavigate();
 
   return (
     <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
@@ -30,17 +30,15 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
               SYSTEM_ROLE.SYSTEM_ADMIN,
               SYSTEM_ROLE.DATA_ADMINISTRATOR,
               SYSTEM_ROLE.PROJECT_CREATOR
-            ]}
-          >
+            ]}>
             {isExpanded && (
               <Button
                 sx={{ mr: '1rem' }}
                 variant="contained"
                 color="primary"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                onClick={() => history('/admin/projects/create')}
-                data-testid="create-project-button"
-              >
+                // onClick={() => history('/admin/projects/create')}
+                data-testid="create-project-button">
                 Create Plan
               </Button>
             )}
@@ -57,8 +55,7 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
                 size={1}
               />
             }
-            {...getToggleProps()}
-          >
+            {...getToggleProps()}>
             <strong>{isExpanded ? 'Collapse Plans' : 'Expand Plans'}</strong>
           </Button>
         </Box>

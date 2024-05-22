@@ -59,8 +59,7 @@ export const ReadMoreField: React.FC<IReadMoreFieldProps> = (props) => {
               size="small"
               variant="outlined"
               color="primary"
-              onClick={() => setIsTruncatedText(false)}
-            >
+              onClick={() => setIsTruncatedText(false)}>
               Read More
             </Button>
           </Box>
@@ -77,8 +76,7 @@ export const ReadMoreField: React.FC<IReadMoreFieldProps> = (props) => {
                 size="small"
                 variant="outlined"
                 color="primary"
-                onClick={() => setIsTruncatedText(true)}
-              >
+                onClick={() => setIsTruncatedText(true)}>
                 Read Less
               </Button>
             </Box>

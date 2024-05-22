@@ -16,8 +16,7 @@ describe('ProjectLocationForm', () => {
         validationSchema={ProjectLocationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectLocationForm
             ranges={codes.ranges.map((item) => {
@@ -63,8 +62,7 @@ describe('ProjectLocationForm', () => {
         validationSchema={ProjectLocationFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectLocationForm
             ranges={codes.ranges.map((item) => {
@@ -112,8 +110,7 @@ describe('ProjectLocationForm', () => {
         validateOnChange={false}
         initialErrors={{ range: 'error is here' }}
         initialTouched={{ range: true }}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectLocationForm
             ranges={codes.ranges.map((item) => {

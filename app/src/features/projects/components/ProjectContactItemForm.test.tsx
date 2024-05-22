@@ -17,8 +17,7 @@ describe('ProjectContactItemForm', () => {
         validationSchema={ProjectContactItemYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => <ProjectContactItemForm coordinator_agency={agencies} />}
       </Formik>
     );
@@ -45,8 +44,7 @@ describe('ProjectContactItemForm', () => {
         validationSchema={ProjectContactItemYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => <ProjectContactItemForm coordinator_agency={agencies} />}
       </Formik>
     );

@@ -51,8 +51,7 @@ describe('ProjectFundingForm', () => {
         validationSchema={ProjectFundingFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectFundingForm
             fundingSources={fundingSources}
@@ -91,8 +90,7 @@ describe('ProjectFundingForm', () => {
         validationSchema={ProjectFundingFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectFundingForm
             fundingSources={codes.funding_source.map((item) => {
@@ -147,8 +145,7 @@ describe('ProjectFundingForm', () => {
         validationSchema={ProjectFundingFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectFundingForm
             fundingSources={codes.funding_source.map((item) => {
@@ -200,8 +197,7 @@ describe('ProjectFundingForm', () => {
           validationSchema={ProjectFundingFormYupSchema}
           validateOnBlur={true}
           validateOnChange={false}
-          onSubmit={async () => {}}
-        >
+          onSubmit={async () => {}}>
           {() => (
             <ProjectFundingForm
               fundingSources={codes.funding_source.map((item) => {
@@ -261,8 +257,7 @@ describe('ProjectFundingForm', () => {
           validationSchema={ProjectFundingFormYupSchema}
           validateOnBlur={true}
           validateOnChange={false}
-          onSubmit={async () => {}}
-        >
+          onSubmit={async () => {}}>
           {() => (
             <ProjectFundingForm
               fundingSources={codes.funding_source.map((item) => {

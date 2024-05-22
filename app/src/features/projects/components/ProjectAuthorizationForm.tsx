@@ -132,8 +132,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                                   authorizationTypeMeta.touched &&
                                   Boolean(authorizationTypeMeta.error)
                                 }
-                                inputProps={{ 'aria-label': 'Authorization Type' }}
-                              >
+                                inputProps={{ 'aria-label': 'Authorization Type' }}>
                                 {authorizationTypes.map((authorizationType, index2) => (
                                   <MenuItem key={index2} value={authorizationType}>
                                     {authorizationType}
@@ -168,8 +167,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                             aria-label="remove authorization"
                             onClick={() => arrayHelpers.remove(index)}
                             edge="end"
-                            size="large"
-                          >
+                            size="large">
                             <Icon path={mdiTrashCanOutline} size={1}></Icon>
                           </IconButton>
                         </ListItemSecondaryAction>
@@ -186,8 +184,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                 color="primary"
                 aria-label="add authorization"
                 startIcon={<Icon path={mdiPlus} size={1}></Icon>}
-                onClick={() => arrayHelpers.push(ProjectAuthorizationFormArrayItemInitialValues)}
-              >
+                onClick={() => arrayHelpers.push(ProjectAuthorizationFormArrayItemInitialValues)}>
                 Add New Authorization
               </Button>
             </Box>

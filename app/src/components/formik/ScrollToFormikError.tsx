@@ -97,8 +97,7 @@ export const ScrollToFormikError: React.FC = () => {
         }}
         open={openSnackbar.open}
         autoHideDuration={4000}
-        onClose={() => setOpenSnackbar({ open: false, msg: '' })}
-      >
+        onClose={() => setOpenSnackbar({ open: false, msg: '' })}>
         <Alert severity="error">{openSnackbar.msg}</Alert>
       </Snackbar>
     </>

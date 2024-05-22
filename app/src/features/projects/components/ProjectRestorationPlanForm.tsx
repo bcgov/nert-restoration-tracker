@@ -47,8 +47,7 @@ const ProjectRestorationPlanForm: React.FC = () => {
               error={
                 touched.restoration_plan?.is_project_part_public_plan &&
                 Boolean(errors.restoration_plan?.is_project_part_public_plan)
-              }
-            >
+              }>
               <FormLabel component="legend">
                 Is this project part of a publicly available restoration plan? *
               </FormLabel>
@@ -56,8 +55,7 @@ const ProjectRestorationPlanForm: React.FC = () => {
                 name="restoration_plan.is_project_part_public_plan"
                 aria-label="is this project part of a publicly available restoration plan"
                 value={values.restoration_plan.is_project_part_public_plan || false}
-                onChange={handleChange}
-              >
+                onChange={handleChange}>
                 <FormControlLabel
                   value={false}
                   control={<Radio color="primary" size="small" />}
