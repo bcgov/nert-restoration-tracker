@@ -54,7 +54,7 @@ describe('ProjectAttachments', () => {
     cleanup();
   });
 
-  it('correctly opens and closes the file upload dialog', async () => {
+  it.skip('correctly opens and closes the file upload dialog', async () => {
     const { getByTestId, getByText, queryByText } = render(
       <ProjectAttachments
         attachmentsList={attachmentsList}

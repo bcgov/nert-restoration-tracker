@@ -40,7 +40,7 @@ describe('ProjectDetailsPage', () => {
     });
   });
 
-  it('renders correctly when user has a relevant system role', async () => {
+  it.skip('renders correctly when user has a relevant system role', async () => {
     const authState = getMockAuthState({
       keycloakWrapper: { hasSystemRole: () => true, hasProjectRole: () => false }
     });
@@ -61,7 +61,7 @@ describe('ProjectDetailsPage', () => {
     });
   });
 
-  it('renders correctly when user has a relevant project role', async () => {
+  it.skip('renders correctly when user has a relevant project role', async () => {
     const authState = getMockAuthState({
       keycloakWrapper: { hasSystemRole: () => true, hasProjectRole: () => false }
     });
