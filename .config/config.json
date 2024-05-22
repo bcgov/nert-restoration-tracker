@@ -32,6 +32,16 @@
     "test": "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi",
     "prod": "https://logon7.gov.bc.ca/clp-cgi/logoff.cgi"
   },
+  "objectStorageURL": {
+    "dev": "nrs.objectstore.gov.bc.ca",
+    "test": "nrs.objectstore.gov.bc.ca",
+    "prod": "nrs.objectstore.gov.bc.ca"
+  },
+  "objectStorageBucket": {
+    "dev": "nerdel",
+    "test": "nertst",
+    "prod": "nerprd"
+  },
   "mapTiler": {
     "dev": {
       "mapTilerSecret": "restoration-tracker-maptiler-cred",
