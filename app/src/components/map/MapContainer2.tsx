@@ -1,4 +1,5 @@
-import { FeatureCollection } from 'geojson';
+import * as turf from '@turf/turf';
+import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +21,8 @@ export interface IMapContainerProps {
   features?: any;
   layerVisibility?: any;
   centroids?: boolean;
+  mask?: null | number; // Store what mask just changed
+  maskState?: boolean[]; // Store which features are masked
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -161,12 +164,96 @@ const convertToGeoJSON = (features: any) => {
   };
 };
 
-const drawFeatures = (map: maplibre.Map, features: any, centroid: boolean) => {
-  console.log('features', features);
-  console.log('centroid', centroid);
+let map: maplibre.Map;
+
+/**
+ * initializeMasks
+ * Draw the mask polygons around the features if required.
+ * @param features Array of features
+ * @return Array containing the mask centroid and radius
+ */
+type radiusType = number;
+type maskParams = [any, radiusType];
+
+const initializeMasks = (feature: Feature) => {
+  const centroid = turf.centroid(feature as any);
+  const bbox = turf.bbox(feature);
+
+  const p1 = turf.point([bbox[0], bbox[1]]);
+  const p2 = turf.point([bbox[2], bbox[3]]);
+  const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
+  const area = turf.area(feature) * 100;
+  const innerRadius = Math.sqrt(area / Math.PI);
+  const outerRadius = innerRadius + buffer;
+
+  // Calculate the random centroid within the innerRadius
+  const rr = innerRadius * Math.sqrt(Math.random());
+  const rt = Math.random() * 2 * Math.PI;
+  const rx = rr * Math.cos(rt);
+  const ry = rr * Math.sin(rt);
+  const mercCentroid = turf.toMercator(centroid);
+  mercCentroid.geometry.coordinates[0] += rx;
+  mercCentroid.geometry.coordinates[1] += ry;
+  const newCentroid = turf.toWgs84(mercCentroid);
+
+  return [newCentroid.geometry.coordinates, outerRadius];
 };
 
-let map: maplibre.Map;
+const createMask = (params: maskParams, feature: Feature) => {
+  const properties = feature.properties || {};
+  properties.mask = { centroid: params[0], radius: params[1] };
+  const centroid = turf.point(params[0]);
+
+  return turf.circle(centroid, params[1], {
+    steps: 64,
+    units: 'meters',
+    properties: properties
+  });
+};
+
+/**
+ * # updateMasks
+ * This is when the user has clicked on a widget to turn on or off a mask.
+ */
+const updateMasks = (mask: number, maskState: boolean[], features: any) => {
+  if (!map.getSource('mask')) return;
+  const maskGeojson: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: features
+      .map((feature: any, index: any) => {
+        let specs: any;
+
+        // Clicked to turn on
+        if (index === mask && feature.properties?.maskedLocation === true) {
+          specs = initializeMasks(feature);
+
+          // Clicked to turn off
+        } else if (index === mask && feature.properties?.maskedLocation === false) {
+          specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
+
+          // Not clicked but has an existing mask
+        } else if (feature.properties?.maskedLocation) {
+          specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
+
+          // Not clicked and no mask
+        } else {
+          specs = [];
+        }
+
+        // @ts-ignore
+        if (specs.length > 0) {
+          const maskPolygon = createMask(specs, feature);
+          return maskPolygon;
+        } else {
+          // If there is no mask, return the original to get removed below
+          return feature;
+        }
+      })
+      .filter((feature: any) => feature.properties?.maskedLocation)
+  };
+  // @ts-ignore
+  map.getSource('mask').setData(maskGeojson);
+};
 
 const initializeMap = (
   mapId: string,
@@ -241,6 +328,38 @@ const initializeMap = (
     }
 
     /**
+     * Draw the masked polygons
+     */
+    const maskGeojson: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: []
+    };
+
+    features
+      .filter((feature: any) => feature.properties?.maskedLocation)
+      .forEach((feature: any) => {
+        const specs: any = initializeMasks(feature);
+        const maskPolygon = createMask(specs, feature);
+        maskGeojson.features.push(maskPolygon);
+      });
+
+    map.addSource('mask', {
+      type: 'geojson',
+      data: maskGeojson
+    });
+    map.addLayer({
+      id: 'mask',
+      type: 'line',
+      source: 'mask',
+      paint: {
+        'line-width': 4,
+        'line-color': 'aqua',
+        'line-dasharray': [3, 2],
+        'line-blur': 2
+      }
+    });
+
+    /**
      * Add the custom communities layer
      */
     map.addSource('communities', {
@@ -289,7 +408,6 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
-    drawFeatures(map, features, centroids);
 
     map.loadImage('/assets/icon/marker-icon.png').then((image) => {
       map.addImage('blue-marker', image.data);
@@ -494,6 +612,29 @@ const initializeMap = (
     map.on('mouseleave', 'markerProjects.points', hideTooltip);
     /**************************************************/
 
+    /*******************Fires**************************/
+    // XXX: Don't turn this on without consent from the project owner.
+    // map.addSource('forestfire-areas', {
+    //   type: 'raster',
+    //   tiles: [
+    //     'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_FOREST_VEGETATION.VEG_BURN_SEVERITY_SP,WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP'
+    //   ],
+    //   tileSize: 256,
+    //   minzoom: 10
+    // });
+    // map.addLayer({
+    //   id: 'wms-forestfire-areas',
+    //   type: 'raster',
+    //   source: 'forestfire-areas',
+    //   // layout: {
+    //   //   visibility: wildlife[0] ? 'visible' : 'none'
+    //   // },
+    //   paint: {
+    //     'raster-opacity': 0.9
+    //   }
+    // });
+    /*******************Fires**************************/
+
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
       type: 'raster',
@@ -660,6 +801,9 @@ const checkLayerVisibility = (layers: any, features: any) => {
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const { mapId, center, zoom, features, centroids, layerVisibility } = props;
 
+  const maskState = props.maskState || [];
+  const mask = props.mask || 0;
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -678,7 +822,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setTooltipY
   };
 
-  // Update the map if the markers change
+  // Update the map if the features change
   useEffect(() => {
     initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
   }, [features]);
@@ -691,6 +835,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
     }
   }, [layerVisibility]);
+
+  // Listen for masks being turned on and off
+  useEffect(() => {
+    updateMasks(mask, maskState, features);
+  }, [maskState]);
 
   return (
     <div id={mapId} style={pageStyle}>

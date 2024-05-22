@@ -3,6 +3,7 @@ import Icon from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -23,7 +24,6 @@ import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import CustomTextField from 'components/fields/CustomTextField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
-// import MapContainer from 'components/map/MapContainer';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
@@ -82,6 +82,14 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
+  // Mask state array
+  const [maskState, setMaskState] = useState<boolean[]>(
+    values.location.geometry.map((feature) => feature.properties?.maskedLocation)
+  );
+
+  // Mask change indicator
+  const [mask, setMask] = useState<null | number>(null);
+
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
       if (file?.name.includes('json')) {
@@ -111,6 +119,22 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     wildlife,
     indigenous,
     baselayer
+  };
+
+  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    // Update the formik values
+    // @ts-ignore
+    values.location.geometry[index].properties.maskedLocation = event.target.checked;
+
+    // Update the local state
+    setMaskState(() => {
+      const newState = [...maskState];
+      newState[index] = event.target.checked;
+      return newState;
+    });
+
+    // Make sure children know what has changed
+    setMask(index);
   };
 
   return (
@@ -250,8 +274,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Typography component="legend">Project Areas *</Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
-            Upload a GeoJSON file or use the drawing tools on the map to define your project
-            boundary.
+            Upload a GeoJSON file to define your project boundary.
           </Typography>
           <Tooltip title="GeoJSON Properties Information" placement="right">
             <IconButton>
@@ -274,11 +297,29 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </Button>
         </Box>
 
+        <Box>
+          {/* Create a list element for each feature within values.location.geometry */}
+          {values.location.geometry.map((feature, index) => (
+            <div className="feature-list" key={index}>
+              <div className="feature-name">
+                {feature.properties?.siteName || `Area ${index + 1}`}
+              </div>
+              <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
+              <Checkbox
+                checked={feature.properties?.maskedLocation}
+                onChange={(event) => maskChanged(event, index)}
+              />
+            </div>
+          ))}
+        </Box>
+
         <Box height={500}>
           <MapContainer
             mapId={'project_location_map'}
             layerVisibility={layerVisibility}
             features={values.location.geometry}
+            mask={mask}
+            maskState={maskState}
           />
         </Box>
         {errors?.location?.geometry && (

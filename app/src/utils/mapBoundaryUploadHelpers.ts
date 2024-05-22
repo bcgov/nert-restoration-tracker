@@ -1,4 +1,5 @@
 import bbox from '@turf/bbox';
+import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
 import { BBox, Feature, GeoJSON } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
@@ -23,22 +24,67 @@ export const handleGeoJSONUpload = async <T>(
     return jsonString;
   });
 
-  if (!file?.name.includes('json') && !fileAsString?.includes('FeatureCollection')) {
+  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
     setFieldError(name, 'You must upload a GeoJSON file, please try again.');
     return;
   }
 
-  try {
-    const geojson = JSON.parse(fileAsString);
+  const cleanFeature = (feature: Feature) => {
+    // Exit out if the feature is not a Polygon or MultiPolygon
+    if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+      return;
+    }
+    const area = turf.area(feature);
+    const p = feature.properties || {};
 
-    if (geojson?.features) {
-      setFieldValue(name, [...geojson.features, ...get(values, name)]);
+    p.siteName = p.siteName || p.Site_Name || '';
+    p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 100) / 100;
+    p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
+
+    feature.properties = p;
+    return feature;
+  };
+
+  /**
+   * If the object is a single Feature, clean it.
+   * If the object is a FeatureCollection, clean all features.
+   * If the object is not a Feature or FeatureCollection, display an error.
+   * Always return a clean FeatureCollection.
+   * @param geojson
+   * @param callback
+   * @returns Cleaned GeoJSON
+   */
+  const cleanGeoJSON = (geojson: GeoJSON) => {
+    if (geojson.type === 'Feature') {
+      const cleanF = cleanFeature(geojson);
+      return { type: 'FeatureCollection', features: [cleanF] };
+    } else if (geojson.type === 'FeatureCollection') {
+      const cleanFeatures = geojson.features.map(cleanFeature);
+      if (cleanFeatures.length === 0) {
+        return { type: 'FeatureCollection', features: [] };
+      } else {
+        return { type: 'FeatureCollection', features: cleanFeatures };
+      }
     } else {
       setFieldError(
         name,
-        'Error uploading your GeoJSON file, please check the file and try again.'
+        'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
       );
+      return { type: 'FeatureCollection', features: [] };
     }
+  };
+
+  try {
+    const geojson = JSON.parse(fileAsString);
+
+    const geojsonWithAttributes = cleanGeoJSON(geojson);
+    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
+
+    if (geojsonWithAttributes?.features.length <= 0) {
+      setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
+      return;
+    }
+    setFieldValue(name, [...get(values, name), ...geojsonWithAttributes.features]);
   } catch (error) {
     setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
   }
