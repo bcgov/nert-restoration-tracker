@@ -419,7 +419,6 @@ const initializeMap = (
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
-      promoteId: 'id',
       cluster: centroids ? true : false,
       clusterRadius: 50,
       clusterMaxZoom: 12
@@ -487,9 +486,39 @@ const initializeMap = (
         visibility: 'visible'
       },
       paint: {
-        'fill-color': 'rgba(245,149,66,0.8)'
+        'fill-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'rgba(250,191,120,1)',
+          'rgba(250,191,120,0.5)'
+        ]
       }
     });
+    let hoverStateMarkerPolygon: boolean | any = false;
+    map
+      .on('mouseenter', 'markerPolygon', (e: any) => {
+        map.getCanvas().style.cursor = 'pointer';
+
+        hoverStateMarkerPolygon = e.features[0].id;
+        map.setFeatureState(
+          {
+            source: 'markers',
+            id: e.features[0].id
+          },
+          { hover: true }
+        );
+      })
+      .on('mouseleave', 'markerPolygon', () => {
+        map.getCanvas().style.cursor = '';
+
+        map.setFeatureState(
+          {
+            source: 'markers',
+            id: hoverStateMarkerPolygon
+          },
+          { hover: false }
+        );
+      });
 
     // Zoom in until cluster breaks apart.
     map.on('click', 'markerClusters.points', (e: any) => {

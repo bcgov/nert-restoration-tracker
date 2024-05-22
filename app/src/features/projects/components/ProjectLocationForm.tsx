@@ -84,16 +84,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
-  const maskStateArray =
-    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || [];
-
-  console.log('maskStateArray', maskStateArray);
-
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
-
-  console.log('maskState', maskState);
 
   // Mask change indicator
   const [mask, setMask] = useState<null | number>(null);
@@ -152,8 +145,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     setMask(index);
   };
 
+  // TODO: Connect these to the map state for active shapes
   const mouseEnterListItem = (index: number) => {
     console.log('mouse enter', index);
+  };
+  const mouseLeaveListItem = (index: number) => {
+    console.log('mouse leave', index);
   };
 
   return (
@@ -318,7 +315,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               style={featureStyle.parent}
               className="feature-item"
               key={index}
-              onMouseEnter={() => mouseEnterListItem(index)}>
+              onMouseEnter={() => mouseEnterListItem(index)}
+              onMouseLeave={() => mouseLeaveListItem(index)}>
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>

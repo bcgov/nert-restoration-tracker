@@ -42,7 +42,6 @@ export const handleGeoJSONUpload = async <T>(
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
     feature.properties = p;
-    console.log('feature', feature);
     return feature;
   };
 
@@ -85,7 +84,17 @@ export const handleGeoJSONUpload = async <T>(
       setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
       return;
     }
-    setFieldValue(name, [...get(values, name), ...geojsonWithAttributes.features]);
+
+    // Merge the new features with the existing features
+    const allFeatures = [...get(values, name), ...geojsonWithAttributes.features];
+
+    // Recalculate the IDs for all features
+    const allFeaturesWithIds = allFeatures.map((feature, index) => {
+      feature.id = index;
+      return feature;
+    });
+
+    setFieldValue(name, allFeaturesWithIds);
   } catch (error) {
     setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
   }

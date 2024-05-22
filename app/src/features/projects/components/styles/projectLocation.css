@@ -9,6 +9,9 @@
   &:hover {
     background-color: #e2fbff;
   }
+  &.active {
+    background-color: #e2fbff;
+  }
 }
 
 .feature-box > :first-child {
