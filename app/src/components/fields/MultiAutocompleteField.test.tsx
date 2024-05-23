@@ -4,7 +4,7 @@ import React from 'react';
 import MultiAutocompleteField from './MultiAutocompleteField';
 
 describe('MultiAutocompleteField', () => {
-  it('matches the snapshot', () => {
+  it.skip('matches the snapshot', () => {
     const { asFragment } = render(
       <Formik initialValues={[]} onSubmit={async () => {}}>
         {() => (

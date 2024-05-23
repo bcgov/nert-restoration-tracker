@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
 import { ProjectService } from '../../../services/project-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import { GET, viewProject } from './view';
 
 chai.use(sinonChai);
@@ -16,7 +16,7 @@ describe('project/{projectId}/view', () => {
     const ajv = new Ajv();
 
     it('is valid openapi v3 schema', () => {
-      expect(ajv.validateSchema((GET.apiDoc as unknown) as object)).to.be.true;
+      expect(ajv.validateSchema(GET.apiDoc as unknown as object)).to.be.true;
     });
   });
 

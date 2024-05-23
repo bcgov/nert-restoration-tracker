@@ -1,5 +1,6 @@
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 
+//TODO: Update project object
 export const getProjectForViewResponse: IGetProjectForViewResponse = {
   project: {
     project_id: 1,

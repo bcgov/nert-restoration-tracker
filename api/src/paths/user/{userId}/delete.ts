@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../constants/roles';
-import { getDBConnection, IDBConnection } from '../../../database/db';
+import { IDBConnection, getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
 import { queries } from '../../../queries/queries';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
@@ -140,9 +140,8 @@ export const getAllParticipantsFromSystemUsersProjects = async (
   userId: number,
   connection: IDBConnection
 ): Promise<any[]> => {
-  const getParticipantsFromAllSystemUsersProjectsSQLStatment = queries.projectParticipation.getParticipantsFromAllSystemUsersProjectsSQL(
-    userId
-  );
+  const getParticipantsFromAllSystemUsersProjectsSQLStatment =
+    queries.projectParticipation.getParticipantsFromAllSystemUsersProjectsSQL(userId);
 
   if (!getParticipantsFromAllSystemUsersProjectsSQLStatment) {
     throw new HTTP400('Failed to build SQL get statement');

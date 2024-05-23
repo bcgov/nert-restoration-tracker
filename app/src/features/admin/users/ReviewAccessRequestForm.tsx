@@ -1,6 +1,6 @@
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import AutocompleteField, { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { useFormikContext } from 'formik';
@@ -15,7 +15,7 @@ export interface IReviewAccessRequestForm {
 }
 
 export const ReviewAccessRequestFormInitialValues: IReviewAccessRequestForm = {
-  system_role: ('' as unknown) as number
+  system_role: '' as unknown as number
 };
 
 export const ReviewAccessRequestFormYupSchema = yup.object().shape({
@@ -37,7 +37,10 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
 
   const identitySource = props.request.data.identitySource;
   const userIdentifier = props.request.data.username;
-  const formattedUsername = [getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE), userIdentifier]
+  const formattedUsername = [
+    getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
+    userIdentifier
+  ]
     .filter(Boolean)
     .join('/');
 
@@ -89,7 +92,8 @@ const ReviewAccessRequestForm: React.FC<IReviewAccessRequestFormProps> = (props)
                 Company
               </Typography>
               <Typography component="dd" variant="body1">
-                {('company' in props.request.data && props.request.data.company) || 'Not Applicable'}
+                {('company' in props.request.data && props.request.data.company) ||
+                  'Not Applicable'}
               </Typography>
             </Grid>
 

@@ -1,8 +1,8 @@
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import { getFormattedDate } from 'utils/Utils';
 
@@ -31,15 +31,6 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
     );
   };
 
-  const getRangeName = (rangeNumber: number) => {
-    const codeValue = props.codes.ranges.find((code) => code.id === rangeNumber);
-    return (
-      <Typography variant="body2" component="dd" data-testid="project-region">
-        {codeValue?.name}
-      </Typography>
-    );
-  };
-
   return (
     <Box component="dl" data-testid="general_info_component">
       <div>
@@ -48,14 +39,16 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
         </Typography>
         {getRegionName(location.region)}
       </div>
-      {location && location.range && (
-        <div>
-          <Typography variant="body2" component="dt" color="textSecondary">
-            Caribou Range:
-          </Typography>
-          {getRangeName(location.range)}
-        </div>
-      )}
+
+      <div>
+        <Typography variant="body2" component="dt" color="textSecondary">
+          Brief Description:
+        </Typography>
+        <Typography variant="body2" component="dd">
+          {project.brief_desc}
+        </Typography>
+      </div>
+
       <div>
         <Typography variant="body2" component="dt" color="textSecondary">
           Start Date:
@@ -69,7 +62,9 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
           End Date:
         </Typography>
         <Typography variant="body2" component="dd">
-          {project.end_date ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date) : '---'}
+          {project.end_date
+            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
+            : '---'}
         </Typography>
       </div>
       <div>

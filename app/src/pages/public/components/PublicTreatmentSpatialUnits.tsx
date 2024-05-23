@@ -1,19 +1,21 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiMenuDown } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectTreatment, TreatmentSearchCriteria } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectTreatment,
+  TreatmentSearchCriteria
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-const useStyles = makeStyles({
+const pageStyles = {
   filterMenu: {
     minWidth: '200px !important',
     padding: 0,
@@ -22,7 +24,7 @@ const useStyles = makeStyles({
       borderBottom: 'none'
     }
   }
-});
+};
 
 export interface IProjectSpatialUnitsProps {
   treatmentList: IGetProjectTreatment[];
@@ -35,10 +37,9 @@ export interface IProjectSpatialUnitsProps {
  * @return {*}
  */
 const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
-  const classes = useStyles();
   const { getTreatments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -48,7 +49,8 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
   const [yearList, setYearList] = useState<{ year: number }[]>([]);
   const [selectedSpatialLayer, setSelectedSpatialLayer] = useState({ boundary: true });
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
 
@@ -62,7 +64,10 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
 
     Object.keys(selectedSpatialLayer).forEach((key) => {
       //handles async discrepancies for selected years
-      if ((selectedSpatialLayer[key] && key !== selectedName) || (key === selectedName && !selectedSpatialLayer[key])) {
+      if (
+        (selectedSpatialLayer[key] && key !== selectedName) ||
+        (key === selectedName && !selectedSpatialLayer[key])
+      ) {
         selectedArray.years.push(key);
       }
     });
@@ -77,7 +82,8 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
       }
 
       try {
-        const yearsResponse = await restorationTrackerApi.public.project.getProjectTreatmentsYears(projectId);
+        const yearsResponse =
+          await restorationTrackerApi.public.project.getProjectTreatmentsYears(projectId);
 
         if (!yearsResponse) {
           return;
@@ -128,7 +134,6 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
             <Menu
               id="treatment-menu"
               anchorEl={anchorEl}
-              getContentAnchorEl={null}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorEl)}
@@ -140,7 +145,7 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
                     <MenuItem
                       dense
                       disableGutters
-                      className={classes.filterMenu}
+                      sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
                       onClick={() => handleSelectedSwitch(year.year)}>

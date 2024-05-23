@@ -1,10 +1,9 @@
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer';
+import MapContainer from 'components/map/MapContainer2';
 import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
@@ -59,7 +58,8 @@ const SearchPage: React.FC = () => {
       const clusteredPointGeometries: IMarker[] = [];
 
       response.forEach((result: any) => {
-        const feature = generateValidGeometryCollection(result.geometry, result.id).geometryCollection[0];
+        const feature = generateValidGeometryCollection(result.geometry, result.id)
+          .geometryCollection[0];
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
@@ -86,22 +86,39 @@ const SearchPage: React.FC = () => {
   }, [performSearch, getSearchResults]);
 
   /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(false);
+  const plans = useState<boolean>(false);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
+
+  /**
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Container maxWidth="xl">
-      <Box mb={5} display="flex" justifyContent="space-between">
-        <Typography variant="h1">Map</Typography>
-      </Box>
-      <Box height={750}>
-        <MapContainer
-          mapId="search_boundary_map"
-          fullScreenControl={true}
-          scrollWheelZoom={true}
-          markers={geometries}
-        />
-      </Box>
-    </Container>
+    <Box sx={{ height: '100%' }}>
+      <MapContainer
+        mapId="search_boundary_map"
+        features={geometries}
+        layerVisibility={layerVisibility}
+        centroids={true}
+      />
+      <LayerSwitcher layerVisibility={layerVisibility} />
+    </Box>
   );
 };
 

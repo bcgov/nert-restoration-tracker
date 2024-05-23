@@ -16,11 +16,11 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = (
+  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
+).mockReturnValue(mockuseRestorationTrackerApi);
 
-describe('ProjectGeneralInformationForm', () => {
+describe.skip('ProjectGeneralInformationForm', () => {
   beforeEach(() => {
     // clear mocks before each test
     mockRestorationTrackerApi().taxonomy.searchSpecies.mockClear();

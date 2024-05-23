@@ -1,7 +1,7 @@
 import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
 import { IConfig } from 'contexts/configContext';
+import dayjs from 'dayjs';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import moment from 'moment';
 
 /**
  * Checks if a url string starts with an `http(s)://` protocol, and adds `https://` if it does not.
@@ -10,7 +10,10 @@ import moment from 'moment';
  * @param {('http://' | 'https://')} [protocol='https://'] The protocol to add, if necessary. Defaults to `https://`.
  * @return {*}  {string} the url which is guaranteed to have an `http(s)://` protocol.
  */
-export const ensureProtocol = (url: string, protocol: 'http://' | 'https://' = 'https://'): string => {
+export const ensureProtocol = (
+  url: string,
+  protocol: 'http://' | 'https://' = 'https://'
+): string => {
   return ((url.startsWith('http://') || url.startsWith('https://')) && url) || `${protocol}${url}`;
 };
 
@@ -52,7 +55,7 @@ export const getFormattedDateRangeString = (
  * @return {string} formatted date string, or an empty string if unable to parse the date
  */
 export const getFormattedDate = (dateFormat: DATE_FORMAT, date: string): string => {
-  const dateMoment = moment(date);
+  const dateMoment = dayjs(date);
 
   if (!dateMoment.isValid()) {
     //date was invalid
@@ -63,6 +66,22 @@ export const getFormattedDate = (dateFormat: DATE_FORMAT, date: string): string 
 };
 
 /**
+ * Get the difference in months between 2 dates.
+ *
+ * @param {string} startDate ISO 8601 date string
+ * @param {string} endDate ISO 8601 date string
+ * @return {number} 0 if start date is after end date, otherwise number of months
+ */
+export const getDateDiffInMonths = (startDate: string, endDate: string): number => {
+  const d1 = new Date(startDate);
+  const d2 = new Date(endDate);
+
+  if (d2 <= d1) return 0;
+
+  return Math.max((d2.getFullYear() - d1.getFullYear()) * 12 + d2.getMonth() - d1.getMonth(), 0);
+};
+
+/**
  * Get a formatted time string.
  *
  * @param {TIME_FORMAT} timeFormat
@@ -70,7 +89,7 @@ export const getFormattedDate = (dateFormat: DATE_FORMAT, date: string): string 
  * @return {string} formatted time string, or an empty string if unable to parse the date
  */
 export const getFormattedTime = (timeFormat: TIME_FORMAT, date: string): string => {
-  const dateMoment = moment(date);
+  const dateMoment = dayjs(date);
 
   if (!dateMoment.isValid()) {
     //date was invalid
@@ -108,7 +127,12 @@ export const getFormattedAmount = (amount: number): string => {
  * @return {*}  {(string | undefined)}
  */
 export const getLogOutUrl = (config: IConfig): string | undefined => {
-  if (!config || !config.KEYCLOAK_CONFIG?.url || !config.KEYCLOAK_CONFIG?.realm || !config.SITEMINDER_LOGOUT_URL) {
+  if (
+    !config ||
+    !config.KEYCLOAK_CONFIG?.url ||
+    !config.KEYCLOAK_CONFIG?.realm ||
+    !config.SITEMINDER_LOGOUT_URL
+  ) {
     return;
   }
 
@@ -172,7 +196,9 @@ export const triggerFileDownload = (fileData: string, fileName: string) => {
  * @param {SYSTEM_IDENTITY_SOURCE} identitySource The identity source
  * @returns {*} {string} the string representing the identity source
  */
-export const getFormattedIdentitySource = (identitySource: SYSTEM_IDENTITY_SOURCE): string | null => {
+export const getFormattedIdentitySource = (
+  identitySource: SYSTEM_IDENTITY_SOURCE
+): string | null => {
   switch (identitySource) {
     case SYSTEM_IDENTITY_SOURCE.BCEID_BASIC:
       return 'BCeID Basic';

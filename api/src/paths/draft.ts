@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import { PROJECT_ROLE } from '../constants/roles';
+import { SYSTEM_ROLE } from '../constants/roles';
 import { getDBConnection } from '../database/db';
 import { HTTP400 } from '../errors/custom-error';
 import { queries } from '../queries/queries';
@@ -8,15 +8,13 @@ import { authorizeRequestHandler } from '../request-handlers/security/authorizat
 import { getLogger } from '../utils/logger';
 
 const defaultLog = getLogger('paths/draft');
-
 export const PUT: Operation = [
-  authorizeRequestHandler((req) => {
+  authorizeRequestHandler(() => {
     return {
       and: [
         {
-          validProjectRoles: [PROJECT_ROLE.PROJECT_LEAD],
-          projectId: Number(req.params.projectId),
-          discriminator: 'ProjectRole'
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          discriminator: 'SystemRole'
         }
       ]
     };
@@ -25,13 +23,12 @@ export const PUT: Operation = [
 ];
 
 export const POST: Operation = [
-  authorizeRequestHandler((req) => {
+  authorizeRequestHandler(() => {
     return {
       and: [
         {
-          validProjectRoles: [PROJECT_ROLE.PROJECT_LEAD],
-          projectId: Number(req.params.projectId),
-          discriminator: 'ProjectRole'
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          discriminator: 'SystemRole'
         }
       ]
     };
@@ -55,8 +52,12 @@ POST.apiDoc = {
         schema: {
           title: 'Draft request object',
           type: 'object',
-          required: ['name', 'data'],
+          required: ['is_project', 'name', 'data'],
           properties: {
+            is_project: {
+              title: 'True is project, False is plan',
+              type: 'boolean'
+            },
             name: {
               title: 'Draft name',
               type: 'string'
@@ -204,6 +205,10 @@ export function createDraft(): RequestHandler {
         throw new HTTP400('Failed to identify system user ID');
       }
 
+      if (!req.body.is_project) {
+        throw new HTTP400('Missing required param is_project');
+      }
+
       if (!req.body.name) {
         throw new HTTP400('Missing required param name');
       }
@@ -212,7 +217,12 @@ export function createDraft(): RequestHandler {
         throw new HTTP400('Missing required param data');
       }
 
-      const postDraftSQLStatement = queries.project.draft.postDraftSQL(systemUserId, req.body.name, req.body.data);
+      const postDraftSQLStatement = queries.project.draft.postDraftSQL(
+        systemUserId,
+        req.body.is_project,
+        req.body.name,
+        req.body.data
+      );
 
       if (!postDraftSQLStatement) {
         throw new HTTP400('Failed to build SQL insert statement');

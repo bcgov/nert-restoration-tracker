@@ -70,14 +70,15 @@ GET.apiDoc = {
                   },
                   start_date: {
                     oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                    description: 'ISO 8601 date string for the project start date'
+                    description: 'ISO 8601 date string for the project start date',
+                    nullable: true
                   },
                   end_date: {
                     oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                     description: 'ISO 8601 date string for the project end date',
                     nullable: true
                   },
-                  objectives: {
+                  brief_desc: {
                     type: 'string'
                   },
                   publish_date: {

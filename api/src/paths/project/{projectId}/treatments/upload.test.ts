@@ -59,8 +59,8 @@ describe('uploadTreatments', () => {
 
       await result(
         { ...mockReq, params: { ...mockReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -75,7 +75,7 @@ describe('uploadTreatments', () => {
     try {
       const result = upload.uploadTreatmentSpatial();
 
-      await result({ ...mockReq, files: [] }, (null as unknown) as any, (null as unknown) as any);
+      await result({ ...mockReq, files: [] }, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -96,7 +96,7 @@ describe('uploadTreatments', () => {
     try {
       const result = upload.uploadTreatmentSpatial();
 
-      await result(mockReq, (null as unknown) as any, (null as unknown) as any);
+      await result(mockReq, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
@@ -121,7 +121,7 @@ describe('uploadTreatments', () => {
 
     const result = upload.uploadTreatmentSpatial();
 
-    await result(mockReq, mockRes as any, (null as unknown) as any);
+    await result(mockReq, mockRes as any, null as unknown as any);
 
     expect(actualResult).to.eql({ unitIds: [1] });
   });

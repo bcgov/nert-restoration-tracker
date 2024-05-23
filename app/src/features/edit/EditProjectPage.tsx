@@ -1,39 +1,40 @@
-import Box from '@material-ui/core/Box';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
-import ArrowBack from '@material-ui/icons/ArrowBack';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Box from '@mui/material/Box';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import { EditProjectI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
+import ProjectAuthorizationForm from 'features/projects/components/ProjectAuthorizationForm';
 import ProjectContactForm from 'features/projects/components/ProjectContactForm';
 import ProjectFundingForm from 'features/projects/components/ProjectFundingForm';
 import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
-import ProjectIUCNForm from 'features/projects/components/ProjectIUCNForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
 import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
-import ProjectPermitForm from 'features/projects/components/ProjectPermitForm';
-import { ProjectFormInitialValues, ProjectFormYupSchema } from 'features/projects/create/CreateProjectPage';
+import ProjectIUCNForm from 'features/projects/components/ProjectWildlifeForm';
+import {
+  ProjectFormInitialValues,
+  ProjectFormYupSchema
+} from 'features/projects/create/CreateProjectPage';
 import { Form, Formik, FormikProps } from 'formik';
-import History from 'history';
+// import History from 'history';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import { Prompt } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import ReactRouterPrompt from 'react-router-prompt';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   formButtons: {
     '& button': {
-      margin: theme.spacing(0.5)
+      margin: '0.5rem'
     }
   },
   breadCrumbLink: {
@@ -53,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   breadCrumbLinkIcon: {
     marginRight: '0.25rem'
   }
-}));
+};
 
 /**
  * Page for editing a project.
@@ -61,13 +62,12 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @return {*}
  */
 const EditProjectPage: React.FC = () => {
-  const classes = useStyles();
-
-  const history = useHistory();
+  const history = useNavigate();
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
-  const urlParams = useParams();
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
 
   const codes = useCodes();
 
@@ -83,12 +83,12 @@ const EditProjectPage: React.FC = () => {
   const dialogContext = useContext(DialogContext);
 
   const [initialProjectFormData, setInitialProjectFormData] = useState<IGetProjectForViewResponse>(
-    (ProjectFormInitialValues as unknown) as IGetProjectForViewResponse
+    ProjectFormInitialValues as unknown as IGetProjectForViewResponse
   );
 
   useEffect(() => {
     const getEditProjectFields = async () => {
-      const response = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+      const response = await restorationTrackerApi.project.getProjectById(projectId);
 
       setInitialProjectFormData(response);
 
@@ -111,9 +111,7 @@ const EditProjectPage: React.FC = () => {
    */
   const handleProjectEdits = async (values: IGetProjectForViewResponse) => {
     try {
-      const id = urlParams['id'];
-
-      const response = await restorationTrackerApi.project.updateProject(id, values);
+      const response = await restorationTrackerApi.project.updateProject(projectId, values);
 
       if (!response?.id) {
         showEditErrorDialog({
@@ -124,7 +122,7 @@ const EditProjectPage: React.FC = () => {
 
       setEnableCancelCheck(false);
 
-      history.push(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${response.id}`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: 'Error Editing Project',
@@ -136,7 +134,7 @@ const EditProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history.push(`/admin/projects/${urlParams['id']}`);
+    history(`/admin/projects/${projectId}`);
   };
 
   const defaultErrorDialogProps = {
@@ -160,7 +158,7 @@ const EditProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history.push(`/admin/projects/${urlParams['id']}`);
+      history(`/admin/projects/${projectId}`);
     }
   };
 
@@ -186,14 +184,14 @@ const EditProjectPage: React.FC = () => {
    * @param {History.Location} location
    * @return {*}
    */
-  const handleLocationChange = (location: History.Location, action: History.Action) => {
+  const handleLocationChange = () => {
     if (!dialogContext.yesNoDialogProps.open) {
       // If the cancel dialog is not open: open it
       dialogContext.setYesNoDialog({
         ...defaultCancelDialogProps,
         onYes: () => {
           dialogContext.setYesNoDialog({ open: false });
-          history.push(location.pathname);
+          history(location.pathname);
         },
         open: true
       });
@@ -206,13 +204,19 @@ const EditProjectPage: React.FC = () => {
 
   return (
     <>
-      <Prompt when={enableCancelCheck} message={handleLocationChange} />
+      <ReactRouterPrompt when={enableCancelCheck}>
+        {({ isActive }) => isActive && handleLocationChange()}
+      </ReactRouterPrompt>
 
       <Container maxWidth="xl">
         <Box mb={3}>
           <Breadcrumbs>
-            <Link color="primary" onClick={handleCancel} aria-current="page" className={classes.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" className={classes.breadCrumbLinkIcon} />
+            <Link
+              color="primary"
+              onClick={handleCancel}
+              aria-current="page"
+              sx={pageStyles.breadCrumbLink}>
+              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
           </Breadcrumbs>
@@ -252,19 +256,33 @@ const EditProjectPage: React.FC = () => {
                       <Box component="fieldset" mt={5} mx={0}>
                         <ProjectIUCNForm
                           classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map((item) => {
-                              return { value: item.id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_1_classification?.map(
+                              (item) => {
+                                return { value: item.id, label: item.name };
+                              }
+                            ) || []
                           }
                           subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map((item) => {
-                              return { value: item.id, iucn1_id: item.iucn1_id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
+                              (item) => {
+                                return {
+                                  value: item.id,
+                                  iucn1_id: item.iucn1_id,
+                                  label: item.name
+                                };
+                              }
+                            ) || []
                           }
                           subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map((item) => {
-                              return { value: item.id, iucn2_id: item.iucn2_id, label: item.name };
-                            }) || []
+                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
+                              (item) => {
+                                return {
+                                  value: item.id,
+                                  iucn2_id: item.iucn2_id,
+                                  label: item.name
+                                };
+                              }
+                            ) || []
                           }
                         />
                       </Box>
@@ -293,11 +311,11 @@ const EditProjectPage: React.FC = () => {
                 <Box my={5}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Permits</Typography>
+                      <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
-                      <ProjectPermitForm />
+                      <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>
                 </Box>
@@ -316,21 +334,16 @@ const EditProjectPage: React.FC = () => {
                           fundingSources={codes.codes.funding_source.map((item) => {
                             return { value: item.id, label: item.name };
                           })}
-                          investment_action_category={codes.codes.investment_action_category.map((item) => {
-                            return { value: item.id, label: item.name, fs_id: item.fs_id };
-                          })}
+                          investment_action_category={codes.codes.investment_action_category.map(
+                            (item) => {
+                              return { value: item.id, label: item.name, fs_id: item.fs_id };
+                            }
+                          )}
                         />
                       </Box>
 
                       <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectPartnershipsForm
-                          first_nations={codes.codes.first_nations.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          stakeholder_partnerships={codes.codes.funding_source.map((item) => {
-                            return { value: item.name, label: item.name };
-                          })}
-                        />
+                        <ProjectPartnershipsForm />
                       </Box>
                     </Grid>
                   </Grid>
@@ -346,9 +359,6 @@ const EditProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectLocationForm
-                        ranges={codes.codes.ranges.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
                         regions={codes.codes.regions.map((item) => {
                           return { value: item.id, label: item.name };
                         })}
@@ -359,7 +369,7 @@ const EditProjectPage: React.FC = () => {
 
                 <Divider></Divider>
 
-                <Box mt={5} className={classes.formButtons} display="flex" justifyContent="flex-end">
+                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
                   <Button
                     variant="contained"
                     color="primary"

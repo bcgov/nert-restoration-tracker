@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 import GeneralInformation from './GeneralInformation';
 
@@ -36,7 +36,11 @@ describe('GeneralInformation', () => {
     } as IGetAllCodeSetsResponse;
 
     const { getByText } = render(
-      <GeneralInformation projectForViewData={projectPermitData} codes={codes} refresh={mockRefresh} />
+      <GeneralInformation
+        projectForViewData={projectPermitData}
+        codes={codes}
+        refresh={mockRefresh}
+      />
     );
 
     expect(getByText('Jan 10, 2021', { exact: false })).toBeVisible();
@@ -73,7 +77,11 @@ describe('GeneralInformation', () => {
     } as IGetAllCodeSetsResponse;
 
     const { getByText } = render(
-      <GeneralInformation projectForViewData={projectPermitData} codes={codes} refresh={mockRefresh} />
+      <GeneralInformation
+        projectForViewData={projectPermitData}
+        codes={codes}
+        refresh={mockRefresh}
+      />
     );
 
     expect(getByText('Jan 10, 2021', { exact: false })).toBeVisible();

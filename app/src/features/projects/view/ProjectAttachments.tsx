@@ -6,7 +6,10 @@ import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment, IUploadAttachmentResponse } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectAttachment,
+  IUploadAttachmentResponse
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -22,13 +25,14 @@ export interface IProjectAttachmentsProps {
  */
 const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const { attachmentsList, getAttachments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 
-  const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
+  // const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
+  const handleUploadAttachmentClick = () => true;
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
     return (file, cancelToken, handleFileUploadProgress) => {
@@ -65,7 +69,11 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         }}
       />
 
-      <AttachmentsList projectId={projectId} attachmentsList={attachmentsList} getAttachments={getAttachments} />
+      <AttachmentsList
+        projectId={projectId}
+        attachmentsList={attachmentsList}
+        getAttachments={getAttachments}
+      />
     </>
   );
 };

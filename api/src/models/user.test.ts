@@ -7,7 +7,7 @@ describe('ProjectParticipantObject', () => {
     let data: ProjectParticipantObject;
 
     before(() => {
-      data = new ProjectParticipantObject((null as unknown) as any);
+      data = new ProjectParticipantObject(null as unknown as any);
     });
 
     it('sets project_id', function () {
@@ -82,7 +82,7 @@ describe('UserObject', () => {
     let data: UserObject;
 
     before(() => {
-      data = new UserObject((null as unknown) as any);
+      data = new UserObject(null as unknown as any);
     });
 
     it('sets id', function () {

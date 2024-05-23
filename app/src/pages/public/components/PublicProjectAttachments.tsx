@@ -1,7 +1,10 @@
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment, IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectAttachment,
+  IGetProjectForViewResponse
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import PublicAttachmentsList from './PublicAttachmentsList';
@@ -16,8 +19,8 @@ export interface IPublicProjectAttachmentsProps {
  * @return {*}
  */
 const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () => {
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
@@ -29,7 +32,8 @@ const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () =>
       }
 
       try {
-        const response = await restorationTrackerApi.public.project.getProjectAttachments(projectId);
+        const response =
+          await restorationTrackerApi.public.project.getProjectAttachments(projectId);
 
         if (!response?.attachmentsList) {
           return;
@@ -45,12 +49,11 @@ const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () =>
 
   useEffect(() => {
     getAttachments(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Box>
-      <Box py={2} px={3} display="flex" justifyContent="space-between">
+      <Box py={1} px={2} display="flex" justifyContent="space-between">
         <Typography variant="h2">Documents</Typography>
       </Box>
 

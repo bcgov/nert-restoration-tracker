@@ -1,17 +1,16 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
+import { IGetProjectTreatment } from 'interfaces/useProjectPlanApi.interface';
 import React, { ReactElement, useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';
@@ -20,7 +19,7 @@ export interface IProjectTreatmentListProps {
   treatmentList: IGetProjectTreatment[];
 }
 
-const useStyles = makeStyles({
+const pageStyles = {
   treatmentsTable: {
     '& thead sup': {
       display: 'inline-block',
@@ -46,7 +45,7 @@ const useStyles = makeStyles({
   pagination: {
     flex: '0 0 auto'
   }
-});
+};
 
 /**
  * General information content for a project.
@@ -54,7 +53,6 @@ const useStyles = makeStyles({
  * @return {*}
  */
 const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
-  const classes = useStyles();
   const { treatmentList } = props;
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -92,7 +90,7 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
 
           <Divider />
 
-          <Box component="dl" my={0} className={classes.detaildl}>
+          <Box component="dl" my={0} sx={pageStyles.detaildl}>
             <Box key={`treatment-id-${currentTreatmentDetail.id}`}>
               <Box py={1} display="flex">
                 <Typography component="dt" variant="body2" color="textSecondary">
@@ -212,7 +210,7 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
     <>
       <Box display="flex" flexDirection="column" height="100%">
         <Box component={TableContainer}>
-          <Table stickyHeader className={classes.treatmentsTable} aria-label="treatments-list-table">
+          <Table stickyHeader sx={pageStyles.treatmentsTable} aria-label="treatments-list-table">
             <TableHead>
               <TableRow>
                 <TableCell width="50">ID</TableCell>
@@ -243,48 +241,52 @@ const TreatmentList: React.FC<IProjectTreatmentListProps> = (props) => {
               )}
 
               {treatmentList.length > 0 &&
-                treatmentList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                  return (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell colSpan={2}>
-                        {formatYearsTreatmentsBox(groupTreatmentsByYear(row.treatments))}
-                      </TableCell>
-                      <TableCell align="right">{row.width}</TableCell>
-                      <TableCell align="right">{row.length}</TableCell>
-                      <TableCell align="right">{row.area}</TableCell>
-                      <TableCell>
-                        <Box my={-0.5}>
-                          <Button
-                            size="small"
-                            color="primary"
-                            variant="outlined"
-                            title="View treatment unit details"
-                            aria-label="view treatment unit details"
-                            data-testid="view-treatment-unit-details"
-                            onClick={() => viewTreatmentUnitDetailsDialog(row)}>
-                            Details
-                          </Button>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                treatmentList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow key={row.id}>
+                        <TableCell>{row.id}</TableCell>
+                        <TableCell>{row.type}</TableCell>
+                        <TableCell colSpan={2}>
+                          {formatYearsTreatmentsBox(groupTreatmentsByYear(row.treatments))}
+                        </TableCell>
+                        <TableCell align="right">{row.width}</TableCell>
+                        <TableCell align="right">{row.length}</TableCell>
+                        <TableCell align="right">{row.area}</TableCell>
+                        <TableCell>
+                          <Box my={-0.5}>
+                            <Button
+                              size="small"
+                              color="primary"
+                              variant="outlined"
+                              title="View treatment unit details"
+                              aria-label="view treatment unit details"
+                              data-testid="view-treatment-unit-details"
+                              onClick={() => viewTreatmentUnitDetailsDialog(row)}>
+                              Details
+                            </Button>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
             </TableBody>
           </Table>
         </Box>
 
         {treatmentList.length > 0 && (
           <TablePagination
-            className={classes.pagination}
+            sx={pageStyles.pagination}
             rowsPerPageOptions={[5, 10, 15, 20]}
             component="div"
             count={treatmentList.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onChangePage={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
-            onChangeRowsPerPage={(event: React.ChangeEvent<HTMLInputElement>) =>
+            onPageChange={(event: unknown, newPage: number) =>
+              handleChangePage(event, newPage, setPage)
+            }
+            onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }
           />

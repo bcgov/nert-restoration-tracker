@@ -2,9 +2,9 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection } from '../__mocks__/db';
 import { coordinator_agency } from '../constants/codes';
 import * as spatialUtils from '../utils/spatial-utils';
-import { getMockDBConnection } from '../__mocks__/db';
 import { CodeService } from './code-service';
 
 chai.use(sinonChai);

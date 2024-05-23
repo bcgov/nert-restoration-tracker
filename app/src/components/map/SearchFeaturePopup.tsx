@@ -1,15 +1,15 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { AuthStateContext } from 'contexts/authStateContext';
 import React, { useContext } from 'react';
 import { Popup } from 'react-leaflet';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 
 export const SearchFeaturePopup: React.FC<{ featureData: any }> = (props) => {
   const { keycloakWrapper } = useContext(AuthStateContext);
-  const history = useHistory();
+  const history = useNavigate();
 
   const { featureData } = props;
 
@@ -23,9 +23,9 @@ export const SearchFeaturePopup: React.FC<{ featureData: any }> = (props) => {
         color="primary"
         onClick={() => {
           if (isAuthenticated(keycloakWrapper)) {
-            history.push(`/admin/projects/${featureData.id}`);
+            history(`/admin/projects/${featureData.id}`);
           } else {
-            history.push(`/projects/${featureData.id}`);
+            history(`/projects/${featureData.id}`);
           }
         }}>
         View Project Details

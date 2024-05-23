@@ -49,10 +49,13 @@ GET.apiDoc = {
           schema: {
             title: 'Draft Get Response Object',
             type: 'object',
-            required: ['id', 'name', 'data'],
+            required: ['id', 'is_project', 'name', 'data'],
             properties: {
               id: {
                 type: 'number'
+              },
+              is_project: {
+                type: 'boolean'
               },
               name: {
                 type: 'string',
@@ -94,7 +97,6 @@ GET.apiDoc = {
 export function getSingleDraft(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
-
     try {
       const getDraftSQLStatement = queries.project.draft.getDraftSQL(Number(req.params.draftId));
 

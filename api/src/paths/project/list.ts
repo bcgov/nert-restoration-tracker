@@ -19,11 +19,11 @@ export const GET: Operation = [
       ]
     };
   }),
-  getProjectList()
+  getProjectsPlansList()
 ];
 
 GET.apiDoc = {
-  description: 'Gets a list of projects based on search parameters if passed in.',
+  description: 'Gets a list of projects and plans based on search parameters if passed in.',
   tags: ['projects'],
   security: [
     {
@@ -144,6 +144,28 @@ GET.apiDoc = {
     },
     {
       in: 'query',
+      name: 'actual_start_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'actual_end_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
       name: 'ranges',
       schema: {
         oneOf: [
@@ -185,7 +207,7 @@ GET.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'Project response object.',
+      description: 'Project Plans response object.',
       content: {
         'application/json': {
           schema: {
@@ -198,7 +220,15 @@ GET.apiDoc = {
                 project: {
                   description: 'Basic project metadata',
                   type: 'object',
-                  required: ['project_id', 'project_name', 'start_date', 'end_date', 'publish_date'],
+                  required: [
+                    'project_id',
+                    'project_name',
+                    'start_date',
+                    'end_date',
+                    'actual_start_date',
+                    'actual_end_date',
+                    'publish_date'
+                  ],
                   properties: {
                     id: {
                       description: 'Project id',
@@ -209,11 +239,22 @@ GET.apiDoc = {
                     },
                     start_date: {
                       oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                      description: 'ISO 8601 date string for the project start date'
+                      description: 'ISO 8601 date string for the project start date',
+                      nullable: true
                     },
                     end_date: {
                       oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                       description: 'ISO 8601 date string for the project end date',
+                      nullable: true
+                    },
+                    actual_start_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual start date',
+                      nullable: true
+                    },
+                    actual_end_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual end date',
                       nullable: true
                     },
                     objectives: {
@@ -365,11 +406,13 @@ GET.apiDoc = {
                           },
                           start_date: {
                             oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                            description: 'ISO 8601 date string for the funding start date'
+                            description: 'ISO 8601 date string for the funding start date',
+                            nullable: true
                           },
                           end_date: {
                             oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                            description: 'ISO 8601 date string for the funding end_date'
+                            description: 'ISO 8601 date string for the funding end_date',
+                            nullable: true
                           },
                           agency_project_id: {
                             type: 'string',
@@ -451,8 +494,9 @@ GET.apiDoc = {
  *
  * @returns {RequestHandler}
  */
-export function getProjectList(): RequestHandler {
+export function getProjectsPlansList(): RequestHandler {
   return async (req, res) => {
+    defaultLog.debug({ label: 'getProjectsPlansList' });
     const connection = getDBConnection(req['keycloak_token']);
 
     const searchCriteria: ProjectSearchCriteria = req.query || {};
@@ -476,7 +520,7 @@ export function getProjectList(): RequestHandler {
 
       return res.status(200).json(projects);
     } catch (error) {
-      defaultLog.error({ label: 'getProjectList', message: 'error', error });
+      defaultLog.error({ label: 'getProjectsPlansList', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {

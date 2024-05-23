@@ -1,15 +1,15 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { ThemeProvider } from '@material-ui/core/styles';
-// Strange looking `type {}` import below, see: https://github.com/microsoft/TypeScript/issues/36812
-import type {} from '@material-ui/lab/themeAugmentation'; // this allows `@material-ui/lab` components to be themed
+import CircularProgress from '@mui/material/CircularProgress';
+import { ThemeProvider } from '@mui/material/styles';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
-import AppRouter from 'AppRouter';
+import { AppRouter } from 'AppRouter';
 import { AuthStateContextProvider } from 'contexts/authStateContext';
 import { ConfigContext, ConfigContextProvider } from 'contexts/configContext';
 import Keycloak from 'keycloak-js';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import appTheme from 'themes/appTheme';
+
+const router = AppRouter();
 
 const App: React.FC = () => {
   return (
@@ -29,9 +29,7 @@ const App: React.FC = () => {
                 initOptions={{ pkceMethod: 'S256' }}
                 LoadingComponent={<CircularProgress className="pageProgress" size={40} />}>
                 <AuthStateContextProvider>
-                  <BrowserRouter>
-                    <AppRouter />
-                  </BrowserRouter>
+                  <RouterProvider router={router} />
                 </AuthStateContextProvider>
               </ReactKeycloakProvider>
             );

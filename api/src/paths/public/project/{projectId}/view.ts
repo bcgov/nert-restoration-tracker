@@ -35,7 +35,7 @@ GET.apiDoc = {
               project: {
                 description: 'Basic project metadata',
                 type: 'object',
-                required: ['project_id', 'project_name', 'start_date', 'end_date', 'publish_date'],
+                required: ['project_id', 'project_name', 'start_date', 'end_date', 'brief_desc', 'publish_date'],
                 properties: {
                   id: {
                     description: 'Project id',
@@ -46,14 +46,15 @@ GET.apiDoc = {
                   },
                   start_date: {
                     oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                    description: 'ISO 8601 date string for the project start date'
+                    description: 'ISO 8601 date string for the project start date',
+                    nullable: true
                   },
                   end_date: {
                     oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                     description: 'ISO 8601 date string for the project end date',
                     nullable: true
                   },
-                  objectives: {
+                  brief_desc: {
                     type: 'string'
                   },
                   publish_date: {

@@ -1,5 +1,5 @@
-import Typography from '@material-ui/core/Typography';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import Typography from '@mui/material/Typography';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 
 export interface IProjectObjectivesProps {
@@ -20,7 +20,7 @@ const Objectives: React.FC<IProjectObjectivesProps> = (props) => {
   return (
     <>
       <Typography style={{ whiteSpace: 'pre-line' }} variant="body2">
-        {project.objectives}
+        {project.brief_desc}
       </Typography>
     </>
   );

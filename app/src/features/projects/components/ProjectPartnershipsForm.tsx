@@ -1,72 +1,69 @@
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import MultiAutocompleteFieldVariableSize, {
-  IMultiAutocompleteFieldOption
-} from 'components/fields/MultiAutocompleteFieldVariableSize';
+import { mdiPlus } from '@mdi/js';
+import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import CustomTextField from 'components/fields/CustomTextField';
 import React from 'react';
 import yup from 'utils/YupSchema';
 
+export interface IProjectPartnershipsFormArrayItem {
+  partnership: string;
+}
 export interface IProjectPartnershipsForm {
-  partnerships: {
-    indigenous_partnerships: number[];
-    stakeholder_partnerships: string[];
+  partnership: {
+    partnerships: IProjectPartnershipsFormArrayItem[];
   };
 }
 
 export const ProjectPartnershipsFormInitialValues: IProjectPartnershipsForm = {
-  partnerships: {
-    indigenous_partnerships: [],
-    stakeholder_partnerships: []
+  partnership: {
+    partnerships: []
   }
 };
 
 export const ProjectPartnershipsFormYupSchema = yup.object().shape({
-  partnerships: yup.object().shape({
-    indigenous_partnerships: yup.mixed(),
-    stakeholder_partnerships: yup.mixed()
+  partnership: yup.object().shape({
+    //partnerships: yup.array().nullable()
   })
 });
-
-export interface IProjectPartnershipsFormProps {
-  first_nations: IMultiAutocompleteFieldOption[];
-  stakeholder_partnerships: IMultiAutocompleteFieldOption[];
-}
 
 /**
  * Create project - Partnerships section
  *
  * @return {*}
  */
-const ProjectPartnershipsForm: React.FC<IProjectPartnershipsFormProps> = (props) => {
+const ProjectPartnershipsForm: React.FC = () => {
   return (
     <>
       <Typography component="legend">Partnerships</Typography>
 
       <Box mb={3} maxWidth={'72ch'}>
         <Typography variant="body1" color="textSecondary">
-          Specify any additional partnerships that have not been previously identified as a funding sources.
+          Specify any additional partnerships that have not been previously identified as a funding
+          sources.
         </Typography>
       </Box>
 
       <Grid container spacing={3} direction="column">
         <Grid item xs={12}>
-          <MultiAutocompleteFieldVariableSize
-            id={'partnerships.indigenous_partnerships'}
-            label={'Indigenous Partnerships'}
-            options={props.first_nations}
-            required={false}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <MultiAutocompleteFieldVariableSize
-            id={'partnerships.stakeholder_partnerships'}
-            label={'Other Partnerships'}
-            options={props.stakeholder_partnerships}
-            required={false}
-          />
+          <CustomTextField name={'partnership.partnerships'} label={'Partnership'} />
         </Grid>
       </Grid>
+
+      <Box pt={2}>
+        <Button
+          type="button"
+          variant="outlined"
+          color="primary"
+          aria-label="add partnership"
+          startIcon={<Icon path={mdiPlus} size={1}></Icon>}
+          // onClick={() => arrayHelpers.push(ProjectPartnershipsFormInitialValues)}
+        >
+          Add New Partnership
+        </Button>
+      </Box>
     </>
   );
 };

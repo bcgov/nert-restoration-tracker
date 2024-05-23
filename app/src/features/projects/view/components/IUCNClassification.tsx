@@ -1,17 +1,14 @@
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    projectIucnList: {
-      margin: 0,
-      padding: 0
-    }
-  })
-);
+const pageStyles = {
+  projectIucnList: {
+    margin: 0,
+    padding: 0
+  }
+};
 
 export interface IIUCNClassificationProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -25,15 +22,14 @@ export interface IIUCNClassificationProps {
  * @return {*}
  */
 const IUCNClassification: React.FC<IIUCNClassificationProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: { iucn }
   } = props;
 
-  const hasIucnClassifications = iucn.classificationDetails && iucn.classificationDetails.length > 0;
+  const hasIucnClassifications =
+    iucn.classificationDetails && iucn.classificationDetails.length > 0;
   return (
-    <ul className={classes.projectIucnList}>
+    <ul style={pageStyles.projectIucnList}>
       {hasIucnClassifications &&
         iucn.classificationDetails.map((classificationDetail: any, index: number) => {
           const iucn1_name = props.codes.iucn_conservation_action_level_1_classification.find(

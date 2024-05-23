@@ -3,13 +3,15 @@ import { PROJECT_ROLE } from '../constants/roles';
 import { HTTP400, HTTP409, HTTP500 } from '../errors/custom-error';
 import { models } from '../models/models';
 import {
+  IPostAuthorization,
   IPostContact,
   IPostIUCN,
-  IPostPermit,
+  PostFocusData,
   PostFundingSource,
   PostLocationData,
   PostProjectData,
-  PostProjectObject
+  PostProjectObject,
+  PostRestPlanData
 } from '../models/project-create';
 import {
   GetContactData,
@@ -138,25 +140,17 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async getProjectById(projectId: number, isPublic = false): Promise<ProjectObject> {
-    const [
-      projectData,
-      speciesData,
-      iucnData,
-      contactData,
-      permitData,
-      partnershipsData,
-      fundingData,
-      locationData
-    ] = await Promise.all([
-      this.getProjectData(projectId),
-      this.getSpeciesData(projectId),
-      this.getIUCNClassificationData(projectId),
-      this.getContactData(projectId, isPublic),
-      this.getPermitData(projectId, isPublic),
-      this.getPartnershipsData(projectId),
-      this.getFundingData(projectId),
-      this.getLocationData(projectId)
-    ]);
+    const [projectData, speciesData, iucnData, contactData, permitData, partnershipsData, fundingData, locationData] =
+      await Promise.all([
+        this.getProjectData(projectId),
+        this.getSpeciesData(projectId),
+        this.getIUCNClassificationData(projectId),
+        this.getContactData(projectId, isPublic),
+        this.getPermitData(projectId, isPublic),
+        this.getPartnershipsData(projectId),
+        this.getFundingData(projectId),
+        this.getLocationData(projectId)
+      ]);
 
     return {
       project: projectData,
@@ -424,10 +418,9 @@ export class ProjectService extends DBService {
   }
 
   async getLocationData(projectId: number): Promise<GetLocationData> {
-    const [geometryRows, regionRows, rangeRows] = await Promise.all([
+    const [geometryRows, regionRows] = await Promise.all([
       this.getGeometryData(projectId),
-      this.getRegionData(projectId),
-      this.getRangeData(projectId)
+      this.getRegionData(projectId)
     ]);
 
     if (!geometryRows) {
@@ -438,7 +431,7 @@ export class ProjectService extends DBService {
       throw new HTTP400('Failed to get region data');
     }
 
-    return new GetLocationData(geometryRows, regionRows, rangeRows);
+    return new GetLocationData(geometryRows, regionRows);
   }
 
   async getGeometryData(projectId: number): Promise<any[]> {
@@ -458,7 +451,6 @@ export class ProjectService extends DBService {
     `;
 
     const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
     return (response && response.rows) || null;
   }
 
@@ -494,7 +486,6 @@ export class ProjectService extends DBService {
 
   async createProject(postProjectData: PostProjectObject): Promise<number> {
     const projectId = await this.insertProject(postProjectData.project);
-
     const promises: Promise<any>[] = [];
 
     // Handle contacts
@@ -516,38 +507,35 @@ export class ProjectService extends DBService {
       )
     );
 
-    // Handle indigenous partners
-    promises.push(
-      Promise.all(
-        postProjectData.partnerships.indigenous_partnerships.map((indigenousNationId: number) =>
-          this.insertIndigenousNation(indigenousNationId, projectId)
-        )
-      )
-    );
-
     //Handle classifications
     promises.push(
       Promise.all(
-        postProjectData.iucn.classificationDetails?.map((iucnClassification: IPostIUCN) =>
-          this.insertClassificationDetail(iucnClassification.subClassification2, projectId)
+        postProjectData.iucn.classificationDetails?.map((iucnClassification: IPostIUCN) => {
+          if (
+            iucnClassification.classification &&
+            iucnClassification.subClassification1 &&
+            iucnClassification.subClassification2
+          )
+            return this.insertClassificationDetail(iucnClassification.subClassification2, projectId);
+          else return [];
+        }) || []
+      )
+    );
+
+    // Handle partners
+    promises.push(
+      Promise.all(
+        postProjectData.partnerships.partnerships?.map((partner: string) =>
+          this.insertStakeholderPartnership(partner, projectId)
         ) || []
       )
     );
 
-    // Handle stakeholder partners
+    // Handle new project authorizations
     promises.push(
       Promise.all(
-        postProjectData.partnerships.stakeholder_partnerships.map((stakeholderPartner: string) =>
-          this.insertStakeholderPartnership(stakeholderPartner, projectId)
-        )
-      )
-    );
-
-    // Handle new project permits
-    promises.push(
-      Promise.all(
-        postProjectData.permit.permits.map((permit: IPostPermit) =>
-          this.insertPermit(permit.permit_number, permit.permit_type, projectId)
+        postProjectData.authorization.authorizations.map((authorization: IPostAuthorization) =>
+          this.insertPermit(authorization.authorization_ref, authorization.authorization_type, projectId)
         )
       )
     );
@@ -564,10 +552,11 @@ export class ProjectService extends DBService {
     // Handle region associated to this project
     promises.push(this.insertRegion(postProjectData.location.region, projectId));
 
-    if (postProjectData.location.range) {
-      // Handle range associated to this project
-      promises.push(this.insertRange(postProjectData.location.range, projectId));
-    }
+    // Handle focus
+    promises.push(this.insertFocus(postProjectData.focus, projectId));
+
+    // Handle restorationPlan data
+    promises.push(this.insertRestPlan(postProjectData.restoration_plan, projectId));
 
     await Promise.all(promises);
 
@@ -637,6 +626,42 @@ export class ProjectService extends DBService {
 
     if (!result || !result.id) {
       throw new HTTP400('Failed to insert project boundary data');
+    }
+
+    return result.id;
+  }
+
+  async insertFocus(focusData: PostFocusData, project_id: number): Promise<number> {
+    const sqlStatement = queries.project.postProjectFocusSQL(focusData, project_id);
+
+    if (!sqlStatement) {
+      throw new HTTP400('Failed to build SQL update statement');
+    }
+
+    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+    const result = (response && response.rows && response.rows[0]) || null;
+
+    if (!result || !result.id) {
+      throw new HTTP400('Failed to update project focus data');
+    }
+
+    return result.id;
+  }
+
+  async insertRestPlan(restPlanData: PostRestPlanData, project_id: number): Promise<number> {
+    const sqlStatement = queries.project.postProjectRestPlanSQL(restPlanData, project_id);
+
+    if (!sqlStatement) {
+      throw new HTTP400('Failed to build SQL update statement');
+    }
+
+    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+    const result = (response && response.rows && response.rows[0]) || null;
+
+    if (!result || !result.id) {
+      throw new HTTP400('Failed to update project rest plan data');
     }
 
     return result.id;
@@ -742,7 +767,7 @@ export class ProjectService extends DBService {
     return result.id;
   }
 
-  async insertClassificationDetail(iucn3_id: number, project_id: number): Promise<number> {
+  async insertClassificationDetail(iucn3_id: number | null, project_id: number): Promise<number> {
     const sqlStatement = queries.project.postProjectIUCNSQL(iucn3_id, project_id);
 
     if (!sqlStatement) {
@@ -865,10 +890,6 @@ export class ProjectService extends DBService {
       promises.push(this.updateContactData(projectId, entities));
     }
 
-    if (entities?.permit) {
-      promises.push(this.updateProjectPermitData(projectId, entities));
-    }
-
     if (entities?.partnerships) {
       promises.push(this.updateProjectPartnershipsData(projectId, entities));
     }
@@ -884,7 +905,6 @@ export class ProjectService extends DBService {
     if (entities?.location) {
       promises.push(this.updateProjectSpatialData(projectId, entities));
       promises.push(this.updateProjectRegionData(projectId, entities));
-      promises.push(this.updateProjectRangeData(projectId, entities));
     }
     if (entities?.species) {
       promises.push(this.updateProjectSpeciesData(projectId, entities));
@@ -939,33 +959,6 @@ export class ProjectService extends DBService {
       }) || [];
 
     await Promise.all([insertContactPromises]);
-  }
-
-  async updateProjectPermitData(projectId: number, entities: IUpdateProject): Promise<void> {
-    if (!entities.permit) {
-      throw new HTTP400('Missing request body entity `permit`');
-    }
-
-    const putPermitData = new models.project.PostPermitData(entities.permit);
-
-    const sqlDeleteStatement = queries.project.deletePermitSQL(projectId);
-
-    if (!sqlDeleteStatement) {
-      throw new HTTP400('Failed to build SQL delete statement');
-    }
-
-    const deleteResult = await this.connection.query(sqlDeleteStatement.text, sqlDeleteStatement.values);
-
-    if (!deleteResult) {
-      throw new HTTP409('Failed to delete project permit data');
-    }
-
-    const insertPermitPromises =
-      putPermitData?.permits?.map((permit: IPostPermit) => {
-        return this.insertPermit(permit.permit_number, permit.permit_type, projectId);
-      }) || [];
-
-    await Promise.all([insertPermitPromises]);
   }
 
   async updateProjectIUCNData(projectId: number, entities: IUpdateProject): Promise<void> {
@@ -1113,23 +1106,6 @@ export class ProjectService extends DBService {
       return;
     }
     await this.insertRegion(putRegionData.region, projectId);
-  }
-
-  async updateProjectRangeData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putRangeData = entities?.location && new models.project.PutLocationData(entities.location);
-
-    const projectRangeDeleteStatement = queries.project.deleteProjectRangeSQL(projectId);
-
-    if (!projectRangeDeleteStatement) {
-      throw new HTTP500('Failed to build SQL delete statement');
-    }
-
-    await this.connection.query(projectRangeDeleteStatement.text, projectRangeDeleteStatement.values);
-
-    if (!putRangeData?.range) {
-      return;
-    }
-    await this.insertRange(putRangeData.range, projectId);
   }
 
   async updateProjectSpeciesData(projectId: number, entities: IUpdateProject): Promise<void> {

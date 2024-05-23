@@ -45,7 +45,6 @@ const useAxios = (baseUrl?: string): AxiosInstance => {
     );
 
     return instance;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keycloak, keycloak.token]);
 };
 

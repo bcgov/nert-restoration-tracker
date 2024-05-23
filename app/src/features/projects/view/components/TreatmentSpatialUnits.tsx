@@ -1,28 +1,29 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Alert from '@material-ui/lab/Alert';
 import { mdiExport, mdiImport, mdiMenuDown, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { ProjectAttachmentValidExtensions } from 'constants/attachments';
 import { attachmentType } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment, TreatmentSearchCriteria } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectAttachment,
+  TreatmentSearchCriteria
+} from 'interfaces/useProjectPlanApi.interface';
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-const useStyles = makeStyles({
+const pageStyles = {
   filterMenu: {
     minWidth: '200px !important',
     borderBottom: '1px solid #ffffff',
@@ -36,7 +37,7 @@ const useStyles = makeStyles({
       paddingBottom: 0
     }
   }
-});
+};
 
 export interface IProjectSpatialUnitsProps {
   getTreatments: (forceFetch: boolean, selectedYears?: TreatmentSearchCriteria) => void;
@@ -49,10 +50,9 @@ export interface IProjectSpatialUnitsProps {
  * @return {*}
  */
 const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
-  const classes = useStyles();
   const { getTreatments, getAttachments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -74,7 +74,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
   };
   const openAttachment = async (attachment: IGetProjectAttachment) => window.open(attachment.url);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
   const dialogContext = useContext(DialogContext);
@@ -108,7 +109,10 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
 
     Object.keys(selectedSpatialLayer).forEach((key) => {
       //handles async discrepancies for selected years
-      if ((selectedSpatialLayer[key] && key !== selectedName) || (key === selectedName && !selectedSpatialLayer[key])) {
+      if (
+        (selectedSpatialLayer[key] && key !== selectedName) ||
+        (key === selectedName && !selectedSpatialLayer[key])
+      ) {
         selectedArray.years.push(key);
       }
     });
@@ -123,7 +127,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
       }
 
       try {
-        const yearsResponse = await restorationTrackerApi.project.getProjectTreatmentsYears(projectId);
+        const yearsResponse =
+          await restorationTrackerApi.project.getProjectTreatmentsYears(projectId);
 
         if (!yearsResponse.length) {
           setYearList([]);
@@ -213,8 +218,8 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
           <Box mb={2}>
             <Alert severity="error" variant="filled">
               <Typography variant="body2">
-                Treatments have already been imported to this project. Importing a new treatment shapefile will replace
-                all existing data.
+                Treatments have already been imported to this project. Importing a new treatment
+                shapefile will replace all existing data.
               </Typography>
             </Alert>
           </Box>
@@ -222,7 +227,11 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
         <FileUpload
           uploadHandler={handleUpload()}
           dropZoneProps={{
-            acceptedFileExtensions: ProjectAttachmentValidExtensions.SPATIAL
+            acceptedFileExtensions: {
+              'application/vnd.google-earth.kml+xml': ['.kml'],
+              'application/octet-stream': ['.gpx'],
+              'application/zip': ['.zip']
+            }
           }}
           errorDetailHandler={errorDetailHandler}
         />
@@ -255,7 +264,6 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     id={'download-spatial'}
                     data-testid={'download-spatial'}
                     variant="contained"
-                    color="default"
                     disableElevation
                     title="Export treatment shapefile"
                     aria-label="export treatment shapefile"
@@ -284,13 +292,16 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     data-testid={'remove-project-treatments-button'}
                     onClick={() => {
                       showDeleteTreatmentsDialog();
-                    }}>
+                    }}
+                    size="large">
                     <Icon path={mdiTrashCanOutline} size={0.9375} />
                   </IconButton>
                 </Box>
               </>
             )}
-
+            {
+              //TODO: FIX file from errors
+            }
             <Menu
               id="treatment-menu"
               anchorEl={anchorEl}
@@ -299,7 +310,7 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              className={classes.treatmentFilterList}>
+              sx={pageStyles.treatmentFilterList}>
               {!yearList.length && (
                 <Box flexGrow={1} m={0.5}>
                   <Typography>No Treatment Years Available</Typography>
@@ -311,7 +322,7 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                     <ListItem
                       dense
                       disableGutters
-                      className={classes.filterMenu}
+                      sx={pageStyles.filterMenu}
                       key={year.year}
                       selected={selectedSpatialLayer[year.year]}
                       onClick={() => handleSelectedSwitch(year.year)}>

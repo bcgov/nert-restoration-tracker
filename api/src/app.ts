@@ -2,9 +2,9 @@ import express, { NextFunction, Request, Response } from 'express';
 import { initialize } from 'express-openapi';
 import multer from 'multer';
 import { OpenAPIV3 } from 'openapi-types';
-import swaggerUIExperss from 'swagger-ui-express';
+import swaggerUIExpress from 'swagger-ui-express';
 import { defaultPoolConfig, initDBPool } from './database/db';
-import { ensureHTTPError, HTTPErrorType } from './errors/custom-error';
+import { HTTPErrorType, ensureHTTPError } from './errors/custom-error';
 import { rootAPIDoc } from './openapi/root-api-doc';
 import { authenticateRequest } from './request-handlers/security/authentication';
 import { getLogger } from './utils/logger';
@@ -32,6 +32,11 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE, HEAD');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'no-store');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
   next();
 });
@@ -98,7 +103,7 @@ const openAPIFramework = initialize({
 });
 
 // Path to view beautified openapi spec
-app.use('/api-docs', swaggerUIExperss.serve, swaggerUIExperss.setup(openAPIFramework.apiDoc));
+app.use('/api-docs', swaggerUIExpress.serve, swaggerUIExpress.setup(openAPIFramework.apiDoc));
 
 // Start api
 try {
@@ -142,7 +147,7 @@ function validateAllResponses(req: Request, res: Response, next: NextFunction) {
       );
 
       let validationMessage = '';
-      let errorList = [];
+      let errorList = [] as any[];
 
       if (validationResult?.errors) {
         validationMessage = `Invalid response for status code ${res.statusCode}`;

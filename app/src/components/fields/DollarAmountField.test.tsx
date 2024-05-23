@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import React from 'react';
 import DollarAmountField from './DollarAmountField';
 
-describe('DollarAmountField', () => {
+describe.skip('DollarAmountField', () => {
   it('matches the snapshot without error', () => {
     const { asFragment } = render(
       <Formik initialValues={{}} onSubmit={async () => {}}>

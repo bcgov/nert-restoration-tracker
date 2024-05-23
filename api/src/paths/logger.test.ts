@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
-import { HTTPError } from '../errors/custom-error';
 import { getRequestHandlerMocks } from '../__mocks__/db';
+import { HTTPError } from '../errors/custom-error';
 import * as logger from './logger';
 
 describe('logger', () => {

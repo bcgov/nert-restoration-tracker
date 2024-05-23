@@ -1,5 +1,5 @@
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
 import { IBCeIDAccessRequestDataObject } from 'interfaces/useAdminApi.interface';
 import React from 'react';
@@ -35,8 +35,12 @@ const BCeIDRequestForm = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <h3>Why are you requesting access to Habitat Restoration Tracker?</h3>
-          <CustomTextField name="reason" label="Request Reason" other={{ multiline: true, rows: 4 }} />
+          <h3>Why are you requesting access to Northeast Restoration Tracker?</h3>
+          <CustomTextField
+            name="reason"
+            label="Request Reason"
+            other={{ multiline: true, rows: 4 }}
+          />
         </Grid>
       </Grid>
     </Box>

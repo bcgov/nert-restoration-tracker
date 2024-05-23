@@ -25,7 +25,7 @@ describe('getAllUserProjectsSQL', () => {
 
 describe('getAllProjectParticipantsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = getAllProjectParticipantsSQL((null as unknown) as number);
+    const response = getAllProjectParticipantsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -39,13 +39,13 @@ describe('getAllProjectParticipantsSQL', () => {
 
 describe('addProjectRoleByRoleNameSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = addProjectRoleByRoleNameSQL((null as unknown) as number, 2, 'role');
+    const response = addProjectRoleByRoleNameSQL(null as unknown as number, 2, 'role');
 
     expect(response).to.be.null;
   });
 
   it('returns null response when null systemUserId provided', () => {
-    const response = addProjectRoleByRoleNameSQL(1, (null as unknown) as number, 'role');
+    const response = addProjectRoleByRoleNameSQL(1, null as unknown as number, 'role');
 
     expect(response).to.be.null;
   });
@@ -65,7 +65,7 @@ describe('addProjectRoleByRoleNameSQL', () => {
 
 describe('deleteProjectParticipationSQL', () => {
   it('returns null response when null projectParticipationId provided', () => {
-    const response = deleteProjectParticipationSQL((null as unknown) as number);
+    const response = deleteProjectParticipationSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -79,7 +79,7 @@ describe('deleteProjectParticipationSQL', () => {
 
 describe('getParticipantsFromAllSystemUsersProjectsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = getParticipantsFromAllSystemUsersProjectsSQL((null as unknown) as number);
+    const response = getParticipantsFromAllSystemUsersProjectsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
@@ -94,22 +94,22 @@ describe('getParticipantsFromAllSystemUsersProjectsSQL', () => {
 describe('addProjectRoleByRoleIdSQL', () => {
   it('returns null response when null projectId provided', () => {
     const response = addProjectRoleByRoleIdSQL(
-      (null as unknown) as number,
-      (null as unknown) as number,
-      (null as unknown) as number
+      null as unknown as number,
+      null as unknown as number,
+      null as unknown as number
     );
 
     expect(response).to.be.null;
   });
 
   it('returns null response when null systemUserId provided', () => {
-    const response = addProjectRoleByRoleIdSQL(1, (null as unknown) as number, (null as unknown) as number);
+    const response = addProjectRoleByRoleIdSQL(1, null as unknown as number, null as unknown as number);
 
     expect(response).to.be.null;
   });
 
   it('returns null response when null projectParticipantRoleId provided', () => {
-    const response = addProjectRoleByRoleIdSQL(1, 1, (null as unknown) as number);
+    const response = addProjectRoleByRoleIdSQL(1, 1, null as unknown as number);
 
     expect(response).to.be.null;
   });

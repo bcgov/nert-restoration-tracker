@@ -26,6 +26,8 @@ const appDeploy = async (settings) => {
         CHANGE_ID: phases.build.changeId || changeId,
         REACT_APP_API_HOST: phases[phase].apiHost,
         REACT_APP_SITEMINDER_LOGOUT_URL: phases[phase].siteminderLogoutURL,
+        REACT_APP_OBJECT_STORE_URL: phases[phase].objectStorageURL,
+        REACT_APP_OBJECT_STORE_BUCKET_NAME: phases[phase].objectStorageBucket,
         REACT_APP_MAX_UPLOAD_NUM_FILES: phases[phase].maxUploadNumFiles,
         REACT_APP_MAX_UPLOAD_FILE_SIZE: phases[phase].maxUploadFileSize,
         NODE_ENV: phases[phase].env || 'dev',
@@ -38,7 +40,9 @@ const appDeploy = async (settings) => {
         MEMORY_REQUEST: phases[phase].memoryRequest,
         MEMORY_LIMIT: phases[phase].memoryLimit,
         REPLICAS: phases[phase].replicas,
-        REPLICAS_MAX: phases[phase].replicasMax
+        REPLICAS_MAX: phases[phase].replicasMax,
+        REACT_APP_MAPTILER_SECRET: phases[phase].mapTiler.mapTilerSecret,
+        REACT_APP_MAPTILER_API_KEY: phases[phase].mapTiler.mapTilerSecretApiKey
       }
     })
   );

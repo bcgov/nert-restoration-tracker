@@ -1,15 +1,20 @@
-import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Feature } from 'geojson';
 import L, { LeafletEventHandlerFnMap } from 'leaflet';
 import 'leaflet-draw/dist/leaflet.draw.css';
-import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen.js';
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import React from 'react';
-import { FeatureGroup, LayersControl, MapContainer as LeafletMapContainer } from 'react-leaflet';
+import {
+  FeatureGroup,
+  GeoJSON,
+  LayersControl,
+  MapContainer as LeafletMapContainer,
+  ZoomControl
+} from 'react-leaflet';
 import BaseLayerControls from './components/BaseLayerControls';
 import MapBounds from './components/Bounds';
 import DrawControls from './components/DrawControls';
@@ -17,12 +22,7 @@ import EventHandler from './components/EventHandler';
 import FullScreenScrollingEventHandler from './components/FullScreenScrollingEventHandler';
 import MarkerClusterGroup, { IMarker } from './components/MarkerCluster';
 import StaticLayers, { IStaticLayer } from './components/StaticLayers';
-
-const useStyles = makeStyles(() => ({
-  map: {
-    height: '100%'
-  }
-}));
+import boundary from './layers/north_east_boundary.json';
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl;
@@ -51,8 +51,6 @@ export interface IMapContainerProps {
 }
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const classes = useStyles();
-
   const {
     mapId,
     staticLayers,
@@ -71,15 +69,16 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   return (
     <LeafletMapContainer
       id={mapId}
-      className={classes.map}
-      center={[55, -128]}
-      zoom={zoom || 5}
+      style={{ height: '100%' }}
+      center={[57, -124]}
+      zoom={zoom || 7}
       minZoom={3}
       maxZoom={17}
       maxBounds={[
         [-90, -180],
         [90, 180]
       ]}
+      zoomControl={false}
       maxBoundsViscosity={1}
       fullscreenControl={fullscreenControlProp}
       {...LeafletMapContainerProps}>
@@ -103,11 +102,15 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
       <EventHandler eventHandlers={eventHandlers} />
 
+      <ZoomControl position="topright" />
+
       <LayersControl position="bottomright">
         <StaticLayers layers={staticLayers} />
 
         <BaseLayerControls />
       </LayersControl>
+
+      <GeoJSON data={boundary as unknown as Feature} />
     </LeafletMapContainer>
   );
 };

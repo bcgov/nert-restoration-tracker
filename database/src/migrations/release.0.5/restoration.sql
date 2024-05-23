@@ -713,22 +713,73 @@ NOTE: there are conceptual problems with associating permits to projects early i
 ;
 
 -- 
+-- TABLE: objectives 
+--
+
+CREATE TABLE objective(
+    objective_id                 integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    system_user_id               integer           NOT NULL,
+    project_id                   integer,
+    objective                    varchar(500)      NOT NULL,
+    create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                  integer           NOT NULL,
+    update_date                  timestamptz(6),
+    update_user                  integer,
+    revision_count               integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT objective_pk PRIMARY KEY (objective_id)
+)
+;
+
+
+
+COMMENT ON COLUMN objective.objective_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.system_user_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.project_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.objective IS 'Project or plan objective'
+;
+COMMENT ON COLUMN objective.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN objective.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN objective.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN objective.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN objective.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE objective IS 'Provides project objectives.'
+;
+
+-- 
 -- TABLE: project 
 --
 
 CREATE TABLE project(
-    project_id           integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    uuid                 uuid              DEFAULT public.gen_random_uuid(),
-    name                 varchar(300),
-    objectives           varchar(3000)     NOT NULL,
-    start_date           date              NOT NULL,
-    end_date             date,
-    publish_timestamp    TIMESTAMPTZ,
-    create_date          timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user          integer           NOT NULL,
-    update_date          timestamptz(6),
-    update_user          integer,
-    revision_count       integer           DEFAULT 0 NOT NULL,
+    project_id                  integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    uuid                        uuid              DEFAULT public.gen_random_uuid(),
+    is_project                  boolean           NOT NULL,
+    name                        varchar(300),
+    brief_desc                  varchar(3000)     NOT NULL,
+    start_date                  date,
+    end_date                    date,
+    actual_start_date           date,
+    actual_end_date             date,
+    state_code                  integer           NOT NULL,
+    people_involved             integer,
+    is_healing_land             boolean           DEFAULT false,
+    is_healing_people           boolean           DEFAULT false,
+    is_land_initiative          boolean           DEFAULT false,
+    is_cultural_initiative      boolean           DEFAULT false,
+    is_project_part_public_plan boolean           DEFAULT false,
+    publish_timestamp           TIMESTAMPTZ,
+    create_date                 timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                 integer           NOT NULL,
+    update_date                 timestamptz(6),
+    update_user                 integer,
+    revision_count              integer           DEFAULT 0 NOT NULL,
     CONSTRAINT project_pk PRIMARY KEY (project_id)
 )
 ;
@@ -739,13 +790,33 @@ COMMENT ON COLUMN project.project_id IS 'System generated surrogate primary key 
 ;
 COMMENT ON COLUMN project.uuid IS 'The universally unique identifier for the record.'
 ;
-COMMENT ON COLUMN project.name IS 'Name given to a project.'
+COMMENT ON COLUMN project.is_project IS 'When true project, when false plan.'
 ;
-COMMENT ON COLUMN project.objectives IS 'The objectives for the project.'
+COMMENT ON COLUMN project.name IS 'Name given to a project or plan.'
 ;
-COMMENT ON COLUMN project.start_date IS 'The start date of the project.'
+COMMENT ON COLUMN project.brief_desc IS 'Brief description of a project or plan.'
 ;
-COMMENT ON COLUMN project.end_date IS 'The end date of the project.'
+COMMENT ON COLUMN project.start_date IS 'The planned start date of a project or a plan.'
+;
+COMMENT ON COLUMN project.end_date IS 'The planned end date of a project or plan.'
+;
+COMMENT ON COLUMN project.actual_start_date IS 'The actual start date of a project.'
+;
+COMMENT ON COLUMN project.actual_end_date IS 'The actual end date of a project.'
+;
+COMMENT ON COLUMN project.state_code IS 'The state of a project or plan within their corresponding workflows.'
+;
+COMMENT ON COLUMN project.people_involved IS 'The number of people involved in a Healing the People project.'
+;
+COMMENT ON COLUMN project.is_healing_land IS 'Project or plan focused on healing the land.'
+;
+COMMENT ON COLUMN project.is_healing_people IS 'Project or plan focused on healing the people.'
+;
+COMMENT ON COLUMN project.is_land_initiative IS 'Project or plan focused on land based restoration initiative.'
+;
+COMMENT ON COLUMN project.is_cultural_initiative IS 'Project or plan focused on cultural or community investment initiative.'
+;
+COMMENT ON COLUMN project.is_project_part_public_plan IS 'Project is or not part of a publicly available restoration plan.'
 ;
 COMMENT ON COLUMN project.publish_timestamp IS 'A timestamp that indicates that the project metadata has been approved for discovery. If the timestamp is not null then project metadata is public. If the timestamp is null the project metadata is not yet public.'
 ;
@@ -1005,7 +1076,7 @@ COMMENT ON TABLE project_funding_source IS 'A associative entity that joins proj
 CREATE TABLE project_iucn_action_classification(
     project_iucn_action_classification_id                    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     project_id                                               integer           NOT NULL,
-    iucn_conservation_action_level_3_subclassification_id    integer           NOT NULL,
+    iucn_conservation_action_level_3_subclassification_id    integer,
     create_date                                              timestamptz(6)    DEFAULT now() NOT NULL,
     create_user                                              integer           NOT NULL,
     update_date                                              timestamptz(6),
@@ -1135,7 +1206,9 @@ CREATE TABLE project_spatial_component(
     name                                 varchar(50)                 NOT NULL,
     description                          varchar(3000),
     geometry                             geometry(geometry, 3005),
-    priority                             character(1)                DEFAULT 'N' NOT NULL,
+    is_within_overlapping                character(1)                DEFAULT 'N' NOT NULL,
+    number_sites                         integer                     NOT NULL,
+    size_ha                              integer,      
     geography                            geography(geometry),
     geojson                              jsonb,
     create_date                          timestamptz(6)              DEFAULT now() NOT NULL,
@@ -1161,7 +1234,11 @@ COMMENT ON COLUMN project_spatial_component.description IS 'The description of t
 ;
 COMMENT ON COLUMN project_spatial_component.geometry IS 'The containing geometry of the record.'
 ;
-COMMENT ON COLUMN project_spatial_component.priority IS 'Indicates that the boundary contains treatment units that are considered high value restoration targets.'
+COMMENT ON COLUMN project_spatial_component.is_within_overlapping IS 'Indicates that the area contains or overlaps a known area of cultural or conservation priority.'
+;
+COMMENT ON COLUMN project_spatial_component.number_sites IS 'Total number of projects sites.'
+;
+COMMENT ON COLUMN project_spatial_component.size_ha IS 'Total area in hectars of all project sites.'
 ;
 COMMENT ON COLUMN project_spatial_component.geography IS 'The containing geography of the record.'
 ;
@@ -1752,6 +1829,7 @@ COMMENT ON TABLE user_identity_source IS 'The source of the user identifier. Thi
 CREATE TABLE webform_draft(
     webform_draft_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     system_user_id      integer           NOT NULL,
+    is_project          boolean           NOT NULL,
     name                varchar(300)      NOT NULL,
     data                json              NOT NULL,
     security_token      uuid,
@@ -1769,6 +1847,8 @@ CREATE TABLE webform_draft(
 COMMENT ON COLUMN webform_draft.webform_draft_id IS 'System generated surrogate primary key identifier.'
 ;
 COMMENT ON COLUMN webform_draft.system_user_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN webform_draft.is_project IS 'When true project, when false plan.'
 ;
 COMMENT ON COLUMN webform_draft.name IS 'The name of the record.'
 ;

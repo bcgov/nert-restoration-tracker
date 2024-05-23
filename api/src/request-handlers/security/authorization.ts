@@ -22,9 +22,7 @@ export type AuthorizationSchemeCallback = (req: Request) => AuthorizationScheme;
 export function authorizeRequestHandler(authorizationSchemeCallback: AuthorizationSchemeCallback): RequestHandler {
   return async (req, res, next) => {
     req['authorization_scheme'] = authorizationSchemeCallback(req);
-
     const isAuthorized = await authorizeRequest(req);
-
     if (!isAuthorized) {
       defaultLog.warn({ label: 'authorize', message: 'User is not authorized' });
       throw new HTTP403('Access Denied');
@@ -49,7 +47,6 @@ export const authorizeRequest = async (req: Request): Promise<boolean> => {
 
   try {
     const authorizationScheme: AuthorizationScheme = req['authorization_scheme'];
-
     if (!authorizationScheme) {
       // No authorization scheme specified, all authenticated users are authorized
       return true;

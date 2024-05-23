@@ -1,11 +1,11 @@
-import Box from '@material-ui/core/Box';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
-import Typography from '@material-ui/core/Typography';
 import { mdiPlus } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ProjectParticipantsI18N } from 'constants/i18n';
@@ -13,9 +13,9 @@ import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import AddProjectParticipantsForm, {
   AddProjectParticipantsFormInitialValues,
   AddProjectParticipantsFormYupSchema,
@@ -35,14 +35,14 @@ export interface IProjectParticipantsHeaderProps {
  * @return {*}
  */
 const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (props) => {
-  const history = useHistory();
-  const urlParams = useParams();
+  const history = useNavigate();
+  const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [openAddParticipantsDialog, setOpenAddParticipantsDialog] = useState(false);
 
-  const projectId = urlParams['id'];
+  const projectId = Number(urlParams['id']);
 
   const defaultErrorDialogProps: Partial<IErrorDialogProps> = {
     onClose: () => dialogContext.setErrorDialog({ open: false }),
@@ -59,7 +59,10 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
 
   const handleAddProjectParticipantsSave = async (values: IAddProjectParticipantsForm) => {
     try {
-      const response = await restorationTrackerApi.project.addProjectParticipants(projectId, values.participants);
+      const response = await restorationTrackerApi.project.addProjectParticipants(
+        projectId,
+        values.participants
+      );
 
       if (!response) {
         openErrorDialog({
@@ -84,14 +87,18 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
       <Container maxWidth="xl">
         <Box pb={3}>
           <Breadcrumbs>
-            <Link color="primary" onClick={() => history.push('/admin/projects')} aria-current="page">
+            <Link color="primary" onClick={() => history('/admin/projects')} aria-current="page">
               <Typography variant="body2">Projects</Typography>
             </Link>
             <Link
               color="primary"
-              onClick={() => history.push(`/admin/projects/${props.projectWithDetails.project.project_id}`)}
+              onClick={() =>
+                history(`/admin/projects/${props.projectWithDetails.project.project_id}`)
+              }
               aria-current="page">
-              <Typography variant="body2">{props.projectWithDetails.project.project_name}</Typography>
+              <Typography variant="body2">
+                {props.projectWithDetails.project.project_name}
+              </Typography>
             </Link>
             <Typography variant="body2">Project Team</Typography>
           </Breadcrumbs>
@@ -138,7 +145,8 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
             open: true,
             snackbarMessage: (
               <Typography variant="body2" component="div">
-                {values.participants.length} team {values.participants.length > 1 ? 'members' : 'member'} added.
+                {values.participants.length} team{' '}
+                {values.participants.length > 1 ? 'members' : 'member'} added.
               </Typography>
             )
           });

@@ -1,20 +1,24 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { mdiDotsVertical, mdiInformationOutline, mdiMenuDown, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
+import {
+  mdiDotsVertical,
+  mdiInformationOutline,
+  mdiMenuDown,
+  mdiPlus,
+  mdiTrashCanOutline
+} from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { CustomMenuButton, CustomMenuIconButton } from 'components/toolbar/ActionToolbars';
 import { AddSystemUserI18N, DeleteSystemUserI18N, UpdateSystemUserI18N } from 'constants/i18n';
@@ -24,7 +28,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import AddSystemUsersForm, {
   AddSystemUsersFormInitialValues,
@@ -32,14 +36,14 @@ import AddSystemUsersForm, {
   IAddSystemUsersForm
 } from './AddSystemUsersForm';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   table: {
     tableLayout: 'fixed',
     '& td': {
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 export interface IActiveUsersListProps {
   activeUsers: IGetUserResponse[];
@@ -54,10 +58,9 @@ export interface IActiveUsersListProps {
  * @return {*}
  */
 const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
-  const classes = useStyles();
   const restorationTrackerApi = useRestorationTrackerApi();
   const { activeUsers, codes } = props;
-  const history = useHistory();
+  const history = useNavigate();
 
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [page, setPage] = useState(0);
@@ -74,8 +77,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       dialogTitle: 'Remove User?',
       dialogContent: (
         <Typography variant="body1" component="div" color="textSecondary">
-          Removing user <strong>{row.user_identifier}</strong> will revoke their access to this application and all
-          related projects. Are you sure you want to proceed?
+          Removing user <strong>{row.user_identifier}</strong> will revoke their access to this
+          application and all related projects. Are you sure you want to proceed?
         </Typography>
       ),
       yesButtonLabel: 'Remove User',
@@ -133,12 +136,17 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
     }
   };
 
-  const handleChangeUserPermissionsClick = (row: IGetUserResponse, newRoleName: any, newRoleId: number) => {
+  const handleChangeUserPermissionsClick = (
+    row: IGetUserResponse,
+    newRoleName: any,
+    newRoleId: number
+  ) => {
     dialogContext.setYesNoDialog({
       dialogTitle: 'Change User Role?',
       dialogContent: (
         <Typography variant="body1" color="textSecondary">
-          Change user <strong>{row.user_identifier}</strong>'s role to <strong>{newRoleName}</strong>?
+          Change user <strong>{row.user_identifier}</strong>'s role to{' '}
+          <strong>{newRoleName}</strong>?
         </Typography>
       ),
       yesButtonLabel: 'Change Role',
@@ -171,7 +179,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         snackbarMessage: (
           <>
             <Typography variant="body2" component="div">
-              User <strong>{user.user_identifier}</strong>'s role has changed to <strong>{roleName}</strong>.
+              User <strong>{user.user_identifier}</strong>'s role has changed to{' '}
+              <strong>{roleName}</strong>.
             </Typography>
           </>
         ),
@@ -215,7 +224,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            {values.systemUsers.length} system {values.systemUsers.length > 1 ? 'users' : 'user'} added.
+            {values.systemUsers.length} system {values.systemUsers.length > 1 ? 'users' : 'user'}{' '}
+            added.
           </Typography>
         )
       });
@@ -242,7 +252,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
       <Paper>
         <Toolbar disableGutters>
           <Grid
-            justify="space-between" // Add it here :)
+            justifyContent="space-between" // Add it here :)
             container
             alignItems="center">
             <Grid item>
@@ -268,7 +278,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
           </Grid>
         </Toolbar>
         <TableContainer>
-          <Table className={classes.table}>
+          <Table sx={pageStyles.table}>
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
@@ -287,57 +297,56 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                 </TableRow>
               )}
               {activeUsers.length > 0 &&
-                activeUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                  <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
-                    <TableCell>
-                      <strong>{row.user_identifier || 'Not Applicable'}</strong>
-                    </TableCell>
-                    <TableCell>
-                      <Box m={-1}>
-                        <CustomMenuButton
-                          buttonLabel={row.role_names.join(', ') || 'Unassigned'}
-                          buttonTitle={'Change User Permissions'}
-                          buttonProps={{ variant: 'text' }}
-                          menuItems={codes.system_roles
-                            .sort((item1, item2) => {
-                              return item1.name.localeCompare(item2.name);
-                            })
-                            .map((item) => {
-                              return {
-                                menuLabel: item.name,
-                                menuOnClick: () => handleChangeUserPermissionsClick(row, item.name, item.id)
-                              };
-                            })}
-                          buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
-                        />
-                      </Box>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box my={-1}>
-                        <CustomMenuIconButton
-                          buttonTitle="Actions"
-                          buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
-                          menuItems={[
-                            {
-                              menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
-                              menuLabel: 'View Users Details',
-                              menuOnClick: () =>
-                                history.push({
-                                  pathname: `/admin/users/${row.id}`,
-                                  state: row
-                                })
-                            },
-                            {
-                              menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
-                              menuLabel: 'Remove User',
-                              menuOnClick: () => handleRemoveUserClick(row)
-                            }
-                          ]}
-                        />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                activeUsers
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
+                      <TableCell>
+                        <strong>{row.user_identifier || 'Not Applicable'}</strong>
+                      </TableCell>
+                      <TableCell>
+                        <Box m={-1}>
+                          <CustomMenuButton
+                            buttonLabel={row.role_names.join(', ') || 'Unassigned'}
+                            buttonTitle={'Change User Permissions'}
+                            buttonProps={{ variant: 'text' }}
+                            menuItems={codes.system_roles
+                              .sort((item1, item2) => {
+                                return item1.name.localeCompare(item2.name);
+                              })
+                              .map((item) => {
+                                return {
+                                  menuLabel: item.name,
+                                  menuOnClick: () =>
+                                    handleChangeUserPermissionsClick(row, item.name, item.id)
+                                };
+                              })}
+                            buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
+                          />
+                        </Box>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box my={-1}>
+                          <CustomMenuIconButton
+                            buttonTitle="Actions"
+                            buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
+                            menuItems={[
+                              {
+                                menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
+                                menuLabel: 'View Users Details',
+                                menuOnClick: () => history(`/admin/users/${row.id}`, { state: row })
+                              },
+                              {
+                                menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
+                                menuLabel: 'Remove User',
+                                menuOnClick: () => handleRemoveUserClick(row)
+                              }
+                            ]}
+                          />
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -348,8 +357,10 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
             count={activeUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onChangePage={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
-            onChangeRowsPerPage={(event: React.ChangeEvent<HTMLInputElement>) =>
+            onPageChange={(event: unknown, newPage: number) =>
+              handleChangePage(event, newPage, setPage)
+            }
+            onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }
           />

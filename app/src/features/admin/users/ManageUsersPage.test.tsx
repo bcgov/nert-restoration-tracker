@@ -1,24 +1,28 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React from 'react';
-import { Router } from 'react-router';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import ManageUsersPage from './ManageUsersPage';
 
-const history = createMemoryHistory();
-
 const renderContainer = () => {
+  const routes = [{ path: '/123', element: <ManageUsersPage /> }];
+
+  const router = createMemoryRouter(routes, { initialEntries: ['/123'] });
+
   return render(
-    <Router history={history}>
+    <RouterProvider router={router}>
       <ManageUsersPage />
-    </Router>
+    </RouterProvider>
   );
 };
 
 jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockuseRestorationTrackerApi = {
+
+const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+
+const mockUseApi = {
   admin: {
     getAdministrativeActivities: jest.fn()
   },
@@ -27,18 +31,13 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
-
 jest.mock('../../../hooks/useCodes');
-const mockUseCodes = (useCodes as unknown) as jest.MockedFunction<typeof useCodes>;
+const mockUseCodes = useCodes as unknown as jest.MockedFunction<typeof useCodes>;
 
 describe('ManageUsersPage', () => {
   beforeEach(() => {
     // clear mocks before each test
-    mockRestorationTrackerApi().admin.getAdministrativeActivities.mockClear();
-    mockRestorationTrackerApi().user.getUsersList.mockClear();
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
     mockUseCodes.mockClear();
 
     // mock code set response

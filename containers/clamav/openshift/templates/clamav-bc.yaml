@@ -11,7 +11,7 @@ parameters:
   - name: GIT_SOURCE_URL
     displayName: GIT Source Repo URL
     description: A GIT URL to your source code.
-    value: "https://github.com/bcgov/restoration-tracker.git"
+    value: "https://github.com/bcgov/nert-restoration-tracker.git"
     required: true
   - name: GIT_REF
     displayName: Git Reference

@@ -1,10 +1,9 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { AccessRequestI18N } from 'constants/i18n';
 import { AuthStateContext } from 'contexts/authStateContext';
@@ -14,20 +13,29 @@ import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IBCeIDAccessRequestDataObject, IIDIRAccessRequestDataObject } from 'interfaces/useAdminApi.interface';
+import {
+  IBCeIDAccessRequestDataObject,
+  IIDIRAccessRequestDataObject
+} from 'interfaces/useAdminApi.interface';
 import React, { ReactElement, useContext, useState } from 'react';
-import { Redirect, useHistory } from 'react-router';
-import BCeIDRequestForm, { BCeIDRequestFormInitialValues, BCeIDRequestFormYupSchema } from './BCeIDRequestForm';
-import IDIRRequestForm, { IDIRRequestFormInitialValues, IDIRRequestFormYupSchema } from './IDIRRequestForm';
+import { Navigate, useNavigate } from 'react-router-dom';
+import BCeIDRequestForm, {
+  BCeIDRequestFormInitialValues,
+  BCeIDRequestFormYupSchema
+} from './BCeIDRequestForm';
+import IDIRRequestForm, {
+  IDIRRequestFormInitialValues,
+  IDIRRequestFormYupSchema
+} from './IDIRRequestForm';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
       marginLeft: '0.5rem'
     }
   }
-}));
+};
 
 /**
  * Access Request form
@@ -35,9 +43,8 @@ const useStyles = makeStyles(() => ({
  * @return {*}
  */
 export const AccessRequestPage: React.FC = () => {
-  const classes = useStyles();
   const restorationTrackerApi = useRestorationTrackerApi();
-  const history = useHistory();
+  const history = useNavigate();
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -69,7 +76,9 @@ export const AccessRequestPage: React.FC = () => {
     });
   };
 
-  const handleSubmitAccessRequest = async (values: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject) => {
+  const handleSubmitAccessRequest = async (
+    values: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject
+  ) => {
     try {
       const response = await restorationTrackerApi.admin.createAdministrativeActivity({
         ...values,
@@ -90,7 +99,7 @@ export const AccessRequestPage: React.FC = () => {
 
       keycloakWrapper?.refresh();
 
-      history.push('/request-submitted');
+      history('/request-submitted');
     } catch (error) {
       const apiError = error as APIError;
 
@@ -105,7 +114,7 @@ export const AccessRequestPage: React.FC = () => {
 
   if (!keycloakWrapper?.keycloak.authenticated) {
     // User is not logged in
-    return <Redirect to={{ pathname: '/' }} />;
+    return <Navigate replace to={{ pathname: '/' }} />;
   }
 
   if (!keycloakWrapper.hasLoadedAllUserInfo) {
@@ -115,7 +124,7 @@ export const AccessRequestPage: React.FC = () => {
 
   if (keycloakWrapper?.hasAccessRequest) {
     // User already has a pending access request
-    return <Redirect to={{ pathname: '/request-submitted' }} />;
+    return <Navigate replace to={{ pathname: '/request-submitted' }} />;
   }
 
   let initialValues: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject;
@@ -152,7 +161,8 @@ export const AccessRequestPage: React.FC = () => {
               <Typography variant="h1">Request Access</Typography>
               <Box mt={3}>
                 <Typography variant="body1" color="textSecondary">
-                  You will need to provide some additional details before accessing this application.
+                  You will need to provide some additional details before accessing this
+                  application.
                 </Typography>
               </Box>
               <Box mt={4}>
@@ -164,7 +174,7 @@ export const AccessRequestPage: React.FC = () => {
                         type="submit"
                         variant="contained"
                         color="primary"
-                        className={classes.actionButton}
+                        sx={pageStyles.actionButton}
                         disabled={isSubmittingRequest}>
                         <strong>Submit Request</strong>
                       </Button>
@@ -186,9 +196,9 @@ export const AccessRequestPage: React.FC = () => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        history.push('/logout');
+                        history('/logout');
                       }}
-                      className={classes.actionButton}
+                      sx={pageStyles.actionButton}
                       data-testid="logout-button">
                       Log out
                     </Button>

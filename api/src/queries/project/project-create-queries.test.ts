@@ -5,15 +5,15 @@ import {
   postProjectBoundarySQL,
   postProjectFundingSourceSQL,
   postProjectIUCNSQL,
-  postProjectSpeciesSQL,
-  postProjectSQL
+  postProjectSQL,
+  postProjectSpeciesSQL
 } from './project-create-queries';
 
 describe('postProjectSQL', () => {
   describe('Null project param provided', () => {
     it('returns null', () => {
       // force the function to accept a null value
-      const response = postProjectSQL((null as unknown) as PostProjectData);
+      const response = postProjectSQL(null as unknown as PostProjectData);
 
       expect(response).to.be.null;
     });
@@ -43,7 +43,7 @@ describe('postProjectBoundarySQL', () => {
   describe('Null location data param provided', () => {
     it('returns null', () => {
       // force the function to accept a null value
-      const response = postProjectBoundarySQL((null as unknown) as PostLocationData, 1);
+      const response = postProjectBoundarySQL(null as unknown as PostLocationData, 1);
 
       expect(response).to.be.null;
     });
@@ -76,7 +76,7 @@ describe('postProjectBoundarySQL', () => {
       };
 
       const postLocationData = new PostLocationData(locationDataWithGeo);
-      const response = postProjectBoundarySQL(postLocationData, (null as unknown) as number);
+      const response = postProjectBoundarySQL(postLocationData, null as unknown as number);
 
       expect(response).to.be.null;
     });
@@ -168,13 +168,13 @@ describe('postProjectBoundarySQL', () => {
 describe('postProjectFundingSourceSQL', () => {
   describe('with invalid parameters', () => {
     it('returns null when funding source is null', () => {
-      const response = postProjectFundingSourceSQL((null as unknown) as PostFundingSource, 1);
+      const response = postProjectFundingSourceSQL(null as unknown as PostFundingSource, 1);
 
       expect(response).to.be.null;
     });
 
     it('returns null when project id is null', () => {
-      const response = postProjectFundingSourceSQL(new PostFundingSource({}), (null as unknown) as number);
+      const response = postProjectFundingSourceSQL(new PostFundingSource({}), null as unknown as number);
 
       expect(response).to.be.null;
     });
@@ -208,13 +208,13 @@ describe('postProjectFundingSourceSQL', () => {
 describe('postProjectIUCNSQL', () => {
   describe('with invalid parameters', () => {
     it('returns null when no iucn id', () => {
-      const response = postProjectIUCNSQL((null as unknown) as number, 1);
+      const response = postProjectIUCNSQL(null as unknown as number, 1);
 
       expect(response).to.be.null;
     });
 
     it('returns null when no project id', () => {
-      const response = postProjectIUCNSQL(1, (null as unknown) as number);
+      const response = postProjectIUCNSQL(1, null as unknown as number);
 
       expect(response).to.be.null;
     });
@@ -233,13 +233,13 @@ describe('postProjectIUCNSQL', () => {
 describe('postProjectSpeciesSQL', () => {
   describe('with invalid parameters', () => {
     it('returns null when no iucn id', () => {
-      const response = postProjectSpeciesSQL((null as unknown) as number, 1);
+      const response = postProjectSpeciesSQL(null as unknown as number, 1);
 
       expect(response).to.be.null;
     });
 
     it('returns null when no project id', () => {
-      const response = postProjectSpeciesSQL(1, (null as unknown) as number);
+      const response = postProjectSpeciesSQL(1, null as unknown as number);
 
       expect(response).to.be.null;
     });

@@ -1,30 +1,30 @@
-import AppBar from '@material-ui/core/AppBar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import OtherLink from '@material-ui/core/Link';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
 import Icon from '@mdi/react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import OtherLink from '@mui/material/Link';
+import { alpha } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
 import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
+import { ConfigContext } from 'contexts/configContext';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   govHeaderToolbar: {
     height: '70px'
   },
@@ -60,15 +60,14 @@ const useStyles = makeStyles((theme: Theme) => ({
       display: 'block'
     }
   },
-  appPhaseTag: {
-    marginLeft: theme.spacing(0.75),
+  appVersionTag: {
+    marginLeft: '0.5rem',
     color: '#fcba19',
-    textTransform: 'uppercase',
     fontSize: '0.75rem',
     fontWeight: 400
   },
   userProfile: {
-    color: theme.palette.primary.contrastText,
+    color: 'white',
     fontSize: '0.9375rem',
     '& hr': {
       backgroundColor: '#4b5e7e',
@@ -91,27 +90,38 @@ const useStyles = makeStyles((theme: Theme) => ({
   mainNavToolbar: {
     '& a': {
       display: 'block',
-      padding: theme.spacing(2),
+      padding: '1rem',
       color: 'inherit',
       fontSize: '1rem',
       textDecoration: 'none'
     },
     '& a:hover': {
-      textDecoration: 'underline'
+      textDecoration: 'underline',
+      backgroundColor: (theme: {
+        palette: { primary: { main: string }; action: { activatedOpacity: number } };
+      }) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
     },
-    '& a:first-child': {
-      marginLeft: theme.spacing(-2)
+    '& a:first-of-type': {
+      marginLeft: '-1rem'
     }
   },
   '.MuiDialogContent-root': {
     '& p + p': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   }
-}));
+};
 
 const Header: React.FC = () => {
-  const classes = useStyles();
+  const config = useContext(ConfigContext);
+
+  const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  const nert_version = config?.CHANGE_VERSION
+    ? mmm
+      ? `${mmm}.${config.CHANGE_VERSION}`
+      : `0.0.0.${config.CHANGE_VERSION}`
+    : '0.0.0.NA';
+  const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -119,12 +129,15 @@ const Header: React.FC = () => {
   const LoggedInUser = () => {
     const identitySource = keycloakWrapper?.getIdentitySource() || '';
     const userIdentifier = keycloakWrapper?.getUserIdentifier() || '';
-    const formattedUsername = [getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE), userIdentifier]
+    const formattedUsername = [
+      getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
+      userIdentifier
+    ]
       .filter(Boolean)
       .join('/');
 
     return (
-      <Box display="flex" className={classes.userProfile} my="auto" alignItems="center">
+      <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
         <Icon path={mdiAccountCircle} size={1.12} />
         <Box ml={1}>{formattedUsername}</Box>
         <Box px={2}>
@@ -136,7 +149,11 @@ const Header: React.FC = () => {
         <Box pl={2}>
           <Divider orientation="vertical" />
         </Box>
-        <IconButton aria-label="need help" className={classes.govHeaderIconButton} onClick={showSupportDialog}>
+        <IconButton
+          aria-label="need help"
+          sx={pageStyles.govHeaderIconButton}
+          onClick={showSupportDialog}
+          size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -146,7 +163,7 @@ const Header: React.FC = () => {
   // Unauthenticated public view
   const PublicViewUser = () => {
     return (
-      <Box display="flex" className={classes.userProfile} alignItems="center" my="auto">
+      <Box display="flex" sx={pageStyles.userProfile} alignItems="center" my="auto">
         <Button
           onClick={() => keycloakWrapper?.keycloak.login()}
           type="submit"
@@ -157,7 +174,7 @@ const Header: React.FC = () => {
           data-testid="login">
           Log In
         </Button>
-        <IconButton className={classes.govHeaderIconButton} onClick={showSupportDialog}>
+        <IconButton sx={pageStyles.govHeaderIconButton} onClick={showSupportDialog} size="large">
           <Icon path={mdiHelpCircle} size={1.12} />
         </IconButton>
       </Box>
@@ -174,25 +191,33 @@ const Header: React.FC = () => {
     setOpen(false);
   };
 
-  const BetaLabel = () => {
-    return <span aria-label="This application is currently in beta phase of development">Beta</span>;
+  const VersionEnvironmentLabel = () => {
+    return (
+      <span
+        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
+        v{nert_version} {nert_environment}
+      </span>
+    );
   };
 
   return (
     <>
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
-        <Toolbar className={classes.govHeaderToolbar}>
-          <Box display="flex" justifyContent="space-between" width="100%">
-            <Link to="/projects" className={classes.brand} aria-label="Go to Habitat Restoration Tracker Home">
+        <Toolbar sx={pageStyles.govHeaderToolbar}>
+          <Box display="flex" justifyContent="space-between" width="100%" sx={pageStyles.brand}>
+            <Link
+              to="/"
+              style={pageStyles.brand}
+              aria-label="Go to Northeast Restoration Tracker Home">
               <picture>
                 <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                 <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
                 <img src={headerImageSmall} alt={'Government of British Columbia'} />
               </picture>
               <span>
-                Habitat Restoration Tracker
-                <sup className={classes.appPhaseTag}>
-                  <BetaLabel />
+                Northeast Restoration Tracker
+                <sup style={pageStyles.appVersionTag}>
+                  <VersionEnvironmentLabel />
                 </sup>
               </span>
             </Link>
@@ -205,11 +230,15 @@ const Header: React.FC = () => {
           </Box>
         </Toolbar>
 
-        <Box className={classes.mainNav}>
-          <Toolbar variant="dense" className={classes.mainNavToolbar} role="navigation" aria-label="Main Navigation">
+        <Box sx={pageStyles.mainNav}>
+          <Toolbar
+            variant="dense"
+            sx={pageStyles.mainNavToolbar}
+            role="navigation"
+            aria-label="Main Navigation">
             <UnAuthGuard>
-              <Link to="/" id="menu_projects">
-                Projects
+              <Link to="/projects" id="menu_projects">
+                All Projects/All Plans
               </Link>
               <Link to="/search" id="menu_search">
                 Map
@@ -217,20 +246,20 @@ const Header: React.FC = () => {
             </UnAuthGuard>
             <AuthGuard>
               <Link to="/admin/projects" id="menu_projects">
-                Projects
+                All Projects/All Plans
               </Link>
               <Link to="/admin/user/projects" id="menu_user_projects">
-                My Projects
+                My Projects/My Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
                 Map
               </Link>
+              <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+                <Link to="/admin/users" id="menu_admin_users">
+                  Manage Users
+                </Link>
+              </SystemRoleGuard>
             </AuthGuard>
-            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-              <Link to="/admin/users" id="menu_admin_users">
-                Manage Users
-              </Link>
-            </SystemRoleGuard>
           </Toolbar>
         </Box>
       </AppBar>
@@ -239,16 +268,17 @@ const Header: React.FC = () => {
         <DialogTitle>Need Help?</DialogTitle>
         <DialogContent>
           <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
-            For technical support or questions about this application, please contact:&nbsp;
+            For technical support or questions about this application, please email:&nbsp;
             <OtherLink
-              href="mailto:biohub@gov.bc.ca?subject=Habitat Restoration Tracker - Support Request"
+              href="mailto:oinostro@gov.bc.ca?subject=Northeast Restoration Tracker - Support Request"
               underline="always">
-              biohub@gov.bc.ca
+              oinostro@gov.bc.ca
             </OtherLink>
             .
           </Typography>
-          <Typography variant="body1" color="textSecondary">
-            A support representative will respond to your request shortly.
+          <Typography variant="body2">Northeast Restoration Tracker</Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            Version: {nert_version} Environment: {nert_environment}
           </Typography>
         </DialogContent>
         <DialogActions>

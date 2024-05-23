@@ -39,7 +39,7 @@ parameters:
   - name: ELASTICSEARCH_TAXONOMY_INDEX
     description: Platform Elasticsearch Taxonomy Index
     required: true
-    vale: 'taxonomy_3.0.0'
+    value: 'taxonomy_3.0.0'
   - name: S3_KEY_PREFIX
     description: S3 key optional prefix
     required: false
@@ -94,11 +94,14 @@ parameters:
     value: '1'
   - name: REPLICAS_MAX
     value: '1'
+  - name: NAMELINK
+    value: restoration-tracker-db-postgresql
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
       annotations:
+        iconClass: icon-nodejs
         description: Nodejs Runtime Image
       labels:
         shared: 'true'
@@ -114,6 +117,8 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
+        app.openshift.io/connects-to: >-
+          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${NAMELINK}${SUFFIX}"}]
         openshift.io/generated-by: OpenShiftWebConsole
       creationTimestamp: null
       generation: 0
@@ -346,7 +351,7 @@ objects:
     status:
       ingress: null
   - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v2beta2
+    apiVersion: autoscaling/v2
     metadata:
       annotations: {}
       creationTimestamp: null

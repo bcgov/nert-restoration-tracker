@@ -1,19 +1,16 @@
-import Box from '@material-ui/core/Box';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    partnerItem: {
-      '&:last-child .seperator': {
-        display: 'none'
-      }
+const pageStyles = {
+  partnerItem: {
+    '&:last-child .seperator': {
+      display: 'none'
     }
-  })
-);
+  }
+};
 
 export interface IPartnershipsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -27,8 +24,6 @@ export interface IPartnershipsProps {
  * @return {*}
  */
 const Partnerships: React.FC<IPartnershipsProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: {
       partnerships: { indigenous_partnerships, stakeholder_partnerships }
@@ -37,7 +32,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
   } = props;
 
   const hasIndigenousPartnerships = indigenous_partnerships && indigenous_partnerships.length > 0;
-  const hasStakeholderPartnerships = stakeholder_partnerships && stakeholder_partnerships.length > 0;
+  const hasStakeholderPartnerships =
+    stakeholder_partnerships && stakeholder_partnerships.length > 0;
 
   return (
     <Box component="dl">
@@ -54,15 +50,22 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
         <Typography component="dd" variant="body2">
           {hasIndigenousPartnerships &&
             indigenous_partnerships?.map((indigenousPartnership: number, index: number) => {
-              const codeValue = codes.first_nations.find((code) => code.id === indigenousPartnership);
+              const codeValue = codes.first_nations.find(
+                (code) => code.id === indigenousPartnership
+              );
               return (
-                <span key={index} data-testid="indigenous_partners_data" className={classes.partnerItem}>
+                <span
+                  key={index}
+                  data-testid="indigenous_partners_data"
+                  style={pageStyles.partnerItem['&:last-child .seperator']}>
                   {codeValue?.name}
                   <span className="seperator">,&nbsp;</span>
                 </span>
               );
             })}
-          {!hasIndigenousPartnerships && <span data-testid="no_indigenous_partners_data">None</span>}
+          {!hasIndigenousPartnerships && (
+            <span data-testid="no_indigenous_partners_data">None</span>
+          )}
         </Typography>
       </div>
 
@@ -80,13 +83,18 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
           {hasStakeholderPartnerships &&
             stakeholder_partnerships?.map((stakeholderPartnership: string, index: number) => {
               return (
-                <span key={index} data-testid="stakeholder_partners_data" className={classes.partnerItem}>
+                <span
+                  key={index}
+                  data-testid="stakeholder_partners_data"
+                  style={pageStyles.partnerItem['&:last-child .seperator']}>
                   {stakeholderPartnership}
                   <span className="seperator">,&nbsp;</span>
                 </span>
               );
             })}
-          {!hasStakeholderPartnerships && <span data-testid="no_stakeholder_partners_data">None</span>}
+          {!hasStakeholderPartnerships && (
+            <span data-testid="no_stakeholder_partners_data">None</span>
+          )}
         </Typography>
       </div>
     </Box>

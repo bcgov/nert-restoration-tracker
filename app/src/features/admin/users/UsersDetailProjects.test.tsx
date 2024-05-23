@@ -1,20 +1,18 @@
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
-import { createMemoryHistory } from 'history';
 import useCodes from 'hooks/useCodes';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React from 'react';
-import { Router } from 'react-router';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
+import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectPlanApi.interface';
 import UsersDetailProjects from './UsersDetailProjects';
 
-const history = createMemoryHistory();
-
 jest.mock('../../../hooks/useRestorationTrackerApi');
+const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
 
-const mockuseRestorationTrackerApi = {
+const mockUseApi = {
   project: {
     getAllUserProjectsParticipation: jest.fn<Promise<IGetUserProjectsListResponse[]>, []>(),
     removeProjectParticipant: jest.fn<Promise<boolean>, []>(),
@@ -22,12 +20,8 @@ const mockuseRestorationTrackerApi = {
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
-
 jest.mock('../../../hooks/useCodes');
-const mockUseCodes = (useCodes as unknown) as jest.MockedFunction<typeof useCodes>;
+const mockUseCodes = useCodes as unknown as jest.MockedFunction<typeof useCodes>;
 
 const mockUser = {
   id: 1,
@@ -36,10 +30,16 @@ const mockUser = {
   role_names: ['system']
 } as IGetUserResponse;
 
+const routes = [
+  { path: '/admin/projects/1/details', element: <UsersDetailProjects userDetails={mockUser} /> }
+];
+
+const router = createMemoryRouter(routes, { initialEntries: ['/admin/projects/1/details'] });
+
 describe('UsersDetailProjects', () => {
   beforeEach(() => {
     // clear mocks before each test
-    mockRestorationTrackerApi().project.getAllUserProjectsParticipation.mockClear();
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
     mockUseCodes.mockClear();
   });
 
@@ -48,13 +48,12 @@ describe('UsersDetailProjects', () => {
   });
 
   it('shows circular spinner when assignedProjects not yet loaded', async () => {
-    history.push('/admin/users/1');
     mockUseCodes.mockReturnValue({ codes: undefined, isLoading: true, isReady: false });
 
     const { getAllByTestId } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailProjects userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -63,8 +62,6 @@ describe('UsersDetailProjects', () => {
   });
 
   it('renders empty list correctly when assignedProjects empty and loaded', async () => {
-    history.push('/admin/users/1');
-
     mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
 
     mockRestorationTrackerApi().project.getAllUserProjectsParticipation.mockResolvedValue({
@@ -72,9 +69,9 @@ describe('UsersDetailProjects', () => {
     } as any);
 
     const { getAllByTestId, getAllByText } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailProjects userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -85,8 +82,6 @@ describe('UsersDetailProjects', () => {
   });
 
   it('renders list of a single project correctly when assignedProjects are loaded', async () => {
-    history.push('/admin/users/1');
-
     mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
 
     mockRestorationTrackerApi().project.getAllUserProjectsParticipation.mockResolvedValue([
@@ -100,9 +95,9 @@ describe('UsersDetailProjects', () => {
     ]);
 
     const { getAllByTestId, getAllByText } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailProjects userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -113,8 +108,6 @@ describe('UsersDetailProjects', () => {
   });
 
   it('renders list of a multiple projects correctly when assignedProjects are loaded', async () => {
-    history.push('/admin/users/1');
-
     mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
 
     mockRestorationTrackerApi().project.getAllUserProjectsParticipation.mockResolvedValue([
@@ -135,9 +128,9 @@ describe('UsersDetailProjects', () => {
     ]);
 
     const { getAllByTestId, getAllByText } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailProjects userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -149,8 +142,6 @@ describe('UsersDetailProjects', () => {
   });
 
   it('routes to project id details on click', async () => {
-    history.push('/admin/users/1');
-
     mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
 
     mockRestorationTrackerApi().project.getAllUserProjectsParticipation.mockResolvedValue([
@@ -164,9 +155,9 @@ describe('UsersDetailProjects', () => {
     ]);
 
     const { getAllByText, getByText } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailProjects userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -176,14 +167,12 @@ describe('UsersDetailProjects', () => {
     fireEvent.click(getByText('projectName'));
 
     await waitFor(() => {
-      expect(history.location.pathname).toEqual('/admin/projects/1/details');
+      expect(router.state.location.pathname).toEqual('/admin/projects/1/details');
     });
   });
 
   describe('Are you sure? Dialog', () => {
     it('does nothing if the user clicks `No` or away from the dialog', async () => {
-      history.push('/admin/users/1');
-
       mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
 
       mockRestorationTrackerApi().project.getAllUserProjectsParticipation.mockResolvedValue([
@@ -198,9 +187,9 @@ describe('UsersDetailProjects', () => {
 
       const { getAllByText, getByTestId, getByText } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailProjects userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 
@@ -217,13 +206,11 @@ describe('UsersDetailProjects', () => {
       fireEvent.click(getByText('Cancel'));
 
       await waitFor(() => {
-        expect(history.location.pathname).toEqual('/admin/users/1');
+        expect(router.state.location.pathname).toEqual('/admin/projects/1/details');
       });
     });
 
     it('deletes User from project if the user clicks on `Remove User` ', async () => {
-      history.push('/admin/users/1');
-
       mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
 
       mockRestorationTrackerApi().project.removeProjectParticipant.mockResolvedValue(true);
@@ -247,9 +234,9 @@ describe('UsersDetailProjects', () => {
 
       const { getAllByText, getByText, getAllByTestId } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailProjects userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 
@@ -286,8 +273,6 @@ describe('UsersDetailProjects', () => {
 
   describe('Change users Project Role', () => {
     it('renders list of roles to change per project', async () => {
-      history.push('/admin/users/1');
-
       mockUseCodes.mockReturnValue({
         codes: {
           ...codes,
@@ -313,9 +298,9 @@ describe('UsersDetailProjects', () => {
       ]);
 
       const { getAllByText, getByText } = render(
-        <Router history={history}>
+        <RouterProvider router={router}>
           <UsersDetailProjects userDetails={mockUser} />
-        </Router>
+        </RouterProvider>
       );
 
       await waitFor(() => {
@@ -333,8 +318,6 @@ describe('UsersDetailProjects', () => {
     });
 
     it('renders dialog pop on role selection, does nothing if user clicks `Cancel` ', async () => {
-      history.push('/admin/users/1');
-
       mockUseCodes.mockReturnValue({
         codes: {
           ...codes,
@@ -361,9 +344,9 @@ describe('UsersDetailProjects', () => {
 
       const { getAllByText, getByText } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailProjects userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 
@@ -389,13 +372,11 @@ describe('UsersDetailProjects', () => {
       fireEvent.click(getByText('Cancel'));
 
       await waitFor(() => {
-        expect(history.location.pathname).toEqual('/admin/users/1');
+        expect(router.state.location.pathname).toEqual('/admin/projects/1/details');
       });
     });
 
     it('renders dialog pop on role selection, Changes role on click of `Change Role` ', async () => {
-      history.push('/admin/users/1');
-
       mockUseCodes.mockReturnValue({
         codes: {
           ...codes,
@@ -424,9 +405,9 @@ describe('UsersDetailProjects', () => {
 
       const { getAllByText, getByText } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailProjects userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 

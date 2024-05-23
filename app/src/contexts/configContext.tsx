@@ -5,6 +5,8 @@ import { ensureProtocol } from 'utils/Utils';
 
 export interface IConfig {
   API_HOST: string;
+  REACT_APP_OBJECT_STORE_URL: string;
+  REACT_APP_OBJECT_STORE_BUCKET_NAME: string;
   CHANGE_VERSION: string;
   NODE_ENV: string;
   REACT_APP_NODE_ENV: string;
@@ -17,6 +19,8 @@ export interface IConfig {
 
 export const ConfigContext = React.createContext<IConfig | undefined>({
   API_HOST: '',
+  REACT_APP_OBJECT_STORE_URL: '',
+  REACT_APP_OBJECT_STORE_BUCKET_NAME: '',
   CHANGE_VERSION: '',
   NODE_ENV: '',
   REACT_APP_NODE_ENV: '',
@@ -44,6 +48,8 @@ const getLocalConfig = (): IConfig => {
 
   return {
     API_HOST: ensureProtocol(API_URL, 'http://'),
+    REACT_APP_OBJECT_STORE_URL: process.env.REACT_APP_OBJECT_STORE_URL || '',
+    REACT_APP_OBJECT_STORE_BUCKET_NAME: process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME || '',
     CHANGE_VERSION: process.env.CHANGE_VERSION || 'NA',
     NODE_ENV: process.env.NODE_ENV,
     REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || 'dev',
@@ -92,7 +98,7 @@ const isDevelopment = (): boolean => {
  * @param {*} props
  * @return {*}
  */
-export const ConfigContextProvider: React.FC = (props) => {
+export const ConfigContextProvider: React.FC<React.PropsWithChildren> = (props) => {
   const [config, setConfig] = useState<IConfig>();
 
   useEffect(() => {

@@ -2,36 +2,37 @@ import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import AccessRequestList from 'features/admin/users/AccessRequestList';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IAccessRequestDataObject, IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
+import {
+  IAccessRequestDataObject,
+  IGetAccessRequestsListResponse
+} from 'interfaces/useAdminApi.interface';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React from 'react';
 import { codes } from 'test-helpers/code-helpers';
 
 jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockuseRestorationTrackerApi = {
+const mockUseApi = {
   admin: {
     approveAccessRequest: jest.fn(),
     denyAccessRequest: jest.fn()
   }
 };
-
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
+const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
 
 const renderContainer = (
   accessRequests: IGetAccessRequestsListResponse[],
   codes: IGetAllCodeSetsResponse,
   refresh: () => void
 ) => {
-  return render(<AccessRequestList accessRequests={accessRequests} codes={codes} refresh={refresh} />);
+  return render(
+    <AccessRequestList accessRequests={accessRequests} codes={codes} refresh={refresh} />
+  );
 };
 
 describe('AccessRequestList', () => {
   beforeEach(() => {
     // clear mocks before each test
-    mockRestorationTrackerApi().admin.approveAccessRequest.mockClear();
-    mockRestorationTrackerApi().admin.denyAccessRequest.mockClear();
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
   });
 
   afterEach(() => {
@@ -165,7 +166,7 @@ describe('AccessRequestList', () => {
           status_name: 'Pending',
           description: 'test description',
           notes: 'test notes',
-          data: (null as unknown) as IAccessRequestDataObject,
+          data: null as unknown as IAccessRequestDataObject,
           create_date: '2020-04-20'
         }
       ],

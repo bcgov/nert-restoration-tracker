@@ -1,17 +1,15 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiPencilOutline, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Paper from '@mui/material/Paper';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
@@ -53,7 +51,7 @@ export interface IProjectFundingFormProps {
   investment_action_category: IInvestmentActionCategoryOption[];
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   title: {
     flexGrow: 1,
     marginRight: '1rem',
@@ -63,13 +61,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 700
   },
   titleDesc: {
-    marginLeft: theme.spacing(1),
+    marginLeft: '0.5rem',
     fontWeight: 400
   },
   fundingListItem: {
     padding: 0,
     '& + li': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   },
   fundingListItemInner: {
@@ -78,9 +76,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'hidden'
   },
   fundingListItemToolbar: {
-    paddingRight: theme.spacing(2)
+    paddingRight: '1rem'
   }
-}));
+};
 
 /**
  * Create project - Funding section
@@ -88,8 +86,6 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @return {*}
  */
 const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
-  const classes = useStyles();
-
   const { values } = useFormikContext<IProjectFundingForm>();
 
   // Tracks information about the current funding source item that is being added/edited
@@ -130,9 +126,14 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                 }}
                 onCancel={() => setIsModalOpen(false)}
                 onSave={(projectFundingItemValues) => {
-                  if (currentProjectFundingFormArrayItem.index < values.funding.fundingSources.length) {
+                  if (
+                    currentProjectFundingFormArrayItem.index < values.funding.fundingSources.length
+                  ) {
                     // Update an existing item
-                    arrayHelpers.replace(currentProjectFundingFormArrayItem.index, projectFundingItemValues);
+                    arrayHelpers.replace(
+                      currentProjectFundingFormArrayItem.index,
+                      projectFundingItemValues
+                    );
                   } else {
                     // Add a new item
                     arrayHelpers.push(projectFundingItemValues);
@@ -145,7 +146,12 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
               <List dense disablePadding>
                 {!values.funding.fundingSources.length && (
                   <ListItem dense component={Paper}>
-                    <Box display="flex" flexGrow={1} justifyContent="center" alignContent="middle" p={2}>
+                    <Box
+                      display="flex"
+                      flexGrow={1}
+                      justifyContent="center"
+                      alignContent="middle"
+                      p={2}>
                       <Typography variant="subtitle2">No Funding Sources</Typography>
                     </Box>
                   </ListItem>
@@ -161,13 +167,15 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                   )?.[0]?.label;
 
                   return (
-                    <ListItem dense className={classes.fundingListItem} key={index}>
-                      <Paper className={classes.fundingListItemInner}>
-                        <Toolbar className={classes.fundingListItemToolbar}>
-                          <Typography className={classes.title}>
+                    <ListItem dense sx={pageStyles.fundingListItem} key={index}>
+                      <Paper sx={pageStyles.fundingListItemInner}>
+                        <Toolbar sx={pageStyles.fundingListItemToolbar}>
+                          <Typography sx={pageStyles.title}>
                             {getCodeValueNameByID(props.fundingSources, fundingSource.agency_id)}
                             {investment_action_category_label && (
-                              <span className={classes.titleDesc}>({investment_action_category_value})</span>
+                              <span style={pageStyles.titleDesc}>
+                                ({investment_action_category_value})
+                              </span>
                             )}
                           </Typography>
 
@@ -182,7 +190,8 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                                 values: values.funding.fundingSources[index]
                               });
                               setIsModalOpen(true);
-                            }}>
+                            }}
+                            size="large">
                             <Icon path={mdiPencilOutline} size={1} />
                           </IconButton>
                           <IconButton
@@ -190,7 +199,8 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                             data-testid={'delete-button-' + index}
                             title="Remove Funding Source"
                             aria-label="Remove Funding Source"
-                            onClick={() => arrayHelpers.remove(index)}>
+                            onClick={() => arrayHelpers.remove(index)}
+                            size="large">
                             <Icon path={mdiTrashCanOutline} size={1} />
                           </IconButton>
                         </Toolbar>
@@ -201,7 +211,9 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                               <Typography variant="body2" color="textSecondary">
                                 Agency Project ID
                               </Typography>
-                              <Typography variant="body1">{fundingSource.agency_project_id}</Typography>
+                              <Typography variant="body1">
+                                {fundingSource.agency_project_id}
+                              </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
                               <Typography variant="body2" color="textSecondary">
@@ -257,7 +269,10 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
 
 export default ProjectFundingForm;
 
-export const getCodeValueNameByID = (codeSet: IMultiAutocompleteFieldOption[], codeValueId: number): string => {
+export const getCodeValueNameByID = (
+  codeSet: IMultiAutocompleteFieldOption[],
+  codeValueId: number
+): string => {
   if (!codeSet?.length || !codeValueId) {
     return '';
   }

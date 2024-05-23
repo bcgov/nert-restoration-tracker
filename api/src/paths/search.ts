@@ -125,6 +125,7 @@ export function _extractResults(rows: any[]): any[] {
     const result: any = {
       id: row.id,
       name: row.name,
+      is_project: row.is_project,
       geometry: row.geometry && [JSON.parse(row.geometry)]
     };
 

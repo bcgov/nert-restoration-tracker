@@ -1,27 +1,25 @@
-import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
 import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import { ConfigContext } from 'contexts/configContext';
 import React, { useContext } from 'react';
 import Dropzone, { FileRejection } from 'react-dropzone';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   dropZoneTitle: {
-    marginBottom: theme.spacing(1),
+    marginBottom: '1rem',
     fontSize: '1.125rem',
     fontWeight: 700
   },
   dropZoneIcon: {
-    color: theme.palette.text.primary + '55'
+    color: 'gray'
   },
   dropZoneRequirements: {
     textAlign: 'center'
   }
-}));
+};
 
 const BYTES_PER_MEGABYTE = 1048576;
 
@@ -69,17 +67,15 @@ export interface IDropZoneConfigProps {
    * @type {string}
    * @memberof IDropZoneConfigProps
    */
-  acceptedFileExtensions?: string;
+  acceptedFileExtensions?: { [key: string]: string[] };
 }
 
 export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props) => {
-  const classes = useStyles();
   const config = useContext(ConfigContext);
 
   const maxNumFiles = props.maxNumFiles || config?.MAX_UPLOAD_NUM_FILES;
   const maxFileSize = props.maxFileSize || config?.MAX_UPLOAD_FILE_SIZE;
   const multiple = props.multiple ?? true;
-  const acceptedFileExtensions = props.acceptedFileExtensions;
 
   return (
     <Box className="dropZoneContainer">
@@ -93,18 +89,17 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
           <Box {...getRootProps()}>
             <input {...getInputProps()} data-testid="drop-zone-input" />
             <Box p={2} display="flex" flexDirection="column" alignItems="center">
-              <Icon className={classes.dropZoneIcon} path={mdiTrayArrowUp} size={1.5} />
-              <Box mt={0.5} className={classes.dropZoneTitle}>
-                Drag your {(multiple && 'files') || 'file'} here, or <Link underline="always">Browse Files</Link>
+              <Icon color={pageStyles.dropZoneIcon.color} path={mdiTrayArrowUp} size={1.5} />
+              <Box mt={0.5} sx={pageStyles.dropZoneTitle}>
+                Drag your {(multiple && 'files') || 'file'} here, or{' '}
+                <Link underline="always">Browse Files</Link>
               </Box>
               <Box textAlign="center">
-                {acceptedFileExtensions && (
-                  <Box>
-                    <Typography component="span" variant="subtitle2" color="textSecondary">
-                      {`Accepted files: ${acceptedFileExtensions}`}
-                    </Typography>
-                  </Box>
-                )}
+                <Box>
+                  <Typography component="span" variant="subtitle2" color="textSecondary">
+                    {`Accepted files: GeoJSON`}
+                  </Typography>
+                </Box>
                 {!!maxFileSize && maxFileSize !== Infinity && (
                   <Box>
                     <Typography component="span" variant="subtitle2" color="textSecondary">

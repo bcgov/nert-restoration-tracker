@@ -1,17 +1,15 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiPencilOutline, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import { Icon } from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Paper from '@mui/material/Paper';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
@@ -43,7 +41,7 @@ export const ProjectContactYupSchema = yup.object().shape({
 
 export type IProjectContactFormProps = IProjectContactItemFormProps;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   legend: {
     marginTop: '1rem',
     float: 'left',
@@ -59,13 +57,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 700
   },
   titleDesc: {
-    marginLeft: theme.spacing(1),
+    marginLeft: '0.5rem',
     fontWeight: 400
   },
   contactListItem: {
     padding: 0,
     '& + li': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   },
   contactListItemInner: {
@@ -74,9 +72,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'hidden'
   },
   contactListItemToolbar: {
-    paddingRight: theme.spacing(2)
+    paddingRight: '1rem'
   }
-}));
+};
 
 /**
  * Create project - contact section
@@ -84,8 +82,6 @@ const useStyles = makeStyles((theme: Theme) => ({
  * @return {*}
  */
 const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_agency }) => {
-  const classes = useStyles();
-
   const { values } = useFormikContext<IProjectContactForm>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -144,16 +140,21 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
               <List dense disablePadding>
                 {!values.contact.contacts.length && (
                   <ListItem dense component={Paper}>
-                    <Box display="flex" flexGrow={1} justifyContent="center" alignContent="middle" p={2}>
+                    <Box
+                      display="flex"
+                      flexGrow={1}
+                      justifyContent="center"
+                      alignContent="middle"
+                      p={2}>
                       <Typography variant="subtitle2">No Contacts</Typography>
                     </Box>
                   </ListItem>
                 )}
                 {values.contact.contacts.map((contact, index) => (
-                  <ListItem dense className={classes.contactListItem} key={index}>
-                    <Paper className={classes.contactListItemInner}>
-                      <Toolbar className={classes.contactListItemToolbar}>
-                        <Typography className={classes.title}>
+                  <ListItem dense sx={pageStyles.contactListItem} key={index}>
+                    <Paper sx={pageStyles.contactListItemInner}>
+                      <Toolbar sx={pageStyles.contactListItemToolbar}>
+                        <Typography sx={pageStyles.title}>
                           {`${contact.first_name} ${contact.last_name}`}
                           {JSON.parse(contact.is_primary) && (
                             <Box ml={1} component="sup">
@@ -174,7 +175,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                               values: values.contact.contacts[index]
                             });
                             setIsModalOpen(true);
-                          }}>
+                          }}
+                          size="large">
                           <Icon path={mdiPencilOutline} size={1} />
                         </IconButton>
                         <IconButton
@@ -182,7 +184,8 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                           data-testid={'delete-button-' + index}
                           title="Remove Contact"
                           aria-label="Remove Contact"
-                          onClick={() => arrayHelpers.remove(index)}>
+                          onClick={() => arrayHelpers.remove(index)}
+                          size="large">
                           <Icon path={mdiTrashCanOutline} size={1} />
                         </IconButton>
                       </Toolbar>

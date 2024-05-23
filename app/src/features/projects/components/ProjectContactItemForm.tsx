@@ -1,13 +1,13 @@
-import Box from '@material-ui/core/Box';
-import Checkbox from '@material-ui/core/Checkbox';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Grid from '@material-ui/core/Grid';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import Divider from '@mui/material/Divider';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Typography from '@mui/material/Typography';
 import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
 import CustomTextField from 'components/fields/CustomTextField';
 import { useFormikContext } from 'formik';
@@ -115,13 +115,20 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
                   onChange={handleChange}
                 />
               }
-              label={<Typography color="textSecondary">This person is the primary contact for this project</Typography>}
+              label={
+                <Typography color="textSecondary">
+                  This person is the primary contact for this project
+                </Typography>
+              }
             />
           </Grid>
         </Grid>
       </Box>
       <Box mt={4}>
-        <FormControl required={true} component="fieldset" error={touched.is_public && Boolean(errors.is_public)}>
+        <FormControl
+          required={true}
+          component="fieldset"
+          error={touched.is_public && Boolean(errors.is_public)}>
           <Typography id="share_contact_details" component="legend">
             Share Contact Details
           </Typography>
@@ -136,12 +143,12 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
               onChange={handleChange}>
               <FormControlLabel
                 value="true"
-                control={<Radio required={true} color="primary" size="small" />}
+                control={<Radio color="primary" size="small" />}
                 label="Yes"
               />
               <FormControlLabel
                 value="false"
-                control={<Radio required={true} color="primary" size="small" />}
+                control={<Radio color="primary" size="small" />}
                 label="No"
               />
               <FormHelperText>{errors.is_public}</FormHelperText>

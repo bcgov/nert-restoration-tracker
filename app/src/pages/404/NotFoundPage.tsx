@@ -1,15 +1,14 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
 import { mdiHelpCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 const NotFoundPage = () => {
-  const history = useHistory();
-
+  const history = useNavigate();
   return (
     <Container>
       <Box pt={6} textAlign="center">
@@ -17,7 +16,12 @@ const NotFoundPage = () => {
         <h1>Page Not Found</h1>
         <Typography>Sorry, the page you are trying to access does not exist.</Typography>
         <Box pt={4}>
-          <Button onClick={() => history.push('/')} type="submit" size="large" variant="contained" color="primary">
+          <Button
+            onClick={() => history('/')}
+            type="submit"
+            size="large"
+            variant="contained"
+            color="primary">
             Return Home
           </Button>
         </Box>
