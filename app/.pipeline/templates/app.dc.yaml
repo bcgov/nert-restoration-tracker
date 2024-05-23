@@ -78,7 +78,7 @@ objects:
     apiVersion: image.openshift.io/v1
     metadata:
       annotations:
-        iconClass: nodejs
+        iconClass: icon-nodejs
         description: Nodejs Runtime Image
       labels:
         shared: 'true'
