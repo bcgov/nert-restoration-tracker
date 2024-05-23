@@ -72,7 +72,7 @@ parameters:
   - name: REPLICAS_MAX
     value: '1'
   - name: NAMELINK
-    value: restoration-tracker-api-${{SUFFIX}}-${{CHANGE_ID}}
+    value: restoration-tracker-api
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
@@ -95,7 +95,7 @@ objects:
       annotations:
         iconClass: icon-nodejs
         app.openshift.io/connects-to: >-
-          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${NAMELINK}"}]
+          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${NAMELINK}-${SUFFIX}-${CHANGE_ID}"}]
         openshift.io/generated-by: OpenShiftWebConsole
       creationTimestamp: null
       generation: 0
