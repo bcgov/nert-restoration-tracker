@@ -136,7 +136,8 @@ objects:
       creationTimestamp:
       labels:
         shared: 'true'
-      annotations: {}
+      annotations:
+        iconClass: icon-postgresql
       role: db
     spec:
       lookupPolicy:
@@ -145,7 +146,6 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
-        iconClass: postgresql
         template.alpha.openshift.io/wait-for-ready: 'true'
       name: '${DATABASE_SERVICE_NAME}'
       role: db
