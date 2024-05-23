@@ -116,7 +116,7 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
-        iconClass: icon-nodejs
+        iconClass: nodejs
         app.openshift.io/connects-to: >-
           [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${NAMELINK}${SUFFIX}"}]
         openshift.io/generated-by: OpenShiftWebConsole
