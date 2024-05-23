@@ -118,7 +118,7 @@ objects:
       annotations:
         iconClass: icon-nodejs
         app.openshift.io/connects-to: >-
-          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${{NAMELINK}}"}]
+          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${NAMELINK}"}]
         openshift.io/generated-by: OpenShiftWebConsole
       creationTimestamp: null
       generation: 0
