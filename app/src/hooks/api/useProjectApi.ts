@@ -223,7 +223,6 @@ const useProjectApi = (axios: AxiosInstance) => {
     return data;
   };
 
-
   //TODO: handle cancelTokenSource and onProgress
   /**
    * Upload project treatment spacial files.
