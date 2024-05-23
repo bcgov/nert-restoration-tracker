@@ -6,9 +6,9 @@
   padding: 0 10px;
   border: 0.5px solid #ccc;
   background-color: #f9f9f9;
-  &:hover {
+  /* &:hover {
     background-color: #e2fbff;
-  }
+  } */
   &.active {
     background-color: #e2fbff;
   }

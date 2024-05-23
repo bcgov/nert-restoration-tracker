@@ -27,7 +27,7 @@ import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -121,6 +121,16 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     baselayer
   };
 
+  /**
+   * State to share with the map to indicate which
+   * feature is selected or hovered over
+   */
+  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
+
+  useEffect(() => {
+    console.log('active feature just changed', activeFeature);
+  }, [activeFeature]);
+
   const featureStyle = {
     parent: {
       display: 'grid',
@@ -148,9 +158,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   // TODO: Connect these to the map state for active shapes
   const mouseEnterListItem = (index: number) => {
     console.log('mouse enter', index);
+    console.log(values.location.geometry[index]);
+    setActiveFeature(values.location.geometry[index]);
   };
   const mouseLeaveListItem = (index: number) => {
     console.log('mouse leave', index);
+    setActiveFeature(null);
   };
 
   return (
@@ -313,7 +326,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           {values.location.geometry.map((feature, index) => (
             <div
               style={featureStyle.parent}
-              className="feature-item"
+              className={activeFeature?.id === feature?.id ? 'feature-item active' : 'feature-item'}
               key={index}
               onMouseEnter={() => mouseEnterListItem(index)}
               onMouseLeave={() => mouseLeaveListItem(index)}>
@@ -343,6 +356,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             features={values.location.geometry}
             mask={mask}
             maskState={maskState}
+            activeFeatureState={[activeFeature, setActiveFeature]}
           />
         </Box>
         {errors?.location?.geometry && (
