@@ -147,7 +147,7 @@ function validateAllResponses(req: Request, res: Response, next: NextFunction) {
       );
 
       let validationMessage = '';
-      let errorList = [];
+      let errorList = [] as any[];
 
       if (validationResult?.errors) {
         validationMessage = `Invalid response for status code ${res.statusCode}`;

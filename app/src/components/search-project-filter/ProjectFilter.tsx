@@ -214,7 +214,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
         </Grid>
       );
     };
-
+    //TODO: Fix this function: handleDelete
     if (Array.isArray(value)) {
       value.forEach((item) => ChipArray.push(filterChip(item)));
     } else {

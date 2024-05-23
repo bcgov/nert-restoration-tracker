@@ -156,7 +156,8 @@ const ViewProjectPage: React.FC = () => {
   //   onYes: () => dialogContext.setYesNoDialog({ open: false })
   // };
 
-  const isPriority = projectWithDetails.location.priority === 'true';
+  //TODO: Priority is not in the project location object
+  const isPriority = false; //projectWithDetails.location.priority === 'true';
 
   // const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
   //   dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
@@ -291,7 +292,7 @@ const ViewProjectPage: React.FC = () => {
                       <Typography variant="h2">Project Objectives</Typography>
                     </Box>
                     <Typography variant="body1" color="textSecondary">
-                      {projectWithDetails.project.objectives}
+                      {projectWithDetails.project.brief_desc}
                     </Typography>
                   </Box>
                 </Paper>
