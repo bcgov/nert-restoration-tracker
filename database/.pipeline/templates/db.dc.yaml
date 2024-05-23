@@ -145,6 +145,7 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
+        iconClass: iconpostgresql
         template.alpha.openshift.io/wait-for-ready: 'true'
       name: '${DATABASE_SERVICE_NAME}'
       role: db
