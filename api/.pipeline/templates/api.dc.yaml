@@ -94,6 +94,8 @@ parameters:
     value: '1'
   - name: REPLICAS_MAX
     value: '1'
+  - name: NAMELINK
+    value: restoration-tracker-app${SUFFIX}-${CHANGE_ID}
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
