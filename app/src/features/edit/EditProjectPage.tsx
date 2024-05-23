@@ -343,14 +343,7 @@ const EditProjectPage: React.FC = () => {
                       </Box>
 
                       <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectPartnershipsForm
-                          first_nations={codes.codes.first_nations.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          stakeholder_partnerships={codes.codes.funding_source.map((item) => {
-                            return { value: item.name, label: item.name };
-                          })}
-                        />
+                        <ProjectPartnershipsForm />
                       </Box>
                     </Grid>
                   </Grid>
@@ -366,9 +359,6 @@ const EditProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectLocationForm
-                        ranges={codes.codes.ranges.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
                         regions={codes.codes.regions.map((item) => {
                           return { value: item.id, label: item.name };
                         })}

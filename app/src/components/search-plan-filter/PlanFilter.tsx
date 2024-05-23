@@ -216,6 +216,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
       );
     };
 
+    //TODO: Fix this function: handleDelete
     if (Array.isArray(value)) {
       value.forEach((item) => ChipArray.push(filterChip(item)));
     } else {
