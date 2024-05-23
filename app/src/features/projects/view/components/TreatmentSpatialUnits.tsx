@@ -299,7 +299,9 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
                 </Box>
               </>
             )}
-
+            {
+              //TODO: FIX file from errors
+            }
             <Menu
               id="treatment-menu"
               anchorEl={anchorEl}
