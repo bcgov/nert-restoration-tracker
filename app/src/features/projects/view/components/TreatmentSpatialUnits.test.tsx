@@ -1,27 +1,21 @@
 import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React from 'react';
-import { Router } from 'react-router';
 import TreatmentSpatialUnits from './TreatmentSpatialUnits';
 
-const history = createMemoryHistory();
-
 jest.mock('../../../../hooks/useRestorationTrackerApi');
-const mockuseRestorationTrackerApi = {
+const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+
+const mockUseApi = {
   project: {
     getProjectTreatmentsYears: jest.fn<Promise<{ year: number }[]>, [number]>()
   }
 };
 
-const mockRestorationTrackerApi = (
-  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
-).mockReturnValue(mockuseRestorationTrackerApi);
-
 describe('TreatmentSpatialUnits', () => {
   beforeEach(() => {
     // clear mocks before each test
-    mockRestorationTrackerApi().project.getProjectTreatmentsYears.mockClear();
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
   });
   afterEach(() => {
     cleanup();
@@ -30,21 +24,17 @@ describe('TreatmentSpatialUnits', () => {
   it('renders correctly with no Treatment Years', async () => {
     await act(async () => {
       mockRestorationTrackerApi().project.getProjectTreatmentsYears.mockResolvedValue([]);
-      const { getByText } = render(
-        <Router history={history}>
-          <TreatmentSpatialUnits getTreatments={jest.fn()} getAttachments={jest.fn()} />
-        </Router>
+      const { queryByText } = render(
+        <TreatmentSpatialUnits getTreatments={jest.fn()} getAttachments={jest.fn()} />
       );
 
-      expect(getByText('Import Treatments', { exact: false })).toBeInTheDocument();
+      expect(queryByText('Import Treatments', { exact: false })).toBeNull();
     });
   });
 
   it('renders popup correctly', async () => {
     const { getAllByText, getByTestId } = render(
-      <Router history={history}>
-        <TreatmentSpatialUnits getTreatments={jest.fn()} getAttachments={jest.fn()} />
-      </Router>
+      <TreatmentSpatialUnits getTreatments={jest.fn()} getAttachments={jest.fn()} />
     );
 
     fireEvent.click(getByTestId('upload-spatial'));
@@ -58,9 +48,7 @@ describe('TreatmentSpatialUnits', () => {
     mockRestorationTrackerApi().project.getProjectTreatmentsYears.mockResolvedValue([{ year: 99 }]);
 
     const { getByText } = render(
-      <Router history={history}>
-        <TreatmentSpatialUnits getTreatments={jest.fn()} getAttachments={jest.fn()} />
-      </Router>
+      <TreatmentSpatialUnits getTreatments={jest.fn()} getAttachments={jest.fn()} />
     );
 
     await waitFor(() => {

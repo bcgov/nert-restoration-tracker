@@ -1,9 +1,8 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { createMemoryHistory } from 'history';
 import React from 'react';
-import { Router } from 'react-router';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
 import RequestSubmitted from './RequestSubmitted';
 
@@ -26,23 +25,21 @@ describe('RequestSubmitted', () => {
       }
     });
 
-    const history = createMemoryHistory();
+    const routes = [{ path: '/access-request', element: <RequestSubmitted /> }];
 
-    history.push('/access-request');
+    const router = createMemoryRouter(routes, { initialEntries: ['/access-request'] });
 
-    const { asFragment } = render(
+    const { queryAllByText } = render(
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
+        <RouterProvider router={router}>
           <RequestSubmitted />
-        </Router>
+        </RouterProvider>
       </AuthStateContext.Provider>
     );
 
     // does not change location
-    expect(history.location.pathname).toEqual('/access-request');
-
-    // renders a spinner
-    expect(asFragment()).toMatchSnapshot();
+    expect(router.state.location.pathname).toEqual('/access-request');
+    expect(queryAllByText('Access Request Submitted').length).toEqual(0);
   });
 
   it('redirects to `/admin/projects` when user has at least 1 system role', () => {
@@ -63,19 +60,22 @@ describe('RequestSubmitted', () => {
       }
     });
 
-    const history = createMemoryHistory();
+    const routes = [
+      { path: '/access-request', element: <RequestSubmitted /> },
+      { path: '/admin/projects', element: <div>Admin Projects</div> }
+    ];
 
-    history.push('/access-request');
+    const router = createMemoryRouter(routes, { initialEntries: ['/access-request'] });
 
     render(
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
+        <RouterProvider router={router}>
           <RequestSubmitted />
-        </Router>
+        </RouterProvider>
       </AuthStateContext.Provider>
     );
 
-    expect(history.location.pathname).toEqual('/admin/projects');
+    expect(router.state.location.pathname).toEqual('/admin/projects');
   });
 
   it('redirects to `/` when user has no pending access request', () => {
@@ -96,19 +96,23 @@ describe('RequestSubmitted', () => {
       }
     });
 
-    const history = createMemoryHistory();
+    const routes = [
+      { path: '/access-request', element: <RequestSubmitted /> },
+      { path: '/admin/projects', element: <div>Admin Projects</div> },
+      { path: '/', element: <div>Home</div> }
+    ];
 
-    history.push('/access-request');
+    const router = createMemoryRouter(routes, { initialEntries: ['/access-request'] });
 
     render(
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
+        <RouterProvider router={router}>
           <RequestSubmitted />
-        </Router>
+        </RouterProvider>
       </AuthStateContext.Provider>
     );
 
-    expect(history.location.pathname).toEqual('/');
+    expect(router.state.location.pathname).toEqual('/');
   });
 
   it('renders correctly when user has no role but has a pending access requests', () => {
@@ -129,30 +133,29 @@ describe('RequestSubmitted', () => {
       }
     });
 
-    const history = createMemoryHistory();
+    const routes = [
+      { path: '/access-request', element: <RequestSubmitted /> },
+      { path: '/admin/projects', element: <div>Admin Projects</div> },
+      { path: '/', element: <div>Home</div> }
+    ];
 
-    history.push('/access-request');
+    const router = createMemoryRouter(routes, { initialEntries: ['/access-request'] });
 
-    const { getByText, asFragment } = render(
+    const { getByText } = render(
       <AuthStateContext.Provider value={authState}>
-        <Router history={history}>
+        <RouterProvider router={router}>
           <RequestSubmitted />
-        </Router>
+        </RouterProvider>
       </AuthStateContext.Provider>
     );
 
     // does not change location
-    expect(history.location.pathname).toEqual('/access-request');
+    expect(router.state.location.pathname).toEqual('/access-request');
 
     expect(getByText('Log Out')).toBeVisible();
-
-    // renders the component in full
-    expect(asFragment()).toMatchSnapshot();
   });
 
   describe('Log Out', () => {
-    const history = createMemoryHistory();
-
     it('should redirect to `/logout`', async () => {
       const authState = getMockAuthState({
         keycloakWrapper: {
@@ -171,18 +174,27 @@ describe('RequestSubmitted', () => {
         }
       });
 
+      const routes = [
+        { path: '/access-request', element: <RequestSubmitted /> },
+        { path: '/admin/projects', element: <div>Admin Projects</div> },
+        { path: '/', element: <div>Home</div> },
+        { path: '/logout', element: <div>Logout</div> }
+      ];
+
+      const router = createMemoryRouter(routes, { initialEntries: ['/access-request'] });
+
       const { getByTestId } = render(
         <AuthStateContext.Provider value={authState}>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <RequestSubmitted />
-          </Router>
+          </RouterProvider>
         </AuthStateContext.Provider>
       );
 
       fireEvent.click(getByTestId('logout-button'));
 
       waitFor(() => {
-        expect(history.location.pathname).toEqual('/logout');
+        expect(router.state.location.pathname).toEqual('/logout');
       });
     });
   });

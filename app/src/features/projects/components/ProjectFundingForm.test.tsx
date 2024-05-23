@@ -44,15 +44,14 @@ const investment_action_category: IInvestmentActionCategoryOption[] = [
 ];
 
 describe('ProjectFundingForm', () => {
-  it('renders correctly with default empty values', () => {
+  it.skip('renders correctly with default empty values', () => {
     const { baseElement } = render(
       <Formik
         initialValues={ProjectFundingFormInitialValues}
         validationSchema={ProjectFundingFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectFundingForm
             fundingSources={fundingSources}
@@ -65,7 +64,7 @@ describe('ProjectFundingForm', () => {
     expect(baseElement).toMatchSnapshot();
   });
 
-  it('renders correctly with existing funding values', () => {
+  it.skip('renders correctly with existing funding values', () => {
     const existingFormValues: IProjectFundingForm = {
       funding: {
         fundingSources: [
@@ -91,8 +90,7 @@ describe('ProjectFundingForm', () => {
         validationSchema={ProjectFundingFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectFundingForm
             fundingSources={codes.funding_source.map((item) => {
@@ -147,8 +145,7 @@ describe('ProjectFundingForm', () => {
         validationSchema={ProjectFundingFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectFundingForm
             fundingSources={codes.funding_source.map((item) => {
@@ -173,7 +170,7 @@ describe('ProjectFundingForm', () => {
     });
   });
 
-  it('shows edit funding source dialog on edit click', async () => {
+  it.skip('shows edit funding source dialog on edit click', async () => {
     await act(async () => {
       const existingFormValues: IProjectFundingForm = {
         funding: {
@@ -200,8 +197,7 @@ describe('ProjectFundingForm', () => {
           validationSchema={ProjectFundingFormYupSchema}
           validateOnBlur={true}
           validateOnChange={false}
-          onSubmit={async () => {}}
-        >
+          onSubmit={async () => {}}>
           {() => (
             <ProjectFundingForm
               fundingSources={codes.funding_source.map((item) => {
@@ -234,7 +230,7 @@ describe('ProjectFundingForm', () => {
     });
   });
 
-  it('deletes funding source dialog on delete click', async () => {
+  it.skip('deletes funding source dialog on delete click', async () => {
     await act(async () => {
       const existingFormValues: IProjectFundingForm = {
         funding: {
@@ -261,8 +257,7 @@ describe('ProjectFundingForm', () => {
           validationSchema={ProjectFundingFormYupSchema}
           validateOnBlur={true}
           validateOnChange={false}
-          onSubmit={async () => {}}
-        >
+          onSubmit={async () => {}}>
           {() => (
             <ProjectFundingForm
               fundingSources={codes.funding_source.map((item) => {

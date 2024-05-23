@@ -94,9 +94,8 @@ const ProjectParticipantsPage: React.FC = () => {
   };
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
-      projectId
-    );
+    const projectWithDetailsResponse =
+      await restorationTrackerApi.project.getProjectById(projectId);
 
     if (!projectWithDetailsResponse) {
       return;
@@ -224,8 +223,7 @@ const ProjectParticipantsPage: React.FC = () => {
                         }
                       })
                     }
-                    size="large"
-                  >
+                    size="large">
                     <Icon path={mdiTrashCanOutline} size={1} aria-label="remove team member" />
                   </IconButton>
                 </Box>

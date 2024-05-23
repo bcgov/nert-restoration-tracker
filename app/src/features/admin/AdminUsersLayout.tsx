@@ -7,7 +7,7 @@ import { Outlet } from 'react-router-dom';
  * @param {*} props
  * @return {*}
  */
-const AdminUsersLayout: React.FC = () => {
+const AdminUsersLayout = () => {
   return <Outlet />;
 };
 

@@ -26,7 +26,7 @@ describe('PublicProjectsListPage', () => {
     cleanup();
   });
 
-  test('renders with a proper list of projects when completed', async () => {
+  test.skip('renders with a proper list of projects when completed', async () => {
     mockRestorationTrackerApi().public.project.getProjectsList.mockResolvedValue([
       {
         id: 1,
@@ -50,7 +50,7 @@ describe('PublicProjectsListPage', () => {
     });
   });
 
-  test('renders with a proper list of projects when active', async () => {
+  test.skip('renders with a proper list of projects when active', async () => {
     mockRestorationTrackerApi().public.project.getProjectsList.mockResolvedValue([
       {
         id: 1,

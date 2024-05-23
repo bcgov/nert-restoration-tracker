@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
+import { ConfigContext } from 'contexts/configContext';
 import React, { Fragment, useContext, useState } from 'react';
 import ReactPlayer from 'react-player/file';
 import { isAuthenticated } from 'utils/authUtils';
@@ -36,6 +37,8 @@ const VideoDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
+  const config = useContext(ConfigContext);
+
   const [isError, setIsError] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -74,12 +77,10 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
         aria-labelledby="customized-dialog-title"
         open={open}
         maxWidth="xl"
-        scroll="paper"
-      >
+        scroll="paper">
         <DialogTitle
           sx={{ m: 0, p: 2, backgroundColor: item.typeBgColor }}
-          id="customized-dialog-title"
-        >
+          id="customized-dialog-title">
           <img src={item.typeIcon} width="20" height="32" alt={item.typeLabel} /> {item.typeLabel}{' '}
           table usage
         </DialogTitle>
@@ -91,8 +92,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
             right: 8,
             top: 8,
             color: (theme) => theme.palette.grey[500]
-          }}
-        >
+          }}>
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
@@ -103,7 +103,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
           ) : (
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
               <ReactPlayer
-                url={`https://${process.env.REACT_APP_OBJECT_STORE_URL}/${process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${item.typeLabel}PagedTableInfo.mp4`}
+                url={`https://${config?.REACT_APP_OBJECT_STORE_URL}/${config?.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${item.typeLabel}PagedTableInfo.mp4`}
                 style={{ position: 'absolute', top: 0, left: 0 }}
                 playing={true}
                 loop={true}

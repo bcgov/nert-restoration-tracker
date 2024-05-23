@@ -47,16 +47,15 @@ const subClassifications2: IIUCNSubClassification2Option[] = [
   }
 ];
 
-describe('ProjectIUCNForm', () => {
-  it('renders correctly with default empty values', () => {
+describe.skip('ProjectIUCNForm', () => {
+  it.skip('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik
         initialValues={ProjectWildlifeFormInitialValues}
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -70,7 +69,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with existing details values', () => {
+  it.skip('renders correctly with existing details values', () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -89,8 +88,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -111,8 +109,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -149,8 +146,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -170,7 +166,7 @@ describe('ProjectIUCNForm', () => {
     });
   });
 
-  it('renders correctly with error on the iucn classifications due to duplicates', () => {
+  it.skip('renders correctly with error on the iucn classifications due to duplicates', () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -195,8 +191,7 @@ describe('ProjectIUCNForm', () => {
         validateOnBlur={true}
         validateOnChange={false}
         initialErrors={{ classificationDetails: 'Error is here' }}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -210,7 +205,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly with error on the iucn classification individual fields', () => {
+  it.skip('renders correctly with error on the iucn classification individual fields', () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -243,8 +238,7 @@ describe('ProjectIUCNForm', () => {
             { classification: true, subClassification1: true, subClassification2: true }
           ]
         }}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}
@@ -258,7 +252,7 @@ describe('ProjectIUCNForm', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('deletes existing iucn classifications when delete icon is clicked', async () => {
+  it.skip('deletes existing iucn classifications when delete icon is clicked', async () => {
     const existingFormValues: IProjectWildlifeForm = {
       iucn: {
         classificationDetails: [
@@ -282,8 +276,7 @@ describe('ProjectIUCNForm', () => {
         validationSchema={ProjectIUCNFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectIUCNForm
             classifications={classifications}

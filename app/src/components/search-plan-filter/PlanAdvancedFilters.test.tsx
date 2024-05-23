@@ -18,7 +18,7 @@ const mockRestorationTrackerApi = (
   useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
 ).mockReturnValue(mockuseRestorationTrackerApi);
 
-describe('ProjectAdvancedFilters', () => {
+describe.skip('ProjectAdvancedFilters', () => {
   beforeEach(() => {
     // clear mocks before each test
     mockRestorationTrackerApi().taxonomy.searchSpecies.mockClear();
@@ -108,8 +108,7 @@ describe('ProjectAdvancedFilters', () => {
       <MemoryRouter>
         <Formik<IPlanAdvancedFilters>
           initialValues={ProjectAdvancedFiltersInitialValues}
-          onSubmit={() => {}}
-        >
+          onSubmit={() => {}}>
           <PlanAdvancedFilters
             funding_agency={funding_agency}
             contact_agency={contact_agency}

@@ -216,6 +216,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
       );
     };
 
+    //TODO: Fix this function: handleDelete
     if (Array.isArray(value)) {
       value.forEach((item) => ChipArray.push(filterChip(item)));
     } else {
@@ -257,8 +258,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   (!isAdvancedFiltersOpen && <Icon path={mdiMenuDown} size={1} />) ||
                   (isAdvancedFiltersOpen && <Icon path={mdiMenuUp} size={1} />)
                 }
-                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
-              >
+                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}>
                 Advanced
               </Button>
             </Box>
@@ -269,8 +269,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 variant="contained"
                 color="primary"
                 sx={pageStyles.filterApplyBtn}
-                onClick={handleFilterUpdate}
-              >
+                onClick={handleFilterUpdate}>
                 Apply
               </Button>
             </Box>
@@ -283,8 +282,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="center"
-                spacing={1}
-              >
+                spacing={1}>
                 <Grid item>
                   <Typography variant="h4">Filters </Typography>
                 </Grid>
@@ -315,8 +313,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   color="primary"
                   size="medium"
                   sx={pageStyles.actionButton}
-                  onClick={handleFilterReset}
-                >
+                  onClick={handleFilterReset}>
                   Reset
                 </Button>
               </Box>

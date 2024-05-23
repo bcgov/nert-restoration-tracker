@@ -1,14 +1,14 @@
 import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import EditProjectPage from 'features/edit/EditProjectPage';
-import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
+import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import ViewProjectPage from 'features/projects/view/ViewProjectPage';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { RedirectURL } from 'utils/AppRoutesUtils';
-import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
 import ProjectsPlansListPage from './ProjectsPlansListPage';
+import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
 
 /**
  * Router for all `/admin/project/*` pages.
@@ -30,8 +30,7 @@ const ProjectsRouter: React.FC = () => {
                 SYSTEM_ROLE.DATA_ADMINISTRATOR,
                 SYSTEM_ROLE.PROJECT_CREATOR
               ]}
-              fallback={<Navigate replace to={'/projects'} />}
-            >
+              fallback={<Navigate replace to={'/projects'} />}>
               <CreateProjectPage />
             </SystemRoleGuard>
           }
@@ -44,8 +43,7 @@ const ProjectsRouter: React.FC = () => {
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
               fallback={(projectId) => (
                 <Route path="" element={<Navigate replace to={`/projects/${projectId}`} />} />
-              )}
-            >
+              )}>
               <EditProjectPage />
             </RoleGuard>
           }
@@ -60,8 +58,7 @@ const ProjectsRouter: React.FC = () => {
                 PROJECT_ROLE.PROJECT_EDITOR,
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
-              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}
-            >
+              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}>
               <ViewProjectPage />
             </RoleGuard>
           }
@@ -72,8 +69,7 @@ const ProjectsRouter: React.FC = () => {
             <RoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}
-            >
+              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}>
               <ProjectParticipantsPage />
             </RoleGuard>
           }

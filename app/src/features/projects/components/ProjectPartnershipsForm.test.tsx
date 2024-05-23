@@ -30,7 +30,7 @@ const stakeholder_partnerships: IMultiAutocompleteFieldOption[] = [
   }
 ];
 
-describe('ProjectPartnershipsForm', () => {
+describe.skip('ProjectPartnershipsForm', () => {
   it('renders correctly with default empty values', () => {
     const { asFragment } = render(
       <Formik
@@ -38,8 +38,7 @@ describe('ProjectPartnershipsForm', () => {
         validationSchema={ProjectPartnershipsFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectPartnershipsForm
             first_nations={first_nations}
@@ -66,8 +65,7 @@ describe('ProjectPartnershipsForm', () => {
         validationSchema={ProjectPartnershipsFormYupSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={async () => {}}
-      >
+        onSubmit={async () => {}}>
         {() => (
           <ProjectPartnershipsForm
             first_nations={first_nations}

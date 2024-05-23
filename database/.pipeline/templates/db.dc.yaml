@@ -136,7 +136,8 @@ objects:
       creationTimestamp:
       labels:
         shared: 'true'
-      annotations: {}
+      annotations:
+        iconClass: icon-postgresql
       role: db
     spec:
       lookupPolicy:

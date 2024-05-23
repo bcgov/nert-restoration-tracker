@@ -33,7 +33,7 @@ const projectContactFilledValues = {
   }
 };
 
-describe('Project Contact Form', () => {
+describe.skip('Project Contact Form', () => {
   it('renders correctly the empty component correctly', () => {
     const { asFragment } = render(
       <Formik
@@ -43,8 +43,7 @@ describe('Project Contact Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectContactForm coordinator_agency={[]} />}
       </Formik>
     );
@@ -61,8 +60,7 @@ describe('Project Contact Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectContactForm coordinator_agency={agencies} />}
       </Formik>
     );

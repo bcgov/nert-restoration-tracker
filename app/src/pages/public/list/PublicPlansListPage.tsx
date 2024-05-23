@@ -89,13 +89,11 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                   key={headCell.id}
                   align={headCell.numeric ? 'right' : 'left'}
                   padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}
-                >
+                  sortDirection={orderBy === headCell.id ? order : false}>
                   <TableSortLabel
                     active={orderBy === headCell.id}
                     direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                  >
+                    onClick={createSortHandler(headCell.id)}>
                     {headCell.label}
                     {orderBy === headCell.id ? (
                       <Box component="span" sx={visuallyHidden}>
@@ -140,8 +138,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
             bgcolor: (theme) =>
               alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
           })
-        }}
-      >
+        }}>
         {numSelected > 0 ? (
           <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
             {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}{' '}
@@ -152,8 +149,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
             sx={{ mx: '0.5rem', flex: '1 1 100%' }}
             variant="h2"
             id="tableTitle"
-            component="div"
-          >
+            component="div">
             Found {rows?.length} {rows?.length !== 1 ? 'plans' : 'plan'}
           </Typography>
         )}
@@ -165,8 +161,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
             disableElevation
             data-testid="export-plan-button"
             aria-label={PlanTableI18N.exportPlansData}
-            startIcon={<Icon path={mdiExport} size={1} />}
-          >
+            startIcon={<Icon path={mdiExport} size={1} />}>
             <strong>{TableI18N.exportData}</strong>
           </Button>
         ) : (
@@ -254,8 +249,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-          >
+            size={dense ? 'small' : 'medium'}>
             <PlansTableHead
               numSelected={selected.length}
               order={order}
@@ -277,8 +271,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
+                    sx={{ cursor: 'pointer' }}>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       <Link
                         data-testid={row.planName}
@@ -286,8 +279,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history(`/projects/${row.planId}`)}
-                      >
+                        onClick={() => history(`/projects/${row.planId}`)}>
                         {row.planName}
                       </Link>
                     </TableCell>
@@ -312,8 +304,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                           title={
                             isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
                           }
-                          placement="right"
-                        >
+                          placement="right">
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
@@ -344,8 +335,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows
-                  }}
-                >
+                  }}>
                   <TableCell colSpan={7} />
                 </TableRow>
               )}

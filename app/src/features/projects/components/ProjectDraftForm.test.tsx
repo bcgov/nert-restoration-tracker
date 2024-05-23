@@ -22,8 +22,7 @@ describe('Project Draft Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectDraftForm />}
       </Formik>
     );
@@ -40,8 +39,7 @@ describe('Project Draft Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectDraftForm />}
       </Formik>
     );
@@ -65,8 +63,7 @@ describe('Project Draft Form', () => {
         validateOnChange={false}
         onSubmit={async (values) => {
           handleSaveAndNext(values);
-        }}
-      >
+        }}>
         {() => <ProjectDraftForm />}
       </Formik>
     );

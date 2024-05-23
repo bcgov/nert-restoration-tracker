@@ -215,8 +215,7 @@ const EditProjectPage: React.FC = () => {
               color="primary"
               onClick={handleCancel}
               aria-current="page"
-              sx={pageStyles.breadCrumbLink}
-            >
+              sx={pageStyles.breadCrumbLink}>
               <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
               <Typography variant="body2">Cancel and Exit</Typography>
             </Link>
@@ -240,8 +239,7 @@ const EditProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
-            onSubmit={handleProjectEdits}
-          >
+            onSubmit={handleProjectEdits}>
             <>
               <ScrollToFormikError />
 
@@ -345,14 +343,7 @@ const EditProjectPage: React.FC = () => {
                       </Box>
 
                       <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectPartnershipsForm
-                          first_nations={codes.codes.first_nations.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          stakeholder_partnerships={codes.codes.funding_source.map((item) => {
-                            return { value: item.name, label: item.name };
-                          })}
-                        />
+                        <ProjectPartnershipsForm />
                       </Box>
                     </Grid>
                   </Grid>
@@ -368,9 +359,6 @@ const EditProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectLocationForm
-                        ranges={codes.codes.ranges.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
                         regions={codes.codes.regions.map((item) => {
                           return { value: item.id, label: item.name };
                         })}
@@ -387,8 +375,7 @@ const EditProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     type="submit"
-                    data-testid="project-save-button"
-                  >
+                    data-testid="project-save-button">
                     Save Project
                   </Button>
                   <Button
@@ -396,8 +383,7 @@ const EditProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}
-                  >
+                    onClick={handleCancel}>
                     Cancel
                   </Button>
                 </Box>

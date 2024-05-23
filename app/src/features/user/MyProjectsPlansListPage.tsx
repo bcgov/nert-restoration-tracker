@@ -46,10 +46,11 @@ const MyProjectsPlansListPage: React.FC = () => {
     }
   }, [restorationTrackerApi, isLoading, keycloakWrapper]);
 
+  //TODO: add plans loading to list
   return (
     <Container maxWidth="xl">
       <MyProjects projects={projectsPlans} drafts={drafts} />
-      <MyPlans plans={projectsPlans} drafts={drafts} />
+      <MyPlans plans={[]} drafts={drafts} />
     </Container>
   );
 };

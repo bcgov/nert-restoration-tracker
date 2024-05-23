@@ -21,8 +21,7 @@ const NotFoundPage = () => {
             type="submit"
             size="large"
             variant="contained"
-            color="primary"
-          >
+            color="primary">
             Return Home
           </Button>
         </Box>
