@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
@@ -26,9 +27,10 @@ import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
+import './styles/projectLocation.css';
 
 export interface IProjectLocationForm {
   location: {
@@ -82,9 +84,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
-  // Mask state array
   const [maskState, setMaskState] = useState<boolean[]>(
-    values.location.geometry.map((feature) => feature.properties?.maskedLocation)
+    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
 
   // Mask change indicator
@@ -95,7 +96,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       if (file?.name.includes('json')) {
         handleGeoJSONUpload(file, 'location.geometry', formikProps);
       }
-
       return Promise.resolve();
     };
   };
@@ -121,6 +121,24 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     baselayer
   };
 
+  /**
+   * State to share with the map to indicate which
+   * feature is selected or hovered over
+   */
+  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
+
+  useEffect(() => {
+    console.log('active feature just changed', activeFeature);
+  }, [activeFeature]);
+
+  const featureStyle = {
+    parent: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr auto',
+      cursor: 'pointer'
+    }
+  };
+
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the formik values
     // @ts-ignore
@@ -135,6 +153,17 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
     // Make sure children know what has changed
     setMask(index);
+  };
+
+  // TODO: Connect these to the map state for active shapes
+  const mouseEnterListItem = (index: number) => {
+    console.log('mouse enter', index);
+    console.log(values.location.geometry[index]);
+    setActiveFeature(values.location.geometry[index]);
+  };
+  const mouseLeaveListItem = (index: number) => {
+    console.log('mouse leave', index);
+    setActiveFeature(null);
   };
 
   return (
@@ -292,18 +321,30 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </Button>
         </Box>
 
-        <Box>
+        <Box className="feature-box">
           {/* Create a list element for each feature within values.location.geometry */}
           {values.location.geometry.map((feature, index) => (
-            <div className="feature-list" key={index}>
+            <div
+              style={featureStyle.parent}
+              className={activeFeature?.id === feature?.id ? 'feature-item active' : 'feature-item'}
+              key={index}
+              onMouseEnter={() => mouseEnterListItem(index)}
+              onMouseLeave={() => mouseLeaveListItem(index)}>
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>
               <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
-              <Checkbox
-                checked={feature.properties?.maskedLocation}
-                onChange={(event) => maskChanged(event, index)}
-              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={feature.properties?.maskedLocation || false}
+                      onChange={(event) => maskChanged(event, index)}
+                    />
+                  }
+                  label="Mask"
+                />
+              </FormGroup>
             </div>
           ))}
         </Box>
@@ -315,6 +356,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             features={values.location.geometry}
             mask={mask}
             maskState={maskState}
+            activeFeatureState={[activeFeature, setActiveFeature]}
           />
         </Box>
         {errors?.location?.geometry && (

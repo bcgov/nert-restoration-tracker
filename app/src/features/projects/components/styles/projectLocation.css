@@ -1,0 +1,20 @@
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 10px;
+  border: 0.5px solid #ccc;
+  background-color: #f9f9f9;
+  /* &:hover {
+    background-color: #e2fbff;
+  } */
+  &.active {
+    background-color: #e2fbff;
+  }
+}
+
+.feature-box > :first-child {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}

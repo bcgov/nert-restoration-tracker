@@ -51,6 +51,11 @@ const ImageUpload = () => {
       }
     }
   };
+  // Fixing a lame typescript error
+  const centerText = 'center' as const;
+  const fitObject = 'cover' as const;
+
+  // Styles for the component
   const styles = {
     default: {
       border: '3px dashed #0003',
@@ -62,6 +67,17 @@ const ImageUpload = () => {
       borderRadius: '25px',
       cursor: 'pointer',
       overflow: 'hidden'
+    },
+    text: {
+      color: '#0003',
+      fontSize: '1.2rem',
+      margin: '1rem',
+      textAlign: centerText
+    },
+    image: {
+      height: '200px',
+      width: '100%',
+      objectFit: fitObject
     }
   };
 
@@ -74,9 +90,9 @@ const ImageUpload = () => {
       onDragLeave={handleMouseLeave}
       onDrop={handleDrop}>
       {image ? (
-        <img src={image} alt="uploaded" style={{ height: '200px', width: '200px' }} />
+        <img src={image} alt="uploaded" style={styles.image} />
       ) : (
-        <div>{hoverText}</div>
+        <div style={styles.text}>{hoverText}</div>
       )}
     </div>
   );

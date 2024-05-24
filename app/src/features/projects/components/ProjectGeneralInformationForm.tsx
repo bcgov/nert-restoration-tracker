@@ -58,6 +58,10 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   })
 });
 
+const uploadImageStyles = {
+  marginTop: '23px'
+};
+
 /**
  * Create project - General information section
  *
@@ -69,8 +73,10 @@ const ProjectGeneralInformationForm: React.FC = () => {
 
   return (
     <Grid container spacing={3}>
-      <ImageUpload />
-      <Grid item xs={12} md={9}>
+      <div style={uploadImageStyles}>
+        <ImageUpload />
+      </div>
+      <Grid item xs={12} md={8}>
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>
             <CustomTextField

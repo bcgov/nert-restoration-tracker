@@ -23,6 +23,7 @@ export interface IMapContainerProps {
   centroids?: boolean;
   mask?: null | number; // Store what mask just changed
   maskState?: boolean[]; // Store which features are masked
+  activeFeatureState?: any; // Store which feature is active
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -253,6 +254,34 @@ const updateMasks = (mask: number, maskState: boolean[], features: any) => {
   map.getSource('mask').setData(maskGeojson);
 };
 
+let hoverStateMarkerPolygon: boolean | any = false;
+const checkFeatureState = (featureState: any) => {
+  if (!map.getSource('markers')) return; // Exit if markers are not initialized
+
+  if (hoverStateMarkerPolygon) {
+    map.setFeatureState(
+      {
+        source: 'markers',
+        id: hoverStateMarkerPolygon.id
+      },
+      { hover: false }
+    );
+  }
+
+  // If there is a feature state, set the hover state
+  if (featureState[0]) {
+    map.setFeatureState(
+      {
+        source: 'markers',
+        id: featureState[0].id
+      },
+      { hover: true }
+    );
+  }
+
+  hoverStateMarkerPolygon = featureState[0] || false;
+};
+
 const initializeMap = (
   mapId: string,
   center: any = [-124, 57],
@@ -260,7 +289,8 @@ const initializeMap = (
   features?: any, // There's no features when first creating a record
   layerVisibility?: any,
   centroids = false,
-  tooltipState?: any
+  tooltipState?: any,
+  activeFeatureState?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -411,7 +441,6 @@ const initializeMap = (
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
-      promoteId: 'id',
       cluster: centroids ? true : false,
       clusterRadius: 50,
       clusterMaxZoom: 12
@@ -479,9 +508,48 @@ const initializeMap = (
         visibility: 'visible'
       },
       paint: {
-        'fill-color': 'rgba(245,149,66,0.8)'
+        'fill-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'rgba(250,191,120,1)',
+          'rgba(250,191,120,0.5)'
+        ]
       }
     });
+    // let hoverStateMarkerPolygon: boolean | any = false;
+    map
+      .on('mouseenter', 'markerPolygon', (e: any) => {
+        map.getCanvas().style.cursor = 'pointer';
+
+        checkFeatureState(activeFeatureState);
+        activeFeatureState[1](e.features[0]);
+
+        // console.log('entering index: ', e.features[0].id);
+        // if (activeFeatureState[0]) {
+        //   activeFeatureState[1](e.features[0]);
+        // }
+
+        // hoverStateMarkerPolygon = e.features[0].id;
+        // map.setFeatureState(
+        //   {
+        //     source: 'markers',
+        //     id: e.features[0].id
+        //   },
+        //   { hover: true }
+        // );
+      })
+      .on('mouseleave', 'markerPolygon', () => {
+        map.getCanvas().style.cursor = '';
+
+        activeFeatureState[1](null);
+        // map.setFeatureState(
+        //   {
+        //     source: 'markers',
+        //     id: hoverStateMarkerPolygon
+        //   },
+        //   { hover: false }
+        // );
+      });
 
     // Zoom in until cluster breaks apart.
     map.on('click', 'markerClusters.points', (e: any) => {
@@ -795,6 +863,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
+  const activeFeatureState = props.activeFeatureState || [];
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -816,7 +885,16 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Update the map if the features change
   useEffect(() => {
-    initializeMap(mapId, center, zoom, features, layerVisibility, centroids, tooltipState);
+    initializeMap(
+      mapId,
+      center,
+      zoom,
+      features,
+      layerVisibility,
+      centroids,
+      tooltipState,
+      activeFeatureState
+    );
   }, [features]);
 
   // Listen to layer changes
@@ -832,6 +910,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     updateMasks(mask, maskState, features);
   }, [maskState]);
+
+  // Listen for active feature changes
+  useEffect(() => {
+    checkFeatureState(activeFeatureState);
+  }, [activeFeatureState]);
 
   return (
     <div id={mapId} style={pageStyle}>
