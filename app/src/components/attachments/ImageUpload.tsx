@@ -42,7 +42,6 @@ const ImageUpload = () => {
     const files = e.dataTransfer.files;
 
     const processImage = (image: any) => {
-      console.log('originalLength', image.length);
       const img = new Image();
       img.src = image;
 
@@ -64,7 +63,6 @@ const ImageUpload = () => {
         const dataUrl = canvas.toDataURL();
 
         setImage(dataUrl);
-        console.log('newLength', dataUrl.length);
       };
     };
 
