@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 
+// TODO: Pass in the image and thumbnail state from the parent component
 const ImageUpload = () => {
   const [hoverText, setHoverText] = useState('Upload Image');
 
