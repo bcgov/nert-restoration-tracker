@@ -114,7 +114,7 @@ const pageStyles = {
 
 const Header: React.FC = () => {
   const config = useContext(ConfigContext);
-
+  console.log(config);
   const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
   const nert_version = config?.CHANGE_VERSION
     ? mmm
