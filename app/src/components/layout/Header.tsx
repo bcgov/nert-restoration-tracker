@@ -114,13 +114,9 @@ const pageStyles = {
 
 const Header: React.FC = () => {
   const config = useContext(ConfigContext);
-  console.log(config);
+
   const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
-  const nert_version = config?.CHANGE_VERSION
-    ? mmm
-      ? `${mmm}.${config.CHANGE_VERSION}`
-      : `0.0.0.${config.CHANGE_VERSION}`
-    : '0.0.0.NA';
+  const nert_version = mmm ?? '0.0.0.NA';
   const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
   const { keycloakWrapper } = useContext(AuthStateContext);
