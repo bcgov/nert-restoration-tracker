@@ -4,13 +4,11 @@ import {
   IAddProjectParticipant,
   ICreateProjectRequest,
   ICreateProjectResponse,
-  IGetPlanForViewResponse,
   IGetProjectAttachmentsResponse,
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponse,
   IGetProjectTreatmentsResponse,
   IGetUserProjectsListResponse,
-  IPlanAdvancedFilterRequest,
   IPostTreatmentUnitResponse,
   IProjectAdvancedFilterRequest,
   IUploadAttachmentResponse,
@@ -147,29 +145,6 @@ const useProjectApi = (axios: AxiosInstance) => {
   const getProjectsList = async (
     filterFieldData?: IProjectAdvancedFilterRequest
   ): Promise<IGetProjectForViewResponse[]> => {
-    const { data } = await axios.get(`/api/project/list`, {
-      params: filterFieldData,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, {
-          arrayFormat: 'repeat',
-          filter: (_prefix, value) => value || undefined
-        });
-      }
-    });
-
-    return data;
-  };
-
-  /**
-   * Get plans list (potentially based on filter criteria).
-   *
-   * @param {IPlansAdvancedFilterRequest} filterFieldData
-   * @return {*}  {Promise<IGetPlansForViewResponse[]>}
-   */
-  // [OIP] this needs updating to make Plan specific
-  const getPlansList = async (
-    filterFieldData?: IPlanAdvancedFilterRequest
-  ): Promise<IGetPlanForViewResponse[]> => {
     const { data } = await axios.get(`/api/project/list`, {
       params: filterFieldData,
       paramsSerializer: (params) => {
@@ -446,7 +421,6 @@ const useProjectApi = (axios: AxiosInstance) => {
   return {
     getAllUserProjectsParticipation,
     getProjectsList,
-    getPlansList,
     createProject,
     getProjectById,
     getProjectTreatmentsYears,

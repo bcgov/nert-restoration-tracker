@@ -1,7 +1,11 @@
 import { IPlanContactForm } from 'features/plans/components/PlanContactForm';
 import { IPlanGeneralInformationForm } from 'features/plans/components/PlanGeneralInformationForm';
 import { IPlanLocationForm } from 'features/plans/components/PlanLocationForm';
-import { Feature } from 'maplibre-gl';
+import {
+  IGetProjectForViewResponseContact,
+  IGetProjectForViewResponseDetails,
+  IGetProjectForViewResponseLocation
+} from './useProjectApi.interface';
 
 // [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
@@ -19,49 +23,19 @@ export interface ICreatePlanRequest
     IPlanContactForm,
     IPlanLocationForm {}
 
-export interface IGetPlanForViewResponse {
-  // [OI] this will require updating to the plan data model
-  plan: IGetPlanForViewResponseDetails;
-  contact: IGetPlanForViewResponseContact;
-  location: IGetPlanForViewResponseLocation;
+export interface ICreatePlanResponse {
+  id: number;
 }
-
-export interface IGetPlanForViewResponseDetails {
-  state_code: number;
-  is_project: boolean;
+export interface IGetUserPlansListResponse {
   project_id: number;
-  project_name: string;
-  start_date: string;
-  end_date: string;
-  publish_date: string;
-  brief_desc: string;
-  is_healing_land: boolean;
-  is_healing_people: boolean;
-  is_land_initiative: boolean;
-  is_cultural_initiative: boolean;
-  region: string;
+  name: string;
+  system_user_id: number;
+  project_role_id: number;
+  project_participation_id: number;
 }
 
-export interface IGetPlanForViewResponseContactArrayItem {
-  first_name: string;
-  last_name: string;
-  email_address: string;
-  phone_number: string;
-  organization: string;
-  first_nation_indigenous_affiliation: boolean;
-  is_primary: string;
-  is_public: string;
-}
-
-export interface IGetPlanForViewResponseContact {
-  contacts: IGetPlanForViewResponseContactArrayItem[];
-}
-
-export interface IGetPlanForViewResponseLocation {
-  geometry: Feature[];
-  is_within_overlapping: string;
-  region: number;
-  number_sites: number;
-  size_ha: number;
-  name_area_conservation_priority: string[];
+export interface IGetPlanForViewResponse {
+  project: IGetProjectForViewResponseDetails;
+  location: IGetProjectForViewResponseLocation;
+  contact: IGetProjectForViewResponseContact;
 }

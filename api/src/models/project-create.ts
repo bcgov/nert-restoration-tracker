@@ -37,6 +37,20 @@ export class PostProjectObject {
   }
 }
 
+export class PostPlanObject {
+  contact: PostContactData;
+  project: PostProjectData;
+  location: PostLocationData;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
+
+    this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
+    this.project = (obj?.project && new PostProjectData(obj.project)) || null;
+    this.location = (obj?.location && new PostLocationData(obj.location)) || null;
+  }
+}
+
 export interface IPostContact {
   first_name: string;
   last_name: string;

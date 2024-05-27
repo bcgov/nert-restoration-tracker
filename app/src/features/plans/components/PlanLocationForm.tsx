@@ -24,7 +24,7 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import CustomTextField from 'components/fields/CustomTextField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
-// import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer2';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useEffect, useState } from 'react';
@@ -56,7 +56,10 @@ export const PlanLocationFormInitialValues: IPlanLocationForm = {
 export const PlanLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
     // region: yup.string().required('Required'),
-    geometry: yup.array(), //.min(1, 'You must specify a Plan boundary'),
+    geometry: yup
+      .array()
+      .min(1, 'You must specify a Plan boundary')
+      .required('You must specify a Plan boundary'),
     is_within_overlapping: yup.string().notRequired(),
     // name_area_conservation_priority: yup.array().nullable(),
     size_ha: yup.number().nullable(),
@@ -86,7 +89,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
   // Mask change indicator
   const [mask, setMask] = useState<null | number>(null);
-  console.log('mask', mask);
 
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
@@ -118,7 +120,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     baselayer
   };
 
-  console.log('layerVisibility', layerVisibility);
   /**
    * State to share with the map to indicate which
    * feature is selected or hovered over
@@ -348,14 +349,14 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         </Box>
 
         <Box height={500}>
-          {/* <MapContainer
+          <MapContainer
             mapId={'Plan_location_map'}
             layerVisibility={layerVisibility}
             features={values.location.geometry}
             mask={mask}
             maskState={maskState}
             activeFeatureState={[activeFeature, setActiveFeature]}
-          /> */}
+          />
         </Box>
         {errors?.location?.geometry && (
           <Box pt={2}>

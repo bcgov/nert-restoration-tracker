@@ -229,8 +229,7 @@ const CreatePlanPage: React.FC = () => {
       );
 
       console.log('planPostObject', planPostObject);
-      // const response = await restorationTrackerApi.Plan.createPlan(planPostObject);
-      const response = { id: 1 };
+      const response = await restorationTrackerApi.plan.createPlan(planPostObject);
       if (!response?.id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a Plan ID.'
