@@ -9,7 +9,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
   IUploadAttachmentResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 

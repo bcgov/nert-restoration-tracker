@@ -6,6 +6,14 @@ export const CreateProjectI18N = {
     'An error has occurred while attempting to create your project, please try again. If the error persists, please contact your system administrator.'
 };
 
+export const CreatePlanI18N = {
+  cancelTitle: 'Cancel Create Plan',
+  cancelText: 'Are you sure you want to cancel?',
+  createErrorTitle: 'Error Creating Plan',
+  createErrorText:
+    'An error has occurred while attempting to create your Plan, please try again. If the error persists, please contact your system administrator.'
+};
+
 export const EditProjectI18N = {
   cancelTitle: 'Cancel Edit Project',
   cancelText: 'Are you sure you want to cancel?',
@@ -36,6 +44,12 @@ export const AttachmentsI18N = {
 };
 
 export const CreateProjectDraftI18N = {
+  draftErrorTitle: 'Error Saving Draft',
+  draftErrorText:
+    'An error has occurred while attempting to save your draft, please try again. If the error persists, please contact your system administrator.'
+};
+
+export const CreatePlanDraftI18N = {
   draftErrorTitle: 'Error Saving Draft',
   draftErrorText:
     'An error has occurred while attempting to save your draft, please try again. If the error persists, please contact your system administrator.'

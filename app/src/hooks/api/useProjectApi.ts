@@ -15,7 +15,7 @@ import {
   IProjectAdvancedFilterRequest,
   IUploadAttachmentResponse,
   TreatmentSearchCriteria
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 
 /**

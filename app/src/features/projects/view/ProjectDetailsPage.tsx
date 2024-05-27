@@ -5,7 +5,7 @@ import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import IUCNClassification from 'features/projects/view/components/IUCNClassification';
 import Partnerships from 'features/projects/view/components/Partnerships';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicProjectContact from 'pages/public/components/PublicProjectContact';
 import React from 'react';
 import FundingSource from './components/FundingSource';

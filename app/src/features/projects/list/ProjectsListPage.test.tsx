@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import ProjectsListPage from './ProjectsListPage';

@@ -11,7 +11,7 @@ import {
   IGetProjectForViewResponsePermit,
   IGetProjectForViewResponseSpecies,
   IPostTreatmentUnitResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import useProjectApi, { usePublicProjectApi } from './useProjectApi';
 

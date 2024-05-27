@@ -11,7 +11,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectTreatment,
   TreatmentSearchCriteria
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 

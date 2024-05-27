@@ -2,6 +2,7 @@ import { SystemRoleGuard } from 'components/security/Guards';
 import { AuthenticatedRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
+import PlansRouter from 'features/plans/PlansRouter';
 import ProjectsRouter from 'features/projects/ProjectsRouter';
 import PublicProjectsRouter from 'features/projects/PublicProjectsRouter';
 import SearchPage from 'features/search/SearchPage';
@@ -69,6 +70,14 @@ export const AppRouter = () => {
             element={
               <AuthenticatedRouteGuard>
                 <ProjectsRouter />
+              </AuthenticatedRouteGuard>
+            }
+          />
+          <Route
+            path="/admin/plans/*"
+            element={
+              <AuthenticatedRouteGuard>
+                <PlansRouter />
               </AuthenticatedRouteGuard>
             }
           />

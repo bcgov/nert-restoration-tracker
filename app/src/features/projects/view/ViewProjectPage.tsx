@@ -23,7 +23,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 // import TreatmentList from './components/TreatmentList';

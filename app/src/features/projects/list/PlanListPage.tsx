@@ -37,7 +37,7 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
+import { IPlansListProps } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';

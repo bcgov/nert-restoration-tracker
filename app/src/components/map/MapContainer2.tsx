@@ -830,9 +830,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
       const currentStyle = map.getStyle();
       const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
       const currentBase = rasterSource.tiles[0];
-      // @ts-ignore
       if (currentBase !== baseLayerUrls[layers.baselayer[0]]) {
-        // @ts-ignore
         currentStyle.sources['raster-tiles'].tiles = [baseLayerUrls[layers.baselayer[0]]];
         map.setStyle(currentStyle);
       }

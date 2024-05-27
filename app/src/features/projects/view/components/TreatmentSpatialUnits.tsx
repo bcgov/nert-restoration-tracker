@@ -19,7 +19,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
   TreatmentSearchCriteria
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import GeneralInformation from './GeneralInformation';
 

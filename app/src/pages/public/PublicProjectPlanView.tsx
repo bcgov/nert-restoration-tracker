@@ -4,7 +4,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetPlanForViewResponse,
   IGetProjectForViewResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import PublicPlanView from 'pages/public/PublicPlanView';
 import PublicProjectView from 'pages/public/PublicProjectView';
 import React, { useCallback, useEffect, useState } from 'react';

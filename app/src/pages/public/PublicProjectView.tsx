@@ -20,7 +20,7 @@ import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 

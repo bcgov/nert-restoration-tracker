@@ -12,7 +12,7 @@ import LocationBoundary from 'features/projects/view/components/LocationBoundary
 // import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetPlanForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 
 const pageStyles = {

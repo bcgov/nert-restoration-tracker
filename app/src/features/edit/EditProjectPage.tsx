@@ -29,7 +29,7 @@ import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactRouterPrompt from 'react-router-prompt';
