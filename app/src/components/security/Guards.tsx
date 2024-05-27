@@ -1,6 +1,6 @@
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
-import React, { PropsWithChildren, ReactElement, isValidElement, useContext } from 'react';
+import React, { isValidElement, PropsWithChildren, ReactElement, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 

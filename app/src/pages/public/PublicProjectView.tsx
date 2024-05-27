@@ -12,9 +12,9 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { ICONS, focus } from 'constants/misc';
-import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
+import { focus, ICONS } from 'constants/misc';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
+import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
@@ -213,8 +213,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           {project.location.is_within_overlapping === 'D'
                             ? "Don't know"
                             : project.location.is_within_overlapping === 'Y'
-                              ? 'Yes'
-                              : 'No'}
+                            ? 'Yes'
+                            : 'No'}
                         </Typography>
                       </Box>
 

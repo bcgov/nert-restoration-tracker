@@ -849,8 +849,8 @@ const checkLayerVisibility = (layers: any, features: any) => {
     return plansVisible && !feature.properties.is_project
       ? feature
       : projectsVisible && feature.properties.is_project
-        ? feature
-        : null;
+      ? feature
+      : null;
   });
   if (map.getSource('markers')) {
     // @ts-ignore

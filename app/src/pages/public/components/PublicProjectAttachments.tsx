@@ -32,8 +32,9 @@ const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () =>
       }
 
       try {
-        const response =
-          await restorationTrackerApi.public.project.getProjectAttachments(projectId);
+        const response = await restorationTrackerApi.public.project.getProjectAttachments(
+          projectId
+        );
 
         if (!response?.attachmentsList) {
           return;

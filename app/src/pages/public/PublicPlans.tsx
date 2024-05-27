@@ -10,7 +10,7 @@ import PlanFilter, {
   IPlanAdvancedFilters,
   PlanAdvancedFiltersInitialValues
 } from 'components/search-plan-filter/PlanFilter';
-import { ICONS, focusOptions, planStatusOptions } from 'constants/misc';
+import { focusOptions, ICONS, planStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
@@ -139,8 +139,9 @@ export default function PublicPlans() {
   //plans
   useEffect(() => {
     const getFilteredPlans = async () => {
-      const plansResponse =
-        await restorationTrackerApi.public.project.getProjectsList(formikValues);
+      const plansResponse = await restorationTrackerApi.public.project.getProjectsList(
+        formikValues
+      );
 
       setIsLoading(false);
       setPlans(plansResponse);

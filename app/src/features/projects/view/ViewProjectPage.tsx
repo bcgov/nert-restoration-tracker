@@ -1,22 +1,27 @@
-import { mdiAccountMultipleOutline, mdiArrowLeft, mdiFullscreen, mdiPencilOutline, mdiFilePdfBox } from '@mdi/js';
+import {
+  mdiAccountMultipleOutline,
+  mdiArrowLeft,
+  mdiFilePdfBox,
+  mdiFullscreen,
+  mdiPencilOutline
+} from '@mdi/js';
 import { Icon } from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
-import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { ICONS, focus } from 'constants/misc';
 import { RoleGuard } from 'components/security/Guards';
-import { attachmentType } from 'constants/misc';
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import { attachmentType, focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import useCodes from 'hooks/useCodes';
@@ -59,9 +64,7 @@ const ViewProjectPage: React.FC = () => {
   const urlParams: Record<string, string | number | undefined> = useParams();
 
   if (!urlParams['id']) {
-    throw new Error(
-      "Invalid project ID."
-    );
+    throw new Error('Invalid project ID.');
   }
 
   const projectId = Number(urlParams['id']);
@@ -71,16 +74,15 @@ const ViewProjectPage: React.FC = () => {
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [project, setProject] = useState<IGetProjectForViewResponse | null>(
-    null
-  );
+  const [project, setProject] = useState<IGetProjectForViewResponse | null>(null);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
 
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse =
-      await restorationTrackerApi.project.getProjectById(projectId);
+    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
+      projectId
+    );
 
     if (!projectWithDetailsResponse) {
       // TODO error handling/messaging
@@ -283,8 +285,8 @@ const ViewProjectPage: React.FC = () => {
                           {project.location.is_within_overlapping === 'D'
                             ? "Don't know"
                             : project.location.is_within_overlapping === 'Y'
-                              ? 'Yes'
-                              : 'No'}
+                            ? 'Yes'
+                            : 'No'}
                         </Typography>
                       </Box>
 
@@ -332,7 +334,10 @@ const ViewProjectPage: React.FC = () => {
 
                 {/* Documents */}
                 <Paper elevation={2}>
-                  <ProjectAttachments attachmentsList={attachmentsList} getAttachments={getAttachments} />
+                  <ProjectAttachments
+                    attachmentsList={attachmentsList}
+                    getAttachments={getAttachments}
+                  />
                 </Paper>
               </Grid>
 

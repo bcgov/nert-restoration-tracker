@@ -94,8 +94,9 @@ const ProjectParticipantsPage: React.FC = () => {
   };
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse =
-      await restorationTrackerApi.project.getProjectById(projectId);
+    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
+      projectId
+    );
 
     if (!projectWithDetailsResponse) {
       return;

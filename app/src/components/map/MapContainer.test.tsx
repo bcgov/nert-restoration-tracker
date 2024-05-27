@@ -1,9 +1,9 @@
 import { cleanup, render } from '@testing-library/react';
 import bbox from '@turf/bbox';
 import React from 'react';
-import MapContainer from './MapContainer';
 import { IMarker } from './components/MarkerCluster';
 import { IStaticLayer } from './components/StaticLayers';
+import MapContainer from './MapContainer';
 
 describe('MapContainer', () => {
   afterEach(() => {
