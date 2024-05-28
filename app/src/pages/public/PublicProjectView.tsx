@@ -213,8 +213,8 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                           {project.location.is_within_overlapping === 'D'
                             ? "Don't know"
                             : project.location.is_within_overlapping === 'Y'
-                            ? 'Yes'
-                            : 'No'}
+                              ? 'Yes'
+                              : 'No'}
                         </Typography>
                       </Box>
 

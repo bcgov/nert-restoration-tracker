@@ -139,9 +139,8 @@ export default function PublicPlans() {
   //plans
   useEffect(() => {
     const getFilteredPlans = async () => {
-      const plansResponse = await restorationTrackerApi.public.project.getProjectsList(
-        formikValues
-      );
+      const plansResponse =
+        await restorationTrackerApi.public.project.getProjectsList(formikValues);
 
       setIsLoading(false);
       setPlans(plansResponse);
