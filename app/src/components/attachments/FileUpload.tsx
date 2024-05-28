@@ -14,7 +14,8 @@ import {
 const pageStyles = {
   dropZone: {
     clear: 'both',
-    borderRadius: '4px',
+    borderRadius: '25px',
+    overflow: 'hidden',
     borderStyle: 'dashed',
     borderWidth: '2px',
     borderColor: 'gray',

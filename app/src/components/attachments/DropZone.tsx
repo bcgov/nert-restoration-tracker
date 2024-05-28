@@ -61,6 +61,7 @@ export interface IDropZoneConfigProps {
   multiple?: boolean;
   /**
    * Comma separated list of allowed file extensions.
+   * This is passed to the dropzone component as the `accept` prop.
    *
    * Example: `'.pdf, .txt'`
    *
@@ -68,6 +69,11 @@ export interface IDropZoneConfigProps {
    * @memberof IDropZoneConfigProps
    */
   acceptedFileExtensions?: { [key: string]: string[] };
+  /**
+   * Human readable list of accepted file extensions.
+   * This is displayed to the user.
+   */
+  acceptedFileExtensionsHumanReadable?: string;
 }
 
 export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props) => {
@@ -76,6 +82,24 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
   const maxNumFiles = props.maxNumFiles || config?.MAX_UPLOAD_NUM_FILES;
   const maxFileSize = props.maxFileSize || config?.MAX_UPLOAD_FILE_SIZE;
   const multiple = props.multiple ?? true;
+  const acceptedFiles =
+    props.acceptedFileExtensionsHumanReadable ||
+    Object.values(props.acceptedFileExtensions || {}).join(', ');
+
+  /**
+   *  Only list the number of files allowed if it is greater than 1.
+   */
+  const MaxNumFilesMessage = () => {
+    if (maxNumFiles && maxNumFiles > 1) {
+      return (
+        <Box>
+          <Typography component="span" variant="subtitle2" color="textSecondary">
+            {`Maximum files: ${maxNumFiles}`}
+          </Typography>
+        </Box>
+      );
+    }
+  };
 
   return (
     <Box className="dropZoneContainer">
@@ -95,11 +119,13 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
                 <Link underline="always">Browse Files</Link>
               </Box>
               <Box textAlign="center">
-                <Box>
-                  <Typography component="span" variant="subtitle2" color="textSecondary">
-                    {`Accepted files: GeoJSON`}
-                  </Typography>
-                </Box>
+                {acceptedFiles && (
+                  <Box>
+                    <Typography component="span" variant="subtitle2" color="textSecondary">
+                      {`Accepted files: ${acceptedFiles}`}
+                    </Typography>
+                  </Box>
+                )}
                 {!!maxFileSize && maxFileSize !== Infinity && (
                   <Box>
                     <Typography component="span" variant="subtitle2" color="textSecondary">
@@ -107,13 +133,7 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
                     </Typography>
                   </Box>
                 )}
-                {!!maxNumFiles && (
-                  <Box>
-                    <Typography component="span" variant="subtitle2" color="textSecondary">
-                      {`Maximum files: ${maxNumFiles}`}
-                    </Typography>
-                  </Box>
-                )}
+                <MaxNumFilesMessage />
               </Box>
             </Box>
           </Box>

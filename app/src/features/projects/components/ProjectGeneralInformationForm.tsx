@@ -6,7 +6,8 @@ import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFiel
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
 
-import ImageUpload from 'components/attachments/ImageUpload';
+import FileUpload from 'components/attachments/FileUpload';
+// import ImageUpload from 'components/attachments/ImageUpload';
 import React from 'react';
 import yup from 'utils/YupSchema';
 
@@ -59,7 +60,17 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 });
 
 const uploadImageStyles = {
-  marginTop: '23px'
+  marginTop: '23px',
+  maxWidth: '230px'
+};
+
+const uploadImage = () => {
+  return async (file) => {
+    // if (file?.name.includes('json')) {
+    //   handleGeoJSONUpload(file, 'location.geometry', formikProps);
+    // }
+    return Promise.resolve();
+  };
 };
 
 /**
@@ -74,7 +85,23 @@ const ProjectGeneralInformationForm: React.FC = () => {
   return (
     <Grid container spacing={3}>
       <div style={uploadImageStyles}>
-        <ImageUpload />
+        {/* <ImageUpload /> */}
+        <FileUpload
+          uploadHandler={uploadImage()}
+          // onReplace={handleReplace}
+          // onSuccess={handleUploadSuccess}
+          // fileHandler={handleFile}
+          dropZoneProps={{
+            maxFileSize: 10 * 1024 * 1024, // 10MB
+            maxNumFiles: 1,
+            multiple: false,
+            acceptedFileExtensionsHumanReadable: 'GeoJSON',
+            acceptedFileExtensions: {
+              'image/png': ['.png'],
+              'image/jpeg': ['.jpg', '.jpeg']
+            }
+          }}
+        />
       </div>
       <Grid item xs={12} md={8}>
         <Grid container spacing={3} direction="column">
