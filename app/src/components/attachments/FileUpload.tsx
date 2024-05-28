@@ -17,13 +17,13 @@ const pageStyles = {
     borderRadius: '25px',
     overflow: 'hidden',
     borderStyle: 'dashed',
-    borderWidth: '2px',
-    borderColor: 'gray',
+    borderWidth: '4px',
+    borderColor: 'lightgray',
     background: 'white',
+    textAlign: 'center',
     transition: 'all ease-out 0.2s',
     '&:hover, &:focus': {
-      borderColor: 'darkgray',
-      backgroundColor: 'lightgray'
+      borderColor: 'darkgray'
     },
     cursor: 'pointer'
   }

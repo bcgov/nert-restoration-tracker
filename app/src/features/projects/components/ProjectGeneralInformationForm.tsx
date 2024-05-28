@@ -2,6 +2,7 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
 
+import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
@@ -60,12 +61,21 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 });
 
 const uploadImageStyles = {
-  marginTop: '23px',
-  maxWidth: '230px'
+  general: {
+    marginTop: '23px',
+    maxWidth: '230px'
+  },
+  description: {
+    fontSize: '12px',
+    color: '#6E6E6E',
+    marginBottom: '2px'
+  }
 };
 
-const uploadImage = () => {
+const uploadImage = (): IUploadHandler => {
   return async (file) => {
+    console.log('File uploaded:', file);
+    // TODO: Handle image upload
     // if (file?.name.includes('json')) {
     //   handleGeoJSONUpload(file, 'location.geometry', formikProps);
     // }
@@ -84,8 +94,9 @@ const ProjectGeneralInformationForm: React.FC = () => {
 
   return (
     <Grid container spacing={3}>
-      <div style={uploadImageStyles}>
+      <div style={uploadImageStyles.general}>
         {/* <ImageUpload /> */}
+        <div style={uploadImageStyles.description}>Project Image</div>
         <FileUpload
           uploadHandler={uploadImage()}
           // onReplace={handleReplace}
@@ -95,7 +106,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
             maxFileSize: 10 * 1024 * 1024, // 10MB
             maxNumFiles: 1,
             multiple: false,
-            acceptedFileExtensionsHumanReadable: 'GeoJSON',
+            acceptedFileExtensionsHumanReadable: 'PNG & JPG',
             acceptedFileExtensions: {
               'image/png': ['.png'],
               'image/jpeg': ['.jpg', '.jpeg']
