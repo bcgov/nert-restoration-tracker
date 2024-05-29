@@ -189,10 +189,12 @@ const Header: React.FC = () => {
 
   const VersionEnvironmentLabel = () => {
     return (
-      <span
+      <Typography
+        sx={pageStyles.appVersionTag}
+        variant="subtitle2"
         aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
         v{nert_version} {nert_environment}
-      </span>
+      </Typography>
     );
   };
 
@@ -210,12 +212,10 @@ const Header: React.FC = () => {
                 <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
                 <img src={headerImageSmall} alt={'Government of British Columbia'} />
               </picture>
-              <span>
-                Northeast Restoration Tracker
-                <sup style={pageStyles.appVersionTag}>
-                  <VersionEnvironmentLabel />
-                </sup>
-              </span>
+              <Box>
+                <Typography variant="h6">Northeast Restoration Tracker</Typography>
+                <VersionEnvironmentLabel />
+              </Box>
             </Link>
             <UnAuthGuard>
               <PublicViewUser />

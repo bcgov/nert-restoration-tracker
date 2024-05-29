@@ -10,6 +10,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
@@ -36,6 +37,20 @@ import ProjectAttachments from './ProjectAttachments';
 import ProjectDetailsPage from './ProjectDetailsPage';
 
 const pageStyles = {
+  objectiveChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '2px',
+    justifyContent: 'left'
+  },
+  objectiveLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    // textWrap: "nowrap",
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
   titleContainerActions: {
     '& button + button': {
       marginLeft: '1rem'
@@ -129,6 +144,16 @@ const ViewProjectPage: React.FC = () => {
 
   const closeMapDialog = () => {
     setOpenFullScreen(false);
+  };
+
+  const objectiveStyled = (objective) => {
+    return (
+      <Tooltip title={objective} disableHoverListener={objective.length < 130}>
+        <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
+          {objective}
+        </Typography>
+      </Tooltip>
+    );
   };
 
   return (
@@ -228,86 +253,152 @@ const ViewProjectPage: React.FC = () => {
                 <Box mb={1}>
                   <Paper elevation={2}>
                     <Box p={1}>
-                      <Box>
-                        <Typography variant="subtitle2" component="span" color="textSecondary">
-                          Project Size (Ha):
-                        </Typography>
-                        <Typography
-                          ml={1}
-                          sx={{ fontWeight: 'bold' }}
-                          variant="subtitle2"
-                          component="span"
-                          color="textPrimary">
-                          {project.location.size_ha}
-                        </Typography>
-                      </Box>
+                      <Grid container spacing={0}>
+                        <Grid item xs={2}>
+                          <Card sx={{ maxWidth: 200, borderRadius: '16px' }}>
+                            <CardMedia
+                              sx={{ height: 124, borderRadius: '16px' }}
+                              image="https://nrs.objectstore.gov.bc.ca/nerdel/local/restoration/projects/31/attachments/lizard.png"
+                              title="green iguana"
+                            />
+                          </Card>
+                        </Grid>
+                        <Grid item xs={10}>
+                          <Box ml={1} mt={1.5}>
+                            <Box>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary"
+                                noWrap>
+                                Project Size (Ha):
+                              </Typography>
+                              <Typography
+                                ml={1}
+                                sx={{ fontWeight: 'bold' }}
+                                variant="subtitle2"
+                                component="span"
+                                color="textPrimary">
+                                {project.location.size_ha}
+                              </Typography>
+                            </Box>
 
-                      <Box mt={-0.6}>
-                        <Typography variant="subtitle2" component="span" color="textSecondary">
-                          Number of Sites:
-                        </Typography>
-                        <Typography
-                          ml={1}
-                          sx={{ fontWeight: 'bold' }}
-                          variant="subtitle2"
-                          component="span"
-                          color="textPrimary">
-                          {project.location.number_sites}
-                        </Typography>
-                      </Box>
+                            <Box mt={-0.6}>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
+                                Number of Sites:
+                              </Typography>
+                              <Typography
+                                ml={1}
+                                sx={{ fontWeight: 'bold' }}
+                                variant="subtitle2"
+                                component="span"
+                                color="textPrimary">
+                                {project.location.number_sites}
+                              </Typography>
+                            </Box>
 
-                      <Box mt={-0.6}>
-                        <Typography variant="subtitle2" component="span" color="textSecondary">
-                          Number of People Involved:
-                        </Typography>
-                        <Typography
-                          ml={1}
-                          sx={{ fontWeight: 'bold' }}
-                          variant="subtitle2"
-                          component="span"
-                          color="textPrimary">
-                          {project.project.people_involved}
-                        </Typography>
-                      </Box>
+                            <Box mt={-0.6}>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
+                                Number of People Involved:
+                              </Typography>
+                              <Typography
+                                ml={1}
+                                sx={{ fontWeight: 'bold' }}
+                                variant="subtitle2"
+                                component="span"
+                                color="textPrimary">
+                                {project.project.people_involved}
+                              </Typography>
+                            </Box>
 
-                      <Box mt={-0.6}>
-                        <Typography variant="subtitle2" component="span" color="textSecondary">
-                          Project within or overlapping known area of cultural or conservation
-                          priority:
-                        </Typography>
-                        <Typography
-                          ml={1}
-                          sx={{ fontWeight: 'bold' }}
-                          variant="subtitle2"
-                          component="span"
-                          color="textPrimary">
-                          {project.location.is_within_overlapping === 'D'
-                            ? "Don't know"
-                            : project.location.is_within_overlapping === 'Y'
-                              ? 'Yes'
-                              : 'No'}
-                        </Typography>
-                      </Box>
+                            <Box mt={-0.6}>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
+                                Project within or overlapping known area of cultural or conservation
+                                priority:
+                              </Typography>
+                              <Typography
+                                ml={1}
+                                sx={{ fontWeight: 'bold' }}
+                                variant="subtitle2"
+                                component="span"
+                                color="textPrimary">
+                                {project.location.is_within_overlapping === 'D'
+                                  ? "Don't know"
+                                  : project.location.is_within_overlapping === 'Y'
+                                    ? 'Yes'
+                                    : 'No'}
+                              </Typography>
+                            </Box>
 
-                      <Box mt={-0.6}>
-                        <Typography variant="subtitle2" component="span" color="textSecondary">
-                          Project part of a publicly available restoration plan:
-                        </Typography>
-                        <Typography
-                          ml={1}
-                          sx={{ fontWeight: 'bold' }}
-                          variant="subtitle2"
-                          component="span"
-                          color="textPrimary">
-                          {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
-                        </Typography>
-                      </Box>
+                            <Box mt={-0.6}>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
+                                Project part of a publicly available restoration plan:
+                              </Typography>
+                              <Typography
+                                ml={1}
+                                sx={{ fontWeight: 'bold' }}
+                                variant="subtitle2"
+                                component="span"
+                                color="textPrimary">
+                                {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Grid>
+                      </Grid>
 
-                      <Box mb={0}>
-                        <Typography variant="subtitle2">Project Objectives:</Typography>
-                        <Typography variant="body1" color="textSecondary">
-                          {/* {project.project.objectives} */}
+                      <Box mt={1}>
+                        <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+                          Project Objectives:
                         </Typography>
+
+                        {/* TODO [OI] Here we need to iterate thru the objectives array and display accordingly for now just hard coded the objectives*/}
+                        {/* {project.project.objective && project.objective.map((objective, key) => { */}
+
+                        <Box display="flex" flexDirection={'column'} alignItems="left">
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled(
+                              'This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters.'
+                            )}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled(
+                              'This is project objective one and it is a string with 67 characters'
+                            )}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled('Objective three is to preserve habitad')}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled('Objective four for this project')}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled('Objective five for this project')}
+                          />
+                        </Box>
+                        {/* })} */}
                       </Box>
                     </Box>
                   </Paper>
