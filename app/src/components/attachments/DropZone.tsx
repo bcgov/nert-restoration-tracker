@@ -101,6 +101,12 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
     }
   };
 
+  /**
+   * Display instructions for the user to drag and drop files.
+   */
+
+  // const DisplayInstructions = () => {};
+
   return (
     <Box className="dropZoneContainer">
       <Dropzone
@@ -110,6 +116,7 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
         onDrop={props.onFiles}
         accept={props.acceptedFileExtensions}>
         {({ getRootProps, getInputProps }) => (
+          // Add condition that displays the thumbnail if the file is an image
           <Box {...getRootProps()}>
             <input {...getInputProps()} data-testid="drop-zone-input" />
             <Box p={2} display="flex" flexDirection="column" alignItems="center">

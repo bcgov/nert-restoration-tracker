@@ -90,6 +90,11 @@ export interface IFileUploadProps {
    */
   replace?: boolean;
   /**
+   * Hide the file upload list.
+   * Make backwards compatible with the old FileUpload component by defaulting to false
+   */
+  hideFileUploadList?: boolean;
+  /**
    * Callback fired when files are replaced.
    *
    * Note: Does nothing if `replace` is not set to `true`.
@@ -232,9 +237,11 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
       <Box sx={pageStyles.dropZone}>
         <DropZone onFiles={onFiles} {...props.dropZoneProps} />
       </Box>
-      <Box>
-        <List>{fileUploadItems}</List>
-      </Box>
+      {!props.hideFileUploadList && (
+        <Box>
+          <List>{fileUploadItems}</List>
+        </Box>
+      )}
     </Box>
   );
 };

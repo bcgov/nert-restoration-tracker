@@ -9,7 +9,7 @@ import { useFormikContext } from 'formik';
 
 import FileUpload from 'components/attachments/FileUpload';
 // import ImageUpload from 'components/attachments/ImageUpload';
-import React from 'react';
+import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 
 export interface IProjectGeneralInformationForm {
@@ -72,13 +72,40 @@ const uploadImageStyles = {
   }
 };
 
-const uploadImage = (): IUploadHandler => {
+const uploadImage = (setImage): IUploadHandler => {
   return async (file) => {
-    console.log('File uploaded:', file);
-    // TODO: Handle image upload
-    // if (file?.name.includes('json')) {
-    //   handleGeoJSONUpload(file, 'location.geometry', formikProps);
-    // }
+    const processImage = (image: any) => {
+      const img = new Image();
+      img.src = image;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const width = img.width;
+        const height = img.height;
+        const aspectRatio = width / height;
+
+        const res = 256; // The largest we want the thumbnail to be is 256 x 256
+        const newWidth = Math.sqrt(res * res * aspectRatio);
+        const newHeight = Math.sqrt((res * res) / aspectRatio);
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        ctx?.drawImage(img, 0, 0, newWidth, newHeight);
+
+        const dataUrl = canvas.toDataURL();
+
+        setImage(dataUrl);
+
+        // TODO: Pass both the image and thumbnail to the formik form
+      };
+    };
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      processImage(reader.result);
+    };
+    reader.readAsDataURL(file);
     return Promise.resolve();
   };
 };
@@ -92,27 +119,36 @@ const uploadImage = (): IUploadHandler => {
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
+  const [image, setImage] = useState('' as any);
+
   return (
     <Grid container spacing={3}>
       <div style={uploadImageStyles.general}>
         {/* <ImageUpload /> */}
         <div style={uploadImageStyles.description}>Project Image</div>
-        <FileUpload
-          uploadHandler={uploadImage()}
-          // onReplace={handleReplace}
-          // onSuccess={handleUploadSuccess}
-          // fileHandler={handleFile}
-          dropZoneProps={{
-            maxFileSize: 10 * 1024 * 1024, // 10MB
-            maxNumFiles: 1,
-            multiple: false,
-            acceptedFileExtensionsHumanReadable: 'PNG & JPG',
-            acceptedFileExtensions: {
-              'image/png': ['.png'],
-              'image/jpeg': ['.jpg', '.jpeg']
-            }
-          }}
-        />
+        {/* // TODO: Maybe move this to the parent */}
+        {image ? (
+          <img src={image} alt="Project" />
+        ) : (
+          <FileUpload
+            uploadHandler={uploadImage(setImage)}
+            // TODO: This breaks things!!!!
+            // hideFileUploadList={true}
+            // onReplace={handleReplace}
+            // onSuccess={handleUploadSuccess}
+            // fileHandler={handleFile}
+            dropZoneProps={{
+              maxFileSize: 10 * 1024 * 1024, // 10MB
+              maxNumFiles: 1,
+              multiple: false,
+              acceptedFileExtensionsHumanReadable: 'PNG & JPG',
+              acceptedFileExtensions: {
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg']
+              }
+            }}
+          />
+        )}
       </div>
       <Grid item xs={12} md={8}>
         <Grid container spacing={3} direction="column">
