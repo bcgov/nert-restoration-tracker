@@ -11,6 +11,8 @@ import FileUpload from 'components/attachments/FileUpload';
 import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 
+import './styles/projectImage.css';
+
 export interface IProjectGeneralInformationForm {
   project: {
     project_name: string;
@@ -94,8 +96,8 @@ const uploadImageStyles = {
     borderRadius: '50%',
     padding: '5px 7px',
     cursor: 'pointer',
+    opacity: 0.5,
     transition: 'all ease-out 0.2s',
-    opacity: 0.7,
     zIndex: 1
   }
 };
@@ -167,6 +169,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
           <div>
             <button
               style={uploadImageStyles.thumbnailDelete}
+              className="delete-image-button"
               title="Delete Image"
               onClick={() => {
                 deleteImage(image, setImage);
