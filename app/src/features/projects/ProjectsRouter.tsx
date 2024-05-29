@@ -1,7 +1,6 @@
 import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import EditProjectPage from 'features/projects/edit/EditProjectPage';
-import ProjectsLayout from 'features/projects/ProjectsLayout';
 import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
 import ViewProjectPage from 'features/projects/view/ViewProjectPage';
