@@ -8,7 +8,6 @@ import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workfl
 import { useFormikContext } from 'formik';
 
 import FileUpload from 'components/attachments/FileUpload';
-// import ImageUpload from 'components/attachments/ImageUpload';
 import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 
@@ -27,6 +26,7 @@ export interface IProjectGeneralInformationForm {
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
     people_involved: number | null;
+    project_image: string;
   };
 }
 
@@ -44,7 +44,8 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     is_healing_people: false,
     is_land_initiative: false,
     is_cultural_initiative: false,
-    people_involved: null
+    people_involved: null,
+    project_image: ''
   }
 };
 
@@ -107,8 +108,6 @@ const uploadImage = (setImage): IUploadHandler => {
         const dataUrl = canvas.toDataURL();
 
         setImage(dataUrl);
-
-        // TODO: Pass both the image and thumbnail to the formik form
       };
     };
 
@@ -130,26 +129,23 @@ const uploadImage = (setImage): IUploadHandler => {
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
+  // const { values, setFieldValue, setFieldError } = formikProps;
+  // console.log('values', values);
+
   const [image, setImage] = useState('' as any);
 
   return (
     <Grid container spacing={3}>
       <div style={uploadImageStyles.general}>
-        {/* <ImageUpload /> */}
         <div style={uploadImageStyles.description}>Project Image</div>
-        {/* // TODO: Maybe move this to the parent */}
         {image ? (
           <div>
+            // TODO: Add delete button
             <img style={uploadImageStyles.thumbnail} src={image} alt="Project" />
           </div>
         ) : (
           <FileUpload
             uploadHandler={uploadImage(setImage)}
-            // TODO: This breaks things!!!!
-            // hideFileUploadList={true}
-            // onReplace={handleReplace}
-            // onSuccess={handleUploadSuccess}
-            // fileHandler={handleFile}
             dropZoneProps={{
               maxFileSize: 10 * 1024 * 1024, // 10MB
               maxNumFiles: 1,
