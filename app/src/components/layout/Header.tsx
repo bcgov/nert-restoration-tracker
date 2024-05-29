@@ -213,9 +213,7 @@ const Header: React.FC = () => {
                 <img src={headerImageSmall} alt={'Government of British Columbia'} />
               </picture>
               <Box>
-                <Typography variant="h6">
-                  Northeast Restoration Tracker
-                </Typography>
+                <Typography variant="h6">Northeast Restoration Tracker</Typography>
                 <VersionEnvironmentLabel />
               </Box>
             </Link>

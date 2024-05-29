@@ -39,8 +39,8 @@ import ProjectDetailsPage from './ProjectDetailsPage';
 const pageStyles = {
   objectiveChip: {
     backgroundColor: '#E9FBFF',
-    marginBottom: "2px",
-    justifyContent: "left"
+    marginBottom: '2px',
+    justifyContent: 'left'
   },
   objectiveLabel: {
     color: '#545454',
@@ -48,8 +48,8 @@ const pageStyles = {
     fontWeight: 500,
     textTransform: 'none',
     // textWrap: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis"
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   titleContainerActions: {
     '& button + button': {
@@ -149,10 +149,8 @@ const ViewProjectPage: React.FC = () => {
   const objectiveStyled = (objective) => {
     return (
       <Tooltip title={objective} disableHoverListener={objective.length < 130}>
-        <Typography 
-          sx={pageStyles.objectiveLabel}
-          aria-label={`${objective}`}>
-            {objective}
+        <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
+          {objective}
         </Typography>
       </Tooltip>
     );
@@ -212,7 +210,6 @@ const ViewProjectPage: React.FC = () => {
                   )}
                 </Box>
               </Box>
-              
             </Box>
 
             <RoleGuard
@@ -258,18 +255,22 @@ const ViewProjectPage: React.FC = () => {
                     <Box p={1}>
                       <Grid container spacing={0}>
                         <Grid item xs={2}>
-                          <Card sx={{maxWidth: 200, borderRadius: "16px"}}>
+                          <Card sx={{ maxWidth: 200, borderRadius: '16px' }}>
                             <CardMedia
-                                sx={{height: 124, borderRadius: "16px"}}
-                                image="https://nrs.objectstore.gov.bc.ca/nerdel/local/restoration/projects/31/attachments/lizard.png"
-                                title="green iguana"
-                            />  
+                              sx={{ height: 124, borderRadius: '16px' }}
+                              image="https://nrs.objectstore.gov.bc.ca/nerdel/local/restoration/projects/31/attachments/lizard.png"
+                              title="green iguana"
+                            />
                           </Card>
                         </Grid>
                         <Grid item xs={10}>
                           <Box ml={1} mt={1.5}>
                             <Box>
-                              <Typography variant="subtitle2" component="span" color="textSecondary" noWrap>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary"
+                                noWrap>
                                 Project Size (Ha):
                               </Typography>
                               <Typography
@@ -283,7 +284,10 @@ const ViewProjectPage: React.FC = () => {
                             </Box>
 
                             <Box mt={-0.6}>
-                              <Typography variant="subtitle2" component="span" color="textSecondary">
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
                                 Number of Sites:
                               </Typography>
                               <Typography
@@ -297,7 +301,10 @@ const ViewProjectPage: React.FC = () => {
                             </Box>
 
                             <Box mt={-0.6}>
-                              <Typography variant="subtitle2" component="span" color="textSecondary">
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
                                 Number of People Involved:
                               </Typography>
                               <Typography
@@ -311,7 +318,10 @@ const ViewProjectPage: React.FC = () => {
                             </Box>
 
                             <Box mt={-0.6}>
-                              <Typography variant="subtitle2" component="span" color="textSecondary">
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
                                 Project within or overlapping known area of cultural or conservation
                                 priority:
                               </Typography>
@@ -330,7 +340,10 @@ const ViewProjectPage: React.FC = () => {
                             </Box>
 
                             <Box mt={-0.6}>
-                              <Typography variant="subtitle2" component="span" color="textSecondary">
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
                                 Project part of a publicly available restoration plan:
                               </Typography>
                               <Typography
@@ -342,38 +355,51 @@ const ViewProjectPage: React.FC = () => {
                                 {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
                               </Typography>
                             </Box>
-
-
-
-
                           </Box>
                         </Grid>
                       </Grid>
 
-                      
                       <Box mt={1}>
-                        <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">Project Objectives:</Typography>
+                        <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+                          Project Objectives:
+                        </Typography>
 
                         {/* TODO [OI] Here we need to iterate thru the objectives array and display accordingly for now just hard coded the objectives*/}
-                          {/* {project.project.objective && project.objective.map((objective, key) => { */}
-                          
-                          <Box display="flex" flexDirection={'column'} alignItems="left">
-                            <Chip size="small" sx={pageStyles.objectiveChip} label={objectiveStyled("This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters.")}/>
-                            <Chip size="small" sx={pageStyles.objectiveChip} label={objectiveStyled("This is project objective one and it is a string with 67 characters")}/>
-                            <Chip size="small" sx={pageStyles.objectiveChip} label={objectiveStyled("Objective three is to preserve habitad")}/>
-                            <Chip size="small" sx={pageStyles.objectiveChip} label={objectiveStyled("Objective four for this project")}/>
-                            <Chip size="small" sx={pageStyles.objectiveChip} label={objectiveStyled("Objective five for this project")}/>
-                          </Box>
-                           {/* })} */}
+                        {/* {project.project.objective && project.objective.map((objective, key) => { */}
+
+                        <Box display="flex" flexDirection={'column'} alignItems="left">
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled(
+                              'This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters.'
+                            )}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled(
+                              'This is project objective one and it is a string with 67 characters'
+                            )}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled('Objective three is to preserve habitad')}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled('Objective four for this project')}
+                          />
+                          <Chip
+                            size="small"
+                            sx={pageStyles.objectiveChip}
+                            label={objectiveStyled('Objective five for this project')}
+                          />
+                        </Box>
+                        {/* })} */}
                       </Box>
-
-                      
-
-                      
-
-                      
-
-                      
                     </Box>
                   </Paper>
                 </Box>
