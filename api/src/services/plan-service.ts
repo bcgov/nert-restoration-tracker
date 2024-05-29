@@ -1,8 +1,9 @@
 import { IDBConnection } from '../database/db';
-import { ICreatePlan, IGetPlan } from '../interfaces/project.interface';
+import { ICreatePlan, IEditPlan, IGetPlan } from '../interfaces/project.interface';
 import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
 import { PlanRepository } from '../repositories/plan-repository';
 import { ProjectRepository } from '../repositories/project-repository';
+import { AttachmentService } from './attachment-service';
 import { DBService } from './service';
 
 export class PlanService extends DBService {
@@ -71,26 +72,80 @@ export class PlanService extends DBService {
    * @memberof PlanService
    */
   async createPlan(plan: ICreatePlan): Promise<{ project_id: number }> {
-    console.log('plan', plan);
     // insert project
-    const projectResponse = await this.planRepository.insertPlan(plan.project);
-    console.log('projectResponse', projectResponse);
+    const planResponse = await this.planRepository.insertPlan(plan.project);
 
     // insert contacts
     Promise.all(
       plan.contact.contacts.map(async (contact) => {
-        await this.projectRepository.insertProjectContact(contact, projectResponse.project_id);
+        await this.projectRepository.insertProjectContact(contact, planResponse.project_id);
       })
     );
 
+    // insert focus
+    await this.projectRepository.insertProjectFocus(plan.focus, planResponse.project_id);
+
     // insert location
-    await this.projectRepository.insertProjectLocation(plan.location, projectResponse.project_id);
+    await this.projectRepository.insertProjectLocation(plan.location, planResponse.project_id);
 
     // insert region
     if (plan.location.region) {
-      await this.projectRepository.insertProjectRegion(plan.location.region, projectResponse.project_id);
+      await this.projectRepository.insertProjectRegion(plan.location.region, planResponse.project_id);
     }
 
-    return projectResponse;
+    return planResponse;
+  }
+
+  /**
+   * Update a plan.
+   *
+   * @param {number} projectId
+   * @param {IEditPlan} plan
+   * @return {*}  {Promise<void>}
+   * @memberof PlanService
+   */
+  async updatePlan(projectId: number, plan: IEditPlan): Promise<{ project_id: number }> {
+    // update project
+    const planResponse = await this.planRepository.updatePlan(plan.project, projectId);
+
+    // update contacts
+    Promise.all(
+      plan.contact.contacts.map(async (contact) => {
+        await this.projectRepository.insertProjectContact(contact, projectId);
+      })
+    );
+
+    // update location
+    if (plan.location) {
+      await this.projectRepository.updateProjectLocation(projectId, plan.location);
+    }
+
+    //TODO: FINISH UPDATE FUNCTION
+    //update region
+
+    //update focus
+
+    return planResponse;
+  }
+
+  /**
+   * Delete a plan.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<boolean>}
+   * @memberof PlanService
+   */
+  async deletePlan(projectId: number): Promise<boolean> {
+    /**
+     * PART 1
+     * Delete all the plan related and all associated records/resources from S3
+     */
+    await new AttachmentService(this.connection).deleteAllS3Attachments(projectId);
+
+    /**
+     * PART 2
+     * Delete the plan and all associated records/resources from our DB
+     */
+    return this.projectRepository.deleteProject(projectId);
   }
 }

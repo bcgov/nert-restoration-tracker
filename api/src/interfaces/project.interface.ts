@@ -1,8 +1,15 @@
 import { Feature } from 'geojson';
-import { PostContactData, PostLocationData, PostPlanData } from '../models/project-create';
+import { PostContactData, PostFocusData, PostLocationData, PostPlanData } from '../models/project-create';
 import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
 
 export interface ICreatePlan {
+  project: PostPlanData;
+  focus: PostFocusData;
+  contact: PostContactData;
+  location: PostLocationData;
+}
+
+export interface IEditPlan {
   project: PostPlanData;
   contact: PostContactData;
   location: PostLocationData;

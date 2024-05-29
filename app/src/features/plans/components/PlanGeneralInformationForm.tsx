@@ -8,9 +8,9 @@ import React from 'react';
 import yup from 'utils/YupSchema';
 
 export interface IPlanGeneralInformationForm {
-  plan: {
+  project: {
     is_project: boolean;
-    plan_name: string;
+    project_name: string;
     state_code: number;
     brief_desc: string;
     start_date: string;
@@ -23,9 +23,9 @@ export interface IPlanGeneralInformationForm {
 }
 
 export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationForm = {
-  plan: {
+  project: {
     is_project: false,
-    plan_name: '',
+    project_name: '',
     state_code: getStateCodeFromLabel(states.DRAFT),
     brief_desc: '',
     start_date: '',
@@ -33,13 +33,13 @@ export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationFor
     is_healing_land: false,
     is_healing_people: false,
     is_land_initiative: false,
-    is_cultural_initiative: false,
+    is_cultural_initiative: false
   }
 };
 
 export const PlanGeneralInformationFormYupSchema = yup.object().shape({
-  plan: yup.object().shape({
-    plan_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
+  project: yup.object().shape({
+    project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
     start_date: yup.string().nullable().isValidDateString(),
     end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
     brief_desc: yup
@@ -64,7 +64,7 @@ const PlanGeneralInformationForm: React.FC = () => {
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>
             <CustomTextField
-              name="plan.plan_name"
+              name="project.project_name"
               label="Plan Name"
               other={{
                 required: true
@@ -73,7 +73,7 @@ const PlanGeneralInformationForm: React.FC = () => {
           </Grid>
           <Grid item xs={12}>
             <CustomTextField
-              name="plan.no_data"
+              name="project.no_data"
               label="Plan Status"
               other={{
                 InputProps: {
@@ -92,7 +92,7 @@ const PlanGeneralInformationForm: React.FC = () => {
           <Grid item xs={12}>
             <Grid item xs={12}>
               <CustomTextField
-                name="plan.brief_desc"
+                name="project.brief_desc"
                 label="Brief Description"
                 other={{ required: true, multiline: true, maxRows: 5 }}
                 maxLength={500}
@@ -101,8 +101,8 @@ const PlanGeneralInformationForm: React.FC = () => {
           </Grid>
           <PlanStartEndDateFields
             formikProps={formikProps}
-            startName={'plan.start_date'}
-            endName={'plan.end_date'}
+            startName={'project.start_date'}
+            endName={'project.end_date'}
             startRequired={true}
             endRequired={true}
           />

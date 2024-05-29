@@ -201,22 +201,6 @@ export function createDraft(): RequestHandler {
 
       const systemUserId = connection.systemUserId();
 
-      if (!systemUserId) {
-        throw new HTTP400('Failed to identify system user ID');
-      }
-
-      if (!req.body.is_project) {
-        throw new HTTP400('Missing required param is_project');
-      }
-
-      if (!req.body.name) {
-        throw new HTTP400('Missing required param name');
-      }
-
-      if (!req.body.data) {
-        throw new HTTP400('Missing required param data');
-      }
-
       const postDraftSQLStatement = queries.project.draft.postDraftSQL(
         systemUserId,
         req.body.is_project,

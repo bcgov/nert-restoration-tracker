@@ -3,12 +3,13 @@ import { Operation } from 'express-openapi';
 import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
+import { PostEditPlanObject } from '../../../models/project-create';
 import { geoJsonFeature } from '../../../openapi/schemas/geoJson';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
-import { ProjectService } from '../../../services/project-service';
+import { PlanService } from '../../../services/plan-service';
 import { getLogger } from '../../../utils/logger';
 
-const defaultLog = getLogger('paths/project/{projectId}/update');
+const defaultLog = getLogger('paths/plan/{planId}/update');
 
 export const PUT: Operation = [
   authorizeRequestHandler((req) => {
@@ -20,36 +21,36 @@ export const PUT: Operation = [
         },
         {
           validProjectRoles: [PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR],
-          projectId: Number(req.params.projectId),
+          projectId: Number(req.params.planId),
           discriminator: 'ProjectRole'
         }
       ]
     };
   }),
-  updateProject()
+  updatePlan()
 ];
 
 PUT.apiDoc = {
-  description: 'Update a project.',
-  tags: ['project'],
+  description: 'Update a plan.',
+  tags: ['plan'],
   security: [
     {
       Bearer: []
     }
   ],
   requestBody: {
-    description: 'Project put request object.',
+    description: 'Plan put request object.',
     content: {
       'application/json': {
         schema: {
-          title: 'Project Put Object',
-          required: ['project', 'species', 'iucn', 'contact', 'permit', 'funding', 'partnerships', 'location'],
+          title: 'Plan Put Object',
+          required: ['project', 'contact', 'location'],
           type: 'object',
           additionalProperties: false,
           properties: {
             project: {
               type: 'object',
-              required: ['project_name', 'start_date', 'end_date', 'objectives'],
+              required: ['project_name', 'start_date', 'end_date'],
               properties: {
                 project_name: {
                   type: 'string'
@@ -73,50 +74,8 @@ PUT.apiDoc = {
                     }
                   ]
                 },
-                objectives: {
-                  type: 'string'
-                },
                 revision_count: {
                   type: 'number'
-                }
-              }
-            },
-            species: {
-              title: 'Project species',
-              type: 'object',
-              required: ['focal_species'],
-              properties: {
-                focal_species: {
-                  type: 'array',
-                  items: {
-                    type: 'number'
-                  }
-                }
-              }
-            },
-            iucn: {
-              type: 'object',
-              required: ['classificationDetails'],
-              additionalProperties: false,
-              properties: {
-                classificationDetails: {
-                  type: 'array',
-                  items: {
-                    title: 'IUCN classification',
-                    required: ['classification', 'subClassification1', 'subClassification2'],
-                    type: 'object',
-                    properties: {
-                      classification: {
-                        type: 'number'
-                      },
-                      subClassification1: {
-                        type: 'number'
-                      },
-                      subClassification2: {
-                        type: 'number'
-                      }
-                    }
-                  }
                 }
               }
             },
@@ -158,104 +117,10 @@ PUT.apiDoc = {
                 }
               }
             },
-            permit: {
-              type: 'object',
-              required: ['permits'],
-              additionalProperties: false,
-              properties: {
-                permits: {
-                  type: 'array',
-                  items: {
-                    title: 'Project permit',
-                    required: ['permit_number', 'permit_type'],
-                    type: 'object',
-                    properties: {
-                      permit_number: {
-                        type: 'string'
-                      },
-                      permit_type: {
-                        type: 'string'
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            funding: {
-              description: 'The project funding details',
-              type: 'object',
-              required: ['fundingSources'],
-              additionalProperties: false,
-              properties: {
-                fundingSources: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    required: [
-                      'agency_id',
-                      'investment_action_category',
-                      'agency_project_id',
-                      'funding_amount',
-                      'start_date',
-                      'end_date'
-                    ],
-                    properties: {
-                      agency_id: {
-                        type: 'number'
-                      },
-                      investment_action_category: {
-                        type: 'number'
-                      },
-                      funding_amount: {
-                        type: 'number'
-                      },
-                      start_date: {
-                        type: 'string',
-                        oneOf: [{ format: 'date' }, { format: 'date-time' }],
-                        description: 'ISO 8601 date string for the funding start date'
-                      },
-                      end_date: {
-                        type: 'string',
-                        oneOf: [{ format: 'date' }, { format: 'date-time' }],
-                        description: 'ISO 8601 date string for the funding end_date'
-                      },
-                      agency_project_id: {
-                        type: 'string',
-                        nullable: true
-                      },
-                      revision_count: {
-                        type: 'number'
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            partnerships: {
-              description: 'The project partners',
-              type: 'object',
-              required: ['indigenous_partnerships', 'stakeholder_partnerships'],
-              additionalProperties: false,
-              properties: {
-                indigenous_partnerships: {
-                  type: 'array',
-                  items: {
-                    type: 'number'
-                  }
-                },
-                stakeholder_partnerships: {
-                  type: 'array',
-                  items: {
-                    type: 'string'
-                  }
-                }
-              }
-            },
             location: {
               description: 'The project location object',
               type: 'object',
               required: ['geometry', 'region'],
-              additionalProperties: false,
               properties: {
                 range: {
                   type: 'number',
@@ -284,13 +149,13 @@ PUT.apiDoc = {
   },
   responses: {
     200: {
-      description: 'Project with matching projectId.',
+      description: 'Plan with matching projectId.',
       content: {
         'application/json': {
           schema: {
-            title: 'Project Response Object',
+            title: 'Plan Response Object',
             type: 'object',
-            required: ['id'],
+            required: ['project_id'],
             properties: {
               id: {
                 type: 'number'
@@ -318,33 +183,22 @@ PUT.apiDoc = {
   }
 };
 
-export interface IUpdateProject {
-  contact: object | null;
-  species: object | null;
-  authorization: object | null;
-  project: object | null;
-  location: object | null;
-  iucn: object | null;
-  funding: object | null;
-  partnerships: object | null;
-}
-
 /**
  * Update a project.
  *
  * @returns {RequestHandler}
  */
-export function updateProject(): RequestHandler {
+export function updatePlan(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
 
     try {
-      const projectId = Number(req.params?.projectId);
+      const planId = Number(req.params?.planId);
 
-      const entities: IUpdateProject = req.body;
+      const entities = new PostEditPlanObject(req.body);
 
-      if (!projectId) {
-        throw new HTTP400('Missing required path parameter: projectId');
+      if (!planId) {
+        throw new HTTP400('Missing required path parameter: planId');
       }
 
       if (!entities) {
@@ -353,15 +207,15 @@ export function updateProject(): RequestHandler {
 
       await connection.open();
 
-      const projectService = new ProjectService(connection);
+      const planService = new PlanService(connection);
 
-      await projectService.updateProject(projectId, entities);
+      const response = await planService.updatePlan(planId, entities);
 
       await connection.commit();
 
-      return res.status(200).json({ id: projectId });
+      return res.status(200).json(response);
     } catch (error) {
-      defaultLog.error({ label: 'updateProject', message: 'error', error });
+      defaultLog.error({ label: 'updatePlan', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {

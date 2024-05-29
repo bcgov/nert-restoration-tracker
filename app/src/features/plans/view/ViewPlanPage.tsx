@@ -1,4 +1,9 @@
-import { mdiAccountMultipleOutline, mdiArrowLeft, mdiPencilOutline } from '@mdi/js';
+import {
+  mdiAccountMultipleOutline,
+  mdiArrowLeft,
+  mdiPencilOutline,
+  mdiTrashCanOutline
+} from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,7 +20,7 @@ import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
@@ -23,6 +28,10 @@ import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/Project
 import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import MapContainer from 'components/map/MapContainer2';
 import { MapStateContext } from 'contexts/mapContext';
+import { DeletePlanI18N } from 'constants/i18n';
+import { DialogContext } from 'contexts/dialogContext';
+import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import { APIError } from 'hooks/api/useAxios';
 
 const pageStyles = {
   titleContainerActions: {
@@ -49,7 +58,7 @@ const pageStyles = {
  * @return {*}
  */
 const ViewPlanPage: React.FC = () => {
-  // const history = useNavigate();
+  const history = useNavigate();
   const urlParams: Record<string, string | number | undefined> = useParams();
 
   if (!urlParams['id']) {
@@ -61,6 +70,7 @@ const ViewPlanPage: React.FC = () => {
   const planId = Number(urlParams['id']);
 
   const mapContext = useContext(MapStateContext);
+  const dialogContext = useContext(DialogContext);
 
   const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
@@ -71,6 +81,9 @@ const ViewPlanPage: React.FC = () => {
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
 
   const codes = useCodes();
+
+  //TODO: Priority is not in the plan location object
+  const isPriority = false; //planWithDetails.location.priority === 'true';
 
   const getPlan = useCallback(async () => {
     const planWithDetailsResponse = await restorationTrackerApi.plan.getPlanById(planId);
@@ -115,71 +128,68 @@ const ViewPlanPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
-  // const defaultYesNoDialogProps = {
-  //   dialogTitle: DeletePlanI18N.deleteTitle,
-  //   dialogText: DeletePlanI18N.deleteText,
+  const defaultYesNoDialogProps = {
+    dialogTitle: DeletePlanI18N.deleteTitle,
+    dialogText: DeletePlanI18N.deleteText,
 
-  //   open: false,
-  //   onClose: () => dialogContext.setYesNoDialog({ open: false }),
-  //   onNo: () => dialogContext.setYesNoDialog({ open: false }),
-  //   onYes: () => dialogContext.setYesNoDialog({ open: false })
-  // };
+    open: false,
+    onClose: () => dialogContext.setYesNoDialog({ open: false }),
+    onNo: () => dialogContext.setYesNoDialog({ open: false }),
+    onYes: () => dialogContext.setYesNoDialog({ open: false })
+  };
 
-  //TODO: Priority is not in the plan location object
-  const isPriority = false; //planWithDetails.location.priority === 'true';
+  const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
+    dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
+  };
 
-  // const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-  //   dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
-  // };
+  const deleteErrorDialogProps = {
+    dialogTitle: DeletePlanI18N.deleteErrorTitle,
+    dialogText: DeletePlanI18N.deleteErrorText,
+    open: false,
+    onClose: () => {
+      dialogContext.setErrorDialog({ open: false });
+    },
+    onOk: () => {
+      dialogContext.setErrorDialog({ open: false });
+    }
+  };
 
-  // const deleteErrorDialogProps = {
-  //   dialogTitle: DeletePlanI18N.deleteErrorTitle,
-  //   dialogText: DeletePlanI18N.deleteErrorText,
-  //   open: false,
-  //   onClose: () => {
-  //     dialogContext.setErrorDialog({ open: false });
-  //   },
-  //   onOk: () => {
-  //     dialogContext.setErrorDialog({ open: false });
-  //   }
-  // };
+  const showDeletePlanDialog = () => {
+    dialogContext.setYesNoDialog({
+      ...defaultYesNoDialogProps,
+      open: true,
+      yesButtonLabel: 'Delete',
+      yesButtonProps: { color: 'secondary' },
+      noButtonLabel: 'Cancel',
+      onYes: () => {
+        deletePlan();
+        dialogContext.setYesNoDialog({ open: false });
+      }
+    });
+  };
 
-  // const showDeletePlanDialog = () => {
-  //   dialogContext.setYesNoDialog({
-  //     ...defaultYesNoDialogProps,
-  //     open: true,
-  //     yesButtonLabel: 'Delete',
-  //     yesButtonProps: { color: 'secondary' },
-  //     noButtonLabel: 'Cancel',
-  //     onYes: () => {
-  //       deletePlan();
-  //       dialogContext.setYesNoDialog({ open: false });
-  //     }
-  //   });
-  // };
+  const deletePlan = async () => {
+    if (!planWithDetails) {
+      return;
+    }
 
-  // const deletePlan = async () => {
-  //   if (!planWithDetails) {
-  //     return;
-  //   }
+    try {
+      const response = await restorationTrackerApi.plan.deletePlan(
+        planWithDetails.project.project_id
+      );
 
-  //   try {
-  //     const response = await restorationTrackerApi.plan.deletePlan(
-  //       planWithDetails.plan.plan_id
-  //     );
+      if (!response) {
+        showDeleteErrorDialog({ open: true });
+        return;
+      }
 
-  //     if (!response) {
-  //       showDeleteErrorDialog({ open: true });
-  //       return;
-  //     }
-
-  //     history('/admin/user/plans');
-  //   } catch (error) {
-  //     const apiError = error as APIError;
-  //     showDeleteErrorDialog({ dialogText: apiError.message, open: true });
-  //     return error;
-  //   }
-  // };
+      history('/admin/user/projects');
+    } catch (error) {
+      const apiError = error as APIError;
+      showDeleteErrorDialog({ dialogText: apiError.message, open: true });
+      return error;
+    }
+  };
 
   const closeMapDialog = () => {
     setOpenFullScreen(false);
@@ -225,8 +235,7 @@ const ViewPlanPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                // onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}
-              >
+                onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}>
                 Edit Plan
               </Button>
               <RoleGuard
@@ -236,9 +245,9 @@ const ViewPlanPage: React.FC = () => {
                   aria-label="delete plan"
                   variant="outlined"
                   color="primary"
-                  // onClick={showDeletePlanDialog}
-                >
-                  Print
+                  startIcon={<Icon path={mdiTrashCanOutline} size={1} />}
+                  onClick={showDeletePlanDialog}>
+                  Delete
                 </Button>
               </RoleGuard>
             </Box>

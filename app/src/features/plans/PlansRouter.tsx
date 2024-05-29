@@ -7,6 +7,7 @@ import { RedirectURL } from 'utils/AppRoutesUtils';
 import ProjectsPlansListPage from '../projects/ProjectsPlansListPage';
 import CreatePlanPage from './create/CreatePlanPage';
 import ViewPlanPage from './view/ViewPlanPage';
+import EditPlanPage from './edit/EditProjectPage';
 
 /**
  * Router for all `/admin/plans/*` pages.
@@ -34,19 +35,19 @@ const PlansRouter: React.FC = () => {
           }
         />
 
-        {/* <Route
+        <Route
           path=":id/edit"
           element={
             <RoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
               fallback={(projectId) => (
-                <Route path="" element={<Navigate replace to={`/projects/${projectId}`} />} />
+                <Route path="" element={<Navigate replace to={`/plans/${projectId}`} />} />
               )}>
-              <EditProjectPage />
+              <EditPlanPage />
             </RoleGuard>
           }
-        /> */}
+        />
         <Route
           path=":id/details"
           element={

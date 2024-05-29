@@ -2,6 +2,8 @@ import { AxiosInstance } from 'axios';
 import {
   ICreatePlanRequest,
   ICreatePlanResponse,
+  IEditPlanRequest,
+  IEditPlanResponse,
   IGetPlanForViewResponse,
   IGetUserPlansListResponse,
   IPlanAdvancedFilterRequest
@@ -89,10 +91,13 @@ const usePlanApi = (axios: AxiosInstance) => {
    * Update an existing Plan.
    *
    * @param {number} planId
-   * @param {IGetPlanForViewResponse} PlanData
+   * @param {IEditPlanRequest} PlanData
    * @return {*}  {Promise<any>}
    */
-  const updatePlan = async (planId: number, PlanData: IGetPlanForViewResponse): Promise<any> => {
+  const updatePlan = async (
+    planId: number,
+    PlanData: IEditPlanRequest
+  ): Promise<IEditPlanResponse> => {
     const { data } = await axios.put(`api/plan/${planId}/update`, PlanData);
 
     return data;

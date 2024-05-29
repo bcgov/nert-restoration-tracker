@@ -87,4 +87,42 @@ export class PlanRepository extends BaseRepository {
       throw error;
     }
   }
+
+  /**
+   * Update a plan.
+   *
+   * @param {PostPlanData} project
+   * @param {number} projectId
+   * @return {*}  {Promise<{ project_id: number }>}
+   * @memberof PlanRepository
+   */
+  async updatePlan(project: PostPlanData, projectId: number): Promise<{ project_id: number }> {
+    defaultLog.debug({ label: 'updatePlan', message: 'params', project });
+
+    try {
+      const sqlStatement = SQL`
+        UPDATE project 
+        SET 
+          name = ${project.name},
+          brief_desc = ${project.brief_desc},
+          state_code = ${project.state_code},
+          start_date = ${project.start_date},
+          end_date = ${project.end_date},
+          is_healing_land = ${project.is_healing_land},
+          is_healing_people = ${project.is_healing_people},
+          is_land_initiative = ${project.is_land_initiative},
+          is_cultural_initiative = ${project.is_cultural_initiative}
+        WHERE project_id = ${projectId}
+        RETURNING
+          project_id;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'updatePlan', message: 'error', error });
+      throw error;
+    }
+  }
 }

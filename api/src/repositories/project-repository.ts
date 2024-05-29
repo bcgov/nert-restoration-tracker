@@ -1,6 +1,6 @@
 import SQL from 'sql-template-strings';
 import { ILocation, IProject } from '../interfaces/project.interface';
-import { IPostContact } from '../models/project-create';
+import { IPostContact, PostFocusData } from '../models/project-create';
 import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
 import { queries } from '../queries/queries';
 import { getLogger } from '../utils/logger';
@@ -266,6 +266,60 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Insert a project focus.
+   *
+   * @param {PostFocusData} focusData
+   * @param {number} projectId
+   * @return {*}  {Promise<{ project_focus_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async insertProjectFocus(focusData: PostFocusData, projectId: number): Promise<{ project_id: number }> {
+    defaultLog.debug({ label: 'insertProjectFocus', message: 'params', focusData });
+
+    try {
+      let is_healing_land = false;
+      let is_healing_people = false;
+      let is_land_initiative = false;
+      let is_cultural_initiative = false;
+      focusData.focuses?.map((focus: number) => {
+        switch (focus) {
+          case 1:
+            is_healing_land = true;
+            break;
+          case 2:
+            is_healing_people = true;
+            break;
+          case 3:
+            is_land_initiative = true;
+            break;
+          case 4:
+            is_cultural_initiative = true;
+            break;
+        }
+      }) || [];
+
+      const sqlStatement = SQL`
+        UPDATE project 
+        SET is_healing_land = ${is_healing_land},
+            is_healing_people = ${is_healing_people},
+            is_land_initiative = ${is_land_initiative},
+            is_cultural_initiative = ${is_cultural_initiative},
+            people_involved = ${focusData.people_involved}
+        WHERE project_id = ${projectId}   
+        RETURNING
+          project_id;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'insertProjectFocus', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Insert a project region.
    *
    * @param {number} regionNumber
@@ -375,6 +429,125 @@ export class ProjectRepository extends BaseRepository {
       return result;
     } catch (error) {
       defaultLog.debug({ label: 'insertProjectLocation', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Update a project Contact.
+   *
+   * @param {IPostContact} contact
+   * @param {number} projectId
+   * @return {*}  {Promise<{ project_contact_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async updateProjectContact(contact: IPostContact, projectId: number): Promise<{ project_contact_id: number }> {
+    defaultLog.debug({ label: 'updateProjectContact', message: 'params', contact });
+
+    try {
+      const sqlStatement = SQL`
+        UPDATE project_contact
+        SET
+          first_name = ${contact.first_name},
+          last_name = ${contact.last_name},
+          agency = ${contact.agency},
+          email_address = ${contact.email_address},
+          is_public = ${contact.is_public ? 'Y' : 'N'},
+          is_primary = ${contact.is_primary ? 'Y' : 'N'}
+        WHERE
+          project_id = ${projectId}
+        AND
+          contact_type_id = (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator')
+        RETURNING
+          project_contact_id;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'updateProjectContact', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Update a project Location.
+   *
+   * @param {number} projectId
+   * @param {ILocation} location
+   * @return {*}  {Promise<{ project_spatial_component_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async updateProjectLocation(
+    projectId: number,
+    location: ILocation
+  ): Promise<{ project_spatial_component_id: number }> {
+    try {
+      const componentName = 'Boundary';
+      const componentTypeName = 'Boundary';
+
+      const sqlStatement = SQL`
+        UPDATE project_spatial_component
+        SET
+          name = ${componentName},
+          is_within_overlapping = ${
+            location.is_within_overlapping === 'false' ? 'N' : location.is_within_overlapping === 'true' ? 'Y' : 'D'
+          },
+          number_sites = ${location.number_sites},
+          size_ha = ${location.size_ha},
+          geojson = ${JSON.stringify(location.geometry)}
+      `;
+
+      const geometryCollectionSQL = queries.spatial.generateGeometryCollectionSQL(location.geometry);
+
+      sqlStatement.append(SQL`
+        ,geography = public.geography(
+          public.ST_Force2D(
+            public.ST_SetSRID(
+      `);
+
+      sqlStatement.append(geometryCollectionSQL);
+
+      sqlStatement.append(SQL`
+        , 4326)))
+        WHERE
+          project_id = ${projectId}
+        AND
+          project_spatial_component_type_id = (SELECT project_spatial_component_type_id from project_spatial_component_type WHERE name = ${componentTypeName})
+        RETURNING
+          project_spatial_component_id;
+      `);
+
+      const response = await this.connection.sql(sqlStatement);
+
+      const result = (response && response.rows && response.rows[0]) || null;
+
+      return result;
+    } catch (error) {
+      defaultLog.debug({ label: 'updateProjectLocation', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a project.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<boolean>}
+   * @memberof ProjectRepository
+   */
+  async deleteProject(projectId: number): Promise<boolean> {
+    try {
+      const sqlStatement = SQL`call api_delete_project(${projectId})`;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      const result = (response && response.rows && response.rows[0]) || null;
+
+      return result;
+    } catch (error) {
+      defaultLog.debug({ label: 'insertProjectContact', message: 'error', error });
       throw error;
     }
   }

@@ -6,6 +6,7 @@ import {
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseLocation
 } from './useProjectApi.interface';
+import { IPlanFocusForm } from 'features/plans/components/PlanFocusForm';
 
 // [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
@@ -20,10 +21,20 @@ export interface IPlanAdvancedFilterRequest {
 
 export interface ICreatePlanRequest
   extends IPlanGeneralInformationForm,
+    IPlanFocusForm,
+    IPlanContactForm,
+    IPlanLocationForm {}
+
+export interface IEditPlanRequest
+  extends IPlanGeneralInformationForm,
     IPlanContactForm,
     IPlanLocationForm {}
 
 export interface ICreatePlanResponse {
+  project_id: number;
+}
+
+export interface IEditPlanResponse {
   project_id: number;
 }
 export interface IGetUserPlansListResponse {

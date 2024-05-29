@@ -38,15 +38,31 @@ export class PostProjectObject {
 }
 
 export class PostPlanObject {
-  contact: PostContactData;
   project: PostPlanData;
+  focus: PostFocusData;
+  contact: PostContactData;
   location: PostLocationData;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
 
+    this.project = (obj?.project && new PostPlanData(obj.project)) || null;
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
     this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
-    this.project = (obj?.plan && new PostPlanData(obj.plan)) || null;
+    this.location = (obj?.location && new PostLocationData(obj.location)) || null;
+  }
+}
+
+export class PostEditPlanObject {
+  project: PostPlanData;
+  contact: PostContactData;
+  location: PostLocationData;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
+
+    this.project = (obj?.project && new PostPlanData(obj.project)) || null;
+    this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
   }
 }
@@ -179,7 +195,7 @@ export class PostPlanData {
     defaultLog.debug({ label: 'PostPlanData', message: 'params', obj });
 
     this.is_project = Boolean(obj?.is_project);
-    this.name = obj?.plan_name || null;
+    this.name = obj?.project_name || null;
     this.state_code = obj?.state_code || 0;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;

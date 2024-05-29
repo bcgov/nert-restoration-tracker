@@ -16,14 +16,16 @@ import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { ICreatePlanRequest, IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import { IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactRouterPrompt from 'react-router-prompt';
-import { PlanFormInitialValues, PlanFormYupSchema } from '../create/CreatePlanPage';
-import PlanGeneralInformationForm from '../components/PlanGeneralInformationForm';
-import PlanContactForm from '../components/PlanContactForm';
-import PlanLocationForm from '../components/PlanLocationForm';
+import { PlanFormInitialValues } from '../create/CreatePlanPage';
+import PlanGeneralInformationForm, {
+  PlanGeneralInformationFormYupSchema
+} from '../components/PlanGeneralInformationForm';
+import PlanContactForm, { PlanContactYupSchema } from '../components/PlanContactForm';
+import PlanLocationForm, { PlanLocationFormYupSchema } from '../components/PlanLocationForm';
+import yup from 'utils/YupSchema';
 
 const pageStyles = {
   actionButton: {
@@ -47,6 +49,12 @@ const pageStyles = {
   }
 };
 
+export const PlanEditFormYupSchema = yup
+  .object()
+  .concat(PlanGeneralInformationFormYupSchema)
+  .concat(PlanContactYupSchema)
+  .concat(PlanLocationFormYupSchema);
+
 /**
  * Page for editing a plan.
  *
@@ -66,16 +74,12 @@ const EditPlanPage: React.FC = () => {
 
   // Reference to pass to the formik component in order to access its state at any time
   // Used by the draft logic to fetch the values of a step form that has not been validated/completed
-  const formikRef = useRef<FormikProps<ICreatePlanRequest>>(null);
-
-  // Ability to bypass showing the 'Are you sure you want to cancel' dialog
-  const [enableCancelCheck, setEnableCancelCheck] = useState(true);
+  const formikRef = useRef<FormikProps<IEditPlanRequest>>(null);
 
   const dialogContext = useContext(DialogContext);
 
-  const [initialPlanFormData, setInitialPlanFormData] = useState<IGetPlanForViewResponse>(
-    PlanFormInitialValues as unknown as IGetPlanForViewResponse
-  );
+  const [initialPlanFormData, setInitialPlanFormData] =
+    useState<IEditPlanRequest>(PlanFormInitialValues);
 
   useEffect(() => {
     const getEditPlanFields = async () => {
@@ -100,20 +104,18 @@ const EditPlanPage: React.FC = () => {
   /**
    * Handle project edits.
    */
-  const handlePlanEdits = async (values: IGetPlanForViewResponse) => {
+  const handlePlanEdits = async (values: IEditPlanRequest) => {
     try {
       const response = await restorationTrackerApi.plan.updatePlan(projectId, values);
 
-      if (!response?.id) {
+      if (!response?.project_id) {
         showEditErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a project ID.'
         });
         return;
       }
 
-      setEnableCancelCheck(false);
-
-      history(`/admin/projects/${response.id}`);
+      history(`/admin/plans/${response.project_id}`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: 'Error Editing Project',
@@ -125,7 +127,7 @@ const EditPlanPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history(`/admin/projects/${projectId}`);
+    history(`/admin/plans/${projectId}`);
   };
 
   const defaultErrorDialogProps = {
@@ -167,38 +169,8 @@ const EditPlanPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  /**
-   * Intercepts all navigation attempts (when used with a `Prompt`).
-   *
-   * Returning true allows the navigation, returning false prevents it.
-   *
-   * @param {History.Location} location
-   * @return {*}
-   */
-  const handleLocationChange = () => {
-    if (!dialogContext.yesNoDialogProps.open) {
-      // If the cancel dialog is not open: open it
-      dialogContext.setYesNoDialog({
-        ...defaultCancelDialogProps,
-        onYes: () => {
-          dialogContext.setYesNoDialog({ open: false });
-          history(location.pathname);
-        },
-        open: true
-      });
-      return false;
-    }
-
-    // If the cancel dialog is already open and another location change action is triggered: allow it
-    return true;
-  };
-
   return (
     <>
-      <ReactRouterPrompt when={enableCancelCheck}>
-        {({ isActive }) => isActive && handleLocationChange()}
-      </ReactRouterPrompt>
-
       <Container maxWidth="xl">
         <Box mb={3}>
           <Breadcrumbs>
@@ -223,11 +195,11 @@ const EditPlanPage: React.FC = () => {
         </Box>
 
         <Box component={Paper} p={4}>
-          <Formik<ICreatePlanRequest>
+          <Formik<IEditPlanRequest>
             innerRef={formikRef}
             enableReinitialize={true}
             initialValues={initialPlanFormData}
-            validationSchema={PlanFormYupSchema}
+            validationSchema={PlanEditFormYupSchema}
             validateOnBlur={true}
             validateOnChange={false}
             onSubmit={handlePlanEdits}>
@@ -240,6 +212,11 @@ const EditPlanPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <PlanGeneralInformationForm />
+                    {/*
+                      TODO: fix focus to be contained in general information form
+                     <Box mt={2}>
+                        <PlanFocusForm />
+                      </Box> */}
                   </Grid>
                 </Grid>
               </Box>
@@ -286,6 +263,7 @@ const EditPlanPage: React.FC = () => {
                   color="primary"
                   size="large"
                   type="submit"
+                  onClick={() => formikRef.current?.submitForm()}
                   data-testid="project-save-button">
                   Save Project
                 </Button>

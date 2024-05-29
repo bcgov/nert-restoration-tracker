@@ -163,6 +163,14 @@ export const DeleteProjectI18N = {
     'An error has occurred while attempting to delete this project, its attachments and associated surveys/observations, please try again. If the error persists, please contact your system administrator.'
 };
 
+export const DeletePlanI18N = {
+  deleteTitle: 'Delete Plan',
+  deleteText: 'Are you sure you want to delete this plan?',
+  deleteErrorTitle: 'Error Deleting Plan',
+  deleteErrorText:
+    'An error has occurred while attempting to delete this plan, please try again. If the error persists, please contact your system administrator.'
+};
+
 export const AddSystemUserI18N = {
   addUserErrorTitle: 'Error Adding System User',
   addUserErrorText:

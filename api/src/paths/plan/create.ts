@@ -21,11 +21,11 @@ export const POST: Operation = [
       ]
     };
   }),
-  createProject()
+  createPlan()
 ];
 
 POST.apiDoc = {
-  description: 'Create a new Project.',
+  description: 'Create a new Plan.',
   tags: ['plan'],
   security: [
     {
@@ -33,20 +33,20 @@ POST.apiDoc = {
     }
   ],
   requestBody: {
-    description: 'Project post request object.',
+    description: 'Plan post request object.',
     content: {
       'application/json': {
         schema: {
-          title: 'Project post request object',
+          title: 'Plan post request object',
           type: 'object',
-          required: ['plan', 'contact', 'location'],
+          required: ['project', 'focus', 'contact', 'location'],
           additionalProperties: false,
           properties: {
-            plan: {
+            project: {
               title: 'Project general information',
               type: 'object',
               properties: {
-                plan_name: {
+                project_name: {
                   type: 'string'
                 },
                 is_project: {
@@ -95,6 +95,24 @@ POST.apiDoc = {
                 is_cultural_initiative: {
                   type: 'boolean',
                   description: 'Plan focused on cultural or community investment initiative'
+                }
+              }
+            },
+            focus: {
+              title: 'Plan focuses',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                focuses: {
+                  type: 'array',
+                  items: {
+                    type: 'number'
+                  }
+                },
+                people_involved: {
+                  type: 'number',
+                  description: 'Number of people involved in the project',
+                  nullable: true
                 }
               }
             },
@@ -213,11 +231,11 @@ POST.apiDoc = {
 };
 
 /**
- * Creates a new project record.
+ * Creates a new plan record.
  *
  * @returns {RequestHandler}
  */
-export function createProject(): RequestHandler {
+export function createPlan(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedPlanPostData = new PostPlanObject(req.body);
@@ -233,7 +251,7 @@ export function createProject(): RequestHandler {
 
       return res.status(200).json(projectId);
     } catch (error) {
-      defaultLog.error({ label: 'createProject', message: 'error', error });
+      defaultLog.error({ label: 'createPlan', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {

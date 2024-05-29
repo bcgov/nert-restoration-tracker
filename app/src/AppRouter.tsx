@@ -1,7 +1,6 @@
 import { SystemRoleGuard } from 'components/security/Guards';
 import { AuthenticatedRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { MapStateContextProvider } from 'contexts/mapContext';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
 import PlansRouter from 'features/plans/PlansRouter';
 import ProjectsRouter from 'features/projects/ProjectsRouter';
@@ -78,9 +77,7 @@ export const AppRouter = () => {
             path="/admin/plans/*"
             element={
               <AuthenticatedRouteGuard>
-                <MapStateContextProvider>
-                  <PlansRouter />
-                </MapStateContextProvider>
+                <PlansRouter />
               </AuthenticatedRouteGuard>
             }
           />

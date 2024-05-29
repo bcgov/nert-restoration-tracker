@@ -49,6 +49,10 @@ import PlanDraftForm, {
   PlanDraftFormYupSchema
 } from '../components/PlanDraftForm';
 import { Container } from '@mui/system';
+import PlanFocusForm, {
+  PlanFocusFormInitialValues,
+  PlanFocusFormYupSchema
+} from '../components/PlanFocusForm';
 
 const pageStyles = {
   formButtons: {
@@ -68,6 +72,7 @@ const pageStyles = {
 
 export const PlanFormInitialValues = {
   ...PlanGeneralInformationFormInitialValues,
+  ...PlanFocusFormInitialValues,
   ...PlanContactInitialValues,
   ...PlanLocationFormInitialValues
 };
@@ -75,6 +80,7 @@ export const PlanFormInitialValues = {
 export const PlanFormYupSchema = yup
   .object()
   .concat(PlanGeneralInformationFormYupSchema)
+  .concat(PlanFocusFormYupSchema)
   .concat(PlanContactYupSchema)
   .concat(PlanLocationFormYupSchema);
 
@@ -140,12 +146,13 @@ const CreatePlanPage: React.FC = () => {
   useEffect(() => {
     const getDraftPlanFields = async () => {
       const response = await restorationTrackerApi.draft.getDraft(queryParams.draftId);
+      console.log('response', response);
       setHasLoadedDraftData(true);
 
       if (!response || !response.data) {
         return;
       }
-      setInitialPlanFormData(PlanFormInitialValues); //set back to draft values
+      setInitialPlanFormData(response.data);
     };
 
     if (hasLoadedDraftData) {
@@ -157,7 +164,7 @@ const CreatePlanPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history('/admin/user/Plans');
+    history('/admin/user/projects');
   };
 
   const handleCancelConfirmation = () => {
@@ -171,7 +178,7 @@ const CreatePlanPage: React.FC = () => {
       let response;
       if (draftId) {
         if (formikRef.current) {
-          formikRef.current.values.plan.state_code = getStateCodeFromLabel(
+          formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.saving)
           );
         }
@@ -182,7 +189,7 @@ const CreatePlanPage: React.FC = () => {
         );
       } else {
         if (formikRef.current) {
-          formikRef.current.values.plan.state_code = getStateCodeFromLabel(
+          formikRef.current.values.project.state_code = getStateCodeFromLabel(
             StateMachine(true, states.DRAFT, events.creating)
           );
         }
@@ -205,7 +212,7 @@ const CreatePlanPage: React.FC = () => {
       setDraft({ id: response.id, date: response.date });
       // setEnableCancelCheck(false);
 
-      history('/admin/user/Plans');
+      history('/admin/user/projects');
     } catch (error) {
       setOpenDraftDialog(false);
 
@@ -225,13 +232,11 @@ const CreatePlanPage: React.FC = () => {
       planPostObject.location.size_ha = planPostObject.location.size_ha
         ? planPostObject.location.size_ha
         : 0;
-      planPostObject.plan.state_code = getStateCodeFromLabel(
+      planPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
 
-      console.log('planPostObject', planPostObject);
       const response = await restorationTrackerApi.plan.createPlan(planPostObject);
-      console.log('response', response);
       if (!response?.project_id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a Plan ID.'
@@ -333,7 +338,7 @@ const CreatePlanPage: React.FC = () => {
           element: <PlanDraftForm />,
           initialValues: {
             draft_name: formikRef.current
-              ? formikRef.current.values.plan.plan_name
+              ? formikRef.current.values.project.project_name
               : PlanDraftFormInitialValues.draft_name
           },
           validationSchema: PlanDraftFormYupSchema
@@ -398,6 +403,9 @@ const CreatePlanPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <PlanGeneralInformationForm />
+                      <Box mt={2}>
+                        <PlanFocusForm />
+                      </Box>
                     </Grid>
                   </Grid>
                 </Box>

@@ -4,6 +4,8 @@ import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { AppRouter } from 'AppRouter';
 import { AuthStateContextProvider } from 'contexts/authStateContext';
 import { ConfigContext, ConfigContextProvider } from 'contexts/configContext';
+import { DialogContextProvider } from 'contexts/dialogContext';
+import { MapStateContextProvider } from 'contexts/mapContext';
 import Keycloak from 'keycloak-js';
 import React from 'react';
 import { RouterProvider } from 'react-router-dom';
@@ -29,7 +31,11 @@ const App: React.FC = () => {
                 initOptions={{ pkceMethod: 'S256' }}
                 LoadingComponent={<CircularProgress className="pageProgress" size={40} />}>
                 <AuthStateContextProvider>
-                  <RouterProvider router={router} />
+                  <MapStateContextProvider>
+                    <DialogContextProvider>
+                      <RouterProvider router={router} />
+                    </DialogContextProvider>
+                  </MapStateContextProvider>
                 </AuthStateContextProvider>
               </ReactKeycloakProvider>
             );
