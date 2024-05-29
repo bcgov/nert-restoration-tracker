@@ -63,9 +63,12 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 
 // Fixing a lame typescript error
 const fitObject = 'cover' as const;
+const positionAbsolute = 'absolute' as const;
+const positionRelative = 'relative' as const;
 
 const uploadImageStyles = {
   general: {
+    position: positionRelative,
     marginTop: '23px',
     maxWidth: '230px'
   },
@@ -81,6 +84,19 @@ const uploadImageStyles = {
     height: '200px',
     width: '100%',
     objectFit: fitObject
+  },
+  thumbnailDelete: {
+    position: positionAbsolute,
+    top: '28px',
+    right: '8px',
+    background: 'rgba(0, 0, 0, 0.5)',
+    color: 'white',
+    borderRadius: '50%',
+    padding: '5px 7px',
+    cursor: 'pointer',
+    transition: 'all ease-out 0.2s',
+    opacity: 0.7,
+    zIndex: 1
   }
 };
 
@@ -121,6 +137,15 @@ const uploadImage = (setImage): IUploadHandler => {
 };
 
 /**
+ * Delete the image if one exists
+ * @param image Image to delete
+ * @param setImage State function to set the image
+ */
+const deleteImage = (image, setImage) => {
+  if (image) setImage('');
+};
+
+/**
  * Create project - General information section
  *
  * @return {*}
@@ -140,7 +165,14 @@ const ProjectGeneralInformationForm: React.FC = () => {
         <div style={uploadImageStyles.description}>Project Image</div>
         {image ? (
           <div>
-            // TODO: Add delete button
+            <button
+              style={uploadImageStyles.thumbnailDelete}
+              title="Delete Image"
+              onClick={() => {
+                deleteImage(image, setImage);
+              }}>
+              X
+            </button>
             <img style={uploadImageStyles.thumbnail} src={image} alt="Project" />
           </div>
         ) : (
