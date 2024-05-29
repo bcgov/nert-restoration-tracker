@@ -1461,44 +1461,44 @@ describe.skip('ProjectService', () => {
     });
   });
 
-  describe('insertRegion', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
+  // describe('insertRegion', () => {
+  //   afterEach(() => {
+  //     sinon.restore();
+  //   });
 
-    it('should throw a 400 response when response has no id', async () => {
-      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
+  //   it('should throw a 400 response when response has no id', async () => {
+  //     const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
+  //     const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
-      const regionNumber = 1;
-      const projectId = 1;
+  //     const regionNumber = 1;
+  //     const projectId = 1;
 
-      const projectService = new ProjectService(mockDBConnection);
+  //     const projectService = new ProjectService(mockDBConnection);
 
-      try {
-        await projectService.insertRegion(regionNumber, projectId);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Failed to insert project region data');
-        expect((actualError as HTTPError).status).to.equal(400);
-      }
-    });
+  //     try {
+  //       await projectService.insertRegion(regionNumber, projectId);
+  //       expect.fail();
+  //     } catch (actualError) {
+  //       expect((actualError as HTTPError).message).to.equal('Failed to insert project region data');
+  //       expect((actualError as HTTPError).status).to.equal(400);
+  //     }
+  //   });
 
-    it('returns id on success', async () => {
-      const mockRowObj = [{ id: 1 }];
-      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
+  //   it('returns id on success', async () => {
+  //     const mockRowObj = [{ id: 1 }];
+  //     const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
+  //     const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
 
-      const regionNumber = 1;
-      const projectId = 1;
+  //     const regionNumber = 1;
+  //     const projectId = 1;
 
-      const projectService = new ProjectService(mockDBConnection);
+  //     const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.insertRegion(regionNumber, projectId);
+  //     const result = await projectService.insertRegion(regionNumber, projectId);
 
-      expect(result).equals(mockRowObj[0].id);
-    });
-  });
+  //     expect(result).equals(mockRowObj[0].id);
+  //   });
+  // });
 
   describe('insertRange', () => {
     afterEach(() => {
@@ -2282,34 +2282,34 @@ describe.skip('ProjectService', () => {
       }
     });
 
-    it('should insert the new region information', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve([]));
+    // it('should insert the new region information', async () => {
+    //   const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve([]));
 
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
+    //   const mockDBConnection = getMockDBConnection({
+    //     query: mockQuery
+    //   });
 
-      const projectId = 1;
-      const entities: IUpdateProject = {
-        ...entitiesInitValue,
-        location: {
-          geometry: [{} as unknown as Feature],
-          priority: 'true',
-          region: 3640,
-          range: 1234
-        }
-      };
+    //   const projectId = 1;
+    //   const entities: IUpdateProject = {
+    //     ...entitiesInitValue,
+    //     location: {
+    //       geometry: [{} as unknown as Feature],
+    //       priority: 'true',
+    //       region: 3640,
+    //       range: 1234
+    //     }
+    //   };
 
-      sinon.stub(queries.project, 'deleteProjectRegionSQL').returns(SQL`valid sql`);
+    //   sinon.stub(queries.project, 'deleteProjectRegionSQL').returns(SQL`valid sql`);
 
-      const insertRegionStub = sinon.stub(ProjectService.prototype, 'insertRegion').resolves(1);
+    //   const insertRegionStub = sinon.stub(ProjectService.prototype, 'insertRegion').resolves(1);
 
-      const projectService = new ProjectService(mockDBConnection);
+    //   const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateProjectRegionData(projectId, entities);
+    //   await projectService.updateProjectRegionData(projectId, entities);
 
-      expect(insertRegionStub).to.have.been.calledOnce;
-    });
+    //   expect(insertRegionStub).to.have.been.calledOnce;
+    // });
   });
 
   describe('updateProjectSpeciesData', () => {

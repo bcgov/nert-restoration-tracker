@@ -17,6 +17,9 @@ const mockUseApi = {
   project: {
     getUserProjectsList: jest.fn<Promise<IGetProjectForViewResponse[]>, []>()
   },
+  plan: {
+    getPlansList: jest.fn<Promise<IGetProjectForViewResponse[]>, []>()
+  },
   draft: {
     getDraftsList: jest.fn<Promise<IGetDraftsListResponse[]>, []>()
   }
@@ -33,6 +36,7 @@ describe('MyProjectsPlansListPage', () => {
 
   it('renders with the create project button when user has a valid system role', async () => {
     mockRestorationTrackerApi().project.getUserProjectsList.mockResolvedValue([]);
+    mockRestorationTrackerApi().plan.getPlansList.mockResolvedValue([]);
     mockRestorationTrackerApi().draft.getDraftsList.mockResolvedValue([]);
 
     const authState = getMockAuthState({
