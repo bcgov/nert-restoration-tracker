@@ -16,10 +16,7 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { attachmentType } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import {
-  IGetProjectAttachment,
-  TreatmentSearchCriteria
-} from 'interfaces/useProjectApi.interface';
+import { IGetProjectAttachment, TreatmentSearchCriteria } from 'interfaces/useProjectApi.interface';
 import React, { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
