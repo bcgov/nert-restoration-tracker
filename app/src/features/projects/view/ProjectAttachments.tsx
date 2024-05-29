@@ -31,8 +31,7 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 
-  // const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
-  const handleUploadAttachmentClick = () => true;
+  const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
     return (file, cancelToken, handleFileUploadProgress) => {
