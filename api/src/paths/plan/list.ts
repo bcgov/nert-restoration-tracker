@@ -4,6 +4,7 @@ import { getDBConnection } from '../../database/db';
 import { geoJsonFeature } from '../../openapi/schemas/geoJson';
 import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
 import { PlanService } from '../../services/plan-service';
+import { ProjectSearchCriteria, SearchService } from '../../services/search-service';
 import { getLogger } from '../../utils/logger';
 
 const defaultLog = getLogger('paths/plan/list');
@@ -39,18 +40,18 @@ GET.apiDoc = {
             items: {
               title: 'Project get response object, for view purposes',
               type: 'object',
-              required: ['plan', 'contact', 'location'],
+              required: ['project', 'contact', 'location'],
               properties: {
-                plan: {
+                project: {
                   description: 'Basic plan metadata',
                   type: 'object',
-                  required: ['plan_id', 'plan_name', 'start_date', 'end_date', 'publish_date'],
+                  required: ['project_id', 'project_name', 'start_date', 'end_date', 'publish_date'],
                   properties: {
-                    id: {
+                    project_id: {
                       description: 'Project id',
                       type: 'number'
                     },
-                    plan_name: {
+                    project_name: {
                       type: 'string'
                     },
                     start_date: {
@@ -81,6 +82,7 @@ GET.apiDoc = {
                   properties: {
                     contacts: {
                       type: 'array',
+                      nullable: true,
                       items: {
                         title: 'Project contact',
                         type: 'object',
@@ -164,22 +166,23 @@ export function getPlansList(): RequestHandler {
     defaultLog.debug({ label: 'getPlansList' });
     const connection = getDBConnection(req['keycloak_token']);
 
-    // const searchCriteria: ProjectSearchCriteria = req.query || {};
+    const searchCriteria: ProjectSearchCriteria = req.query || {};
 
     try {
       await connection.open();
 
-      // const searchService = new SearchService(connection);
+      const searchService = new SearchService(connection);
 
       // Fetch all planIds that match the search criteria
-      // const planIdsResponse = await searchService.findProjectIdsByCriteria(searchCriteria);
+      const planIdsResponse = await searchService.findProjectIdsByCriteria(searchCriteria);
 
-      // const planIds = planIdsResponse.map((item) => item.project_id);
+      const planIds = planIdsResponse.map((item) => item.project_id);
 
       const planService = new PlanService(connection);
 
       // Get all plans data for the planIds
-      const plans = await planService.getPlansList();
+      const plans = await planService.getPlansByIds(planIds);
+      console.log('plans', plans);
 
       await connection.commit();
 

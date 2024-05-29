@@ -1,5 +1,6 @@
 import { IDBConnection } from '../database/db';
-import { ICreatePlan, IProject } from '../interfaces/project.interface';
+import { ICreatePlan, IGetPlan } from '../interfaces/project.interface';
+import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
 import { PlanRepository } from '../repositories/plan-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { DBService } from './service';
@@ -15,13 +16,30 @@ export class PlanService extends DBService {
   }
 
   /**
-   * Get a list of plans.
+   * Get a list of plans by search criteria.
    *
-   * @return {*}  {Promise<IProject[]>}
+   * @param {number[]} projectIds
+   * @param {boolean} [isPublic=false]
+   * @return {*}  {Promise<
+   *     {
+   *       project: GetProjectData;
+   *       contact: GetContactData;
+   *       location: GetLocationData;
+   *     }[]
+   *   >}
    * @memberof PlanService
    */
-  async getPlansList(): Promise<IProject[]> {
-    return this.planRepository.getPlansList();
+  async getPlansByIds(
+    projectIds: number[],
+    isPublic = false
+  ): Promise<
+    {
+      project: GetProjectData;
+      contact: GetContactData;
+      location: GetLocationData;
+    }[]
+  > {
+    return Promise.all(projectIds.map(async (projectId) => this.getPlanById(projectId, isPublic)));
   }
 
   /**
@@ -31,8 +49,18 @@ export class PlanService extends DBService {
    * @return {*}  {Promise<IProject>}
    * @memberof PlanService
    */
-  async getPlanById(id: number): Promise<IProject> {
-    return this.planRepository.getPlanById(id);
+  async getPlanById(id: number, isPublic = false): Promise<IGetPlan> {
+    const [projectData, contactData, locationData] = await Promise.all([
+      this.projectRepository.getProjectData(id),
+      this.projectRepository.getContactData(id, isPublic),
+      this.projectRepository.getLocationData(id)
+    ]);
+
+    return {
+      project: projectData,
+      contact: contactData,
+      location: locationData
+    };
   }
 
   /**
@@ -43,11 +71,13 @@ export class PlanService extends DBService {
    * @memberof PlanService
    */
   async createPlan(plan: ICreatePlan): Promise<{ project_id: number }> {
+    console.log('plan', plan);
     // insert project
-    const projectResponse = await this.projectRepository.insertProject(plan.project);
+    const projectResponse = await this.planRepository.insertPlan(plan.project);
+    console.log('projectResponse', projectResponse);
 
     // insert contacts
-    await Promise.all(
+    Promise.all(
       plan.contact.contacts.map(async (contact) => {
         await this.projectRepository.insertProjectContact(contact, projectResponse.project_id);
       })
@@ -55,6 +85,7 @@ export class PlanService extends DBService {
 
     // insert location
     await this.projectRepository.insertProjectLocation(plan.location, projectResponse.project_id);
+
     // insert region
     if (plan.location.region) {
       await this.projectRepository.insertProjectRegion(plan.location.region, projectResponse.project_id);

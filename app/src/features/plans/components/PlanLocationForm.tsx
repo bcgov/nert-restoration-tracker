@@ -25,9 +25,10 @@ import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import CustomTextField from 'components/fields/CustomTextField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
+import { MapStateContext } from 'contexts/mapContext';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 
@@ -44,7 +45,7 @@ export interface IPlanLocationForm {
 
 export const PlanLocationFormInitialValues: IPlanLocationForm = {
   location: {
-    geometry: [],
+    geometry: [] as unknown as Feature[],
     region: '' as unknown as number,
     number_sites: '' as unknown as number,
     is_within_overlapping: 'false',
@@ -78,8 +79,9 @@ export interface IPlanLocationFormProps {
  */
 const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IPlanLocationForm>();
-
   const { errors, touched, values, handleChange } = formikProps;
+
+  const layerVisibility = useContext(MapStateContext).layerVisibility;
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
@@ -97,27 +99,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
       }
       return Promise.resolve();
     };
-  };
-
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const Plans = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    Plans,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
   };
 
   /**
@@ -322,6 +303,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
         <Box className="feature-box">
           {/* Create a list element for each feature within values.location.geometry */}
+          {/* TODO: Utilize MUI Components instead of custom divs */}
           {values.location.geometry.map((feature, index) => (
             <div
               style={featureStyle.parent}
@@ -350,7 +332,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
         <Box height={500}>
           <MapContainer
-            mapId={'Plan_location_map'}
+            mapId={'plan_location_map'}
             layerVisibility={layerVisibility}
             features={values.location.geometry}
             mask={mask}

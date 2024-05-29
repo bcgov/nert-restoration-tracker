@@ -24,7 +24,7 @@ export interface ICreatePlanRequest
     IPlanLocationForm {}
 
 export interface ICreatePlanResponse {
-  id: number;
+  project_id: number;
 }
 export interface IGetUserPlansListResponse {
   project_id: number;

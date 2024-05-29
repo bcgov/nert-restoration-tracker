@@ -8,7 +8,7 @@ import { authorizeRequestHandler } from '../../request-handlers/security/authori
 import { PlanService } from '../../services/plan-service';
 import { getLogger } from '../../utils/logger';
 
-const defaultLog = getLogger('paths/project/create');
+const defaultLog = getLogger('paths/plan/create');
 
 export const POST: Operation = [
   authorizeRequestHandler(() => {
@@ -26,7 +26,7 @@ export const POST: Operation = [
 
 POST.apiDoc = {
   description: 'Create a new Project.',
-  tags: ['project'],
+  tags: ['plan'],
   security: [
     {
       Bearer: []
@@ -39,14 +39,14 @@ POST.apiDoc = {
         schema: {
           title: 'Project post request object',
           type: 'object',
-          required: ['project', 'contact', 'location'],
+          required: ['plan', 'contact', 'location'],
           additionalProperties: false,
           properties: {
-            project: {
+            plan: {
               title: 'Project general information',
               type: 'object',
               properties: {
-                project_name: {
+                plan_name: {
                   type: 'string'
                 },
                 is_project: {
@@ -58,7 +58,7 @@ POST.apiDoc = {
                 },
                 state_code: {
                   type: 'number',
-                  description: 'Workflow project or plan state'
+                  description: 'Workflow plan state'
                 },
                 start_date: {
                   type: 'string',
@@ -82,24 +82,24 @@ POST.apiDoc = {
                 },
                 is_healing_land: {
                   type: 'boolean',
-                  description: 'Project or plan focused on healing the land'
+                  description: 'Plan focused on healing the land'
                 },
                 is_healing_people: {
                   type: 'boolean',
-                  description: 'Project or plan focused on healing the people'
+                  description: 'Plan focused on healing the people'
                 },
                 is_land_initiative: {
                   type: 'boolean',
-                  description: 'Project or plan focused on land based restoration initiative'
+                  description: 'Plan focused on land based restoration initiative'
                 },
                 is_cultural_initiative: {
                   type: 'boolean',
-                  description: 'Project or plan focused on cultural or community investment initiative'
+                  description: 'Plan focused on cultural or community investment initiative'
                 }
               }
             },
             contact: {
-              title: 'Project contact',
+              title: 'Plan contact',
               type: 'object',
               required: ['contacts'],
               additionalProperties: false,
@@ -178,11 +178,11 @@ POST.apiDoc = {
   },
   responses: {
     200: {
-      description: 'Project response object.',
+      description: 'Plan response object.',
       content: {
         'application/json': {
           schema: {
-            title: 'Project Response Object',
+            title: 'Plan Response Object',
             type: 'object',
             required: ['project_id'],
             properties: {
@@ -221,6 +221,7 @@ export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedPlanPostData = new PostPlanObject(req.body);
+    console.log('sanitizedPlanPostData', sanitizedPlanPostData);
     try {
       await connection.open();
 
@@ -230,7 +231,7 @@ export function createProject(): RequestHandler {
 
       await connection.commit();
 
-      return res.status(200).json({ id: projectId });
+      return res.status(200).json(projectId);
     } catch (error) {
       defaultLog.error({ label: 'createProject', message: 'error', error });
       await connection.rollback();

@@ -1,4 +1,6 @@
+import SQL from 'sql-template-strings';
 import { IProject } from '../interfaces/project.interface';
+import { PostPlanData } from '../models/project-create';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
 
@@ -12,31 +14,6 @@ const defaultLog = getLogger('repositories/plan-repository');
  * @extends {BaseRepository}
  */
 export class PlanRepository extends BaseRepository {
-  /**
-   * Get a list of plans.
-   *
-   * @return {*}  {Promise<IProject[]>}
-   * @memberof PlanRepository
-   */
-  async getPlansList(): Promise<IProject[]> {
-    defaultLog.debug({ label: 'getPlansList', message: 'params' });
-
-    const connection = await this.connection;
-
-    try {
-      const query = 'SELECT * FROM project WHERE is_project = false ORDER BY name ASC;';
-
-      const response = await connection.query(query);
-
-      return response.rows;
-    } catch (error) {
-      defaultLog.debug({ label: 'getPlansList', message: 'error', error });
-      throw error;
-    } finally {
-      connection.release();
-    }
-  }
-
   /**
    * Get a plan by ID.
    *
@@ -58,8 +35,56 @@ export class PlanRepository extends BaseRepository {
     } catch (error) {
       defaultLog.debug({ label: 'getPlanById', message: 'error', error });
       throw error;
-    } finally {
-      connection.release();
+    }
+  }
+
+  /**
+   * Insert a plan.
+   *
+   *
+   * @param {PostPlanData} project
+   * @return {*}  {Promise<{ project_id: number }>}
+   * @memberof PlanRepository
+   */
+  async insertPlan(plan: PostPlanData): Promise<{ project_id: number }> {
+    console.log('plan', plan);
+    defaultLog.debug({ label: 'insertPlan', message: 'params', plan });
+
+    try {
+      const sqlStatement = SQL`
+              INSERT INTO project (
+                name,
+                brief_desc,
+                is_project,
+                state_code,
+                start_date,
+                end_date,
+                is_healing_land,
+                is_healing_people,
+                is_land_initiative,
+                is_cultural_initiative
+              ) VALUES (
+                ${plan.name},
+                ${plan.brief_desc},
+                ${plan.is_project},
+                ${plan.state_code},
+                ${plan.start_date},
+                ${plan.end_date},
+                ${plan.is_healing_land},
+                ${plan.is_healing_people},
+                ${plan.is_land_initiative},
+                ${plan.is_cultural_initiative}
+              )
+              RETURNING
+                project_id;
+            `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'insertPlan', message: 'error', error });
+      throw error;
     }
   }
 }

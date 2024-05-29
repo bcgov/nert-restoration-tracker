@@ -1,10 +1,17 @@
 import { Feature } from 'geojson';
-import { PostContactData, PostLocationData, PostProjectData } from '../models/project-create';
+import { PostContactData, PostLocationData, PostPlanData } from '../models/project-create';
+import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
 
 export interface ICreatePlan {
-  project: PostProjectData;
+  project: PostPlanData;
   contact: PostContactData;
   location: PostLocationData;
+}
+
+export interface IGetPlan {
+  project: GetProjectData;
+  contact: GetContactData;
+  location: GetLocationData;
 }
 
 export interface IPlan {
@@ -48,7 +55,7 @@ export interface IContact {
 }
 
 export interface ILocation {
-  geometry?: Feature[];
+  geometry: Feature[];
   is_within_overlapping?: string;
   region?: number;
   number_sites?: number;

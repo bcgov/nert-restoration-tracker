@@ -4,10 +4,10 @@ import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { geoJsonFeature } from '../../../openapi/schemas/geoJson';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
-import { ProjectService } from '../../../services/project-service';
+import { PlanService } from '../../../services/plan-service';
 import { getLogger } from '../../../utils/logger';
 
-const defaultLog = getLogger('paths/project/{projectId}/view');
+const defaultLog = getLogger('paths/plan/{projectId}/view');
 
 export const GET: Operation = [
   authorizeRequestHandler((req) => {
@@ -25,7 +25,7 @@ export const GET: Operation = [
       ]
     };
   }),
-  viewProject()
+  viewPlan()
 ];
 
 GET.apiDoc = {
@@ -39,7 +39,7 @@ GET.apiDoc = {
   parameters: [
     {
       in: 'path',
-      name: 'projectId',
+      name: 'planId',
       schema: {
         type: 'number'
       },
@@ -48,13 +48,13 @@ GET.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'Project with matching projectId.',
+      description: 'Plan with matching projectId.',
       content: {
         'application/json': {
           schema: {
-            title: 'Project get response object, for view purposes',
+            title: 'Plan get response object, for view purposes',
             type: 'object',
-            required: ['project', 'species', 'permit', 'contact', 'location', 'iucn', 'funding', 'partnerships'],
+            required: ['project', 'contact', 'location'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -91,49 +91,6 @@ GET.apiDoc = {
                   }
                 }
               },
-              species: {
-                description: 'The project species',
-                type: 'object',
-                required: ['focal_species', 'focal_species_names'],
-                properties: {
-                  focal_species: {
-                    type: 'array',
-                    items: {
-                      type: 'number'
-                    }
-                  },
-                  focal_species_names: {
-                    type: 'array',
-                    items: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              iucn: {
-                description: 'The International Union for Conservation of Nature number',
-                type: 'object',
-                required: ['classificationDetails'],
-                properties: {
-                  classificationDetails: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        classification: {
-                          type: 'number'
-                        },
-                        subClassification1: {
-                          type: 'number'
-                        },
-                        subClassification2: {
-                          type: 'number'
-                        }
-                      }
-                    }
-                  }
-                }
-              },
               contact: {
                 title: 'Project contact',
                 type: 'object',
@@ -167,96 +124,6 @@ GET.apiDoc = {
                           enum: ['true', 'false']
                         }
                       }
-                    }
-                  }
-                }
-              },
-              permit: {
-                type: 'object',
-                required: ['permits'],
-                properties: {
-                  permits: {
-                    type: 'array',
-                    items: {
-                      title: 'Project permit',
-                      required: ['permit_number', 'permit_type'],
-                      type: 'object',
-                      properties: {
-                        permit_number: {
-                          type: 'string'
-                        },
-                        permit_type: {
-                          type: 'string'
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              funding: {
-                description: 'The project funding details',
-                type: 'object',
-                required: ['fundingSources'],
-                properties: {
-                  fundingSources: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
-                      properties: {
-                        id: {
-                          type: 'number'
-                        },
-                        agency_id: {
-                          type: 'number'
-                        },
-                        investment_action_category: {
-                          type: 'number'
-                        },
-                        investment_action_category_name: {
-                          type: 'string'
-                        },
-                        agency_name: {
-                          type: 'string'
-                        },
-                        funding_amount: {
-                          type: 'number'
-                        },
-                        start_date: {
-                          oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                          description: 'ISO 8601 date string for the funding start date'
-                        },
-                        end_date: {
-                          oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                          description: 'ISO 8601 date string for the funding end_date'
-                        },
-                        agency_project_id: {
-                          type: 'string',
-                          nullable: true
-                        },
-                        revision_count: {
-                          type: 'number'
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              partnerships: {
-                description: 'The project partners',
-                type: 'object',
-                required: ['indigenous_partnerships', 'stakeholder_partnerships'],
-                properties: {
-                  indigenous_partnerships: {
-                    type: 'array',
-                    items: {
-                      type: 'number'
-                    }
-                  },
-                  stakeholder_partnerships: {
-                    type: 'array',
-                    items: {
-                      type: 'string'
                     }
                   }
                 }
@@ -310,26 +177,26 @@ GET.apiDoc = {
 };
 
 /**
- * Get a project by its id.
+ * Get a plan by its id.
  *
  * @returns {RequestHandler}
  */
-export function viewProject(): RequestHandler {
+export function viewPlan(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
 
     try {
       await connection.open();
 
-      const projectService = new ProjectService(connection);
+      const planService = new PlanService(connection);
 
-      const result = await projectService.getProjectById(Number(req.params.projectId));
+      const result = await planService.getPlanById(Number(req.params.planId));
 
       await connection.commit();
 
       return res.status(200).json(result);
     } catch (error) {
-      defaultLog.error({ label: 'viewProject', message: 'error', error });
+      defaultLog.error({ label: 'viewPlan', message: 'error', error });
       throw error;
     } finally {
       connection.release();

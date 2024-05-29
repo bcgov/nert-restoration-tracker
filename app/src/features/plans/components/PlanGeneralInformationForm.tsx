@@ -9,6 +9,7 @@ import yup from 'utils/YupSchema';
 
 export interface IPlanGeneralInformationForm {
   plan: {
+    is_project: boolean;
     plan_name: string;
     state_code: number;
     brief_desc: string;
@@ -18,12 +19,12 @@ export interface IPlanGeneralInformationForm {
     is_healing_people: boolean;
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
-    people_involved: number | null;
   };
 }
 
 export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationForm = {
   plan: {
+    is_project: false,
     plan_name: '',
     state_code: getStateCodeFromLabel(states.DRAFT),
     brief_desc: '',
@@ -33,7 +34,6 @@ export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationFor
     is_healing_people: false,
     is_land_initiative: false,
     is_cultural_initiative: false,
-    people_involved: null
   }
 };
 

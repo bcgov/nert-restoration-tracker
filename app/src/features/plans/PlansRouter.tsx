@@ -1,11 +1,12 @@
-import { SystemRoleGuard } from 'components/security/Guards';
-import { SYSTEM_ROLE } from 'constants/roles';
+import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
+import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { RedirectURL } from 'utils/AppRoutesUtils';
 import ProjectsPlansListPage from '../projects/ProjectsPlansListPage';
 import CreatePlanPage from './create/CreatePlanPage';
+import ViewPlanPage from './view/ViewPlanPage';
 
 /**
  * Router for all `/admin/plans/*` pages.
@@ -46,7 +47,7 @@ const PlansRouter: React.FC = () => {
             </RoleGuard>
           }
         /> */}
-        {/* <Route
+        <Route
           path=":id/details"
           element={
             <RoleGuard
@@ -56,11 +57,11 @@ const PlansRouter: React.FC = () => {
                 PROJECT_ROLE.PROJECT_EDITOR,
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
-              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}>
-              <ViewProjectPage />
+              fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
+              <ViewPlanPage />
             </RoleGuard>
           }
-        /> */}
+        />
         {/* <Route
           path=":id/users"
           element={

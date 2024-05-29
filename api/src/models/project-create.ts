@@ -39,14 +39,14 @@ export class PostProjectObject {
 
 export class PostPlanObject {
   contact: PostContactData;
-  project: PostProjectData;
+  project: PostPlanData;
   location: PostLocationData;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
 
     this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
-    this.project = (obj?.project && new PostProjectData(obj.project)) || null;
+    this.project = (obj?.plan && new PostPlanData(obj.plan)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
   }
 }
@@ -154,6 +154,40 @@ export class PostProjectData {
     this.is_cultural_initiative = obj?.is_cultural_initiative || null;
     this.people_involved = obj?.people_involved || null;
     this.is_project_part_public_plan = obj?.is_project_part_public_plan || null;
+  }
+}
+
+/**
+ * Processes POST /project project data.
+ *
+ * @export
+ * @class PostPlanData
+ */
+export class PostPlanData {
+  is_project: boolean;
+  name: string;
+  state_code: number;
+  start_date: string;
+  end_date: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostPlanData', message: 'params', obj });
+
+    this.is_project = Boolean(obj?.is_project);
+    this.name = obj?.plan_name || null;
+    this.state_code = obj?.state_code || 0;
+    this.start_date = obj?.start_date || null;
+    this.end_date = obj?.end_date || null;
+    this.brief_desc = obj?.brief_desc || '';
+    this.is_healing_land = Boolean(obj?.is_healing_land);
+    this.is_healing_people = Boolean(obj?.is_healing_people);
+    this.is_land_initiative = Boolean(obj?.is_land_initiative);
+    this.is_cultural_initiative = Boolean(obj?.is_cultural_initiative);
   }
 }
 

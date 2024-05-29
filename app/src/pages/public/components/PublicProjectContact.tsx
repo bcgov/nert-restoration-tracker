@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
@@ -20,7 +21,7 @@ const pageStyles = {
 } as const;
 
 export interface IPublicProjectContactProps {
-  projectForViewData: IGetProjectForViewResponse;
+  projectForViewData: IGetProjectForViewResponse | IGetPlanForViewResponse;
   refresh: () => void;
 }
 

@@ -11,7 +11,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-// import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import YesNoDialog from 'components/dialog/YesNoDialog';
 import {
   events,
@@ -27,7 +26,7 @@ import PlanLocationForm, {
   PlanLocationFormInitialValues,
   PlanLocationFormYupSchema
 } from 'features/plans/components/PlanLocationForm';
-import { Form, Formik, FormikProps } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
@@ -39,8 +38,10 @@ import PlanGeneralInformationForm, {
   PlanGeneralInformationFormInitialValues,
   PlanGeneralInformationFormYupSchema
 } from '../components/PlanGeneralInformationForm';
-import PlanContactForm, { PlanContactInitialValues } from '../components/PlanContactForm';
-import { PlanContactItemYupSchema } from '../components/PlanContactItemForm';
+import PlanContactForm, {
+  PlanContactInitialValues,
+  PlanContactYupSchema
+} from '../components/PlanContactForm';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import PlanDraftForm, {
   IPlanDraftForm,
@@ -74,7 +75,7 @@ export const PlanFormInitialValues = {
 export const PlanFormYupSchema = yup
   .object()
   .concat(PlanGeneralInformationFormYupSchema)
-  .concat(PlanContactItemYupSchema)
+  .concat(PlanContactYupSchema)
   .concat(PlanLocationFormYupSchema);
 
 /**
@@ -144,7 +145,7 @@ const CreatePlanPage: React.FC = () => {
       if (!response || !response.data) {
         return;
       }
-      setInitialPlanFormData({} as any);
+      setInitialPlanFormData(PlanFormInitialValues); //set back to draft values
     };
 
     if (hasLoadedDraftData) {
@@ -230,7 +231,8 @@ const CreatePlanPage: React.FC = () => {
 
       console.log('planPostObject', planPostObject);
       const response = await restorationTrackerApi.plan.createPlan(planPostObject);
-      if (!response?.id) {
+      console.log('response', response);
+      if (!response?.project_id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a Plan ID.'
         });
@@ -241,7 +243,7 @@ const CreatePlanPage: React.FC = () => {
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
       keycloakWrapper?.refresh();
-      history(`/admin/Plans/${response.id}`);
+      history(`/admin/Plans/${response.project_id}`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Plan',
@@ -346,7 +348,9 @@ const CreatePlanPage: React.FC = () => {
         open={openYesNoDialog}
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}
-        onYes={() => formikRef.current?.submitForm()}
+        onYes={() => {
+          formikRef.current?.handleSubmit();
+        }}
       />
 
       <Container maxWidth="xl">
@@ -386,85 +390,80 @@ const CreatePlanPage: React.FC = () => {
               validateOnChange={false}
               onSubmit={handlePlanCreation}>
               <>
-                {/* <ScrollToFormikError /> */}
-                <Form noValidate>
-                  <Box ml={1} my={3}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={2.5}>
-                        <Typography variant="h2">General Information</Typography>
-                      </Grid>
-
-                      <Grid item xs={12} md={9}>
-                        <PlanGeneralInformationForm />
-                      </Grid>
+                <Box ml={1} my={3}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={2.5}>
+                      <Typography variant="h2">General Information</Typography>
                     </Grid>
-                  </Box>
 
-                  <Divider />
-
-                  <Box ml={1} my={3}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={2.5}>
-                        <Typography variant="h2">Contacts</Typography>
-                      </Grid>
-
-                      <Grid item xs={12} md={9}>
-                        <PlanContactForm
-                          coordinator_agency={codes.codes.coordinator_agency.map(
-                            (item) => item.name
-                          )}
-                        />
-                      </Grid>
+                    <Grid item xs={12} md={9}>
+                      <PlanGeneralInformationForm />
                     </Grid>
-                  </Box>
+                  </Grid>
+                </Box>
 
-                  <Divider />
+                <Divider />
 
-                  <Box ml={1} my={3}>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={2.5}>
-                        <Typography variant="h2">Location</Typography>
-                      </Grid>
-
-                      <Grid item xs={12} md={9}>
-                        <PlanLocationForm
-                          regions={codes.codes.regions.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                        />
-                      </Grid>
+                <Box ml={1} my={3}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={2.5}>
+                      <Typography variant="h2">Contacts</Typography>
                     </Grid>
-                  </Box>
 
-                  <Divider />
+                    <Grid item xs={12} md={9}>
+                      <PlanContactForm
+                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
 
-                  <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      size="large"
-                      onClick={() => setOpenDraftDialog(true)}
-                      data-testid="Plan-save-draft-button">
-                      Save Draft
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      onClick={() => setOpenYesNoDialog(true)}
-                      data-testid="Plan-create-button">
-                      <span>Create Plan</span>
-                    </Button>
-                    <Button
-                      variant="text"
-                      color="primary"
-                      size="large"
-                      data-testid="Plan-cancel-buttton"
-                      onClick={handleCancel}>
-                      Cancel
-                    </Button>
-                  </Box>
-                </Form>
+                <Divider />
+
+                <Box ml={1} my={3}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={2.5}>
+                      <Typography variant="h2">Location</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} md={9}>
+                      <PlanLocationForm
+                        regions={codes.codes.regions.map((item) => {
+                          return { value: item.id, label: item.name };
+                        })}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                <Divider />
+
+                <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                    onClick={() => setOpenDraftDialog(true)}
+                    data-testid="Plan-save-draft-button">
+                    Save Draft
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => setOpenYesNoDialog(true)}
+                    data-testid="Plan-create-button">
+                    <span>Create Plan</span>
+                  </Button>
+                  <Button
+                    variant="text"
+                    color="primary"
+                    size="large"
+                    data-testid="Plan-cancel-buttton"
+                    onClick={handleCancel}>
+                    Cancel
+                  </Button>
+                </Box>
               </>
             </Formik>
           </Box>

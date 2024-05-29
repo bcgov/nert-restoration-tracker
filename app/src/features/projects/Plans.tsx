@@ -20,7 +20,7 @@ import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
-import PlanListPage from './list/PlanListPage';
+import PlanListPage from '../plans/PlanListPage';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 
 export default function Plans() {

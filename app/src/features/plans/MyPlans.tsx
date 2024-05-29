@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { SystemRoleGuard } from 'components/security/Guards';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
-import PlanListPage from 'features/projects/list/PlanListPage';
+import PlanListPage from 'features/plans/PlanListPage';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import React from 'react';
