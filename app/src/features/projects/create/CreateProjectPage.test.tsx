@@ -1,7 +1,7 @@
 import {
   cleanup,
-  fireEvent,
   findByText as rawFindByText,
+  fireEvent,
   getByText as rawGetByText,
   render,
   waitFor

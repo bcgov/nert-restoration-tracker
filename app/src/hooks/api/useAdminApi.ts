@@ -2,9 +2,9 @@ import { AxiosInstance } from 'axios';
 import { AdministrativeActivityStatusType, AdministrativeActivityType } from 'constants/misc';
 import {
   IAccessRequestDataObject,
-  IGetAccessRequestsListResponse,
   IgcNotifyGenericMessage,
-  IgcNotifyRecipient
+  IgcNotifyRecipient,
+  IGetAccessRequestsListResponse
 } from 'interfaces/useAdminApi.interface';
 import qs from 'qs';
 

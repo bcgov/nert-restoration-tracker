@@ -79,7 +79,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
   return (
     <Box sx={pageStyles.projectMetadata} p={3}>
       <Box mb={3}>
-        <Typography variant="h2">Project Details</Typography>
+        <Typography variant="h2">More Project Details</Typography>
       </Box>
 
       <Box component="section">

@@ -54,7 +54,9 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
           Start Date:
         </Typography>
         <Typography variant="body2" component="dd">
-          {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)}
+          {project.start_date
+            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)
+            : '---'}
         </Typography>
       </div>
       <div>
