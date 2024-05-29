@@ -60,6 +60,9 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   })
 });
 
+// Fixing a lame typescript error
+const fitObject = 'cover' as const;
+
 const uploadImageStyles = {
   general: {
     marginTop: '23px',
@@ -69,6 +72,14 @@ const uploadImageStyles = {
     fontSize: '12px',
     color: '#6E6E6E',
     marginBottom: '2px'
+  },
+  thumbnail: {
+    border: '1px solid #0008',
+    borderRadius: '25px',
+    overflow: 'hidden',
+    height: '200px',
+    width: '100%',
+    objectFit: fitObject
   }
 };
 
@@ -128,7 +139,9 @@ const ProjectGeneralInformationForm: React.FC = () => {
         <div style={uploadImageStyles.description}>Project Image</div>
         {/* // TODO: Maybe move this to the parent */}
         {image ? (
-          <img src={image} alt="Project" />
+          <div>
+            <img style={uploadImageStyles.thumbnail} src={image} alt="Project" />
+          </div>
         ) : (
           <FileUpload
             uploadHandler={uploadImage(setImage)}
