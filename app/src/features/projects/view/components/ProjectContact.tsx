@@ -41,14 +41,15 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
                       {contactDetails.email_address}
                     </Link>
                     {contactDetails.is_primary === 'true' ? (
-                      <Typography>
+                      <Box>
                         <Chip size="small" label="PRIMARY" />
-                      </Typography>
+                      </Box>
                     ) : (
                       <></>
                     )}
                   </>
                 }
+                data-testid="contact_name"
               />
               <CardContent sx={{ my: -3 }}>
                 <Typography variant="body2" color="text.secondary">

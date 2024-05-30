@@ -1,14 +1,14 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
-import ProjectPermits from './ProjectAuthorizations';
+import ProjectAuthorizations from './ProjectAuthorizations';
 
 const mockRefresh = jest.fn();
 
 describe('ProjectPermits', () => {
   it('renders correctly with no permits', () => {
     const { getByTestId } = render(
-      <ProjectPermits
+      <ProjectAuthorizations
         projectForViewData={{
           ...getProjectForViewResponse,
           permit: {
@@ -19,12 +19,12 @@ describe('ProjectPermits', () => {
       />
     );
 
-    expect(getByTestId('no_permits_loaded')).toBeVisible();
+    expect(getByTestId('no_authorization_loaded')).toBeVisible();
   });
 
   it('renders permits data correctly', async () => {
     const { getByTestId, getByText } = render(
-      <ProjectPermits
+      <ProjectAuthorizations
         projectForViewData={{
           ...getProjectForViewResponse,
           permit: {
@@ -40,7 +40,7 @@ describe('ProjectPermits', () => {
       />
     );
 
-    expect(getByTestId('permit_item')).toBeInTheDocument();
+    expect(getByTestId('authorization_item')).toBeInTheDocument();
 
     expect(getByText('123', { exact: false })).toBeVisible();
     expect(getByText('Test Permit Type', { exact: false })).toBeVisible();

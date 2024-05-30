@@ -26,7 +26,7 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
       {hasPartnerships &&
         partnerships?.map((partnership: string, index: number) => {
           return (
-            <Typography key={index} variant="body2" color="textSecondary" data-testid="iucn_data">
+            <Typography key={index} variant="body2" color="textSecondary" data-testid="partnership_data">
               {partnership}
             </Typography>
           );

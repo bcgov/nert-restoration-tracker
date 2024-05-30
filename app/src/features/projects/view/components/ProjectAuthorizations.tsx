@@ -24,7 +24,7 @@ const ProjectAuthorizations: React.FC<IProjectAuthorizationsProps> = (props) => 
     <>
       {hasAuthorizations &&
         permit.permits.map((item: any) => (
-          <Box key={item.permit_number}>
+          <Box key={item.permit_number} data-testid="authorization_item">
             <Typography variant="body2" component="dt" color="textSecondary">
               {item.permit_number}
             </Typography>
