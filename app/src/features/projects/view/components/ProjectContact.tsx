@@ -29,7 +29,7 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
     <>
       {hasContacts &&
         contact.contacts.map((contactDetails, index) => (
-          <Box my={2} key={index}>
+          <Box my={1} key={index}>
             <Card sx={{ borderRadius: '10px' }}>
               <CardHeader
                 sx={{ mt: -1 }}
