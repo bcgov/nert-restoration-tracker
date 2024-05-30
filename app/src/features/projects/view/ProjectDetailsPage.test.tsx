@@ -75,7 +75,7 @@ describe('ProjectDetailsPage', () => {
     await waitFor(() => {
       expect(getByTestId('GeneralInfoTitle')).toBeVisible();
       expect(getByTestId('ContactsTitle')).toBeVisible();
-      expect(getByTestId('PermitsTitle')).toBeVisible();
+      expect(getByTestId('AuthorizationsTitle')).toBeVisible();
       expect(getByTestId('IUCNTitle')).toBeVisible();
       expect(getByTestId('FundingSourceTitle')).toBeVisible();
       expect(getByTestId('PartnershipTitle')).toBeVisible();
