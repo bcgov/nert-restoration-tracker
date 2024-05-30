@@ -30,7 +30,7 @@ import {
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
-import { IPlansListProps } from 'interfaces/useProjectApi.interface';
+import { IPlansListProps } from 'features/user/MyPlans';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';

@@ -1,6 +1,6 @@
 import Container from '@mui/material/Container';
 import { AuthStateContext } from 'contexts/authStateContext';
-import MyPlans from 'features/plans/MyPlans';
+import MyPlans from 'features/user/MyPlans';
 import MyProjects from 'features/user/MyProjects';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';

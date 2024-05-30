@@ -8,6 +8,7 @@ import ProjectsPlansListPage from '../projects/ProjectsPlansListPage';
 import CreatePlanPage from './create/CreatePlanPage';
 import ViewPlanPage from './view/ViewPlanPage';
 import EditPlanPage from './edit/EditProjectPage';
+import ProjectParticipantsPage from 'features/projects/participants/ProjectParticipantsPage';
 
 /**
  * Router for all `/admin/plans/*` pages.
@@ -63,17 +64,17 @@ const PlansRouter: React.FC = () => {
             </RoleGuard>
           }
         />
-        {/* <Route
+        <Route
           path=":id/users"
           element={
             <RoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}>
+              fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
               <ProjectParticipantsPage />
             </RoleGuard>
           }
-        /> */}
+        />
       </Route>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}

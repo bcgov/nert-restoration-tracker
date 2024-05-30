@@ -98,7 +98,7 @@ const ViewProjectPage: React.FC = () => {
     const projectWithDetailsResponse =
       await restorationTrackerApi.project.getProjectById(projectId);
 
-    if (!projectWithDetailsResponse) {
+    if (!projectWithDetailsResponse || !projectWithDetailsResponse.project.is_project) {
       // TODO error handling/messaging
       return;
     }

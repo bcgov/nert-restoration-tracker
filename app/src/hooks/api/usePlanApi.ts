@@ -127,27 +127,3 @@ const usePlanApi = (axios: AxiosInstance) => {
 };
 
 export default usePlanApi;
-
-/**
- * Returns a set of supported api methods for working with public (published) Plan records.
- *
- * @param {AxiosInstance} axios
- * @return {*} object whose properties are supported api methods.
- */
-export const usePublicPlanApi = (axios: AxiosInstance) => {
-  /**
-   * Get public (published) Plan or plan details based on its ID for viewing purposes.
-   *
-   * @param {number} planId
-   * @return {*} {any>}  could be a Plan or a plan response
-   */
-  const getPlanPlanForView = async (planId: number): Promise<any> => {
-    const { data } = await axios.get(`/api/public/plan/${planId}/view`);
-
-    return data;
-  };
-
-  return {
-    getPlanPlanForView
-  };
-};

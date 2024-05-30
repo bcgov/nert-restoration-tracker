@@ -1,10 +1,8 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import {
-  IGetPlanForViewResponse,
-  IGetProjectForViewResponse
-} from 'interfaces/useProjectApi.interface';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicPlanView from 'pages/public/PublicPlanView';
 import PublicProjectView from 'pages/public/PublicProjectView';
 import React, { useCallback, useEffect, useState } from 'react';

@@ -42,7 +42,7 @@ import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
-import { IPlansListProps } from './MyPlans';
+import { IPlansListProps } from '../user/MyPlans';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;

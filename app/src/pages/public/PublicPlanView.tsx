@@ -9,11 +9,11 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
-// import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetPlanForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
 
 const pageStyles = {
   fullScreenBtn: {
@@ -40,7 +40,7 @@ interface IPlanViewFormProps {
  * @return {*}
  */
 const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
-  const { plan } = props;
+  const { plan, codes } = props;
 
   // Full Screen Map Dialog
   const [openFullScreen, setOpenFullScreen] = useState(false);
@@ -57,7 +57,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
       <Container maxWidth="xl" data-testid="view_plan_page_component">
         <Box mb={5} display="flex" justifyContent="space-between">
           <Box>
-            <Typography variant="h1">{plan.plan.project_name}</Typography>
+            <Typography variant="h1">{plan.project.project_name}</Typography>
             <Box mt={1.5} display="flex" flexDirection={'row'} alignItems="center">
               <Typography variant="subtitle2" component="span" color="textSecondary">
                 Plan Status:
@@ -65,8 +65,8 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
               <Box ml={1}>
                 <Chip
                   size="small"
-                  sx={getStatusStyle(plan.plan.state_code)}
-                  label={getStateLabelFromCode(plan.plan.state_code)}
+                  sx={getStatusStyle(plan.project.state_code)}
+                  label={getStateLabelFromCode(plan.project.state_code)}
                 />
               </Box>
             </Box>
@@ -76,20 +76,6 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
         <Box mt={2}>
           <Grid container spacing={3}>
             <Grid item md={8}>
-              {/* Project Objectives */}
-              <Box mb={3}>
-                <Paper elevation={2}>
-                  <Box p={3}>
-                    <Box mb={2}>
-                      <Typography variant="h2">Plan Objectives</Typography>
-                    </Box>
-                    <Typography variant="body1" color="textSecondary">
-                      {plan.plan.objectives}
-                    </Typography>
-                  </Box>
-                </Paper>
-              </Box>
-
               <Box mb={3}>
                 <Paper elevation={2}>
                   <Box height="500px" position="relative">
@@ -111,10 +97,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
 
             <Grid item md={4}>
               <Paper elevation={2}>
-                {/* <ProjectDetailsPage
-                  planForViewData={plan}
-                  codes={codes}
-                /> */}
+                <PlanDetailsPage planForViewData={plan} codes={codes} />
               </Paper>
             </Grid>
           </Grid>

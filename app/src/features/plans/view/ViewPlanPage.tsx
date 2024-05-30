@@ -227,8 +227,7 @@ const ViewPlanPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                // onClick={() => history('users')}
-              >
+                onClick={() => history(`/admin/plans/${urlParams['id']}/users`)}>
                 Plan Team
               </Button>
               <Button

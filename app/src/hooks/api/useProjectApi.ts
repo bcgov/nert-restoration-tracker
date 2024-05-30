@@ -1,5 +1,6 @@
 import { AxiosInstance, CancelTokenSource } from 'axios';
 import { attachmentType } from 'constants/misc';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import {
   IAddProjectParticipant,
   ICreateProjectRequest,
@@ -477,6 +478,28 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Get plans list (potentially based on filter criteria).
+   *
+   * @param {IProjectAdvancedFilterRequest} filterFieldData
+   * @return {*}  {Promise<IGetProjectForViewResponse[]>}
+   */
+  const getPlansList = async (
+    filterFieldData?: IProjectAdvancedFilterRequest
+  ): Promise<IGetPlanForViewResponse[]> => {
+    const { data } = await axios.get(`/api/public/plans`, {
+      params: filterFieldData,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
+      }
+    });
+
+    return data;
+  };
+
+  /**
    * Get public (published) project or plan details based on its ID for viewing purposes.
    *
    * @param {number} projectId
@@ -559,6 +582,7 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
   };
 
   return {
+    getPlansList,
     getProjectsList,
     getProjectPlanForView,
     getProjectAttachments,
