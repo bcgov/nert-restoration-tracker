@@ -150,7 +150,7 @@ const ViewProjectPage: React.FC = () => {
     return (
       <Tooltip title={objective} disableHoverListener={objective.length < 130}>
         <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
-          {objective}
+          &#x2022;{objective}
         </Typography>
       </Tooltip>
     );

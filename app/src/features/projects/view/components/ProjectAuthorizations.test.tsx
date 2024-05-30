@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
-import ProjectPermits from './ProjectPermits';
+import ProjectPermits from './ProjectAuthorizations';
 
 const mockRefresh = jest.fn();
 
