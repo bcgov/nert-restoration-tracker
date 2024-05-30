@@ -14,7 +14,6 @@ describe('GeneralInformation', () => {
         project_name: 'Test Project Name',
         start_date: '2021-01-10',
         end_date: '',
-        actual_start_date: 
         publish_date: '2021-01-26',
         objectives: 'Project objectives'
       },
@@ -24,7 +23,7 @@ describe('GeneralInformation', () => {
       location: {
         region: 123
       }
-    } as IGetProjectForViewResponse;
+    } as unknown as IGetProjectForViewResponse;
 
     const codes = {
       regions: [
@@ -65,7 +64,7 @@ describe('GeneralInformation', () => {
       location: {
         region: 123
       }
-    } as IGetProjectForViewResponse;
+    } as unknown as IGetProjectForViewResponse;
 
     const codes = {
       regions: [

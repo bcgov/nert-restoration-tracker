@@ -80,7 +80,12 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
       </Box>
 
       <Box mt={2}>
-        <Chip sx={pageStyles.secTitle} label="General Information" size="medium" />
+        <Chip
+          sx={pageStyles.secTitle}
+          label="General Information"
+          size="medium"
+          data-testid="GeneralInfoTitle"
+        />
         <GeneralInformation
           projectForViewData={projectForViewData}
           codes={codes}
@@ -89,7 +94,12 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
       </Box>
       <Divider />
       <Box mt={2}>
-        <Chip sx={pageStyles.secTitle} label="Project Contacts" size="medium" />
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Project Contacts"
+          size="medium"
+          data-testid="ContactsTitle"
+        />
         <RoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
           validProjectRoles={[
@@ -112,18 +122,33 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           PROJECT_ROLE.PROJECT_VIEWER
         ]}>
         <Box mt={2}>
-          <Chip sx={pageStyles.secTitle} label="Authorizations" size="medium" />
+          <Chip
+            sx={pageStyles.secTitle}
+            label="Authorizations"
+            size="medium"
+            data-testid="AuthorizationsTitle"
+          />
           <ProjectAuthorizations projectForViewData={projectForViewData} refresh={refresh} />
         </Box>
       </RoleGuard>
       <Divider />
       <Box mt={2}>
-        <Chip sx={pageStyles.secTitle} label="Funding Sources" size="medium" />
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Funding Sources"
+          size="medium"
+          data-testid="FundingSourceTitle"
+        />
         <FundingSource projectForViewData={projectForViewData} refresh={refresh} />
       </Box>
       <Divider />
       <Box mt={2}>
-        <Chip sx={pageStyles.secTitle} label="Partnerships" size="medium" />
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Partnerships"
+          size="medium"
+          data-testid="PartnershipTitle"
+        />
         <Partnerships projectForViewData={projectForViewData} refresh={refresh} />
       </Box>
       <Divider />
@@ -132,6 +157,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           sx={pageStyles.secTitle}
           label="IUCN Conservation Actions Classifications"
           size="medium"
+          data-testid="IUCNTitle"
         />
         <IUCNClassification
           projectForViewData={projectForViewData}
