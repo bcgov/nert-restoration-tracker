@@ -19,7 +19,7 @@ describe('Partnerships', () => {
       />
     );
 
-    expect(getByTestId('partnership_data')).toBeVisible();
+    expect(getByTestId('no_partnerships_data')).toBeVisible();
   });
 
   it('renders correctly with invalid null values', () => {
@@ -35,7 +35,7 @@ describe('Partnerships', () => {
       />
     );
 
-    expect(getByTestId('partnership_data')).toBeVisible();
+    expect(getByTestId('no_partnerships_data')).toBeVisible();
   });
 
   it('renders correctly with existing partnership values', () => {
@@ -51,6 +51,6 @@ describe('Partnerships', () => {
       />
     );
 
-    expect(getAllByTestId('partnership_data').length).toEqual(2);
+    expect(getAllByTestId('partnerships_data').length).toEqual(2);
   });
 });

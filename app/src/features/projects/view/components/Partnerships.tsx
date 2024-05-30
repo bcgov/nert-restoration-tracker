@@ -30,14 +30,14 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
               key={index}
               variant="body2"
               color="textSecondary"
-              data-testid="partnership_data">
+              data-testid="partnerships_data">
               {partnership}
             </Typography>
           );
         })}
 
       {!hasPartnerships && (
-        <Typography variant="body2" color="textSecondary" data-testid="no_partnerships">
+        <Typography variant="body2" color="textSecondary" data-testid="no_partnerships_data">
           No Partnerships
         </Typography>
       )}
