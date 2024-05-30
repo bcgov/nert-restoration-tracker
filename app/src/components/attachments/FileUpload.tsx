@@ -25,6 +25,9 @@ const pageStyles = {
     '&:hover, &:focus': {
       borderColor: 'darkgray'
     },
+    '&.hoverApproved': {
+      borderColor: 'green'
+    },
     cursor: 'pointer'
   }
 };
@@ -103,11 +106,30 @@ export interface IFileUploadProps {
 }
 
 export const FileUpload: React.FC<IFileUploadProps> = (props) => {
+  console.log('props', props);
   const [files, setFiles] = useState<IUploadFile[]>([]);
 
   const [fileUploadItems, setFileUploadItems] = useState<any[]>([]);
 
   const [fileToRemove, setFileToRemove] = useState<string>('');
+
+  const [uploadCheckApproved, setUploadCheckApproved] = useState<boolean>(false);
+
+  const allApprovedExtensions = Object.entries(props.dropZoneProps.acceptedFileExtensions);
+  const approvedExtensions = allApprovedExtensions.map((value) => value[0]);
+  // const approvedExtensions = allApprovedExtensions.reduce<string[]>((acc, value) => {
+  //   console.log('value', value);
+  //   return acc.concat(value[1]);
+  // }, []);
+  console.log('approvedExtensions', approvedExtensions);
+
+  const checkApproved = (e) => {
+    const match =
+      approvedExtensions.some((extension) => extension === e.dataTransfer.items[0].type) || false;
+    setUploadCheckApproved(match);
+  };
+
+  const checkLeave = () => setUploadCheckApproved(false);
 
   /**
    * Handles files which are added (via either drag/drop or browsing).
@@ -229,7 +251,7 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
 
   return (
     <Box>
-      <Box sx={pageStyles.dropZone}>
+      <Box sx={pageStyles.dropZone} onDragOver={checkApproved} onDragLeave={checkLeave}>
         <DropZone onFiles={onFiles} {...props.dropZoneProps} />
       </Box>
       <Box>
