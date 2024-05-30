@@ -148,6 +148,28 @@ const deleteImage = (image, setImage) => {
 };
 
 /**
+ * Thumbnail image component
+ * @param image Image to delete
+ * @param setImage State function to set the image
+ */
+const ThumbnailImage = ({ image, setImage }) => {
+  return (
+    <div>
+      <button
+        style={uploadImageStyles.thumbnailDelete}
+        className="delete-image-button"
+        title="Delete Image"
+        onClick={() => {
+          deleteImage(image, setImage);
+        }}>
+        X
+      </button>
+      <img style={uploadImageStyles.thumbnail} src={image} alt="Project" />
+    </div>
+  );
+};
+
+/**
  * Create project - General information section
  *
  * @return {*}
@@ -166,18 +188,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
       <div style={uploadImageStyles.general}>
         <div style={uploadImageStyles.description}>Project Image</div>
         {image ? (
-          <div>
-            <button
-              style={uploadImageStyles.thumbnailDelete}
-              className="delete-image-button"
-              title="Delete Image"
-              onClick={() => {
-                deleteImage(image, setImage);
-              }}>
-              X
-            </button>
-            <img style={uploadImageStyles.thumbnail} src={image} alt="Project" />
-          </div>
+          <ThumbnailImage image={image} setImage={setImage} />
         ) : (
           <FileUpload
             uploadHandler={uploadImage(setImage)}
