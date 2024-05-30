@@ -8,8 +8,10 @@ import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workfl
 import { useFormikContext } from 'formik';
 
 import FileUpload from 'components/attachments/FileUpload';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import yup from 'utils/YupSchema';
+
+import { ConfigContext } from 'contexts/configContext';
 
 import './styles/projectImage.css';
 
@@ -174,9 +176,10 @@ const ThumbnailImage = ({ image, setImage }) => {
  *
  * @return {*}
  */
-
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
+
+  const config = useContext(ConfigContext);
 
   // const { values, setFieldValue, setFieldError } = formikProps;
   // console.log('values', values);
@@ -193,9 +196,9 @@ const ProjectGeneralInformationForm: React.FC = () => {
           <FileUpload
             uploadHandler={uploadImage(setImage)}
             dropZoneProps={{
-              maxFileSize: 10 * 1024 * 1024, // 10MB
-              maxNumFiles: 1,
-              multiple: false,
+              maxFileSize: config?.MAX_IMAGE_UPLOAD_SIZE || 52428800,
+              maxNumFiles: config?.MAX_IMAGE_NUM_FILES || 1,
+              multiple: config?.ALLOW_MULTIPLE_IMAGE_UPLOADS || false,
               acceptedFileExtensionsHumanReadable: 'PNG & JPG',
               acceptedFileExtensions: {
                 'image/png': ['.png'],

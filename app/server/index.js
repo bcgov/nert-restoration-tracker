@@ -53,7 +53,11 @@ const request = require('request');
       },
       SITEMINDER_LOGOUT_URL: process.env.REACT_APP_SITEMINDER_LOGOUT_URL,
       MAX_UPLOAD_NUM_FILES: Number(process.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
-      MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800
+      MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800,
+      MAX_IMAGE_UPLOAD_SIZE: Number(process.env.REACT_APP_MAX_IMAGE_UPLOAD_SIZE) || 5242880,
+      MAX_IMAGE_NUM_FILES: Number(process.env.REACT_APP_MAX_IMAGE_NUM_FILES) || 1,
+      ALLOW_MULTIPLE_IMAGE_UPLOADS:
+        Boolean(process.env.REACT_APP_ALLOW_MULTIPLE_IMAGE_UPLOADS) || false
     };
     resp.status(200).json(config);
   });
