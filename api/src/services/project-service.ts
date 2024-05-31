@@ -1,5 +1,6 @@
 import SQL from 'sql-template-strings';
 import { PROJECT_ROLE } from '../constants/roles';
+import { IDBConnection } from '../database/db';
 import { HTTP400, HTTP409, HTTP500 } from '../errors/custom-error';
 import { models } from '../models/models';
 import {
@@ -26,10 +27,17 @@ import {
 } from '../models/project-view';
 import { IUpdateProject } from '../paths/project/{projectId}/update';
 import { queries } from '../queries/queries';
+import { ProjectRepository } from '../repositories/project-repository';
 import { DBService } from './service';
 import { TaxonomyService } from './taxonomy-service';
 
 export class ProjectService extends DBService {
+  projectRepository: ProjectRepository;
+
+  constructor(connection: IDBConnection) {
+    super(connection);
+    this.projectRepository = new ProjectRepository(connection);
+  }
   /**
    * Gets the project participant, adding them if they do not already exist.
    *
@@ -550,7 +558,7 @@ export class ProjectService extends DBService {
     );
 
     // Handle region associated to this project
-    promises.push(this.insertRegion(postProjectData.location.region, projectId));
+    promises.push(this.projectRepository.insertProjectRegion(postProjectData.location.region, projectId));
 
     // Handle focus
     promises.push(this.insertFocus(postProjectData.focus, projectId));
@@ -829,32 +837,6 @@ export class ProjectService extends DBService {
     }
   }
 
-  async insertRegion(regionNumber: number, projectId: number): Promise<number> {
-    const sqlStatement = SQL`
-      INSERT INTO nrm_region (
-        project_id,
-        objectid,
-        name
-      ) VALUES (
-        ${projectId},
-        ${regionNumber},
-        ${regionNumber}
-      )
-      RETURNING
-        nrm_region_id as id;
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project region data');
-    }
-
-    return result.id;
-  }
-
   async insertRange(rangeNumber: number, projectId: number): Promise<number> {
     const sqlStatement = SQL`
       INSERT INTO project_caribou_population_unit (
@@ -1105,7 +1087,7 @@ export class ProjectService extends DBService {
       // No spatial data to insert
       return;
     }
-    await this.insertRegion(putRegionData.region, projectId);
+    await this.projectRepository.insertProjectRegion(putRegionData.region, projectId);
   }
 
   async updateProjectSpeciesData(projectId: number, entities: IUpdateProject): Promise<void> {

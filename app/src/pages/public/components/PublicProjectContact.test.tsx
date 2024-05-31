@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import PublicProjectContact from './PublicProjectContact';
 

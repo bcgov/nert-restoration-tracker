@@ -23,7 +23,7 @@ import { ProjectParticipantsI18N, SystemUserI18N } from '../../../constants/i18n
 import { DialogContext } from '../../../contexts/dialogContext';
 import { APIError } from '../../../hooks/api/useAxios';
 import { CodeSet, IGetAllCodeSetsResponse } from '../../../interfaces/useCodesApi.interface';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectPlanApi.interface';
+import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
 
 const pageStyles = {

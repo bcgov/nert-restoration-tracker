@@ -37,12 +37,12 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
+import { IPlansListProps } from '../user/MyPlans';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
@@ -349,8 +349,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         variant="body2"
                         onClick={
                           draftCode != row.statusCode
-                            ? () => history(`/admin/projects/${row.planId}`)
-                            : () => history(`/admin/projects/create?draftId=${row.planId}`)
+                            ? () => history(`/admin/plans/${row.planId}`)
+                            : () => history(`/admin/plans/create?draftId=${row.planId}`)
                         }>
                         {row.planName}
                       </Link>

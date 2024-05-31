@@ -18,7 +18,7 @@ import { AttachmentsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedFileSize } from 'utils/Utils';
