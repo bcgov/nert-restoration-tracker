@@ -22,6 +22,8 @@
     "format-fix": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "faker-js": "^1.0.0",
     "knex": "^3.1.0",
     "pg": "^8.11.3"
   },
