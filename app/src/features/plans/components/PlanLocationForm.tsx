@@ -1,4 +1,4 @@
-import { mdiPlus, mdiTrayArrowUp } from '@mdi/js';
+import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
@@ -8,13 +8,10 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
-import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
@@ -22,7 +19,6 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import CustomTextField from 'components/fields/CustomTextField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
 import { MapStateContext } from 'contexts/mapContext';
@@ -34,37 +30,31 @@ import yup from 'utils/YupSchema';
 
 export interface IPlanLocationForm {
   location: {
-    geometry: Feature[];
-    number_sites: number;
     region: number;
-    is_within_overlapping: string;
-    name_area_conservation_priority: string[];
+    number_sites: number;
     size_ha: number;
+    geometry: Feature[];
   };
 }
 
 export const PlanLocationFormInitialValues: IPlanLocationForm = {
   location: {
-    geometry: [] as unknown as Feature[],
     region: '' as unknown as number,
     number_sites: '' as unknown as number,
-    is_within_overlapping: 'false',
-    name_area_conservation_priority: [],
-    size_ha: '' as unknown as number
+    size_ha: '' as unknown as number,
+    geometry: [] as unknown as Feature[]
   }
 };
 
 export const PlanLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    // region: yup.string().required('Required'),
+    region: yup.string().required('Required'),
+    number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
+    size_ha: yup.number().nullable(),
     geometry: yup
       .array()
       .min(1, 'You must specify a Plan boundary')
-      .required('You must specify a Plan boundary'),
-    is_within_overlapping: yup.string().notRequired(),
-    // name_area_conservation_priority: yup.array().nullable(),
-    size_ha: yup.number().nullable(),
-    number_sites: yup.number().min(1, 'At least one site is required').required('Required')
+      .required('You must specify a Plan boundary')
   })
 });
 
@@ -181,74 +171,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
               </FormControl>
             </Grid>
           </Grid>
-        </Box>
-
-        <Box mb={4}>
-          <FormControl
-            component="fieldset"
-            error={
-              touched.location?.is_within_overlapping &&
-              Boolean(errors.location?.is_within_overlapping)
-            }>
-            <FormLabel component="legend">
-              Is the Plan within or overlapping a known area of cultural or conservation ?
-            </FormLabel>
-
-            <Box mt={1}>
-              <RadioGroup
-                name="location.is_within_overlapping"
-                aria-label="Plan within or overlapping a known area of cultural or conservation"
-                value={values.location.is_within_overlapping || 'false'}
-                onChange={handleChange}>
-                <FormControlLabel
-                  value="false"
-                  control={<Radio color="primary" size="small" />}
-                  label="No"
-                />
-                <FormControlLabel
-                  value="true"
-                  control={<Radio color="primary" size="small" />}
-                  label="Yes"
-                />
-                <FormControlLabel
-                  value="dont_know"
-                  control={<Radio color="primary" size="small" />}
-                  label="Don't know"
-                />
-                <FormHelperText>
-                  {touched.location?.is_within_overlapping &&
-                    errors.location?.is_within_overlapping}
-                </FormHelperText>
-              </RadioGroup>
-            </Box>
-          </FormControl>
-        </Box>
-
-        <Box mb={4}>
-          <Grid container spacing={3} direction="column">
-            <Grid item xs={12}>
-              <CustomTextField
-                name={'location.name_area_conservation_priority'}
-                label={'Area of Cultural or Conservation Priority Name'}
-                other={{
-                  disabled: true
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Box pt={2}>
-            <Button
-              type="button"
-              variant="outlined"
-              color="primary"
-              aria-label="add area of cultural or conservation priority"
-              startIcon={<Icon path={mdiPlus} size={1}></Icon>}
-              // onClick={() => arrayHelpers.push(PlanLocationFormInitialValues)}
-            >
-              Add New Area
-            </Button>
-          </Box>
         </Box>
 
         <Box mb={4}>

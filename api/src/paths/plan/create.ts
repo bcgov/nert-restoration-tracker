@@ -108,11 +108,6 @@ POST.apiDoc = {
                   items: {
                     type: 'number'
                   }
-                },
-                people_involved: {
-                  type: 'number',
-                  description: 'Number of people involved in the project',
-                  nullable: true
                 }
               }
             },
@@ -239,7 +234,7 @@ export function createPlan(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedPlanPostData = new PostPlanObject(req.body);
-    console.log('sanitizedPlanPostData', sanitizedPlanPostData);
+
     try {
       await connection.open();
 

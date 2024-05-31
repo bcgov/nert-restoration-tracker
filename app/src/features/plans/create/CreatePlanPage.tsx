@@ -302,32 +302,6 @@ const CreatePlanPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  // /**
-  //  * Intercepts all navigation attempts (when used with a `Prompt`).
-  //  *
-  //  * Returning true allows the navigation, returning false prevents it.
-  //  *
-  //  * @param {History.Location} location
-  //  * @return {*}
-  //  */
-  // const handleLocationChange = () => {
-  //   if (!dialogContext.yesNoDialogProps.open) {
-  //     // If the cancel dialog is not open: open it
-  //     dialogContext.setYesNoDialog({
-  //       ...defaultCancelDialogProps,
-  //       onYes: () => {
-  //         dialogContext.setYesNoDialog({ open: false });
-  //         history(location.pathname);
-  //       },
-  //       open: true
-  //     });
-  //     return false;
-  //   }
-
-  //   // If the cancel dialog is already open and another location change action is triggered: allow it
-  //   return true;
-  // };
-
   return (
     <>
       <EditDialog

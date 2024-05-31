@@ -15,7 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { RoleGuard } from 'components/security/Guards';
-import { attachmentType } from 'constants/misc';
+import { attachmentType, focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
@@ -24,7 +24,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
-import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
 import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import MapContainer from 'components/map/MapContainer2';
 import { MapStateContext } from 'contexts/mapContext';
@@ -32,6 +31,10 @@ import { DeletePlanI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { APIError } from 'hooks/api/useAxios';
+import { Card, Chip, Tooltip } from '@mui/material';
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import InfoIcon from '@mui/icons-material/Info';
+import PlanHeader from './PlanHeader';
 
 const pageStyles = {
   titleContainerActions: {
@@ -81,9 +84,6 @@ const ViewPlanPage: React.FC = () => {
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
 
   const codes = useCodes();
-
-  //TODO: Priority is not in the plan location object
-  const isPriority = false; //planWithDetails.location.priority === 'true';
 
   const getPlan = useCallback(async () => {
     const planWithDetailsResponse = await restorationTrackerApi.plan.getPlanById(planId);
@@ -198,94 +198,127 @@ const ViewPlanPage: React.FC = () => {
   return (
     <>
       <Container maxWidth="xl" data-testid="view_plan_page_component">
-        <Box mb={5} display="flex" justifyContent="space-between">
-          <Box>
-            <Typography variant="h1">{planWithDetails.project.project_name}</Typography>
-            <Box mt={1.5} display="flex" flexDirection={'row'} alignItems="center">
-              <Typography variant="subtitle2" component="span" color="textSecondary">
-                Plan Status:
+        <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
+          <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
+            <Box>
+              <Typography variant="h1">
+                <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Project" />{' '}
+                {planWithDetails.project.project_name}
               </Typography>
-              <Box ml={1}>
-                <ProjectStatusChip
-                  startDate={planWithDetails.project.start_date}
-                  endDate={planWithDetails.project.end_date}
-                />
-              </Box>
-              {isPriority && (
-                <Box ml={0.5}>
-                  <ProjectPriorityChip />
+              <Box mt={0.3} display="flex" flexDirection={'row'} alignItems="center">
+                <Typography variant="subtitle2" component="span" color="textSecondary">
+                  Plan Status:
+                </Typography>
+                <Box ml={1}>
+                  <Chip
+                    size="small"
+                    sx={getStatusStyle(planWithDetails.project.state_code)}
+                    label={getStateLabelFromCode(planWithDetails.project.state_code)}
+                  />
+                  <Tooltip title={'Plan workflow information'} placement="right">
+                    <IconButton color={'info'}>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
-              )}
+              </Box>
+              <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
+                <Typography variant="subtitle2" component="span" color="textSecondary">
+                  Plan Focus:
+                </Typography>
+                <Box ml={1}>
+                  {planWithDetails.project.is_healing_land && (
+                    <Chip size="small" color={'default'} label={focus.HEALING_THE_LAND} />
+                  )}
+                  {planWithDetails.project.is_healing_people && (
+                    <Chip size="small" color={'default'} label={focus.HEALING_THE_PEOPLE} />
+                  )}
+                  {planWithDetails.project.is_land_initiative && (
+                    <Chip
+                      size="small"
+                      color={'default'}
+                      label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
+                    />
+                  )}
+                  {planWithDetails.project.is_cultural_initiative && (
+                    <Chip
+                      size="small"
+                      color={'default'}
+                      label={focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE}
+                    />
+                  )}
+                </Box>
+              </Box>
             </Box>
-          </Box>
-          <RoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
-            <Box sx={pageStyles.titleContainerActions}>
-              <Button
-                aria-label="manage plan team"
-                variant="outlined"
-                color="primary"
-                startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history(`/admin/plans/${urlParams['id']}/users`)}>
-                Plan Team
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}>
-                Edit Plan
-              </Button>
-              <RoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+            <RoleGuard
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+              <Box p={2} sx={pageStyles.titleContainerActions}>
                 <Button
-                  aria-label="delete plan"
+                  aria-label="manage plan team"
                   variant="outlined"
                   color="primary"
-                  startIcon={<Icon path={mdiTrashCanOutline} size={1} />}
-                  onClick={showDeletePlanDialog}>
-                  Delete
+                  startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
+                  onClick={() => history(`/admin/plans/${urlParams['id']}/users`)}>
+                  Plan Team
                 </Button>
-              </RoleGuard>
-            </Box>
-          </RoleGuard>
-        </Box>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<Icon path={mdiPencilOutline} size={1} />}
+                  onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}>
+                  Edit Plan
+                </Button>
+                <RoleGuard
+                  validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                  <Button
+                    aria-label="delete plan"
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<Icon path={mdiTrashCanOutline} size={1} />}
+                    onClick={showDeletePlanDialog}>
+                    Delete
+                  </Button>
+                </RoleGuard>
+              </Box>
+            </RoleGuard>
+          </Box>
 
-        <Box m={2}>
-          <Grid container spacing={4}>
-            <Grid item md={8}>
-              <Paper elevation={2}>
-                <Box p={2}>
-                  <Typography variant="h2">Location</Typography>
-                </Box>
-                <Box height={500}>
-                  <MapContainer
-                    mapId={'plan_location_map'}
-                    layerVisibility={mapContext.layerVisibility}
-                    features={planWithDetails.location.geometry}
-                    mask={null}
+          <Box mx={1} mb={1}>
+            <Grid container spacing={1}>
+              <Grid item md={8}>
+                <PlanHeader planWithDetails={planWithDetails} />
+                <Paper elevation={2}>
+                  <Box p={2}>
+                    <Typography variant="h2">Location</Typography>
+                  </Box>
+                  <Box height={500}>
+                    <MapContainer
+                      mapId={'plan_location_map'}
+                      layerVisibility={mapContext.layerVisibility}
+                      features={planWithDetails.location.geometry}
+                      mask={null}
+                    />
+                  </Box>
+                </Paper>
+                <Box mt={2} />
+                {/* Documents */}
+                <Paper elevation={2}>
+                  <ProjectAttachments
+                    attachmentsList={attachmentsList}
+                    getAttachments={getAttachments}
                   />
-                </Box>
-              </Paper>
+                </Paper>
+              </Grid>
+              <Grid item md={4}>
+                <Paper elevation={2}>
+                  <PlanDetailsPage planForViewData={planWithDetails} codes={codes.codes} />
+                </Paper>
+              </Grid>
             </Grid>
-            <Grid item md={4}>
-              <Paper elevation={2}>
-                <PlanDetailsPage planForViewData={planWithDetails} codes={codes.codes} />
-              </Paper>
-            </Grid>
-            <Grid item md={8}>
-              {/* Documents */}
-              <Paper elevation={2}>
-                <ProjectAttachments
-                  attachmentsList={attachmentsList}
-                  getAttachments={getAttachments}
-                />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Box>
+          </Box>
+        </Card>
       </Container>
 
       <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
