@@ -1,6 +1,9 @@
 import { mdiAccountCircleOutline } from '@mdi/js';
-import Icon from '@mdi/react';
+import Avatar from '@mui/material/Avatar';
+import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
@@ -13,17 +16,6 @@ export interface IProjectContactProps {
   refresh: () => void;
 }
 
-const pageStyles = {
-  projectContactList: {
-    marginBottom: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    padding: 0
-  },
-  contactIcon: {
-    color: '#575759'
-  }
-};
 /**
  * Project contact content for a project.
  *
@@ -36,39 +28,44 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
 
   return (
     <>
-      <ul style={pageStyles.projectContactList}>
-        {contact.contacts.map((contactDetails, index) => (
-          <Box component="li" key={index} display="flex" justifyContent="space-between">
-            <Box display="flex" pl={1}>
-              <Icon color={pageStyles.contactIcon.color} path={mdiAccountCircleOutline} size={1} />
-              <Box ml={2}>
-                <div>
-                  <strong data-testid="contact_name">
-                    {contactDetails.first_name} {contactDetails.last_name}
-                  </strong>
-                </div>
-                <div>
-                  <Link href={'mailto:' + contactDetails.email_address}>
-                    {contactDetails.email_address}
-                  </Link>
-                </div>
-                <div>{contactDetails.agency}</div>
-              </Box>
-            </Box>
-            <Box>
-              {JSON.parse(contactDetails.is_primary) && <Chip size="small" label="PRIMARY" />}
-            </Box>
+      {hasContacts &&
+        contact.contacts.map((contactDetails, index) => (
+          <Box my={1} key={index}>
+            <Card sx={{ borderRadius: '10px' }}>
+              <CardHeader
+                sx={{ mt: -1 }}
+                avatar={<Avatar src={mdiAccountCircleOutline} aria-label="contact" />}
+                title={contactDetails.first_name + contactDetails.last_name}
+                subheader={
+                  <>
+                    <Link href={'mailto:' + contactDetails.email_address}>
+                      {contactDetails.email_address}
+                    </Link>
+                    {contactDetails.is_primary === 'true' ? (
+                      <Box>
+                        <Chip size="small" label="PRIMARY" />
+                      </Box>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                }
+                data-testid="contact_name"
+              />
+              <CardContent sx={{ my: -3 }}>
+                <Typography variant="body2" color="text.secondary">
+                  <b>Organization:</b> {contactDetails.agency}
+                </Typography>
+              </CardContent>
+            </Card>
           </Box>
         ))}
 
-        {!hasContacts && (
-          <li>
-            <Typography variant="body2" color="textSecondary" data-testid="no_contacts">
-              No Contacts
-            </Typography>
-          </li>
-        )}
-      </ul>
+      {!hasContacts && (
+        <Typography variant="body2" color="textSecondary" data-testid="no_contacts">
+          No Contacts
+        </Typography>
+      )}
     </>
   );
 };
