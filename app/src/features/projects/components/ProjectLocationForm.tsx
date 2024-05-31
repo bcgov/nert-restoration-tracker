@@ -125,7 +125,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    * State to share with the map to indicate which
    * feature is selected or hovered over
    */
-  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
+  const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
   useEffect(() => {
     console.log('active feature just changed', activeFeature);
@@ -159,7 +159,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const mouseEnterListItem = (index: number) => {
     console.log('mouse enter', index);
     console.log(values.location.geometry[index]);
-    setActiveFeature(values.location.geometry[index]);
+    // setActiveFeature(values.location.geometry[index]);
+    setActiveFeature(index + 1);
   };
   const mouseLeaveListItem = (index: number) => {
     console.log('mouse leave', index);
@@ -326,7 +327,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           {values.location.geometry.map((feature, index) => (
             <div
               style={featureStyle.parent}
-              className={activeFeature?.id === feature?.id ? 'feature-item active' : 'feature-item'}
+              className={
+                activeFeature === feature.properties?.id ? 'feature-item active' : 'feature-item'
+              }
               key={index}
               onMouseEnter={() => mouseEnterListItem(index)}
               onMouseLeave={() => mouseLeaveListItem(index)}>

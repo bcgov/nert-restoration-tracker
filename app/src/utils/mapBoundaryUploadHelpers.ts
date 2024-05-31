@@ -90,7 +90,7 @@ export const handleGeoJSONUpload = async <T>(
 
     // Recalculate the IDs for all features
     const allFeaturesWithIds = allFeatures.map((feature, index) => {
-      feature.id = index;
+      feature.properties.id = index + 1;
       return feature;
     });
 

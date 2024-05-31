@@ -262,7 +262,7 @@ const checkFeatureState = (featureState: any) => {
     map.setFeatureState(
       {
         source: 'markers',
-        id: hoverStateMarkerPolygon.id
+        id: hoverStateMarkerPolygon
       },
       { hover: false }
     );
@@ -273,7 +273,7 @@ const checkFeatureState = (featureState: any) => {
     map.setFeatureState(
       {
         source: 'markers',
-        id: featureState[0].id
+        id: featureState[0]
       },
       { hover: true }
     );
@@ -443,7 +443,8 @@ const initializeMap = (
       data: markerGeoJSON as FeatureCollection,
       cluster: centroids ? true : false,
       clusterRadius: 50,
-      clusterMaxZoom: 12
+      clusterMaxZoom: 12,
+      promoteId: 'id'
     });
 
     map.addLayer({
@@ -522,7 +523,7 @@ const initializeMap = (
         map.getCanvas().style.cursor = 'pointer';
 
         checkFeatureState(activeFeatureState);
-        activeFeatureState[1](e.features[0]);
+        activeFeatureState[1](e.features[0].id);
 
         // console.log('entering index: ', e.features[0].id);
         // if (activeFeatureState[0]) {
@@ -849,8 +850,8 @@ const checkLayerVisibility = (layers: any, features: any) => {
     return plansVisible && !feature.properties.is_project
       ? feature
       : projectsVisible && feature.properties.is_project
-        ? feature
-        : null;
+      ? feature
+      : null;
   });
   if (map.getSource('markers')) {
     // @ts-ignore
