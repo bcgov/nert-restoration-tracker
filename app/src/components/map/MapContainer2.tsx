@@ -375,7 +375,7 @@ const initializeMap = (
       source: 'mask',
       paint: {
         'line-width': 4,
-        'line-color': 'aqua',
+        'line-color': 'orange',
         'line-dasharray': [3, 2],
         'line-blur': 2
       }
@@ -512,8 +512,8 @@ const initializeMap = (
         'fill-color': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          'rgba(250,191,120,1)',
-          'rgba(250,191,120,0.5)'
+          'rgba(3, 252, 252,0.4)',
+          'rgba(250,191,120,0.4)'
         ]
       }
     });
