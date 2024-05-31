@@ -1,5 +1,10 @@
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
 import CustomTextField from 'components/fields/CustomTextField';
 
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
@@ -82,25 +87,26 @@ const uploadImageStyles = {
     marginBottom: '2px'
   },
   thumbnail: {
-    border: '1px solid #0008',
-    borderRadius: '25px',
-    overflow: 'hidden',
-    height: '200px',
-    width: '100%',
-    objectFit: fitObject
+    borderRadius: '25px'
+  },
+  thumbnailAction: {
+    position: positionAbsolute,
+    top: '12px',
+    right: '-10px'
+    // background: 'rgba(0, 0, 0, 0.5)',
+    // color: 'white',
+    // borderRadius: '50%',
+    // padding: '5px 7px',
+    // cursor: 'pointer',
+    // opacity: 0.5,
+    // transition: 'all ease-out 0.2s',
+    // zIndex: 1
   },
   thumbnailDelete: {
-    position: positionAbsolute,
-    top: '28px',
-    right: '8px',
-    background: 'rgba(0, 0, 0, 0.5)',
     color: 'white',
-    borderRadius: '50%',
-    padding: '5px 7px',
-    cursor: 'pointer',
-    opacity: 0.5,
     transition: 'all ease-out 0.2s',
-    zIndex: 1
+    opacity: 0.7,
+    fontSize: '2.0rem'
   }
 };
 
@@ -150,24 +156,25 @@ const deleteImage = (image, setImage) => {
 };
 
 /**
- * Thumbnail image component
- * @param image Image to delete
- * @param setImage State function to set the image
+ * Thumbnail image using MUI Card
  */
-const ThumbnailImage = ({ image, setImage }) => {
+const ThumbnailImageCard = ({ image, setImage }) => {
   return (
-    <div>
-      <button
-        style={uploadImageStyles.thumbnailDelete}
-        className="delete-image-button"
-        title="Delete Image"
-        onClick={() => {
-          deleteImage(image, setImage);
-        }}>
-        X
-      </button>
-      <img style={uploadImageStyles.thumbnail} src={image} alt="Project" />
-    </div>
+    <Card sx={uploadImageStyles.thumbnail}>
+      <CardMedia component="img" height="200" image={image} alt="Project" />
+      <CardActions sx={uploadImageStyles.thumbnailAction}>
+        <IconButton
+          title="Delete Image"
+          onClick={() => {
+            deleteImage(image, setImage);
+          }}>
+          <DeleteForeverOutlinedIcon
+            className="delete-image-button"
+            sx={uploadImageStyles.thumbnailDelete}
+          />
+        </IconButton>
+      </CardActions>
+    </Card>
   );
 };
 
@@ -191,7 +198,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
       <div style={uploadImageStyles.general}>
         <div style={uploadImageStyles.description}>Project Image</div>
         {image ? (
-          <ThumbnailImage image={image} setImage={setImage} />
+          <ThumbnailImageCard image={image} setImage={setImage} />
         ) : (
           <FileUpload
             uploadHandler={uploadImage(setImage)}
