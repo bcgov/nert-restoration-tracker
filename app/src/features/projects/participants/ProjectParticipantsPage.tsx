@@ -24,7 +24,7 @@ import { CodeSet, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interfa
 import {
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponseArrayItem
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectParticipantsHeader from './ProjectParticipantsHeader';

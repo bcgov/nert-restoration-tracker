@@ -323,6 +323,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
         <Box className="feature-box">
           {/* Create a list element for each feature within values.location.geometry */}
+          {/* TODO: Utilize MUI Components instead of custom divs */}
           {values.location.geometry.map((feature, index) => (
             <div
               style={featureStyle.parent}

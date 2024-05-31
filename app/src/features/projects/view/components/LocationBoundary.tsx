@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { IStaticLayer, IStaticLayerFeature } from 'components/map/components/StaticLayers';
 import MapContainer from 'components/map/MapContainer';
-import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
 import { LatLngBoundsExpression } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';

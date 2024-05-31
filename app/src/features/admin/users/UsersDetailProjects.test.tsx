@@ -6,7 +6,7 @@ import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectPlanApi.interface';
+import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import UsersDetailProjects from './UsersDetailProjects';
 
 jest.mock('../../../hooks/useRestorationTrackerApi');

@@ -1,4 +1,4 @@
-import { ICreateProjectRequest } from './useProjectPlanApi.interface';
+import { ICreateProjectRequest } from './useProjectApi.interface';
 
 /**
  * Create/Update draft response object.

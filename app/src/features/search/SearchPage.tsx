@@ -1,12 +1,10 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IMarker } from 'components/map/components/MarkerCluster';
 import MapContainer from 'components/map/MapContainer2';
 import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { LatLngTuple } from 'leaflet';
@@ -25,27 +23,27 @@ const SearchPage: React.FC = () => {
   const [performSearch, setPerformSearch] = useState<boolean>(true);
   const [geometries, setGeometries] = useState<IMarker[]>([]);
 
-  const dialogContext = useContext(DialogContext);
   const { keycloakWrapper } = useContext(AuthStateContext);
 
-  const showFilterErrorDialog = useCallback(
-    (textDialogProps?: Partial<IErrorDialogProps>) => {
-      dialogContext.setErrorDialog({
-        onClose: () => {
-          dialogContext.setErrorDialog({ open: false });
-        },
-        onOk: () => {
-          dialogContext.setErrorDialog({ open: false });
-        },
-        ...textDialogProps,
-        open: true
-      });
-    },
-    [dialogContext]
-  );
+  // const showFilterErrorDialog = useCallback(
+  //   (textDialogProps?: Partial<IErrorDialogProps>) => {
+  //     dialogContext.setErrorDialog({
+  //       onClose: () => {
+  //         dialogContext.setErrorDialog({ open: false });
+  //       },
+  //       onOk: () => {
+  //         dialogContext.setErrorDialog({ open: false });
+  //       },
+  //       ...textDialogProps,
+  //       open: true
+  //     });
+  //   },
+  //   [dialogContext]
+  // );
 
   const getSearchResults = useCallback(async () => {
     try {
+      console.log('keycloakWrapper', keycloakWrapper);
       const response = isAuthenticated(keycloakWrapper)
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
@@ -71,13 +69,14 @@ const SearchPage: React.FC = () => {
       setGeometries(clusteredPointGeometries);
     } catch (error) {
       const apiError = error as APIError;
-      showFilterErrorDialog({
-        dialogTitle: 'Error Searching For Results',
-        dialogError: apiError?.message,
-        dialogErrorDetails: apiError?.errors
-      });
+      console.log('apiError', apiError);
+      // showFilterErrorDialog({
+      //   dialogTitle: 'Error Searching For Results',
+      //   dialogError: apiError?.message,
+      //   dialogErrorDetails: apiError?.errors
+      // });
     }
-  }, [restorationApi.search, restorationApi.public.search, showFilterErrorDialog, keycloakWrapper]);
+  }, [restorationApi.search, restorationApi.public.search, keycloakWrapper]);
 
   useEffect(() => {
     if (performSearch) {

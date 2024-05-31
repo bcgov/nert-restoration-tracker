@@ -7,16 +7,23 @@ import Typography from '@mui/material/Typography';
 import { SystemRoleGuard } from 'components/security/Guards';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
-import PlanListPage from 'features/projects/list/PlanListPage';
-import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
+import PlanListPage from 'features/plans/PlanListPage';
+import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import React from 'react';
 import { useCollapse } from 'react-collapsed';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+export interface IPlansListProps {
+  plans: IGetPlanForViewResponse[];
+  drafts?: IGetDraftsListResponse[];
+  myplan?: boolean;
+}
 
 const MyPlans: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts } = props;
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
-  // const history = useNavigate();
+  const history = useNavigate();
 
   return (
     <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
@@ -37,7 +44,7 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
                 variant="contained"
                 color="primary"
                 startIcon={<Icon path={mdiPlus} size={1} />}
-                // onClick={() => history('/admin/projects/create')}
+                onClick={() => history('/admin/plans/create')}
                 data-testid="create-project-button">
                 Create Plan
               </Button>

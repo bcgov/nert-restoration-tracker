@@ -3,7 +3,7 @@ import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectPlanApi.interface';
+import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
 import UsersDetailPage from './UsersDetailPage';
 
