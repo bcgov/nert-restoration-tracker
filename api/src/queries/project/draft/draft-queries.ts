@@ -20,7 +20,7 @@ export const postDraftSQL = (
 ): SQLStatement | null => {
   defaultLog.debug({ label: 'postDraftSQL', message: 'params', isProject, name, data });
 
-  if (!systemUserId || !isProject || !name || !data) {
+  if (!systemUserId || !name || !data) {
     return null;
   }
 

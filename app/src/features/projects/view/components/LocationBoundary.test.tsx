@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { Feature } from 'geojson';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectTreatment } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import LocationBoundary from './LocationBoundary';

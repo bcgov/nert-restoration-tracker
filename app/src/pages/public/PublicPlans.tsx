@@ -16,7 +16,7 @@ import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import PublicPlanListPage from 'pages/public/list/PublicPlansListPage';
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -79,7 +79,7 @@ export default function PublicPlans() {
   };
 
   const handleReset = async () => {
-    const plansResponse = await restorationTrackerApi.public.project.getProjectsList();
+    const plansResponse = await restorationTrackerApi.public.project.getPlansList();
     setPlans(plansResponse);
     setFormikValues(PlanAdvancedFiltersInitialValues);
     setFilterChipValues(PlanAdvancedFiltersInitialValues);
@@ -101,7 +101,7 @@ export default function PublicPlans() {
     try {
       setFilterChipValues(formikRef.current.values);
 
-      const response = await restorationTrackerApi.public.project.getProjectsList(
+      const response = await restorationTrackerApi.public.project.getPlansList(
         formikRef.current.values
       );
 
@@ -139,8 +139,7 @@ export default function PublicPlans() {
   //plans
   useEffect(() => {
     const getFilteredPlans = async () => {
-      const plansResponse =
-        await restorationTrackerApi.public.project.getProjectsList(formikValues);
+      const plansResponse = await restorationTrackerApi.public.project.getPlansList(formikValues);
 
       setIsLoading(false);
       setPlans(plansResponse);

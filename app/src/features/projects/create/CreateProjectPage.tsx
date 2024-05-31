@@ -73,7 +73,7 @@ import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
+import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';

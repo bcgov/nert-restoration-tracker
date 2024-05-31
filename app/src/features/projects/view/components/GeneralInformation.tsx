@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { getFormattedDate } from 'utils/Utils';
 
@@ -32,58 +32,71 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
   };
 
   return (
-    <Box component="dl" data-testid="general_info_component">
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Region:
-        </Typography>
-        {getRegionName(location.region)}
-      </div>
+    <Box data-testid="general_info_component">
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Region:
+      </Typography>
+      {getRegionName(location.region)}
 
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Brief Description:
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {project.brief_desc}
-        </Typography>
-      </div>
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Brief Description:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.brief_desc}
+      </Typography>
 
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Start Date:
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {project.start_date
-            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)
-            : '---'}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          End Date:
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {project.end_date
-            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
-            : '---'}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Focal Species:
-        </Typography>
-        <Typography component="dd" variant="body2">
-          {species.focal_species_names?.map((item: any, index: number) => {
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Start Date:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.start_date
+          ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)
+          : '---'}
+      </Typography>
+
+      <Typography variant="body2" component="dt" color="textSecondary">
+        End Date:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.end_date
+          ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
+          : '---'}
+      </Typography>
+
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Actual Start Date:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.actual_start_date
+          ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.actual_start_date)
+          : '---'}
+      </Typography>
+
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Actual End Date:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.actual_end_date
+          ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.actual_end_date)
+          : '---'}
+      </Typography>
+
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Focal Species:
+      </Typography>
+      <Box component="dd">
+        {species.focal_species_names?.length ? (
+          species.focal_species_names.map((item: any, index: number) => {
             return (
-              <span key={index} data-testid="focal_species_data">
+              <Typography variant="body2" key={index} data-testid="focal_species_data">
                 {item}
-                <br></br>
-              </span>
+              </Typography>
             );
-          })}
-        </Typography>
-      </div>
+          })
+        ) : (
+          <Typography variant="body2">No Focal Species</Typography>
+        )}
+      </Box>
     </Box>
   );
 };

@@ -818,7 +818,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
     }
 
     // Some sample basemap layers
-    const baseLayerUrls = {
+    const baseLayerUrls: { [key: string]: string } = {
       hybrid:
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       terrain: 'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
@@ -830,10 +830,12 @@ const checkLayerVisibility = (layers: any, features: any) => {
       const currentStyle = map.getStyle();
       const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
       const currentBase = rasterSource.tiles[0];
-      // @ts-ignore
-      if (currentBase !== baseLayerUrls[layers.baselayer[0]]) {
-        // @ts-ignore
-        currentStyle.sources['raster-tiles'].tiles = [baseLayerUrls[layers.baselayer[0]]];
+
+      if (!Object.hasOwn(baseLayerUrls, layers.baselayer[0])) return;
+      const newBase: string = baseLayerUrls[layers.baselayer[0]];
+
+      if (currentBase !== newBase) {
+        currentStyle.sources['raster-tiles'] = [] as any;
         map.setStyle(currentStyle);
       }
     }
@@ -907,10 +909,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   }, [layerVisibility]);
 
   // Listen for masks being turned on and off
-  useEffect(() => {
-    updateMasks(mask, maskState, features);
-  }, [maskState]);
-
+  if (maskState.length > 0) {
+    useEffect(() => {
+      updateMasks(mask, maskState, features);
+    }, [maskState]);
+  }
   // Listen for active feature changes
   useEffect(() => {
     checkFeatureState(activeFeatureState);

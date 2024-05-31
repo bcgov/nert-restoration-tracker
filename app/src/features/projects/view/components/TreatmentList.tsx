@@ -10,7 +10,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { IGetProjectTreatment } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
 import React, { ReactElement, useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';

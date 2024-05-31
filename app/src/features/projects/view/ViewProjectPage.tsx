@@ -30,7 +30,7 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ProjectAttachments from './ProjectAttachments';
@@ -98,7 +98,7 @@ const ViewProjectPage: React.FC = () => {
     const projectWithDetailsResponse =
       await restorationTrackerApi.project.getProjectById(projectId);
 
-    if (!projectWithDetailsResponse) {
+    if (!projectWithDetailsResponse || !projectWithDetailsResponse.project.is_project) {
       // TODO error handling/messaging
       return;
     }
@@ -150,7 +150,7 @@ const ViewProjectPage: React.FC = () => {
     return (
       <Tooltip title={objective} disableHoverListener={objective.length < 130}>
         <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
-          {objective}
+          &#x2022;{objective}
         </Typography>
       </Tooltip>
     );

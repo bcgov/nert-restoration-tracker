@@ -8,7 +8,7 @@ import { SystemRoleGuard } from 'components/security/Guards';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
 import ProjectsListPage from 'features/projects/list/ProjectsListPage';
-import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
+import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useNavigate } from 'react-router-dom';

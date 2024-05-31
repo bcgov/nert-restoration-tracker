@@ -33,20 +33,6 @@ export interface IProjectAdvancedFilterRequest {
 }
 
 /**
- * An interface for an instance of filter fields for plan advanced filter search
- */
-// [OI] TODO This will need to be updated with Plan data model
-export interface IPlanAdvancedFilterRequest {
-  keyword?: string;
-  contact_agency?: string | string[];
-  funding_agency?: number | number[];
-  permit_number?: string;
-  species?: number | number[];
-  start_date?: string;
-  end_date?: string;
-}
-
-/**
  * Get project attachments response object.
  *
  * @export
@@ -231,23 +217,6 @@ export interface IGetProjectForViewResponse {
   partnerships: IGetProjectForViewResponsePartnerships;
 }
 
-export interface IPlansListProps {
-  plans: IGetPlanForViewResponse[];
-  drafts?: IGetDraftsListResponse[];
-  myplan?: boolean;
-}
-export interface IGetPlanForViewResponse {
-  // [OI] this will require updating to the plan data model
-  plan: IGetProjectForViewResponseDetails;
-  species: IGetProjectForViewResponseSpecies;
-  permit: IGetProjectForViewResponsePermit;
-  location: IGetProjectForViewResponseLocation;
-  contact: IGetProjectForViewResponseContact;
-  iucn: IGetProjectForViewResponseIUCN;
-  funding: IGetProjectForViewResponseFundingData;
-  partnerships: IGetProjectForViewResponsePartnerships;
-}
-
 export interface IGetProjectForViewResponseDetails {
   plan: any;
   project: any;
@@ -267,21 +236,6 @@ export interface IGetProjectForViewResponseDetails {
   is_cultural_initiative: boolean;
   people_involved: number;
   is_project_part_public_plan: boolean;
-  region: string;
-}
-export interface IGetPlanForViewResponseDetails {
-  state_code: number;
-  is_project: boolean;
-  project_id: number;
-  project_name: string;
-  start_date: string;
-  end_date: string;
-  publish_date: string;
-  brief_desc: string;
-  is_healing_land: boolean;
-  is_healing_people: boolean;
-  is_land_initiative: boolean;
-  is_cultural_initiative: boolean;
   region: string;
 }
 
@@ -349,8 +303,7 @@ export interface IGetProjectForViewResponseFundingData {
 }
 
 export interface IGetProjectForViewResponsePartnerships {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+  partnerships: string[];
 }
 
 /**

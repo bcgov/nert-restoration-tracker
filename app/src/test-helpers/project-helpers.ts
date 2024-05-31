@@ -1,4 +1,4 @@
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 
 //TODO: Update project object
 export const getProjectForViewResponse: IGetProjectForViewResponse = {
@@ -66,7 +66,6 @@ export const getProjectForViewResponse: IGetProjectForViewResponse = {
     ]
   },
   partnerships: {
-    indigenous_partnerships: [0, 1],
-    stakeholder_partnerships: ['partner2', 'partner3']
+    partnerships: ['partner2', 'partner3']
   }
 };

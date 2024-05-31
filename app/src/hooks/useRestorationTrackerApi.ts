@@ -10,6 +10,7 @@ import useProjectApi, { usePublicProjectApi } from './api/useProjectApi';
 import useSearchApi, { usePublicSearchApi } from './api/useSearchApi';
 import useTaxonomyApi from './api/useTaxonomyApi';
 import useUserApi from './api/useUserApi';
+import usePlanApi from './api/usePlanApi';
 
 /**
  * Returns a set of supported api methods.
@@ -21,8 +22,8 @@ export const useRestorationTrackerApi = () => {
   const apiAxios = useAxios(config?.API_HOST);
 
   const project = useProjectApi(apiAxios);
-  // TODO update this code for plan
-  const plan = useProjectApi(apiAxios);
+
+  const plan = usePlanApi(apiAxios);
 
   const search = useSearchApi(apiAxios);
 

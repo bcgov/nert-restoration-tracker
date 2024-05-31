@@ -16,7 +16,7 @@ import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';

@@ -1,14 +1,24 @@
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
 import CustomTextField from 'components/fields/CustomTextField';
 
+import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
 
-import ImageUpload from 'components/attachments/ImageUpload';
-import React from 'react';
+import FileUpload from 'components/attachments/FileUpload';
+import React, { useContext, useState } from 'react';
 import yup from 'utils/YupSchema';
+
+import { ConfigContext } from 'contexts/configContext';
+
+import './styles/projectImage.css';
 
 export interface IProjectGeneralInformationForm {
   project: {
@@ -25,6 +35,7 @@ export interface IProjectGeneralInformationForm {
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
     people_involved: number | null;
+    project_image: string;
   };
 }
 
@@ -42,7 +53,8 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     is_healing_people: false,
     is_land_initiative: false,
     is_cultural_initiative: false,
-    people_involved: null
+    people_involved: null,
+    project_image: ''
   }
 };
 
@@ -58,8 +70,112 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   })
 });
 
+// Fixing a lame typescript error
+const fitObject = 'cover' as const;
+const positionAbsolute = 'absolute' as const;
+const positionRelative = 'relative' as const;
+
 const uploadImageStyles = {
-  marginTop: '23px'
+  general: {
+    position: positionRelative,
+    marginTop: '23px',
+    maxWidth: '230px'
+  },
+  description: {
+    fontSize: '12px',
+    color: '#6E6E6E',
+    marginBottom: '2px'
+  },
+  thumbnail: {
+    borderRadius: '25px'
+  },
+  thumbnailAction: {
+    position: positionAbsolute,
+    top: '12px',
+    right: '-10px'
+    // background: 'rgba(0, 0, 0, 0.5)',
+    // color: 'white',
+    // borderRadius: '50%',
+    // padding: '5px 7px',
+    // cursor: 'pointer',
+    // opacity: 0.5,
+    // transition: 'all ease-out 0.2s',
+    // zIndex: 1
+  },
+  thumbnailDelete: {
+    color: 'white',
+    transition: 'all ease-out 0.2s',
+    opacity: 0.7,
+    fontSize: '2.0rem'
+  }
+};
+
+const uploadImage = (setImage): IUploadHandler => {
+  return async (file) => {
+    const processImage = (image: any) => {
+      const img = new Image();
+      img.src = image;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const width = img.width;
+        const height = img.height;
+        const aspectRatio = width / height;
+
+        const res = 256; // The largest we want the thumbnail to be is 256 x 256
+        const newWidth = Math.sqrt(res * res * aspectRatio);
+        const newHeight = Math.sqrt((res * res) / aspectRatio);
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        ctx?.drawImage(img, 0, 0, newWidth, newHeight);
+
+        const dataUrl = canvas.toDataURL();
+
+        setImage(dataUrl);
+      };
+    };
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      processImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+    return Promise.resolve();
+  };
+};
+
+/**
+ * Delete the image if one exists
+ * @param image Image to delete
+ * @param setImage State function to set the image
+ */
+const deleteImage = (image, setImage) => {
+  if (image) setImage('');
+};
+
+/**
+ * Thumbnail image using MUI Card
+ */
+const ThumbnailImageCard = ({ image, setImage }) => {
+  return (
+    <Card sx={uploadImageStyles.thumbnail}>
+      <CardMedia component="img" height="200" image={image} alt="Project" />
+      <CardActions sx={uploadImageStyles.thumbnailAction}>
+        <IconButton
+          title="Delete Image"
+          onClick={() => {
+            deleteImage(image, setImage);
+          }}>
+          <DeleteForeverOutlinedIcon
+            className="delete-image-button"
+            sx={uploadImageStyles.thumbnailDelete}
+          />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
 };
 
 /**
@@ -67,14 +183,37 @@ const uploadImageStyles = {
  *
  * @return {*}
  */
-
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
+  const config = useContext(ConfigContext);
+
+  // const { values, setFieldValue, setFieldError } = formikProps;
+  // console.log('values', values);
+
+  const [image, setImage] = useState('' as any);
+
   return (
     <Grid container spacing={3}>
-      <div style={uploadImageStyles}>
-        <ImageUpload />
+      <div style={uploadImageStyles.general}>
+        <div style={uploadImageStyles.description}>Project Image</div>
+        {image ? (
+          <ThumbnailImageCard image={image} setImage={setImage} />
+        ) : (
+          <FileUpload
+            uploadHandler={uploadImage(setImage)}
+            dropZoneProps={{
+              maxFileSize: config?.MAX_IMAGE_UPLOAD_SIZE || 52428800,
+              maxNumFiles: config?.MAX_IMAGE_NUM_FILES || 1,
+              multiple: config?.ALLOW_MULTIPLE_IMAGE_UPLOADS || false,
+              acceptedFileExtensionsHumanReadable: 'PNG & JPG',
+              acceptedFileExtensions: {
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg']
+              }
+            }}
+          />
+        )}
       </div>
       <Grid item xs={12} md={8}>
         <Grid container spacing={3} direction="column">
