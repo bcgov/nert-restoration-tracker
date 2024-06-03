@@ -183,9 +183,11 @@ const ProjectGeneralInformationForm: React.FC = () => {
 
   const config = useContext(ConfigContext);
 
-  // const { values, setFieldValue, setFieldError } = formikProps;
-  // console.log('values', values);
+  // TODO: Pass these in to the FileUpload and ThumbnailImageCard components
+  const { values, setFieldValue, setFieldError } = formikProps;
+  console.log('values', values);
 
+  // TODO: This will get replaced by the above
   const [image, setImage] = useState('' as any);
 
   return (

@@ -272,6 +272,7 @@ const CreateProjectPage: React.FC = () => {
    * Handle project creation.
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
+    console.log('projectPostObject', projectPostObject);
     try {
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
