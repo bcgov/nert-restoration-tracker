@@ -118,6 +118,17 @@ export class GetPermitData {
   }
 }
 
+export interface IGetPartnership {
+  partnership: string;
+}
+export class GetPartnershipsData {
+  partnerships: IGetPartnership[];
+
+  constructor(partnerships?: any[]) {
+    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item.partnership)) || [];
+  }
+}
+
 export class GetLocationData {
   geometry?: Feature[];
   is_within_overlapping?: string;
@@ -156,13 +167,6 @@ export class GetIUCNClassificationData {
           };
         })) ||
       [];
-  }
-}
-export class GetPartnershipsData {
-  partnerships: string[];
-
-  constructor(partnerships?: any[]) {
-    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item.partnership)) || [];
   }
 }
 

@@ -819,7 +819,7 @@ export class ProjectService extends DBService {
       promises.push(this.updateContactData(projectId, entities));
     }
 
-    if (entities?.partnerships) {
+    if (entities?.partnership) {
       promises.push(this.updateProjectPartnershipsData(projectId, entities));
     }
 
@@ -915,7 +915,7 @@ export class ProjectService extends DBService {
 
   async updateProjectPartnershipsData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putPartnershipsData =
-      (entities?.partnerships && new models.project.PutPartnershipsData(entities.partnerships)) || null;
+      (entities?.partnership && new models.project.PutPartnershipsData(entities.partnership)) || null;
 
     const sqlDeletePartnershipsStatement = queries.project.deletePartnershipsSQL(projectId);
 

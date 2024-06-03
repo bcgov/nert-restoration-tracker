@@ -326,7 +326,7 @@ export interface IUpdateProject {
   location: object | null;
   iucn: object | null;
   funding: object | null;
-  partnerships: object | null;
+  partnership: object | null;
 }
 
 /**
