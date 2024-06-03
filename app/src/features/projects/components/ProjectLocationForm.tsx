@@ -27,7 +27,7 @@ import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -127,10 +127,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
-  useEffect(() => {
-    console.log('active feature just changed', activeFeature);
-  }, [activeFeature]);
-
   const featureStyle = {
     parent: {
       display: 'grid',
@@ -155,15 +151,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     setMask(index);
   };
 
-  // TODO: Connect these to the map state for active shapes
+  // Highlight the list item and the map feature
   const mouseEnterListItem = (index: number) => {
-    console.log('mouse enter', index);
-    console.log(values.location.geometry[index]);
-    // setActiveFeature(values.location.geometry[index]);
     setActiveFeature(index + 1);
   };
   const mouseLeaveListItem = (index: number) => {
-    console.log('mouse leave', index);
     setActiveFeature(null);
   };
 
