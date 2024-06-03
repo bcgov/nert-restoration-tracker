@@ -71,7 +71,6 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 });
 
 // Fixing a lame typescript error
-const fitObject = 'cover' as const;
 const positionAbsolute = 'absolute' as const;
 const positionRelative = 'relative' as const;
 
@@ -93,14 +92,6 @@ const uploadImageStyles = {
     position: positionAbsolute,
     top: '12px',
     right: '-10px'
-    // background: 'rgba(0, 0, 0, 0.5)',
-    // color: 'white',
-    // borderRadius: '50%',
-    // padding: '5px 7px',
-    // cursor: 'pointer',
-    // opacity: 0.5,
-    // transition: 'all ease-out 0.2s',
-    // zIndex: 1
   },
   thumbnailDelete: {
     color: 'white',

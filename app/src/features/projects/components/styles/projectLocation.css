@@ -10,7 +10,7 @@
     background-color: #e2fbff;
   } */
   &.active {
-    background-color: #e2fbff;
+    background-color: rgba(3, 252, 252, 0.3);
   }
 }
 

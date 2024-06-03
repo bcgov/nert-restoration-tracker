@@ -27,7 +27,7 @@ import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -125,11 +125,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    * State to share with the map to indicate which
    * feature is selected or hovered over
    */
-  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
-
-  useEffect(() => {
-    console.log('active feature just changed', activeFeature);
-  }, [activeFeature]);
+  const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
   const featureStyle = {
     parent: {
@@ -155,14 +151,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     setMask(index);
   };
 
-  // TODO: Connect these to the map state for active shapes
+  // Highlight the list item and the map feature
   const mouseEnterListItem = (index: number) => {
-    console.log('mouse enter', index);
-    console.log(values.location.geometry[index]);
-    setActiveFeature(values.location.geometry[index]);
+    setActiveFeature(index + 1);
   };
   const mouseLeaveListItem = (index: number) => {
-    console.log('mouse leave', index);
     setActiveFeature(null);
   };
 
@@ -327,7 +320,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           {values.location.geometry.map((feature, index) => (
             <div
               style={featureStyle.parent}
-              className={activeFeature?.id === feature?.id ? 'feature-item active' : 'feature-item'}
+              className={
+                activeFeature === feature.properties?.id ? 'feature-item active' : 'feature-item'
+              }
               key={index}
               onMouseEnter={() => mouseEnterListItem(index)}
               onMouseLeave={() => mouseLeaveListItem(index)}>
