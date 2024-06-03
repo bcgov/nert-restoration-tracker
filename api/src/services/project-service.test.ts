@@ -828,7 +828,7 @@ describe.skip('ProjectService', () => {
             }
           ]
         },
-        partnership: { partnerships: [{partnership: 'Canada Nature Fund'}, {partnership: 'BC Parks Living Labs'}] },
+        partnership: { partnerships: [{ partnership: 'Canada Nature Fund' }, { partnership: 'BC Parks Living Labs' }] },
         location: {
           geometry: [{} as unknown as Feature],
           is_within_overlapping: 'string',
@@ -1940,9 +1940,7 @@ describe.skip('ProjectService', () => {
 
       sinon.stub(queries.project, 'deletePartnershipsSQL').returns(SQL`valid sql`);
 
-      const insertPartnershipStub = sinon
-        .stub(ProjectService.prototype, 'insertPartnership')
-        .resolves(1);
+      const insertPartnershipStub = sinon.stub(ProjectService.prototype, 'insertPartnership').resolves(1);
 
       const projectService = new ProjectService(mockDBConnection);
 

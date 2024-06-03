@@ -3,14 +3,14 @@ import { describe } from 'mocha';
 import {
   deleteContactSQL,
   deleteIUCNSQL,
+  deletePartnershipsSQL,
   deletePermitSQL,
   deleteProjectFundingSourceSQL,
   deleteProjectRangeSQL,
   deleteProjectRegionSQL,
-  deleteProjectSpatialSQL,
-  deleteProjectSpeciesSQL,
   deleteProjectSQL,
-  deletePartnershipsSQL
+  deleteProjectSpatialSQL,
+  deleteProjectSpeciesSQL
 } from './project-delete-queries';
 
 describe('deleteIUCNSQL', () => {
