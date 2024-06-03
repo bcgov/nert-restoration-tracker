@@ -8,6 +8,8 @@ const DB_SCHEMA_DAPI_V1 = process.env.DB_SCHEMA_DAPI_V1;
 const NUM_SEED_PROJECTS = Number(process.env.NUM_SEED_PROJECTS ?? 2);
 const NUM_SEED_PLANS = Number(process.env.NUM_SEED_PLANS ?? 2);
 
+const PROJECT_SEEDER_USER_IDENTIFIER = process.env.PROJECT_SEEDER_USER_IDENTIFIER || 'postgres';
+
 /**
  * Add spatial transform
  *
@@ -21,6 +23,9 @@ export async function seed(knex: Knex): Promise<void> {
     SET SEARCH_PATH=${DB_SCHEMA},${DB_SCHEMA_DAPI_V1};
   `);
 
+  const userData = await knex.raw(getInsertUserInfo(PROJECT_SEEDER_USER_IDENTIFIER));
+  const userId = userData.rows[0].system_user_id;
+
   // Check if at least 1 project already exists
   const checkProjectsResponse = await knex.raw(checkAnyProjectExists());
 
@@ -31,6 +36,7 @@ export async function seed(knex: Knex): Promise<void> {
       const projectId = createProjectResponse.rows[0].project_id;
 
       await knex.raw(`
+        ${insertProjectParticipationData(projectId, userId)}
         ${insertProjectContactData(projectId)}
         ${insertProjectSpatialData(projectId)}
         ${insertProjectNRMRegionData(projectId)}
@@ -48,6 +54,7 @@ export async function seed(knex: Knex): Promise<void> {
       const planId = createPlanResponse.rows[0].project_id;
 
       await knex.raw(`
+        ${insertProjectParticipationData(planId, userId)}
         ${insertProjectContactData(planId)}
         ${insertProjectSpatialData(planId)}
         ${insertProjectNRMRegionData(planId)}
@@ -73,6 +80,28 @@ const checkAnyProjectExists = () => `
     project;
 `;
 
+const getInsertUserInfo = (userIdentifier: string) => `
+  SELECT
+    system_user_id
+  FROM
+    system_user
+  WHERE
+    user_identifier = '${userIdentifier}'
+  ;
+`;
+
+const insertProjectParticipationData = (projectId: number, systemUserId: number) => `
+  INSERT INTO project_participation (
+    project_id,
+    system_user_id,
+    project_role_id
+  ) VALUES (
+    ${projectId},
+    ${systemUserId},
+    1
+  );
+`;
+
 const insertProjectNRMRegionData = (projectId: number) => `
 INSERT INTO nrm_region (
   project_id,
@@ -80,8 +109,8 @@ INSERT INTO nrm_region (
   name
 ) VALUES (
   ${projectId},
-  1,
-  1
+  3640,
+  3640
 )
 RETURNING
   nrm_region_id;
@@ -110,11 +139,50 @@ const insertProjectSpatialData = (projectId: number) => `
         "type": "Polygon",
         "coordinates": [
           [
-            [-121,    51],
-            [-121,    51.7],
-            [-120.5,  51.7],
-            [-120.5,  51],
-            [-121,    51]
+            [
+              -124.02326844801064,
+              58.21576618631002
+            ],
+            [
+              -124.59574232852532,
+              58.30564107574736
+            ],
+            [
+              -125.64529166758705,
+              57.84206861781087
+            ],
+            [
+              -125.31624816418848,
+              57.13477061095344
+            ],
+            [
+              -125.0889676390496,
+              56.801625935629886
+            ],
+            [
+              -124.07005384826604,
+              55.792738316850574
+            ],
+            [
+              -123.58473473535227,
+              55.98640773478431
+            ],
+            [
+              -123.13032137577162,
+              56.33110164809847
+            ],
+            [
+              -123.36579661119214,
+              57.1219196332043
+            ],
+            [
+              -123.42801859617094,
+              57.54067623435009
+            ],
+            [
+              -124.02326844801064,
+              58.21576618631002
+            ]
           ]
         ]
       },
@@ -128,11 +196,50 @@ const insertProjectSpatialData = (projectId: number) => `
                 "type": "Polygon",
                 "coordinates": [
                   [
-                    [-121,    51],
-                    [-121,    51.7],
-                    [-120.5,  51.7],
-                    [-120.5,  51],
-                    [-121,    51]
+                    [
+                      -124.02326844801064,
+                      58.21576618631002
+                    ],
+                    [
+                      -124.59574232852532,
+                      58.30564107574736
+                    ],
+                    [
+                      -125.64529166758705,
+                      57.84206861781087
+                    ],
+                    [
+                      -125.31624816418848,
+                      57.13477061095344
+                    ],
+                    [
+                      -125.0889676390496,
+                      56.801625935629886
+                    ],
+                    [
+                      -124.07005384826604,
+                      55.792738316850574
+                    ],
+                    [
+                      -123.58473473535227,
+                      55.98640773478431
+                    ],
+                    [
+                      -123.13032137577162,
+                      56.33110164809847
+                    ],
+                    [
+                      -123.36579661119214,
+                      57.1219196332043
+                    ],
+                    [
+                      -123.42801859617094,
+                      57.54067623435009
+                    ],
+                    [
+                      -124.02326844801064,
+                      58.21576618631002
+                    ]
                   ]
                 ]
               }
