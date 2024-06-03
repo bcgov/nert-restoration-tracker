@@ -149,7 +149,7 @@ const ViewProjectPage: React.FC = () => {
     setOpenFullScreen(false);
   };
 
-  const objectiveStyled = (objective) => {
+  const objectiveStyled = (objective: string) => {
     return (
       <Tooltip title={objective} disableHoverListener={objective.length < 130}>
         <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
@@ -159,7 +159,7 @@ const ViewProjectPage: React.FC = () => {
     );
   };
 
-  const conservationAreaStyled = (conservationArea) => {
+  const conservationAreaStyled = (conservationArea: string) => {
     return (
       <Typography sx={pageStyles.objectiveLabel} aria-label={`${conservationArea}`}>
         {conservationArea}
