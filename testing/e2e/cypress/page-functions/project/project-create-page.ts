@@ -194,8 +194,7 @@ export function add_funding(start_date, end_date) {
 }
 
 export function add_partnerships() {
-  cy.get("#partnerships\\.indigenous_partnerships").focus().type("{downarrow}{enter}");
-  cy.get("#partnerships\\.stakeholder_partnerships").focus().type("{downarrow}{enter}").tab();
+  cy.get("#partnerships\\.partnerships").focus().type("{downarrow}{enter}").tab();
 
   cy.wait(1000);
 }

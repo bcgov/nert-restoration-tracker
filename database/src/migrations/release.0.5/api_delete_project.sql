@@ -30,7 +30,7 @@ begin
 
   delete from permit where project_id = p_project_id;
   delete from project_spatial_component where project_id = p_project_id;
-  delete from stakeholder_partnership where project_id = p_project_id;
+  delete from partnership where project_id = p_project_id;
   delete from project_funding_source where project_id = p_project_id;
   delete from project_iucn_action_classification where project_id = p_project_id;
   delete from project_attachment where project_id = p_project_id;

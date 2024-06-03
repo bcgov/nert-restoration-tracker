@@ -24,7 +24,7 @@
  create trigger audit_treatment before insert or update or delete on restoration.treatment for each row execute procedure tr_audit_trigger();
  create trigger audit_system_user before insert or update or delete on restoration.system_user for each row execute procedure tr_audit_trigger();
  create trigger audit_project_spatial_component before insert or update or delete on restoration.project_spatial_component for each row execute procedure tr_audit_trigger();
- create trigger audit_stakeholder_partnership before insert or update or delete on restoration.stakeholder_partnership for each row execute procedure tr_audit_trigger();
+ create trigger audit_partnership before insert or update or delete on restoration.partnership for each row execute procedure tr_audit_trigger();
  create trigger audit_system_user_role before insert or update or delete on restoration.system_user_role for each row execute procedure tr_audit_trigger();
  create trigger audit_system_role before insert or update or delete on restoration.system_role for each row execute procedure tr_audit_trigger();
  create trigger audit_webform_draft before insert or update or delete on restoration.webform_draft for each row execute procedure tr_audit_trigger();

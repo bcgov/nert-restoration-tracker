@@ -40,7 +40,7 @@ describe('PostProjectObject', () => {
     });
 
     it('sets partnerships', function () {
-      expect(projectPostObject.partnerships).to.eql([]);
+      expect(projectPostObject.partnership).to.eql([]);
     });
   });
 
