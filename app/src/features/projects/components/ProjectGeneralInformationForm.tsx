@@ -101,7 +101,7 @@ const uploadImageStyles = {
   }
 };
 
-const uploadImage = (setImage): IUploadHandler => {
+const uploadImage = (setImage: any): IUploadHandler => {
   return async (file) => {
     const processImage = (image: any) => {
       const img = new Image();
@@ -142,14 +142,18 @@ const uploadImage = (setImage): IUploadHandler => {
  * @param image Image to delete
  * @param setImage State function to set the image
  */
-const deleteImage = (image, setImage) => {
+const deleteImage = (image: string, setImage: (image: string) => void) => {
   if (image) setImage('');
 };
 
 /**
  * Thumbnail image using MUI Card
  */
-const ThumbnailImageCard = ({ image, setImage }) => {
+interface ThumbnailImageCardProps {
+  image: string;
+  setImage: (image: string) => void;
+}
+const ThumbnailImageCard: React.FC<ThumbnailImageCardProps> = ({ image, setImage }) => {
   return (
     <Card sx={uploadImageStyles.thumbnail}>
       <CardMedia component="img" height="200" image={image} alt="Project" />
