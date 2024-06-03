@@ -159,14 +159,10 @@ export class GetIUCNClassificationData {
   }
 }
 export class GetPartnershipsData {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+  partnerships: string[];
 
-  constructor(indigenous_partnerships?: any[], stakeholder_partnerships?: any[]) {
-    this.indigenous_partnerships =
-      (indigenous_partnerships?.length && indigenous_partnerships.map((item: any) => item.first_nations_id)) || [];
-    this.stakeholder_partnerships =
-      (stakeholder_partnerships?.length && stakeholder_partnerships.map((item: any) => item.name)) || [];
+  constructor(partnerships?: any[]) {
+    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item.partnership)) || [];
   }
 }
 

@@ -4,40 +4,6 @@ import { getLogger } from '../../utils/logger';
 const defaultLog = getLogger('queries/project/project-delete-queries');
 
 /**
- * SQL query to delete project indigenous partnership rows (project_first_nations)
- *
- * @param {projectId} projectId
- * @returns {SQLStatement} sql query object
- */
-export const deleteIndigenousPartnershipsSQL = (projectId: number): SQLStatement | null => {
-  defaultLog.debug({
-    label: 'deleteIndigenousPartnershipsSQL',
-    message: 'params',
-    projectId
-  });
-
-  if (!projectId) {
-    return null;
-  }
-
-  const sqlStatement: SQLStatement = SQL`
-    DELETE
-      from project_first_nation
-    WHERE
-      project_id = ${projectId};
-  `;
-
-  defaultLog.debug({
-    label: 'deleteIndigenousPartnershipsSQL',
-    message: 'sql',
-    'sqlStatement.text': sqlStatement.text,
-    'sqlStatement.values': sqlStatement.values
-  });
-
-  return sqlStatement;
-};
-
-/**
  * SQL query to delete contact rows associated to a project
  *
  * @param {projectId} projectId
@@ -106,14 +72,14 @@ export const deletePermitSQL = (projectId: number): SQLStatement | null => {
 };
 
 /**
- * SQL query to delete project stakeholder partnership rows
+ * SQL query to delete project partnership rows
  *
  * @param {projectId} projectId
  * @returns {SQLStatement} sql query object
  */
-export const deleteStakeholderPartnershipsSQL = (projectId: number): SQLStatement | null => {
+export const deletePartnershipsSQL = (projectId: number): SQLStatement | null => {
   defaultLog.debug({
-    label: 'deleteStakeholderPartnershipsSQL',
+    label: 'deletePartnershipsSQL',
     message: 'params',
     projectId
   });
@@ -124,13 +90,13 @@ export const deleteStakeholderPartnershipsSQL = (projectId: number): SQLStatemen
 
   const sqlStatement: SQLStatement = SQL`
     DELETE
-      from stakeholder_partnership
+      from partnership
     WHERE
       project_id = ${projectId};
   `;
 
   defaultLog.debug({
-    label: 'deleteStakeholderPartnershipsSQL',
+    label: 'deletePartnershipsSQL',
     message: 'sql',
     'sqlStatement.text': sqlStatement.text,
     'sqlStatement.values': sqlStatement.values

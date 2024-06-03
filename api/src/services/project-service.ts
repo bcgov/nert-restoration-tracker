@@ -7,6 +7,7 @@ import {
   IPostAuthorization,
   IPostContact,
   IPostIUCN,
+  IPostPartnership,
   PostFocusData,
   PostFundingSource,
   PostLocationData,
@@ -322,51 +323,21 @@ export class ProjectService extends DBService {
   }
 
   async getPartnershipsData(projectId: number): Promise<GetPartnershipsData> {
-    const [indigenousPartnershipsRows, stakegholderPartnershipsRows] = await Promise.all([
-      this.getIndigenousPartnershipsRows(projectId),
-      this.getStakeholderPartnershipsRows(projectId)
-    ]);
+    const [partnershipsRows] = await Promise.all([this.getPartnershipsRows(projectId)]);
 
-    if (!indigenousPartnershipsRows) {
-      throw new HTTP400('Failed to get indigenous partnership data');
+    if (!partnershipsRows) {
+      throw new HTTP400('Failed to get partnership data');
     }
 
-    if (!stakegholderPartnershipsRows) {
-      throw new HTTP400('Failed to get stakeholder partnership data');
-    }
-
-    return new GetPartnershipsData(indigenousPartnershipsRows, stakegholderPartnershipsRows);
+    return new GetPartnershipsData(partnershipsRows);
   }
 
-  async getIndigenousPartnershipsRows(projectId: number): Promise<any[]> {
+  async getPartnershipsRows(projectId: number): Promise<any[]> {
     const sqlStatement = SQL`
       SELECT
-        fn.first_nations_id,
-        fn.name
+        partnership
       FROM
-        project_first_nation pfn
-      LEFT OUTER JOIN
-        first_nations fn
-      ON
-        pfn.first_nations_id = fn.first_nations_id
-      WHERE
-        pfn.project_id = ${projectId}
-      GROUP BY
-        fn.first_nations_id,
-        fn.name;
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response && response.rows) || null;
-  }
-
-  async getStakeholderPartnershipsRows(projectId: number): Promise<any[]> {
-    const sqlStatement = SQL`
-      SELECT
-        name
-      FROM
-        stakeholder_partnership
+        partnership
       WHERE
         project_id = ${projectId};
     `;
@@ -533,8 +504,8 @@ export class ProjectService extends DBService {
     // Handle partners
     promises.push(
       Promise.all(
-        postProjectData.partnerships.partnerships?.map((partner: string) =>
-          this.insertStakeholderPartnership(partner, projectId)
+        postProjectData.partnership.partnerships?.map((partner: IPostPartnership) =>
+          this.insertPartnership(partner.partnership, projectId)
         ) || []
       )
     );
@@ -693,17 +664,17 @@ export class ProjectService extends DBService {
     return result.id;
   }
 
-  async insertIndigenousNation(indigenousNationId: number, projectId: number): Promise<number> {
+  async insertPartnership(partner: string, projectId: number): Promise<number> {
     const sqlStatement = SQL`
-      INSERT INTO project_first_nation (
+      INSERT INTO partnership (
         project_id,
-        first_nations_id
+        partnership
       ) VALUES (
         ${projectId},
-        ${indigenousNationId}
+        ${partner}
       )
       RETURNING
-        project_first_nation_id as id;
+        partnership_id as id;
     `;
 
     const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
@@ -711,31 +682,7 @@ export class ProjectService extends DBService {
     const result = (response && response.rows && response.rows[0]) || null;
 
     if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project first nations partnership data');
-    }
-
-    return result.id;
-  }
-
-  async insertStakeholderPartnership(stakeholderPartner: string, projectId: number): Promise<number> {
-    const sqlStatement = SQL`
-      INSERT INTO stakeholder_partnership (
-        project_id,
-        name
-      ) VALUES (
-        ${projectId},
-        ${stakeholderPartner}
-      )
-      RETURNING
-        stakeholder_partnership_id as id;
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project stakeholder partnership data');
+      throw new HTTP400('Failed to insert project partnership data');
     }
 
     return result.id;
@@ -970,47 +917,28 @@ export class ProjectService extends DBService {
     const putPartnershipsData =
       (entities?.partnerships && new models.project.PutPartnershipsData(entities.partnerships)) || null;
 
-    const sqlDeleteIndigenousPartnershipsStatement = queries.project.deleteIndigenousPartnershipsSQL(projectId);
-    const sqlDeleteStakeholderPartnershipsStatement = queries.project.deleteStakeholderPartnershipsSQL(projectId);
+    const sqlDeletePartnershipsStatement = queries.project.deletePartnershipsSQL(projectId);
 
-    if (!sqlDeleteIndigenousPartnershipsStatement || !sqlDeleteStakeholderPartnershipsStatement) {
+    if (!sqlDeletePartnershipsStatement) {
       throw new HTTP400('Failed to build SQL delete statement');
     }
 
-    const deleteIndigenousPartnershipsPromises = this.connection.query(
-      sqlDeleteIndigenousPartnershipsStatement.text,
-      sqlDeleteIndigenousPartnershipsStatement.values
+    const deletePartnershipsPromises = this.connection.query(
+      sqlDeletePartnershipsStatement.text,
+      sqlDeletePartnershipsStatement.values
     );
 
-    const deleteStakeholderPartnershipsPromises = this.connection.query(
-      sqlDeleteStakeholderPartnershipsStatement.text,
-      sqlDeleteStakeholderPartnershipsStatement.values
-    );
+    const [deletePartnershipsResult] = await Promise.all([deletePartnershipsPromises]);
 
-    const [deleteIndigenousPartnershipsResult, deleteStakeholderPartnershipsResult] = await Promise.all([
-      deleteIndigenousPartnershipsPromises,
-      deleteStakeholderPartnershipsPromises
-    ]);
-
-    if (!deleteIndigenousPartnershipsResult) {
-      throw new HTTP409('Failed to delete project indigenous partnerships data');
+    if (!deletePartnershipsResult) {
+      throw new HTTP409('Failed to delete project partnerships data');
     }
 
-    if (!deleteStakeholderPartnershipsResult) {
-      throw new HTTP409('Failed to delete project stakeholder partnerships data');
-    }
+    const insertPartnershipsPromises =
+      putPartnershipsData?.partnerships?.map((partnership: string) => this.insertPartnership(partnership, projectId)) ||
+      [];
 
-    const insertIndigenousPartnershipsPromises =
-      putPartnershipsData?.indigenous_partnerships?.map((indigenousPartnership: number) =>
-        this.insertIndigenousNation(indigenousPartnership, projectId)
-      ) || [];
-
-    const insertStakeholderPartnershipsPromises =
-      putPartnershipsData?.stakeholder_partnerships?.map((stakeholderPartnership: string) =>
-        this.insertStakeholderPartnership(stakeholderPartnership, projectId)
-      ) || [];
-
-    await Promise.all([...insertIndigenousPartnershipsPromises, ...insertStakeholderPartnershipsPromises]);
+    await Promise.all([...insertPartnershipsPromises]);
   }
 
   async updateProjectFundingData(projectId: number, entities: IUpdateProject): Promise<void> {

@@ -56,12 +56,10 @@ export class PutLocationData {
 }
 
 export class PutPartnershipsData {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+  partnerships: string[];
 
   constructor(obj?: any) {
-    this.indigenous_partnerships = (obj?.indigenous_partnerships?.length && obj.indigenous_partnerships) || [];
-    this.stakeholder_partnerships = (obj?.stakeholder_partnerships?.length && obj.stakeholder_partnerships) || [];
+    this.partnerships = (obj?.partnerships?.length && obj.partnerships) || [];
   }
 }
 
