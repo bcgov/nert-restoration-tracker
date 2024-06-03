@@ -262,7 +262,7 @@ const checkFeatureState = (featureState: any) => {
     map.setFeatureState(
       {
         source: 'markers',
-        id: hoverStateMarkerPolygon.id
+        id: hoverStateMarkerPolygon
       },
       { hover: false }
     );
@@ -273,7 +273,7 @@ const checkFeatureState = (featureState: any) => {
     map.setFeatureState(
       {
         source: 'markers',
-        id: featureState[0].id
+        id: featureState[0]
       },
       { hover: true }
     );
@@ -375,7 +375,7 @@ const initializeMap = (
       source: 'mask',
       paint: {
         'line-width': 4,
-        'line-color': 'aqua',
+        'line-color': 'orange',
         'line-dasharray': [3, 2],
         'line-blur': 2
       }
@@ -443,7 +443,8 @@ const initializeMap = (
       data: markerGeoJSON as FeatureCollection,
       cluster: centroids ? true : false,
       clusterRadius: 50,
-      clusterMaxZoom: 12
+      clusterMaxZoom: 12,
+      promoteId: 'id'
     });
 
     map.addLayer({
@@ -511,8 +512,8 @@ const initializeMap = (
         'fill-color': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          'rgba(250,191,120,1)',
-          'rgba(250,191,120,0.5)'
+          'rgba(3, 252, 252,0.4)',
+          'rgba(250,191,120,0.4)'
         ]
       }
     });
@@ -522,7 +523,7 @@ const initializeMap = (
         map.getCanvas().style.cursor = 'pointer';
 
         checkFeatureState(activeFeatureState);
-        activeFeatureState[1](e.features[0]);
+        activeFeatureState[1](e.features[0].id);
 
         // console.log('entering index: ', e.features[0].id);
         // if (activeFeatureState[0]) {
