@@ -149,20 +149,20 @@ export const projectCreatePostRequestObject = {
         }
       }
     },
-    partnerships: {
+    partnership: {
       title: 'Project partnerships',
       type: 'object',
       properties: {
-        indigenous_partnerships: {
+        partnerships: {
           type: 'array',
           items: {
-            type: 'number'
-          }
-        },
-        stakeholder_partnerships: {
-          type: 'array',
-          items: {
-            type: 'string'
+            title: 'Project partnerships',
+            type: 'object',
+            properties: {
+              partnership: {
+                type: 'string'
+              }
+            }
           }
         }
       }
@@ -200,7 +200,7 @@ const projectUpdateProperties = {
     }
   },
   funding: { type: 'object', properties: {} },
-  partnerships: { type: 'object', properties: {} }
+  partnership: { type: 'object', properties: {} }
 };
 
 /**

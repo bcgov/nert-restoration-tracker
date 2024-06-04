@@ -1,68 +1,148 @@
-import { mdiPlus } from '@mdi/js';
+import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
+import { FieldArray, useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
+
+const pageStyles = {
+  formButtons: {
+    '& button': {
+      margin: '0.3rem'
+    }
+  },
+  addRowButton: {
+    fontWeight: 700
+  },
+  customListItem: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 0,
+    paddingRight: '5rem'
+  },
+  input: {
+    display: 'none'
+  }
+};
 
 export interface IProjectPartnershipsFormArrayItem {
   partnership: string;
 }
+
 export interface IProjectPartnershipsForm {
   partnership: {
     partnerships: IProjectPartnershipsFormArrayItem[];
   };
 }
 
-export const ProjectPartnershipsFormInitialValues: IProjectPartnershipsForm = {
+export const ProjectPartnershipsFormArrayItemInitialValues: IProjectPartnershipsFormArrayItem = {
+  partnership: '' as unknown as string
+};
+
+export const ProjectPartnershipFormInitialValues: IProjectPartnershipsForm = {
   partnership: {
-    partnerships: []
+    partnerships: [ProjectPartnershipsFormArrayItemInitialValues]
   }
 };
 
-export const ProjectPartnershipsFormYupSchema = yup.object().shape({
+export const ProjectPartnershipFormYupSchema = yup.object().shape({
   partnership: yup.object().shape({
-    //partnerships: yup.array().nullable()
+    partnerships: yup.array()
   })
 });
 
 /**
- * Create project - Partnerships section
+ * Create project - Partnerships form
  *
  * @return {*}
  */
 const ProjectPartnershipsForm: React.FC = () => {
+  const { values, getFieldMeta, errors } = useFormikContext<IProjectPartnershipsForm>();
+
   return (
     <>
-      <Typography component="legend">Partnerships</Typography>
+      <FieldArray
+        name="partnership.partnerships"
+        render={(arrayHelpers: any) => (
+          <>
+            {values.partnership.partnerships?.map((partnership, index) => {
+              const partnershipMeta = getFieldMeta(
+                `partnership.partnerships.[${index}].partnership`
+              );
 
-      <Box mb={3} maxWidth={'72ch'}>
-        <Typography variant="body1" color="textSecondary">
-          Specify any additional partnerships that have not been previously identified as a funding
-          sources.
-        </Typography>
-      </Box>
-
-      <Grid container spacing={3} direction="column">
-        <Grid item xs={12}>
-          <CustomTextField name={'partnership.partnerships'} label={'Partnership'} />
-        </Grid>
-      </Grid>
-
-      <Box pt={2}>
-        <Button
-          type="button"
-          variant="outlined"
-          color="primary"
-          aria-label="add partnership"
-          startIcon={<Icon path={mdiPlus} size={1}></Icon>}
-          // onClick={() => arrayHelpers.push(ProjectPartnershipsFormInitialValues)}
-        >
-          Add New Partnership
-        </Button>
+              return (
+                /* partnerships List */
+                <Grid container spacing={3} key={index}>
+                  <Grid item xs={12} md={10.5}>
+                    <List>
+                      <ListItem sx={pageStyles.customListItem}>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={10.5}>
+                            <CustomTextField
+                              name={`partnership.partnerships.[${index}].partnership`}
+                              label="Partnership"
+                              maxLength={100}
+                              other={{
+                                value: partnership.partnership,
+                                error: partnershipMeta.touched && Boolean(partnershipMeta.error),
+                                helperText: partnershipMeta.touched && partnershipMeta.error
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
+                        {index >= 1 && (
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              color="primary"
+                              data-testid="delete-icon"
+                              aria-label="remove partnership"
+                              onClick={() => arrayHelpers.remove(index)}
+                              edge="end"
+                              size="large">
+                              <Icon path={mdiTrashCanOutline} size={1} />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        )}
+                      </ListItem>
+                    </List>
+                  </Grid>
+                </Grid>
+              );
+            })}
+            <Box pt={0.5}>
+              <Button
+                disabled={
+                  !values.partnership.partnerships[values.partnership.partnerships.length - 1]
+                    .partnership || values.partnership.partnerships.length >= 5
+                }
+                type="button"
+                variant="outlined"
+                color="primary"
+                aria-label="add partnership"
+                startIcon={<Icon path={mdiPlus} size={1}></Icon>}
+                onClick={() => arrayHelpers.push(ProjectPartnershipsFormArrayItemInitialValues)}>
+                Add New Partnership
+              </Button>
+            </Box>
+          </>
+        )}
+      />
+      <Box>
+        {errors.partnership?.partnerships && !Array.isArray(errors.partnership?.partnerships) && (
+          <Box pt={2}>
+            <Typography style={{ fontSize: '12px', color: '#f44336' }}>
+              {errors.partnership.partnerships}
+            </Typography>
+          </Box>
+        )}
       </Box>
     </>
   );

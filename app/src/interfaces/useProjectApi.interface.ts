@@ -190,8 +190,7 @@ export interface IGetProjectForUpdateResponseFundingData {
 }
 
 export interface IGetProjectForUpdateResponsePartnerships {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+  partnerships: string[];
 }
 
 export interface IProjectsListProps {
