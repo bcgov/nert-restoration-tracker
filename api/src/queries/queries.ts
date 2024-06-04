@@ -1,4 +1,3 @@
-import administrativeActivity from './administrative-activity';
 import codes from './codes';
 import eml from './eml';
 import permit from './permit';
@@ -7,10 +6,8 @@ import projectParticipation from './project-participation';
 import publicQueries from './public';
 import search from './search';
 import spatial from './spatial';
-import users from './users';
 
 export const queries = {
-  administrativeActivity,
   codes,
   eml,
   permit,
@@ -18,6 +15,5 @@ export const queries = {
   projectParticipation,
   public: publicQueries,
   search,
-  spatial,
-  users
+  spatial
 };

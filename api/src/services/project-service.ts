@@ -28,16 +28,22 @@ import {
 } from '../models/project-view';
 import { IUpdateProject } from '../paths/project/{projectId}/update';
 import { queries } from '../queries/queries';
+import {
+  IProjectParticipation,
+  ProjectParticipationRepository
+} from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { DBService } from './service';
 import { TaxonomyService } from './taxonomy-service';
 
 export class ProjectService extends DBService {
   projectRepository: ProjectRepository;
+  projectParticipantRepository: ProjectParticipationRepository;
 
   constructor(connection: IDBConnection) {
     super(connection);
     this.projectRepository = new ProjectRepository(connection);
+    this.projectParticipantRepository = new ProjectParticipationRepository(connection);
   }
   /**
    * Gets the project participant, adding them if they do not already exist.
@@ -52,7 +58,10 @@ export class ProjectService extends DBService {
     systemUserId: number,
     projectParticipantRoleId: number
   ): Promise<void> {
-    const projectParticipantRecord = await this.getProjectParticipant(systemUserId, projectId);
+    const projectParticipantRecord = await this.projectParticipantRepository.ensureProjectParticipation(
+      projectId,
+      systemUserId
+    );
 
     if (projectParticipantRecord) {
       // project participant already exists, do nothing
@@ -64,52 +73,21 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Get an existing project participant.
-   *
-   * @param {number} systemUserId
-   * @param {number} projectId
-   * @return {*}  {Promise<any>}
-   * @memberof ProjectService
-   */
-  async getProjectParticipant(systemUserId: number, projectId: number): Promise<any> {
-    const sqlStatement = queries.projectParticipation.getAllUserProjectsSQL(systemUserId, projectId);
-
-    const response = await this.connection.sql(sqlStatement);
-
-    if (!response) {
-      throw new HTTP400('Failed to get project team members');
-    }
-
-    return response?.rows?.[0] || null;
-  }
-
-  /**
    * Get all project participants for a project.
    *
    * @param {number} projectId
-   * @return {*}  {Promise<object[]>}
+   * @return {*}  {Promise<IProjectParticipation[]>}
    * @memberof ProjectService
    */
-  async getProjectParticipants(projectId: number): Promise<object[]> {
-    const sqlStatement = queries.projectParticipation.getAllProjectParticipantsSQL(projectId);
-
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL select statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response || !response.rows) {
-      throw new HTTP400('Failed to get project team members');
-    }
-
-    return (response && response.rows) || [];
+  async getProjectParticipants(projectId: number): Promise<IProjectParticipation[]> {
+    return this.projectParticipantRepository.getAllProjectParticipants(projectId);
   }
 
   /**
    * Adds a new models.project.project participant.
    *
    * Note: Will fail if the project participant already exists.
+   * TODO: Fix note
    *
    * @param {number} projectId
    * @param {number} systemUserId
@@ -122,21 +100,7 @@ export class ProjectService extends DBService {
     systemUserId: number,
     projectParticipantRoleId: number
   ): Promise<void> {
-    const sqlStatement = queries.projectParticipation.addProjectRoleByRoleIdSQL(
-      projectId,
-      systemUserId,
-      projectParticipantRoleId
-    );
-
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response || !response.rowCount) {
-      throw new HTTP400('Failed to insert project team member');
-    }
+    this.projectParticipantRepository.insertProjectParticipant(projectId, systemUserId, projectParticipantRoleId);
   }
 
   /**
@@ -151,7 +115,7 @@ export class ProjectService extends DBService {
   async getProjectById(projectId: number, isPublic = false): Promise<ProjectObject> {
     const [projectData, speciesData, iucnData, contactData, permitData, partnershipsData, fundingData, locationData] =
       await Promise.all([
-        this.getProjectData(projectId),
+        this.projectRepository.getProjectData(projectId),
         this.getSpeciesData(projectId),
         this.getIUCNClassificationData(projectId),
         this.getContactData(projectId, isPublic),
@@ -173,294 +137,119 @@ export class ProjectService extends DBService {
     };
   }
 
+  /**
+   * Get project data by its id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetProjectData>}
+   * @memberof ProjectService
+   */
   async getProjectData(projectId: number): Promise<GetProjectData> {
-    const sqlStatement = queries.project.getProjectSQL(projectId);
-
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL get statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result) {
-      throw new HTTP400('Failed to get project data');
-    }
-
-    return new GetProjectData(result);
+    return this.projectRepository.getProjectData(projectId);
   }
 
+  /**
+   *  Get species data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetSpeciesData>}
+   * @memberof ProjectService
+   */
   async getSpeciesData(projectId: number): Promise<GetSpeciesData> {
-    const sqlStatement = SQL`
-      SELECT
-        wldtaxonomic_units_id
-      FROM
-        project_species
-      WHERE
-        project_id = ${projectId};
-      `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows) || null;
-
-    if (!result) {
-      throw new HTTP400('Failed to get species data');
-    }
+    const response = await this.projectRepository.getProjectSpecies(projectId);
 
     const taxonomyService = new TaxonomyService();
 
-    const species = await taxonomyService.getSpeciesFromIds(result);
+    const species = await taxonomyService.getSpeciesFromIds(response);
 
     return new GetSpeciesData(species);
   }
 
+  /**
+   * Get IUCN classification data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetIUCNClassificationData>}
+   * @memberof ProjectService
+   */
   async getIUCNClassificationData(projectId: number): Promise<GetIUCNClassificationData> {
-    const sqlStatement = SQL`
-      SELECT
-        ical1c.iucn_conservation_action_level_1_classification_id as classification,
-        ical2s.iucn_conservation_action_level_2_subclassification_id as subClassification1,
-        ical3s.iucn_conservation_action_level_3_subclassification_id as subClassification2
-      FROM
-        project_iucn_action_classification as piac
-      LEFT OUTER JOIN
-        iucn_conservation_action_level_3_subclassification as ical3s
-      ON
-        piac.iucn_conservation_action_level_3_subclassification_id = ical3s.iucn_conservation_action_level_3_subclassification_id
-      LEFT OUTER JOIN
-        iucn_conservation_action_level_2_subclassification as ical2s
-      ON
-        ical3s.iucn_conservation_action_level_2_subclassification_id = ical2s.iucn_conservation_action_level_2_subclassification_id
-      LEFT OUTER JOIN
-        iucn_conservation_action_level_1_classification as ical1c
-      ON
-        ical2s.iucn_conservation_action_level_1_classification_id = ical1c.iucn_conservation_action_level_1_classification_id
-      WHERE
-        piac.project_id = ${projectId}
-      GROUP BY
-        ical1c.iucn_conservation_action_level_1_classification_id,
-        ical2s.iucn_conservation_action_level_2_subclassification_id,
-        ical3s.iucn_conservation_action_level_3_subclassification_id;
-  `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows) || null;
-
-    if (!result) {
-      throw new HTTP400('Failed to get project IUCN data');
-    }
-
-    return new GetIUCNClassificationData(result);
+    return this.projectRepository.getIUCNClassificationData(projectId);
   }
 
+  /**
+   * Get contact data by project id.
+   *
+   * @param {number} projectId
+   * @param {boolean} isPublic
+   * @return {*}  {Promise<GetContactData>}
+   * @memberof ProjectService
+   */
   async getContactData(projectId: number, isPublic: boolean): Promise<GetContactData> {
-    const sqlStatementAllColumns = SQL`
-      SELECT
-        *
-      FROM
-        project_contact
-      WHERE
-        project_id = ${projectId}
-    `;
-
-    //Will build this sql to select agency ONLY IF the contact is public
-    const sqlStatementJustAgencies = SQL``;
-
-    if (isPublic) {
-      sqlStatementAllColumns.append(SQL`
-        AND is_public = 'Y'
-      `);
-      sqlStatementJustAgencies.append(SQL`
-        SELECT
-          agency
-        FROM
-          project_contact
-        WHERE
-          project_id = ${projectId}
-        AND is_public = 'N'
-      `);
-    }
-
-    const response = await Promise.all([
-      this.connection.query(sqlStatementAllColumns.text, sqlStatementAllColumns.values),
-      this.connection.query(sqlStatementJustAgencies.text, sqlStatementJustAgencies.values)
-    ]);
-
-    const result = (response[0] && response[1] && [...response[0].rows, ...response[1].rows]) || null;
-
-    if (!result) {
-      throw new HTTP400('Failed to get project contact data');
-    }
-
-    return new GetContactData(result);
+    return this.projectRepository.getContactData(projectId, isPublic);
   }
 
+  /**
+   * Get permit data by project id.
+   *
+   * @param {number} projectId
+   * @param {boolean} isPublic
+   * @return {*}  {Promise<GetPermitData>}
+   * @memberof ProjectService
+   */
   async getPermitData(projectId: number, isPublic: boolean): Promise<GetPermitData> {
     if (isPublic) {
       return new GetPermitData();
     }
-
-    const sqlStatement = SQL`
-      SELECT
-        *
-      FROM
-        permit
-      WHERE
-        project_id = ${projectId};
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows) || null;
-
-    if (!result) {
-      throw new HTTP400('Failed to get project permit data');
-    }
-
-    return new GetPermitData(result);
+    return this.projectRepository.getPermitData(projectId);
   }
 
+  /**
+   * Get partnerships data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetPartnershipsData>}
+   * @memberof ProjectService
+   */
   async getPartnershipsData(projectId: number): Promise<GetPartnershipsData> {
-    const [partnershipsRows] = await Promise.all([this.getPartnershipsRows(projectId)]);
-
-    if (!partnershipsRows) {
-      throw new HTTP400('Failed to get partnership data');
-    }
-
-    return new GetPartnershipsData(partnershipsRows);
+    return this.projectRepository.getPartnershipsData(projectId);
   }
 
-  async getPartnershipsRows(projectId: number): Promise<any[]> {
-    const sqlStatement = SQL`
-      SELECT
-        partnership
-      FROM
-        partnership
-      WHERE
-        project_id = ${projectId};
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response && response.rows) || null;
-  }
-
+  /**
+   * Get funding data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetFundingData>}
+   * @memberof ProjectService
+   */
   async getFundingData(projectId: number): Promise<GetFundingData> {
-    const sqlStatement = SQL`
-      SELECT
-        pfs.project_funding_source_id as id,
-        fs.funding_source_id as agency_id,
-        pfs.funding_amount::numeric::int,
-        pfs.funding_start_date as start_date,
-        pfs.funding_end_date as end_date,
-        iac.investment_action_category_id as investment_action_category,
-        iac.name as investment_action_category_name,
-        fs.name as agency_name,
-        pfs.funding_source_project_id as agency_project_id,
-        pfs.revision_count as revision_count
-      FROM
-        project_funding_source as pfs
-      LEFT OUTER JOIN
-        investment_action_category as iac
-      ON
-        pfs.investment_action_category_id = iac.investment_action_category_id
-      LEFT OUTER JOIN
-        funding_source as fs
-      ON
-        iac.funding_source_id = fs.funding_source_id
-      WHERE
-        pfs.project_id = ${projectId}
-      GROUP BY
-        pfs.project_funding_source_id,
-        fs.funding_source_id,
-        pfs.funding_source_project_id,
-        pfs.funding_amount,
-        pfs.funding_start_date,
-        pfs.funding_end_date,
-        iac.investment_action_category_id,
-        iac.name,
-        fs.name,
-        pfs.revision_count
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows) || null;
-
-    if (!result) {
-      throw new HTTP400('Failed to get project funding data');
-    }
-
-    return new GetFundingData(result);
+    return this.projectRepository.getFundingData(projectId);
   }
 
+  /**
+   * Get location data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetLocationData>}
+   * @memberof ProjectService
+   */
   async getLocationData(projectId: number): Promise<GetLocationData> {
     const [geometryRows, regionRows] = await Promise.all([
-      this.getGeometryData(projectId),
-      this.getRegionData(projectId)
+      this.projectRepository.getGeometryData(projectId),
+      this.projectRepository.getRegionData(projectId)
     ]);
-
-    if (!geometryRows) {
-      throw new HTTP400('Failed to get geometry data');
-    }
-
-    if (!regionRows) {
-      throw new HTTP400('Failed to get region data');
-    }
 
     return new GetLocationData(geometryRows, regionRows);
   }
 
-  async getGeometryData(projectId: number): Promise<any[]> {
-    const sqlStatement = SQL`
-      SELECT
-        *
-      FROM
-        project_spatial_component psc
-      LEFT JOIN
-        project_spatial_component_type psct
-      ON
-        psc.project_spatial_component_type_id = psct.project_spatial_component_type_id
-      WHERE
-        psc.project_id = ${projectId}
-      AND
-        psct.name = 'Boundary';
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-    return (response && response.rows) || null;
-  }
-
-  async getRegionData(projectId: number): Promise<any> {
-    const sqlStatement = SQL`
-      SELECT
-        *
-      FROM
-        nrm_region
-      WHERE
-        project_id = ${projectId};
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response && response.rows) || null;
-  }
-
+  /**
+   * Get range data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<any>}
+   * @memberof ProjectService
+   */
   async getRangeData(projectId: number): Promise<any> {
-    const sqlStatement = SQL`
-      SELECT
-        *
-      FROM
-        project_caribou_population_unit
-      WHERE
-        project_id = ${projectId};
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response && response.rows) || null;
+    return this.projectRepository.getRangeData(projectId);
   }
 
   async createProject(postProjectData: PostProjectObject): Promise<number> {
@@ -747,21 +536,11 @@ export class ProjectService extends DBService {
       throw new HTTP400('Failed to identify system user ID');
     }
 
-    const sqlStatement = queries.projectParticipation.addProjectRoleByRoleNameSQL(
+    return this.projectParticipantRepository.insertProjectParticipantByRoleName(
       projectId,
       systemUserId,
       projectParticipantRole
     );
-
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response || !response.rowCount) {
-      throw new HTTP400('Failed to insert project team member');
-    }
   }
 
   async insertSpecies(species_id: number, projectId: number): Promise<void> {
@@ -843,28 +622,13 @@ export class ProjectService extends DBService {
   }
 
   async updateProjectData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putProjectData = (entities?.project && new models.project.PutProjectData(entities.project)) || null;
+    const projectData = entities?.project && new models.project.PutProjectData(entities.project);
 
-    // Update project table
-    const revision_count = putProjectData?.revision_count ?? null;
-
-    if (!revision_count && revision_count !== 0) {
+    if (!projectData) {
       throw new HTTP400('Failed to parse request body');
     }
-
-    const sqlUpdateProject = queries.project.putProjectSQL(projectId, putProjectData, revision_count);
-
-    if (!sqlUpdateProject) {
-      throw new HTTP400('Failed to build SQL update statement');
-    }
-
-    const result = await this.connection.query(sqlUpdateProject.text, sqlUpdateProject.values);
-
-    if (!result || !result.rowCount) {
-      // TODO if revision count is bad, it is supposed to raise an exception?
-      // It currently does skip the update as expected, but it just returns 0 rows updated, and doesn't result in any errors
-      throw new HTTP409('Failed to update stale project data');
-    }
+    // Update project table
+    return this.projectRepository.updateProject(projectId, projectData);
   }
 
   async updateContactData(projectId: number, entities: IUpdateProject): Promise<void> {

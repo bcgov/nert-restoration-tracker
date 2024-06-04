@@ -182,7 +182,7 @@ export class AuthorizationService extends DBService {
       return true;
     }
 
-    const projectUserObject = await this.getProjectUserObject(authorizeProjectRoles.projectId);
+    const projectUserObject = await this.getProjectUserObject();
 
     if (!projectUserObject) {
       return false;
@@ -275,11 +275,11 @@ export class AuthorizationService extends DBService {
     return this._userService.getUserById(systemUserId);
   }
 
-  async getProjectUserObject(projectId: number): Promise<ProjectParticipantObject | null> {
+  async getProjectUserObject(): Promise<ProjectParticipantObject | null> {
     let projectUserWithRoles;
 
     try {
-      projectUserWithRoles = await this.getProjectUserWithRoles(projectId);
+      projectUserWithRoles = await this.getProjectUserWithRoles();
     } catch {
       return null;
     }
@@ -294,17 +294,16 @@ export class AuthorizationService extends DBService {
   /**
    * Get a user's project roles, for a single project.
    *
-   * @param {number} projectId
    * @return {*}  {Promise<ProjectParticipantObject | null>}
    */
-  async getProjectUserWithRoles(projectId: number): Promise<ProjectParticipantObject | null> {
+  async getProjectUserWithRoles(): Promise<ProjectParticipantObject | null> {
     const systemUserId = this.connection.systemUserId();
 
     if (!systemUserId) {
       return null;
     }
 
-    const response = await this._userService.getUserProjectParticipation(systemUserId, projectId);
+    const response = await this._userService.getUserProjectParticipation(systemUserId);
 
     return (response?.length && response[0]) || null;
   }

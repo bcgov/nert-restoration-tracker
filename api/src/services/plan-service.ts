@@ -3,18 +3,24 @@ import { IDBConnection } from '../database/db';
 import { ICreatePlan, IEditPlan, IGetPlan } from '../interfaces/project.interface';
 import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
 import { PlanRepository } from '../repositories/plan-repository';
+import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { AttachmentService } from './attachment-service';
+import { ProjectService } from './project-service';
 import { DBService } from './service';
 
 export class PlanService extends DBService {
   projectRepository: ProjectRepository;
   planRepository: PlanRepository;
+  projectParticipationRepository: ProjectParticipationRepository;
+  projectService: ProjectService;
 
   constructor(connection: IDBConnection) {
     super(connection);
     this.projectRepository = new ProjectRepository(connection);
     this.planRepository = new PlanRepository(connection);
+    this.projectParticipationRepository = new ProjectParticipationRepository(connection);
+    this.projectService = new ProjectService(connection);
   }
 
   /**
@@ -55,7 +61,7 @@ export class PlanService extends DBService {
     const [projectData, contactData, locationData] = await Promise.all([
       this.projectRepository.getProjectData(id),
       this.projectRepository.getContactData(id, isPublic),
-      this.projectRepository.getLocationData(id)
+      this.projectService.getLocationData(id)
     ]);
 
     return {
@@ -96,7 +102,11 @@ export class PlanService extends DBService {
       await this.projectRepository.insertProjectRegion(plan.location.region, planResponse.project_id);
     }
 
-    await this.projectRepository.insertProjectParticipant(planResponse.project_id, userId, PROJECT_ROLE.PROJECT_LEAD);
+    await this.projectParticipationRepository.insertProjectParticipantByRoleName(
+      planResponse.project_id,
+      userId,
+      PROJECT_ROLE.PROJECT_LEAD
+    );
 
     return planResponse;
   }

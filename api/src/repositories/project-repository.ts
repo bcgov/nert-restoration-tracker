@@ -1,7 +1,16 @@
-import SQL from 'sql-template-strings';
+import SQL, { SQLStatement } from 'sql-template-strings';
+import { ApiExecuteSQLError } from '../errors/custom-error';
 import { ILocation, IProject } from '../interfaces/project.interface';
 import { IPostContact, PostFocusData } from '../models/project-create';
-import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
+import { PutProjectData } from '../models/project-update';
+import {
+  GetContactData,
+  GetFundingData,
+  GetIUCNClassificationData,
+  GetPartnershipsData,
+  GetPermitData,
+  GetProjectData
+} from '../models/project-view';
 import { queries } from '../queries/queries';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
@@ -38,11 +47,105 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
-      const result = (response && response.rows && response.rows[0]) || null;
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to get project', [
+          'ProjectRepository->getProjectData',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
 
-      return new GetProjectData(result);
+      return new GetProjectData(response.rows[0]);
     } catch (error) {
       defaultLog.debug({ label: 'getProjectData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get Project Species
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<string[]>}
+   * @memberof ProjectRepository
+   */
+  async getProjectSpecies(projectId: number): Promise<string[]> {
+    defaultLog.debug({ label: 'getProjectSpecies', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          wldtaxonomic_units_id
+        from
+          project_species
+        where
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get species', [
+          'ProjectRepository->getProjectSpecies',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getProjectSpecies', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get IUCN Classification Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetIUCNClassificationData>}
+   * @memberof ProjectRepository
+   */
+  async getIUCNClassificationData(projectId: number): Promise<GetIUCNClassificationData> {
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          ical1c.iucn_conservation_action_level_1_classification_id as classification,
+          ical2s.iucn_conservation_action_level_2_subclassification_id as subClassification1,
+          ical3s.iucn_conservation_action_level_3_subclassification_id as subClassification2
+        FROM
+          project_iucn_action_classification as piac
+        LEFT OUTER JOIN
+          iucn_conservation_action_level_3_subclassification as ical3s
+        ON
+          piac.iucn_conservation_action_level_3_subclassification_id = ical3s.iucn_conservation_action_level_3_subclassification_id
+        LEFT OUTER JOIN
+          iucn_conservation_action_level_2_subclassification as ical2s
+        ON
+          ical3s.iucn_conservation_action_level_2_subclassification_id = ical2s.iucn_conservation_action_level_2_subclassification_id
+        LEFT OUTER JOIN
+          iucn_conservation_action_level_1_classification as ical1c
+        ON
+          ical2s.iucn_conservation_action_level_1_classification_id = ical1c.iucn_conservation_action_level_1_classification_id
+        WHERE
+          piac.project_id = ${projectId}
+        GROUP BY
+          ical1c.iucn_conservation_action_level_1_classification_id,
+          ical2s.iucn_conservation_action_level_2_subclassification_id,
+          ical3s.iucn_conservation_action_level_3_subclassification_id;
+      `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get IUCN classification', [
+          'ProjectRepository->getIUCNClassificationData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+      const result = (response && response.rows) || null;
+
+      return new GetIUCNClassificationData(result);
+    } catch (error) {
+      defaultLog.debug({ label: 'getIUCNClassificationData', message: 'error', error });
       throw error;
     }
   }
@@ -89,7 +192,14 @@ export class ProjectRepository extends BaseRepository {
         this.connection.query(sqlStatementJustAgencies.text, sqlStatementJustAgencies.values)
       ]);
 
-      const result = (response[0] && response[1] && [...response[0].rows, ...response[1].rows]) || null;
+      if (!response[0].rowCount || !response[1].rowCount) {
+        throw new ApiExecuteSQLError('Failed to get contact data', [
+          'ProjectRepository->getContactData',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
+      const result = [...response[0].rows, ...response[1].rows];
 
       return new GetContactData(result);
     } catch (error) {
@@ -99,24 +209,140 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Get Location Data
+   * Get Permit Data
    *
    * @param {number} projectId
-   * @return {*}  {Promise<GetLocationData>}
+   * @return {*}  {Promise<GetPermitData>}
    * @memberof ProjectRepository
    */
-  async getLocationData(projectId: number): Promise<GetLocationData> {
-    const [geometryRows, regionRows] = await Promise.all([
-      this.getGeometryData(projectId),
-      this.getRegionData(projectId)
-    ]);
+  async getPermitData(projectId: number): Promise<GetPermitData> {
+    try {
+      const sqlStatement = SQL`
+      SELECT
+        *
+      FROM
+        permit
+      WHERE
+        project_id = ${projectId};
+    `;
 
-    return new GetLocationData(geometryRows, regionRows);
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get permit data', [
+          'ProjectRepository->getPermitData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      return new GetPermitData(response.rows);
+    } catch (error) {
+      defaultLog.debug({ label: 'getPermitData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get Partnerships Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetPartnershipsData>}
+   * @memberof ProjectRepository
+   */
+  async getPartnershipsData(projectId: number): Promise<GetPartnershipsData> {
+    try {
+      const sqlStatement = SQL`
+      SELECT
+        *
+      FROM
+        project_partnership
+      WHERE
+        project_id = ${projectId};
+    `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get partnership data', [
+          'ProjectRepository->getPartnershipsData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      return new GetPartnershipsData(response.rows);
+    } catch (error) {
+      defaultLog.debug({ label: 'getPartnershipsData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get Funding Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetFundingData>}
+   * @memberof ProjectRepository
+   */
+  async getFundingData(projectId: number): Promise<GetFundingData> {
+    try {
+      const sqlStatement = SQL`
+      SELECT
+        pfs.project_funding_source_id as id,
+        fs.funding_source_id as agency_id,
+        pfs.funding_amount::numeric::int,
+        pfs.funding_start_date as start_date,
+        pfs.funding_end_date as end_date,
+        iac.investment_action_category_id as investment_action_category,
+        iac.name as investment_action_category_name,
+        fs.name as agency_name,
+        pfs.funding_source_project_id as agency_project_id,
+        pfs.revision_count as revision_count
+      FROM
+        project_funding_source as pfs
+      LEFT OUTER JOIN
+        investment_action_category as iac
+      ON
+        pfs.investment_action_category_id = iac.investment_action_category_id
+      LEFT OUTER JOIN
+        funding_source as fs
+      ON
+        iac.funding_source_id = fs.funding_source_id
+      WHERE
+        pfs.project_id = ${projectId}
+      GROUP BY
+        pfs.project_funding_source_id,
+        fs.funding_source_id,
+        pfs.funding_source_project_id,
+        pfs.funding_amount,
+        pfs.funding_start_date,
+        pfs.funding_end_date,
+        iac.investment_action_category_id,
+        iac.name,
+        fs.name,
+        pfs.revision_count
+    `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get funding data', [
+          'ProjectRepository->getFundingData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      const result = (response && response.rows) || null;
+
+      return new GetFundingData(result);
+    } catch (error) {
+      defaultLog.debug({ label: 'getFundingData', message: 'error', error });
+      throw error;
+    }
   }
 
   /**
    * Get Geometry Data
-   *
+   * TODO: Interface for this
    * @param {number} projectId
    * @return {*}  {Promise<any[]>}
    * @memberof ProjectRepository
@@ -139,7 +365,15 @@ export class ProjectRepository extends BaseRepository {
     `;
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-      return (response && response.rows) || null;
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get Geometry', [
+          'ProjectRepository->getGeometryData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      return response && response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getGeometryData', message: 'error', error });
       throw error;
@@ -148,7 +382,7 @@ export class ProjectRepository extends BaseRepository {
 
   /**
    * Get Region Data
-   *
+   * TODO: Interface for this
    * @param {number} projectId
    * @return {*}  {Promise<any>}
    * @memberof ProjectRepository
@@ -166,9 +400,50 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get Region', [
+          'ProjectRepository->getRegionData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
       return (response && response.rows) || null;
     } catch (error) {
       defaultLog.debug({ label: 'getRegionData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get Range Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<any>}
+   * @memberof ProjectRepository
+   */
+  async getRangeData(projectId: number): Promise<any> {
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          *
+        FROM
+          project_caribou_population_unit
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to get Range', [
+          'ProjectRepository->getRangeData',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      return (response && response.rows) || null;
+    } catch (error) {
+      defaultLog.debug({ label: 'getRangeData', message: 'error', error });
       throw error;
     }
   }
@@ -220,49 +495,16 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project', [
+          'ProjectRepository->insertProject',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
       return response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'insertProject', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Insert a project participant.
-   *
-   * @param {number} projectId
-   * @param {number} systemUserId
-   * @param {number} projectParticipantRoleId
-   * @return {*}
-   * @memberof ProjectRepository
-   */
-  async insertProjectParticipant(projectId: number, systemUserId: number, projectParticipantRole: string) {
-    try {
-      const sqlStatement = SQL`
-      INSERT INTO project_participation (
-        project_id,
-        system_user_id,
-        project_role_id
-      )
-      (
-        SELECT
-          ${projectId},
-          ${systemUserId},
-          project_role_id
-        FROM
-          project_role
-        WHERE
-          name = ${projectParticipantRole}
-      )
-      RETURNING
-        *;
-    `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'insertProjectParticipant', message: 'error', error });
       throw error;
     }
   }
@@ -297,6 +539,13 @@ export class ProjectRepository extends BaseRepository {
       `;
 
       const response = await this.connection.sql(sqlStatement);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project Contact', [
+          'ProjectRepository->insertProjectContact',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
 
       return response.rows[0];
     } catch (error) {
@@ -352,6 +601,13 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project focus', [
+          'ProjectRepository->insertProjectFocus',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
       return response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'insertProjectFocus', message: 'error', error });
@@ -368,6 +624,8 @@ export class ProjectRepository extends BaseRepository {
    * @memberof ProjectRepository
    */
   async insertProjectRegion(regionNumber: number, projectId: number): Promise<{ nrm_region_id: number }> {
+    defaultLog.debug({ label: 'insertProjectRegion', message: 'params', regionNumber });
+
     try {
       const sqlStatement = SQL`
       INSERT INTO nrm_region (
@@ -385,11 +643,18 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project region', [
+          'ProjectRepository->insertProjectRegion',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
       const result = (response && response.rows && response.rows[0]) || null;
 
       return result;
     } catch (error) {
-      defaultLog.debug({ label: 'insertProjectContact', message: 'error', error });
+      defaultLog.debug({ label: 'insertProjectRegion', message: 'error', error });
       throw error;
     }
   }
@@ -406,19 +671,23 @@ export class ProjectRepository extends BaseRepository {
     location: ILocation,
     projectId: number
   ): Promise<{ project_spatial_component_id: number }> {
+    defaultLog.debug({
+      label: 'insertProjectLocation',
+      message: 'params',
+      obj: {
+        ...location,
+        geometry: location?.geometry?.map((item: any) => {
+          return { ...item, geometry: 'Too big to print' };
+        })
+      }
+    });
+
     try {
-      defaultLog.debug({
-        label: 'insertProjectLocation',
-        message: 'params',
-        obj: {
-          ...location,
-          geometry: location?.geometry?.map((item: any) => {
-            return { ...item, geometry: 'Too big to print' };
-          })
-        }
-      });
       const componentName = 'Boundary';
       const componentTypeName = 'Boundary';
+      //TODO: This is a bit of a hack, but it works for now.  Need to refactor this to be more dynamic.
+      // Should accept as a prop. Also, need to refactor the SQL to be more dynamic.
+      // TYPES: Boundary, Overlapping, Other, MASK, etc..
 
       const sqlStatement = SQL`
         INSERT INTO project_spatial_component (
@@ -460,15 +729,71 @@ export class ProjectRepository extends BaseRepository {
           project_spatial_component_id;
       `);
 
-      console.log('sqlStatement', sqlStatement);
       const response = await this.connection.sql(sqlStatement);
-      console.log('response', response);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project location', [
+          'ProjectRepository->insertProjectLocation',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
 
       const result = (response && response.rows && response.rows[0]) || null;
 
       return result;
     } catch (error) {
       defaultLog.debug({ label: 'insertProjectLocation', message: 'error', error });
+      throw error;
+    }
+  }
+
+  async updateProject(projectId: number, project: PutProjectData) {
+    defaultLog.debug({
+      label: 'updateProject',
+      message: 'params',
+      projectId,
+      project
+    });
+
+    try {
+      const sqlStatement: SQLStatement = SQL`
+      UPDATE project SET `;
+
+      const sqlSetStatements: SQLStatement[] = [];
+
+      if (project) {
+        sqlSetStatements.push(SQL`name = ${project.name}`);
+        sqlSetStatements.push(SQL`start_date = ${project.start_date}`);
+        sqlSetStatements.push(SQL`end_date = ${project.end_date}`);
+        sqlSetStatements.push(SQL`objectives = ${project.objectives}`);
+      }
+
+      sqlSetStatements.forEach((item, index) => {
+        sqlStatement.append(item);
+        if (index < sqlSetStatements.length - 1) {
+          sqlStatement.append(',');
+        }
+      });
+
+      sqlStatement.append(SQL`
+      WHERE
+        project_id = ${projectId}
+      AND
+        revision_count = ${project.revision_count};
+      `);
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to update project', [
+          'ProjectRepository->updateProject',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'updateProject', message: 'error', error });
       throw error;
     }
   }
@@ -504,6 +829,13 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to update Contact', [
+          'ProjectRepository->updateProjectContact',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
       return response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'updateProjectContact', message: 'error', error });
@@ -523,9 +855,14 @@ export class ProjectRepository extends BaseRepository {
     projectId: number,
     location: ILocation
   ): Promise<{ project_spatial_component_id: number }> {
+    defaultLog.debug({ label: 'updateProjectLocation', message: 'params', location });
+
     try {
       const componentName = 'Boundary';
       const componentTypeName = 'Boundary';
+      //TODO: This is a bit of a hack, but it works for now.  Need to refactor this to be more dynamic.
+      // Should accept as a prop. Also, need to refactor the SQL to be more dynamic.
+      // TYPES: Boundary, Overlapping, Other, MASK, etc..
 
       const sqlStatement = SQL`
         UPDATE project_spatial_component
@@ -561,6 +898,13 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to update Location', [
+          'ProjectRepository->updateProjectLocation',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
       const result = (response && response.rows && response.rows[0]) || null;
 
       return result;
@@ -578,16 +922,25 @@ export class ProjectRepository extends BaseRepository {
    * @memberof ProjectRepository
    */
   async deleteProject(projectId: number): Promise<boolean> {
+    defaultLog.debug({ label: 'deleteProject', message: 'params', projectId });
+
     try {
       const sqlStatement = SQL`call api_delete_project(${projectId})`;
 
       const response = await this.connection.sql(sqlStatement);
 
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to delete Project', [
+          'ProjectRepository->deleteProject',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
       const result = (response && response.rows && response.rows[0]) || null;
 
       return result;
     } catch (error) {
-      defaultLog.debug({ label: 'insertProjectContact', message: 'error', error });
+      defaultLog.debug({ label: 'deleteProject', message: 'error', error });
       throw error;
     }
   }

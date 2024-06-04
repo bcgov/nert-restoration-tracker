@@ -1,9 +1,20 @@
+import { IDBConnection } from '../database/db';
 import { ApiExecuteSQLError } from '../errors/custom-error';
 import { ProjectParticipantObject, UserObject } from '../models/user';
-import { queries } from '../queries/queries';
+import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
+import { UserRepository } from '../repositories/user-repository';
 import { DBService } from './service';
 
 export class UserService extends DBService {
+  userRepository: UserRepository;
+  projectParticipationRepository: ProjectParticipationRepository;
+
+  constructor(connection: IDBConnection) {
+    super(connection);
+    this.userRepository = new UserRepository(connection);
+    this.projectParticipationRepository = new ProjectParticipationRepository(connection);
+  }
+
   /**
    * Fetch a single system user by their ID.
    *
@@ -12,18 +23,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async getUserById(systemUserId: number): Promise<UserObject> {
-    const sqlStatement = queries.users.getUserByIdSQL(systemUserId);
+    const response = await this.userRepository.getUserById(systemUserId);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (response.rowCount !== 1) {
-      throw new ApiExecuteSQLError('Failed to fetch system user', [
-        'UserService->getUserById',
-        'rowCount was null or undefined, expected rowCount = 1'
-      ]);
-    }
-
-    return new UserObject(response.rows[0]);
+    return new UserObject(response);
   }
 
   /**
@@ -34,11 +36,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async getUserByGuid(userGuid: string): Promise<UserObject | null> {
-    const sqlStatement = queries.users.getUserByGuid(userGuid);
+    const response = await this.userRepository.getUserByGuid(userGuid);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response?.rows?.[0] && new UserObject(response.rows[0])) || null;
+    return new UserObject(response);
   }
 
   /**
@@ -50,11 +50,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async getUserByIdentifier(userIdentifier: string, identitySource: string): Promise<UserObject | null> {
-    const sqlStatement = queries.users.getUserByUserIdentifierSQL(userIdentifier, identitySource);
+    const response = await this.userRepository.getUserByUserIdentifier(userIdentifier, identitySource);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response?.rows?.[0] && new UserObject(response.rows[0])) || null;
+    return new UserObject(response);
   }
 
   /**
@@ -69,17 +67,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async addSystemUser(userGuid: string | null, userIdentifier: string, identitySource: string): Promise<UserObject> {
-    const addSystemUserSQLStatement = queries.users.addSystemUserSQL(userGuid, userIdentifier, identitySource);
+    const response = await this.userRepository.addSystemUser(userGuid, userIdentifier, identitySource);
 
-    const response = await this.connection.query(addSystemUserSQLStatement.text, addSystemUserSQLStatement.values);
-
-    const userObject = (response?.rows?.[0] && new UserObject(response.rows[0])) || null;
-
-    if (!userObject) {
-      throw new ApiExecuteSQLError('Failed to insert system user');
-    }
-
-    return userObject;
+    return new UserObject(response);
   }
 
   /**
@@ -89,14 +79,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async listSystemUsers(): Promise<UserObject[]> {
-    const getUserListSQLStatement = queries.users.getUserListSQL();
+    const response = await this.userRepository.getUserList();
 
-    const getUserListResponse = await this.connection.query(
-      getUserListSQLStatement.text,
-      getUserListSQLStatement.values
-    );
-
-    return getUserListResponse.rows.map((row) => new UserObject(row));
+    return response.map((row) => new UserObject(row));
   }
 
   /**
@@ -147,13 +132,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async activateSystemUser(systemUserId: number) {
-    const sqlStatement = queries.users.activateSystemUserSQL(systemUserId);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to activate system user');
-    }
+    await this.userRepository.activateSystemUser(systemUserId);
   }
 
   /**
@@ -164,13 +143,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async deactivateSystemUser(systemUserId: number) {
-    const sqlStatement = queries.users.deactivateSystemUserSQL(systemUserId);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to deactivate system user');
-    }
+    await this.userRepository.deactivateSystemUser(systemUserId);
   }
 
   /**
@@ -180,13 +153,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async deleteUserSystemRoles(systemUserId: number) {
-    const sqlStatement = queries.users.deleteAllSystemRolesSQL(systemUserId);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to delete user system roles');
-    }
+    await this.userRepository.deleteUserSystemRoles(systemUserId);
   }
 
   /**
@@ -197,13 +164,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async addUserSystemRoles(systemUserId: number, roleIds: number[]) {
-    const sqlStatement = queries.users.postSystemRolesSQL(systemUserId, roleIds);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to insert user system roles');
-    }
+    await this.userRepository.postSystemRoles(systemUserId, roleIds);
   }
 
   /**
@@ -214,11 +175,9 @@ export class UserService extends DBService {
    * @return {*}  {Promise<ProjectParticipantObject[]>}
    * @memberof UserService
    */
-  async getUserProjectParticipation(systemUserId: number, projectId?: number): Promise<ProjectParticipantObject[]> {
-    const sqlStatement = queries.projectParticipation.getAllUserProjectsSQL(systemUserId, projectId);
+  async getUserProjectParticipation(systemUserId: number): Promise<ProjectParticipantObject[]> {
+    const response = await this.projectParticipationRepository.getAllUserProjects(systemUserId);
 
-    const response = await this.connection.sql(sqlStatement);
-
-    return response.rows.map((item) => new ProjectParticipantObject(item));
+    return response.map((item) => new ProjectParticipantObject(item));
   }
 }

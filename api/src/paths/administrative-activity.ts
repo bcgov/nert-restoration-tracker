@@ -1,12 +1,11 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import { getAPIUserDBConnection, IDBConnection } from '../database/db';
+import { getAPIUserDBConnection } from '../database/db';
 import { HTTP400, HTTP500 } from '../errors/custom-error';
 import { hasPendingAdministrativeActivitiesResponseObject } from '../openapi/schemas/administrative-activity';
-import { queries } from '../queries/queries';
+import { AdministrativeActivityService } from '../services/administrative-activity-service';
 import { getUserIdentifier } from '../utils/keycloak-utils';
 import { getLogger } from '../utils/logger';
-import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from './administrative-activities';
 
 const defaultLog = getLogger('paths/administrative-activity-request');
 
@@ -141,35 +140,14 @@ export function createAdministrativeActivity(): RequestHandler {
         throw new HTTP500('Failed to identify system user ID');
       }
 
-      const postAdministrativeActivitySQLStatement = queries.administrativeActivity.postAdministrativeActivitySQL(
-        systemUserId,
-        req?.body
-      );
+      const administrativeActivityService = new AdministrativeActivityService(connection);
 
-      if (!postAdministrativeActivitySQLStatement) {
-        throw new HTTP500('Failed to build SQL insert statement');
-      }
-
-      const createAdministrativeActivityResponse = await connection.query(
-        postAdministrativeActivitySQLStatement.text,
-        postAdministrativeActivitySQLStatement.values
-      );
+      const accessRequestData = req?.body;
+      const response = await administrativeActivityService.createPendingAccessRequest(systemUserId, accessRequestData);
 
       await connection.commit();
 
-      const administrativeActivityResult =
-        (createAdministrativeActivityResponse &&
-          createAdministrativeActivityResponse.rows &&
-          createAdministrativeActivityResponse.rows[0]) ||
-        null;
-
-      if (!administrativeActivityResult || !administrativeActivityResult.id) {
-        throw new HTTP500('Failed to submit administrative activity');
-      }
-
-      return res
-        .status(200)
-        .json({ id: administrativeActivityResult.id, date: administrativeActivityResult.create_date });
+      return res.status(200).json(response);
     } catch (error) {
       defaultLog.error({ label: 'administrativeActivity', message: 'error', error });
       await connection.rollback();
@@ -196,21 +174,15 @@ export function getPendingAccessRequestsCount(): RequestHandler {
         throw new HTTP400('Missing required userIdentifier');
       }
 
-      const sqlStatement = queries.administrativeActivity.countPendingAdministrativeActivitiesSQL(userIdentifier);
-
-      if (!sqlStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
-
       await connection.open();
 
-      const response = await connection.query(sqlStatement.text, sqlStatement.values);
+      const administrativeActivityService = new AdministrativeActivityService(connection);
+
+      const response = await administrativeActivityService.getAdministrativeActivityStanding(userIdentifier);
 
       await connection.commit();
 
-      const result = (response && response.rowCount) || 0;
-
-      return res.status(200).json(result);
+      return res.status(200).json(response);
     } catch (error) {
       defaultLog.error({ label: 'getPendingAccessRequestsCount', message: 'error', error });
 
@@ -220,29 +192,3 @@ export function getPendingAccessRequestsCount(): RequestHandler {
     }
   };
 }
-
-/**
- * Update an existing administrative activity.
- *
- * @param {number} administrativeActivityId
- * @param {ADMINISTRATIVE_ACTIVITY_STATUS_TYPE} administrativeActivityStatusTypeName
- * @param {IDBConnection} connection
- */
-export const updateAdministrativeActivity = async (
-  administrativeActivityId: number,
-  administrativeActivityStatusTypeName: ADMINISTRATIVE_ACTIVITY_STATUS_TYPE,
-  connection: IDBConnection
-) => {
-  const sqlStatement = queries.administrativeActivity.putAdministrativeActivitySQL(
-    administrativeActivityId,
-    administrativeActivityStatusTypeName
-  );
-
-  const response = await connection.sql(sqlStatement);
-
-  const result = (response && response.rowCount) || null;
-
-  if (!result) {
-    throw new HTTP500('Failed to update administrative activity');
-  }
-};
