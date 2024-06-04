@@ -34,7 +34,13 @@ const MyProjectsPlansListPage: React.FC = () => {
     };
 
     const getPlans = async () => {
-      const plansResponse = await restorationTrackerApi.plan.getPlansList();
+      if (!keycloakWrapper?.hasLoadedAllUserInfo) {
+        return;
+      }
+
+      const plansResponse = await restorationTrackerApi.plan.getUserPlansList(
+        keycloakWrapper.systemUserId
+      );
 
       setIsLoading(false);
       setPlans(plansResponse);

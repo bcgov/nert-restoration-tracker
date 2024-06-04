@@ -1,3 +1,4 @@
+import { PROJECT_ROLE } from '../constants/roles';
 import { IDBConnection } from '../database/db';
 import { ICreatePlan, IEditPlan, IGetPlan } from '../interfaces/project.interface';
 import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
@@ -72,6 +73,8 @@ export class PlanService extends DBService {
    * @memberof PlanService
    */
   async createPlan(plan: ICreatePlan): Promise<{ project_id: number }> {
+    const userId = this.connection.systemUserId();
+
     // insert project
     const planResponse = await this.planRepository.insertPlan(plan.project);
 
@@ -92,6 +95,8 @@ export class PlanService extends DBService {
     if (plan.location.region) {
       await this.projectRepository.insertProjectRegion(plan.location.region, planResponse.project_id);
     }
+
+    await this.projectRepository.insertProjectParticipant(planResponse.project_id, userId, PROJECT_ROLE.PROJECT_LEAD);
 
     return planResponse;
   }

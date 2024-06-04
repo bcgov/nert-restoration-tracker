@@ -168,4 +168,32 @@ export class SearchService extends DBService {
 
     return response.rows;
   }
+
+  /**
+   * Returns project ids based on a user's plan participation.
+   *
+   * @param {number} systemUserId
+   * @return {*}  {Promise<{ project_id: number }[]>}
+   * @memberof SearchService
+   */
+  async findProjectIdsByPlanParticipation(systemUserId: number): Promise<{ project_id: number }[]> {
+    const sqlStatement = SQL`
+      SELECT
+        project.project_id
+      FROM
+        project
+      LEFT JOIN
+        project_participation
+      ON
+        project.project_id = project_participation.project_id
+      WHERE
+        project_participation.system_user_id = ${systemUserId}
+      AND
+        project.is_project = false;
+    `;
+
+    const response = await this.connection.sql<{ project_id: number }>(sqlStatement);
+
+    return response.rows;
+  }
 }
