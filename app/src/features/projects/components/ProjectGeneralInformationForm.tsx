@@ -13,7 +13,7 @@ import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workfl
 import { useFormikContext } from 'formik';
 
 import FileUpload from 'components/attachments/FileUpload';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import yup from 'utils/YupSchema';
 
 import { ConfigContext } from 'contexts/configContext';
@@ -101,7 +101,12 @@ const uploadImageStyles = {
   }
 };
 
-const uploadImage = (setImage: any): IUploadHandler => {
+// Our type for the image setter
+interface setImageFunction {
+  (image: string): void;
+}
+
+const uploadImage = (setImage: setImageFunction): IUploadHandler => {
   return async (file) => {
     const processImage = (image: any) => {
       const img = new Image();
@@ -151,7 +156,7 @@ const deleteImage = (image: string, setImage: (image: string) => void) => {
  */
 interface ThumbnailImageCardProps {
   image: string;
-  setImage: (image: string) => void;
+  setImage: setImageFunction;
 }
 const ThumbnailImageCard: React.FC<ThumbnailImageCardProps> = ({ image, setImage }) => {
   return (
@@ -183,12 +188,14 @@ const ProjectGeneralInformationForm: React.FC = () => {
 
   const config = useContext(ConfigContext);
 
-  // TODO: Pass these in to the FileUpload and ThumbnailImageCard components
-  const { values, setFieldValue, setFieldError } = formikProps;
-  console.log('values', values);
+  const { setFieldValue } = formikProps;
 
-  // TODO: This will get replaced by the above
   const [image, setImage] = useState('' as any);
+
+  // When the image is updated make sure to update the formik field
+  useEffect(() => {
+    setFieldValue('project.project_image', image);
+  }, [image]);
 
   return (
     <Grid container spacing={3}>
