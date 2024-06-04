@@ -300,7 +300,13 @@ POST.apiDoc = {
                 partnerships: {
                   type: 'array',
                   items: {
-                    type: 'string'
+                    title: 'Project partnerships',
+                    type: 'object',
+                    properties: {
+                      partnership: {
+                        type: 'string'
+                      }
+                    }
                   }
                 }
               }
@@ -400,6 +406,7 @@ export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedProjectPostData = new PostProjectObject(req.body);
+
     try {
       await connection.open();
 

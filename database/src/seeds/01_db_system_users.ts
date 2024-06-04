@@ -24,6 +24,12 @@ const systemUsers = [
     user_guid: '5134A2E785814352A291886CD5F53CD1'
   },
   {
+    identifier: 'oscar-bc-adm',
+    type: SYSTEM_IDENTITY_SOURCE.BCEID_BASIC,
+    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
+    user_guid: 'DCDDBF25F13345EAA9F56BFD1A4F4EA7'
+  },
+  {
     identifier: 'jrpopkin',
     type: SYSTEM_IDENTITY_SOURCE.IDIR,
     roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,

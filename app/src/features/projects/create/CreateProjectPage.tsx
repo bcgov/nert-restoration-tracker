@@ -57,8 +57,8 @@ import ProjectObjectivesForm, {
   ProjectObjectiveFormYupSchema
 } from 'features/projects/components/ProjectObjectivesForm';
 import ProjectPartnershipsForm, {
-  ProjectPartnershipsFormInitialValues,
-  ProjectPartnershipsFormYupSchema
+  ProjectPartnershipFormInitialValues,
+  ProjectPartnershipFormYupSchema
 } from 'features/projects/components/ProjectPartnershipsForm';
 import ProjectRestorationPlanForm, {
   ProjectRestorationPlanFormInitialValues,
@@ -108,7 +108,7 @@ export const ProjectFormInitialValues = {
   ...ProjectWildlifeFormInitialValues,
   ...ProjectAuthorizationFormInitialValues,
   ...ProjectFundingFormInitialValues,
-  ...ProjectPartnershipsFormInitialValues,
+  ...ProjectPartnershipFormInitialValues,
   ...ProjectLocationFormInitialValues,
   ...ProjectRestorationPlanFormInitialValues
 };
@@ -122,7 +122,7 @@ export const ProjectFormYupSchema = yup
   .concat(ProjectIUCNFormYupSchema)
   .concat(ProjectAuthorizationFormYupSchema)
   .concat(ProjectFundingFormYupSchema)
-  .concat(ProjectPartnershipsFormYupSchema)
+  .concat(ProjectPartnershipFormYupSchema)
   .concat(ProjectLocationFormYupSchema)
   .concat(ProjectRestorationPlanFormYupSchema);
 
