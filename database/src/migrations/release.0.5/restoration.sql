@@ -1362,7 +1362,7 @@ COMMENT ON COLUMN partnership.partnership_id IS 'System generated surrogate prim
 ;
 COMMENT ON COLUMN partnership.project_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN partnership.partnership IS 'Partnership name of the record.'
+COMMENT ON COLUMN partnership.partnership IS 'Partnership description.'
 ;
 COMMENT ON COLUMN partnership.create_date IS 'The datetime the record was created.'
 ;
