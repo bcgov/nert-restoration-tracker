@@ -61,10 +61,10 @@ export class ProjectParticipationRepository extends BaseRepository {
    * Get all project participants from all projects a user is associated with.
    *
    * @param {number} systemUserId
-   * @return {*}
+   * @return {*}  {Promise<IProjectParticipation[]>}
    * @memberof ProjectParticipationRepository
    */
-  async getParticipantsFromAllSystemUsersProjects(systemUserId: number) {
+  async getParticipantsFromAllSystemUsersProjects(systemUserId: number): Promise<IProjectParticipation[]> {
     try {
       const sqlStatement = SQL`
         SELECT
@@ -99,13 +99,6 @@ export class ProjectParticipationRepository extends BaseRepository {
       `;
 
       const response = await this.connection.sql(sqlStatement);
-
-      if (!response.rowCount) {
-        throw new ApiExecuteSQLError('Failed to get project participants', [
-          'ProjectParticipationRepository->getParticipantsFromAllSystemUsersProjects',
-          'rowCount was null or undefined, expected rowCount > 0'
-        ]);
-      }
 
       return response.rows;
     } catch (error) {
@@ -149,13 +142,6 @@ export class ProjectParticipationRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (!response.rowCount) {
-        throw new ApiExecuteSQLError('Failed to get user projects', [
-          'ProjectParticipationRepository->getAllUserProjects',
-          'rowCount was null or undefined, expected rowCount > 0'
-        ]);
-      }
-
       return response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getAllUserProjects', message: 'error', error });
@@ -198,13 +184,6 @@ export class ProjectParticipationRepository extends BaseRepository {
     `;
 
       const response = await this.connection.sql(sqlStatement);
-
-      if (!response.rowCount) {
-        throw new ApiExecuteSQLError('Failed to get project participants', [
-          'ProjectParticipationRepository->getAllProjectParticipants',
-          'rowCount was null or undefined, expected rowCount > 0'
-        ]);
-      }
 
       return response.rows;
     } catch (error) {
@@ -306,6 +285,42 @@ export class ProjectParticipationRepository extends BaseRepository {
       return response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'insertProjectParticipantByRoleName', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * delete a project participation record.
+   *
+   * @param {number} projectParticipationId
+   * @return {*}
+   * @memberof ProjectParticipationRepository
+   */
+  async deleteProjectParticipationRecord(projectParticipationId: number) {
+    defaultLog.debug({ label: 'deleteProjectParticipationRecord', message: 'params', projectParticipationId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE FROM
+          project_participation
+        WHERE
+          project_participation_id = ${projectParticipationId}
+        RETURNING
+          *;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (!response.rowCount) {
+        throw new ApiExecuteSQLError('Failed to delete project team member', [
+          'ProjectParticipationRepository->deleteProjectParticipationRecord',
+          'rowCount was null or undefined, expected rowCount > 0'
+        ]);
+      }
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteProjectParticipationRecord', message: 'error', error });
       throw error;
     }
   }

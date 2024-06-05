@@ -157,6 +157,16 @@ export class UserService extends DBService {
   }
 
   /**
+   * Delete all project roles for the user.
+   *
+   * @param {number} systemUserId
+   * @memberof UserService
+   */
+  async deleteAllProjectRoles(systemUserId: number) {
+    await this.userRepository.deleteAllProjectRoles(systemUserId);
+  }
+
+  /**
    * Adds the specified roleIds to the user.
    *
    * @param {number} systemUserId

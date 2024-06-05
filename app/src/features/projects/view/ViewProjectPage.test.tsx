@@ -15,8 +15,7 @@ jest.mock('../../../hooks/useRestorationTrackerApi');
 const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
 const mockUseApi = {
   project: {
-    getProjectById: jest.fn<Promise<IGetProjectForViewResponse>, [number]>(),
-    getProjectTreatmentsYears: jest.fn<Promise<{ year: number }[]>, [number]>()
+    getProjectById: jest.fn<Promise<IGetProjectForViewResponse>, [number]>()
   },
   codes: {
     getAllCodeSets: jest.fn<Promise<IGetAllCodeSetsResponse>, []>()
@@ -54,8 +53,6 @@ describe.skip('ViewProjectPage', () => {
     mockRestorationTrackerApi().codes.getAllCodeSets.mockResolvedValue(codes);
 
     mockRestorationTrackerApi().project.getProjectById.mockResolvedValue(getProjectForViewResponse);
-
-    mockRestorationTrackerApi().project.getProjectTreatmentsYears.mockResolvedValue([{ year: 99 }]);
 
     const authState = getMockAuthState({
       keycloakWrapper: {

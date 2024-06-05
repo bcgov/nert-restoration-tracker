@@ -6,8 +6,7 @@ import { HTTP400, HTTP500 } from '../../../../../errors/custom-error';
 import { authorizeRequestHandler } from '../../../../../request-handlers/security/authorization';
 import { ProjectService } from '../../../../../services/project-service';
 import { getLogger } from '../../../../../utils/logger';
-import { doAllProjectsHaveAProjectLead } from '../../../../user/{userId}/delete';
-import { deleteProjectParticipationRecord } from './delete';
+import { doAllProjectsHaveAProjectLead } from '../../../../../utils/user-utils';
 
 const defaultLog = getLogger('/api/project/{projectId}/participants/{projectParticipationId}/update');
 
@@ -121,7 +120,7 @@ export function updateProjectParticipantRole(): RequestHandler {
       const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
 
       // Delete the user's old participation record, returning the old record
-      const result = await deleteProjectParticipationRecord(Number(req.params.projectParticipationId), connection);
+      const result = await projectService.deleteProjectParticipationRecord(Number(req.params.projectParticipationId));
 
       if (!result || !result.system_user_id) {
         // The delete result is missing necessary data, fail the request

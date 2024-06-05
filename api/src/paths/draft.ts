@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
+import SQL from 'sql-template-strings';
 import { SYSTEM_ROLE } from '../constants/roles';
 import { getDBConnection } from '../database/db';
 import { HTTP400 } from '../errors/custom-error';
-import { queries } from '../queries/queries';
 import { authorizeRequestHandler } from '../request-handlers/security/authorization';
 import { getLogger } from '../utils/logger';
 
@@ -201,16 +201,23 @@ export function createDraft(): RequestHandler {
 
       const systemUserId = connection.systemUserId();
 
-      const postDraftSQLStatement = queries.project.draft.postDraftSQL(
-        systemUserId,
-        req.body.is_project,
-        req.body.name,
-        req.body.data
-      );
-
-      if (!postDraftSQLStatement) {
-        throw new HTTP400('Failed to build SQL insert statement');
-      }
+      const postDraftSQLStatement = SQL`
+        INSERT INTO webform_draft (
+          system_user_id,
+          is_project,
+          name,
+          data
+        ) VALUES (
+          ${systemUserId},
+          ${req.body.is_project},
+          ${req.body.name},
+          ${req.body.data}
+        )
+        RETURNING
+          webform_draft_id as id,
+          create_date::timestamptz,
+          update_date::timestamptz;
+      `;
 
       const createDraftResponse = await connection.query(postDraftSQLStatement.text, postDraftSQLStatement.values);
 
@@ -255,11 +262,19 @@ export function updateDraft(): RequestHandler {
         throw new HTTP400('Missing required param data');
       }
 
-      const putDraftSQLStatement = queries.project.draft.putDraftSQL(req.body.id, req.body.name, req.body.data);
-
-      if (!putDraftSQLStatement) {
-        throw new HTTP400('Failed to build SQL update statement');
-      }
+      const putDraftSQLStatement = SQL`
+        UPDATE
+          webform_draft
+        SET
+          name = ${req.body.name},
+          data = ${req.body.data}
+        WHERE
+          webform_draft_id = ${req.body.id}
+        RETURNING
+          webform_draft_id as id,
+          create_date::timestamptz,
+          update_date::timestamptz;
+      `;
 
       await connection.open();
 

@@ -1,7 +1,6 @@
-import SQL from 'sql-template-strings';
 import { PROJECT_ROLE } from '../constants/roles';
 import { IDBConnection } from '../database/db';
-import { HTTP400, HTTP409, HTTP500 } from '../errors/custom-error';
+import { HTTP400 } from '../errors/custom-error';
 import { models } from '../models/models';
 import {
   IPostAuthorization,
@@ -27,12 +26,12 @@ import {
   ProjectObject
 } from '../models/project-view';
 import { IUpdateProject } from '../paths/project/{projectId}/update';
-import { queries } from '../queries/queries';
 import {
   IProjectParticipation,
   ProjectParticipationRepository
 } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
+import { doAllProjectsHaveAProjectLeadIfUserIsRemoved } from '../utils/user-utils';
 import { DBService } from './service';
 import { TaxonomyService } from './taxonomy-service';
 
@@ -101,6 +100,27 @@ export class ProjectService extends DBService {
     projectParticipantRoleId: number
   ): Promise<void> {
     this.projectParticipantRepository.insertProjectParticipant(projectId, systemUserId, projectParticipantRoleId);
+  }
+
+  /**
+   * Check if a user is the only project lead on any project.
+   *
+   * @param {number} userId
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
+  async checkIfUserIsOnlyProjectLeadOnAnyProject(userId: number): Promise<void> {
+    const allParticipants = await this.projectParticipantRepository.getParticipantsFromAllSystemUsersProjects(userId);
+
+    if (!allParticipants.length) {
+      return;
+    }
+
+    const onlyProjectLead = doAllProjectsHaveAProjectLeadIfUserIsRemoved(allParticipants, userId);
+
+    if (!onlyProjectLead) {
+      throw new HTTP400('Cannot remove user. User is the only Project Lead for one or more projects.');
+    }
   }
 
   /**
@@ -252,6 +272,35 @@ export class ProjectService extends DBService {
     return this.projectRepository.getRangeData(projectId);
   }
 
+  /**
+   * Get all projects by spatial search
+   *
+   * @param {boolean} isUserAdmin
+   * @param {number} [systemUserId]
+   * @return {*}
+   * @memberof ProjectService
+   */
+  async getSpatialSearch(
+    isUserAdmin: boolean,
+    systemUserId?: number
+  ): Promise<
+    {
+      id: number;
+      name: string;
+      is_project: boolean;
+      geometry: any;
+    }[]
+  > {
+    return this.projectRepository.getSpatialSearch(isUserAdmin, systemUserId);
+  }
+
+  /**
+   * Create a new project.
+   *
+   * @param {PostProjectObject} postProjectData
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async createProject(postProjectData: PostProjectObject): Promise<number> {
     const projectId = await this.insertProject(postProjectData.project);
     const promises: Promise<any>[] = [];
@@ -334,201 +383,140 @@ export class ProjectService extends DBService {
     return projectId;
   }
 
-  async insertProject(projectdata: PostProjectData): Promise<number> {
-    const sqlStatement = queries.project.postProjectSQL(projectdata);
+  /**
+   * Insert a new project.
+   *
+   * @param {PostProjectData} projectData
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertProject(projectData: PostProjectData): Promise<number> {
+    const response = await this.projectRepository.insertProject(projectData);
 
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project boundary data');
-    }
-
-    return result.id;
+    return response.project_id;
   }
 
+  /**
+   * Insert a new contact.
+   *
+   * @param {IPostContact} contact
+   * @param {number} project_id
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertContact(contact: IPostContact, project_id: number): Promise<number> {
-    const sqlStatement = SQL`
-      INSERT INTO project_contact (
-        project_id, contact_type_id, first_name, last_name, agency, email_address, is_public, is_primary
-      ) VALUES (
-        ${project_id},
-        (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator'),
-        ${contact.first_name},
-        ${contact.last_name},
-        ${contact.agency},
-        ${contact.email_address},
-        ${contact.is_public ? 'Y' : 'N'},
-        ${contact.is_primary ? 'Y' : 'N'}
-      )
-      RETURNING
-        project_contact_id as id;
-    `;
+    const response = await this.projectRepository.insertProjectContact(contact, project_id);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project contact data');
-    }
-
-    return result.id;
+    return response.project_contact_id;
   }
 
+  /**
+   * Insert a new project spatial component.
+   *
+   * @param {PostLocationData} locationData
+   * @param {number} project_id
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertProjectSpatial(locationData: PostLocationData, project_id: number): Promise<number> {
-    const sqlStatement = queries.project.postProjectBoundarySQL(locationData, project_id);
+    const response = await this.projectRepository.insertProjectLocation(locationData, project_id);
 
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project boundary data');
-    }
-
-    return result.id;
+    return response.project_spatial_component_id;
   }
 
+  /**
+   * Insert a new project focus.
+   *
+   * @param {PostFocusData} focusData
+   * @param {number} project_id
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertFocus(focusData: PostFocusData, project_id: number): Promise<number> {
-    const sqlStatement = queries.project.postProjectFocusSQL(focusData, project_id);
+    const response = await this.projectRepository.insertProjectFocus(focusData, project_id);
 
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL update statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to update project focus data');
-    }
-
-    return result.id;
+    return response.project_id;
   }
 
+  /**
+   * Insert a new project restoration plan.
+   *
+   * @param {PostRestPlanData} restPlanData
+   * @param {number} project_id
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertRestPlan(restPlanData: PostRestPlanData, project_id: number): Promise<number> {
-    const sqlStatement = queries.project.postProjectRestPlanSQL(restPlanData, project_id);
+    const response = await this.projectRepository.insertProjectRestPlan(restPlanData, project_id);
 
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL update statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to update project rest plan data');
-    }
-
-    return result.id;
+    return response.project_id;
   }
 
+  /**
+   * Insert a new project funding source.
+   *
+   * @param {PostFundingSource} fundingSource
+   * @param {number} project_id
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertFundingSource(fundingSource: PostFundingSource, project_id: number): Promise<number> {
-    const sqlStatement = queries.project.postProjectFundingSourceSQL(fundingSource, project_id);
+    const response = await this.projectRepository.insertFundingSource(fundingSource, project_id);
 
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project funding data');
-    }
-
-    return result.id;
+    return response.project_funding_source_id;
   }
 
+  /**
+   * Insert a new project partnership.
+   *
+   * @param {string} partner
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertPartnership(partner: string, projectId: number): Promise<number> {
-    const sqlStatement = SQL`
-      INSERT INTO partnership (
-        project_id,
-        partnership
-      ) VALUES (
-        ${projectId},
-        ${partner}
-      )
-      RETURNING
-        partnership_id as id;
-    `;
+    const response = await this.projectRepository.insertPartnership(partner, projectId);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project partnership data');
-    }
-
-    return result.id;
+    return response.partnership_id;
   }
 
+  /**
+   * Insert a new project permit.
+   *
+   * @param {string} permitNumber
+   * @param {string} permitType
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertPermit(permitNumber: string, permitType: string, projectId: number): Promise<number> {
-    const systemUserId = this.connection.systemUserId();
+    const response = await this.projectRepository.insertPermit(permitNumber, permitType, projectId);
 
-    if (!systemUserId) {
-      throw new HTTP400('Failed to identify system user ID');
-    }
-
-    const sqlStatement = SQL`
-      INSERT INTO permit (
-        project_id,
-        number,
-        type,
-        system_user_id
-      ) VALUES (
-        ${projectId},
-        ${permitNumber},
-        ${permitType},
-        ${systemUserId}
-      )
-      RETURNING
-        permit_id as id;
-    `;
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project permit data');
-    }
-
-    return result.id;
+    return response.permit_id;
   }
 
-  async insertClassificationDetail(iucn3_id: number | null, project_id: number): Promise<number> {
-    const sqlStatement = queries.project.postProjectIUCNSQL(iucn3_id, project_id);
+  /**
+   * Insert a new project classification detail.
+   *
+   * @param {(number | null)} iucn3_id
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertClassificationDetail(iucn3_id: number | null, projectId: number): Promise<number> {
+    const response = await this.projectRepository.insertClassificationDetail(iucn3_id, projectId);
 
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project IUCN data');
-    }
-
-    return result.id;
+    return response.project_iucn_action_classification_id;
   }
 
+  /**
+   * Insert a new project participant role.
+   *
+   * @param {number} projectId
+   * @param {string} projectParticipantRole
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async insertProjectParticipantRole(projectId: number, projectParticipantRole: string): Promise<void> {
     const systemUserId = this.connection.systemUserId();
 
@@ -543,50 +531,41 @@ export class ProjectService extends DBService {
     );
   }
 
-  async insertSpecies(species_id: number, projectId: number): Promise<void> {
-    const systemUserId = this.connection.systemUserId();
+  /**
+   * Insert a new species.
+   *
+   * @param {number} speciesId
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertSpecies(speciesId: number, projectId: number): Promise<number> {
+    const response = await this.projectRepository.insertSpecies(speciesId, projectId);
 
-    if (!systemUserId) {
-      throw new HTTP400('Failed to identify system user ID');
-    }
-
-    const sqlStatement = queries.project.postProjectSpeciesSQL(species_id, projectId);
-
-    if (!sqlStatement) {
-      throw new HTTP400('Failed to build SQL insert statement');
-    }
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response || !response.rowCount) {
-      throw new HTTP400('Failed to insert project species');
-    }
+    return response.project_species_id;
   }
 
+  /**
+   * Insert a new range.
+   *
+   * @param {number} rangeNumber
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
   async insertRange(rangeNumber: number, projectId: number): Promise<number> {
-    const sqlStatement = SQL`
-      INSERT INTO project_caribou_population_unit (
-        project_id,
-        caribou_population_unit_id
-      ) VALUES (
-        ${projectId},
-        ${rangeNumber}
-      )
-      RETURNING
-      project_caribou_population_unit_id as id;
-    `;
+    const response = await this.projectRepository.insertRange(rangeNumber, projectId);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    const result = (response && response.rows && response.rows[0]) || null;
-
-    if (!result || !result.id) {
-      throw new HTTP400('Failed to insert project range data');
-    }
-
-    return result.id;
+    return response.project_caribou_population_unit_id;
   }
 
+  /**
+   * Update a project.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @memberof ProjectService
+   */
   async updateProject(projectId: number, entities: IUpdateProject) {
     const promises: Promise<any>[] = [];
 
@@ -621,6 +600,14 @@ export class ProjectService extends DBService {
     await Promise.all(promises);
   }
 
+  /**
+   * Update project data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectData(projectId: number, entities: IUpdateProject): Promise<void> {
     const projectData = entities?.project && new models.project.PutProjectData(entities.project);
 
@@ -631,20 +618,18 @@ export class ProjectService extends DBService {
     return this.projectRepository.updateProject(projectId, projectData);
   }
 
+  /**
+   * Update project contact data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateContactData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putContactData = new models.project.PostContactData(entities.contact);
 
-    const sqlDeleteStatement = queries.project.deleteContactSQL(projectId);
-
-    if (!sqlDeleteStatement) {
-      throw new HTTP400('Failed to build SQL delete statement');
-    }
-
-    const deleteResult = await this.connection.query(sqlDeleteStatement.text, sqlDeleteStatement.values);
-
-    if (!deleteResult) {
-      throw new HTTP409('Failed to delete project contact data');
-    }
+    await this.projectRepository.deleteProjectContact(projectId);
 
     const insertContactPromises =
       putContactData?.contacts?.map((contact: IPostContact) => {
@@ -654,20 +639,18 @@ export class ProjectService extends DBService {
     await Promise.all([insertContactPromises]);
   }
 
+  /**
+   * Update project IUCN data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectIUCNData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putIUCNData = (entities?.iucn && new models.project.PutIUCNData(entities.iucn)) || null;
 
-    const sqlDeleteStatement = queries.project.deleteIUCNSQL(projectId);
-
-    if (!sqlDeleteStatement) {
-      throw new HTTP400('Failed to build SQL delete statement');
-    }
-
-    const deleteResult = await this.connection.query(sqlDeleteStatement.text, sqlDeleteStatement.values);
-
-    if (!deleteResult) {
-      throw new HTTP409('Failed to delete project IUCN data');
-    }
+    await this.projectRepository.deleteProjectIUCN(projectId);
 
     const insertIUCNPromises =
       putIUCNData?.classificationDetails?.map((iucnClassification: IPostIUCN) =>
@@ -677,26 +660,19 @@ export class ProjectService extends DBService {
     await Promise.all(insertIUCNPromises);
   }
 
+  /**
+   * Update project partnerships data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectPartnershipsData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putPartnershipsData =
       (entities?.partnership && new models.project.PutPartnershipsData(entities.partnership)) || null;
 
-    const sqlDeletePartnershipsStatement = queries.project.deletePartnershipsSQL(projectId);
-
-    if (!sqlDeletePartnershipsStatement) {
-      throw new HTTP400('Failed to build SQL delete statement');
-    }
-
-    const deletePartnershipsPromises = this.connection.query(
-      sqlDeletePartnershipsStatement.text,
-      sqlDeletePartnershipsStatement.values
-    );
-
-    const [deletePartnershipsResult] = await Promise.all([deletePartnershipsPromises]);
-
-    if (!deletePartnershipsResult) {
-      throw new HTTP409('Failed to delete project partnerships data');
-    }
+    await this.projectRepository.deleteProjectPartnership(projectId);
 
     const insertPartnershipsPromises =
       putPartnershipsData?.partnerships?.map((partnership: string) => this.insertPartnership(partnership, projectId)) ||
@@ -705,21 +681,18 @@ export class ProjectService extends DBService {
     await Promise.all([...insertPartnershipsPromises]);
   }
 
+  /**
+   * Update project funding data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectFundingData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putFundingSources = entities?.funding && new models.project.PutFundingData(entities.funding);
 
-    const deleteSQLStatement = SQL`
-      DELETE
-        from project_funding_source
-      WHERE
-        project_id = ${projectId};
-    `;
-
-    const deleteFundingResult = await this.connection.query(deleteSQLStatement.text, deleteSQLStatement.values);
-
-    if (!deleteFundingResult) {
-      throw new HTTP409('Failed to delete project funding data');
-    }
+    await this.projectRepository.deleteProjectFundingSource(projectId);
 
     await Promise.all(
       putFundingSources?.fundingSources?.map((item) => {
@@ -728,52 +701,39 @@ export class ProjectService extends DBService {
     );
   }
 
+  /**
+   * Update project spatial data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectSpatialData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putLocationData = entities?.location && new models.project.PutLocationData(entities.location);
+
+    await this.projectRepository.deleteProjectLocation(projectId);
 
     if (!putLocationData?.geometry) {
       // No spatial data to insert
       return;
     }
 
-    const projectSpatialDeleteStatement = queries.project.deleteProjectSpatialSQL(projectId);
-
-    if (!projectSpatialDeleteStatement) {
-      throw new HTTP400('Failed to build SQL delete statement');
-    }
-
-    const deleteSpatialResult = await this.connection.query(
-      projectSpatialDeleteStatement.text,
-      projectSpatialDeleteStatement.values
-    );
-
-    if (!deleteSpatialResult) {
-      throw new HTTP409('Failed to delete spatial data');
-    }
-
-    const sqlInsertStatement = queries.project.postProjectBoundarySQL(putLocationData, projectId);
-
-    if (!sqlInsertStatement) {
-      throw new HTTP400('Failed to build SQL update statement');
-    }
-
-    const result = await this.connection.query(sqlInsertStatement.text, sqlInsertStatement.values);
-
-    if (!result || !result.rowCount) {
-      throw new HTTP409('Failed to insert project spatial data');
-    }
+    await this.insertProjectSpatial(putLocationData, projectId);
   }
 
+  /**
+   * Update project region data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectRegionData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putRegionData = entities?.location && new models.project.PutLocationData(entities.location);
 
-    const projectRegionDeleteStatement = queries.project.deleteProjectRegionSQL(projectId);
-
-    if (!projectRegionDeleteStatement) {
-      throw new HTTP500('Failed to build SQL delete statement');
-    }
-
-    await this.connection.query(projectRegionDeleteStatement.text, projectRegionDeleteStatement.values);
+    await this.projectRepository.deleteProjectRegion(projectId);
 
     if (!putRegionData?.region) {
       // No spatial data to insert
@@ -782,20 +742,23 @@ export class ProjectService extends DBService {
     await this.projectRepository.insertProjectRegion(putRegionData.region, projectId);
   }
 
+  /**
+   * Update project species data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
   async updateProjectSpeciesData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putSpeciesData = entities?.species && new models.project.PutSpeciesData(entities.species);
 
-    const projectSpeciesDeleteStatement = queries.project.deleteProjectSpeciesSQL(projectId);
-
-    if (!projectSpeciesDeleteStatement) {
-      throw new HTTP500('Failed to build SQL delete statement');
-    }
-
-    await this.connection.query(projectSpeciesDeleteStatement.text, projectSpeciesDeleteStatement.values);
+    await this.projectRepository.deleteProjectSpecies(projectId);
 
     if (!putSpeciesData?.focal_species.length) {
       return;
     }
+
     await Promise.all(
       putSpeciesData?.focal_species.map((speciesId: number) => {
         this.insertSpecies(speciesId, projectId);
@@ -839,5 +802,37 @@ export class ProjectService extends DBService {
     }[]
   > {
     return Promise.all(projectIds.map(async (projectId) => this.getProjectById(projectId, isPublic)));
+  }
+
+  /**
+   * Delete Project Participation Record
+   *
+   * @param {number} projectParticipationId
+   * @return {*}
+   * @memberof ProjectService
+   */
+  async deleteProjectParticipationRecord(projectParticipationId: number) {
+    return this.projectParticipantRepository.deleteProjectParticipationRecord(projectParticipationId);
+  }
+
+  /**
+   * Delete Project
+   *
+   * @param {number} projectId
+   * @memberof ProjectService
+   */
+  async deleteProject(projectId: number) {
+    await this.projectRepository.deleteProject(projectId);
+  }
+
+  /**
+   * Delete Project Funding Source
+   *
+   * @param {number} projectId
+   * @param {number} pfsId
+   * @memberof ProjectService
+   */
+  async deleteFundingSourceById(projectId: number, pfsId: number): Promise<{ project_funding_source_id: number }> {
+    return this.projectRepository.deleteFundingSourceById(projectId, pfsId);
   }
 }

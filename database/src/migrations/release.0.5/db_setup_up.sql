@@ -71,7 +71,6 @@ alter role restoration_api set search_path to restoration_dapi_v1, restoration, 
 -- \i populate_administrative_activity_status_type.sql
 -- \i populate_system_metadata_constant.sql
 -- \i populate_project_spatial_component_type.sql
--- \i populate_treatment_type.sql
 -- \i populate_feature_type.sql
 -- \i populate_contact_type.sql
 -- \i populate_caribou_population_unit.sql

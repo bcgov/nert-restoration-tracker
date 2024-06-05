@@ -3,7 +3,6 @@ import { Operation } from 'express-openapi';
 import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
-import { queries } from '../../../queries/queries';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { AttachmentService } from '../../../services/attachment-service';
 import { AuthorizationService } from '../../../services/authorization-service';
@@ -115,13 +114,7 @@ export function deleteProject(): RequestHandler {
        * PART 3
        * Delete the project and all associated records/resources from our DB
        */
-      const deleteProjectSQLStatement = queries.project.deleteProjectSQL(projectId);
-
-      if (!deleteProjectSQLStatement) {
-        throw new HTTP400('Failed to build SQL delete statement');
-      }
-
-      await connection.query(deleteProjectSQLStatement.text, deleteProjectSQLStatement.values);
+      await projectService.deleteProject(projectId);
 
       await connection.commit();
 

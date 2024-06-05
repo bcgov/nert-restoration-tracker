@@ -1,13 +1,12 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../../../constants/roles';
-import { IDBConnection, getDBConnection } from '../../../../../database/db';
+import { getDBConnection } from '../../../../../database/db';
 import { HTTP400, HTTP500 } from '../../../../../errors/custom-error';
-import { queries } from '../../../../../queries/queries';
 import { authorizeRequestHandler } from '../../../../../request-handlers/security/authorization';
 import { ProjectService } from '../../../../../services/project-service';
 import { getLogger } from '../../../../../utils/logger';
-import { doAllProjectsHaveAProjectLead } from '../../../../user/{userId}/delete';
+import { doAllProjectsHaveAProjectLead } from '../../../../../utils/user-utils';
 
 const defaultLog = getLogger('/api/project/{projectId}/participants/{projectParticipationId}/delete');
 
@@ -101,7 +100,7 @@ export function deleteProjectParticipant(): RequestHandler {
       const projectParticipantsResponse1 = await projectService.getProjectParticipants(Number(req.params.projectId));
       const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
 
-      const result = await deleteProjectParticipationRecord(Number(req.params.projectParticipationId), connection);
+      const result = await projectService.deleteProjectParticipationRecord(Number(req.params.projectParticipationId));
 
       if (!result || !result.system_user_id) {
         // The delete result is missing necesary data, fail the request
@@ -131,22 +130,3 @@ export function deleteProjectParticipant(): RequestHandler {
     }
   };
 }
-
-export const deleteProjectParticipationRecord = async (
-  projectParticipationId: number,
-  connection: IDBConnection
-): Promise<any> => {
-  const sqlStatement = queries.projectParticipation.deleteProjectParticipationSQL(projectParticipationId);
-
-  if (!sqlStatement) {
-    throw new HTTP400('Failed to build SQL delete statement');
-  }
-
-  const response = await connection.query(sqlStatement.text, sqlStatement.values);
-
-  if (!response || !response.rowCount) {
-    throw new HTTP500('Failed to delete project team member');
-  }
-
-  return response.rows[0];
-};
