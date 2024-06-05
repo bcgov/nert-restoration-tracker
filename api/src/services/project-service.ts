@@ -7,6 +7,7 @@ import {
   IPostAuthorization,
   IPostContact,
   IPostIUCN,
+  IPostObjective,
   IPostPartnership,
   PostFocusData,
   PostFundingSource,
@@ -20,6 +21,7 @@ import {
   GetFundingData,
   GetIUCNClassificationData,
   GetLocationData,
+  GetObjectivesData,
   GetPartnershipsData,
   GetPermitData,
   GetProjectData,
@@ -149,17 +151,27 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async getProjectById(projectId: number, isPublic = false): Promise<ProjectObject> {
-    const [projectData, speciesData, iucnData, contactData, permitData, partnershipsData, fundingData, locationData] =
-      await Promise.all([
-        this.getProjectData(projectId),
-        this.getSpeciesData(projectId),
-        this.getIUCNClassificationData(projectId),
-        this.getContactData(projectId, isPublic),
-        this.getPermitData(projectId, isPublic),
-        this.getPartnershipsData(projectId),
-        this.getFundingData(projectId),
-        this.getLocationData(projectId)
-      ]);
+    const [
+      projectData,
+      speciesData,
+      iucnData,
+      contactData,
+      permitData,
+      partnershipsData,
+      objectivesData,
+      fundingData,
+      locationData
+    ] = await Promise.all([
+      this.getProjectData(projectId),
+      this.getSpeciesData(projectId),
+      this.getIUCNClassificationData(projectId),
+      this.getContactData(projectId, isPublic),
+      this.getPermitData(projectId, isPublic),
+      this.getPartnershipsData(projectId),
+      this.getObjectivesData(projectId),
+      this.getFundingData(projectId),
+      this.getLocationData(projectId)
+    ]);
 
     return {
       project: projectData,
@@ -168,6 +180,7 @@ export class ProjectService extends DBService {
       contact: contactData,
       permit: permitData,
       partnerships: partnershipsData,
+      objectives: objectivesData,
       funding: fundingData,
       location: locationData
     };
@@ -326,7 +339,7 @@ export class ProjectService extends DBService {
     const [partnershipsRows] = await Promise.all([this.getPartnershipsRows(projectId)]);
 
     if (!partnershipsRows) {
-      throw new HTTP400('Failed to get partnership data');
+      throw new HTTP400('Failed to get partnerships data');
     }
 
     return new GetPartnershipsData(partnershipsRows);
@@ -338,6 +351,31 @@ export class ProjectService extends DBService {
         partnership
       FROM
         partnership
+      WHERE
+        project_id = ${projectId};
+    `;
+
+    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+    return (response && response.rows) || null;
+  }
+
+  async getObjectivesData(projectId: number): Promise<GetObjectivesData> {
+    const [objectivesRows] = await Promise.all([this.getObjectivesRows(projectId)]);
+
+    if (!objectivesRows) {
+      throw new HTTP400('Failed to get objectives data');
+    }
+
+    return new GetObjectivesData(objectivesRows);
+  }
+
+  async getObjectivesRows(projectId: number): Promise<any[]> {
+    const sqlStatement = SQL`
+      SELECT
+        objective
+      FROM
+        objective
       WHERE
         project_id = ${projectId};
     `;
@@ -501,11 +539,20 @@ export class ProjectService extends DBService {
       )
     );
 
-    // Handle partners
+    // Handle partnerships
     promises.push(
       Promise.all(
         postProjectData.partnership.partnerships?.map((partner: IPostPartnership) =>
           this.insertPartnership(partner.partnership, projectId)
+        ) || []
+      )
+    );
+
+    // Handle objectives
+    promises.push(
+      Promise.all(
+        postProjectData.objective.objectives?.map((objective: IPostObjective) =>
+          this.insertObjective(objective.objective, projectId)
         ) || []
       )
     );
@@ -688,6 +735,30 @@ export class ProjectService extends DBService {
     return result.id;
   }
 
+  async insertObjective(objective: string, projectId: number): Promise<number> {
+    const sqlStatement = SQL`
+      INSERT INTO objective (
+        project_id,
+        objective
+      ) VALUES (
+        ${projectId},
+        ${objective}
+      )
+      RETURNING
+        objective_id as id;
+    `;
+
+    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+    const result = (response && response.rows && response.rows[0]) || null;
+
+    if (!result || !result.id) {
+      throw new HTTP400('Failed to insert project objective data');
+    }
+
+    return result.id;
+  }
+
   async insertPermit(permitNumber: string, permitType: string, projectId: number): Promise<number> {
     const systemUserId = this.connection.systemUserId();
 
@@ -823,6 +894,10 @@ export class ProjectService extends DBService {
       promises.push(this.updateProjectPartnershipsData(projectId, entities));
     }
 
+    if (entities?.objective) {
+      promises.push(this.updateProjectObjectivesData(projectId, entities));
+    }
+
     if (entities?.iucn) {
       promises.push(this.updateProjectIUCNData(projectId, entities));
     }
@@ -941,6 +1016,32 @@ export class ProjectService extends DBService {
     await Promise.all([...insertPartnershipsPromises]);
   }
 
+  async updateProjectObjectivesData(projectId: number, entities: IUpdateProject): Promise<void> {
+    const putObjectivesData = (entities?.objective && new models.project.PutObjectivesData(entities.objective)) || null;
+
+    const sqlDeleteObjectivesStatement = queries.project.deleteObjectivesSQL(projectId);
+
+    if (!sqlDeleteObjectivesStatement) {
+      throw new HTTP400('Failed to build SQL delete statement');
+    }
+
+    const deleteObjectivesPromises = this.connection.query(
+      sqlDeleteObjectivesStatement.text,
+      sqlDeleteObjectivesStatement.values
+    );
+
+    const [deleteObjectivesResult] = await Promise.all([deleteObjectivesPromises]);
+
+    if (!deleteObjectivesResult) {
+      throw new HTTP409('Failed to delete project objectives data');
+    }
+
+    const insertObjectivesPromises =
+      putObjectivesData?.objectives?.map((objective: string) => this.insertObjective(objective, projectId)) || [];
+
+    await Promise.all([...insertObjectivesPromises]);
+  }
+
   async updateProjectFundingData(projectId: number, entities: IUpdateProject): Promise<void> {
     const putFundingSources = entities?.funding && new models.project.PutFundingData(entities.funding);
 
@@ -1053,6 +1154,7 @@ export class ProjectService extends DBService {
    *       contact: GetContactData;
    *       permit: GetPermitData;
    *       partnerships: GetPartnershipsData;
+   *       objectives: GetObjectivesData;
    *       funding: GetFundingData;
    *       location: GetLocationData;
    *     }[]
@@ -1070,6 +1172,7 @@ export class ProjectService extends DBService {
       contact: GetContactData;
       permit: GetPermitData;
       partnerships: GetPartnershipsData;
+      objectives: GetObjectivesData;
       funding: GetFundingData;
       location: GetLocationData;
     }[]

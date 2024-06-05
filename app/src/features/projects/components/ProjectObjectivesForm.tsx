@@ -57,13 +57,16 @@ export const ProjectObjectiveFormYupSchema = yup.object().shape({
   objective: yup.object().shape({
     objectives: yup
       .array()
-      // .of(
-      //   yup.object().shape({
-      //     objective: yup.string().required('Objective required')
-      //   })
-      // )
-      .min(1, 'At least one objective required')
-      .required('required')
+      .of(
+        yup.object().shape({
+          objective: yup
+            .string()
+            .max(300, 'Cannot exceed 500 characters')
+            .trim()
+            .required('Please enter an objective')
+        })
+      )
+      .isUniqueObjective('Objective entries must be unique')
   })
 });
 
@@ -127,8 +130,9 @@ const ProjectObjectivesForm: React.FC = () => {
             <Box pt={0.5}>
               <Button
                 disabled={
-                  !values.objective.objectives[values.objective.objectives.length - 1].objective ||
-                  values.objective.objectives.length >= 5
+                  !values.objective.objectives[
+                    values.objective.objectives.length - 1
+                  ].objective.trim() || values.objective.objectives.length >= 5
                 }
                 type="button"
                 variant="outlined"

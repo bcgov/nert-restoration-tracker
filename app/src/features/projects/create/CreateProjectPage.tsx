@@ -273,6 +273,8 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      projectPostObject.partnership.partnerships =
+        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
       projectPostObject.location.size_ha = projectPostObject.location.size_ha

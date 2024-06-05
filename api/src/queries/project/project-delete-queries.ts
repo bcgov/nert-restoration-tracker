@@ -106,6 +106,40 @@ export const deletePartnershipsSQL = (projectId: number): SQLStatement | null =>
 };
 
 /**
+ * SQL query to delete project objective rows
+ *
+ * @param {projectId} projectId
+ * @returns {SQLStatement} sql query object
+ */
+export const deleteObjectivesSQL = (projectId: number): SQLStatement | null => {
+  defaultLog.debug({
+    label: 'deleteObjectivesSQL',
+    message: 'params',
+    projectId
+  });
+
+  if (!projectId) {
+    return null;
+  }
+
+  const sqlStatement: SQLStatement = SQL`
+    DELETE
+      from objective
+    WHERE
+      project_id = ${projectId};
+  `;
+
+  defaultLog.debug({
+    label: 'deleteObjectivesSQL',
+    message: 'sql',
+    'sqlStatement.text': sqlStatement.text,
+    'sqlStatement.values': sqlStatement.values
+  });
+
+  return sqlStatement;
+};
+
+/**
  * SQL query to delete project IUCN rows.
  *
  * @param {projectId} projectId

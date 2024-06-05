@@ -113,14 +113,12 @@ POST.apiDoc = {
             objective: {
               title: 'Project objectives',
               type: 'object',
-              required: ['objectives'],
               additionalProperties: false,
               properties: {
                 objectives: {
                   type: 'array',
-                  required: ['objective'],
                   items: {
-                    title: 'Project objective',
+                    title: 'Project objectives',
                     type: 'object',
                     properties: {
                       objective: {

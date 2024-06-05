@@ -7,6 +7,7 @@ export type ProjectObject = {
   contact: GetContactData;
   permit: GetPermitData;
   partnerships: GetPartnershipsData;
+  objectives: GetObjectivesData;
   funding: GetFundingData;
   location: GetLocationData;
 };
@@ -126,6 +127,17 @@ export class GetPartnershipsData {
 
   constructor(partnerships?: any[]) {
     this.partnerships = (partnerships?.length && partnerships.map((item: any) => item.partnership)) || [];
+  }
+}
+
+export interface IGetObjective {
+  objective: string;
+}
+export class GetObjectivesData {
+  objectives: IGetObjective[];
+
+  constructor(objectives?: any[]) {
+    this.objectives = (objectives?.length && objectives.map((item: any) => item.objective)) || [];
   }
 }
 
