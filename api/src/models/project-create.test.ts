@@ -7,6 +7,7 @@ import {
   PostIUCNData,
   PostLocationData,
   PostPartnershipsData,
+  PostObjectivesData,
   PostProjectData,
   PostProjectObject
 } from './project-create';
