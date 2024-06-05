@@ -413,8 +413,6 @@ export function createProject(): RequestHandler {
 
     const sanitizedProjectPostData = new PostProjectObject(req.body);
 
-    console.log('sanitizedProjectPostData', sanitizedProjectPostData);
-
     try {
       await connection.open();
 
@@ -422,9 +420,7 @@ export function createProject(): RequestHandler {
 
       const projectId = await projectService.createProject(sanitizedProjectPostData);
 
-      console.log('projectId', projectId);
-
-      // TODO: Save the thumbnail to s3 as a project attachment. This will hopefully be acheived by the FileUpload component and/or updating the project through the API.
+      // TODO: Save the thumbnail to s3 as a project attachment. This will hopefully be achieved by the FileUpload component and/or updating the project through the API.
 
       await connection.commit();
 

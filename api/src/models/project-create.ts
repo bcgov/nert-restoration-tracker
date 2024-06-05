@@ -196,7 +196,6 @@ export class PostObjectivesData {
 export class PostProjectData {
   is_project: boolean;
   name: string;
-  image: string;
   state_code: number;
   start_date: string;
   end_date: string;
@@ -215,7 +214,6 @@ export class PostProjectData {
 
     this.is_project = obj?.is_project || null;
     this.name = obj?.project_name || null;
-    this.image = obj?.project_image || null;
     this.state_code = obj?.state_code || 0;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;
