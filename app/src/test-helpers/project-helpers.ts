@@ -67,5 +67,8 @@ export const getProjectForViewResponse: IGetProjectForViewResponse = {
   },
   partnerships: {
     partnerships: ['partner2', 'partner3']
+  },
+  objectives: {
+    objectives: ['objective2', 'objective3']
   }
 };

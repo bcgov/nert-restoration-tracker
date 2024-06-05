@@ -1,6 +1,13 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
-import { PutFundingData, PutIUCNData, PutLocationData, PutPartnershipsData, PutProjectData } from './project-update';
+import {
+  PutFundingData,
+  PutIUCNData,
+  PutLocationData,
+  PutObjectivesData,
+  PutPartnershipsData,
+  PutProjectData
+} from './project-update';
 
 describe('PutLocationData', () => {
   describe('No values provided', () => {
@@ -149,6 +156,36 @@ describe('PutPartnershipsData', () => {
 
     it('sets partnerships', () => {
       expect(data.partnerships).to.eql(obj.partnerships);
+    });
+  });
+});
+
+describe('PutObjectivesData', () => {
+  describe('No values provided', () => {
+    let data: PutObjectivesData;
+
+    before(() => {
+      data = new PutObjectivesData(null);
+    });
+
+    it('sets objectives', () => {
+      expect(data.objectives).to.eql([]);
+    });
+  });
+
+  describe('all values provided', () => {
+    const obj = {
+      objectives: ['objective 3', 'objective 4']
+    };
+
+    let data: PutObjectivesData;
+
+    before(() => {
+      data = new PutObjectivesData(obj);
+    });
+
+    it('sets objectives', () => {
+      expect(data.objectives).to.eql(obj.objectives);
     });
   });
 });

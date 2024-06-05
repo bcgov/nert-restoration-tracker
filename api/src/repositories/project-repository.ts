@@ -249,6 +249,33 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Get Objectives Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<any>}
+   * @memberof ProjectRepository
+   */
+  async getObjectivesData(projectId: number): Promise<any> {
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          objective
+        FROM
+          objective
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getObjectivesData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Get Funding Data
    *
    * @param {number} projectId
@@ -805,6 +832,46 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Insert a project objective.
+   *
+   * @param {string} objective
+   * @param {number} projectId
+   * @return {*}  {Promise<{ objective_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async insertObjective(objective: string, projectId: number): Promise<{ objective_id: number }> {
+    defaultLog.debug({ label: 'insertObjective', message: 'params', objective });
+
+    try {
+      const sqlStatement = SQL`
+      INSERT INTO objective (
+        project_id,
+        objective
+      ) VALUES (
+        ${projectId},
+        ${objective}
+      )
+      RETURNING
+        objective_id;
+    `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project objective', [
+          'ProjectRepository->insertObjective',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'insertObjective', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Insert a project permit.
    *
    * @param {string} permitNumber
@@ -1305,6 +1372,37 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Delete a project objectives
+   *
+   * @param {number} projectId
+   * @memberof ProjectRepository
+   */
+  async deleteObjectives(projectId: number) {
+    defaultLog.debug({ label: 'deleteObjectives', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE
+          from objective
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (!response) {
+        throw new ApiExecuteSQLError('Failed to delete Objectives', [
+          'ProjectRepository->deleteObjectives',
+          'response was null or undefined'
+        ]);
+      }
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteObjectives', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Delete a project contact.
    *
    * @param {number} projectId
@@ -1393,6 +1491,37 @@ export class ProjectRepository extends BaseRepository {
       }
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectPartnership', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a project objectives.
+   *
+   * @param {number} projectId
+   * @memberof ProjectRepository
+   */
+  async deleteProjectObjectives(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectObjectives', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE
+          from objective
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (!response) {
+        throw new ApiExecuteSQLError('Failed to delete Project Objectives', [
+          'ProjectRepository->deleteProjectObjectives',
+          'response was null or undefined'
+        ]);
+      }
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteProjectObjectives', message: 'error', error });
       throw error;
     }
   }

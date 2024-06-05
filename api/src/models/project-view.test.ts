@@ -5,6 +5,7 @@ import {
   GetFundingData,
   GetIUCNClassificationData,
   GetLocationData,
+  GetObjectivesData,
   GetPartnershipsData,
   GetPermitData,
   GetProjectData,
@@ -61,6 +62,60 @@ describe('GetPartnershipsData', () => {
 
     it('sets partnerships', function () {
       expect(data.partnerships).to.eql(['partner 3', 'partner 4']);
+    });
+  });
+});
+
+describe('GetObjectivesData', () => {
+  describe('No values provided', () => {
+    let data: GetObjectivesData;
+
+    before(() => {
+      data = new GetObjectivesData(null as unknown as any[]);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql([]);
+    });
+  });
+
+  describe('Empty arrays as values provided', () => {
+    let data: GetObjectivesData;
+
+    before(() => {
+      data = new GetObjectivesData([]);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql([]);
+    });
+  });
+
+  describe('objectives values provided', () => {
+    let data: GetObjectivesData;
+
+    const objectives = [{ objective: 'objective 1' }, { objective: 'objective 2' }];
+
+    before(() => {
+      data = new GetObjectivesData(objectives);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql(['objective 1', 'objective 2']);
+    });
+  });
+
+  describe('All values provided', () => {
+    let data: GetObjectivesData;
+
+    const objectives = [{ objective: 'objective 3' }, { objective: 'objective 4' }];
+
+    before(() => {
+      data = new GetObjectivesData(objectives);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql(['objective 3', 'objective 4']);
     });
   });
 });

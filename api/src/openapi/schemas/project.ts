@@ -166,6 +166,24 @@ export const projectCreatePostRequestObject = {
           }
         }
       }
+    },
+    objective: {
+      title: 'Project objectives',
+      type: 'object',
+      properties: {
+        objectives: {
+          type: 'array',
+          items: {
+            title: 'Project objectives',
+            type: 'object',
+            properties: {
+              objective: {
+                type: 'string'
+              }
+            }
+          }
+        }
+      }
     }
   }
 };
@@ -200,7 +218,8 @@ const projectUpdateProperties = {
     }
   },
   funding: { type: 'object', properties: {} },
-  partnership: { type: 'object', properties: {} }
+  partnership: { type: 'object', properties: {} },
+  objective: { type: 'object', properties: {} }
 };
 
 /**

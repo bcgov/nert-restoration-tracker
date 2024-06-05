@@ -6,6 +6,7 @@ import {
   IPostAuthorization,
   IPostContact,
   IPostIUCN,
+  IPostObjective,
   IPostPartnership,
   PostFocusData,
   PostFundingSource,
@@ -19,6 +20,7 @@ import {
   GetFundingData,
   GetIUCNClassificationData,
   GetLocationData,
+  GetObjectivesData,
   GetPartnershipsData,
   GetPermitData,
   GetProjectData,
@@ -133,17 +135,27 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async getProjectById(projectId: number, isPublic = false): Promise<ProjectObject> {
-    const [projectData, speciesData, iucnData, contactData, permitData, partnershipsData, fundingData, locationData] =
-      await Promise.all([
-        this.projectRepository.getProjectData(projectId),
-        this.getSpeciesData(projectId),
-        this.getIUCNClassificationData(projectId),
-        this.getContactData(projectId, isPublic),
-        this.getPermitData(projectId, isPublic),
-        this.getPartnershipsData(projectId),
-        this.getFundingData(projectId),
-        this.getLocationData(projectId)
-      ]);
+    const [
+      projectData,
+      speciesData,
+      iucnData,
+      contactData,
+      permitData,
+      partnershipsData,
+      objectivesData,
+      fundingData,
+      locationData
+    ] = await Promise.all([
+      this.getProjectData(projectId),
+      this.getSpeciesData(projectId),
+      this.getIUCNClassificationData(projectId),
+      this.getContactData(projectId, isPublic),
+      this.getPermitData(projectId, isPublic),
+      this.getPartnershipsData(projectId),
+      this.getObjectivesData(projectId),
+      this.getFundingData(projectId),
+      this.getLocationData(projectId)
+    ]);
 
     return {
       project: projectData,
@@ -152,6 +164,7 @@ export class ProjectService extends DBService {
       contact: contactData,
       permit: permitData,
       partnerships: partnershipsData,
+      objectives: objectivesData,
       funding: fundingData,
       location: locationData
     };
@@ -235,12 +248,22 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Get funding data by project id.
+   * Get objectives data by project id.
    *
    * @param {number} projectId
-   * @return {*}  {Promise<GetFundingData>}
+   * @return {*}  {Promise<GetObjectivesData>}
    * @memberof ProjectService
    */
+  async getObjectivesData(projectId: number): Promise<GetObjectivesData> {
+    const [objectivesRows] = await Promise.all([this.projectRepository.getObjectivesData(projectId)]);
+
+    if (!objectivesRows) {
+      throw new HTTP400('Failed to get objectives data');
+    }
+
+    return new GetObjectivesData(objectivesRows);
+  }
+
   async getFundingData(projectId: number): Promise<GetFundingData> {
     return this.projectRepository.getFundingData(projectId);
   }
@@ -339,11 +362,20 @@ export class ProjectService extends DBService {
       )
     );
 
-    // Handle partners
+    // Handle partnerships
     promises.push(
       Promise.all(
         postProjectData.partnership.partnerships?.map((partner: IPostPartnership) =>
           this.insertPartnership(partner.partnership, projectId)
+        ) || []
+      )
+    );
+
+    // Handle objectives
+    promises.push(
+      Promise.all(
+        postProjectData.objective.objectives?.map((objective: IPostObjective) =>
+          this.insertObjective(objective.objective, projectId)
         ) || []
       )
     );
@@ -481,6 +513,20 @@ export class ProjectService extends DBService {
   }
 
   /**
+   * Insert a new project objective.
+   *
+   * @param {string} objective
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertObjective(objective: string, projectId: number): Promise<number> {
+    const response = await this.projectRepository.insertObjective(objective, projectId);
+
+    return response.objective_id;
+  }
+
+  /**
    * Insert a new project permit.
    *
    * @param {string} permitNumber
@@ -579,6 +625,10 @@ export class ProjectService extends DBService {
 
     if (entities?.partnership) {
       promises.push(this.updateProjectPartnershipsData(projectId, entities));
+    }
+
+    if (entities?.objective) {
+      promises.push(this.updateProjectObjectivesData(projectId, entities));
     }
 
     if (entities?.iucn) {
@@ -682,6 +732,25 @@ export class ProjectService extends DBService {
   }
 
   /**
+   * Update project objectives data.
+   *
+   * @param {number} projectId
+   * @param {IUpdateProject} entities
+   * @return {*}  {Promise<void>}
+   * @memberof ProjectService
+   */
+  async updateProjectObjectivesData(projectId: number, entities: IUpdateProject): Promise<void> {
+    const putObjectivesData = (entities?.objective && new models.project.PutObjectivesData(entities.objective)) || null;
+
+    await this.projectRepository.deleteProjectObjectives(projectId);
+
+    const insertObjectivesPromises =
+      putObjectivesData?.objectives?.map((objective: string) => this.insertObjective(objective, projectId)) || [];
+
+    await Promise.all([...insertObjectivesPromises]);
+  }
+
+  /**
    * Update project funding data.
    *
    * @param {number} projectId
@@ -780,6 +849,7 @@ export class ProjectService extends DBService {
    *       contact: GetContactData;
    *       permit: GetPermitData;
    *       partnerships: GetPartnershipsData;
+   *       objectives: GetObjectivesData;
    *       funding: GetFundingData;
    *       location: GetLocationData;
    *     }[]
@@ -797,6 +867,7 @@ export class ProjectService extends DBService {
       contact: GetContactData;
       permit: GetPermitData;
       partnerships: GetPartnershipsData;
+      objectives: GetObjectivesData;
       funding: GetFundingData;
       location: GetLocationData;
     }[]
