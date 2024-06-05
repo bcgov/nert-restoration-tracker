@@ -718,7 +718,6 @@ NOTE: there are conceptual problems with associating permits to projects early i
 
 CREATE TABLE objective(
     objective_id                 integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    system_user_id               integer           NOT NULL,
     project_id                   integer,
     objective                    varchar(500)      NOT NULL,
     create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
@@ -730,11 +729,7 @@ CREATE TABLE objective(
 )
 ;
 
-
-
 COMMENT ON COLUMN objective.objective_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN objective.system_user_id IS 'System generated surrogate primary key identifier.'
 ;
 COMMENT ON COLUMN objective.project_id IS 'System generated surrogate primary key identifier.'
 ;
@@ -1340,41 +1335,39 @@ COMMENT ON TABLE project_species IS 'The species of interest to the project.'
 ;
 
 -- 
--- TABLE: stakeholder_partnership 
+-- TABLE: partnership 
 --
 
-CREATE TABLE stakeholder_partnership(
-    stakeholder_partnership_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+CREATE TABLE partnership(
+    partnership_id                integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     project_id                    integer           NOT NULL,
-    name                          varchar(300),
+    partnership                   varchar(300),
     create_date                   timestamptz(6)    DEFAULT now() NOT NULL,
     create_user                   integer           NOT NULL,
     update_date                   timestamptz(6),
     update_user                   integer,
     revision_count                integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT stakeholder_partnership_pk PRIMARY KEY (stakeholder_partnership_id)
+    CONSTRAINT partnership_pk PRIMARY KEY (partnership_id)
 )
 ;
 
-
-
-COMMENT ON COLUMN stakeholder_partnership.stakeholder_partnership_id IS 'System generated surrogate primary key identifier.'
+COMMENT ON COLUMN partnership.partnership_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.project_id IS 'System generated surrogate primary key identifier.'
+COMMENT ON COLUMN partnership.project_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.name IS 'The name of the record.'
+COMMENT ON COLUMN partnership.partnership IS 'Partnership description.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.create_date IS 'The datetime the record was created.'
+COMMENT ON COLUMN partnership.create_date IS 'The datetime the record was created.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.create_user IS 'The id of the user who created the record as identified in the system user table.'
+COMMENT ON COLUMN partnership.create_user IS 'The id of the user who created the record as identified in the system user table.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.update_date IS 'The datetime the record was updated.'
+COMMENT ON COLUMN partnership.update_date IS 'The datetime the record was updated.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+COMMENT ON COLUMN partnership.update_user IS 'The id of the user who updated the record as identified in the system user table.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.revision_count IS 'Revision count used for concurrency control.'
+COMMENT ON COLUMN partnership.revision_count IS 'Revision count used for concurrency control.'
 ;
-COMMENT ON TABLE stakeholder_partnership IS 'Stakeholder partnerships associated with the project.'
+COMMENT ON TABLE partnership IS 'Partnerships associated with the project.'
 ;
 
 -- 
@@ -2235,16 +2228,30 @@ CREATE INDEX "Ref5843" ON project_species(wldtaxonomic_units_id)
 CREATE INDEX "Ref1344" ON project_species(project_id)
 ;
 -- 
--- INDEX: stakeholder_partnership_uk1 
+-- INDEX: partnership_uk1 
 --
 
-CREATE UNIQUE INDEX stakeholder_partnership_uk1 ON stakeholder_partnership(name, project_id)
+CREATE UNIQUE INDEX partnership_uk1 ON partnership(partnership, project_id)
 ;
 -- 
 -- INDEX: "Ref1330" 
 --
 
-CREATE INDEX "Ref1330" ON stakeholder_partnership(project_id)
+CREATE INDEX "Ref1330" ON partnership(project_id)
+;
+-- 
+-- INDEX: objective_uk1 
+--
+
+CREATE UNIQUE INDEX objective_uk1 ON objective(objective, project_id)
+;
+
+
+-- 
+-- INDEX: "IX_objective_objective" 
+--
+
+CREATE INDEX "IX_objective_objective" ON objective(project_id)
 ;
 -- 
 -- INDEX: system_constant_uk1 
@@ -2576,10 +2583,20 @@ ALTER TABLE project_species ADD CONSTRAINT "Refproject44"
 
 
 -- 
--- TABLE: stakeholder_partnership 
+-- TABLE: partnership 
 --
 
-ALTER TABLE stakeholder_partnership ADD CONSTRAINT "Refproject30" 
+ALTER TABLE partnership ADD CONSTRAINT "Refproject30" 
+    FOREIGN KEY (project_id)
+    REFERENCES project(project_id)
+;
+
+
+-- 
+-- TABLE: objective 
+--
+
+ALTER TABLE objective ADD CONSTRAINT "Refproject18790" 
     FOREIGN KEY (project_id)
     REFERENCES project(project_id)
 ;

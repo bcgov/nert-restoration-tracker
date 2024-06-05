@@ -124,6 +124,7 @@ export interface IGetProjectForUpdateResponse {
   iucn?: IGetProjectForUpdateResponseIUCN;
   funding?: IGetProjectForUpdateResponseFundingData;
   partnerships?: IGetProjectForUpdateResponsePartnerships;
+  objectives?: IGetProjectForUpdateResponseObjectives;
 }
 
 export interface IGetGeneralInformationForUpdateResponseDetails {
@@ -190,8 +191,11 @@ export interface IGetProjectForUpdateResponseFundingData {
 }
 
 export interface IGetProjectForUpdateResponsePartnerships {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+  partnerships: string[];
+}
+
+export interface IGetProjectForUpdateResponseObjectives {
+  objectives: string[];
 }
 
 export interface IProjectsListProps {
@@ -215,6 +219,7 @@ export interface IGetProjectForViewResponse {
   iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
   partnerships: IGetProjectForViewResponsePartnerships;
+  objectives: IGetProjectForViewResponseObjectives;
 }
 
 export interface IGetProjectForViewResponseDetails {
@@ -304,6 +309,10 @@ export interface IGetProjectForViewResponseFundingData {
 
 export interface IGetProjectForViewResponsePartnerships {
   partnerships: string[];
+}
+
+export interface IGetProjectForViewResponseObjectives {
+  objectives: string[];
 }
 
 /**

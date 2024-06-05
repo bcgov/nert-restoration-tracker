@@ -106,6 +106,7 @@ describe('update', () => {
         permit: {},
         funding: {},
         partnerships: {},
+        objectives: {},
         location: {}
       };
 

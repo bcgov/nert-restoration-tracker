@@ -2,16 +2,16 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import {
   deleteContactSQL,
-  deleteIndigenousPartnershipsSQL,
   deleteIUCNSQL,
+  deleteObjectivesSQL,
+  deletePartnershipsSQL,
   deletePermitSQL,
   deleteProjectFundingSourceSQL,
   deleteProjectRangeSQL,
   deleteProjectRegionSQL,
-  deleteProjectSpatialSQL,
-  deleteProjectSpeciesSQL,
   deleteProjectSQL,
-  deleteStakeholderPartnershipsSQL
+  deleteProjectSpatialSQL,
+  deleteProjectSpeciesSQL
 } from './project-delete-queries';
 
 describe('deleteIUCNSQL', () => {
@@ -42,29 +42,29 @@ describe('deletePermitSQL', () => {
   });
 });
 
-describe('deleteIndigenousPartnershipsSQL', () => {
+describe('deletePartnershipsSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteIndigenousPartnershipsSQL(null as unknown as number);
+    const response = deletePartnershipsSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
 
   it('returns non null response when valid projectId provided', () => {
-    const response = deleteIndigenousPartnershipsSQL(1);
+    const response = deletePartnershipsSQL(1);
 
     expect(response).to.not.be.null;
   });
 });
 
-describe('deleteStakeholderPartnershipsSQL', () => {
+describe('deleteObjectivesSQL', () => {
   it('returns null response when null projectId provided', () => {
-    const response = deleteStakeholderPartnershipsSQL(null as unknown as number);
+    const response = deleteObjectivesSQL(null as unknown as number);
 
     expect(response).to.be.null;
   });
 
   it('returns non null response when valid projectId provided', () => {
-    const response = deleteStakeholderPartnershipsSQL(1);
+    const response = deleteObjectivesSQL(1);
 
     expect(response).to.not.be.null;
   });

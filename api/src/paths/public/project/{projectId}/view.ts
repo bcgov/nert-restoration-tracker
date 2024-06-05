@@ -30,7 +30,7 @@ GET.apiDoc = {
           schema: {
             title: 'Project get response object, for view purposes',
             type: 'object',
-            required: ['project', 'permit', 'contact', 'location', 'iucn', 'funding', 'partnerships'],
+            required: ['project', 'permit', 'contact', 'location', 'iucn', 'funding'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -199,21 +199,40 @@ GET.apiDoc = {
                   }
                 }
               },
-              partnerships: {
-                description: 'The project partners',
+              partnership: {
+                description: 'Project partnerships',
                 type: 'object',
-                required: ['indigenous_partnerships', 'stakeholder_partnerships'],
+                required: ['partnerships'],
                 properties: {
-                  indigenous_partnerships: {
+                  partnerships: {
                     type: 'array',
                     items: {
-                      type: 'number'
+                      title: 'Project partnerships',
+                      type: 'object',
+                      properties: {
+                        partnership: {
+                          type: 'string'
+                        }
+                      }
                     }
-                  },
-                  stakeholder_partnerships: {
+                  }
+                }
+              },
+              objective: {
+                description: 'Project objectives',
+                type: 'object',
+                required: ['objectives'],
+                properties: {
+                  objectives: {
                     type: 'array',
                     items: {
-                      type: 'string'
+                      title: 'Project objectives',
+                      type: 'object',
+                      properties: {
+                        objective: {
+                          type: 'string'
+                        }
+                      }
                     }
                   }
                 }

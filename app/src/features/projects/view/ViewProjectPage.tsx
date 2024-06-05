@@ -37,6 +37,10 @@ import ProjectAttachments from './ProjectAttachments';
 import ProjectDetailsPage from './ProjectDetailsPage';
 
 const pageStyles = {
+  conservationAreChip: {
+    marginBottom: '2px',
+    justifyContent: 'left'
+  },
   objectiveChip: {
     backgroundColor: '#E9FBFF',
     marginBottom: '2px',
@@ -47,7 +51,6 @@ const pageStyles = {
     fontSize: '0.78rem',
     fontWeight: 500,
     textTransform: 'none',
-    // textWrap: "nowrap",
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
@@ -146,13 +149,21 @@ const ViewProjectPage: React.FC = () => {
     setOpenFullScreen(false);
   };
 
-  const objectiveStyled = (objective) => {
+  const objectiveStyled = (objective: string) => {
     return (
       <Tooltip title={objective} disableHoverListener={objective.length < 130}>
         <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
-          &#x2022;{objective}
+          &#x2022; {objective}
         </Typography>
       </Tooltip>
+    );
+  };
+
+  const conservationAreaStyled = (conservationArea: string) => {
+    return (
+      <Typography sx={pageStyles.objectiveLabel} aria-label={`${conservationArea}`}>
+        {conservationArea}
+      </Typography>
     );
   };
 
@@ -257,14 +268,14 @@ const ViewProjectPage: React.FC = () => {
                         <Grid item xs={2}>
                           <Card sx={{ maxWidth: 200, borderRadius: '16px' }}>
                             <CardMedia
-                              sx={{ height: 124, borderRadius: '16px' }}
+                              sx={{ height: 200, borderRadius: '16px' }}
                               image="https://nrs.objectstore.gov.bc.ca/nerdel/local/restoration/projects/31/attachments/lizard.png"
                               title="green iguana"
                             />
                           </Card>
                         </Grid>
                         <Grid item xs={10}>
-                          <Box ml={1} mt={1.5}>
+                          <Box ml={1}>
                             <Box>
                               <Typography
                                 variant="subtitle2"
@@ -322,6 +333,23 @@ const ViewProjectPage: React.FC = () => {
                                 variant="subtitle2"
                                 component="span"
                                 color="textSecondary">
+                                Project part of a publicly available restoration plan:
+                              </Typography>
+                              <Typography
+                                ml={1}
+                                sx={{ fontWeight: 'bold' }}
+                                variant="subtitle2"
+                                component="span"
+                                color="textPrimary">
+                                {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
+                              </Typography>
+                            </Box>
+
+                            <Box mt={-0.6}>
+                              <Typography
+                                variant="subtitle2"
+                                component="span"
+                                color="textSecondary">
                                 Project within or overlapping known area of cultural or conservation
                                 priority:
                               </Typography>
@@ -337,23 +365,45 @@ const ViewProjectPage: React.FC = () => {
                                     ? 'Yes'
                                     : 'No'}
                               </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Project part of a publicly available restoration plan:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
-                              </Typography>
+                              {project.location.is_within_overlapping === 'Y' && (
+                                <Box ml={1}>
+                                  <Chip
+                                    size="small"
+                                    sx={pageStyles.conservationAreChip}
+                                    label={conservationAreaStyled(
+                                      'Conservation area name 1. String with 100 characters conservation area name1 conservation area name1'
+                                    )}
+                                  />
+                                  <Chip
+                                    size="small"
+                                    sx={pageStyles.conservationAreChip}
+                                    label={conservationAreaStyled(
+                                      'Conservation area name 2. String with 100 characters conservation area name2 conservation area name2'
+                                    )}
+                                  />
+                                  <Chip
+                                    size="small"
+                                    sx={pageStyles.conservationAreChip}
+                                    label={conservationAreaStyled(
+                                      'Conservation area name 3. String with 100 characters conservation area name3 conservation area name3'
+                                    )}
+                                  />
+                                  <Chip
+                                    size="small"
+                                    sx={pageStyles.conservationAreChip}
+                                    label={conservationAreaStyled(
+                                      'Conservation area name 4. String with 100 characters conservation area name4 conservation area name4'
+                                    )}
+                                  />
+                                  <Chip
+                                    size="small"
+                                    sx={pageStyles.conservationAreChip}
+                                    label={conservationAreaStyled(
+                                      'Conservation area name 5. String with 100 characters conservation area name5 conservation area name5'
+                                    )}
+                                  />
+                                </Box>
+                              )}
                             </Box>
                           </Box>
                         </Grid>

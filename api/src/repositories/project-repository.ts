@@ -228,6 +228,46 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Insert a project participant.
+   *
+   * @param {number} projectId
+   * @param {number} systemUserId
+   * @param {number} projectParticipantRoleId
+   * @return {*}
+   * @memberof ProjectRepository
+   */
+  async insertProjectParticipant(projectId: number, systemUserId: number, projectParticipantRole: string) {
+    try {
+      const sqlStatement = SQL`
+      INSERT INTO project_participation (
+        project_id,
+        system_user_id,
+        project_role_id
+      )
+      (
+        SELECT
+          ${projectId},
+          ${systemUserId},
+          project_role_id
+        FROM
+          project_role
+        WHERE
+          name = ${projectParticipantRole}
+      )
+      RETURNING
+        *;
+    `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'insertProjectParticipant', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Insert a project contact.
    *
    * @param {number} projectId

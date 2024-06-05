@@ -17,7 +17,8 @@ export class PostProjectObject {
   location: PostLocationData;
   iucn: PostIUCNData;
   funding: PostFundingData;
-  partnerships: PostPartnershipsData;
+  partnership: PostPartnershipsData;
+  objective: PostObjectivesData;
   focus: PostFocusData;
   restoration_plan: PostRestPlanData;
 
@@ -31,7 +32,8 @@ export class PostProjectObject {
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
     this.funding = (obj?.funding && new PostFundingData(obj.funding)) || null;
     this.iucn = (obj?.iucn && new PostIUCNData(obj.iucn)) || null;
-    this.partnerships = (obj?.partnerships && new PostPartnershipsData(obj.partnerships)) || [];
+    this.partnership = (obj?.partnership && new PostPartnershipsData(obj.partnership)) || [];
+    this.objective = (obj?.objective && new PostObjectivesData(obj.objective)) || [];
     this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
     this.restoration_plan = (obj?.restoration_plan && new PostRestPlanData(obj.restoration_plan)) || null;
   }
@@ -125,6 +127,60 @@ export class PostAuthorizationData {
           return {
             authorization_ref: item.authorization_ref,
             authorization_type: item.authorization_type
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IPostPartnership {
+  partnership: string;
+}
+
+/**
+ * Processes POST /project partnerships data
+ *
+ * @export
+ * @class PostPartnershipsData
+ */
+export class PostPartnershipsData {
+  partnerships: IPostPartnership[];
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostPartnershipsData', message: 'params', obj });
+
+    this.partnerships =
+      (obj?.partnerships?.length &&
+        obj.partnerships.map((item: any) => {
+          return {
+            partnership: item.partnership
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IPostObjective {
+  objective: string;
+}
+
+/**
+ * Processes POST /project objectives data
+ *
+ * @export
+ * @class PostObjectivesData
+ */
+export class PostObjectivesData {
+  objectives: IPostObjective[];
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostObjectivesData', message: 'params', obj });
+
+    this.objectives =
+      (obj?.objectives?.length &&
+        obj.objectives.map((item: any) => {
+          return {
+            objective: item.objective
           };
         })) ||
       [];
@@ -331,22 +387,6 @@ export class PostFundingData {
 
     this.funding_sources =
       (obj?.fundingSources?.length && obj.fundingSources.map((item: any) => new PostFundingSource(item))) || [];
-  }
-}
-
-/**
- * Processes POST /project partnerships data
- *
- * @export
- * @class PostPartnershipsData
- */
-export class PostPartnershipsData {
-  partnerships: string[];
-
-  constructor(obj?: any) {
-    defaultLog.debug({ label: 'PostPartnershipsData', message: 'params', obj });
-
-    this.partnerships = (obj?.partnerships.length && obj.partnerships) || [];
   }
 }
 

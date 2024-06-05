@@ -212,7 +212,7 @@ export class EmlService extends DBService {
         describes: this.packageId,
         metadata: {
           stakeholderPartnerships: {
-            stakeholderPartnership: this.projectData.partnerships.stakeholder_partnerships.map((item) => {
+            stakeholderPartnership: this.projectData.partnerships.partnerships.map((item) => {
               return { name: item };
             })
           }

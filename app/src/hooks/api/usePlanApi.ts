@@ -37,7 +37,7 @@ const usePlanApi = (axios: AxiosInstance) => {
    * @return {*} {Promise<IGetPlanForViewResponse[]>}
    */
   const getUserPlansList = async (userId: number): Promise<IGetPlanForViewResponse[]> => {
-    const { data } = await axios.get(`/api/user/${userId}/plan/list`);
+    const { data } = await axios.get(`/api/user/${userId}/plans/list`);
     return data;
   };
 

@@ -96,6 +96,28 @@ declare module 'yup' {
     ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
 
     /**
+     * Determine if the array of partnerships has duplicate partnership string
+     *
+     * @param {string} message='Parnership entries must be unique' - error message if this check fails
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof ArraySchema
+     */
+    isUniquePartnership(
+      message: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
+     * Determine if the array of objective has duplicate objective string
+     *
+     * @param {string} message='Objective entries must be unique' - error message if this check fails
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof ArraySchema
+     */
+    isUniqueObjective(
+      message: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
      * Determine if the array of classification details has duplicates
      *
      * @param {string} message='IUCN Classifications must be unique' - error message if this check fails

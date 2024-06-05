@@ -57,8 +57,8 @@ import ProjectObjectivesForm, {
   ProjectObjectiveFormYupSchema
 } from 'features/projects/components/ProjectObjectivesForm';
 import ProjectPartnershipsForm, {
-  ProjectPartnershipsFormInitialValues,
-  ProjectPartnershipsFormYupSchema
+  ProjectPartnershipFormInitialValues,
+  ProjectPartnershipFormYupSchema
 } from 'features/projects/components/ProjectPartnershipsForm';
 import ProjectRestorationPlanForm, {
   ProjectRestorationPlanFormInitialValues,
@@ -108,7 +108,7 @@ export const ProjectFormInitialValues = {
   ...ProjectWildlifeFormInitialValues,
   ...ProjectAuthorizationFormInitialValues,
   ...ProjectFundingFormInitialValues,
-  ...ProjectPartnershipsFormInitialValues,
+  ...ProjectPartnershipFormInitialValues,
   ...ProjectLocationFormInitialValues,
   ...ProjectRestorationPlanFormInitialValues
 };
@@ -122,7 +122,7 @@ export const ProjectFormYupSchema = yup
   .concat(ProjectIUCNFormYupSchema)
   .concat(ProjectAuthorizationFormYupSchema)
   .concat(ProjectFundingFormYupSchema)
-  .concat(ProjectPartnershipsFormYupSchema)
+  .concat(ProjectPartnershipFormYupSchema)
   .concat(ProjectLocationFormYupSchema)
   .concat(ProjectRestorationPlanFormYupSchema);
 
@@ -274,6 +274,8 @@ const CreateProjectPage: React.FC = () => {
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     console.log('projectPostObject', projectPostObject);
     try {
+      projectPostObject.partnership.partnerships =
+        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
       projectPostObject.location.size_ha = projectPostObject.location.size_ha
