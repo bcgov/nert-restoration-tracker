@@ -852,8 +852,8 @@ const checkLayerVisibility = (layers: any, features: any) => {
     return plansVisible && !feature.properties.is_project
       ? feature
       : projectsVisible && feature.properties.is_project
-        ? feature
-        : null;
+      ? feature
+      : null;
   });
   if (map.getSource('markers')) {
     // @ts-ignore
@@ -910,11 +910,9 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   }, [layerVisibility]);
 
   // Listen for masks being turned on and off
-  if (maskState.length > 0) {
-    useEffect(() => {
-      updateMasks(mask, maskState, features);
-    }, [maskState]);
-  }
+  useEffect(() => {
+    updateMasks(mask, maskState, features);
+  }, [mask, maskState, features]);
   // Listen for active feature changes
   useEffect(() => {
     checkFeatureState(activeFeatureState);
