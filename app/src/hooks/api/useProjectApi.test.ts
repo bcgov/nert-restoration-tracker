@@ -8,6 +8,7 @@ import {
   IGetProjectForViewResponseIUCN,
   IGetProjectForViewResponseLocation,
   IGetProjectForViewResponsePartnerships,
+  IGetProjectForViewResponseObjectives,
   IGetProjectForViewResponsePermit,
   IGetProjectForViewResponseSpecies,
   IPostTreatmentUnitResponse
@@ -275,7 +276,8 @@ describe('useProjectApi', () => {
       contact: {} as IGetProjectForViewResponseContact,
       iucn: {} as IGetProjectForViewResponseIUCN,
       funding: {} as IGetProjectForViewResponseFundingData,
-      partnerships: {} as IGetProjectForViewResponsePartnerships
+      partnerships: {} as IGetProjectForViewResponsePartnerships,
+      objectives: {} as IGetProjectForViewResponseObjectives
     };
 
     const result = await useProjectApi(axios).updateProject(projectId, newProjectData);

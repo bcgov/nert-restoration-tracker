@@ -179,4 +179,34 @@ yup.addMethod(yup.array, 'isUniqueAuthor', function (message: string) {
   });
 });
 
+yup.addMethod(yup.array, 'isUniquePartnership', function (message: string) {
+  return this.test('is-unique-partnership', message, (values) => {
+    if (!values || !values.length) {
+      return true;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = values.some((partnerships) => {
+      return seen.size === seen.add(partnerships.partnership).size;
+    });
+
+    return !hasDuplicates;
+  });
+});
+
+yup.addMethod(yup.array, 'isUniqueObjective', function (message: string) {
+  return this.test('is-unique-objective', message, (values) => {
+    if (!values || !values.length) {
+      return true;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = values.some((objectives) => {
+      return seen.size === seen.add(objectives.objective).size;
+    });
+
+    return !hasDuplicates;
+  });
+});
+
 export default yup;

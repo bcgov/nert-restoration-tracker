@@ -251,6 +251,26 @@ PUT.apiDoc = {
                 }
               }
             },
+            objective: {
+              description: 'Project objectives',
+              type: 'object',
+              required: ['objectives'],
+              additionalProperties: false,
+              properties: {
+                objectives: {
+                  type: 'array',
+                  items: {
+                    title: 'Project objectives',
+                    type: 'object',
+                    properties: {
+                      objective: {
+                        type: 'string'
+                      }
+                    }
+                  }
+                }
+              }
+            },
             location: {
               description: 'The project location object',
               type: 'object',
@@ -327,6 +347,7 @@ export interface IUpdateProject {
   iucn: object | null;
   funding: object | null;
   partnership: object | null;
+  objective: object | null;
 }
 
 /**

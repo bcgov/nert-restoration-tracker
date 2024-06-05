@@ -261,6 +261,25 @@ GET.apiDoc = {
                   }
                 }
               },
+              objective: {
+                description: 'Project objectives',
+                type: 'object',
+                required: ['objectives'],
+                properties: {
+                  objectives: {
+                    type: 'array',
+                    items: {
+                      title: 'Project objectives',
+                      type: 'object',
+                      properties: {
+                        objective: {
+                          type: 'string'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
               location: {
                 description: 'The project location object',
                 type: 'object',

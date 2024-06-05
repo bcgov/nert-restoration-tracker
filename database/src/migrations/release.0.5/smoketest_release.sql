@@ -65,6 +65,7 @@ begin
     ) returning project_id into _project_id;
 
   insert into partnership (project_id, partnership) values (_project_id, 'test');
+  insert into objective (project_id, objective) values (_project_id, 'test');
   insert into project_funding_source (project_id, investment_action_category_id, funding_amount, funding_start_date, funding_end_date, funding_source_project_id) values (_project_id, (select investment_action_category_id from investment_action_category where name = 'Action 1'), '$1,000.00', now(), now(), 'test') returning project_funding_source_id into _project_funding_source_id;
   --insert into project_funding_source (project_id, investment_action_category_id, funding_amount, funding_start_date, funding_end_date) values (_project_id, 43, '$1,000.00', now(), now());
   insert into project_iucn_action_classification (project_id, iucn_conservation_action_level_3_subclassification_id) values (_project_id, (select iucn_conservation_action_level_3_subclassification_id from iucn_conservation_action_level_3_subclassification where name = 'Primary Education'));
@@ -79,6 +80,8 @@ begin
 
   select count(1) into _count from partnership;
   assert _count = 1, 'FAIL partnership';
+  select count(1) into _count from objective;
+  assert _count = 1, 'FAIL objective';
   select count(1) into _count from project_funding_source;
   assert _count = 1, 'FAIL project_funding_source';
   select count(1) into _count from project_iucn_action_classification;

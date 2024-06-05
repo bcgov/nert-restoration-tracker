@@ -42,6 +42,10 @@ describe('PostProjectObject', () => {
     it('sets partnerships', function () {
       expect(projectPostObject.partnership).to.eql([]);
     });
+
+    it('sets objectives', function () {
+      expect(projectPostObject.objective).to.eql([]);
+    });
   });
 
   describe.skip('All values provided', () => {
@@ -123,7 +127,8 @@ describe('PostProjectObject', () => {
           }
         ]
       },
-      partnerships: ['partner1, partner2']
+      partnerships: ['partner1, partner2'],
+      objectives: ['objective1, obective2']
     };
 
     before(() => {
@@ -285,6 +290,34 @@ describe('PostPartnershipsData', () => {
 
     it('sets projectPartnershipsData', function () {
       expect(projectPartnershipsData.partnerships).to.eql(obj);
+    });
+  });
+});
+
+describe('PostObjectivesData', () => {
+  describe('No values provided', () => {
+    let projectObjectiveData: PostObjectivesData;
+
+    before(() => {
+      projectObjectiveData = new PostObjectivesData(null);
+    });
+
+    it('sets projectObjectivesData', function () {
+      expect(projectObjectiveData.objectives).to.eql([]);
+    });
+  });
+
+  describe.skip('All values provided', () => {
+    let projectObjectiveData: PostObjectivesData;
+
+    const obj = ['1', '2'];
+
+    before(() => {
+      projectObjectiveData = new PostObjectivesData(obj);
+    });
+
+    it('sets projectObjectivesData', function () {
+      expect(projectObjectiveData.objectives).to.eql(obj);
     });
   });
 });

@@ -55,7 +55,18 @@ export const ProjectPartnershipFormInitialValues: IProjectPartnershipsForm = {
 
 export const ProjectPartnershipFormYupSchema = yup.object().shape({
   partnership: yup.object().shape({
-    partnerships: yup.array()
+    partnerships: yup
+      .array()
+      .of(
+        yup.object().shape({
+          partnership: yup
+            .string()
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
+            .max(300, 'Cannot exceed 300 characters')
+        })
+      )
+      .isUniquePartnership('Parnership entries must be unique')
   })
 });
 
@@ -120,8 +131,9 @@ const ProjectPartnershipsForm: React.FC = () => {
             <Box pt={0.5}>
               <Button
                 disabled={
-                  !values.partnership.partnerships[values.partnership.partnerships.length - 1]
-                    .partnership || values.partnership.partnerships.length >= 5
+                  !values.partnership.partnerships[
+                    values.partnership.partnerships.length - 1
+                  ].partnership.trim() || values.partnership.partnerships.length >= 5
                 }
                 type="button"
                 variant="outlined"

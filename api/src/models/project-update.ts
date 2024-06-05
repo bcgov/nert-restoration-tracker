@@ -63,6 +63,14 @@ export class PutPartnershipsData {
   }
 }
 
+export class PutObjectivesData {
+  objectives: string[];
+
+  constructor(obj?: any) {
+    this.objectives = (obj?.objectives?.length && obj.objectives) || [];
+  }
+}
+
 export class PutFundingData {
   fundingSources: PostFundingSource[];
 

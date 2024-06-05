@@ -718,7 +718,6 @@ NOTE: there are conceptual problems with associating permits to projects early i
 
 CREATE TABLE objective(
     objective_id                 integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    system_user_id               integer           NOT NULL,
     project_id                   integer,
     objective                    varchar(500)      NOT NULL,
     create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
@@ -730,11 +729,7 @@ CREATE TABLE objective(
 )
 ;
 
-
-
 COMMENT ON COLUMN objective.objective_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN objective.system_user_id IS 'System generated surrogate primary key identifier.'
 ;
 COMMENT ON COLUMN objective.project_id IS 'System generated surrogate primary key identifier.'
 ;
@@ -1355,8 +1350,6 @@ CREATE TABLE partnership(
     CONSTRAINT partnership_pk PRIMARY KEY (partnership_id)
 )
 ;
-
-
 
 COMMENT ON COLUMN partnership.partnership_id IS 'System generated surrogate primary key identifier.'
 ;
@@ -2247,6 +2240,20 @@ CREATE UNIQUE INDEX partnership_uk1 ON partnership(partnership, project_id)
 CREATE INDEX "Ref1330" ON partnership(project_id)
 ;
 -- 
+-- INDEX: objective_uk1 
+--
+
+CREATE UNIQUE INDEX objective_uk1 ON objective(objective, project_id)
+;
+
+
+-- 
+-- INDEX: "IX_objective_objective" 
+--
+
+CREATE INDEX "IX_objective_objective" ON objective(project_id)
+;
+-- 
 -- INDEX: system_constant_uk1 
 --
 
@@ -2580,6 +2587,16 @@ ALTER TABLE project_species ADD CONSTRAINT "Refproject44"
 --
 
 ALTER TABLE partnership ADD CONSTRAINT "Refproject30" 
+    FOREIGN KEY (project_id)
+    REFERENCES project(project_id)
+;
+
+
+-- 
+-- TABLE: objective 
+--
+
+ALTER TABLE objective ADD CONSTRAINT "Refproject18790" 
     FOREIGN KEY (project_id)
     REFERENCES project(project_id)
 ;

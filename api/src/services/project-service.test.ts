@@ -21,6 +21,7 @@ const entitiesInitValue = {
   contact: null,
   authorization: null,
   partnership: null,
+  objective: null,
   iucn: null,
   funding: null,
   location: null,
@@ -563,7 +564,7 @@ describe.skip('ProjectService', () => {
         await projectService.getPartnershipsData(projectId);
         expect.fail();
       } catch (actualError) {
-        expect((actualError as HTTPError).message).to.equal('Failed to get partnership data');
+        expect((actualError as HTTPError).message).to.equal('Failed to get partnerships data');
         expect((actualError as HTTPError).status).to.equal(400);
       }
     });
@@ -581,6 +582,45 @@ describe.skip('ProjectService', () => {
       const result = await projectService.getPartnershipsData(projectId);
 
       expect(result).to.deep.include(new projectViewModels.GetPartnershipsData(mockRowObj));
+    });
+  });
+
+  describe('getObjectivesData', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should throw a 400 response when getObjectivesRows response has no rowCount', async () => {
+      const mockDBConnection = getMockDBConnection();
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      sinon.stub(projectService, 'getObjectivesRows').resolves();
+
+      const projectId = 1;
+
+      try {
+        await projectService.getObjectivesData(projectId);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('Failed to get objectives data');
+        expect((actualError as HTTPError).status).to.equal(400);
+      }
+    });
+
+    it('returns row on success', async () => {
+      const mockRowObj = [{ project_id: 1 }];
+
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
+      const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
+
+      const projectId = 1;
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      const result = await projectService.getObjectivesData(projectId);
+
+      expect(result).to.deep.include(new projectViewModels.GetObjectivesData(mockRowObj));
     });
   });
 
@@ -755,6 +795,7 @@ describe.skip('ProjectService', () => {
         funding: new projectCreateModels.PostFundingData(),
         iucn: new projectCreateModels.PostIUCNData(),
         partnership: new projectCreateModels.PostPartnershipsData(),
+        objective: new projectCreateModels.PostObjectivesData(),
         authorization: new projectCreateModels.PostAuthorizationData(),
         focus: new projectCreateModels.PostFocusData(),
         restoration_plan: new projectCreateModels.PostRestPlanData()
@@ -829,6 +870,7 @@ describe.skip('ProjectService', () => {
           ]
         },
         partnership: { partnerships: [{ partnership: 'Canada Nature Fund' }, { partnership: 'BC Parks Living Labs' }] },
+        objective: { objectives: [{ objective: 'This is objective 1' }, { objective: 'This is objective 2' }] },
         location: {
           geometry: [{} as unknown as Feature],
           is_within_overlapping: 'string',
@@ -1118,6 +1160,45 @@ describe.skip('ProjectService', () => {
       const projectService = new ProjectService(mockDBConnection);
 
       const result = await projectService.insertPartnership(partner, projectId);
+
+      expect(result).equals(mockRowObj[0].id);
+    });
+  });
+
+  describe('insertObjective', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should throw a 400 response when response has no id', async () => {
+      const mockQueryResponse = { noId: true } as unknown as QueryResult<any>;
+      const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
+
+      const objective = 'something';
+      const projectId = 1;
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      try {
+        await projectService.insertObjective(objective, projectId);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('Failed to insert project objective data');
+        expect((actualError as HTTPError).status).to.equal(400);
+      }
+    });
+
+    it('returns id on success', async () => {
+      const mockRowObj = [{ id: 1 }];
+      const mockQueryResponse = { rows: mockRowObj } as unknown as QueryResult<any>;
+      const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
+
+      const objective = 'something';
+      const projectId = 1;
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      const result = await projectService.insertObjective(objective, projectId);
 
       expect(result).equals(mockRowObj[0].id);
     });
@@ -1558,6 +1639,7 @@ describe.skip('ProjectService', () => {
       expect(projectServiceSpy.updateContactData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectIUCNData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectPartnershipsData).not.to.have.been.called;
+      expect(projectServiceSpy.updateProjectObjectivesData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectFundingData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectSpatialData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectRegionData).not.to.have.been.called;
@@ -1573,6 +1655,7 @@ describe.skip('ProjectService', () => {
         contact: new projectCreateModels.PostContactData(),
         authorization: new projectCreateModels.PostAuthorizationData(),
         partnership: new projectUpdateModels.PutPartnershipsData(),
+        objective: new projectUpdateModels.PutObjectivesData(),
         iucn: new projectUpdateModels.PutIUCNData(),
         funding: new projectUpdateModels.PutFundingData(),
         location: new projectUpdateModels.PutLocationData(),
@@ -1590,6 +1673,7 @@ describe.skip('ProjectService', () => {
         expect(projectServiceSpy.updateContactData).to.have.been.called;
         expect(projectServiceSpy.updateProjectIUCNData).to.have.been.called;
         expect(projectServiceSpy.updateProjectPartnershipsData).to.have.been.called;
+        expect(projectServiceSpy.updateProjectObjectivesData).to.have.been.called;
         expect(projectServiceSpy.updateProjectFundingData).to.have.been.called;
         expect(projectServiceSpy.updateProjectSpatialData).to.have.been.called;
         expect(projectServiceSpy.updateProjectRegionData).to.have.been.called;
@@ -1947,6 +2031,90 @@ describe.skip('ProjectService', () => {
       await projectService.updateProjectPartnershipsData(projectId, entities);
 
       expect(insertPartnershipStub).to.have.been.calledTwice;
+    });
+  });
+
+  describe('updateProjectObjectivesData', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should throw a 400 response when no sql statement produced for objectives', async () => {
+      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve([]));
+
+      const mockDBConnection = getMockDBConnection({
+        query: mockQuery
+      });
+
+      sinon.stub(queries.project, 'deleteObjectivesSQL').returns(null);
+
+      const projectId = 1;
+      const entities: IUpdateProject = {
+        ...entitiesInitValue,
+        objective: new projectCreateModels.PostObjectivesData()
+      };
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      try {
+        await projectService.updateProjectObjectivesData(projectId, entities);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('Failed to build SQL delete statement');
+        expect((actualError as HTTPError).status).to.equal(400);
+      }
+    });
+
+    it('should throw a 409 response when delete objectives fails', async () => {
+      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve(null));
+
+      const mockDBConnection = getMockDBConnection({
+        query: mockQuery
+      });
+
+      const projectId = 1;
+      const entities: IUpdateProject = {
+        ...entitiesInitValue,
+        objective: new projectCreateModels.PostObjectivesData()
+      };
+
+      sinon.stub(queries.project, 'deleteObjectivesSQL').returns(SQL`valid sql`);
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      try {
+        await projectService.updateProjectObjectivesData(projectId, entities);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('Failed to delete project objectives data');
+        expect((actualError as HTTPError).status).to.equal(409);
+      }
+    });
+
+    it('should insert the new objectives information', async () => {
+      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([])).onCall(1).returns(Promise.resolve([]));
+
+      const mockDBConnection = getMockDBConnection({
+        query: mockQuery
+      });
+
+      const projectId = 1;
+      const entities: IUpdateProject = {
+        ...entitiesInitValue,
+        objective: {
+          objectives: ['objective1', 'objective2']
+        }
+      };
+
+      sinon.stub(queries.project, 'deleteObjectivesSQL').returns(SQL`valid sql`);
+
+      const insertObjectiveStub = sinon.stub(ProjectService.prototype, 'insertObjective').resolves(1);
+
+      const projectService = new ProjectService(mockDBConnection);
+
+      await projectService.updateProjectObjectivesData(projectId, entities);
+
+      expect(insertObjectiveStub).to.have.been.calledTwice;
     });
   });
 

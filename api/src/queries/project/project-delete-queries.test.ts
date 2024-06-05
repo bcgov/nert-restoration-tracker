@@ -3,6 +3,7 @@ import { describe } from 'mocha';
 import {
   deleteContactSQL,
   deleteIUCNSQL,
+  deleteObjectivesSQL,
   deletePartnershipsSQL,
   deletePermitSQL,
   deleteProjectFundingSourceSQL,
@@ -50,6 +51,20 @@ describe('deletePartnershipsSQL', () => {
 
   it('returns non null response when valid projectId provided', () => {
     const response = deletePartnershipsSQL(1);
+
+    expect(response).to.not.be.null;
+  });
+});
+
+describe('deleteObjectivesSQL', () => {
+  it('returns null response when null projectId provided', () => {
+    const response = deleteObjectivesSQL(null as unknown as number);
+
+    expect(response).to.be.null;
+  });
+
+  it('returns non null response when valid projectId provided', () => {
+    const response = deleteObjectivesSQL(1);
 
     expect(response).to.not.be.null;
   });
