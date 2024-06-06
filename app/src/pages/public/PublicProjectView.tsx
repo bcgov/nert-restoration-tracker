@@ -1,6 +1,5 @@
 import { mdiArrowLeft, mdiFullscreen } from '@mdi/js';
 import { Icon } from '@mdi/react';
-import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -10,7 +9,6 @@ import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { focus, ICONS } from 'constants/misc';
@@ -25,6 +23,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
+import InfoDialog from 'components/dialog/InfoDialog';
 
 const pageStyles = {
   conservationAreChip: {
@@ -141,11 +140,7 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                     sx={getStatusStyle(project.project.state_code)}
                     label={getStateLabelFromCode(project.project.state_code)}
                   />
-                  <Tooltip title={'Project workflow information'} placement="right">
-                    <IconButton color={'info'}>
-                      <InfoIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <InfoDialog isProject={true} infoContent={'workflow'} />
                 </Box>
               </Box>
               <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
