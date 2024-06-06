@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
 export interface IProjectAuthorizationsProps {

@@ -1,5 +1,8 @@
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
+import Box from '@mui/material/Box';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -17,8 +20,9 @@ import React, { Fragment, useContext, useState } from 'react';
 import ReactPlayer from 'react-player/file';
 import { isAuthenticated } from 'utils/authUtils';
 
-interface IPagedTableInfoDialogProps {
+interface IInfoDialogProps {
   isProject: boolean;
+  infoContent: string;
 }
 
 interface ITypeItem {
@@ -36,7 +40,9 @@ const VideoDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
+const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
+  const { isProject, infoContent } = props;
+
   const config = useContext(ConfigContext);
 
   const [isError, setIsError] = useState(false);
@@ -60,13 +66,13 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
       ? 'auth/admin'
       : 'auth/user'
     : 'public';
-  const item: ITypeItem = !props.isProject
+  const item: ITypeItem = !isProject
     ? { typeLabel: 'Plan', typeIcon: ICONS.PLAN_ICON, typeBgColor: '#FFF4EB' }
     : { typeLabel: 'Project', typeIcon: ICONS.PROJECT_ICON, typeBgColor: '#E9FBFF' };
 
   return (
     <Fragment>
-      <Tooltip title={`${item.typeLabel} Information`} placement="right">
+      <Tooltip title={`${item.typeLabel} ${infoContent}`} placement="right">
         <IconButton onClick={handleClickOpen}>
           <InfoIcon color="info" />
         </IconButton>
@@ -81,8 +87,16 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
         <DialogTitle
           sx={{ m: 0, p: 2, backgroundColor: item.typeBgColor }}
           id="customized-dialog-title">
-          <img src={item.typeIcon} width="20" height="32" alt={item.typeLabel} /> {item.typeLabel}{' '}
-          table usage
+          <Box display="flex" flexDirection={'row'}>
+            <CardMedia
+              sx={{ width: 20, height: 32 }}
+              image={item.typeIcon}
+              title={item.typeLabel}
+            />
+            <Typography sx={{ mt: 1, ml: 1, fontWeight: 550 }}>
+              {item.typeLabel} {infoContent}
+            </Typography>
+          </Box>
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -103,7 +117,7 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
           ) : (
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
               <ReactPlayer
-                url={`https://${config?.REACT_APP_OBJECT_STORE_URL}/${config?.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${item.typeLabel}PagedTableInfo.mp4`}
+                url={`https://${config?.REACT_APP_OBJECT_STORE_URL}/${config?.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${item.typeLabel}${infoContent.replace(' ', '')}Info.mp4`}
                 style={{ position: 'absolute', top: 0, left: 0 }}
                 playing={true}
                 loop={true}
@@ -125,4 +139,4 @@ const PagedTableInfoDialog: React.FC<IPagedTableInfoDialogProps> = (props) => {
   );
 };
 
-export default PagedTableInfoDialog;
+export default InfoDialog;
