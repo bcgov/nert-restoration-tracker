@@ -554,7 +554,7 @@ describe('getProjectUserObject', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection);
 
-    await authorizationService.getProjectUserObject(1);
+    await authorizationService.getProjectUserObject();
 
     const projectUserObject = await authorizationService.getSystemUserObject();
 
@@ -569,7 +569,7 @@ describe('getProjectUserObject', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection);
 
-    const projectUserObject = await authorizationService.getProjectUserObject(1);
+    const projectUserObject = await authorizationService.getProjectUserObject();
 
     expect(projectUserObject).to.equal(null);
   });
@@ -582,7 +582,7 @@ describe('getProjectUserObject', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection);
 
-    const projectUserObject = await authorizationService.getProjectUserObject(1);
+    const projectUserObject = await authorizationService.getProjectUserObject();
 
     expect(projectUserObject).to.be.instanceOf(ProjectParticipantObject);
   });
@@ -598,7 +598,7 @@ describe('getProjectUserWithRoles', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection);
 
-    const result = await authorizationService.getProjectUserWithRoles(1);
+    const result = await authorizationService.getProjectUserWithRoles();
 
     expect(result).to.be.null;
   });
@@ -610,7 +610,7 @@ describe('getProjectUserWithRoles', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection);
 
-    const result = await authorizationService.getProjectUserWithRoles(1);
+    const result = await authorizationService.getProjectUserWithRoles();
 
     expect(result).to.be.null;
   });
@@ -625,7 +625,7 @@ describe('getProjectUserWithRoles', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection);
 
-    const result = await authorizationService.getProjectUserWithRoles(1);
+    const result = await authorizationService.getProjectUserWithRoles();
 
     expect(result).to.eql(mockProjectParticipationResponse);
   });

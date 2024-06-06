@@ -257,13 +257,16 @@ export class ProjectService extends DBService {
   async getObjectivesData(projectId: number): Promise<GetObjectivesData> {
     const [objectivesRows] = await Promise.all([this.projectRepository.getObjectivesData(projectId)]);
 
-    if (!objectivesRows) {
-      throw new HTTP400('Failed to get objectives data');
-    }
-
     return new GetObjectivesData(objectivesRows);
   }
 
+  /**
+   * Get funding data by project id.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<GetFundingData>}
+   * @memberof ProjectService
+   */
   async getFundingData(projectId: number): Promise<GetFundingData> {
     return this.projectRepository.getFundingData(projectId);
   }

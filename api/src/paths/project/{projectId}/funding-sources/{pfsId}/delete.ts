@@ -64,7 +64,7 @@ export function deleteFundingSource(): RequestHandler {
 
       await connection.commit();
 
-      return res.status(200).json(response);
+      return res.status(200).json(response.project_funding_source_id);
     } catch (error) {
       defaultLog.error({ label: 'deleteFundingSource', message: 'error', error });
       await connection.rollback();

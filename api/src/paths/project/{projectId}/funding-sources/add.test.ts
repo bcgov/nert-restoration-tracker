@@ -2,11 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
-import project_queries from '../../../../queries/project';
+import { ProjectService } from '../../../../services/project-service';
 import * as addFunding from './add';
 
 chai.use(sinonChai);
@@ -83,32 +82,6 @@ describe('add a funding source', () => {
   });
 
   it('should throw a 400 error when addFundingSource fails, because result has no rows', async () => {
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: null });
-
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      },
-      query: mockQuery
-    });
-
-    sinon.stub(project_queries, 'postProjectFundingSourceSQL').returns(SQL`some query`);
-
-    try {
-      const result = addFunding.addFundingSource();
-
-      await result(sampleReq, null as unknown as any, null as unknown as any);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to insert project funding source data');
-    }
-  });
-
-  it('should throw a 400 error when no sql statement returned for addFundingSourceSQL', async () => {
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
@@ -116,33 +89,7 @@ describe('add a funding source', () => {
       }
     });
 
-    sinon.stub(project_queries, 'postProjectFundingSourceSQL').returns(null);
-
-    try {
-      const result = addFunding.addFundingSource();
-
-      await result(sampleReq, null as unknown as any, null as unknown as any);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build addFundingSourceSQLStatement');
-    }
-  });
-
-  it('should throw a 400 error when the AddFundingSource fails because result has no id', async () => {
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: [{ id: null }] });
-
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      },
-      query: mockQuery
-    });
-
-    sinon.stub(project_queries, 'postProjectFundingSourceSQL').returns(SQL`some query`);
+    sinon.stub(ProjectService.prototype, 'insertFundingSource').resolves(undefined);
 
     try {
       const result = addFunding.addFundingSource();
@@ -156,24 +103,19 @@ describe('add a funding source', () => {
   });
 
   it('should return the new funding source id on success', async () => {
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: [{ id: 23 }] });
-
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
         return 20;
-      },
-      query: mockQuery
+      }
     });
 
-    sinon.stub(project_queries, 'postProjectFundingSourceSQL').returns(SQL`something`);
+    sinon.stub(ProjectService.prototype, 'insertFundingSource').resolves(1);
 
     const result = addFunding.addFundingSource();
 
     await result(sampleReq, sampleRes as any, null as unknown as any);
 
-    expect(actualResult).to.eql({ id: 23 });
+    expect(actualResult).to.eql(1);
   });
 });

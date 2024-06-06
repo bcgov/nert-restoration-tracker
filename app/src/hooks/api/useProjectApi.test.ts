@@ -10,11 +10,11 @@ import {
   IGetProjectForViewResponsePartnerships,
   IGetProjectForViewResponseObjectives,
   IGetProjectForViewResponsePermit,
-  IGetProjectForViewResponseSpecies,
-  IPostTreatmentUnitResponse
+  IGetProjectForViewResponseSpecies
 } from 'interfaces/useProjectApi.interface';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import useProjectApi, { usePublicProjectApi } from './useProjectApi';
+import { attachmentType } from 'constants/misc';
 
 describe('useProjectApi', () => {
   let mock: any;
@@ -30,7 +30,6 @@ describe('useProjectApi', () => {
   const userId = 123;
   const projectId = 1;
   const attachmentId = 1;
-  const treatmentUnitId = 1;
 
   it('getAllUserProjectsParticipation works as expected', async () => {
     mock.onGet(`/api/user/${userId}/projects/participation/list`).reply(200, [
@@ -212,58 +211,6 @@ describe('useProjectApi', () => {
     expect(result).toEqual(true);
   });
 
-  it('deleteProjectTreatmentUnit works as expected', async () => {
-    mock
-      .onDelete(`/api/project/${projectId}/treatments/treatment-unit/${treatmentUnitId}/delete`)
-      .reply(200);
-
-    const result = await useProjectApi(axios).deleteProjectTreatmentUnit(
-      projectId,
-      treatmentUnitId
-    );
-
-    expect(result).toEqual(true);
-  });
-
-  it('deleteProjectTreatments works as expected', async () => {
-    mock.onDelete(`/api/project/${projectId}/treatments/delete`).reply(200);
-
-    const result = await useProjectApi(axios).deleteProjectTreatments(projectId);
-
-    expect(result).toEqual(true);
-  });
-
-  it('getProjectTreatments works as expected', async () => {
-    const mockResponse = { treatmentList: [] };
-    mock.onGet(`/api/project/${projectId}/treatments/list`).reply(200, mockResponse);
-
-    const result = await useProjectApi(axios).getProjectTreatments(projectId);
-
-    expect(result).toEqual(mockResponse);
-  });
-
-  it('getProjectTreatmentsYears works as expected', async () => {
-    const mockResponse = [{ year: 1 }];
-    mock.onGet(`/api/project/${projectId}/treatments/year/list`).reply(200, mockResponse);
-
-    const result = await useProjectApi(axios).getProjectTreatmentsYears(projectId);
-
-    expect(result).toEqual(mockResponse);
-  });
-
-  it('importProjectTreatmentSpatialFile works as expected', async () => {
-    const treatmentResponse = {
-      treatment_unit_id: 1,
-      revision_count: 2
-    } as IPostTreatmentUnitResponse;
-
-    mock.onPost(`/api/project/${projectId}/treatments/upload`).reply(200, treatmentResponse);
-
-    const result = await useProjectApi(axios).importProjectTreatmentSpatialFile(1, {} as File);
-
-    expect(result).toEqual(treatmentResponse);
-  });
-
   it('updateProject works as expected', async () => {
     const mockResponse = [{ id: 1 }];
     mock.onPut(`/api/project/${projectId}/update`).reply(200, mockResponse);
@@ -321,7 +268,7 @@ describe('usePublicProjectApi', () => {
   it.skip('getProjectById works as expected', async () => {
     mock.onGet(`/api/public/project/${projectId}/view`).reply(200, getProjectForViewResponse);
 
-    const result = await usePublicProjectApi(axios).getProjectForView(projectId);
+    const result = await usePublicProjectApi(axios).getProjectPlanForView(projectId);
 
     expect(result).toEqual(getProjectForViewResponse);
   });
@@ -362,9 +309,10 @@ describe('usePublicProjectApi', () => {
       ]
     });
 
-    const result = await useProjectApi(axios).getProjectAttachments(projectId, {
-      type: 'attachments'
-    });
+    const result = await useProjectApi(axios).getProjectAttachments(
+      projectId,
+      attachmentType.ATTACHMENTS
+    );
 
     expect(result.attachmentsList).toEqual([
       {
@@ -374,23 +322,5 @@ describe('usePublicProjectApi', () => {
         size: 3028
       }
     ]);
-  });
-
-  it('getProjectTreatments works as expected', async () => {
-    const mockResponse = { treatmentList: [] };
-    mock.onGet(`/api/public/project/${projectId}/treatments/list`).reply(200, mockResponse);
-
-    const result = await usePublicProjectApi(axios).getProjectTreatments(projectId);
-
-    expect(result).toEqual(mockResponse);
-  });
-
-  it('getProjectTreatmentsYears works as expected', async () => {
-    const mockResponse = [{ year: 1 }];
-    mock.onGet(`/api/public/project/${projectId}/treatments/year/list`).reply(200, mockResponse);
-
-    const result = await usePublicProjectApi(axios).getProjectTreatmentsYears(projectId);
-
-    expect(result).toEqual(mockResponse);
   });
 });

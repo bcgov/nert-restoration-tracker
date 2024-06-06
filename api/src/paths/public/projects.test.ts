@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
-import public_queries from '../../queries/public';
+import { ProjectService } from '../../services/project-service';
+import { SearchService } from '../../services/search-service';
 import * as projects from './projects';
 
 chai.use(sinonChai);
@@ -45,19 +45,15 @@ describe('getPublicProjectsPlansList', () => {
       }
     ];
 
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: projectsList });
-
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
         return 20;
-      },
-      query: mockQuery
+      }
     });
 
-    sinon.stub(public_queries, 'getPublicProjectListSQL').returns(SQL`some query`);
+    sinon.stub(SearchService.prototype, 'findProjectIdsByCriteria').resolves([{ project_id: 1 }]);
+    sinon.stub(ProjectService.prototype, 'getProjectsByIds').resolves(projectsList as any);
 
     const result = projects.getPublicProjectsPlansList();
 

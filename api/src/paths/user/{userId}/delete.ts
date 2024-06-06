@@ -85,17 +85,7 @@ export function removeSystemUser(): RequestHandler {
 
       const userService = new UserService(connection);
 
-      const usrObject = await userService.getUserById(userId);
-
-      if (usrObject.record_end_date) {
-        throw new HTTP400('The system user is not active');
-      }
-
-      await userService.deleteAllProjectRoles(userId);
-
-      await userService.deleteUserSystemRoles(userId);
-
-      await userService.deactivateSystemUser(userId);
+      await userService.handleDeleteSystemUser(userId);
 
       await connection.commit();
 

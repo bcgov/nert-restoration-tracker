@@ -3,11 +3,9 @@ import { describe } from 'mocha';
 import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../__mocks__/db';
 import * as db from '../database/db';
 import { HTTPError } from '../errors/custom-error';
-import draft_queries from '../queries/project/draft';
 import * as draft from './draft';
 
 chai.use(sinonChai);
@@ -55,26 +53,6 @@ describe('draft', () => {
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
         expect((actualError as HTTPError).message).to.equal('Failed to identify system user ID');
-      }
-    });
-
-    it('should throw a 400 error when no sql statement produced', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-      sinon.stub(draft_queries, 'postDraftSQL').returns(null);
-
-      try {
-        const result = draft.createDraft();
-
-        await result(sampleReq, null as unknown as any, null as unknown as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL insert statement');
       }
     });
 
@@ -142,8 +120,6 @@ describe('draft', () => {
         }
       });
 
-      sinon.stub(draft_queries, 'postDraftSQL').returns(SQL`some query`);
-
       try {
         const result = draft.createDraft();
 
@@ -167,8 +143,6 @@ describe('draft', () => {
           } as any;
         }
       });
-
-      sinon.stub(draft_queries, 'postDraftSQL').returns(SQL`some query`);
 
       try {
         const result = draft.createDraft();
@@ -201,8 +175,6 @@ describe('draft', () => {
         }
       });
 
-      sinon.stub(draft_queries, 'postDraftSQL').returns(SQL`some query`);
-
       const result = draft.createDraft();
 
       await result(sampleReq, sampleRes as any, null as unknown as any);
@@ -229,8 +201,6 @@ describe('draft', () => {
           } as QueryResult<any>;
         }
       });
-
-      sinon.stub(draft_queries, 'postDraftSQL').returns(SQL`some query`);
 
       const result = draft.createDraft();
 
@@ -335,26 +305,6 @@ describe('draft', () => {
       }
     });
 
-    it('should throw a 400 error when no sql statement produced', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-      sinon.stub(draft_queries, 'putDraftSQL').returns(null);
-
-      try {
-        const result = draft.updateDraft();
-
-        await result(sampleReq, null as unknown as any, null as unknown as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL update statement');
-      }
-    });
-
     it('should throw a 400 error when no id in result', async () => {
       sinon.stub(db, 'getDBConnection').returns({
         ...dbConnectionObj,
@@ -372,8 +322,6 @@ describe('draft', () => {
           } as QueryResult<any>;
         }
       });
-
-      sinon.stub(draft_queries, 'putDraftSQL').returns(SQL`some query`);
 
       try {
         const result = draft.updateDraft();
@@ -398,8 +346,6 @@ describe('draft', () => {
           } as any;
         }
       });
-
-      sinon.stub(draft_queries, 'putDraftSQL').returns(SQL`some query`);
 
       try {
         const result = draft.updateDraft();
@@ -432,8 +378,6 @@ describe('draft', () => {
         }
       });
 
-      sinon.stub(draft_queries, 'putDraftSQL').returns(SQL`some query`);
-
       const result = draft.updateDraft();
 
       await result(sampleReq, sampleRes as any, null as unknown as any);
@@ -460,8 +404,6 @@ describe('draft', () => {
           } as QueryResult<any>;
         }
       });
-
-      sinon.stub(draft_queries, 'putDraftSQL').returns(SQL`some query`);
 
       const result = draft.updateDraft();
 

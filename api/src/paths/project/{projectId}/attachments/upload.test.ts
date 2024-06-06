@@ -80,27 +80,6 @@ describe('uploadMedia', () => {
     }
   });
 
-  it('should throw a 400 error when file format incorrect', async () => {
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      }
-    });
-
-    sinon.stub(file_utils, 'scanFileForVirus').resolves(true);
-
-    try {
-      const result = upload.uploadAttachment();
-
-      await result({ ...mockReq, files: ['file1'] }, null as unknown as any, null as unknown as any);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
-    }
-  });
-
   it('should throw a 400 error when file contains malicious content', async () => {
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,

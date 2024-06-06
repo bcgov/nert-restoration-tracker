@@ -1,5 +1,5 @@
 import { IDBConnection } from '../database/db';
-import { ApiExecuteSQLError } from '../errors/custom-error';
+import { ApiExecuteSQLError, HTTP400 } from '../errors/custom-error';
 import { ProjectParticipantObject, UserObject } from '../models/user';
 import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { UserRepository } from '../repositories/user-repository';
@@ -189,5 +189,25 @@ export class UserService extends DBService {
     const response = await this.projectParticipationRepository.getAllUserProjects(systemUserId);
 
     return response.map((item) => new ProjectParticipantObject(item));
+  }
+
+  /**
+   * handle delete system user
+   *
+   * @param {number} systemUserId
+   * @memberof UserService
+   */
+  async handleDeleteSystemUser(systemUserId: number) {
+    const usrObject = await this.getUserById(systemUserId);
+
+    if (usrObject.record_end_date) {
+      throw new HTTP400('The system user is not active');
+    }
+
+    await this.deleteAllProjectRoles(systemUserId);
+
+    await this.deleteUserSystemRoles(systemUserId);
+
+    await this.deactivateSystemUser(systemUserId);
   }
 }

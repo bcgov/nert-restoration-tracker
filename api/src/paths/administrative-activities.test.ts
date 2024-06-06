@@ -2,10 +2,9 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection, getRequestHandlerMocks } from '../__mocks__/db';
 import * as db from '../database/db';
-import administrative_queries from '../queries/administrative-activity';
+import { AdministrativeActivityService } from '../services/administrative-activity-service';
 import * as administrative_activities from './administrative-activities';
 
 chai.use(sinonChai);
@@ -16,14 +15,9 @@ describe('getAdministrativeActivities', () => {
   });
 
   it('should return the rows on success (empty)', async () => {
-    sinon.stub(administrative_queries, 'getAdministrativeActivitiesSQL').returns(SQL`some`);
+    sinon.stub(AdministrativeActivityService.prototype, 'getAdministrativeActivities').resolves([]);
 
-    const mockSql = sinon.stub().resolves({
-      rows: null,
-      rowCount: 0
-    });
-
-    const mockDBConnection = getMockDBConnection({ sql: mockSql });
+    const mockDBConnection = getMockDBConnection();
 
     sinon.stub(db, 'getDBConnection').returns(mockDBConnection);
 

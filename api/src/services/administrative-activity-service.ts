@@ -89,10 +89,10 @@ export class AdministrativeActivityService extends DBService {
    * Fetch an existing administrative activity record for a user, based on their user GUID.
    *
    * @param {string} userGUID
-   * @return {*}  {(Promise<IAdministrativeActivityStanding>)}
+   * @return {*}  {(Promise<IAdministrativeActivityStanding[]>)}
    * @memberof AdministrativeActivityService
    */
-  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding> {
+  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding[]> {
     return this.administrativeActivityRepository.getAdministrativeActivityStanding(userGUID);
   }
 }

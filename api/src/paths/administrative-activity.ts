@@ -182,7 +182,9 @@ export function getPendingAccessRequestsCount(): RequestHandler {
 
       await connection.commit();
 
-      return res.status(200).json(response);
+      const result = response.length;
+
+      return res.status(200).json(result);
     } catch (error) {
       defaultLog.error({ label: 'getPendingAccessRequestsCount', message: 'error', error });
 

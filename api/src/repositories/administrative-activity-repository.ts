@@ -173,10 +173,10 @@ export class AdministrativeActivityRepository extends BaseRepository {
    * SQL query to count pending records in the administrative_activity table for a given user GUID
    *
    * @param {string} userGUID
-   * @return {*}  {(Promise<IAdministrativeActivityStanding>)}
+   * @return {*}  {(Promise<IAdministrativeActivityStanding[]>)}
    * @memberof AdministrativeActivityRepository
    */
-  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding> {
+  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding[]> {
     const sqlStatement = SQL`
       WITH
         administrative_activity_with_status
@@ -221,7 +221,7 @@ export class AdministrativeActivityRepository extends BaseRepository {
 
     const response = await this.connection.sql(sqlStatement);
 
-    return response.rows[0];
+    return response.rows;
   }
 
   /**

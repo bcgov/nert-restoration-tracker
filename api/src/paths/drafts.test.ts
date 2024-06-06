@@ -2,11 +2,9 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../__mocks__/db';
 import * as db from '../database/db';
 import { HTTPError } from '../errors/custom-error';
-import draft_queries from '../queries/project/draft';
 import * as drafts from './drafts';
 
 chai.use(sinonChai);
@@ -49,26 +47,6 @@ describe('drafts', () => {
       }
     });
 
-    it('should throw a 400 error when no sql statement produced', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-      sinon.stub(draft_queries, 'getDraftsSQL').returns(null);
-
-      try {
-        const result = drafts.getDraftList();
-
-        await result(sampleReq, null as unknown as any, null as unknown as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
-      }
-    });
-
     it('should throw a 400 error when no rows in result', async () => {
       sinon.stub(db, 'getDBConnection').returns({
         ...dbConnectionObj,
@@ -81,8 +59,6 @@ describe('drafts', () => {
           } as any;
         }
       });
-
-      sinon.stub(draft_queries, 'getDraftsSQL').returns(SQL`some query`);
 
       try {
         const result = drafts.getDraftList();
@@ -107,8 +83,6 @@ describe('drafts', () => {
           } as any;
         }
       });
-
-      sinon.stub(draft_queries, 'getDraftsSQL').returns(SQL`some query`);
 
       const result = drafts.getDraftList();
 

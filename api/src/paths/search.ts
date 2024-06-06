@@ -83,7 +83,7 @@ export function getSearchResults(): RequestHandler {
 
       await connection.commit();
 
-      if (!response || !response.length) {
+      if (!response) {
         return res.status(200).json(null);
       }
 

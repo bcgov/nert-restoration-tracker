@@ -2,11 +2,9 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
-import draft_queries from '../../../queries/project/draft';
 import * as deleteDraftProject from './delete';
 
 chai.use(sinonChai);
@@ -55,27 +53,6 @@ describe('delete a draft project', () => {
     }
   });
 
-  it('should throw a 400 error when no sql statement returned for deleteDraftSQL', async () => {
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      }
-    });
-
-    sinon.stub(draft_queries, 'deleteDraftSQL').returns(null);
-
-    try {
-      const result = deleteDraftProject.deleteDraft();
-
-      await result(sampleReq, null as unknown as any, null as unknown as any);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build SQL delete statement');
-    }
-  });
-
   it('should return the row count of the removed draft project on success', async () => {
     const mockQuery = sinon.stub();
 
@@ -88,8 +65,6 @@ describe('delete a draft project', () => {
       },
       query: mockQuery
     });
-
-    sinon.stub(draft_queries, 'deleteDraftSQL').returns(SQL`something`);
 
     const result = deleteDraftProject.deleteDraft();
 

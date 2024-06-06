@@ -2,11 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../../../../../__mocks__/db';
 import * as db from '../../../../../database/db';
 import { HTTPError } from '../../../../../errors/custom-error';
-import project_queries from '../../../../../queries/project';
+import { ProjectService } from '../../../../../services/project-service';
 import * as deleteFundingSource from './delete';
 
 chai.use(sinonChai);
@@ -73,7 +72,7 @@ describe('delete a funding source', () => {
     }
   });
 
-  it('should throw a 400 error when no sql statement returned for deleteProjectFundingSourceSQL', async () => {
+  it('should return the row count of the removed funding source on success', async () => {
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
@@ -81,33 +80,7 @@ describe('delete a funding source', () => {
       }
     });
 
-    sinon.stub(project_queries, 'deleteProjectFundingSourceSQL').returns(null);
-
-    try {
-      const result = deleteFundingSource.deleteFundingSource();
-
-      await result(sampleReq, null as unknown as any, null as unknown as any);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build SQL delete statement');
-    }
-  });
-
-  it('should return the row count of the removed funding source on success', async () => {
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rowCount: 1 });
-
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      },
-      query: mockQuery
-    });
-
-    sinon.stub(project_queries, 'deleteProjectFundingSourceSQL').returns(SQL`something`);
+    sinon.stub(ProjectService.prototype, 'deleteFundingSourceById').resolves({ project_funding_source_id: 1 });
 
     const result = deleteFundingSource.deleteFundingSource();
 
