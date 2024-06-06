@@ -79,8 +79,9 @@ const PublicTreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props)
       }
 
       try {
-        const yearsResponse =
-          await restorationTrackerApi.public.project.getProjectTreatmentsYears(projectId);
+        const yearsResponse = await restorationTrackerApi.public.project.getProjectTreatmentsYears(
+          projectId
+        );
 
         if (!yearsResponse) {
           return;

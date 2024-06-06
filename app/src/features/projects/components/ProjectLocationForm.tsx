@@ -155,7 +155,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const mouseEnterListItem = (index: number) => {
     setActiveFeature(index + 1);
   };
-  const mouseLeaveListItem = (index: number) => {
+  const mouseLeaveListItem = () => {
     setActiveFeature(null);
   };
 
@@ -325,7 +325,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               }
               key={index}
               onMouseEnter={() => mouseEnterListItem(index)}
-              onMouseLeave={() => mouseLeaveListItem(index)}>
+              onMouseLeave={() => mouseLeaveListItem()}>
               <div className="feature-name">
                 {feature.properties?.siteName || `Area ${index + 1}`}
               </div>

@@ -98,8 +98,9 @@ const ViewProjectPage: React.FC = () => {
   const codes = useCodes();
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse =
-      await restorationTrackerApi.project.getProjectById(projectId);
+    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(
+      projectId
+    );
 
     if (!projectWithDetailsResponse || !projectWithDetailsResponse.project.is_project) {
       // TODO error handling/messaging
@@ -362,8 +363,8 @@ const ViewProjectPage: React.FC = () => {
                                 {project.location.is_within_overlapping === 'D'
                                   ? "Don't know"
                                   : project.location.is_within_overlapping === 'Y'
-                                    ? 'Yes'
-                                    : 'No'}
+                                  ? 'Yes'
+                                  : 'No'}
                               </Typography>
                               {project.location.is_within_overlapping === 'Y' && (
                                 <Box ml={1}>

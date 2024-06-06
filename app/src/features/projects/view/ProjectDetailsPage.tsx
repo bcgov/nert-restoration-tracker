@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
@@ -12,8 +12,8 @@ import PublicProjectContact from 'pages/public/components/PublicProjectContact';
 import React from 'react';
 import FundingSource from './components/FundingSource';
 import GeneralInformation from './components/GeneralInformation';
-import ProjectContact from './components/ProjectContact';
 import ProjectAuthorizations from './components/ProjectAuthorizations';
+import ProjectContact from './components/ProjectContact';
 
 export interface IProjectDetailsProps {
   projectForViewData: IGetProjectForViewResponse;

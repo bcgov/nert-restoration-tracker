@@ -140,8 +140,9 @@ export default function PublicProjects() {
   //projects
   useEffect(() => {
     const getFilteredProjects = async () => {
-      const projectsResponse =
-        await restorationTrackerApi.public.project.getProjectsList(formikValues);
+      const projectsResponse = await restorationTrackerApi.public.project.getProjectsList(
+        formikValues
+      );
 
       setIsLoading(false);
       setProjects(projectsResponse);

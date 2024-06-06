@@ -1,5 +1,5 @@
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
 import React from 'react';
 

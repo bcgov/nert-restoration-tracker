@@ -124,8 +124,9 @@ const TreatmentSpatialUnits: React.FC<IProjectSpatialUnitsProps> = (props) => {
       }
 
       try {
-        const yearsResponse =
-          await restorationTrackerApi.project.getProjectTreatmentsYears(projectId);
+        const yearsResponse = await restorationTrackerApi.project.getProjectTreatmentsYears(
+          projectId
+        );
 
         if (!yearsResponse.length) {
           setYearList([]);
