@@ -6,7 +6,6 @@ import {
   mdiPencilOutline
 } from '@mdi/js';
 import { Icon } from '@mdi/react';
-import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -18,7 +17,6 @@ import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { RoleGuard } from 'components/security/Guards';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
@@ -33,20 +31,17 @@ import {
 } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ProjectAttachments from './ProjectAttachments';
-import ProjectDetailsPage from './ProjectDetailsPage';
+import ProjectAttachments from 'features/projects/view/ProjectAttachments';
+import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
+import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
+import InfoDialog from 'components/dialog/InfoDialog';
 
 const pageStyles = {
   conservationAreChip: {
     marginBottom: '2px',
     justifyContent: 'left'
   },
-  objectiveChip: {
-    backgroundColor: '#E9FBFF',
-    marginBottom: '2px',
-    justifyContent: 'left'
-  },
-  objectiveLabel: {
+  conservAreaLabel: {
     color: '#545454',
     fontSize: '0.78rem',
     fontWeight: 500,
@@ -149,19 +144,9 @@ const ViewProjectPage: React.FC = () => {
     setOpenFullScreen(false);
   };
 
-  const objectiveStyled = (objective: string) => {
-    return (
-      <Tooltip title={objective} disableHoverListener={objective.length < 130}>
-        <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
-          &#x2022; {objective}
-        </Typography>
-      </Tooltip>
-    );
-  };
-
   const conservationAreaStyled = (conservationArea: string) => {
     return (
-      <Typography sx={pageStyles.objectiveLabel} aria-label={`${conservationArea}`}>
+      <Typography sx={pageStyles.conservAreaLabel} aria-label={`${conservationArea}`}>
         {conservationArea}
       </Typography>
     );
@@ -187,11 +172,7 @@ const ViewProjectPage: React.FC = () => {
                     sx={getStatusStyle(project.project.state_code)}
                     label={getStateLabelFromCode(project.project.state_code)}
                   />
-                  <Tooltip title={'Project workflow information'} placement="right">
-                    <IconButton color={'info'}>
-                      <InfoIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <InfoDialog isProject={true} infoContent={'workflow'} />
                 </Box>
               </Box>
               <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
@@ -413,42 +394,9 @@ const ViewProjectPage: React.FC = () => {
                         <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
                           Project Objectives:
                         </Typography>
-
-                        {/* TODO [OI] Here we need to iterate thru the objectives array and display accordingly for now just hard coded the objectives*/}
-                        {/* {project.project.objective && project.objective.map((objective, key) => { */}
-
                         <Box display="flex" flexDirection={'column'} alignItems="left">
-                          <Chip
-                            size="small"
-                            sx={pageStyles.objectiveChip}
-                            label={objectiveStyled(
-                              'This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters. This is a very long objective string that contains 200 characters.'
-                            )}
-                          />
-                          <Chip
-                            size="small"
-                            sx={pageStyles.objectiveChip}
-                            label={objectiveStyled(
-                              'This is project objective one and it is a string with 67 characters'
-                            )}
-                          />
-                          <Chip
-                            size="small"
-                            sx={pageStyles.objectiveChip}
-                            label={objectiveStyled('Objective three is to preserve habitad')}
-                          />
-                          <Chip
-                            size="small"
-                            sx={pageStyles.objectiveChip}
-                            label={objectiveStyled('Objective four for this project')}
-                          />
-                          <Chip
-                            size="small"
-                            sx={pageStyles.objectiveChip}
-                            label={objectiveStyled('Objective five for this project')}
-                          />
+                          <ProjectObjectives projectViewData={project} />
                         </Box>
-                        {/* })} */}
                       </Box>
                     </Box>
                   </Paper>

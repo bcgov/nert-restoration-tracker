@@ -21,7 +21,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
-import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
+import InfoDialog from 'components/dialog/InfoDialog';
 import {
   getStateCodeFromLabel,
   getStateLabelFromCode,
@@ -154,7 +154,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             <strong>{TableI18N.exportData}</strong>
           </Button>
         ) : (
-          <PagedTableInfoDialog isProject={true} />
+          <InfoDialog isProject={true} infoContent={'paged table'} />
         )}
       </Toolbar>
     );
