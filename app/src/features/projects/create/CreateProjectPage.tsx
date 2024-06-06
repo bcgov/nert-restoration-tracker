@@ -272,7 +272,6 @@ const CreateProjectPage: React.FC = () => {
    * Handle project creation.
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
-    console.log('projectPostObject', projectPostObject);
     try {
       projectPostObject.partnership.partnerships =
         projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
