@@ -1,18 +1,22 @@
 import { IDBConnection } from '../database/db';
-import { ApiExecuteSQLError, HTTP400 } from '../errors/custom-error';
+import { ApiExecuteSQLError, HTTP400, HTTP500 } from '../errors/custom-error';
 import { ProjectParticipantObject, UserObject } from '../models/user';
 import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { UserRepository } from '../repositories/user-repository';
+import { doAllProjectsHaveAProjectLead } from '../utils/user-utils';
+import { ProjectService } from './project-service';
 import { DBService } from './service';
 
 export class UserService extends DBService {
   userRepository: UserRepository;
   projectParticipationRepository: ProjectParticipationRepository;
+  projectService: ProjectService;
 
   constructor(connection: IDBConnection) {
     super(connection);
     this.userRepository = new UserRepository(connection);
     this.projectParticipationRepository = new ProjectParticipationRepository(connection);
+    this.projectService = new ProjectService(connection);
   }
 
   /**
@@ -209,5 +213,71 @@ export class UserService extends DBService {
     await this.deleteUserSystemRoles(systemUserId);
 
     await this.deactivateSystemUser(systemUserId);
+  }
+
+  /**
+   * handle delete project participant
+   *
+   * @param {number} projectParticipationId
+   * @param {number} projectId
+   * @memberof UserService
+   */
+  async handleDeleteProjectParticipant(projectParticipationId: number, projectId: number) {
+    // Check project lead roles before deleting user
+    const projectParticipantsResponse1 = await this.projectService.getProjectParticipants(Number(projectId));
+    const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
+
+    const result = await this.projectService.deleteProjectParticipationRecord(Number(projectParticipationId));
+
+    if (!result || !result.system_user_id) {
+      // The delete result is missing necesary data, fail the request
+      throw new HTTP500('Failed to delete project participant');
+    }
+
+    // If Project Lead roles are invalide skip check to prevent removal of only Project Lead of project
+    // (Project is already missing Project Lead and is in a bad state)
+    if (projectHasLeadResponse1) {
+      const projectParticipantsResponse2 = await this.projectService.getProjectParticipants(Number(projectId));
+      const projectHasLeadResponse2 = doAllProjectsHaveAProjectLead(projectParticipantsResponse2);
+
+      if (!projectHasLeadResponse2) {
+        throw new HTTP400('Cannot delete project user. User is the only Project Lead for the project.');
+      }
+    }
+  }
+
+  /**
+   * handle update project participant role
+   *
+   * @param {number} projectParticipationId
+   * @param {number} projectId
+   * @param {number} roleId
+   * @memberof UserService
+   */
+  async handleUpdateProjectParticipantRole(projectParticipationId: number, projectId: number, roleId: number) {
+    // Check project lead roles before updating user
+    const projectParticipantsResponse1 = await this.projectService.getProjectParticipants(projectId);
+    const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
+
+    // Delete the user's old participation record, returning the old record
+    const result = await this.projectService.deleteProjectParticipationRecord(projectParticipationId);
+
+    if (!result || !result.system_user_id) {
+      // The delete result is missing necessary data, fail the request
+      throw new HTTP500('Failed to update project participant role');
+    }
+
+    await this.projectService.addProjectParticipant(projectId, result.system_user_id, roleId);
+
+    // If Project Lead roles are invalid skip check to prevent removal of only Project Lead of project
+    // (Project is already missing Project Lead and is in a bad state)
+    if (projectHasLeadResponse1) {
+      const projectParticipantsResponse2 = await this.projectService.getProjectParticipants(projectId);
+      const projectHasLeadResponse2 = doAllProjectsHaveAProjectLead(projectParticipantsResponse2);
+
+      if (!projectHasLeadResponse2) {
+        throw new HTTP400('Cannot update project user. User is the only Project Lead for the project.');
+      }
+    }
   }
 }

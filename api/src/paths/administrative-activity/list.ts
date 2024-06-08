@@ -3,14 +3,14 @@ import { Operation } from 'express-openapi';
 import {
   ADMINISTRATIVE_ACTIVITY_STATUS_TYPE,
   ADMINISTRATIVE_ACTIVITY_TYPE
-} from '../constants/administrative-activity';
-import { SYSTEM_ROLE } from '../constants/roles';
-import { getDBConnection } from '../database/db';
-import { authorizeRequestHandler } from '../request-handlers/security/authorization';
-import { AdministrativeActivityService } from '../services/administrative-activity-service';
-import { getLogger } from '../utils/logger';
+} from '../../constants/administrative-activity';
+import { SYSTEM_ROLE } from '../../constants/roles';
+import { getDBConnection } from '../../database/db';
+import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
+import { AdministrativeActivityService } from '../../services/administrative-activity-service';
+import { getLogger } from '../../utils/logger';
 
-const defaultLog = getLogger('paths/administrative-activities');
+const defaultLog = getLogger('paths/administrative-activity/list');
 
 export const GET: Operation = [
   authorizeRequestHandler(() => {

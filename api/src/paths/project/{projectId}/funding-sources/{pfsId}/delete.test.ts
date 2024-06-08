@@ -88,4 +88,43 @@ describe('delete a funding source', () => {
 
     expect(actualResult).to.eql(1);
   });
+
+  it('catches errors and returns 500 on failure', async () => {
+    sinon.stub(db, 'getDBConnection').returns({
+      ...dbConnectionObj,
+      systemUserId: () => {
+        return 20;
+      }
+    });
+
+    sinon.stub(ProjectService.prototype, 'deleteFundingSourceById').throws(new Error('error message'));
+
+    try {
+      const result = deleteFundingSource.deleteFundingSource();
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+      expect.fail();
+    } catch (actualError) {
+      expect((actualError as HTTPError).message).to.equal('error message');
+    }
+  });
+
+  it('throws a 400 error when the funding source is not found', async () => {
+    sinon.stub(db, 'getDBConnection').returns({
+      ...dbConnectionObj,
+      systemUserId: () => {
+        return 20;
+      }
+    });
+
+    sinon.stub(ProjectService.prototype, 'deleteFundingSourceById').resolves(undefined);
+
+    try {
+      const result = deleteFundingSource.deleteFundingSource();
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+      expect.fail();
+    } catch (actualError) {
+      expect((actualError as HTTPError).status).to.equal(400);
+      expect((actualError as HTTPError).message).to.equal('Failed to delete project funding source');
+    }
+  });
 });

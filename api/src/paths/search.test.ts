@@ -38,6 +38,22 @@ describe('search', () => {
       sinon.restore();
     });
 
+    it('catches and rethrows errors', async () => {
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      try {
+        sinon.stub(ProjectService.prototype, 'getSpatialSearch').rejects(new Error('An error occurred'));
+
+        const result = search.getSearchResults();
+
+        await result(sampleReq, sampleRes as any, null as unknown as any);
+
+        expect.fail();
+      } catch (actualError: any) {
+        expect(actualError.message).to.equal('An error occurred');
+      }
+    });
+
     it('should return null when no response returned from getSpatialSearch', async () => {
       const mockQuery = sinon.stub();
 

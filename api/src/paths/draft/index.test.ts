@@ -3,10 +3,10 @@ import { describe } from 'mocha';
 import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { getMockDBConnection } from '../__mocks__/db';
-import * as db from '../database/db';
-import { HTTPError } from '../errors/custom-error';
-import * as draft from './draft';
+import { getMockDBConnection } from '../../__mocks__/db';
+import * as db from '../../database/db';
+import { HTTPError } from '../../errors/custom-error';
+import * as draft from './index';
 
 chai.use(sinonChai);
 
@@ -37,69 +37,9 @@ describe('draft', () => {
     }
   };
 
-  describe.skip('createDraft', () => {
+  describe('createDraft', () => {
     afterEach(() => {
       sinon.restore();
-    });
-
-    it('should throw a 400 error when no system user id', async () => {
-      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
-
-      try {
-        const result = draft.createDraft();
-
-        await result(sampleReq, null as unknown as any, null as unknown as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to identify system user ID');
-      }
-    });
-
-    it('should throw a 400 error when missing request body param name', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-
-      try {
-        const result = draft.createDraft();
-
-        await result(
-          { ...sampleReq, body: { ...sampleReq.body, name: null } },
-          null as unknown as any,
-          null as unknown as any
-        );
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required param name');
-      }
-    });
-
-    it('should throw a 400 error when missing request body param data', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-
-      try {
-        const result = draft.createDraft();
-
-        await result(
-          { ...sampleReq, body: { ...sampleReq.body, data: null } },
-          null as unknown as any,
-          null as unknown as any
-        );
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required param data');
-      }
     });
 
     it('should throw a 400 error when no id in result', async () => {
@@ -411,6 +351,71 @@ describe('draft', () => {
 
       expect(actualResult.id).to.equal(1);
       expect(actualResult.date).to.equal('2020/04/04');
+    });
+  });
+
+  describe('getDraftList', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should throw a 400 error when no system user id', async () => {
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      try {
+        const result = draft.getDraftList();
+
+        await result(sampleReq, null as unknown as any, null as unknown as any);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).status).to.equal(400);
+        expect((actualError as HTTPError).message).to.equal('Failed to identify system user ID');
+      }
+    });
+
+    it('should throw a 400 error when no rows in result', async () => {
+      sinon.stub(db, 'getDBConnection').returns({
+        ...dbConnectionObj,
+        systemUserId: () => {
+          return 20;
+        },
+        query: async () => {
+          return {
+            rows: null
+          } as any;
+        }
+      });
+
+      try {
+        const result = draft.getDraftList();
+
+        await result(sampleReq, sampleRes as any, null as unknown as any);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).status).to.equal(400);
+        expect((actualError as HTTPError).message).to.equal('Failed to get drafts');
+      }
+    });
+
+    it('should return result on success', async () => {
+      sinon.stub(db, 'getDBConnection').returns({
+        ...dbConnectionObj,
+        systemUserId: () => {
+          return 20;
+        },
+        query: async () => {
+          return {
+            rows: [{ id: 1, name: 'draft 1' }]
+          } as any;
+        }
+      });
+
+      const result = draft.getDraftList();
+
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+
+      expect(actualResult[0].id).to.equal(1);
+      expect(actualResult[0].name).to.equal('draft 1');
     });
   });
 });

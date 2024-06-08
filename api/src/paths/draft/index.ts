@@ -1,13 +1,27 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import SQL from 'sql-template-strings';
-import { SYSTEM_ROLE } from '../constants/roles';
-import { getDBConnection } from '../database/db';
-import { HTTP400 } from '../errors/custom-error';
-import { authorizeRequestHandler } from '../request-handlers/security/authorization';
-import { getLogger } from '../utils/logger';
+import { SYSTEM_ROLE } from '../../constants/roles';
+import { getDBConnection } from '../../database/db';
+import { HTTP400 } from '../../errors/custom-error';
+import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
+import { getLogger } from '../../utils/logger';
 
-const defaultLog = getLogger('paths/draft');
+const defaultLog = getLogger('paths/draft/index');
+
+export const GET: Operation = [
+  authorizeRequestHandler(() => {
+    return {
+      and: [
+        {
+          discriminator: 'SystemUser'
+        }
+      ]
+    };
+  }),
+  getDraftList()
+];
+
 export const PUT: Operation = [
   authorizeRequestHandler(() => {
     return {
@@ -37,57 +51,32 @@ export const POST: Operation = [
   createDraft()
 ];
 
-POST.apiDoc = {
-  description: 'Create a new Draft.',
+GET.apiDoc = {
+  description: 'Get all Drafts.',
   tags: ['draft'],
   security: [
     {
       Bearer: []
     }
   ],
-  requestBody: {
-    description: 'Draft post request object.',
-    content: {
-      'application/json': {
-        schema: {
-          title: 'Draft request object',
-          type: 'object',
-          required: ['is_project', 'name', 'data'],
-          properties: {
-            is_project: {
-              title: 'True is project, False is plan',
-              type: 'boolean'
-            },
-            name: {
-              title: 'Draft name',
-              type: 'string'
-            },
-            data: {
-              title: 'Draft json data',
-              type: 'object',
-              properties: {}
-            }
-          }
-        }
-      }
-    }
-  },
   responses: {
     200: {
-      description: 'Draft post response object.',
+      description: 'Draft response object.',
       content: {
         'application/json': {
           schema: {
-            title: 'Draft Response Object',
-            type: 'object',
-            required: ['id', 'date'],
-            properties: {
-              id: {
-                type: 'number'
-              },
-              date: {
-                oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                description: 'The date this draft was last updated or created'
+            type: 'array',
+            items: {
+              title: 'Draft Response Object',
+              type: 'object',
+              required: ['id', 'name'],
+              properties: {
+                id: {
+                  type: 'number'
+                },
+                name: {
+                  type: 'string'
+                }
               }
             }
           }
@@ -186,6 +175,131 @@ PUT.apiDoc = {
     }
   }
 };
+
+POST.apiDoc = {
+  description: 'Create a new Draft.',
+  tags: ['draft'],
+  security: [
+    {
+      Bearer: []
+    }
+  ],
+  requestBody: {
+    description: 'Draft post request object.',
+    content: {
+      'application/json': {
+        schema: {
+          title: 'Draft request object',
+          type: 'object',
+          required: ['is_project', 'name', 'data'],
+          properties: {
+            is_project: {
+              title: 'True is project, False is plan',
+              type: 'boolean'
+            },
+            name: {
+              title: 'Draft name',
+              type: 'string'
+            },
+            data: {
+              title: 'Draft json data',
+              type: 'object',
+              properties: {}
+            }
+          }
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: 'Draft post response object.',
+      content: {
+        'application/json': {
+          schema: {
+            title: 'Draft Response Object',
+            type: 'object',
+            required: ['id', 'date'],
+            properties: {
+              id: {
+                type: 'number'
+              },
+              date: {
+                oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                description: 'The date this draft was last updated or created'
+              }
+            }
+          }
+        }
+      }
+    },
+    400: {
+      $ref: '#/components/responses/400'
+    },
+    401: {
+      $ref: '#/components/responses/401'
+    },
+    403: {
+      $ref: '#/components/responses/401'
+    },
+    500: {
+      $ref: '#/components/responses/500'
+    },
+    default: {
+      $ref: '#/components/responses/default'
+    }
+  }
+};
+
+/**
+ * Gets a list of existing draft records.
+ *
+ * @returns {RequestHandler}
+ */
+export function getDraftList(): RequestHandler {
+  return async (req, res) => {
+    const connection = getDBConnection(req['keycloak_token']);
+
+    try {
+      await connection.open();
+
+      const systemUserId = connection.systemUserId();
+
+      if (!systemUserId) {
+        throw new HTTP400('Failed to identify system user ID');
+      }
+
+      const getDraftsSQLStatement = SQL`
+        SELECT
+          webform_draft_id as id,
+          is_project,
+          name
+        FROM
+          webform_draft
+        WHERE
+          system_user_id = ${systemUserId};
+      `;
+
+      const getDraftsResponse = await connection.query(getDraftsSQLStatement.text, getDraftsSQLStatement.values);
+
+      const draftResult = (getDraftsResponse && getDraftsResponse.rows) || null;
+
+      if (!draftResult) {
+        throw new HTTP400('Failed to get drafts');
+      }
+
+      await connection.commit();
+
+      return res.status(200).json(draftResult);
+    } catch (error) {
+      defaultLog.error({ label: 'getDraftsList', message: 'error', error });
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  };
+}
 
 /**
  * Creates a new draft record.

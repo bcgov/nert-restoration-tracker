@@ -17,6 +17,24 @@ describe('approveAccessRequest', () => {
     sinon.restore();
   });
 
+  it('throws error when identity source is not SYSTEM_IDENTITY_SOURCE', async () => {
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+    mockReq.body = {
+      userIdentifier: 'username',
+      roleIds: [1, 3]
+    };
+
+    const requestHandler = approve_request.approveAccessRequest();
+
+    try {
+      await requestHandler(mockReq, mockRes, mockNext);
+      expect.fail();
+    } catch (error: any) {
+      expect(error.message).to.equal('Invalid user identity source');
+    }
+  });
+
   it('re-throws any error that is thrown', async () => {
     const expectedError = new Error('test error');
 

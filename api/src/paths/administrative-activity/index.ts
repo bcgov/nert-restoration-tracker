@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import { getAPIUserDBConnection } from '../database/db';
-import { HTTP400, HTTP500 } from '../errors/custom-error';
-import { hasPendingAdministrativeActivitiesResponseObject } from '../openapi/schemas/administrative-activity';
-import { AdministrativeActivityService } from '../services/administrative-activity-service';
-import { getUserIdentifier } from '../utils/keycloak-utils';
-import { getLogger } from '../utils/logger';
+import { getAPIUserDBConnection } from '../../database/db';
+import { HTTP400, HTTP500 } from '../../errors/custom-error';
+import { hasPendingAdministrativeActivitiesResponseObject } from '../../openapi/schemas/administrative-activity';
+import { AdministrativeActivityService } from '../../services/administrative-activity-service';
+import { getUserIdentifier } from '../../utils/keycloak-utils';
+import { getLogger } from '../../utils/logger';
 
 const defaultLog = getLogger('paths/administrative-activity-request');
 

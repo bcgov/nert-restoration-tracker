@@ -35,6 +35,22 @@ describe('gets a draft project', () => {
     sinon.restore();
   });
 
+  it('catches and rethrows errors', async () => {
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+    try {
+      sinon.stub(dbConnectionObj, 'query').rejects(new Error('An error occurred'));
+
+      const result = viewDraftProject.getSingleDraft();
+
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+
+      expect.fail();
+    } catch (actualError: any) {
+      expect(actualError.message).to.equal('An error occurred');
+    }
+  });
+
   it('should return the draft project on success', async () => {
     const mockQuery = sinon.stub();
 

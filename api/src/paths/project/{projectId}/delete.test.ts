@@ -9,7 +9,6 @@ import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
 import { AttachmentService } from '../../../services/attachment-service';
 import { ProjectService } from '../../../services/project-service';
-import * as file_utils from '../../../utils/file-utils';
 import * as delete_project from './delete';
 
 chai.use(sinonChai);
@@ -67,23 +66,38 @@ describe('deleteProject', () => {
     }
   });
 
-  it.skip('should return true on successful delete', async () => {
+  it('should throw a 400 error when user is not a system admin and project is published', async () => {
     const dbConnectionObj = getMockDBConnection();
-    const mockQuery = sinon.stub();
-
-    // mock project query
-    mockQuery.onCall(0).resolves({
-      rowCount: 1,
-      rows: [
-        {
-          id: 1
-        }
-      ]
-    });
 
     sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      query: mockQuery
+      ...dbConnectionObj
+    });
+
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+    mockReq.params = { projectId: '1' };
+    mockReq['system_user'] = { role_names: [] };
+
+    sinon.stub(ProjectService.prototype, 'getProjectData').resolves({ publish_date: '2021-01-01' } as any);
+
+    try {
+      const result = delete_project.deleteProject();
+
+      await result(mockReq, mockRes, mockNext);
+      expect.fail();
+    } catch (actualError) {
+      expect((actualError as HTTPError).status).to.equal(400);
+      expect((actualError as HTTPError).message).to.equal(
+        'Cannot delete a published project if you are not a system administrator.'
+      );
+    }
+  });
+
+  it('should return true on successful delete', async () => {
+    const dbConnectionObj = getMockDBConnection();
+
+    sinon.stub(db, 'getDBConnection').returns({
+      ...dbConnectionObj
     });
 
     const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
@@ -92,8 +106,8 @@ describe('deleteProject', () => {
     mockReq['system_user'] = { role_names: [SYSTEM_ROLE.SYSTEM_ADMIN] };
 
     sinon.stub(ProjectService.prototype, 'getProjectData').resolves({ key: 'key' } as any);
-    sinon.stub(file_utils, 'deleteFileFromS3').resolves({});
     sinon.stub(AttachmentService.prototype, 'deleteAllS3Attachments').resolves();
+    sinon.stub(ProjectService.prototype, 'deleteProject').resolves();
 
     const result = delete_project.deleteProject();
 

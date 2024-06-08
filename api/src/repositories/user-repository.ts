@@ -72,7 +72,7 @@ export class UserRepository extends BaseRepository {
         ;
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to get user by identifier', [
@@ -135,7 +135,7 @@ export class UserRepository extends BaseRepository {
         ;
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to get user by id', [
@@ -198,7 +198,7 @@ export class UserRepository extends BaseRepository {
         ;
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to get user by guid', [
@@ -257,7 +257,7 @@ export class UserRepository extends BaseRepository {
             uis.name;
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       return response.rows;
     } catch (error) {
@@ -309,7 +309,7 @@ export class UserRepository extends BaseRepository {
             record_end_date;
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to insert new user', [
@@ -345,10 +345,10 @@ export class UserRepository extends BaseRepository {
             system_user_id = ${userId};
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to activate system user', [
+        throw new ApiExecuteSQLError('Failed to deactivate system user', [
           'UserRepository->deactivateSystemUser',
           'rowCount was null or undefined, expected rowCount = 1'
         ]);
@@ -383,7 +383,7 @@ export class UserRepository extends BaseRepository {
             *;
         `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to activate system user', [
@@ -430,7 +430,7 @@ export class UserRepository extends BaseRepository {
 
       sqlStatement.append(';');
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (!response.rowCount) {
         throw new ApiExecuteSQLError('Failed to insert user system roles', [
@@ -462,7 +462,7 @@ export class UserRepository extends BaseRepository {
             system_user_id = ${systemUserId};
         `;
 
-      await this.connection.query(sqlStatement.text, sqlStatement.values);
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteUserSystemRoles', message: 'error', error });
       throw error;
@@ -487,7 +487,7 @@ export class UserRepository extends BaseRepository {
             system_user_id = ${systemUserId};
         `;
 
-      await this.connection.query(sqlStatement.text, sqlStatement.values);
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteAllProjectRoles', message: 'error', error });
       throw error;

@@ -4,6 +4,7 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getRequestHandlerMocks } from '../../__mocks__/db';
+import { GCNotifyService } from '../../services/gcnotify-service';
 import * as notify from './send';
 
 chai.use(sinonChai);
@@ -41,6 +42,25 @@ describe('gcnotify', () => {
         uri: 'string'
       }
     };
+
+    it('catches and rethrows errors', async () => {
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = sampleReq.params;
+      mockReq.body = sampleReq.body;
+      process.env.GCNOTIFY_SECRET_API_KEY = 'temp';
+
+      sinon.stub(GCNotifyService.prototype, 'sendEmailGCNotification').throws(new Error('An error occurred'));
+
+      const requestHandler = notify.sendNotification();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError: any) {
+        expect(actualError.message).to.equal('An error occurred');
+      }
+    });
 
     it('sends email notification and returns 200 on success', async () => {
       const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();

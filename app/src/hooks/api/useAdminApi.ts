@@ -45,7 +45,7 @@ const useAdminApi = (axios: AxiosInstance) => {
     type: AdministrativeActivityType[] = [],
     status: AdministrativeActivityStatusType[] = []
   ): Promise<IGetAccessRequestsListResponse[]> => {
-    const { data } = await axios.get(`/api/administrative-activities`, {
+    const { data } = await axios.get(`/api/administrative-activity/list`, {
       params: { type, status },
       paramsSerializer: (params) => {
         return qs.stringify(params);

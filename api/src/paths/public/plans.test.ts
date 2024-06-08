@@ -4,13 +4,13 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
-import { ProjectService } from '../../services/project-service';
+import { PlanService } from '../../services/plan-service';
 import { SearchService } from '../../services/search-service';
-import * as projects from './projects';
+import * as plans from './plans';
 
 chai.use(sinonChai);
 
-describe('getPublicProjectsPlansList', () => {
+describe('getPublicPlansList', () => {
   afterEach(() => {
     sinon.restore();
   });
@@ -44,15 +44,15 @@ describe('getPublicProjectsPlansList', () => {
     sinon.stub(SearchService.prototype, 'findProjectIdsByCriteria').throws(new Error('Test error'));
 
     try {
-      const result = projects.getPublicProjectsPlansList();
+      const result = plans.getPublicPlansList();
       await result(sampleReq, sampleRes as any, null as unknown as any);
     } catch (actualError) {
       expect((actualError as Error).message).to.equal('Test error');
     }
   });
 
-  it('should return all public projects on success', async () => {
-    const projectsList = [
+  it('should return all public plans on success', async () => {
+    const plansList = [
       {
         id: 1,
         name: 'name',
@@ -71,20 +71,20 @@ describe('getPublicProjectsPlansList', () => {
     });
 
     sinon.stub(SearchService.prototype, 'findProjectIdsByCriteria').resolves([{ project_id: 1 }]);
-    sinon.stub(ProjectService.prototype, 'getProjectsByIds').resolves(projectsList as any);
+    sinon.stub(PlanService.prototype, 'getPlansByIds').resolves(plansList as any);
 
-    const result = projects.getPublicProjectsPlansList();
+    const result = plans.getPublicPlansList();
 
     await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql([
       {
-        id: projectsList[0].id,
-        name: projectsList[0].name,
-        start_date: projectsList[0].start_date,
-        end_date: projectsList[0].end_date,
-        agency_list: projectsList[0].agency_list,
-        permits_list: projectsList[0].permits_list
+        id: plansList[0].id,
+        name: plansList[0].name,
+        start_date: plansList[0].start_date,
+        end_date: plansList[0].end_date,
+        agency_list: plansList[0].agency_list,
+        permits_list: plansList[0].permits_list
       }
     ]);
   });

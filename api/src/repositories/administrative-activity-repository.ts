@@ -160,7 +160,7 @@ export class AdministrativeActivityRepository extends BaseRepository {
 
     const response = await this.connection.sql(sqlStatement);
 
-    if (!response.rows.length) {
+    if (response.rowCount !== 1) {
       throw new ApiExecuteSQLError('Failed to create administrative activity record', [
         'AdministrativeActivityRepository->createPendingAccessRequest'
       ]);
@@ -254,7 +254,7 @@ export class AdministrativeActivityRepository extends BaseRepository {
 
     const response = await this.connection.sql(sqlStatement);
 
-    if (!response.rowCount) {
+    if (response.rowCount !== 1) {
       throw new ApiExecuteSQLError('Failed to update administrative activity record', [
         'AdministrativeActivityRepository->putAdministrativeActivity'
       ]);

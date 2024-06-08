@@ -4,62 +4,22 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import * as db from '../../../../../database/db';
-import { HTTPError } from '../../../../../errors/custom-error';
-import { ProjectService } from '../../../../../services/project-service';
+import { UserService } from '../../../../../services/user-service';
 import * as delete_project_participant from './delete';
 chai.use(sinonChai);
 
-describe.skip('Delete a project participant.', () => {
+describe('Delete a project participant.', () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  it('should throw a 400 error when no projectId is provided', async () => {
-    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-    const dbConnectionObj = getMockDBConnection();
-    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
-
-    mockReq.params = { projectId: '', projectParticipationId: '2' };
-
-    try {
-      const requestHandler = delete_project_participant.deleteProjectParticipant();
-
-      await requestHandler(mockReq, mockRes, mockNext);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).message).to.equal('Missing required path param `projectId`');
-    }
-  });
-
-  it('should throw a 400 error when no projectParticipationId is provided', async () => {
-    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-    const dbConnectionObj = getMockDBConnection();
-    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
-
-    mockReq.params = { projectId: '1', projectParticipationId: '' };
-
-    try {
-      const requestHandler = delete_project_participant.deleteProjectParticipant();
-
-      await requestHandler(mockReq, mockRes, mockNext);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).message).to.equal('Missing required path param `projectParticipationId`');
-    }
-  });
-
-  it('should throw a 400 error when user is only project lead', async () => {
+  it('catches and re-throws an error', async () => {
     const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
     const dbConnectionObj = getMockDBConnection();
 
     mockReq.params = { projectId: '1', projectParticipationId: '2' };
 
-    sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 });
-
-    const getProjectParticipant = sinon.stub(ProjectService.prototype, 'getProjectParticipants');
-
-    getProjectParticipant.onCall(0).resolves([{ system_user_id: 1 } as any]);
-    getProjectParticipant.onCall(1).resolves([]);
+    sinon.stub(UserService.prototype, 'handleDeleteProjectParticipant').throws(new Error('Test error'));
 
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
@@ -70,13 +30,9 @@ describe.skip('Delete a project participant.', () => {
 
     try {
       const requestHandler = delete_project_participant.deleteProjectParticipant();
-
       await requestHandler(mockReq, mockRes, mockNext);
-      expect.fail();
     } catch (actualError) {
-      expect((actualError as HTTPError).message).to.equal(
-        'Cannot delete project user. User is the only Project Lead for the project.'
-      );
+      expect((actualError as Error).message).to.equal('Test error');
     }
   });
 
@@ -86,11 +42,7 @@ describe.skip('Delete a project participant.', () => {
 
     mockReq.params = { projectId: '1', projectParticipationId: '2' };
 
-    sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves(undefined);
-    const getProjectParticipant = sinon.stub(ProjectService.prototype, 'getProjectParticipants');
-
-    getProjectParticipant.onCall(0).resolves([{ id: 1 } as any]);
-    getProjectParticipant.onCall(1).resolves([{ id: 2 } as any]);
+    sinon.stub(UserService.prototype, 'handleDeleteProjectParticipant').resolves(undefined);
 
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,

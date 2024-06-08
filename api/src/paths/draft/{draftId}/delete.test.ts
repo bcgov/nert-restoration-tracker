@@ -36,6 +36,22 @@ describe('delete a draft project', () => {
     sinon.restore();
   });
 
+  it('catches and rethrows errors', async () => {
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+    try {
+      sinon.stub(dbConnectionObj, 'query').rejects(new Error('An error occurred'));
+
+      const result = deleteDraftProject.deleteDraft();
+
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+
+      expect.fail();
+    } catch (actualError: any) {
+      expect(actualError.message).to.equal('An error occurred');
+    }
+  });
+
   it('should throw a 400 error when no draftId is provided', async () => {
     sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
 
