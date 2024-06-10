@@ -913,6 +913,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     updateMasks(mask, maskState, features);
   }, [mask, maskState, features]);
+
   // Listen for active feature changes
   useEffect(() => {
     checkFeatureState(activeFeatureState);

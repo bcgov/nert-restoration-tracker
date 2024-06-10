@@ -126,8 +126,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
-
-
   return (
     <>
       <Box mb={5} mt={0}>
@@ -286,7 +284,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box className="feature-box">
           <MapFeatureList
             features={values.location.geometry}
-            mask={[mask,setMask]}
+            mask={[mask, setMask]}
             maskState={[maskState, setMaskState]}
             activeFeatureState={[activeFeature, setActiveFeature]}
           />

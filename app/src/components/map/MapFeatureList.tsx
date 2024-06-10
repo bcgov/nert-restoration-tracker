@@ -4,7 +4,6 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import React from 'react';
 
-
 export interface MapFeatureListProps {
   features?: any;
   mask?: any; // Store what mask just changed
@@ -12,9 +11,7 @@ export interface MapFeatureListProps {
   activeFeatureState?: any; // Store which feature is active
 }
 
-
 const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
-
   const features = props.features || [];
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
@@ -51,36 +48,35 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     activeFeatureState[1](null);
   };
 
-
   return (
-      <div>
-        {features.map((feature: Feature, index: number) => (
-          <div
-            style={featureStyle.parent}
-            className={
-              activeFeatureState[0] === feature.properties?.id ? 'feature-item active' : 'feature-item'
-            }
-            key={index}
-            onMouseEnter={() => mouseEnterListItem(index)}
-            onMouseLeave={() => mouseLeaveListItem()}>
-            <div className="feature-name">
-              {feature.properties?.siteName || `Area ${index + 1}`}
-            </div>
-            <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={feature.properties?.maskedLocation || false}
-                    onChange={(event) => maskChanged(event, index)}
-                  />
-                }
-                label="Mask"
-              />
-            </FormGroup>
-          </div>
-        ))}
-      </div>
+    <div>
+      {features.map((feature: Feature, index: number) => (
+        <div
+          style={featureStyle.parent}
+          className={
+            activeFeatureState[0] === feature.properties?.id
+              ? 'feature-item active'
+              : 'feature-item'
+          }
+          key={index}
+          onMouseEnter={() => mouseEnterListItem(index)}
+          onMouseLeave={() => mouseLeaveListItem()}>
+          <div className="feature-name">{feature.properties?.siteName || `Area ${index + 1}`}</div>
+          <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={feature.properties?.maskedLocation || false}
+                  onChange={(event) => maskChanged(event, index)}
+                />
+              }
+              label="Mask"
+            />
+          </FormGroup>
+        </div>
+      ))}
+    </div>
   );
 };
 
