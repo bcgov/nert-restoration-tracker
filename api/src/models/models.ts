@@ -1,6 +1,4 @@
 import * as gcnotify from './gcnotify';
-import * as occurrence_create from './occurrence-create';
-import * as occurrence_view from './occurrence-view';
 import * as project_attachments from './project-attachments';
 import * as project_create from './project-create';
 import * as project_update from './project-update';
@@ -13,10 +11,6 @@ export const models = {
     ...project_create,
     ...project_update,
     ...project_view
-  },
-  occurrence: {
-    ...occurrence_create,
-    ...occurrence_view
   },
   user: {
     ...user

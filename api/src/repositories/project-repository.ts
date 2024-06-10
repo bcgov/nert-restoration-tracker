@@ -680,7 +680,7 @@ export class ProjectRepository extends BaseRepository {
         ${systemUserId}
       )
       RETURNING
-        permit_id as id;
+        permit_id;
     `;
 
       const response = await this.connection.sql(sqlStatement);
