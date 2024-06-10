@@ -19,7 +19,7 @@ describe('useDraftApi', () => {
       date: '2020/04/04'
     });
 
-    const result = await useDraftApi(axios).createDraft('draftName', null);
+    const result = await useDraftApi(axios).createDraft(true, 'string', 'string');
 
     expect(result.id).toEqual(1);
     expect(result.date).toEqual('2020/04/04');
@@ -38,7 +38,7 @@ describe('useDraftApi', () => {
   });
 
   it('getDraftsList works as expected', async () => {
-    mock.onGet('/api/drafts').reply(200, [
+    mock.onGet('/api/draft').reply(200, [
       {
         id: 1,
         name: 'draft 1'

@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import { DeleteObjectOutput, GetObjectOutput, ManagedUpload, Metadata } from 'aws-sdk/clients/s3';
 import clamd from 'clamdjs';
 
-export type S3FileType = 'attachments' | 'treatments';
+export type S3FileType = 'attachments';
 
 export interface IS3FileKey {
   projectId: number;

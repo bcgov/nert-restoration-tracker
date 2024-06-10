@@ -120,7 +120,6 @@ const ViewPlanPage: React.FC = () => {
     if (!isLoadingPlan && !planWithDetails) {
       getPlan();
       getAttachments(false);
-      // getTreatments(false);
       setIsLoadingPlan(true);
     }
   }, [isLoadingPlan, planWithDetails, getPlan, getAttachments]);

@@ -17,8 +17,7 @@ export enum ProjectStatusType {
 }
 
 export enum attachmentType {
-  ATTACHMENTS = 'attachments',
-  TREATMENTS = 'treatments'
+  ATTACHMENTS = 'attachments'
 }
 
 //url for public reference of iucn conservation classification file.

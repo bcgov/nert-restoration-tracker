@@ -8,12 +8,9 @@ import {
   IGetProjectAttachmentsResponse,
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponse,
-  IGetProjectTreatmentsResponse,
   IGetUserProjectsListResponse,
-  IPostTreatmentUnitResponse,
   IProjectAdvancedFilterRequest,
-  IUploadAttachmentResponse,
-  TreatmentSearchCriteria
+  IUploadAttachmentResponse
 } from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 
@@ -68,41 +65,6 @@ const useProjectApi = (axios: AxiosInstance) => {
         });
       }
     });
-
-    return data;
-  };
-
-  /**
-   * Get project treatments based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatments = async (
-    projectId: number,
-    filterByYear?: TreatmentSearchCriteria
-  ): Promise<IGetProjectTreatmentsResponse> => {
-    const { data } = await axios.get(`/api/project/${projectId}/treatments/list`, {
-      params: filterByYear,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, {
-          arrayFormat: 'repeat',
-          filter: (_prefix, value) => value || undefined
-        });
-      }
-    });
-
-    return data;
-  };
-
-  /**
-   * Get project treatments years based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatmentsYears = async (projectId: number): Promise<{ year: number }[]> => {
-    const { data } = await axios.get(`/api/project/${projectId}/treatments/year/list`);
 
     return data;
   };
@@ -195,34 +157,6 @@ const useProjectApi = (axios: AxiosInstance) => {
    */
   const createProject = async (project: ICreateProjectRequest): Promise<ICreateProjectResponse> => {
     const { data } = await axios.post('/api/project/create', project);
-
-    return data;
-  };
-
-  //TODO: handle cancelTokenSource and onProgress
-  /**
-   * Upload project treatment spacial files.
-   *
-   * @param {number} projectId
-   * @param {File} file
-   * @param {CancelTokenSource} [cancelTokenSource]
-   * @param {(progressEvent: ProgressEvent) => void} [onProgress]
-   * @return {*}  {Promise<string[]>}
-   */
-  const importProjectTreatmentSpatialFile = async (
-    projectId: number,
-    file: File,
-    cancelTokenSource?: CancelTokenSource,
-    onProgress?: (progressEvent: ProgressEvent) => void
-  ): Promise<IPostTreatmentUnitResponse> => {
-    const req_message = new FormData();
-
-    req_message.append('media', file);
-
-    const { data } = await axios.post(`/api/project/${projectId}/treatments/upload`, req_message, {
-      cancelToken: cancelTokenSource?.token,
-      onUploadProgress: onProgress
-    });
 
     return data;
   };
@@ -369,66 +303,11 @@ const useProjectApi = (axios: AxiosInstance) => {
     return status === 200;
   };
 
-  /**
-   * Delete project treatment unit based on project and treatmentUnit ID
-   *
-   * @param {number} projectId
-   * @param {number} treatmentUnitId
-   * @returns {*} {Promise<number>}
-   */
-  const deleteProjectTreatmentUnit = async (
-    projectId: number,
-    treatmentUnitId: number
-  ): Promise<boolean> => {
-    const { status } = await axios.delete(
-      `/api/project/${projectId}/treatments/treatment-unit/${treatmentUnitId}/delete`
-    );
-
-    return status === 200;
-  };
-
-  /**
-   * Delete project treatments based on project ID and year
-   *
-   * @param {number} projectId
-   * @param {number} attachmentId
-   * @returns {*} {Promise<void>}
-   */
-  const deleteProjectTreatments = async (projectId: number): Promise<boolean> => {
-    const { status } = await axios.delete(`/api/project/${projectId}/treatments/delete`);
-
-    return status === 200;
-  };
-
-  /**
-   * Download an EML file containing the project meta data.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<{ fileData: string; fileName: string }>}
-   */
-  const downloadProjectEML = async (
-    projectId: number
-  ): Promise<{ fileData: string; fileName: string }> => {
-    const response = await axios.get<{ eml: string }>(`/api/project/${projectId}/export/eml`);
-
-    const fileName =
-      response.headers?.['content-disposition']
-        ?.split('filename=')[1]
-        .replace(/(^['"]|['"]$)/g, '') || 'project_eml.xml';
-
-    return { fileData: response.data.eml, fileName: fileName };
-  };
-
   return {
     getAllUserProjectsParticipation,
     getProjectsList,
     createProject,
     getProjectById,
-    getProjectTreatmentsYears,
-    importProjectTreatmentSpatialFile,
-    deleteProjectTreatmentUnit,
-    deleteProjectTreatments,
-    getProjectTreatments,
     uploadProjectAttachments,
     updateProject,
     getProjectAttachments,
@@ -441,8 +320,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     addProjectParticipants,
     removeProjectParticipant,
     updateProjectParticipantRole,
-    getUserProjectsList,
-    downloadProjectEML
+    getUserProjectsList
   };
 };
 
@@ -525,69 +403,10 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
     return data;
   };
 
-  /**
-   * Get project treatments based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatments = async (
-    projectId: number,
-    filterByYear?: TreatmentSearchCriteria
-  ): Promise<IGetProjectTreatmentsResponse> => {
-    const { data } = await axios.get(`/api/public/project/${projectId}/treatments/list`, {
-      params: filterByYear,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, {
-          arrayFormat: 'repeat',
-          filter: (_prefix, value) => value || undefined
-        });
-      }
-    });
-
-    return data;
-  };
-
-  /**
-   * Get project treatments years based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatmentsYears = async (projectId: number): Promise<{ year: number }[]> => {
-    const { data } = await axios.get(`/api/public/project/${projectId}/treatments/year/list`);
-
-    return data;
-  };
-
-  /**
-   * Download an EML file containing the project meta data.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<{ fileData: string; fileName: string }>}
-   */
-  const downloadProjectEML = async (
-    projectId: number
-  ): Promise<{ fileData: string; fileName: string }> => {
-    const response = await axios.get<{ eml: string }>(
-      `/api/public/project/${projectId}/export/eml`
-    );
-
-    const fileName =
-      response.headers?.['content-disposition']
-        ?.split('filename=')[1]
-        .replace(/(^['"]|['"]$)/g, '') || 'project_eml.xml';
-
-    return { fileData: response.data.eml, fileName: fileName };
-  };
-
   return {
     getPlansList,
     getProjectsList,
     getProjectPlanForView,
-    getProjectAttachments,
-    getProjectTreatments,
-    getProjectTreatmentsYears,
-    downloadProjectEML
+    getProjectAttachments
   };
 };

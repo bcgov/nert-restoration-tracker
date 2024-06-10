@@ -4,8 +4,8 @@ import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../../constants/roles';
 import { getDBConnection } from '../../../../database/db';
 import { HTTP400 } from '../../../../errors/custom-error';
 import { models } from '../../../../models/models';
-import { queries } from '../../../../queries/queries';
 import { authorizeRequestHandler } from '../../../../request-handlers/security/authorization';
+import { ProjectService } from '../../../../services/project-service';
 import { getLogger } from '../../../../utils/logger';
 import { addFundingSourceApiDocObject } from '../../../../utils/shared-api-docs';
 
@@ -56,26 +56,20 @@ export function addFundingSource(): RequestHandler {
     try {
       await connection.open();
 
-      const addFundingSourceSQLStatement = queries.project.postProjectFundingSourceSQL(
+      const projectService = new ProjectService(connection);
+
+      const response = await projectService.insertFundingSource(
         sanitizedPostFundingSource,
         Number(req.params.projectId)
       );
 
-      if (!addFundingSourceSQLStatement) {
-        throw new HTTP400('Failed to build addFundingSourceSQLStatement');
-      }
-
-      const response = await connection.query(addFundingSourceSQLStatement.text, addFundingSourceSQLStatement.values);
-
-      const result = (response && response.rows && response.rows[0]) || null;
-
-      if (!result || !result.id) {
+      if (!response) {
         throw new HTTP400('Failed to insert project funding source data');
       }
 
       await connection.commit();
 
-      return res.status(200).json({ id: result.id });
+      return res.status(200).json(response);
     } catch (error) {
       defaultLog.error({ label: 'addFundingSource', message: 'error', error });
       await connection.rollback();

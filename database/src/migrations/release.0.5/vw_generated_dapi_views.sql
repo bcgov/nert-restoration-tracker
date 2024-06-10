@@ -31,10 +31,6 @@
  create or replace view system_role as select * from restoration.system_role;
  create or replace view system_user as select * from restoration.system_user;
  create or replace view system_user_role as select * from restoration.system_user_role;
- create or replace view treatment as select * from restoration.treatment;
- create or replace view treatment_treatment_type as select * from restoration.treatment_treatment_type;
- create or replace view treatment_type as select * from restoration.treatment_type;
- create or replace view treatment_unit as select * from restoration.treatment_unit;
  create or replace view user_identity_source as select * from restoration.user_identity_source;
  create or replace view webform_draft as select * from restoration.webform_draft;
  create or replace view wldtaxonomic_units as select * from restoration.wldtaxonomic_units;

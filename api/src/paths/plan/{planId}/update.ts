@@ -201,10 +201,6 @@ export function updatePlan(): RequestHandler {
         throw new HTTP400('Missing required path parameter: planId');
       }
 
-      if (!entities) {
-        throw new HTTP400('Missing required request body');
-      }
-
       await connection.open();
 
       const planService = new PlanService(connection);

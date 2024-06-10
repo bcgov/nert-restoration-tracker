@@ -234,7 +234,7 @@ const FileUploadItem: React.FC<IFileUploadItemProps> = (props) => {
                   </Button>
                   <ComponentDialog
                     open={openDialog}
-                    dialogTitle="Treatment File Errors"
+                    dialogTitle="File Errors"
                     onClose={() => setOpenDialog(false)}>
                     {props.errorDetailHandler(errors)}
                   </ComponentDialog>

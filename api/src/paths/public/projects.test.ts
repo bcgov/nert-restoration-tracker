@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
-import public_queries from '../../queries/public';
+import { ProjectService } from '../../services/project-service';
+import { SearchService } from '../../services/search-service';
 import * as projects from './projects';
 
 chai.use(sinonChai);
@@ -33,7 +33,25 @@ describe('getPublicProjectsPlansList', () => {
     }
   };
 
-  it.skip('should return all public projects on success', async () => {
+  it('catches errors and returns 500 status', async () => {
+    sinon.stub(db, 'getDBConnection').returns({
+      ...dbConnectionObj,
+      systemUserId: () => {
+        return 20;
+      }
+    });
+
+    sinon.stub(SearchService.prototype, 'findProjectIdsByCriteria').throws(new Error('Test error'));
+
+    try {
+      const result = projects.getPublicProjectsPlansList();
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+    } catch (actualError) {
+      expect((actualError as Error).message).to.equal('Test error');
+    }
+  });
+
+  it('should return all public projects on success', async () => {
     const projectsList = [
       {
         id: 1,
@@ -45,19 +63,15 @@ describe('getPublicProjectsPlansList', () => {
       }
     ];
 
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: projectsList });
-
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
         return 20;
-      },
-      query: mockQuery
+      }
     });
 
-    sinon.stub(public_queries, 'getPublicProjectListSQL').returns(SQL`some query`);
+    sinon.stub(SearchService.prototype, 'findProjectIdsByCriteria').resolves([{ project_id: 1 }]);
+    sinon.stub(ProjectService.prototype, 'getProjectsByIds').resolves(projectsList as any);
 
     const result = projects.getPublicProjectsPlansList();
 
@@ -69,7 +83,7 @@ describe('getPublicProjectsPlansList', () => {
         name: projectsList[0].name,
         start_date: projectsList[0].start_date,
         end_date: projectsList[0].end_date,
-        contact_agency_list: projectsList[0].agency_list,
+        agency_list: projectsList[0].agency_list,
         permits_list: projectsList[0].permits_list
       }
     ]);

@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
+import SQL from 'sql-template-strings';
 import { SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
-import { queries } from '../../../queries/queries';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { getLogger } from '../../../utils/logger';
 
@@ -74,11 +74,10 @@ export function deleteDraft(): RequestHandler {
     try {
       await connection.open();
 
-      const deleteDraftSQLStatement = queries.project.draft.deleteDraftSQL(Number(req.params.draftId));
-
-      if (!deleteDraftSQLStatement) {
-        throw new HTTP400('Failed to build SQL delete statement');
-      }
+      const deleteDraftSQLStatement = SQL`
+        DELETE from webform_draft
+        WHERE webform_draft_id = ${Number(req.params.draftId)};
+      `;
 
       const result = await connection.query(deleteDraftSQLStatement.text, deleteDraftSQLStatement.values);
 

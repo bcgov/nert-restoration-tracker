@@ -3,8 +3,8 @@ import { Operation } from 'express-openapi';
 import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../../../constants/roles';
 import { getDBConnection } from '../../../../../database/db';
 import { HTTP400 } from '../../../../../errors/custom-error';
-import { queries } from '../../../../../queries/queries';
 import { authorizeRequestHandler } from '../../../../../request-handlers/security/authorization';
+import { ProjectService } from '../../../../../services/project-service';
 import { getLogger } from '../../../../../utils/logger';
 import { deleteFundingSourceApiDocObject } from '../../../../../utils/shared-api-docs';
 
@@ -51,27 +51,20 @@ export function deleteFundingSource(): RequestHandler {
     try {
       await connection.open();
 
-      const deleteProjectFundingSourceSQLStatement = queries.project.deleteProjectFundingSourceSQL(
+      const projectService = new ProjectService(connection);
+
+      const response = await projectService.deleteFundingSourceById(
         Number(req.params.projectId),
         Number(req.params.pfsId)
       );
 
-      if (!deleteProjectFundingSourceSQLStatement) {
-        throw new HTTP400('Failed to build SQL delete statement');
-      }
-
-      const projectFundingSourceDeleteResponse = await connection.query(
-        deleteProjectFundingSourceSQLStatement.text,
-        deleteProjectFundingSourceSQLStatement.values
-      );
-
-      if (!projectFundingSourceDeleteResponse || !projectFundingSourceDeleteResponse.rowCount) {
+      if (!response) {
         throw new HTTP400('Failed to delete project funding source');
       }
 
       await connection.commit();
 
-      return res.status(200).json(projectFundingSourceDeleteResponse && projectFundingSourceDeleteResponse.rowCount);
+      return res.status(200).json(response.project_funding_source_id);
     } catch (error) {
       defaultLog.error({ label: 'deleteFundingSource', message: 'error', error });
       await connection.rollback();
