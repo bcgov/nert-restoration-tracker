@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
+import { arch } from 'os';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -332,7 +333,11 @@ const initializeMap = (
    * # loadLayers
    * Load all custom layers here
    */
-  map.on('load', () => {
+  map.on('load', async () => {
+
+    /* Avoid double renders */
+    if (map.getSource('maptiler.raster-dem')) return;
+
     /* The base layer */
     map.addSource('maptiler.raster-dem', {
       type: 'raster-dem',
@@ -431,12 +436,10 @@ const initializeMap = (
 
     /*****************Project/Plans********************/
 
-    map.loadImage('/assets/icon/marker-icon.png').then((image) => {
-      map.addImage('blue-marker', image.data);
-    });
-    map.loadImage('/assets/icon/marker-icon2.png').then((image) => {
-      map.addImage('orange-marker', image.data);
-    });
+    const blueMarker = await map.loadImage('/assets/icon/marker-icon.png');
+    map.addImage('blue-marker', blueMarker.data);
+    const orangeMarker = await map.loadImage('/assets/icon/marker-icon2.png'); 
+    map.addImage('orange-marker', orangeMarker.data);
 
     map.addSource('markers', {
       type: 'geojson',
@@ -525,31 +528,11 @@ const initializeMap = (
         checkFeatureState(activeFeatureState);
         activeFeatureState[1](e.features[0].id);
 
-        // console.log('entering index: ', e.features[0].id);
-        // if (activeFeatureState[0]) {
-        //   activeFeatureState[1](e.features[0]);
-        // }
-
-        // hoverStateMarkerPolygon = e.features[0].id;
-        // map.setFeatureState(
-        //   {
-        //     source: 'markers',
-        //     id: e.features[0].id
-        //   },
-        //   { hover: true }
-        // );
       })
       .on('mouseleave', 'markerPolygon', () => {
         map.getCanvas().style.cursor = '';
 
         activeFeatureState[1](null);
-        // map.setFeatureState(
-        //   {
-        //     source: 'markers',
-        //     id: hoverStateMarkerPolygon
-        //   },
-        //   { hover: false }
-        // );
       });
 
     // Zoom in until cluster breaks apart.
@@ -673,28 +656,6 @@ const initializeMap = (
     map.on('mouseleave', 'markerProjects.points', hideTooltip);
     /**************************************************/
 
-    /*******************Fires**************************/
-    // XXX: Don't turn this on without consent from the project owner.
-    // map.addSource('forestfire-areas', {
-    //   type: 'raster',
-    //   tiles: [
-    //     'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_FOREST_VEGETATION.VEG_BURN_SEVERITY_SP,WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP'
-    //   ],
-    //   tileSize: 256,
-    //   minzoom: 10
-    // });
-    // map.addLayer({
-    //   id: 'wms-forestfire-areas',
-    //   type: 'raster',
-    //   source: 'forestfire-areas',
-    //   // layout: {
-    //   //   visibility: wildlife[0] ? 'visible' : 'none'
-    //   // },
-    //   paint: {
-    //     'raster-opacity': 0.9
-    //   }
-    // });
-    /*******************Fires**************************/
 
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
