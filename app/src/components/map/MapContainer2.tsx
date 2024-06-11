@@ -308,7 +308,7 @@ const initializeMap = (
     setTooltipY
   } = tooltipState;
 
-  const { blueMarker, setBlueMarker, orangeMarker, setOrangeMarker } = markerState;
+  const { projectMarker, setProjectMarker, planMarker, setPlanMarker } = markerState;
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
@@ -524,13 +524,13 @@ const initializeMap = (
      * layers once the images are loaded. This only seems to be a thing with
      * image icons styling for geojson points.
      */
-    const blueMarkerFile = await map.loadImage('/assets/icon/marker-icon.png');
-    setBlueMarker(blueMarkerFile.data);
-    map.addImage('blue-marker', blueMarkerFile.data);
+    const projectMarkerFile = await map.loadImage('/assets/icon/marker-icon.png');
+    setProjectMarker(projectMarkerFile.data);
+    map.addImage('blue-marker', projectMarkerFile.data);
 
-    const orangeMarkerFile = await map.loadImage('/assets/icon/marker-icon2.png');
-    setOrangeMarker(orangeMarkerFile.data);
-    map.addImage('orange-marker', orangeMarkerFile.data);
+    const planMarkerFile = await map.loadImage('/assets/icon/marker-icon2.png');
+    setPlanMarker(planMarkerFile.data);
+    map.addImage('orange-marker', planMarkerFile.data);
 
     // Hover over polygons
     map
@@ -861,14 +861,14 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
    * Maplibre has some quirky behavour with loading images, so
    * use React to manage the state.
    */
-  const [blueMarker, setBlueMarker] = useState<any>();
-  const [orangeMarker, setOrangeMarker] = useState<any>();
+  const [projectMarker, setProjectMarker] = useState<any>();
+  const [planMarker, setPlanMarker] = useState<any>();
 
   const markerState = {
-    blueMarker,
-    setBlueMarker,
-    orangeMarker,
-    setOrangeMarker
+    projectMarker,
+    setProjectMarker,
+    planMarker,
+    setPlanMarker
   };
 
   // Update the map if the features change
@@ -893,12 +893,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     } else {
       checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
     }
-  }, [layerVisibility, blueMarker, orangeMarker]);
-
-  // Testing a fix for the layer visibility
-  // setTimeout(() => {
-  //   checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
-  // }, 1000);
+  }, [layerVisibility, projectMarker, planMarker]);
 
   // Listen for masks being turned on and off
   useEffect(() => {
