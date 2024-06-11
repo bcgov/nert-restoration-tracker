@@ -2,10 +2,13 @@ import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../../constants/roles';
 import { getDBConnection } from '../../database/db';
+import { HTTP400 } from '../../errors/custom-error';
 import { PostProjectObject } from '../../models/project-create';
 import { geoJsonFeature } from '../../openapi/schemas/geoJson';
 import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
+import { AttachmentService } from '../../services/attachment-service';
 import { ProjectService } from '../../services/project-service';
+import { generateS3FileKey, scanFileForVirus } from '../../utils/file-utils';
 import { getLogger } from '../../utils/logger';
 
 const defaultLog = getLogger('paths/project/create');
@@ -107,6 +110,11 @@ POST.apiDoc = {
                 is_cultural_initiative: {
                   type: 'boolean',
                   description: 'Project or plan focused on cultural or community investment initiative'
+                },
+                project_image: {
+                  type: 'string',
+                  description: 'Base64 encoded image string',
+                  nullable: true
                 }
               }
             },
@@ -404,6 +412,8 @@ export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedProjectPostData = new PostProjectObject(req.body);
+    console.log('req.body', req.body);
+    console.log('sanitizedProjectPostData', sanitizedProjectPostData);
 
     try {
       await connection.open();
@@ -411,6 +421,37 @@ export function createProject(): RequestHandler {
       const projectService = new ProjectService(connection);
 
       const projectId = await projectService.createProject(sanitizedProjectPostData);
+
+      // Handle project image upload here
+      const rawMediaFile: Express.Multer.File = req.body.project.project_image;
+      console.log('rawMediaFile', rawMediaFile);
+      const metadata = {
+        filename: rawMediaFile.originalname,
+        username: (req['auth_payload'] && req['auth_payload'].preferred_username) || '',
+        email: (req['auth_payload'] && req['auth_payload'].email) || ''
+      };
+
+      console.log('metadata', metadata);
+
+      if (!(await scanFileForVirus(rawMediaFile))) {
+        throw new HTTP400('Malicious content detected, upload cancelled');
+      }
+
+      const attachmentService = new AttachmentService(connection);
+
+      const s3Key = generateS3FileKey({
+        projectId: projectId,
+        fileName: 'project_thumbnail',
+        fileType: 'thumbnail'
+      });
+      console.log('s3Key', s3Key);
+
+      const uploadResponse = await attachmentService.uploadMedia(projectId, rawMediaFile, s3Key, 'thumbnail', metadata);
+      console.log('uploadResponse', uploadResponse);
+
+      if (!uploadResponse) {
+        throw new HTTP400('Error uploading project image');
+      }
 
       await connection.commit();
 

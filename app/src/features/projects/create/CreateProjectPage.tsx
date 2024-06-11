@@ -349,40 +349,8 @@ const CreateProjectPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  // /**
-  //  * Intercepts all navigation attempts (when used with a `Prompt`).
-  //  *
-  //  * Returning true allows the navigation, returning false prevents it.
-  //  *
-  //  * @param {History.Location} location
-  //  * @return {*}
-  //  */
-  // const handleLocationChange = () => {
-  //   if (!dialogContext.yesNoDialogProps.open) {
-  //     // If the cancel dialog is not open: open it
-  //     dialogContext.setYesNoDialog({
-  //       ...defaultCancelDialogProps,
-  //       onYes: () => {
-  //         dialogContext.setYesNoDialog({ open: false });
-  //         history(location.pathname);
-  //       },
-  //       open: true
-  //     });
-  //     return false;
-  //   }
-
-  //   // If the cancel dialog is already open and another location change action is triggered: allow it
-  //   return true;
-  // };
-
   return (
     <>
-      {/* <ReactRouterPrompt when={enableCancelCheck} >
-        {({ isActive, onConfirm, onCancel }) => (
-          <YesNoDialog dialogTitle="Cancel Create Project" dialogText="Are you sure you want to cancel?" open={isActive} onClose={onCancel} onNo={onCancel} onYes={onConfirm} />
-        )}
-      </ReactRouterPrompt> */}
-
       <EditDialog
         dialogTitle="Save Incomplete Project as a Draft"
         dialogSaveButtonLabel="Save"
@@ -422,7 +390,6 @@ const CreateProjectPage: React.FC = () => {
         </Breadcrumbs>
       </Box>
 
-      {/* <Container maxWidth="xl"> */}
       <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
           <Box mb={0.5} mt={0.9}>
@@ -446,7 +413,6 @@ const CreateProjectPage: React.FC = () => {
             validateOnChange={false}
             onSubmit={handleProjectCreation}>
             <>
-              {/* <ScrollToFormikError /> */}
               <Form noValidate>
                 <Box ml={1}>
                   <Grid container spacing={2}>
@@ -635,7 +601,6 @@ const CreateProjectPage: React.FC = () => {
             </>
           </Formik>
         </Box>
-        {/* </Container> */}
       </Card>
     </>
   );
