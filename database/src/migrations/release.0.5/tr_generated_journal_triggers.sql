@@ -25,6 +25,7 @@
  create trigger journal_project_spatial_component after insert or update or delete on restoration.project_spatial_component for each row execute procedure tr_journal_trigger();
  create trigger journal_partnership after insert or update or delete on restoration.partnership for each row execute procedure tr_journal_trigger();
  create trigger journal_objective after insert or update or delete on restoration.objective for each row execute procedure tr_journal_trigger();
+ create trigger journal_conservation_area after insert or update or delete on restoration.conservation_area for each row execute procedure tr_journal_trigger();
  create trigger journal_system_user_role after insert or update or delete on restoration.system_user_role for each row execute procedure tr_journal_trigger();
  create trigger journal_system_role after insert or update or delete on restoration.system_role for each row execute procedure tr_journal_trigger();
  create trigger journal_webform_draft after insert or update or delete on restoration.webform_draft for each row execute procedure tr_journal_trigger();

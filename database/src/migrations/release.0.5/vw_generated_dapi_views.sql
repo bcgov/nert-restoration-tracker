@@ -13,6 +13,7 @@
  create or replace view nrm_region as select * from restoration.nrm_region;
  create or replace view permit as select * from restoration.permit;
  create or replace view objective as select * from restoration.objective;
+ create or replace view conservation_area as select * from restoration.conservation_area;
  create or replace view project as select * from restoration.project;
  create or replace view project_attachment as select * from restoration.project_attachment;
  create or replace view project_caribou_population_unit as select * from restoration.project_caribou_population_unit;
