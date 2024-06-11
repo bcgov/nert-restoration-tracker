@@ -334,7 +334,6 @@ const initializeMap = (
    * Load all custom layers here
    */
   map.on('load', async () => {
-
     /* Avoid double renders */
     if (map.getSource('maptiler.raster-dem')) return;
 
@@ -438,7 +437,7 @@ const initializeMap = (
 
     const blueMarker = await map.loadImage('/assets/icon/marker-icon.png');
     map.addImage('blue-marker', blueMarker.data);
-    const orangeMarker = await map.loadImage('/assets/icon/marker-icon2.png'); 
+    const orangeMarker = await map.loadImage('/assets/icon/marker-icon2.png');
     map.addImage('orange-marker', orangeMarker.data);
 
     map.addSource('markers', {
@@ -527,7 +526,6 @@ const initializeMap = (
 
         checkFeatureState(activeFeatureState);
         activeFeatureState[1](e.features[0].id);
-
       })
       .on('mouseleave', 'markerPolygon', () => {
         map.getCanvas().style.cursor = '';
@@ -655,7 +653,6 @@ const initializeMap = (
     map.on('mouseenter', 'markerProjects.points', showTooltip);
     map.on('mouseleave', 'markerProjects.points', hideTooltip);
     /**************************************************/
-
 
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
