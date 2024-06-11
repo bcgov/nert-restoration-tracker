@@ -36,10 +36,16 @@ const systemUsers = [
     user_guid: 'C8659F561DC244AE9D7EDE7F08E25512'
   },
   {
-    identifier: 'kjartane',
-    type: SYSTEM_IDENTITY_SOURCE.BCEID_BASIC,
+    identifier: 'keinarss',
+    type: SYSTEM_IDENTITY_SOURCE.IDIR,
     roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
-    user_guid: '6F76D664023A4EABAD52B95512D6607C'
+    user_guid: 'F4663727DE89489C8B7CFA81E4FA99B3'
+  },
+  {
+    identifier: 'hdave',
+    type: SYSTEM_IDENTITY_SOURCE.IDIR,
+    roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,
+    user_guid: '1983DA9AA0F046A180D314D0F9CC0B15'
   }
 ];
 

@@ -74,13 +74,6 @@ export class UserRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to get user by identifier', [
-          'UserRepository->getUserByUserIdentifier',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
       return response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'getUserByUserIdentifier', message: 'error', error });
@@ -199,13 +192,6 @@ export class UserRepository extends BaseRepository {
         `;
 
       const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to get user by guid', [
-          'UserRepository->getUserByGuid',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
 
       return response.rows[0];
     } catch (error) {

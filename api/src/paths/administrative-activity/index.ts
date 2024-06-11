@@ -178,13 +178,11 @@ export function getPendingAccessRequestsCount(): RequestHandler {
 
       const administrativeActivityService = new AdministrativeActivityService(connection);
 
-      const response = await administrativeActivityService.getAdministrativeActivityStanding(userIdentifier);
+      const response = await administrativeActivityService.countPendingAdministrativeActivities(userIdentifier);
 
       await connection.commit();
 
-      const result = response.length;
-
-      return res.status(200).json(result);
+      return res.status(200).json(response);
     } catch (error) {
       defaultLog.error({ label: 'getPendingAccessRequestsCount', message: 'error', error });
 
