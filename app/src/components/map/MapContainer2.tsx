@@ -7,6 +7,7 @@ import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
 import { arch } from 'os';
+import { blue } from '@mui/material/colors';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -291,7 +292,8 @@ const initializeMap = (
   layerVisibility?: any,
   centroids = false,
   tooltipState?: any,
-  activeFeatureState?: any
+  activeFeatureState?: any,
+  markerState?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -305,6 +307,8 @@ const initializeMap = (
     // tooltipY,
     setTooltipY
   } = tooltipState;
+
+  const { blueMarker, setBlueMarker, orangeMarker, setOrangeMarker } = markerState;
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
@@ -434,12 +438,6 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
-
-    const blueMarker = await map.loadImage('/assets/icon/marker-icon.png');
-    map.addImage('blue-marker', blueMarker.data);
-    const orangeMarker = await map.loadImage('/assets/icon/marker-icon2.png');
-    map.addImage('orange-marker', orangeMarker.data);
-
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
@@ -519,7 +517,22 @@ const initializeMap = (
         ]
       }
     });
-    // let hoverStateMarkerPolygon: boolean | any = false;
+
+    /**
+     * This is to work around an async quirk in maplibre-gl.
+     * Use React hooks to force maplibre to refresh the plans and projects
+     * layers once the images are loaded. This only seems to be a thing with
+     * image icons styling for geojson points.
+     */
+    const blueMarkerFile = await map.loadImage('/assets/icon/marker-icon.png');
+    setBlueMarker(blueMarkerFile.data);
+    map.addImage('blue-marker', blueMarkerFile.data);
+
+    const orangeMarkerFile = await map.loadImage('/assets/icon/marker-icon2.png');
+    setOrangeMarker(orangeMarkerFile.data);
+    map.addImage('orange-marker', orangeMarkerFile.data);
+
+    // Hover over polygons
     map
       .on('mouseenter', 'markerPolygon', (e: any) => {
         map.getCanvas().style.cursor = 'pointer';
@@ -715,7 +728,6 @@ const initializeMap = (
  */
 const checkLayerVisibility = (layers: any, features: any) => {
   if (!map) return; // Exist if map is not initialized
-  console.log('checkLayerVisibility', layers);
 
   Object.keys(layers).forEach((layer) => {
     // The boundary layer is simple enough.
@@ -845,6 +857,20 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setTooltipY
   };
 
+  /**
+   * Maplibre has some quirky behavour with loading images, so
+   * use React to manage the state.
+   */
+  const [blueMarker, setBlueMarker] = useState<any>();
+  const [orangeMarker, setOrangeMarker] = useState<any>();
+
+  const markerState = {
+    blueMarker,
+    setBlueMarker,
+    orangeMarker,
+    setOrangeMarker
+  };
+
   // Update the map if the features change
   useEffect(() => {
     initializeMap(
@@ -855,7 +881,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       layerVisibility,
       centroids,
       tooltipState,
-      activeFeatureState
+      activeFeatureState,
+      markerState
     );
   }, [features]);
 
@@ -866,12 +893,12 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     } else {
       checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
     }
-  }, [layerVisibility]);
+  }, [layerVisibility, blueMarker, orangeMarker]);
 
   // Testing a fix for the layer visibility
-  setTimeout(() => {
-    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
-  }, 1000);
+  // setTimeout(() => {
+  //   checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
+  // }, 1000);
 
   // Listen for masks being turned on and off
   useEffect(() => {
