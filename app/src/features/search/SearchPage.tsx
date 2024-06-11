@@ -25,25 +25,8 @@ const SearchPage: React.FC = () => {
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
-  // const showFilterErrorDialog = useCallback(
-  //   (textDialogProps?: Partial<IErrorDialogProps>) => {
-  //     dialogContext.setErrorDialog({
-  //       onClose: () => {
-  //         dialogContext.setErrorDialog({ open: false });
-  //       },
-  //       onOk: () => {
-  //         dialogContext.setErrorDialog({ open: false });
-  //       },
-  //       ...textDialogProps,
-  //       open: true
-  //     });
-  //   },
-  //   [dialogContext]
-  // );
-
   const getSearchResults = useCallback(async () => {
     try {
-      console.log('keycloakWrapper', keycloakWrapper);
       const response = isAuthenticated(keycloakWrapper)
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();

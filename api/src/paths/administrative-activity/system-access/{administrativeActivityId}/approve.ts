@@ -121,6 +121,8 @@ export function approveAccessRequest(): RequestHandler {
     const connection = getDBConnection(req['keycloak_token']);
 
     try {
+      await connection.open();
+
       const userService = new UserService(connection);
       const administrativeActivityService = new AdministrativeActivityService(connection);
 

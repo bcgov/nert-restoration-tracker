@@ -713,7 +713,7 @@ NOTE: there are conceptual problems with associating permits to projects early i
 ;
 
 -- 
--- TABLE: objectives 
+-- TABLE: objective 
 --
 
 CREATE TABLE objective(
@@ -733,7 +733,7 @@ COMMENT ON COLUMN objective.objective_id IS 'System generated surrogate primary 
 ;
 COMMENT ON COLUMN objective.project_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN objective.objective IS 'Project or plan objective'
+COMMENT ON COLUMN objective.objective IS 'Project objective'
 ;
 COMMENT ON COLUMN objective.create_date IS 'The datetime the record was created.'
 ;
@@ -745,7 +745,43 @@ COMMENT ON COLUMN objective.update_user IS 'The id of the user who updated the r
 ;
 COMMENT ON COLUMN objective.revision_count IS 'Revision count used for concurrency control.'
 ;
-COMMENT ON TABLE objective IS 'Provides project objectives.'
+COMMENT ON TABLE objective IS 'Stores project objectives.'
+;
+
+-- 
+-- TABLE: conservation_area 
+--
+
+CREATE TABLE conservation_area(
+    conservation_area_id         integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    project_id                   integer,
+    conservation_area            varchar(200)      NOT NULL,
+    create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                  integer           NOT NULL,
+    update_date                  timestamptz(6),
+    update_user                  integer,
+    revision_count               integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT conservation_area_pk PRIMARY KEY (conservation_area_id)
+)
+;
+
+COMMENT ON COLUMN conservation_area.conservation_area_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN conservation_area.project_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN conservation_area.conservation_area IS 'Project conservation_area'
+;
+COMMENT ON COLUMN conservation_area.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN conservation_area.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN conservation_area.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN conservation_area.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN conservation_area.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE conservation_area IS 'Stores project conservation areas.'
 ;
 
 -- 
@@ -2064,12 +2100,24 @@ CREATE INDEX "Ref1330" ON partnership(project_id)
 CREATE UNIQUE INDEX objective_uk1 ON objective(objective, project_id)
 ;
 
-
 -- 
 -- INDEX: "IX_objective_objective" 
 --
 
 CREATE INDEX "IX_objective_objective" ON objective(project_id)
+;
+-- 
+-- INDEX: conservation_area_uk1 
+--
+
+CREATE UNIQUE INDEX conservation_area_uk1 ON conservation_area(conservation_area, project_id)
+;
+
+-- 
+-- INDEX: "IX_conservation_area_conservation_area" 
+--
+
+CREATE INDEX "IX_conservation_area_conservation_area" ON conservation_area(project_id)
 ;
 -- 
 -- INDEX: system_constant_uk1 
@@ -2361,6 +2409,16 @@ ALTER TABLE partnership ADD CONSTRAINT "Refproject30"
 --
 
 ALTER TABLE objective ADD CONSTRAINT "Refproject18790" 
+    FOREIGN KEY (project_id)
+    REFERENCES project(project_id)
+;
+
+
+-- 
+-- TABLE: conservation_area 
+--
+
+ALTER TABLE conservation_area ADD CONSTRAINT "Refproject18800" 
     FOREIGN KEY (project_id)
     REFERENCES project(project_id)
 ;

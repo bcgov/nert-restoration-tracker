@@ -3,7 +3,6 @@ import { IDBConnection } from '../database/db';
 import {
   AdministrativeActivityRepository,
   IAdministrativeActivity,
-  IAdministrativeActivityStanding,
   ICreateAdministrativeActivity
 } from '../repositories/administrative-activity-repository';
 import { DBService } from './service';
@@ -89,10 +88,10 @@ export class AdministrativeActivityService extends DBService {
    * Fetch an existing administrative activity record for a user, based on their user GUID.
    *
    * @param {string} userGUID
-   * @return {*}  {(Promise<IAdministrativeActivityStanding[]>)}
+   * @return {*}  {Promise<number>}
    * @memberof AdministrativeActivityService
    */
-  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding[]> {
-    return this.administrativeActivityRepository.getAdministrativeActivityStanding(userGUID);
+  async countPendingAdministrativeActivities(userGUID: string): Promise<number> {
+    return this.administrativeActivityRepository.countPendingAdministrativeActivities(userGUID);
   }
 }

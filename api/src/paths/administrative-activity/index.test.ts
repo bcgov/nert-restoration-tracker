@@ -126,7 +126,7 @@ describe('getPendingAccessRequestsCount', () => {
       }
     });
 
-    sinon.stub(AdministrativeActivityService.prototype, 'getAdministrativeActivityStanding').resolves([]);
+    sinon.stub(AdministrativeActivityService.prototype, 'countPendingAdministrativeActivities').resolves(0);
 
     const result = administrative_activity.getPendingAccessRequestsCount();
 
@@ -145,9 +145,7 @@ describe('getPendingAccessRequestsCount', () => {
       }
     });
 
-    sinon
-      .stub(AdministrativeActivityService.prototype, 'getAdministrativeActivityStanding')
-      .resolves([{ id: 1 } as any]);
+    sinon.stub(AdministrativeActivityService.prototype, 'countPendingAdministrativeActivities').resolves(1);
 
     const result = administrative_activity.getPendingAccessRequestsCount();
 

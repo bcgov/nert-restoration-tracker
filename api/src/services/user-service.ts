@@ -104,7 +104,7 @@ export class UserService extends DBService {
       ? await this.getUserByGuid(userGuid)
       : await this.getUserByIdentifier(userIdentifier, identitySource);
 
-    if (!userObject) {
+    if (!userObject || !userObject.id) {
       // Id of the current authenticated user
       const systemUserId = this.connection.systemUserId();
 
