@@ -172,56 +172,28 @@ export class AdministrativeActivityRepository extends BaseRepository {
   /**
    * SQL query to count pending records in the administrative_activity table for a given user GUID
    *
-   * @param {string} userGUID
-   * @return {*}  {(Promise<IAdministrativeActivityStanding[]>)}
+   *
+   * @param {string} userIdentifier
+   * @return {*}  {Promise<number>}
    * @memberof AdministrativeActivityRepository
    */
-  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding[]> {
+  async countPendingAdministrativeActivities(userIdentifier: string): Promise<number> {
     const sqlStatement = SQL`
-      WITH
-        administrative_activity_with_status
-      AS (
-        SELECT
-          CASE
-            WHEN COUNT(*) > 0 THEN TRUE
-            ELSE FALSE
-          END AS has_pending_access_request
-        FROM
-          administrative_activity aa
-        LEFT OUTER JOIN
-          administrative_activity_status_type aast
-        ON
-          aa.administrative_activity_status_type_id = aast.administrative_activity_status_type_id
-        WHERE
-            LOWER(aa.data ->> 'userGuid') =  LOWER(${userGUID})
-        AND
-          aast.name = 'Pending'
-      ),
-        system_user_project_roles
-      AS (
-        SELECT
-          CASE
-            WHEN COUNT(*) > 0 THEN TRUE
-            ELSE FALSE
-          END AS has_one_or_more_project_roles
-        FROM
-          project_participation pp
-        LEFT JOIN
-          system_user su 
-        ON
-          pp.system_user_id = su.system_user_id 
-        WHERE
-          LOWER(su.user_guid) = LOWER(${userGUID})
-      ) SELECT
-        *
+      SELECT *
       FROM
-        administrative_activity_with_status,
-        system_user_project_roles;
+        administrative_activity aa
+      LEFT OUTER JOIN
+        administrative_activity_status_type aast
+      ON
+        aa.administrative_activity_status_type_id = aast.administrative_activity_status_type_id
+        WHERE
+        (aa.data -> 'username')::text =  '"' || ${userIdentifier} || '"'
+      AND aast.name = 'Pending';
     `;
 
     const response = await this.connection.sql(sqlStatement);
 
-    return response.rows;
+    return response.rowCount || 0;
   }
 
   /**
@@ -252,12 +224,6 @@ export class AdministrativeActivityRepository extends BaseRepository {
         administrative_activity_id = ${administrativeActivityId};
     `;
 
-    const response = await this.connection.sql(sqlStatement);
-
-    if (response.rowCount !== 1) {
-      throw new ApiExecuteSQLError('Failed to update administrative activity record', [
-        'AdministrativeActivityRepository->putAdministrativeActivity'
-      ]);
-    }
+    await this.connection.sql(sqlStatement);
   }
 }

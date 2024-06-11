@@ -72,7 +72,7 @@ describe('AdministrativeActivityRepository', () => {
     });
   });
 
-  describe('getAdministrativeActivityStanding', () => {
+  describe('countPendingAdministrativeActivities', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -87,9 +87,9 @@ describe('AdministrativeActivityRepository', () => {
 
       const administrativeActivityRepository = new AdministrativeActivityRepository(mockDBConnection);
 
-      const response = await administrativeActivityRepository.getAdministrativeActivityStanding('guid');
+      const response = await administrativeActivityRepository.countPendingAdministrativeActivities('guid');
 
-      expect(response).to.deep.equal([]);
+      expect(response).to.deep.equal(0);
     });
   });
 
