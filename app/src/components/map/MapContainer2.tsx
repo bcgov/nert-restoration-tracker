@@ -715,6 +715,7 @@ const initializeMap = (
  */
 const checkLayerVisibility = (layers: any, features: any) => {
   if (!map) return; // Exist if map is not initialized
+  console.log('checkLayerVisibility', layers);
 
   Object.keys(layers).forEach((layer) => {
     // The boundary layer is simple enough.
@@ -866,6 +867,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
     }
   }, [layerVisibility]);
+
+  // Testing a fix for the layer visibility
+  setTimeout(() => {
+    checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
+  }, 1000);
 
   // Listen for masks being turned on and off
   useEffect(() => {
