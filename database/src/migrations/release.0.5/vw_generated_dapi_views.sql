@@ -13,6 +13,7 @@
  create or replace view nrm_region as select * from restoration.nrm_region;
  create or replace view permit as select * from restoration.permit;
  create or replace view objective as select * from restoration.objective;
+ create or replace view conservation_area as select * from restoration.conservation_area;
  create or replace view project as select * from restoration.project;
  create or replace view project_attachment as select * from restoration.project_attachment;
  create or replace view project_caribou_population_unit as select * from restoration.project_caribou_population_unit;
@@ -31,10 +32,6 @@
  create or replace view system_role as select * from restoration.system_role;
  create or replace view system_user as select * from restoration.system_user;
  create or replace view system_user_role as select * from restoration.system_user_role;
- create or replace view treatment as select * from restoration.treatment;
- create or replace view treatment_treatment_type as select * from restoration.treatment_treatment_type;
- create or replace view treatment_type as select * from restoration.treatment_type;
- create or replace view treatment_unit as select * from restoration.treatment_unit;
  create or replace view user_identity_source as select * from restoration.user_identity_source;
  create or replace view webform_draft as select * from restoration.webform_draft;
  create or replace view wldtaxonomic_units as select * from restoration.wldtaxonomic_units;

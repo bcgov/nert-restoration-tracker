@@ -18,16 +18,10 @@ $$
 --                  2021-06-21  added delete survey
 -- Kjartan.Einarsson@quartech.com
 --                  2022-02-25  added delete species
--- charlie.garrettjones@quartech.com
---                  2022-03-03  added delete treatment treatment types
 -- *******************************************************************
 declare
 
 begin
-  delete from treatment_treatment_type where treatment_id in (select treatment_id from treatment where treatment_unit_id in (select treatment_unit_id from treatment_unit where project_id = p_project_id));
-  delete from treatment where treatment_unit_id in (select treatment_unit_id from treatment_unit where project_id = p_project_id);
-  delete from treatment_unit where project_id = p_project_id;
-
   delete from permit where project_id = p_project_id;
   delete from project_spatial_component where project_id = p_project_id;
   delete from partnership where project_id = p_project_id;

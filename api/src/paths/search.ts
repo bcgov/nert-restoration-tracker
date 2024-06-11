@@ -2,10 +2,9 @@ import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../constants/roles';
 import { getDBConnection } from '../database/db';
-import { HTTP400 } from '../errors/custom-error';
-import { queries } from '../queries/queries';
 import { authorizeRequestHandler } from '../request-handlers/security/authorization';
 import { AuthorizationService } from '../services/authorization-service';
+import { ProjectService } from '../services/project-service';
 import { getLogger } from '../utils/logger';
 
 const defaultLog = getLogger('paths/search');
@@ -78,24 +77,17 @@ export function getSearchResults(): RequestHandler {
         req['system_user']['role_names']
       );
 
-      const getSpatialSearchResultsSQLStatement = queries.search.getSpatialSearchResultsSQL(isUserAdmin, systemUserId);
+      const projectService = new ProjectService(connection);
 
-      if (!getSpatialSearchResultsSQLStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
-
-      const response = await connection.query(
-        getSpatialSearchResultsSQLStatement.text,
-        getSpatialSearchResultsSQLStatement.values
-      );
+      const response = await projectService.getSpatialSearch(isUserAdmin, systemUserId);
 
       await connection.commit();
 
-      if (!response || !response.rows) {
+      if (!response) {
         return res.status(200).json(null);
       }
 
-      const result: any[] = _extractResults(response.rows);
+      const result: any[] = _extractResults(response);
 
       return res.status(200).json(result);
     } catch (error) {

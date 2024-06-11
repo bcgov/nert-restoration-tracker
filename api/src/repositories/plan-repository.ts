@@ -47,7 +47,6 @@ export class PlanRepository extends BaseRepository {
    * @memberof PlanRepository
    */
   async insertPlan(plan: PostPlanData): Promise<{ project_id: number }> {
-    console.log('plan', plan);
     defaultLog.debug({ label: 'insertPlan', message: 'params', plan });
 
     try {

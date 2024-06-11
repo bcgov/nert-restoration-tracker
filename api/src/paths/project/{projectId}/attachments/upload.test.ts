@@ -80,24 +80,17 @@ describe('uploadMedia', () => {
     }
   });
 
-  it('should throw a 400 error when file format incorrect', async () => {
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      }
-    });
-
-    sinon.stub(file_utils, 'scanFileForVirus').resolves(true);
+  it('should throw an error when body is missing', async () => {
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
 
     try {
       const result = upload.uploadAttachment();
 
-      await result({ ...mockReq, files: ['file1'] }, null as unknown as any, null as unknown as any);
+      await result({ ...mockReq, body: null }, null as unknown as any, null as unknown as any);
       expect.fail();
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
+      expect((actualError as HTTPError).message).to.equal('Missing request body');
     }
   });
 
@@ -138,5 +131,26 @@ describe('uploadMedia', () => {
     await result(mockReq, mockRes as any, null as unknown as any);
 
     expect(actualResult).to.eql({ id: 1, revision_count: 0 });
+  });
+
+  it('catches and returns a 500 error', async () => {
+    sinon.stub(db, 'getDBConnection').returns({
+      ...dbConnectionObj,
+      systemUserId: () => {
+        return 20;
+      }
+    });
+
+    sinon.stub(file_utils, 'scanFileForVirus').resolves(true);
+    sinon.stub(AttachmentService.prototype, 'uploadMedia').throws(new Error('An error occurred'));
+
+    try {
+      const result = upload.uploadAttachment();
+
+      await result(mockReq, mockRes as any, null as unknown as any);
+      expect.fail();
+    } catch (actualError) {
+      expect((actualError as HTTPError).message).to.equal('An error occurred');
+    }
   });
 });

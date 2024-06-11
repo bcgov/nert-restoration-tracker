@@ -242,7 +242,6 @@ export function getPublicPlansList(): RequestHandler {
     const connection = getAPIUserDBConnection();
 
     const searchCriteria: ProjectSearchCriteria = req.query || {};
-    console.log('searchCriteria', searchCriteria);
 
     try {
       await connection.open();

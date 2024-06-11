@@ -2,11 +2,8 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
 import { getMockDBConnection } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
-import { HTTPError } from '../../../errors/custom-error';
-import draft_queries from '../../../queries/project/draft';
 import * as viewDraftProject from './get';
 
 chai.use(sinonChai);
@@ -38,24 +35,19 @@ describe('gets a draft project', () => {
     sinon.restore();
   });
 
-  it('should throw a 400 error when no sql statement returned for getDraftSQL', async () => {
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      }
-    });
-
-    sinon.stub(draft_queries, 'getDraftSQL').returns(null);
+  it('catches and rethrows errors', async () => {
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
 
     try {
+      sinon.stub(dbConnectionObj, 'query').rejects(new Error('An error occurred'));
+
       const result = viewDraftProject.getSingleDraft();
 
-      await result(sampleReq, null as unknown as any, null as unknown as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+
       expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
+    } catch (actualError: any) {
+      expect(actualError.message).to.equal('An error occurred');
     }
   });
 
@@ -71,8 +63,6 @@ describe('gets a draft project', () => {
       },
       query: mockQuery
     });
-
-    sinon.stub(draft_queries, 'getDraftSQL').returns(SQL`something`);
 
     const result = viewDraftProject.getSingleDraft();
 
@@ -93,8 +83,6 @@ describe('gets a draft project', () => {
       },
       query: mockQuery
     });
-
-    sinon.stub(draft_queries, 'getDraftSQL').returns(SQL`something`);
 
     const result = viewDraftProject.getSingleDraft();
 

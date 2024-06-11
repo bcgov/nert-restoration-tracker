@@ -1,9 +1,8 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
+import SQL from 'sql-template-strings';
 import { SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
-import { HTTP400 } from '../../../errors/custom-error';
-import { queries } from '../../../queries/queries';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { getLogger } from '../../../utils/logger';
 
@@ -98,11 +97,17 @@ export function getSingleDraft(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     try {
-      const getDraftSQLStatement = queries.project.draft.getDraftSQL(Number(req.params.draftId));
-
-      if (!getDraftSQLStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
+      const getDraftSQLStatement = SQL`
+        SELECT
+          webform_draft_id as id,
+          is_project,
+          name,
+          data
+        FROM
+          webform_draft
+        WHERE
+          webform_draft_id = ${Number(req.params.draftId)};
+      `;
 
       await connection.open();
 

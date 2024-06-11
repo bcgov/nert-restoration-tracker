@@ -1,4 +1,4 @@
-import { CodeSet } from '../services/code-service';
+import { CodeSet } from '../repositories/code-repository';
 
 export const coordinator_agency: CodeSet = [
   { id: 1, name: 'A Rocha Canada' },

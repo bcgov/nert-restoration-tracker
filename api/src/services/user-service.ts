@@ -1,9 +1,24 @@
-import { ApiExecuteSQLError } from '../errors/custom-error';
+import { IDBConnection } from '../database/db';
+import { ApiExecuteSQLError, HTTP400, HTTP500 } from '../errors/custom-error';
 import { ProjectParticipantObject, UserObject } from '../models/user';
-import { queries } from '../queries/queries';
+import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
+import { UserRepository } from '../repositories/user-repository';
+import { doAllProjectsHaveAProjectLead } from '../utils/user-utils';
+import { ProjectService } from './project-service';
 import { DBService } from './service';
 
 export class UserService extends DBService {
+  userRepository: UserRepository;
+  projectParticipationRepository: ProjectParticipationRepository;
+  projectService: ProjectService;
+
+  constructor(connection: IDBConnection) {
+    super(connection);
+    this.userRepository = new UserRepository(connection);
+    this.projectParticipationRepository = new ProjectParticipationRepository(connection);
+    this.projectService = new ProjectService(connection);
+  }
+
   /**
    * Fetch a single system user by their ID.
    *
@@ -12,18 +27,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async getUserById(systemUserId: number): Promise<UserObject> {
-    const sqlStatement = queries.users.getUserByIdSQL(systemUserId);
+    const response = await this.userRepository.getUserById(systemUserId);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (response.rowCount !== 1) {
-      throw new ApiExecuteSQLError('Failed to fetch system user', [
-        'UserService->getUserById',
-        'rowCount was null or undefined, expected rowCount = 1'
-      ]);
-    }
-
-    return new UserObject(response.rows[0]);
+    return new UserObject(response);
   }
 
   /**
@@ -34,11 +40,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async getUserByGuid(userGuid: string): Promise<UserObject | null> {
-    const sqlStatement = queries.users.getUserByGuid(userGuid);
+    const response = await this.userRepository.getUserByGuid(userGuid);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response?.rows?.[0] && new UserObject(response.rows[0])) || null;
+    return new UserObject(response);
   }
 
   /**
@@ -50,11 +54,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async getUserByIdentifier(userIdentifier: string, identitySource: string): Promise<UserObject | null> {
-    const sqlStatement = queries.users.getUserByUserIdentifierSQL(userIdentifier, identitySource);
+    const response = await this.userRepository.getUserByUserIdentifier(userIdentifier, identitySource);
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    return (response?.rows?.[0] && new UserObject(response.rows[0])) || null;
+    return new UserObject(response);
   }
 
   /**
@@ -69,17 +71,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async addSystemUser(userGuid: string | null, userIdentifier: string, identitySource: string): Promise<UserObject> {
-    const addSystemUserSQLStatement = queries.users.addSystemUserSQL(userGuid, userIdentifier, identitySource);
+    const response = await this.userRepository.addSystemUser(userGuid, userIdentifier, identitySource);
 
-    const response = await this.connection.query(addSystemUserSQLStatement.text, addSystemUserSQLStatement.values);
-
-    const userObject = (response?.rows?.[0] && new UserObject(response.rows[0])) || null;
-
-    if (!userObject) {
-      throw new ApiExecuteSQLError('Failed to insert system user');
-    }
-
-    return userObject;
+    return new UserObject(response);
   }
 
   /**
@@ -89,14 +83,9 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async listSystemUsers(): Promise<UserObject[]> {
-    const getUserListSQLStatement = queries.users.getUserListSQL();
+    const response = await this.userRepository.getUserList();
 
-    const getUserListResponse = await this.connection.query(
-      getUserListSQLStatement.text,
-      getUserListSQLStatement.values
-    );
-
-    return getUserListResponse.rows.map((row) => new UserObject(row));
+    return response.map((row) => new UserObject(row));
   }
 
   /**
@@ -115,7 +104,7 @@ export class UserService extends DBService {
       ? await this.getUserByGuid(userGuid)
       : await this.getUserByIdentifier(userIdentifier, identitySource);
 
-    if (!userObject) {
+    if (!userObject || !userObject.id) {
       // Id of the current authenticated user
       const systemUserId = this.connection.systemUserId();
 
@@ -147,13 +136,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async activateSystemUser(systemUserId: number) {
-    const sqlStatement = queries.users.activateSystemUserSQL(systemUserId);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to activate system user');
-    }
+    await this.userRepository.activateSystemUser(systemUserId);
   }
 
   /**
@@ -164,13 +147,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async deactivateSystemUser(systemUserId: number) {
-    const sqlStatement = queries.users.deactivateSystemUserSQL(systemUserId);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to deactivate system user');
-    }
+    await this.userRepository.deactivateSystemUser(systemUserId);
   }
 
   /**
@@ -180,13 +157,17 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async deleteUserSystemRoles(systemUserId: number) {
-    const sqlStatement = queries.users.deleteAllSystemRolesSQL(systemUserId);
+    await this.userRepository.deleteUserSystemRoles(systemUserId);
+  }
 
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to delete user system roles');
-    }
+  /**
+   * Delete all project roles for the user.
+   *
+   * @param {number} systemUserId
+   * @memberof UserService
+   */
+  async deleteAllProjectRoles(systemUserId: number) {
+    await this.userRepository.deleteAllProjectRoles(systemUserId);
   }
 
   /**
@@ -197,13 +178,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async addUserSystemRoles(systemUserId: number, roleIds: number[]) {
-    const sqlStatement = queries.users.postSystemRolesSQL(systemUserId, roleIds);
-
-    const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-    if (!response.rowCount) {
-      throw new ApiExecuteSQLError('Failed to insert user system roles');
-    }
+    await this.userRepository.postSystemRoles(systemUserId, roleIds);
   }
 
   /**
@@ -214,11 +189,95 @@ export class UserService extends DBService {
    * @return {*}  {Promise<ProjectParticipantObject[]>}
    * @memberof UserService
    */
-  async getUserProjectParticipation(systemUserId: number, projectId?: number): Promise<ProjectParticipantObject[]> {
-    const sqlStatement = queries.projectParticipation.getAllUserProjectsSQL(systemUserId, projectId);
+  async getUserProjectParticipation(systemUserId: number): Promise<ProjectParticipantObject[]> {
+    const response = await this.projectParticipationRepository.getAllUserProjects(systemUserId);
 
-    const response = await this.connection.sql(sqlStatement);
+    return response.map((item) => new ProjectParticipantObject(item));
+  }
 
-    return response.rows.map((item) => new ProjectParticipantObject(item));
+  /**
+   * handle delete system user
+   *
+   * @param {number} systemUserId
+   * @memberof UserService
+   */
+  async handleDeleteSystemUser(systemUserId: number) {
+    const usrObject = await this.getUserById(systemUserId);
+
+    if (usrObject.record_end_date) {
+      throw new HTTP400('The system user is not active');
+    }
+
+    await this.deleteAllProjectRoles(systemUserId);
+
+    await this.deleteUserSystemRoles(systemUserId);
+
+    await this.deactivateSystemUser(systemUserId);
+  }
+
+  /**
+   * handle delete project participant
+   *
+   * @param {number} projectParticipationId
+   * @param {number} projectId
+   * @memberof UserService
+   */
+  async handleDeleteProjectParticipant(projectParticipationId: number, projectId: number) {
+    // Check project lead roles before deleting user
+    const projectParticipantsResponse1 = await this.projectService.getProjectParticipants(Number(projectId));
+    const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
+
+    const result = await this.projectService.deleteProjectParticipationRecord(Number(projectParticipationId));
+
+    if (!result || !result.system_user_id) {
+      // The delete result is missing necesary data, fail the request
+      throw new HTTP500('Failed to delete project participant');
+    }
+
+    // If Project Lead roles are invalide skip check to prevent removal of only Project Lead of project
+    // (Project is already missing Project Lead and is in a bad state)
+    if (projectHasLeadResponse1) {
+      const projectParticipantsResponse2 = await this.projectService.getProjectParticipants(Number(projectId));
+      const projectHasLeadResponse2 = doAllProjectsHaveAProjectLead(projectParticipantsResponse2);
+
+      if (!projectHasLeadResponse2) {
+        throw new HTTP400('Cannot delete project user. User is the only Project Lead for the project.');
+      }
+    }
+  }
+
+  /**
+   * handle update project participant role
+   *
+   * @param {number} projectParticipationId
+   * @param {number} projectId
+   * @param {number} roleId
+   * @memberof UserService
+   */
+  async handleUpdateProjectParticipantRole(projectParticipationId: number, projectId: number, roleId: number) {
+    // Check project lead roles before updating user
+    const projectParticipantsResponse1 = await this.projectService.getProjectParticipants(projectId);
+    const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
+
+    // Delete the user's old participation record, returning the old record
+    const result = await this.projectService.deleteProjectParticipationRecord(projectParticipationId);
+
+    if (!result || !result.system_user_id) {
+      // The delete result is missing necessary data, fail the request
+      throw new HTTP500('Failed to update project participant role');
+    }
+
+    await this.projectService.addProjectParticipant(projectId, result.system_user_id, roleId);
+
+    // If Project Lead roles are invalid skip check to prevent removal of only Project Lead of project
+    // (Project is already missing Project Lead and is in a bad state)
+    if (projectHasLeadResponse1) {
+      const projectParticipantsResponse2 = await this.projectService.getProjectParticipants(projectId);
+      const projectHasLeadResponse2 = doAllProjectsHaveAProjectLead(projectParticipantsResponse2);
+
+      if (!projectHasLeadResponse2) {
+        throw new HTTP400('Cannot update project user. User is the only Project Lead for the project.');
+      }
+    }
   }
 }
