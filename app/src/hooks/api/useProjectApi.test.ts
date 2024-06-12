@@ -153,7 +153,9 @@ describe('useProjectApi', () => {
   });
 
   it('createProject works as expected', async () => {
-    const projectData = {} as unknown as ICreateProjectRequest;
+    const projectData = {
+      project: { project_image: undefined, image_url: undefined, image_key: undefined }
+    } as unknown as ICreateProjectRequest;
 
     mock.onPost('/api/project/create').reply(200, {
       id: 1
@@ -315,7 +317,7 @@ describe('usePublicProjectApi', () => {
 
     const result = await useProjectApi(axios).getProjectAttachments(
       projectId,
-      attachmentType.ATTACHMENTS
+      S3FileType.ATTACHMENTS
     );
 
     expect(result.attachmentsList).toEqual([
