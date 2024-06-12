@@ -26,12 +26,13 @@ export class AttachmentService extends DBService {
   async insertProjectAttachment(
     projectId: number,
     s3Key: string,
-    file: Express.Multer.File,
+    fileName: string,
+    fileSize: number,
     attachmentType: S3FileType
   ): Promise<{ id: number; revision_count: number }> {
     const response = await this.attachmentRepository.insertProjectAttachment(
-      file.originalname,
-      file.size,
+      fileName,
+      fileSize,
       projectId,
       s3Key,
       attachmentType
@@ -80,7 +81,7 @@ export class AttachmentService extends DBService {
   ): Promise<{ id: number; revision_count: number }> {
     const response = (await this.fileWithSameNameExist(projectId, file))
       ? this.updateProjectAttachment(projectId, file)
-      : this.insertProjectAttachment(projectId, s3Key, file, attachmentType);
+      : this.insertProjectAttachment(projectId, s3Key, file.originalname, file.size, attachmentType);
 
     await uploadFileToS3(file, s3Key, metadata);
 

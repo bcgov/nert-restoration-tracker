@@ -273,18 +273,29 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      // Remove empty partnerships
       projectPostObject.partnership.partnerships =
         projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
+
+      // Confirm that the project is not a draft
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
+
+      // Set size_ha to 0 if it is not set
       projectPostObject.location.size_ha = projectPostObject.location.size_ha
         ? projectPostObject.location.size_ha
         : 0;
+
+      // Set the state code to the correct value for a project being created
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
-      const response = await restorationTrackerApi.project.createProject(projectPostObject);
-      if (!response?.id) {
+
+      // Create the project
+      const createProjectResponse =
+        await restorationTrackerApi.project.createProject(projectPostObject);
+
+      if (!createProjectResponse?.id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a project ID.'
         });
@@ -295,7 +306,7 @@ const CreateProjectPage: React.FC = () => {
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
       keycloakWrapper?.refresh();
-      history(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${createProjectResponse.id}`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',

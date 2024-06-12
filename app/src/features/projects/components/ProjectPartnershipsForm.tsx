@@ -78,11 +78,13 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
 const ProjectPartnershipsForm: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectPartnershipsForm>();
 
+  if (!values || !values.partnership || !values.partnership.partnerships) return null;
+
   return (
     <>
       <FieldArray
         name="partnership.partnerships"
-        render={(arrayHelpers: any) => (
+        render={(arrayHelpers) => (
           <>
             {values.partnership.partnerships?.map((partnership, index) => {
               const partnershipMeta = getFieldMeta(

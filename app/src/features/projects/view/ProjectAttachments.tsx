@@ -5,6 +5,7 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
+import { S3FileType } from 'constants/attachments';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
   IGetProjectAttachment,
@@ -38,6 +39,7 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
       return restorationTrackerApi.project.uploadProjectAttachments(
         projectId,
         file,
+        S3FileType.ATTACHMENTS,
         cancelToken,
         handleFileUploadProgress
       );

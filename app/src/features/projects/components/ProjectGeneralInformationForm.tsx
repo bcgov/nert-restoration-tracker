@@ -24,7 +24,9 @@ export interface IProjectGeneralInformationForm {
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
     people_involved: number | null;
-    project_image: string;
+    project_image?: File | null;
+    image_url?: string;
+    image_key?: string;
   };
 }
 
@@ -43,7 +45,9 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     is_land_initiative: false,
     is_cultural_initiative: false,
     people_involved: null,
-    project_image: ''
+    project_image: null,
+    image_url: '',
+    image_key: ''
   }
 };
 

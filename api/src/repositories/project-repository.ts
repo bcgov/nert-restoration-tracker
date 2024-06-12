@@ -1069,13 +1069,6 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert project region', [
-          'ProjectRepository->insertProjectRegion',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
       const result = (response && response.rows && response.rows[0]) || null;
 
       return result;

@@ -1,36 +1,31 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../../constants/roles';
+import { SYSTEM_ROLE } from '../../../../constants/roles';
 import { getDBConnection } from '../../../../database/db';
 import { HTTP400 } from '../../../../errors/custom-error';
+import { DraftRepository } from '../../../../repositories/draft-repository';
 import { authorizeRequestHandler } from '../../../../request-handlers/security/authorization';
-import { AttachmentService } from '../../../../services/attachment-service';
-import { generateS3FileKey, scanFileForVirus } from '../../../../utils/file-utils';
+import { generateDraftS3FileKey, getS3SignedURL, scanFileForVirus, uploadFileToS3 } from '../../../../utils/file-utils';
 import { getLogger } from '../../../../utils/logger';
 
 const defaultLog = getLogger('/api/project/{projectId}/attachments/upload');
 
 export const POST: Operation = [
-  authorizeRequestHandler((req) => {
+  authorizeRequestHandler(() => {
     return {
-      or: [
+      and: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
-        },
-        {
-          validProjectRoles: [PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR],
-          projectId: Number(req.params.projectId),
-          discriminator: 'ProjectRole'
         }
       ]
     };
   }),
-  uploadAttachment()
+  uploadDraftAttachment()
 ];
 POST.apiDoc = {
-  description: 'Upload a project-specific attachment.',
-  tags: ['attachment'],
+  description: 'Upload a draft project-specific attachment.',
+  tags: ['attachment', 'draft'],
   security: [
     {
       Bearer: []
@@ -39,7 +34,7 @@ POST.apiDoc = {
   parameters: [
     {
       in: 'path',
-      name: 'projectId',
+      name: 'draftId',
       required: true
     }
   ],
@@ -66,24 +61,7 @@ POST.apiDoc = {
   },
   responses: {
     200: {
-      description: 'Attachment upload response.',
-      content: {
-        'application/json': {
-          schema: {
-            title: 'Attachment Response Object',
-            type: 'object',
-            required: ['id', 'revision_count'],
-            properties: {
-              id: {
-                type: 'number'
-              },
-              revision_count: {
-                type: 'number'
-              }
-            }
-          }
-        }
-      }
+      description: 'Attachment upload response.'
     },
     401: {
       $ref: '#/components/responses/401'
@@ -102,10 +80,10 @@ POST.apiDoc = {
  *
  * @returns {RequestHandler}
  */
-export function uploadAttachment(): RequestHandler {
+export function uploadDraftAttachment(): RequestHandler {
   return async (req, res) => {
-    if (!req.params.projectId) {
-      throw new HTTP400('Missing projectId');
+    if (!req.params.draftId) {
+      throw new HTTP400('Missing draftId');
     }
     if (!req.files || !req.files.length) {
       throw new HTTP400('Missing upload data');
@@ -114,15 +92,13 @@ export function uploadAttachment(): RequestHandler {
       throw new HTTP400('Missing request body');
     }
 
-    const projectId = Number(req.params.projectId);
+    const draftId = Number(req.params.draftId);
     const rawMediaFile: Express.Multer.File = req.files[0];
     const metadata = {
       filename: rawMediaFile.originalname,
       username: (req['auth_payload'] && req['auth_payload'].preferred_username) || '',
       email: (req['auth_payload'] && req['auth_payload'].email) || ''
     };
-
-    const fileType = req.body.fileType || 'attachments';
 
     const connection = getDBConnection(req['keycloak_token']);
 
@@ -139,19 +115,33 @@ export function uploadAttachment(): RequestHandler {
     try {
       await connection.open();
 
-      const attachmentService = new AttachmentService(connection);
-
-      const s3Key = generateS3FileKey({
-        projectId: projectId,
+      const s3Key = generateDraftS3FileKey({
+        projectId: draftId,
         fileName: rawMediaFile.originalname,
-        fileType: fileType
+        fileType: 'thumbnail'
       });
 
-      const uploadResponse = await attachmentService.uploadMedia(projectId, rawMediaFile, s3Key, fileType, metadata);
+      const draftRepository = new DraftRepository(connection);
+
+      const draft = await draftRepository.getDraft(draftId);
+
+      if (!draft) {
+        throw new HTTP400('Draft not found');
+      }
+
+      await uploadFileToS3(rawMediaFile, s3Key, metadata);
+
+      const s3Url = await getS3SignedURL(s3Key);
+      const updatedDraft = {
+        ...draft,
+        data: { ...draft.data, project: { ...draft.data.project, image_url: s3Url, image_key: s3Key } }
+      };
+
+      await draftRepository.updateDraft(draftId, draft.name, updatedDraft.data);
 
       await connection.commit();
 
-      return res.status(200).json(uploadResponse);
+      return res.status(200).json();
     } catch (error) {
       defaultLog.error({ label: 'uploadMedia', message: 'error', error });
       await connection.rollback();
