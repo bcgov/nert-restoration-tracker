@@ -100,7 +100,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                             <CustomTextField
                               name={`partnership.partnerships.[${index}].partnership`}
                               label="Partnership"
-                              maxLength={100}
+                              maxLength={300}
                               other={{
                                 value: partnership.partnership,
                                 error: partnershipMeta.touched && Boolean(partnershipMeta.error),

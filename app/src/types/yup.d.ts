@@ -107,6 +107,17 @@ declare module 'yup' {
     ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
 
     /**
+     * Determine if the array of conservation areas has duplicate conservation area string
+     *
+     * @param {string} message='Conservation area entries must be unique' - error message if this check fails
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof ArraySchema
+     */
+    isUniqueConservationArea(
+      message: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
      * Determine if the array of objective has duplicate objective string
      *
      * @param {string} message='Objective entries must be unique' - error message if this check fails
