@@ -1700,7 +1700,6 @@ describe('ProjectRepository', () => {
       }
     });
   });
-  
 
   describe('deleteProjectContact', () => {
     afterEach(() => {
