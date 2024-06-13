@@ -2,12 +2,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
+import ProjectContact from 'features/projects/view/components/ProjectContact';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import PublicProjectContact from 'pages/public/components/PublicProjectContact';
 import React from 'react';
-import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import PlanGeneralInformation from './components/PlanGeneralInformation';
-import ProjectContact from 'features/projects/view/components/ProjectContact';
 
 export interface IPlanDetailsProps {
   planForViewData: IGetPlanForViewResponse;

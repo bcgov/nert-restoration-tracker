@@ -1,8 +1,8 @@
 import { mdiAccountCircleOutline } from '@mdi/js';
 import Avatar from '@mui/material/Avatar';
-import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';

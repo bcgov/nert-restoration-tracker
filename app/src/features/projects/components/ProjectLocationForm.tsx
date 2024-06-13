@@ -3,10 +3,8 @@ import Icon from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
@@ -24,6 +22,7 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
+import MapFeatureList from 'components/map/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
@@ -156,38 +155,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    * feature is selected or hovered over
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
-
-  const featureStyle = {
-    parent: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr auto',
-      cursor: 'pointer'
-    }
-  };
-
-  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    // Update the formik values
-    // @ts-ignore
-    values.location.geometry[index].properties.maskedLocation = event.target.checked;
-
-    // Update the local state
-    setMaskState(() => {
-      const newState = [...maskState];
-      newState[index] = event.target.checked;
-      return newState;
-    });
-
-    // Make sure children know what has changed
-    setMask(index);
-  };
-
-  // Highlight the list item and the map feature
-  const mouseEnterListItem = (index: number) => {
-    setActiveFeature(index + 1);
-  };
-  const mouseLeaveListItem = (index: number) => {
-    setActiveFeature(null);
-  };
 
   return (
     <>
@@ -322,34 +289,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
 
         <Box className="feature-box">
-          {/* Create a list element for each feature within values.location.geometry */}
-          {/* TODO: Utilize MUI Components instead of custom divs */}
-          {values.location.geometry.map((feature, index) => (
-            <div
-              style={featureStyle.parent}
-              className={
-                activeFeature === feature.properties?.id ? 'feature-item active' : 'feature-item'
-              }
-              key={index}
-              onMouseEnter={() => mouseEnterListItem(index)}
-              onMouseLeave={() => mouseLeaveListItem(index)}>
-              <div className="feature-name">
-                {feature.properties?.siteName || `Area ${index + 1}`}
-              </div>
-              <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={feature.properties?.maskedLocation || false}
-                      onChange={(event) => maskChanged(event, index)}
-                    />
-                  }
-                  label="Mask"
-                />
-              </FormGroup>
-            </div>
-          ))}
+          <MapFeatureList
+            features={values.location.geometry}
+            mask={[mask, setMask]}
+            maskState={[maskState, setMaskState]}
+            activeFeatureState={[activeFeature, setActiveFeature]}
+          />
         </Box>
 
         <Box height={500}>
