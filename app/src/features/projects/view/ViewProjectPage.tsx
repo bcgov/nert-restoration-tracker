@@ -34,21 +34,10 @@ import { useParams } from 'react-router-dom';
 import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
+import ProjectConservationAreas from 'features/projects/view/components/ProjectConservationAreas';
 import InfoDialog from 'components/dialog/InfoDialog';
 
 const pageStyles = {
-  conservationAreChip: {
-    marginBottom: '2px',
-    justifyContent: 'left'
-  },
-  conservAreaLabel: {
-    color: '#545454',
-    fontSize: '0.78rem',
-    fontWeight: 500,
-    textTransform: 'none',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
   titleContainerActions: {
     '& button + button': {
       marginLeft: '1rem'
@@ -142,14 +131,6 @@ const ViewProjectPage: React.FC = () => {
 
   const closeMapDialog = () => {
     setOpenFullScreen(false);
-  };
-
-  const conservationAreaStyled = (conservationArea: string) => {
-    return (
-      <Typography sx={pageStyles.conservAreaLabel} aria-label={`${conservationArea}`}>
-        {conservationArea}
-      </Typography>
-    );
   };
 
   return (
@@ -347,42 +328,12 @@ const ViewProjectPage: React.FC = () => {
                                     : 'No'}
                               </Typography>
                               {project.location.is_within_overlapping === 'Y' && (
-                                <Box ml={1}>
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 1. String with 100 characters conservation area name1 conservation area name1'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 2. String with 100 characters conservation area name2 conservation area name2'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 3. String with 100 characters conservation area name3 conservation area name3'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 4. String with 100 characters conservation area name4 conservation area name4'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 5. String with 100 characters conservation area name5 conservation area name5'
-                                    )}
-                                  />
+                                <Box
+                                  ml={1}
+                                  display="flex"
+                                  flexDirection={'column'}
+                                  alignItems="left">
+                                  <ProjectConservationAreas projectViewData={project} />
                                 </Box>
                               )}
                             </Box>

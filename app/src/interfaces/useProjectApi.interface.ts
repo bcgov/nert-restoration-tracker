@@ -4,6 +4,7 @@ import { IProjectFocusForm } from 'features/projects/components/ProjectFocusForm
 import { IProjectFundingForm } from 'features/projects/components/ProjectFundingForm';
 import { IProjectGeneralInformationForm } from 'features/projects/components/ProjectGeneralInformationForm';
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
+import { IProjectLocationConservationAreasArrayItem } from 'features/projects/components/ProjectLocationConservationAreasForm';
 import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
 import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';
@@ -258,13 +259,17 @@ export interface IGetProjectForViewResponsePermit {
   permits: IGetProjectForViewResponsePermitArrayItem[];
 }
 
+export interface IGetProjectForViewResponseConservationAreas {
+  conservationAreas: string;
+}
+
 export interface IGetProjectForViewResponseLocation {
   geometry: Feature[];
   is_within_overlapping: string;
   region: number;
   number_sites: number;
   size_ha: number;
-  name_area_conservation_priority: string[];
+  conservationAreas: IGetProjectForViewResponseConservationAreas[];
 }
 
 export interface IGetProjectForViewResponseContactArrayItem {

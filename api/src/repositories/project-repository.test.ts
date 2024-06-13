@@ -1377,7 +1377,7 @@ describe('ProjectRepository', () => {
           region: 1,
           number_sites: 1,
           size_ha: 1,
-          name_area_conservation_priority: []
+          conservationAreas: []
         },
         1
       );
@@ -1403,7 +1403,7 @@ describe('ProjectRepository', () => {
             region: 1,
             number_sites: 1,
             size_ha: 1,
-            name_area_conservation_priority: []
+            conservationAreas: []
           },
           1
         );
@@ -1428,7 +1428,7 @@ describe('ProjectRepository', () => {
             region: 1,
             number_sites: 1,
             size_ha: 1,
-            name_area_conservation_priority: []
+            conservationAreas: []
           },
           1
         );

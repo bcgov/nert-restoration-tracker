@@ -326,11 +326,17 @@ POST.apiDoc = {
                 number_sites: {
                   type: 'number'
                 },
-                name_area_conservation_priority: {
+                conservationAreas: {
                   type: 'array',
+                  additionalProperties: true,
                   items: {
-                    title: 'Cultural or conservation area name',
-                    type: 'string'
+                    title: 'Project conservation areas',
+                    type: 'object',
+                    properties: {
+                      conservationArea: {
+                        type: 'string'
+                      }
+                    }
                   }
                 },
                 geometry: {
@@ -404,7 +410,6 @@ export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     const sanitizedProjectPostData = new PostProjectObject(req.body);
-
     try {
       await connection.open();
 
