@@ -9,6 +9,7 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import { Container } from '@mui/system';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import YesNoDialog from 'components/dialog/YesNoDialog';
@@ -31,28 +32,27 @@ import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
-import PlanGeneralInformationForm, {
-  PlanGeneralInformationFormInitialValues,
-  PlanGeneralInformationFormYupSchema
-} from '../components/PlanGeneralInformationForm';
 import PlanContactForm, {
   PlanContactInitialValues,
   PlanContactYupSchema
 } from '../components/PlanContactForm';
-import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import PlanDraftForm, {
   IPlanDraftForm,
   PlanDraftFormInitialValues,
   PlanDraftFormYupSchema
 } from '../components/PlanDraftForm';
-import { Container } from '@mui/system';
 import PlanFocusForm, {
   PlanFocusFormInitialValues,
   PlanFocusFormYupSchema
 } from '../components/PlanFocusForm';
+import PlanGeneralInformationForm, {
+  PlanGeneralInformationFormInitialValues,
+  PlanGeneralInformationFormYupSchema
+} from '../components/PlanGeneralInformationForm';
 
 const pageStyles = {
   formButtons: {

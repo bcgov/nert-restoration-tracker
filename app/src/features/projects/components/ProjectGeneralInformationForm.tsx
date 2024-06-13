@@ -13,7 +13,7 @@ import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workfl
 import { useFormikContext } from 'formik';
 
 import FileUpload from 'components/attachments/FileUpload';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import yup from 'utils/YupSchema';
 
 import { ConfigContext } from 'contexts/configContext';
@@ -101,7 +101,12 @@ const uploadImageStyles = {
   }
 };
 
-const uploadImage = (setImage): IUploadHandler => {
+// Our type for the image setter
+interface setImageFunction {
+  (image: string): void;
+}
+
+const uploadImage = (setImage: setImageFunction): IUploadHandler => {
   return async (file) => {
     const processImage = (image: any) => {
       const img = new Image();
@@ -142,14 +147,18 @@ const uploadImage = (setImage): IUploadHandler => {
  * @param image Image to delete
  * @param setImage State function to set the image
  */
-const deleteImage = (image, setImage) => {
+const deleteImage = (image: string, setImage: (image: string) => void) => {
   if (image) setImage('');
 };
 
 /**
  * Thumbnail image using MUI Card
  */
-const ThumbnailImageCard = ({ image, setImage }) => {
+interface ThumbnailImageCardProps {
+  image: string;
+  setImage: setImageFunction;
+}
+const ThumbnailImageCard: React.FC<ThumbnailImageCardProps> = ({ image, setImage }) => {
   return (
     <Card sx={uploadImageStyles.thumbnail}>
       <CardMedia component="img" height="200" image={image} alt="Project" />
@@ -179,10 +188,14 @@ const ProjectGeneralInformationForm: React.FC = () => {
 
   const config = useContext(ConfigContext);
 
-  // const { values, setFieldValue, setFieldError } = formikProps;
-  // console.log('values', values);
+  const { setFieldValue } = formikProps;
 
   const [image, setImage] = useState('' as any);
+
+  // When the image is updated make sure to update the formik field
+  useEffect(() => {
+    setFieldValue('project.project_image', image);
+  }, [image]);
 
   return (
     <Grid container spacing={3}>

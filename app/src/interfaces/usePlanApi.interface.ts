@@ -1,4 +1,5 @@
 import { IPlanContactForm } from 'features/plans/components/PlanContactForm';
+import { IPlanFocusForm } from 'features/plans/components/PlanFocusForm';
 import { IPlanGeneralInformationForm } from 'features/plans/components/PlanGeneralInformationForm';
 import { IPlanLocationForm } from 'features/plans/components/PlanLocationForm';
 import {
@@ -6,7 +7,6 @@ import {
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseLocation
 } from './useProjectApi.interface';
-import { IPlanFocusForm } from 'features/plans/components/PlanFocusForm';
 
 // [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
