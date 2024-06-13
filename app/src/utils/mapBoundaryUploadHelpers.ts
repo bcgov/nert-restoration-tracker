@@ -166,6 +166,11 @@ export const calculateUpdatedMapBounds = (
   return latLngBoundsFromBoundingBox(bboxCoords);
 };
 
+export interface IGeometryCollection {
+  geometryCollection: Feature[];
+  bounds?: number[][];
+}
+
 /*
   Leaflet does not know how to draw Multipolygons or GeometryCollections
   that are not in proper GeoJSON format so we manually convert to a Feature[]
@@ -174,9 +179,12 @@ export const calculateUpdatedMapBounds = (
 
   We also set the bounds based on those geometries so the extent is set
 */
-export const generateValidGeometryCollection = (geometry: GeoJSON[], id?: string) => {
+export const generateValidGeometryCollection = (
+  geometry: GeoJSON[],
+  id?: string
+): IGeometryCollection => {
   const geometryCollection: Feature[] = [];
-  const bounds: any[] = [];
+  const bounds: number[][] = [];
 
   if (!geometry || !geometry.length) {
     return { geometryCollection, bounds };

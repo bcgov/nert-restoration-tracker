@@ -26,10 +26,11 @@ import MapContainer from 'components/map/MapContainer2';
 import MapFeatureList from 'components/map/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
+import { MapStateContext } from 'contexts/mapContext';
 
 export interface IProjectLocationForm {
   location: {
@@ -78,6 +79,7 @@ export interface IProjectLocationFormProps {
  */
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
+  const mapContext = useContext(MapStateContext);
 
   const { errors, touched, values, handleChange } = formikProps;
 
@@ -97,27 +99,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       }
       return Promise.resolve();
     };
-  };
-
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
   };
 
   /**
@@ -293,11 +274,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box height={500}>
           <MapContainer
             mapId={'project_location_map'}
-            layerVisibility={layerVisibility}
+            layerVisibility={mapContext.layerVisibility}
             features={values.location.geometry}
-            mask={mask}
-            maskState={maskState}
-            activeFeatureState={[activeFeature, setActiveFeature]}
           />
         </Box>
         {errors?.location?.geometry && (

@@ -1,14 +1,15 @@
-import { Feature } from 'geojson';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import React from 'react';
+import { IUseState } from 'contexts/mapContext';
+import { Feature, GeoJsonProperties, Geometry } from 'geojson';
 
 export interface MapFeatureListProps {
-  features?: any;
-  mask?: any; // Store what mask just changed
-  maskState?: any; // Store which features are masked
-  activeFeatureState?: any; // Store which feature is active
+  features: Feature<Geometry, GeoJsonProperties>[];
+  mask: IUseState<number | null>; // Store what mask just changed
+  maskState: IUseState<boolean[]>; // Store which features are masked
+  activeFeatureState: IUseState<number | null>; // Store which feature is active
 }
 
 const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
@@ -27,11 +28,13 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the feature object
+    if (!features[index].properties) features[index].properties = {};
+
     features[index].properties.maskedLocation = event.target.checked;
 
     // Update the local state
     maskState[1](() => {
-      const newState = [...maskState];
+      const newState = [...maskState[0]];
       newState[index] = event.target.checked;
       return newState;
     });

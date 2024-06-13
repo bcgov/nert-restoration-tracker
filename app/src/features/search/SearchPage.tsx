@@ -3,7 +3,7 @@ import centroid from '@turf/centroid';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IMarker } from 'components/map/components/MarkerCluster';
 import MapContainer from 'components/map/MapContainer2';
-import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
+import { SearchFeaturePopup } from 'components/map/components/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
@@ -11,6 +11,9 @@ import { LatLngTuple } from 'leaflet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
+import { ILayerVisibility } from 'constants/map';
+import { IGetSearchResultsResponse } from 'interfaces/useSearchApi.interface';
+import { Feature } from '@turf/turf';
 
 /**
  * Page to search for and display a list of records spatially.
@@ -38,12 +41,12 @@ const SearchPage: React.FC = () => {
 
       const clusteredPointGeometries: IMarker[] = [];
 
-      response.forEach((result: any) => {
+      response.forEach((result: IGetSearchResultsResponse) => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
           .geometryCollection[0];
 
         clusteredPointGeometries.push({
-          position: centroid(feature as any).geometry.coordinates as LatLngTuple,
+          position: centroid(feature as Feature).geometry.coordinates as LatLngTuple,
           popup: <SearchFeaturePopup featureData={result} />
         });
       });
@@ -78,7 +81,7 @@ const SearchPage: React.FC = () => {
   const indigenous = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
-  const layerVisibility = {
+  const layerVisibility: ILayerVisibility = {
     boundary,
     wells,
     projects,

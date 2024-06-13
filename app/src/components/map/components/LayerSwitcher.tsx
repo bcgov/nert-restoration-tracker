@@ -13,18 +13,11 @@ import {
   Radio,
   RadioGroup
 } from '@mui/material';
+import { ILayerVisibility } from 'constants/map';
 import React, { useState } from 'react';
 
 export interface ILayerSwitcherProps {
-  layerVisibility: {
-    boundary: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    wells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
-  };
+  layerVisibility: ILayerVisibility;
 }
 
 const switcherStyle = {

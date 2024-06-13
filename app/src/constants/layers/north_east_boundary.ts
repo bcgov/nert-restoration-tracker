@@ -1,14 +1,14 @@
-{
-  "type": "FeatureCollection",
-  "name": "north_east_boundary",
-  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-  "features": [
+export const north_east_boundary = {
+  type: 'FeatureCollection',
+  name: 'north_east_boundary',
+  crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } },
+  features: [
     {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
           [
             [-124.21505, 57.50398],
             [-124.21494, 57.50362],
@@ -12868,4 +12868,4 @@
       }
     }
   ]
-}
+};

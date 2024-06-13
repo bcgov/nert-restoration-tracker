@@ -1,13 +1,10 @@
 import * as turf from '@turf/turf';
-import { Feature, FeatureCollection } from 'geojson';
+import { Feature, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect, useState } from 'react';
-import communities from './layers/communities.json';
-import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
-import { arch } from 'os';
-import { blue } from '@mui/material/colors';
+import { ILayerVisibility } from 'contexts/mapContext';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -18,14 +15,11 @@ export interface IMapDrawControlsProps {
 
 export interface IMapContainerProps {
   mapId: string;
-  center?: any;
-  zoom?: any;
-  features?: any;
-  layerVisibility?: any;
+  center?: number[];
+  zoom?: number;
+  features?: Feature<Geometry, GeoJsonProperties>[];
+  layerVisibility?: ILayerVisibility;
   centroids?: boolean;
-  mask?: null | number; // Store what mask just changed
-  maskState?: boolean[]; // Store which features are masked
-  activeFeatureState?: any; // Store which feature is active
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -861,8 +855,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
    * Maplibre has some quirky behavour with loading images, so
    * use React to manage the state.
    */
-  const [projectMarker, setProjectMarker] = useState<any>();
-  const [planMarker, setPlanMarker] = useState<any>();
+  const [projectMarker, setProjectMarker] = useState<HTMLImageElement | ImageBitmap>();
+  const [planMarker, setPlanMarker] = useState<HTMLImageElement | ImageBitmap>();
 
   const markerState = {
     projectMarker,
