@@ -8,12 +8,12 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import React, { useState } from 'react';
-import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
+import LocationBoundary from 'features/projects/view/components/LocationBoundary';
+import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import React, { useState } from 'react';
 
 const pageStyles = {
   fullScreenBtn: {

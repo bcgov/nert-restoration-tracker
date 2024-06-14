@@ -1,6 +1,6 @@
-import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { Box } from '@mui/material';
@@ -44,9 +44,7 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
   const {
     projectViewData: { objectives }
   } = props;
-
   const hasObjectives = objectives.objectives && objectives.objectives.length > 0;
-
   return (
     <Box mt={1}>
       <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">

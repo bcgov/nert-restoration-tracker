@@ -7,8 +7,8 @@ import {
   IGetProjectForViewResponseFundingData,
   IGetProjectForViewResponseIUCN,
   IGetProjectForViewResponseLocation,
-  IGetProjectForViewResponsePartnerships,
   IGetProjectForViewResponseObjectives,
+  IGetProjectForViewResponsePartnerships,
   IGetProjectForViewResponsePermit,
   IGetProjectForViewResponseSpecies
 } from 'interfaces/useProjectApi.interface';

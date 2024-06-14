@@ -17,11 +17,15 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import InfoDialog from 'components/dialog/InfoDialog';
 import { RoleGuard } from 'components/security/Guards';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
+import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
+import ProjectAttachments from 'features/projects/view/ProjectAttachments';
+import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import {
@@ -30,10 +34,6 @@ import {
 } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ProjectAttachments from 'features/projects/view/ProjectAttachments';
-import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
-import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
-import InfoDialog from 'components/dialog/InfoDialog';
 import { S3FileType } from 'constants/attachments';
 import ProjectDetails from './components/ProjectDetails';
 

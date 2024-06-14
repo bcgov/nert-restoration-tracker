@@ -141,14 +141,19 @@ export class GetObjectivesData {
   }
 }
 
+export interface IGetconservationArea {
+  conservationArea: string;
+}
+
 export class GetLocationData {
   geometry?: Feature[];
   is_within_overlapping?: string;
   region?: number;
   number_sites?: number;
   size_ha?: number;
+  conservationAreas?: IGetconservationArea[];
 
-  constructor(locationData?: any[], regionData?: any[]) {
+  constructor(locationData?: any[], regionData?: any[], conservationAreaData?: any[]) {
     const locationDataItem = locationData && locationData.length && locationData[0];
     this.geometry = (locationDataItem?.geojson?.length && locationDataItem.geojson) || [];
     this.is_within_overlapping = locationData && locationData?.length && locationData[0]?.is_within_overlapping;
@@ -156,6 +161,7 @@ export class GetLocationData {
     this.number_sites =
       (locationData && locationData?.length && locationData[0]?.number_sites) || ('' as unknown as number);
     this.size_ha = (locationData && locationData?.length && locationData[0]?.size_ha) || ('' as unknown as number);
+    this.conservationAreas = (conservationAreaData && conservationAreaData?.length && conservationAreaData) || [];
   }
 }
 

@@ -15,27 +15,27 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { RoleGuard } from 'components/security/Guards';
-import { focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
+import { DialogContext } from 'contexts/dialogContext';
+import { MapStateContext } from 'contexts/mapContext';
+import ProjectAttachments from 'features/projects/view/ProjectAttachments';
+import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
-import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
-import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import MapContainer from 'components/map/MapContainer2';
-import { MapStateContext } from 'contexts/mapContext';
 import { DeletePlanI18N } from 'constants/i18n';
-import { DialogContext } from 'contexts/dialogContext';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { APIError } from 'hooks/api/useAxios';
 import { Card, Chip, Tooltip } from '@mui/material';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import InfoIcon from '@mui/icons-material/Info';
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
+import { focus, ICONS } from 'constants/misc';
 
 const pageStyles = {
   titleContainerActions: {

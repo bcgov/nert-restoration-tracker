@@ -1,10 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
-import Box from '@mui/material/Box';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CardMedia from '@mui/material/CardMedia';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -12,6 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { AuthStateContext } from 'contexts/authStateContext';
@@ -117,7 +117,9 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
           ) : (
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
               <ReactPlayer
-                url={`https://${config?.REACT_APP_OBJECT_STORE_URL}/${config?.REACT_APP_OBJECT_STORE_BUCKET_NAME}/info/${userPath}/${item.typeLabel}${infoContent.replace(' ', '')}Info.mp4`}
+                url={`https://${config?.REACT_APP_OBJECT_STORE_URL}/${
+                  config?.REACT_APP_OBJECT_STORE_BUCKET_NAME
+                }/info/${userPath}/${item.typeLabel}${infoContent.replace(' ', '')}Info.mp4`}
                 style={{ position: 'absolute', top: 0, left: 0 }}
                 playing={true}
                 loop={true}

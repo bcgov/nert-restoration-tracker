@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
+import { arch } from 'os';
+import { blue } from '@mui/material/colors';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -290,7 +292,8 @@ const initializeMap = (
   layerVisibility?: any,
   centroids = false,
   tooltipState?: any,
-  activeFeatureState?: any
+  activeFeatureState?: any,
+  markerState?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -304,6 +307,8 @@ const initializeMap = (
     // tooltipY,
     setTooltipY
   } = tooltipState;
+
+  const { projectMarker, setProjectMarker, planMarker, setPlanMarker } = markerState;
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
@@ -332,7 +337,10 @@ const initializeMap = (
    * # loadLayers
    * Load all custom layers here
    */
-  map.on('load', () => {
+  map.on('load', async () => {
+    /* Avoid double renders */
+    if (map.getSource('maptiler.raster-dem')) return;
+
     /* The base layer */
     map.addSource('maptiler.raster-dem', {
       type: 'raster-dem',
@@ -430,14 +438,6 @@ const initializeMap = (
     });
 
     /*****************Project/Plans********************/
-
-    map.loadImage('/assets/icon/marker-icon.png').then((image) => {
-      map.addImage('blue-marker', image.data);
-    });
-    map.loadImage('/assets/icon/marker-icon2.png').then((image) => {
-      map.addImage('orange-marker', image.data);
-    });
-
     map.addSource('markers', {
       type: 'geojson',
       data: markerGeoJSON as FeatureCollection,
@@ -517,39 +517,33 @@ const initializeMap = (
         ]
       }
     });
-    // let hoverStateMarkerPolygon: boolean | any = false;
+
+    /**
+     * This is to work around an async quirk in maplibre-gl.
+     * Use React hooks to force maplibre to refresh the plans and projects
+     * layers once the images are loaded. This only seems to be a thing with
+     * image icons styling for geojson points.
+     */
+    const projectMarkerFile = await map.loadImage('/assets/icon/marker-icon.png');
+    setProjectMarker(projectMarkerFile.data);
+    map.addImage('blue-marker', projectMarkerFile.data);
+
+    const planMarkerFile = await map.loadImage('/assets/icon/marker-icon2.png');
+    setPlanMarker(planMarkerFile.data);
+    map.addImage('orange-marker', planMarkerFile.data);
+
+    // Hover over polygons
     map
       .on('mouseenter', 'markerPolygon', (e: any) => {
         map.getCanvas().style.cursor = 'pointer';
 
         checkFeatureState(activeFeatureState);
         activeFeatureState[1](e.features[0].id);
-
-        // console.log('entering index: ', e.features[0].id);
-        // if (activeFeatureState[0]) {
-        //   activeFeatureState[1](e.features[0]);
-        // }
-
-        // hoverStateMarkerPolygon = e.features[0].id;
-        // map.setFeatureState(
-        //   {
-        //     source: 'markers',
-        //     id: e.features[0].id
-        //   },
-        //   { hover: true }
-        // );
       })
       .on('mouseleave', 'markerPolygon', () => {
         map.getCanvas().style.cursor = '';
 
         activeFeatureState[1](null);
-        // map.setFeatureState(
-        //   {
-        //     source: 'markers',
-        //     id: hoverStateMarkerPolygon
-        //   },
-        //   { hover: false }
-        // );
       });
 
     // Zoom in until cluster breaks apart.
@@ -672,29 +666,6 @@ const initializeMap = (
     map.on('mouseenter', 'markerProjects.points', showTooltip);
     map.on('mouseleave', 'markerProjects.points', hideTooltip);
     /**************************************************/
-
-    /*******************Fires**************************/
-    // XXX: Don't turn this on without consent from the project owner.
-    // map.addSource('forestfire-areas', {
-    //   type: 'raster',
-    //   tiles: [
-    //     'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_FOREST_VEGETATION.VEG_BURN_SEVERITY_SP,WHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_POLYS_SP'
-    //   ],
-    //   tileSize: 256,
-    //   minzoom: 10
-    // });
-    // map.addLayer({
-    //   id: 'wms-forestfire-areas',
-    //   type: 'raster',
-    //   source: 'forestfire-areas',
-    //   // layout: {
-    //   //   visibility: wildlife[0] ? 'visible' : 'none'
-    //   // },
-    //   paint: {
-    //     'raster-opacity': 0.9
-    //   }
-    // });
-    /*******************Fires**************************/
 
     /* Protected Areas as WMS layers from the BCGW */
     map.addSource('wildlife-areas', {
@@ -886,6 +857,20 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setTooltipY
   };
 
+  /**
+   * Maplibre has some quirky behavour with loading images, so
+   * use React to manage the state.
+   */
+  const [projectMarker, setProjectMarker] = useState<any>();
+  const [planMarker, setPlanMarker] = useState<any>();
+
+  const markerState = {
+    projectMarker,
+    setProjectMarker,
+    planMarker,
+    setPlanMarker
+  };
+
   // Update the map if the features change
   useEffect(() => {
     initializeMap(
@@ -896,7 +881,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       layerVisibility,
       centroids,
       tooltipState,
-      activeFeatureState
+      activeFeatureState,
+      markerState
     );
   }, [features]);
 
@@ -907,14 +893,13 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     } else {
       checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
     }
-  }, [layerVisibility]);
+  }, [layerVisibility, projectMarker, planMarker]);
 
   // Listen for masks being turned on and off
-  if (maskState.length > 0) {
-    useEffect(() => {
-      updateMasks(mask, maskState, features);
-    }, [maskState]);
-  }
+  useEffect(() => {
+    updateMasks(mask, maskState, features);
+  }, [mask, maskState, features]);
+
   // Listen for active feature changes
   useEffect(() => {
     checkFeatureState(activeFeatureState);

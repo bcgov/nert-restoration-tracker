@@ -19,13 +19,13 @@ import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PlanFormInitialValues } from '../create/CreatePlanPage';
+import yup from 'utils/YupSchema';
+import PlanContactForm, { PlanContactYupSchema } from '../components/PlanContactForm';
 import PlanGeneralInformationForm, {
   PlanGeneralInformationFormYupSchema
 } from '../components/PlanGeneralInformationForm';
-import PlanContactForm, { PlanContactYupSchema } from '../components/PlanContactForm';
 import PlanLocationForm, { PlanLocationFormYupSchema } from '../components/PlanLocationForm';
-import yup from 'utils/YupSchema';
+import { PlanFormInitialValues } from '../create/CreatePlanPage';
 
 const pageStyles = {
   actionButton: {

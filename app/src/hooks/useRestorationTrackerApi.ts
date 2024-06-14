@@ -6,11 +6,11 @@ import useAxios from './api/useAxios';
 import useCodesApi from './api/useCodesApi';
 import useDraftApi from './api/useDraftApi';
 import useExternalApi from './api/useExternalApi';
+import usePlanApi from './api/usePlanApi';
 import useProjectApi, { usePublicProjectApi } from './api/useProjectApi';
 import useSearchApi, { usePublicSearchApi } from './api/useSearchApi';
 import useTaxonomyApi from './api/useTaxonomyApi';
 import useUserApi from './api/useUserApi';
-import usePlanApi from './api/usePlanApi';
 
 /**
  * Returns a set of supported api methods.

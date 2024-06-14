@@ -1,12 +1,10 @@
-import { mdiPlus, mdiTrayArrowUp } from '@mdi/js';
+import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
@@ -22,15 +20,18 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import CustomTextField from 'components/fields/CustomTextField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
+import MapFeatureList from 'components/map/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
+import ProjectLocationConservationAreas, {
+  IProjectLocationConservationAreasArrayItem
+} from 'features/projects/components/ProjectLocationConservationAreasForm';
 
 export interface IProjectLocationForm {
   location: {
@@ -38,8 +39,8 @@ export interface IProjectLocationForm {
     number_sites: number;
     region: number;
     is_within_overlapping: string;
-    name_area_conservation_priority: string[];
     size_ha: number;
+    conservationAreas: IProjectLocationConservationAreasArrayItem[];
   };
 }
 
@@ -49,8 +50,8 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
     region: '' as unknown as number,
     number_sites: '' as unknown as number,
     is_within_overlapping: 'false',
-    name_area_conservation_priority: [],
-    size_ha: '' as unknown as number
+    size_ha: '' as unknown as number,
+    conservationAreas: [{ conservationArea: '' as unknown as string }]
   }
 };
 
@@ -62,9 +63,37 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
       .min(1, 'You must specify a project boundary')
       .required('You must specify a project boundary'),
     is_within_overlapping: yup.string().notRequired(),
-    // name_area_conservation_priority: yup.array().nullable(),
     size_ha: yup.number().nullable(),
-    number_sites: yup.number().min(1, 'At least one site is required').required('Required')
+    number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
+    conservationAreas: yup
+      .array()
+      .of(
+        yup.object().shape({
+          conservationArea: yup
+            .string()
+            .max(100, 'Cannot exceed 100 characters')
+            .trim()
+            .required('Please enter a conservation area')
+        })
+      )
+      .isUniqueConservationArea('Conservation area entries must be unique')
+  })
+});
+
+export const ProjectObjectiveFormYupSchema = yup.object().shape({
+  objective: yup.object().shape({
+    objectives: yup
+      .array()
+      .of(
+        yup.object().shape({
+          objective: yup
+            .string()
+            .max(300, 'Cannot exceed 500 characters')
+            .trim()
+            .required('Please enter an objective')
+        })
+      )
+      .isUniqueObjective('Objective entries must be unique')
   })
 });
 
@@ -127,38 +156,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
-  const featureStyle = {
-    parent: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr auto',
-      cursor: 'pointer'
-    }
-  };
-
-  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    // Update the formik values
-    // @ts-ignore
-    values.location.geometry[index].properties.maskedLocation = event.target.checked;
-
-    // Update the local state
-    setMaskState(() => {
-      const newState = [...maskState];
-      newState[index] = event.target.checked;
-      return newState;
-    });
-
-    // Make sure children know what has changed
-    setMask(index);
-  };
-
-  // Highlight the list item and the map feature
-  const mouseEnterListItem = (index: number) => {
-    setActiveFeature(index + 1);
-  };
-  const mouseLeaveListItem = (index: number) => {
-    setActiveFeature(null);
-  };
-
   return (
     <>
       <Box mb={5} mt={0}>
@@ -196,7 +193,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </Grid>
         </Box>
 
-        <Box mb={4}>
+        <Box mb={2}>
           <FormControl
             component="fieldset"
             error={
@@ -237,31 +234,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </FormControl>
         </Box>
 
-        <Box mb={4}>
-          <Grid container spacing={3} direction="column">
-            <Grid item xs={12}>
-              <CustomTextField
-                name={'location.name_area_conservation_priority'}
-                label={'Area of Cultural or Conservation Priority Name'}
-                other={{
-                  disabled: true
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Box pt={2}>
-            <Button
-              type="button"
-              variant="outlined"
-              color="primary"
-              aria-label="add area of cultural or conservation priority"
-              startIcon={<Icon path={mdiPlus} size={1}></Icon>}
-              // onClick={() => arrayHelpers.push(ProjectLocationFormInitialValues)}
-            >
-              Add New Area
-            </Button>
-          </Box>
+        <Box component="fieldset" mb={4}>
+          <ProjectLocationConservationAreas isOverlapping={values.location.is_within_overlapping} />
         </Box>
 
         <Box mb={4}>
@@ -315,34 +289,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
 
         <Box className="feature-box">
-          {/* Create a list element for each feature within values.location.geometry */}
-          {/* TODO: Utilize MUI Components instead of custom divs */}
-          {values.location.geometry.map((feature, index) => (
-            <div
-              style={featureStyle.parent}
-              className={
-                activeFeature === feature.properties?.id ? 'feature-item active' : 'feature-item'
-              }
-              key={index}
-              onMouseEnter={() => mouseEnterListItem(index)}
-              onMouseLeave={() => mouseLeaveListItem(index)}>
-              <div className="feature-name">
-                {feature.properties?.siteName || `Area ${index + 1}`}
-              </div>
-              <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={feature.properties?.maskedLocation || false}
-                      onChange={(event) => maskChanged(event, index)}
-                    />
-                  }
-                  label="Mask"
-                />
-              </FormGroup>
-            </div>
-          ))}
+          <MapFeatureList
+            features={values.location.geometry}
+            mask={[mask, setMask]}
+            maskState={[maskState, setMaskState]}
+            activeFeatureState={[activeFeature, setActiveFeature]}
+          />
         </Box>
 
         <Box height={500}>
