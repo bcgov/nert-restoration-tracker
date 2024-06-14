@@ -37,7 +37,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ProjectConservationAreas from 'features/projects/view/components/ProjectConservationAreas';
 
-
 const pageStyles = {
   titleContainerActions: {
     '& button + button': {
