@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import SQL from 'sql-template-strings';
 import { SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
+import { DraftRepository } from '../../../repositories/draft-repository';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { getLogger } from '../../../utils/logger';
 
@@ -97,25 +97,15 @@ export function getSingleDraft(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
     try {
-      const getDraftSQLStatement = SQL`
-        SELECT
-          webform_draft_id as id,
-          is_project,
-          name,
-          data
-        FROM
-          webform_draft
-        WHERE
-          webform_draft_id = ${Number(req.params.draftId)};
-      `;
-
       await connection.open();
 
-      const draftResponse = await connection.query(getDraftSQLStatement.text, getDraftSQLStatement.values);
+      const draftRepository = new DraftRepository(connection);
+
+      const draftResponse = await draftRepository.getDraft(Number(req.params.draftId));
 
       await connection.commit();
 
-      const draftResult = (draftResponse && draftResponse.rows && draftResponse.rows[0]) || null;
+      const draftResult = draftResponse || null;
 
       return res.status(200).json(draftResult);
     } catch (error) {

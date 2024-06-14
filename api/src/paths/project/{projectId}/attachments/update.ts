@@ -5,10 +5,10 @@ import { getDBConnection } from '../../../../database/db';
 import { HTTP400 } from '../../../../errors/custom-error';
 import { authorizeRequestHandler } from '../../../../request-handlers/security/authorization';
 import { AttachmentService } from '../../../../services/attachment-service';
-import { generateS3FileKey, scanFileForVirus } from '../../../../utils/file-utils';
+import { findFileInS3, generateS3FileKey, moveFileInS3 } from '../../../../utils/file-utils';
 import { getLogger } from '../../../../utils/logger';
 
-const defaultLog = getLogger('/api/project/{projectId}/attachments/upload');
+const defaultLog = getLogger('/api/project/{projectId}/attachments/update');
 
 export const POST: Operation = [
   authorizeRequestHandler((req) => {
@@ -26,10 +26,10 @@ export const POST: Operation = [
       ]
     };
   }),
-  uploadAttachment()
+  updateAttachment()
 ];
 POST.apiDoc = {
-  description: 'Upload a project-specific attachment.',
+  description: 'Update a project-specific attachment.',
   tags: ['attachment'],
   security: [
     {
@@ -44,16 +44,15 @@ POST.apiDoc = {
     }
   ],
   requestBody: {
-    description: 'Attachment upload post request object.',
+    description: 'Attachment update post request object.',
     content: {
-      'multipart/form-data': {
+      'application/json': {
         schema: {
           type: 'object',
-          required: ['media'],
+          required: ['key', 'fileType'],
           properties: {
-            media: {
-              type: 'string',
-              format: 'binary'
+            key: {
+              type: 'string'
             },
             fileType: {
               type: 'string',
@@ -95,45 +94,29 @@ POST.apiDoc = {
 };
 
 /**
- * Uploads any media in the request to S3, adding their keys to the request.
- * Also adds the metadata to the project_attachment DB table
- * Does nothing if no media is present in the request.
- *
+ * Updates an attachment for a project.
  *
  * @returns {RequestHandler}
  */
-export function uploadAttachment(): RequestHandler {
+export function updateAttachment(): RequestHandler {
   return async (req, res) => {
     if (!req.params.projectId) {
       throw new HTTP400('Missing projectId');
     }
-    if (!req.files || !req.files.length) {
-      throw new HTTP400('Missing upload data');
-    }
+
     if (!req.body) {
       throw new HTTP400('Missing request body');
     }
 
     const projectId = Number(req.params.projectId);
-    const rawMediaFile: Express.Multer.File = req.files[0];
-    const metadata = {
-      filename: rawMediaFile.originalname,
-      username: (req['auth_payload'] && req['auth_payload'].preferred_username) || '',
-      email: (req['auth_payload'] && req['auth_payload'].email) || ''
-    };
 
     const fileType = req.body.fileType || 'attachments';
 
     const connection = getDBConnection(req['keycloak_token']);
 
-    if (!(await scanFileForVirus(rawMediaFile))) {
-      throw new HTTP400('Malicious content detected, upload cancelled');
-    }
-
     defaultLog.debug({
       label: 'uploadMedia',
-      message: 'file',
-      file: { ...rawMediaFile, buffer: 'Too big to print' }
+      message: 'file'
     });
 
     try {
@@ -141,13 +124,27 @@ export function uploadAttachment(): RequestHandler {
 
       const attachmentService = new AttachmentService(connection);
 
+      const s3File = await findFileInS3(req.body.key);
+
+      if (!s3File) {
+        throw new HTTP400('Error fetching file from S3');
+      }
+
       const s3Key = generateS3FileKey({
         projectId: projectId,
-        fileName: rawMediaFile.originalname,
+        fileName: 'thumbnail',
         fileType: fileType
       });
 
-      const uploadResponse = await attachmentService.uploadMedia(projectId, rawMediaFile, s3Key, fileType, metadata);
+      const uploadResponse = await attachmentService.insertProjectAttachment(
+        projectId,
+        s3Key,
+        s3File.Metadata?.filename || 'thumbnail',
+        s3File.ContentLength || 0,
+        fileType
+      );
+
+      await moveFileInS3(req.body.key, s3Key);
 
       await connection.commit();
 

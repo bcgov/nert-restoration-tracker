@@ -273,18 +273,29 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      // Remove empty partnerships
       projectPostObject.partnership.partnerships =
         projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
+
+      // Confirm that the project is not a draft
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
+
+      // Set size_ha to 0 if it is not set
       projectPostObject.location.size_ha = projectPostObject.location.size_ha
         ? projectPostObject.location.size_ha
         : 0;
+
+      // Set the state code to the correct value for a project being created
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
-      const response = await restorationTrackerApi.project.createProject(projectPostObject);
-      if (!response?.id) {
+
+      // Create the project
+      const createProjectResponse =
+        await restorationTrackerApi.project.createProject(projectPostObject);
+
+      if (!createProjectResponse?.id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a project ID.'
         });
@@ -295,7 +306,7 @@ const CreateProjectPage: React.FC = () => {
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
       keycloakWrapper?.refresh();
-      history(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${createProjectResponse.id}`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',
@@ -349,40 +360,8 @@ const CreateProjectPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  // /**
-  //  * Intercepts all navigation attempts (when used with a `Prompt`).
-  //  *
-  //  * Returning true allows the navigation, returning false prevents it.
-  //  *
-  //  * @param {History.Location} location
-  //  * @return {*}
-  //  */
-  // const handleLocationChange = () => {
-  //   if (!dialogContext.yesNoDialogProps.open) {
-  //     // If the cancel dialog is not open: open it
-  //     dialogContext.setYesNoDialog({
-  //       ...defaultCancelDialogProps,
-  //       onYes: () => {
-  //         dialogContext.setYesNoDialog({ open: false });
-  //         history(location.pathname);
-  //       },
-  //       open: true
-  //     });
-  //     return false;
-  //   }
-
-  //   // If the cancel dialog is already open and another location change action is triggered: allow it
-  //   return true;
-  // };
-
   return (
     <>
-      {/* <ReactRouterPrompt when={enableCancelCheck} >
-        {({ isActive, onConfirm, onCancel }) => (
-          <YesNoDialog dialogTitle="Cancel Create Project" dialogText="Are you sure you want to cancel?" open={isActive} onClose={onCancel} onNo={onCancel} onYes={onConfirm} />
-        )}
-      </ReactRouterPrompt> */}
-
       <EditDialog
         dialogTitle="Save Incomplete Project as a Draft"
         dialogSaveButtonLabel="Save"
@@ -422,7 +401,6 @@ const CreateProjectPage: React.FC = () => {
         </Breadcrumbs>
       </Box>
 
-      {/* <Container maxWidth="xl"> */}
       <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
           <Box mb={0.5} mt={0.9}>
@@ -446,7 +424,6 @@ const CreateProjectPage: React.FC = () => {
             validateOnChange={false}
             onSubmit={handleProjectCreation}>
             <>
-              {/* <ScrollToFormikError /> */}
               <Form noValidate>
                 <Box ml={1}>
                   <Grid container spacing={2}>
@@ -635,7 +612,6 @@ const CreateProjectPage: React.FC = () => {
             </>
           </Formik>
         </Box>
-        {/* </Container> */}
       </Card>
     </>
   );

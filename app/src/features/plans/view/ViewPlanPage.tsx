@@ -5,8 +5,6 @@ import {
   mdiTrashCanOutline
 } from '@mdi/js';
 import { Icon } from '@mdi/react';
-import InfoIcon from '@mui/icons-material/Info';
-import { Card, Chip, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -16,12 +14,7 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import MapContainer from 'components/map/MapContainer2';
 import { RoleGuard } from 'components/security/Guards';
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { DeletePlanI18N } from 'constants/i18n';
-import { attachmentType, focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { DialogContext } from 'contexts/dialogContext';
 import { MapStateContext } from 'contexts/mapContext';
@@ -34,7 +27,15 @@ import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
-import PlanHeader from './PlanHeader';
+import MapContainer from 'components/map/MapContainer2';
+import { DeletePlanI18N } from 'constants/i18n';
+import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import { Card, Chip, Tooltip } from '@mui/material';
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import InfoIcon from '@mui/icons-material/Info';
+import { S3FileType } from 'constants/attachments';
+import PlanDetails from './components/PlanDetails';
+import { focus, ICONS } from 'constants/misc';
 
 const pageStyles = {
   titleContainerActions: {
@@ -82,6 +83,7 @@ const ViewPlanPage: React.FC = () => {
   const [isLoadingPlan, setIsLoadingPlan] = useState(false);
   const [planWithDetails, setPlanWithDetails] = useState<IGetPlanForViewResponse | null>(null);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
+  const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
   const codes = useCodes();
 
@@ -103,12 +105,21 @@ const ViewPlanPage: React.FC = () => {
       try {
         const response = await restorationTrackerApi.project.getProjectAttachments(
           planId,
-          attachmentType.ATTACHMENTS
+          S3FileType.ATTACHMENTS
         );
 
-        if (!response?.attachmentsList) return;
+        if (response?.attachmentsList) {
+          setAttachmentsList([...response.attachmentsList]);
+        }
 
-        setAttachmentsList([...response.attachmentsList]);
+        const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
+          planId,
+          S3FileType.THUMBNAIL
+        );
+
+        if (thumbnailResponse?.attachmentsList) {
+          setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
       } catch (error) {
         return error;
       }
@@ -287,7 +298,16 @@ const ViewPlanPage: React.FC = () => {
           <Box mx={1} mb={1}>
             <Grid container spacing={1}>
               <Grid item md={8}>
-                <PlanHeader planWithDetails={planWithDetails} />
+                <Box mb={1}>
+                  <Paper elevation={2}>
+                    <Box p={1}>
+                      <PlanDetails
+                        plan={planWithDetails}
+                        thumbnailImageUrl={thumbnailImage[0]?.url}
+                      />
+                    </Box>
+                  </Paper>
+                </Box>
                 <Paper elevation={2}>
                   <Box p={2}>
                     <Typography variant="h2">Location</Typography>

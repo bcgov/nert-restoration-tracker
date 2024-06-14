@@ -19,7 +19,9 @@ describe('useDraftApi', () => {
       date: '2020/04/04'
     });
 
-    const result = await useDraftApi(axios).createDraft(true, 'string', 'string');
+    const result = await useDraftApi(axios).createDraft(true, 'string', {
+      project: { project_image: undefined, image_url: undefined, image_key: undefined }
+    });
 
     expect(result.id).toEqual(1);
     expect(result.date).toEqual('2020/04/04');
@@ -31,7 +33,9 @@ describe('useDraftApi', () => {
       date: '2020/04/04'
     });
 
-    const result = await useDraftApi(axios).updateDraft(1, 'draftName', null);
+    const result = await useDraftApi(axios).updateDraft(1, 'draftName', {
+      project: { project_image: undefined, image_url: undefined, image_key: undefined }
+    });
 
     expect(result.id).toEqual(1);
     expect(result.date).toEqual('2020/04/04');

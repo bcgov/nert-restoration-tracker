@@ -351,7 +351,14 @@ POST.apiDoc = {
                   }
                 },
                 region: {
-                  type: 'number'
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ]
                 }
               }
             },
