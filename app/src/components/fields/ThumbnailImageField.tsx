@@ -95,7 +95,7 @@ const ThumbnailImageField: React.FC = () => {
 
   return (
     <div style={uploadImageStyles.general}>
-      <div style={uploadImageStyles.description}>Project Image</div>
+      <div style={uploadImageStyles.description}>Thumbnail Image</div>
       {image ? (
         <ThumbnailImageCard image={image} deleteImage={deleteImage} />
       ) : (

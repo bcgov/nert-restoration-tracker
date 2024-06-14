@@ -2,6 +2,7 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
 import PlanStartEndDateFields from 'components/fields/PlanStartEndDateFields';
+import ThumbnailImageField from 'components/fields/ThumbnailImageField';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
 import React from 'react';
@@ -19,6 +20,9 @@ export interface IPlanGeneralInformationForm {
     is_healing_people: boolean;
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
+    project_image?: File | null;
+    image_url?: string;
+    image_key?: string;
   };
 }
 
@@ -33,7 +37,10 @@ export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationFor
     is_healing_land: false,
     is_healing_people: false,
     is_land_initiative: false,
-    is_cultural_initiative: false
+    is_cultural_initiative: false,
+    project_image: null,
+    image_url: '',
+    image_key: ''
   }
 };
 
@@ -60,7 +67,8 @@ const PlanGeneralInformationForm: React.FC = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={12}>
+      <ThumbnailImageField />
+      <Grid item xs={12} md={8}>
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>
             <CustomTextField
