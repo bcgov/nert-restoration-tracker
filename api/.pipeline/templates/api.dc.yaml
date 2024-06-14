@@ -8,7 +8,7 @@ parameters:
   - name: ENABLE_FILE_VIRUS_SCAN
     value: 'true'
   - name: CLAMAV_HOST
-    value: 'clamav'
+    value: 'clamav.d83219-tools'
   - name: CLAMAV_PORT
     value: '3310'
   - name: NAME
