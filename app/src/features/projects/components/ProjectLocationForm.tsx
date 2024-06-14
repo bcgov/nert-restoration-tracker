@@ -294,6 +294,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             mask={[mask, setMask]}
             maskState={[maskState, setMaskState]}
             activeFeatureState={[activeFeature, setActiveFeature]}
+            formikProps={formikProps}
           />
         </Box>
 
