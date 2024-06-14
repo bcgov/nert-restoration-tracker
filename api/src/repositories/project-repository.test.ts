@@ -1377,7 +1377,7 @@ describe('ProjectRepository', () => {
           region: 1,
           number_sites: 1,
           size_ha: 1,
-          name_area_conservation_priority: []
+          conservationAreas: []
         },
         1
       );
@@ -1403,7 +1403,7 @@ describe('ProjectRepository', () => {
             region: 1,
             number_sites: 1,
             size_ha: 1,
-            name_area_conservation_priority: []
+            conservationAreas: []
           },
           1
         );
@@ -1428,7 +1428,7 @@ describe('ProjectRepository', () => {
             region: 1,
             number_sites: 1,
             size_ha: 1,
-            name_area_conservation_priority: []
+            conservationAreas: []
           },
           1
         );
@@ -1695,59 +1695,6 @@ describe('ProjectRepository', () => {
 
       try {
         await projectRepository.deleteProject(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
-  describe('deleteObjectives', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should delete objectives and return true on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [{ project_id: 1 }] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.deleteObjectives(1);
-
-      expect(response).to.eql(undefined);
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = null as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.deleteObjectives(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to delete Objectives');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.deleteObjectives(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

@@ -43,9 +43,7 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
   const {
     projectViewData: { objectives }
   } = props;
-
   const hasObjectives = objectives.objectives && objectives.objectives.length > 0;
-
   return (
     <>
       {hasObjectives &&

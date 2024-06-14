@@ -34,13 +34,16 @@ export class PutProjectData {
   }
 }
 
+export interface IPutConservationArea {
+  conservationArea: string;
+}
 export class PutLocationData {
   geometry: Feature[];
   region: number;
   is_within_overlapping: string;
   number_sites: number;
   size_ha: number;
-  name_area_conservation_priority: string[];
+  conservationAreas: IPutConservationArea[];
   revision_count: number;
 
   constructor(obj?: any) {
@@ -49,8 +52,14 @@ export class PutLocationData {
     this.number_sites = obj?.number_sites || null;
     this.size_ha = obj?.size_ha || null;
     this.is_within_overlapping = (obj?.is_within_overlapping && JSON.parse(obj.is_within_overlapping)) || null;
-    this.name_area_conservation_priority =
-      (obj?.name_area_conservation_priority?.length && obj.name_area_conservation_priority) || [];
+    this.conservationAreas =
+      (obj?.conservationAreas?.length &&
+        obj.conservationAreas.map((item: any) => {
+          return {
+            conservationArea: item.conservationArea
+          };
+        })) ||
+      [];
     this.revision_count = obj?.revision_count ?? null;
   }
 }
@@ -68,6 +77,14 @@ export class PutObjectivesData {
 
   constructor(obj?: any) {
     this.objectives = (obj?.objectives?.length && obj.objectives) || [];
+  }
+}
+
+export class PutConservationAreasData {
+  conservationAreas: string[];
+
+  constructor(obj?: any) {
+    this.conservationAreas = (obj?.conservationAreas?.length && obj.conservationAreas) || [];
   }
 }
 

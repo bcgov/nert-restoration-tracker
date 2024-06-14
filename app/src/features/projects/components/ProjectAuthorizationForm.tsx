@@ -19,22 +19,11 @@ import React from 'react';
 import yup from 'utils/YupSchema';
 
 const pageStyles = {
-  formButtons: {
-    '& button': {
-      margin: '0.3rem'
-    }
-  },
-  addRowButton: {
-    fontWeight: 700
-  },
   customListItem: {
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: '5rem'
-  },
-  input: {
-    display: 'none'
   }
 };
 

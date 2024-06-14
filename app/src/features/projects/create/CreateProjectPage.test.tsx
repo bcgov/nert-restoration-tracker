@@ -308,7 +308,7 @@ describe.skip('CreateProjectPage', () => {
             ]
           },
           funding: { fundingSources: [] },
-          partnerships: { indigenous_partnerships: [], stakeholder_partnerships: [] },
+          partnership: { partnerships: [] },
           species: { focal_species: [] }
         });
 

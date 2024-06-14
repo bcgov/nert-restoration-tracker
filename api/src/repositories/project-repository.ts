@@ -276,6 +276,33 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Get Conservation Areas Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<any>}
+   * @memberof ProjectRepository
+   */
+  async getConservationAreasData(projectId: number): Promise<any> {
+    try {
+      const sqlStatement = SQL`
+        SELECT
+        conservation_area
+        FROM
+        conservation_area
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getConservationAreasData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Get Funding Data
    *
    * @param {number} projectId
@@ -872,6 +899,46 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Insert a project conservation area.
+   *
+   * @param {string} conservationArea
+   * @param {number} projectId
+   * @return {*}  {Promise<{ conservationArea_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async insertConservationArea(conservationArea: string, projectId: number): Promise<{ conservation_area_id: number }> {
+    defaultLog.debug({ label: 'insertConservationArea', message: 'params', conservationArea });
+
+    try {
+      const sqlStatement = SQL`
+      INSERT INTO conservation_area (
+        project_id,
+        conservation_area
+      ) VALUES (
+        ${projectId},
+        ${conservationArea}
+      )
+      RETURNING
+      conservation_area_id;
+    `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project conservation area', [
+          'ProjectRepository->insertConservationArea',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'insertConservationArea', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Insert a project permit.
    *
    * @param {string} permitNumber
@@ -1372,37 +1439,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Delete a project objectives
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteObjectives(projectId: number) {
-    defaultLog.debug({ label: 'deleteObjectives', message: 'params', projectId });
-
-    try {
-      const sqlStatement = SQL`
-        DELETE
-          from objective
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Objectives', [
-          'ProjectRepository->deleteObjectives',
-          'response was null or undefined'
-        ]);
-      }
-    } catch (error) {
-      defaultLog.debug({ label: 'deleteObjectives', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * Delete a project contact.
    *
    * @param {number} projectId
@@ -1522,6 +1558,37 @@ export class ProjectRepository extends BaseRepository {
       }
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectObjectives', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a project conservation areas.
+   *
+   * @param {number} projectId
+   * @memberof ProjectRepository
+   */
+  async deleteProjectConservationAreas(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE
+          from conservation_area
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (!response) {
+        throw new ApiExecuteSQLError('Failed to delete Project conservation areas', [
+          'ProjectRepository->deleteProjectConservationAreas',
+          'response was null or undefined'
+        ]);
+      }
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'error', error });
       throw error;
     }
   }

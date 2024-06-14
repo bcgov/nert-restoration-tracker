@@ -194,6 +194,21 @@ yup.addMethod(yup.array, 'isUniquePartnership', function (message: string) {
   });
 });
 
+yup.addMethod(yup.array, 'isUniqueConservationArea', function (message: string) {
+  return this.test('is-unique-conservation-area', message, (values) => {
+    if (!values || !values.length) {
+      return true;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = values.some((conservationAreas) => {
+      return seen.size === seen.add(conservationAreas.conservationArea).size;
+    });
+
+    return !hasDuplicates;
+  });
+});
+
 yup.addMethod(yup.array, 'isUniqueObjective', function (message: string) {
   return this.test('is-unique-objective', message, (values) => {
     if (!values || !values.length) {
