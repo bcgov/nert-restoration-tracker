@@ -6,6 +6,8 @@ import { LatLngBoundsExpression } from 'leaflet';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
 
+// TODO: Make the cleaning of the GeoJSON exportable so it can be used in other places.
+
 /**
  *
  * @param file File object to upload

@@ -18,13 +18,14 @@ export interface MapFeatureListProps {
 }
 
 const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
-  const features = props.features || [];
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
   const formikProps = props.formikProps || {};
 
   const { values, setFieldValue } = formikProps;
+
+  const features = values.location.geometry || [];
 
   const featureStyle = {
     parent: {
@@ -51,9 +52,11 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   // Highlight the list item and the map feature
   const mouseEnterListItem = (index: number) => {
+    console.log('mouseEnterListItem', index);
     activeFeatureState[1](index + 1);
   };
   const mouseLeaveListItem = () => {
+    console.log('mouseLeaveListItem');
     activeFeatureState[1](null);
   };
 
@@ -62,6 +65,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     const oldFeatureList = get(values, 'location.geometry');
     const newFeatureList = oldFeatureList.filter((f: Feature, i: number) => i !== index); 
     location.geometry = newFeatureList;
+    // TODO: Think I need to recalc the IDs here
     setFieldValue('location', location);
 
     // Reset the hover state
@@ -75,41 +79,59 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     });
   };
 
+  interface FeatureItemProps {
+    properties?: any;
+    feature: Feature;
+    index: number;
+  }
+
+  /**
+   * FeatureItem
+   * @param feature 
+   * @returns React component for a single feature item
+   */
+  const FeatureItem: React.FC<FeatureItemProps> = (item) => {
+    const feature = item.feature;
+    return (
+      <Box
+        style={featureStyle.parent}
+        className={
+          activeFeatureState[0] === feature.properties?.id
+            ? 'feature-item active'
+            : 'feature-item'
+        }
+        key={item.index}
+        onMouseEnter={() => mouseEnterListItem(item.index)}
+        onMouseLeave={() => mouseLeaveListItem()}>
+        <Box className="feature-name">{feature.properties?.siteName || `Area ${item.index + 1}`}</Box>
+        <Box className="feature-size">{feature.properties?.areaHectares || 0} Ha</Box>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={feature.properties?.maskedLocation || false}
+                onChange={(event) => maskChanged(event, item.index)}
+              />
+            }
+            label="Mask"
+          />
+        </FormGroup>
+        <IconButton
+          title="Delete Feature"
+          onClick={() => {
+            deleteListItem(item.index);
+          }}>
+          <DeleteForeverOutlinedIcon />
+        </IconButton>
+      </Box>
+    );
+  }
+
 
   return (
     <Box>
       {features.map((feature: Feature, index: number) => (
-        <Box
-          style={featureStyle.parent}
-          className={
-            activeFeatureState[0] === feature.properties?.id
-              ? 'feature-item active'
-              : 'feature-item'
-          }
-          key={index}
-          onMouseEnter={() => mouseEnterListItem(index)}
-          onMouseLeave={() => mouseLeaveListItem()}>
-          <Box className="feature-name">{feature.properties?.siteName || `Area ${index + 1}`}</Box>
-          <Box className="feature-size">{feature.properties?.areaHectares || 0} Ha</Box>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={feature.properties?.maskedLocation || false}
-                  onChange={(event) => maskChanged(event, index)}
-                />
-              }
-              label="Mask"
-            />
-          </FormGroup>
-          <IconButton
-            title="Delete Feature"
-            onClick={() => {
-              deleteListItem(index);
-            }}>
-            <DeleteForeverOutlinedIcon />
-          </IconButton>
-        </Box>
+        <FeatureItem feature={feature} index={index} key={index}/>
       ))}
     </Box>
   );
