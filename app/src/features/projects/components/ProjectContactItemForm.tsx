@@ -105,7 +105,7 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
           </Grid>
           <Grid item xs={12} md={6}>
             <AutocompleteFreeSoloField
-              id="contact_organization"
+              id="organization"
               name="organization"
               label="Organization"
               options={props.organization}
