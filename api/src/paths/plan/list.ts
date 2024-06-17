@@ -123,10 +123,6 @@ GET.apiDoc = {
                         ...(geoJsonFeature as object)
                       }
                     },
-                    range: {
-                      type: 'number',
-                      nullable: true
-                    },
                     region: {
                       type: 'number'
                     }

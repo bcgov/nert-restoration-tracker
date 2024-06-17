@@ -73,7 +73,6 @@ begin
   insert into project_spatial_component (name, project_id, geography, project_spatial_component_type_id) values ('test project spatial', _project_id, _geography, (select project_spatial_component_type_id from project_spatial_component_type where name = 'Boundary'));
   insert into project_contact (project_id, contact_type_id, first_name, last_name, agency, email_address, is_primary, is_public) values (_project_id, (select contact_type_id from contact_type where name = 'Coordinator'), 'john', 'doe', 'an agency', 'nobody@nowhere.com', 'Y', 'Y');
   insert into nrm_region (project_id, name, objectid) values (_project_id, 'test region name', 367463);
-  insert into project_caribou_population_unit (project_id, caribou_population_unit_id) values (_project_id, (select caribou_population_unit_id from caribou_population_unit where name = 'Atlin'));
 
 
   select count(1) into _count from partnership;
@@ -96,8 +95,6 @@ begin
   assert _count = 1, 'FAIL project_contact';
   select count(1) into _count from nrm_region;
   assert _count = 1, 'FAIL nrm_region';
-  select count(1) into _count from project_caribou_population_unit;
-  assert _count = 1, 'FAIL project_caribou_population_unit';
 
 
   -- test ancillary data

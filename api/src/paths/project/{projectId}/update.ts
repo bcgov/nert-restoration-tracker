@@ -277,10 +277,6 @@ PUT.apiDoc = {
               required: ['geometry', 'region'],
               additionalProperties: false,
               properties: {
-                range: {
-                  type: 'number',
-                  nullable: true
-                },
                 priority: {
                   type: 'string',
                   enum: ['true', 'false']

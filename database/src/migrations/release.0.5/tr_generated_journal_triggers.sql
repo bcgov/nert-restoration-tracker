@@ -1,6 +1,4 @@
  create trigger journal_administrative_activity_status_type after insert or update or delete on restoration.administrative_activity_status_type for each row execute procedure tr_journal_trigger();
- create trigger journal_caribou_population_unit after insert or update or delete on restoration.caribou_population_unit for each row execute procedure tr_journal_trigger();
- create trigger journal_feature_type after insert or update or delete on restoration.feature_type for each row execute procedure tr_journal_trigger();
  create trigger journal_funding_source after insert or update or delete on restoration.funding_source for each row execute procedure tr_journal_trigger();
  create trigger journal_contact_type after insert or update or delete on restoration.contact_type for each row execute procedure tr_journal_trigger();
  create trigger journal_first_nations after insert or update or delete on restoration.first_nations for each row execute procedure tr_journal_trigger();
@@ -10,7 +8,6 @@
  create trigger journal_permit after insert or update or delete on restoration.permit for each row execute procedure tr_journal_trigger();
  create trigger journal_investment_action_category after insert or update or delete on restoration.investment_action_category for each row execute procedure tr_journal_trigger();
  create trigger journal_iucn_conservation_action_level_1_classification after insert or update or delete on restoration.iucn_conservation_action_level_1_classification for each row execute procedure tr_journal_trigger();
- create trigger journal_project_caribou_population_unit after insert or update or delete on restoration.project_caribou_population_unit for each row execute procedure tr_journal_trigger();
  create trigger journal_project_first_nation after insert or update or delete on restoration.project_first_nation for each row execute procedure tr_journal_trigger();
  create trigger journal_project_contact after insert or update or delete on restoration.project_contact for each row execute procedure tr_journal_trigger();
  create trigger journal_project_funding_source after insert or update or delete on restoration.project_funding_source for each row execute procedure tr_journal_trigger();
