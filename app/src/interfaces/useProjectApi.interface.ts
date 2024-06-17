@@ -4,7 +4,6 @@ import { IProjectFocusForm } from 'features/projects/components/ProjectFocusForm
 import { IProjectFundingForm } from 'features/projects/components/ProjectFundingForm';
 import { IProjectGeneralInformationForm } from 'features/projects/components/ProjectGeneralInformationForm';
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
-import { IProjectLocationConservationAreasArrayItem } from 'features/projects/components/ProjectLocationConservationAreasForm';
 import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
 import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';

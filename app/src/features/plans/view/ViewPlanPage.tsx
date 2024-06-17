@@ -1,15 +1,9 @@
-import {
-  mdiAccountMultipleOutline,
-  mdiArrowLeft,
-  mdiPencilOutline,
-  mdiTrashCanOutline
-} from '@mdi/js';
+import { mdiAccountMultipleOutline, mdiPencilOutline, mdiTrashCanOutline } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -17,8 +11,6 @@ import Typography from '@mui/material/Typography';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { DialogContext } from 'contexts/dialogContext';
-import { MapStateContext } from 'contexts/mapContext';
-import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
@@ -73,16 +65,14 @@ const ViewPlanPage: React.FC = () => {
 
   const planId = Number(urlParams['id']);
 
-  const mapContext = useContext(MapStateContext);
   const dialogContext = useContext(DialogContext);
 
-  const [openFullScreen, setOpenFullScreen] = React.useState(false);
+  // const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const [isLoadingPlan, setIsLoadingPlan] = useState(false);
   const [planWithDetails, setPlanWithDetails] = useState<IGetPlanForViewResponse | null>(null);
-  const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
   const codes = useCodes();
@@ -100,18 +90,9 @@ const ViewPlanPage: React.FC = () => {
 
   const getAttachments = useCallback(
     async (forceFetch: boolean) => {
-      if (attachmentsList.length && !forceFetch) return;
+      if (thumbnailImage.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectAttachments(
-          planId,
-          S3FileType.ATTACHMENTS
-        );
-
-        if (response?.attachmentsList) {
-          setAttachmentsList([...response.attachmentsList]);
-        }
-
         const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
           planId,
           S3FileType.THUMBNAIL
@@ -124,7 +105,7 @@ const ViewPlanPage: React.FC = () => {
         return error;
       }
     },
-    [restorationTrackerApi.plan, planId, attachmentsList.length]
+    [restorationTrackerApi.plan, planId]
   );
 
   useEffect(() => {
@@ -134,9 +115,6 @@ const ViewPlanPage: React.FC = () => {
       setIsLoadingPlan(true);
     }
   }, [isLoadingPlan, planWithDetails, getPlan, getAttachments]);
-  if (!codes.isReady || !codes.codes || !planWithDetails) {
-    return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
-  }
 
   const defaultYesNoDialogProps = {
     dialogTitle: DeletePlanI18N.deleteTitle,
@@ -201,9 +179,34 @@ const ViewPlanPage: React.FC = () => {
     }
   };
 
-  const closeMapDialog = () => {
-    setOpenFullScreen(false);
+  // const closeMapDialog = () => {
+  //   setOpenFullScreen(false);
+  // };
+
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
   };
+
+  if (!codes.isReady || !codes.codes || !planWithDetails) {
+    return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
+  }
 
   return (
     <>
@@ -315,20 +318,13 @@ const ViewPlanPage: React.FC = () => {
                   <Box height={500}>
                     <MapContainer
                       mapId={'plan_location_map'}
-                      layerVisibility={mapContext.layerVisibility}
+                      layerVisibility={layerVisibility}
                       features={planWithDetails.location.geometry}
                       mask={null}
                     />
                   </Box>
                 </Paper>
                 <Box mt={2} />
-                {/* Documents */}
-                <Paper elevation={2}>
-                  <ProjectAttachments
-                    attachmentsList={attachmentsList}
-                    getAttachments={getAttachments}
-                  />
-                </Paper>
               </Grid>
               <Grid item md={4}>
                 <Paper elevation={2}>
@@ -340,7 +336,7 @@ const ViewPlanPage: React.FC = () => {
         </Card>
       </Container>
 
-      <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
+      {/* <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
         <Box pr={3} pl={1} display="flex" alignItems="center">
           <Box mr={1}>
             <IconButton onClick={closeMapDialog} aria-label="back to plan" size="large">
@@ -352,12 +348,12 @@ const ViewPlanPage: React.FC = () => {
           <Box flex="1 1 auto">
             <MapContainer
               mapId={'plan_location_map'}
-              layerVisibility={mapContext.layerVisibility}
+              layerVisibility={layerVisibility}
               features={planWithDetails.location.geometry}
             />
           </Box>
         </Box>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };
