@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
 import get from 'lodash-es/get';
-
+import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
 
 export interface MapFeatureListProps {
   features?: any;
@@ -52,20 +52,20 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   // Highlight the list item and the map feature
   const mouseEnterListItem = (index: number) => {
-    console.log('mouseEnterListItem', index);
     activeFeatureState[1](index + 1);
   };
   const mouseLeaveListItem = () => {
-    console.log('mouseLeaveListItem');
     activeFeatureState[1](null);
   };
 
   const deleteListItem = (index: number) => {
     const location = get(values, 'location');
     const oldFeatureList = get(values, 'location.geometry');
-    const newFeatureList = oldFeatureList.filter((f: Feature, i: number) => i !== index); 
+    const newFeatureList = recalculateFeatureIds(
+      oldFeatureList.filter((f: Feature, i: number) => i !== index)
+    );
+
     location.geometry = newFeatureList;
-    // TODO: Think I need to recalc the IDs here
     setFieldValue('location', location);
 
     // Reset the hover state
@@ -74,7 +74,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     // To keep the map happy, we need to update the maskState
     maskState[1](() => {
       const oldState = maskState[0];
-      const newState = oldState.filter((f: boolean, i: number) => i !== index); 
+      const newState = oldState.filter((f: boolean, i: number) => i !== index);
       return newState;
     });
   };
@@ -87,7 +87,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   /**
    * FeatureItem
-   * @param feature 
+   * @param feature
    * @returns React component for a single feature item
    */
   const FeatureItem: React.FC<FeatureItemProps> = (item) => {
@@ -96,14 +96,14 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
       <Box
         style={featureStyle.parent}
         className={
-          activeFeatureState[0] === feature.properties?.id
-            ? 'feature-item active'
-            : 'feature-item'
+          activeFeatureState[0] === feature.properties?.id ? 'feature-item active' : 'feature-item'
         }
         key={item.index}
         onMouseEnter={() => mouseEnterListItem(item.index)}
         onMouseLeave={() => mouseLeaveListItem()}>
-        <Box className="feature-name">{feature.properties?.siteName || `Area ${item.index + 1}`}</Box>
+        <Box className="feature-name">
+          {feature.properties?.siteName || `Area ${item.index + 1}`}
+        </Box>
         <Box className="feature-size">{feature.properties?.areaHectares || 0} Ha</Box>
         <FormGroup>
           <FormControlLabel
@@ -125,13 +125,12 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         </IconButton>
       </Box>
     );
-  }
-
+  };
 
   return (
     <Box>
       {features.map((feature: Feature, index: number) => (
-        <FeatureItem feature={feature} index={index} key={index}/>
+        <FeatureItem feature={feature} index={index} key={index} />
       ))}
     </Box>
   );
