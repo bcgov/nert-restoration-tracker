@@ -580,6 +580,7 @@ export class ProjectRepository extends BaseRepository {
   async insertProjectContact(contact: IPostContact, projectId: number): Promise<{ project_contact_id: number }> {
     defaultLog.debug({ label: 'insertProjectContact', message: 'params', contact });
 
+    // TODO: add phone number to contact table
     try {
       const sqlStatement = SQL`
         INSERT INTO project_contact (
@@ -589,7 +590,7 @@ export class ProjectRepository extends BaseRepository {
           (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator'),
           ${contact.first_name},
           ${contact.last_name},
-          ${contact.agency},
+          ${contact.organization},
           ${contact.email_address},
           ${contact.is_public ? 'Y' : 'N'},
           ${contact.is_primary ? 'Y' : 'N'}
@@ -1301,7 +1302,7 @@ export class ProjectRepository extends BaseRepository {
         SET
           first_name = ${contact.first_name},
           last_name = ${contact.last_name},
-          agency = ${contact.agency},
+          agency = ${contact.organization},
           email_address = ${contact.email_address},
           is_public = ${contact.is_public ? 'Y' : 'N'},
           is_primary = ${contact.is_primary ? 'Y' : 'N'}

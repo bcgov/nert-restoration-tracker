@@ -30,7 +30,6 @@ const uploadImageStyles = {
 const ThumbnailImageField: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
   const { values, setFieldValue } = formikProps;
-  console.log('values', values);
 
   const config = useContext(ConfigContext);
 
