@@ -290,17 +290,6 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Get range data by project id.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<any>}
-   * @memberof ProjectService
-   */
-  async getRangeData(projectId: number): Promise<any> {
-    return this.projectRepository.getRangeData(projectId);
-  }
-
-  /**
    * Get all projects by spatial search
    *
    * @param {boolean} isUserAdmin
@@ -617,20 +606,6 @@ export class ProjectService extends DBService {
     const response = await this.projectRepository.insertSpecies(speciesId, projectId);
 
     return response.project_species_id;
-  }
-
-  /**
-   * Insert a new range.
-   *
-   * @param {number} rangeNumber
-   * @param {number} projectId
-   * @return {*}  {Promise<number>}
-   * @memberof ProjectService
-   */
-  async insertRange(rangeNumber: number, projectId: number): Promise<number> {
-    const response = await this.projectRepository.insertRange(rangeNumber, projectId);
-
-    return response.project_caribou_population_unit_id;
   }
 
   /**

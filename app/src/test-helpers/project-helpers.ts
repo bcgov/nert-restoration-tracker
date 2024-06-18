@@ -24,7 +24,6 @@ export const getProjectForViewResponse: IGetProjectForViewResponse = {
   },
   location: {
     geometry: [],
-    range: 1,
     priority: 'false',
     region: 1234
   },

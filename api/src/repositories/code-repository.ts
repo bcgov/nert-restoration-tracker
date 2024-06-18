@@ -29,7 +29,6 @@ export interface IAllCodeSets {
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
-  ranges: CodeSet;
 }
 
 export class CodeRepository extends BaseRepository {
@@ -212,26 +211,6 @@ export class CodeRepository extends BaseRepository {
         name
       FROM administrative_activity_status_type
       WHERE record_end_date is null;
-    `;
-
-    const response = await this.connection.sql(sqlStatement);
-
-    return response.rows;
-  }
-
-  /**
-   * Fetch range codes.
-   *
-   * @return {*}
-   * @memberof CodeRepository
-   */
-  async getRanges() {
-    const sqlStatement = SQL`
-      SELECT 
-        caribou_population_unit_id as id, 
-        name 
-      from caribou_population_unit 
-      ORDER BY name ASC;
     `;
 
     const response = await this.connection.sql(sqlStatement);

@@ -358,26 +358,6 @@ describe.skip('ProjectService', () => {
     });
   });
 
-  describe('getRangeData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('returns row on success', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      sinon.stub(ProjectRepository.prototype, 'getRangeData').resolves({ id: 1 });
-
-      const projectId = 1;
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.getRangeData(projectId);
-
-      expect(result).to.eql({ id: 1 });
-    });
-  });
-
   //TODO: Fix issue with this test
   // describe('createProject', () => {
   //   afterEach(() => {
@@ -650,24 +630,6 @@ describe.skip('ProjectService', () => {
       const projectService = new ProjectService(mockDBConnection);
 
       const result = await projectService.insertSpecies(1, 1);
-
-      expect(result).equals(1);
-    });
-  });
-
-  describe('insertRange', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('returns id on success', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      sinon.stub(ProjectRepository.prototype, 'insertRange').resolves({ project_caribou_population_unit_id: 1 } as any);
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.insertRange(1, 1);
 
       expect(result).equals(1);
     });
