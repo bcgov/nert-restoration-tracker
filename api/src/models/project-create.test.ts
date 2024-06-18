@@ -241,7 +241,8 @@ describe('PostContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
+          organization: 'organization',
+          phone_number: '1234567890',
           is_public: 'true',
           is_primary: 'true'
         }
@@ -258,7 +259,8 @@ describe('PostContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
+          organization: 'organization',
+          phone_number: '1234567890',
           is_public: true,
           is_primary: true
         }

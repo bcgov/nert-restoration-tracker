@@ -3,10 +3,7 @@ import Icon from '@mdi/react';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
@@ -21,18 +18,18 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer2';
-import { MapStateContext } from 'contexts/mapContext';
+import MapFeatureList from 'components/map/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 
 export interface IPlanLocationForm {
   location: {
     region: number;
-    number_sites: number;
     size_ha: number;
+    number_sites: number;
     geometry: Feature[];
   };
 }
@@ -40,8 +37,8 @@ export interface IPlanLocationForm {
 export const PlanLocationFormInitialValues: IPlanLocationForm = {
   location: {
     region: '' as unknown as number,
-    number_sites: '' as unknown as number,
     size_ha: '' as unknown as number,
+    number_sites: '' as unknown as number,
     geometry: [] as unknown as Feature[]
   }
 };
@@ -49,8 +46,8 @@ export const PlanLocationFormInitialValues: IPlanLocationForm = {
 export const PlanLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
     region: yup.string().required('Required'),
+    size_ha: yup.number().required('Required'),
     number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
-    size_ha: yup.number().nullable(),
     geometry: yup
       .array()
       .min(1, 'You must specify a Plan boundary')
@@ -71,7 +68,26 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IPlanLocationForm>();
   const { errors, touched, values, handleChange } = formikProps;
 
-  const layerVisibility = useContext(MapStateContext).layerVisibility;
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
@@ -97,45 +113,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
 
-  useEffect(() => {
-    console.log('active feature just changed', activeFeature);
-  }, [activeFeature]);
-
-  const featureStyle = {
-    parent: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr auto',
-      cursor: 'pointer'
-    }
-  };
-
-  const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    // Update the formik values
-    // @ts-ignore
-    values.location.geometry[index].properties.maskedLocation = event.target.checked;
-
-    // Update the local state
-    setMaskState(() => {
-      const newState = [...maskState];
-      newState[index] = event.target.checked;
-      return newState;
-    });
-
-    // Make sure children know what has changed
-    setMask(index);
-  };
-
-  // TODO: Connect these to the map state for active shapes
-  const mouseEnterListItem = (index: number) => {
-    console.log('mouse enter', index);
-    console.log(values.location.geometry[index]);
-    setActiveFeature(values.location.geometry[index]);
-  };
-  const mouseLeaveListItem = (index: number) => {
-    console.log('mouse leave', index);
-    setActiveFeature(null);
-  };
-
   return (
     <>
       <Box mb={5} mt={0}>
@@ -144,7 +121,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         </Box>
         <Box mb={3}>
           <Grid container spacing={3}>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
               <FormControl
                 component="fieldset"
                 size="small"
@@ -175,11 +152,12 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
         <Box mb={4}>
           <Grid container spacing={3}>
-            <Grid item xs={5}>
+            <Grid item xs={8}>
               <IntegerSingleField
                 name={'location.size_ha'}
-                label={'Plan Size in Hectares (total area including all sites)'}
+                label={'Approximate Plan size in Hectares (total area including all sites)'}
                 adornment={'Ha'}
+                required={true}
               />
             </Grid>
           </Grid>
@@ -187,7 +165,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
         <Box>
           <Grid container spacing={3}>
-            <Grid item xs={5}>
+            <Grid item xs={8}>
               <IntegerSingleField
                 name={'location.number_sites'}
                 label={'Number of Sites'}
@@ -224,32 +202,12 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         </Box>
 
         <Box className="feature-box">
-          {/* Create a list element for each feature within values.location.geometry */}
-          {/* TODO: Utilize MUI Components instead of custom divs */}
-          {values.location.geometry.map((feature, index) => (
-            <div
-              style={featureStyle.parent}
-              className={activeFeature?.id === feature?.id ? 'feature-item active' : 'feature-item'}
-              key={index}
-              onMouseEnter={() => mouseEnterListItem(index)}
-              onMouseLeave={() => mouseLeaveListItem(index)}>
-              <div className="feature-name">
-                {feature.properties?.siteName || `Area ${index + 1}`}
-              </div>
-              <div className="feature-size">{feature.properties?.areaHectares || 0} Ha</div>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={feature.properties?.maskedLocation || false}
-                      onChange={(event) => maskChanged(event, index)}
-                    />
-                  }
-                  label="Mask"
-                />
-              </FormGroup>
-            </div>
-          ))}
+          <MapFeatureList
+            features={values.location.geometry}
+            mask={[mask, setMask]}
+            maskState={[maskState, setMaskState]}
+            activeFeatureState={[activeFeature, setActiveFeature]}
+          />
         </Box>
 
         <Box height={500}>
@@ -257,9 +215,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             mapId={'plan_location_map'}
             layerVisibility={layerVisibility}
             features={values.location.geometry}
-            mask={mask}
-            maskState={maskState}
-            activeFeatureState={[activeFeature, setActiveFeature]}
           />
         </Box>
         {errors?.location?.geometry && (

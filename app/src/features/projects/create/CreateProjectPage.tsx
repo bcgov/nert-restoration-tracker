@@ -72,6 +72,7 @@ import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -190,7 +191,13 @@ const CreateProjectPage: React.FC = () => {
       const response = await restorationTrackerApi.draft.getDraft(queryParams.draftId);
       setHasLoadedDraftData(true);
 
-      if (!response || !response.data) {
+      function instanceOfProjectRequest(
+        object: ICreateProjectRequest | ICreatePlanRequest
+      ): object is ICreateProjectRequest {
+        return 'project' in object;
+      }
+
+      if (!response || !response.data || !instanceOfProjectRequest(response.data)) {
         return;
       }
 
@@ -450,7 +457,7 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                        organization={codes.codes.coordinator_agency.map((item) => item.name)}
                       />
                     </Grid>
                   </Grid>

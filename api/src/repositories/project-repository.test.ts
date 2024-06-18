@@ -1436,7 +1436,8 @@ describe('ProjectRepository', () => {
           first_name: 'first_name',
           last_name: 'last_name',
           email_address: 'email',
-          agency: 'agency',
+          organization: 'organization',
+          phone_number: 'phone',
           is_public: true,
           is_primary: true
         },
@@ -1462,7 +1463,8 @@ describe('ProjectRepository', () => {
             first_name: 'first_name',
             last_name: 'last_name',
             email_address: 'email',
-            agency: 'agency',
+            organization: 'organization',
+            phone_number: 'phone',
             is_public: true,
             is_primary: true
           },
@@ -1487,7 +1489,8 @@ describe('ProjectRepository', () => {
             first_name: 'first_name',
             last_name: 'last_name',
             email_address: 'email',
-            agency: 'agency',
+            organization: 'organization',
+            phone_number: 'phone',
             is_public: true,
             is_primary: true
           },

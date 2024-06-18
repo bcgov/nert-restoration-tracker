@@ -73,7 +73,8 @@ export interface IPostContact {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: boolean;
   is_primary: boolean;
 }
@@ -96,7 +97,8 @@ export class PostContactData {
           first_name: item.first_name,
           last_name: item.last_name,
           email_address: item.email_address,
-          agency: item.agency,
+          organization: item.organization,
+          phone_number: item.phone_number,
           is_public: JSON.parse(item.is_public),
           is_primary: JSON.parse(item.is_primary)
         }))) ||
