@@ -1,17 +1,21 @@
 import bbox from '@turf/bbox';
 import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
-import { BBox, Feature, GeoJSON } from 'geojson';
+import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
+
+interface cleanGeoJSONProps {
+  (geojson: GeoJSON | FeatureCollection): FeatureCollection;
+}
 
 /**
  * Clean the GeoJSON object by adding default properties and removing any invalid features
  * @param geojson
  * @returns Cleaned GeoJSON FeatureCollection
  */
-export const cleanGeoJSON = (geojson: GeoJSON) => {
+export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
   const cleanFeature = (feature: Feature) => {
     // Exit out if the feature is not a Polygon or MultiPolygon
     if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
@@ -39,14 +43,10 @@ export const cleanGeoJSON = (geojson: GeoJSON) => {
    */
   if (geojson.type === 'Feature') {
     const cleanF = cleanFeature(geojson);
-    return { type: 'FeatureCollection', features: [cleanF] };
+    return { type: 'FeatureCollection', features: [cleanF] as Feature[] };
   } else if (geojson.type === 'FeatureCollection') {
-    const cleanFeatures = geojson.features.map(cleanFeature);
-    if (cleanFeatures.length === 0) {
-      return { type: 'FeatureCollection', features: [] };
-    } else {
-      return { type: 'FeatureCollection', features: cleanFeatures };
-    }
+    const cleanF = geojson.features.map(cleanFeature).filter((f): f is Feature => f !== undefined);
+    return { type: 'FeatureCollection', features: cleanF as Feature[] };
   } else {
     console.error(
       'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
@@ -55,12 +55,16 @@ export const cleanGeoJSON = (geojson: GeoJSON) => {
   }
 };
 
+export interface recalculateFeatureIdsProps {
+  (features: Feature[]): Feature[];
+}
+
 /**
  * Recalculate the IDs within a feature array
  * @param features array
  * @returns features array with recalculated IDs
  */
-export const recalculateFeatureIds = (features: Feature[]) => {
+export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feature[]) => {
   return features.map((feature: Feature, index: number) => {
     feature.properties = feature.properties || {};
     feature.properties.id = index + 1;
