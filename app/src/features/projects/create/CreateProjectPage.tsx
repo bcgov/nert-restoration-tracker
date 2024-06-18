@@ -11,7 +11,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-// import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import YesNoDialog from 'components/dialog/YesNoDialog';
 import {
   events,

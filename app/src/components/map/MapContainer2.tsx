@@ -176,7 +176,7 @@ let map: maplibre.Map;
 type radiusType = number;
 type maskParams = [any, radiusType];
 
-const initializeMasks = (feature: Feature) => {
+const initializeMasks = (feature: Feature): maskParams => {
   const centroid = turf.centroid(feature as any);
   const bbox = turf.bbox(feature);
 
@@ -222,7 +222,7 @@ const updateMasks = (mask: number, maskState: boolean[], features: any) => {
     type: 'FeatureCollection',
     features: features
       .map((feature: any, index: any) => {
-        let specs: any;
+        let specs: maskParams | undefined;
 
         // Clicked to turn on
         if (index === mask && feature.properties?.maskedLocation === true) {
@@ -230,19 +230,19 @@ const updateMasks = (mask: number, maskState: boolean[], features: any) => {
 
           // Clicked to turn off
         } else if (index === mask && feature.properties?.maskedLocation === false) {
-          specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
-
+          if (feature.properties && feature.properties.mask && feature.properties.mask.centroid) {
+            specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
+          }
           // Not clicked but has an existing mask
         } else if (feature.properties?.maskedLocation) {
           specs = [feature.properties.mask.centroid, feature.properties.mask.radius];
 
           // Not clicked and no mask
         } else {
-          specs = [];
+          specs = undefined;
         }
 
-        // @ts-ignore
-        if (specs.length > 0) {
+        if (specs && specs.length > 0) {
           const maskPolygon = createMask(specs, feature);
           return maskPolygon;
         } else {
