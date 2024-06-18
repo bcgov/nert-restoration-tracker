@@ -8,21 +8,23 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import Box from '@mui/material/Box';
 import get from 'lodash-es/get';
 import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
+import { useFormikContext, FieldArray } from 'formik';
+
+import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
 
 export interface MapFeatureListProps {
   features?: any;
   mask?: any; // Store what mask just changed
   maskState?: any; // Store which features are masked
   activeFeatureState?: any; // Store which feature is active
-  formikProps: any;
 }
 
 const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
-  const formikProps = props.formikProps || {};
 
+  const formikProps = useFormikContext<IProjectLocationForm>();
   const { values, setFieldValue } = formikProps;
 
   const features = values.location.geometry || [];
@@ -37,6 +39,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the feature object
+    // @ts-ignore - Couldn't make typescript happy here, Event with null checks :(
     features[index].properties.maskedLocation = event.target.checked;
 
     // Update the local state
@@ -58,7 +61,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     activeFeatureState[1](null);
   };
 
-  const deleteListItem = (index: number) => {
+  const deleteListItem = (index: number, helper: any) => {
     const location = get(values, 'location');
     const oldFeatureList = get(values, 'location.geometry');
     const newFeatureList = recalculateFeatureIds(
@@ -67,6 +70,9 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
     location.geometry = newFeatureList;
     setFieldValue('location', location);
+
+    // This causes the indexes in the map and list items to be out of sync
+    // helper.remove(index);
 
     // Reset the hover state
     mouseLeaveListItem();
@@ -83,6 +89,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     properties?: any;
     feature: Feature;
     index: number;
+    helper: any;
   }
 
   /**
@@ -119,7 +126,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         <IconButton
           title="Delete Feature"
           onClick={() => {
-            deleteListItem(item.index);
+            deleteListItem(item.index, item.helper);
           }}>
           <DeleteForeverOutlinedIcon />
         </IconButton>
@@ -127,13 +134,29 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     );
   };
 
+  // return (
+  //   <Box>
+  //     {features.map((feature: Feature, index: number) => (
+  //       <FeatureItem feature={feature} index={index} key={index} />
+  //     ))}
+  //   </Box>
+  // );
+
   return (
-    <Box>
-      {features.map((feature: Feature, index: number) => (
-        <FeatureItem feature={feature} index={index} key={index} />
-      ))}
-    </Box>
-  );
+    <>
+      <FieldArray name="features" render={(arrayHelpers: any) => (
+        <>
+          {features.map((feature: Feature, index: number) => {
+            return (
+              <FeatureItem feature={feature} index={index} key={index} helper={arrayHelpers}/>
+            );
+          })}
+        </>
+      )}>
+
+      </FieldArray>
+    </>
+  )
 };
 
 export default MapFeatureList;
