@@ -10,7 +10,6 @@ export type ProjectSearchCriteria = {
   species?: number | number[];
   start_date?: string;
   end_date?: string;
-  ranges?: string | string[];
   region?: string | string[];
 };
 
@@ -120,19 +119,6 @@ export class SearchService extends DBService {
       queryBuilder.and.whereIn(
         'nrm_region.name',
         (Array.isArray(criteria.region) && criteria.region) || [criteria.region]
-      );
-    }
-
-    if (criteria.ranges) {
-      queryBuilder.leftJoin(
-        'project_caribou_population_unit',
-        'project.project_id',
-        'project_caribou_population_unit.project_id'
-      );
-
-      queryBuilder.and.whereIn(
-        'project_caribou_population_unit.caribou_population_unit_id',
-        (Array.isArray(criteria.ranges) && criteria.ranges) || [criteria.ranges]
       );
     }
 

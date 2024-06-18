@@ -29,7 +29,13 @@ describe('AttachmentService', () => {
 
       const attachmentService = new AttachmentService(mockDBConnection);
 
-      const result = await attachmentService.insertProjectAttachment(projectId, key, file, type);
+      const result = await attachmentService.insertProjectAttachment(
+        projectId,
+        key,
+        file.originalname,
+        file.size,
+        type
+      );
 
       expect(result).to.eql({ id: 123, revision_count: 0 });
     });

@@ -1,4 +1,5 @@
-import { AxiosInstance } from 'axios';
+import { AxiosInstance, CancelTokenSource } from 'axios';
+import { S3FileType } from 'constants/attachments';
 import {
   ICreatePlanRequest,
   ICreatePlanResponse,
@@ -8,6 +9,7 @@ import {
   IGetUserPlansListResponse,
   IPlanAdvancedFilterRequest
 } from 'interfaces/usePlanApi.interface';
+import { IUploadAttachmentResponse } from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 
 /**
@@ -109,8 +111,60 @@ const usePlanApi = (axios: AxiosInstance) => {
    * @param {ICreatePlanRequest} Plan
    * @return {*}  {Promise<ICreatePlanResponse>}
    */
-  const createPlan = async (Plan: ICreatePlanRequest): Promise<ICreatePlanResponse> => {
-    const { data } = await axios.post('/api/plan/create', Plan);
+  const createPlan = async (plan: ICreatePlanRequest): Promise<ICreatePlanResponse> => {
+    // Handle the project image file
+    // remove the image file off project json
+    const projectImage = plan.project.project_image;
+    plan.project.project_image = null;
+    plan.project.image_url = undefined;
+
+    const imageKey = plan.project.image_key;
+    plan.project.image_key = undefined;
+
+    const { data } = await axios.post('/api/plan/create', plan);
+
+    const projectId = data.project_id;
+
+    /*
+     * Upload Thumbnail Image
+     * If a project image is provided, upload it to S3 and associate it with the project.
+     * If an image URL is provided, associate it with the project. and move the image to the correct location
+     */
+    if (projectImage) {
+      await uploadPlanAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    } else if (imageKey) {
+      await axios.post(`/api/project/${projectId}/attachments/update`, {
+        key: imageKey,
+        fileType: S3FileType.THUMBNAIL
+      });
+    }
+
+    return data;
+  };
+
+  /**
+   * Upload project attachments.
+   *
+   * @param {number} projectId
+   * @param {File} file
+   * @param {CancelTokenSource} [cancelTokenSource]
+   * @param {(progressEvent: ProgressEvent) => void} [onProgress]
+   * @return {*}  {Promise<string[]>}
+   */
+  const uploadPlanAttachments = async (
+    projectId: number,
+    file: File,
+    fileType: string,
+    cancelTokenSource?: CancelTokenSource
+  ): Promise<IUploadAttachmentResponse> => {
+    const req_message = new FormData();
+
+    req_message.append('media', file);
+    req_message.append('fileType', fileType);
+
+    const { data } = await axios.post(`/api/project/${projectId}/attachments/upload`, req_message, {
+      cancelToken: cancelTokenSource?.token
+    });
 
     return data;
   };
@@ -122,7 +176,8 @@ const usePlanApi = (axios: AxiosInstance) => {
     getPlanById,
     updatePlan,
     deletePlan,
-    getUserPlansList
+    getUserPlansList,
+    uploadPlanAttachments
   };
 };
 

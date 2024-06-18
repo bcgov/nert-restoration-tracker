@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import SQL from 'sql-template-strings';
 import { SYSTEM_ROLE } from '../../constants/roles';
 import { getDBConnection } from '../../database/db';
 import { HTTP400 } from '../../errors/custom-error';
+import { DraftRepository } from '../../repositories/draft-repository';
 import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
 import { getLogger } from '../../utils/logger';
 
@@ -269,20 +269,9 @@ export function getDraftList(): RequestHandler {
         throw new HTTP400('Failed to identify system user ID');
       }
 
-      const getDraftsSQLStatement = SQL`
-        SELECT
-          webform_draft_id as id,
-          is_project,
-          name
-        FROM
-          webform_draft
-        WHERE
-          system_user_id = ${systemUserId};
-      `;
+      const draftRepository = new DraftRepository(connection);
 
-      const getDraftsResponse = await connection.query(getDraftsSQLStatement.text, getDraftsSQLStatement.values);
-
-      const draftResult = (getDraftsResponse && getDraftsResponse.rows) || null;
+      const draftResult = await draftRepository.getDraftList(systemUserId);
 
       if (!draftResult) {
         throw new HTTP400('Failed to get drafts');
@@ -315,29 +304,18 @@ export function createDraft(): RequestHandler {
 
       const systemUserId = connection.systemUserId();
 
-      const postDraftSQLStatement = SQL`
-        INSERT INTO webform_draft (
-          system_user_id,
-          is_project,
-          name,
-          data
-        ) VALUES (
-          ${systemUserId},
-          ${req.body.is_project},
-          ${req.body.name},
-          ${req.body.data}
-        )
-        RETURNING
-          webform_draft_id as id,
-          create_date::timestamptz,
-          update_date::timestamptz;
-      `;
+      const draftRepository = new DraftRepository(connection);
 
-      const createDraftResponse = await connection.query(postDraftSQLStatement.text, postDraftSQLStatement.values);
+      const createDraftResponse = await draftRepository.createDraft(
+        systemUserId,
+        req.body.is_project,
+        req.body.name,
+        req.body.data
+      );
 
       await connection.commit();
 
-      const draftResult = (createDraftResponse && createDraftResponse.rows && createDraftResponse.rows[0]) || null;
+      const draftResult = createDraftResponse || null;
 
       if (!draftResult || !draftResult.id) {
         throw new HTTP400('Failed to save draft');
@@ -376,25 +354,13 @@ export function updateDraft(): RequestHandler {
         throw new HTTP400('Missing required param data');
       }
 
-      const putDraftSQLStatement = SQL`
-        UPDATE
-          webform_draft
-        SET
-          name = ${req.body.name},
-          data = ${req.body.data}
-        WHERE
-          webform_draft_id = ${req.body.id}
-        RETURNING
-          webform_draft_id as id,
-          create_date::timestamptz,
-          update_date::timestamptz;
-      `;
-
       await connection.open();
 
-      const updateDraftResponse = await connection.query(putDraftSQLStatement.text, putDraftSQLStatement.values);
+      const draftRepository = new DraftRepository(connection);
 
-      const draftResult = (updateDraftResponse && updateDraftResponse.rows && updateDraftResponse.rows[0]) || null;
+      const updateDraftResponse = await draftRepository.updateDraft(req.body.id, req.body.name, req.body.data);
+
+      const draftResult = updateDraftResponse || null;
 
       if (!draftResult || !draftResult.id) {
         throw new HTTP400('Failed to update draft');

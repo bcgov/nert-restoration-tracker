@@ -104,14 +104,7 @@ export class AttachmentRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to get project attachment by filename', [
-          'AttachmentRepository->getProjectAttachmentByFileName',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
+      return response && response.rows && response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'getProjectAttachmentByFileName', message: 'error', error });
       throw error;

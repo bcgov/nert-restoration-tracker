@@ -255,9 +255,9 @@ const insertProjectSpatialData = (projectId: number) => `
 
 const insertProjectContactData = (projectId: number) => `
   INSERT INTO project_contact (
-    project_id, contact_type_id, first_name, last_name, agency, email_address, is_public, is_primary
+    project_id, contact_type_id, first_name, last_name, organization, email_address, phone_number, is_public, is_primary
   ) VALUES (
-    ${projectId}, 1, 'John', 'Doe', 'Ministry of Forests', 'john@email.com', 'Y', 'Y'
+    ${projectId}, 1, 'John', 'Doe', 'Ministry of Forests', 'john@email.com', '250-555-5555', 'Y', 'Y'
   );
 `;
 

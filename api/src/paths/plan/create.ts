@@ -122,7 +122,7 @@ POST.apiDoc = {
                   items: {
                     title: 'contacts',
                     type: 'object',
-                    required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                    required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public', 'is_primary'],
                     properties: {
                       first_name: {
                         type: 'string'
@@ -133,7 +133,7 @@ POST.apiDoc = {
                       email_address: {
                         type: 'string'
                       },
-                      agency: {
+                      organization: {
                         type: 'string'
                       },
                       is_public: {
@@ -143,6 +143,10 @@ POST.apiDoc = {
                       is_primary: {
                         type: 'string',
                         enum: ['true', 'false']
+                      },
+                      phone_number: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }

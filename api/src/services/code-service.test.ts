@@ -35,7 +35,6 @@ describe('CodeService', () => {
       sinon
         .stub(CodeRepository.prototype, 'getAdministrativeActivityStatusType')
         .resolves([{ id: 1, name: 'codeName' }]);
-      sinon.stub(CodeRepository.prototype, 'getRanges').resolves([{ id: 1, name: 'codeName' }]);
 
       const codeService = new CodeService(mockDBConnection);
 
@@ -52,7 +51,6 @@ describe('CodeService', () => {
         'system_roles',
         'project_roles',
         'administrative_activity_status_type',
-        'ranges',
         'regions'
       );
 
@@ -68,7 +66,6 @@ describe('CodeService', () => {
       expect(response.system_roles).to.eql(queryReturn);
       expect(response.project_roles).to.eql(queryReturn);
       expect(response.administrative_activity_status_type).to.eql(queryReturn);
-      expect(response.ranges).to.eql(queryReturn);
     });
 
     it('returns all empty code sets', async function () {
@@ -86,7 +83,6 @@ describe('CodeService', () => {
       sinon.stub(CodeRepository.prototype, 'getSystemRoles').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getProjectRoles').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getAdministrativeActivityStatusType').resolves([]);
-      sinon.stub(CodeRepository.prototype, 'getRanges').resolves([]);
 
       const codeService = new CodeService(mockDBConnection);
 
@@ -103,7 +99,6 @@ describe('CodeService', () => {
         'system_roles',
         'project_roles',
         'administrative_activity_status_type',
-        'ranges',
         'regions'
       );
       expect(response.first_nations).to.eql([]);
@@ -116,7 +111,6 @@ describe('CodeService', () => {
       expect(response.system_roles).to.eql([]);
       expect(response.project_roles).to.eql([]);
       expect(response.administrative_activity_status_type).to.eql([]);
-      expect(response.ranges).to.eql([]);
     });
   });
 });

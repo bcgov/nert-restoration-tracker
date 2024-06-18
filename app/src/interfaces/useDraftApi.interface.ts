@@ -1,3 +1,4 @@
+import { ICreatePlanRequest } from './usePlanApi.interface';
 import { ICreateProjectRequest } from './useProjectApi.interface';
 
 /**
@@ -33,5 +34,5 @@ export interface IGetDraftResponse {
   id: number;
   is_project: boolean;
   name: string;
-  data: ICreateProjectRequest;
+  data: ICreateProjectRequest | ICreatePlanRequest;
 }

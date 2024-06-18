@@ -41,5 +41,4 @@ export interface IGetAllCodeSetsResponse {
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
-  ranges: CodeSet;
 }

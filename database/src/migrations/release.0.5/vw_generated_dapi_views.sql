@@ -1,9 +1,7 @@
  create or replace view administrative_activity as select * from restoration.administrative_activity;
  create or replace view administrative_activity_status_type as select * from restoration.administrative_activity_status_type;
  create or replace view administrative_activity_type as select * from restoration.administrative_activity_type;
- create or replace view caribou_population_unit as select * from restoration.caribou_population_unit;
  create or replace view contact_type as select * from restoration.contact_type;
- create or replace view feature_type as select * from restoration.feature_type;
  create or replace view first_nations as select * from restoration.first_nations;
  create or replace view funding_source as select * from restoration.funding_source;
  create or replace view investment_action_category as select * from restoration.investment_action_category;
@@ -16,7 +14,6 @@
  create or replace view conservation_area as select * from restoration.conservation_area;
  create or replace view project as select * from restoration.project;
  create or replace view project_attachment as select * from restoration.project_attachment;
- create or replace view project_caribou_population_unit as select * from restoration.project_caribou_population_unit;
  create or replace view project_contact as select * from restoration.project_contact;
  create or replace view project_first_nation as select * from restoration.project_first_nation;
  create or replace view project_funding_source as select * from restoration.project_funding_source;
@@ -34,5 +31,4 @@
  create or replace view system_user_role as select * from restoration.system_user_role;
  create or replace view user_identity_source as select * from restoration.user_identity_source;
  create or replace view webform_draft as select * from restoration.webform_draft;
- create or replace view wldtaxonomic_units as select * from restoration.wldtaxonomic_units;
 

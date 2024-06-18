@@ -18,14 +18,14 @@ describe('ProjectContactItemForm', () => {
         validateOnBlur={true}
         validateOnChange={false}
         onSubmit={async () => {}}>
-        {() => <ProjectContactItemForm coordinator_agency={agencies} />}
+        {() => <ProjectContactItemForm organization={agencies} />}
       </Formik>
     );
 
     expect(getByTestId('first_name')).toBeVisible();
     expect(getByTestId('last_name')).toBeVisible();
     expect(getByTestId('email_address')).toBeVisible();
-    expect(getByTestId('contact_agency')).toBeVisible();
+    expect(getByTestId('organization')).toBeVisible();
   });
 
   it('renders renders correctly with existing values', () => {
@@ -33,7 +33,8 @@ describe('ProjectContactItemForm', () => {
       first_name: 'John',
       last_name: 'Doe',
       email_address: 'jd@example.com',
-      agency: 'A Rocha Canada',
+      organization: 'A Rocha Canada',
+      phone_number: '123-456-7890',
       is_public: 'true',
       is_primary: 'true'
     };
@@ -45,14 +46,14 @@ describe('ProjectContactItemForm', () => {
         validateOnBlur={true}
         validateOnChange={false}
         onSubmit={async () => {}}>
-        {() => <ProjectContactItemForm coordinator_agency={agencies} />}
+        {() => <ProjectContactItemForm organization={agencies} />}
       </Formik>
     );
 
     expect(getByTestId('first_name')).toBeVisible();
     expect(getByTestId('last_name')).toBeVisible();
     expect(getByTestId('email_address')).toBeVisible();
-    expect(getByTestId('contact_agency')).toBeVisible();
+    expect(getByTestId('organization')).toBeVisible();
     expect(getByDisplayValue('John')).toBeVisible();
     expect(getByDisplayValue('Doe')).toBeVisible();
     expect(getByDisplayValue('jd@example.com')).toBeVisible();

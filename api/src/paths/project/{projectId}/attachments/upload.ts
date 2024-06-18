@@ -54,6 +54,10 @@ POST.apiDoc = {
             media: {
               type: 'string',
               format: 'binary'
+            },
+            fileType: {
+              type: 'string',
+              enum: ['attachments', 'thumbnail', 'draft']
             }
           }
         }
@@ -117,6 +121,9 @@ export function uploadAttachment(): RequestHandler {
       username: (req['auth_payload'] && req['auth_payload'].preferred_username) || '',
       email: (req['auth_payload'] && req['auth_payload'].email) || ''
     };
+
+    const fileType = req.body.fileType || 'attachments';
+
     const connection = getDBConnection(req['keycloak_token']);
 
     if (!(await scanFileForVirus(rawMediaFile))) {
@@ -137,16 +144,10 @@ export function uploadAttachment(): RequestHandler {
       const s3Key = generateS3FileKey({
         projectId: projectId,
         fileName: rawMediaFile.originalname,
-        fileType: 'attachments'
+        fileType: fileType
       });
 
-      const uploadResponse = await attachmentService.uploadMedia(
-        projectId,
-        rawMediaFile,
-        s3Key,
-        'attachments',
-        metadata
-      );
+      const uploadResponse = await attachmentService.uploadMedia(projectId, rawMediaFile, s3Key, fileType, metadata);
 
       await connection.commit();
 

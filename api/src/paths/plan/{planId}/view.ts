@@ -146,10 +146,6 @@ GET.apiDoc = {
                   },
                   region: {
                     type: 'number'
-                  },
-                  range: {
-                    type: 'number',
-                    nullable: true
                   }
                 }
               }

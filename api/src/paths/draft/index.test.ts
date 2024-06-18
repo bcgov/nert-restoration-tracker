@@ -1,11 +1,11 @@
 import chai, { expect } from 'chai';
 import { describe } from 'mocha';
-import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
 import { HTTPError } from '../../errors/custom-error';
+import { DraftRepository, ICreateDraftResponse } from '../../repositories/draft-repository';
 import * as draft from './index';
 
 chai.use(sinonChai);
@@ -47,42 +47,10 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rowCount: 1,
-            rows: [
-              {
-                id: null
-              }
-            ]
-          } as QueryResult<any>;
         }
       });
 
-      try {
-        const result = draft.createDraft();
-
-        await result(sampleReq, sampleRes as any, null as unknown as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to save draft');
-      }
-    });
-
-    it('should throw a 400 error when no result', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        },
-        query: async () => {
-          return {
-            rows: null
-          } as any;
-        }
-      });
+      sinon.stub(DraftRepository.prototype, 'createDraft').resolves(undefined);
 
       try {
         const result = draft.createDraft();
@@ -100,20 +68,12 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rowCount: 1,
-            rows: [
-              {
-                id: 1,
-                create_date: '2020/04/04',
-                update_date: '2020/05/05'
-              }
-            ]
-          } as QueryResult<any>;
         }
       });
+
+      sinon
+        .stub(DraftRepository.prototype, 'createDraft')
+        .resolves({ id: 1, update_date: '2020/05/05' } as ICreateDraftResponse);
 
       const result = draft.createDraft();
 
@@ -128,19 +88,12 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rowCount: 1,
-            rows: [
-              {
-                id: 1,
-                create_date: '2020/04/04'
-              }
-            ]
-          } as QueryResult<any>;
         }
       });
+
+      sinon
+        .stub(DraftRepository.prototype, 'createDraft')
+        .resolves({ id: 1, create_date: '2020/04/04' } as ICreateDraftResponse);
 
       const result = draft.createDraft();
 
@@ -156,9 +109,11 @@ describe('draft', () => {
       sinon.stub(db, 'getDBConnection').returns({
         ...dbConnectionObj,
         systemUserId: () => {
-          throw expectedError;
+          return 20;
         }
       });
+
+      sinon.stub(DraftRepository.prototype, 'createDraft').throws(expectedError);
 
       try {
         const result = draft.createDraft();
@@ -250,42 +205,10 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rowCount: 1,
-            rows: [
-              {
-                id: null
-              }
-            ]
-          } as QueryResult<any>;
         }
       });
 
-      try {
-        const result = draft.updateDraft();
-
-        await result(sampleReq, sampleRes as any, null as unknown as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to update draft');
-      }
-    });
-
-    it('should throw a 400 error when no result', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        },
-        query: async () => {
-          return {
-            rows: null
-          } as any;
-        }
-      });
+      sinon.stub(DraftRepository.prototype, 'updateDraft').resolves(undefined);
 
       try {
         const result = draft.updateDraft();
@@ -303,20 +226,12 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rowCount: 1,
-            rows: [
-              {
-                id: 1,
-                create_date: '2020/04/04',
-                update_date: '2020/05/05'
-              }
-            ]
-          } as QueryResult<any>;
         }
       });
+
+      sinon
+        .stub(DraftRepository.prototype, 'updateDraft')
+        .resolves({ id: 1, update_date: '2020/05/05' } as ICreateDraftResponse);
 
       const result = draft.updateDraft();
 
@@ -331,26 +246,19 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rowCount: 1,
-            rows: [
-              {
-                id: 1,
-                create_date: '2020/04/04'
-              }
-            ]
-          } as QueryResult<any>;
         }
       });
+
+      sinon
+        .stub(DraftRepository.prototype, 'updateDraft')
+        .resolves({ id: 1, create_date: '2020/05/05' } as ICreateDraftResponse);
 
       const result = draft.updateDraft();
 
       await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult.id).to.equal(1);
-      expect(actualResult.date).to.equal('2020/04/04');
+      expect(actualResult.date).to.equal('2020/05/05');
     });
   });
 
@@ -378,13 +286,10 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rows: null
-          } as any;
         }
       });
+
+      sinon.stub(DraftRepository.prototype, 'getDraftList').resolves(undefined);
 
       try {
         const result = draft.getDraftList();
@@ -402,13 +307,10 @@ describe('draft', () => {
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: async () => {
-          return {
-            rows: [{ id: 1, name: 'draft 1' }]
-          } as any;
         }
       });
+
+      sinon.stub(DraftRepository.prototype, 'getDraftList').resolves([{ id: 1, name: 'draft 1' }] as any);
 
       const result = draft.getDraftList();
 

@@ -28,8 +28,7 @@ export class CodeService extends DBService {
         iucn_conservation_action_level_3_subclassification,
         system_roles,
         project_roles,
-        administrative_activity_status_type,
-        ranges
+        administrative_activity_status_type
       ],
       regions
     ] = await Promise.all([
@@ -42,8 +41,7 @@ export class CodeService extends DBService {
         this.codeRepository.getIUCNConservationActionLevel3Subclassification(),
         this.codeRepository.getSystemRoles(),
         this.codeRepository.getProjectRoles(),
-        this.codeRepository.getAdministrativeActivityStatusType(),
-        this.codeRepository.getRanges()
+        this.codeRepository.getAdministrativeActivityStatusType()
       ]),
       getNRMRegions()
     ]);
@@ -58,7 +56,6 @@ export class CodeService extends DBService {
       system_roles,
       project_roles,
       administrative_activity_status_type,
-      ranges,
       regions,
       coordinator_agency
     };
