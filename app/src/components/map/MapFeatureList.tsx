@@ -144,19 +144,19 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   return (
     <>
-      <FieldArray name="features" render={(arrayHelpers: any) => (
-        <>
-          {features.map((feature: Feature, index: number) => {
-            return (
-              <FeatureItem feature={feature} index={index} key={index} helper={arrayHelpers}/>
-            );
-          })}
-        </>
-      )}>
-
-      </FieldArray>
+      <FieldArray
+        name="features"
+        render={(arrayHelpers: any) => (
+          <>
+            {features.map((feature: Feature, index: number) => {
+              return (
+                <FeatureItem feature={feature} index={index} key={index} helper={arrayHelpers} />
+              );
+            })}
+          </>
+        )}></FieldArray>
     </>
-  )
+  );
 };
 
 export default MapFeatureList;
