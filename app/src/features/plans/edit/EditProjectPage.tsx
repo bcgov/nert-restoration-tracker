@@ -26,6 +26,8 @@ import PlanGeneralInformationForm, {
 } from '../components/PlanGeneralInformationForm';
 import PlanLocationForm, { PlanLocationFormYupSchema } from '../components/PlanLocationForm';
 import { PlanFormInitialValues } from '../create/CreatePlanPage';
+import PlanFocusForm from '../components/PlanFocusForm';
+import { handleFocusFormValues } from 'utils/Utils';
 
 const pageStyles = {
   actionButton: {
@@ -85,7 +87,9 @@ const EditPlanPage: React.FC = () => {
     const getEditPlanFields = async () => {
       const response = await restorationTrackerApi.plan.getPlanById(projectId);
 
-      setInitialPlanFormData(response);
+      const focus = handleFocusFormValues(response.project);
+
+      setInitialPlanFormData({ ...response, focus: { focuses: focus } });
 
       if (!response || !response.project.project_id) {
         return;
@@ -212,11 +216,9 @@ const EditPlanPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <PlanGeneralInformationForm />
-                    {/*
-                      TODO: fix focus to be contained in general information form
-                     <Box mt={2}>
-                        <PlanFocusForm />
-                      </Box> */}
+                    <Box mt={2}>
+                      <PlanFocusForm />
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -231,7 +233,7 @@ const EditPlanPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <PlanContactForm
-                      coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                      organization={codes.codes.coordinator_agency.map((item) => item.name)}
                     />
                   </Grid>
                 </Grid>

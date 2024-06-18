@@ -674,7 +674,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertProjectFocus', () => {
+  describe('updateProjectFocus', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -690,7 +690,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertProjectFocus({ id: 1 } as any, 1);
+      const response = await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
 
       expect(response).to.eql({ project_id: 1 });
     });
@@ -707,7 +707,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertProjectFocus({ id: 1 } as any, 1);
+        await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to insert project focus');
       }
@@ -723,7 +723,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertProjectFocus({ id: 1 } as any, 1);
+        await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

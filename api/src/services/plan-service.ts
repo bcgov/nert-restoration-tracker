@@ -92,7 +92,7 @@ export class PlanService extends DBService {
     );
 
     // insert focus
-    await this.projectRepository.insertProjectFocus(plan.focus, planResponse.project_id);
+    await this.projectRepository.updateProjectFocus(plan.focus, planResponse.project_id);
 
     // insert location
     await this.projectRepository.insertProjectLocation(plan.location, planResponse.project_id);
@@ -123,22 +123,29 @@ export class PlanService extends DBService {
     // update project
     const planResponse = await this.planRepository.updatePlan(plan.project, projectId);
 
+    // update focus
+    await this.projectRepository.updateProjectFocus(plan.focus, planResponse.project_id);
+
     // update contacts
-    Promise.all(
-      plan.contact.contacts.map(async (contact) => {
-        await this.projectRepository.insertProjectContact(contact, projectId);
-      })
-    );
+    if (plan.contact.contacts.length > 0) {
+      await this.projectRepository.deleteProjectContact(projectId);
+
+      Promise.all(
+        plan.contact.contacts.map(async (contact) => {
+          await this.projectRepository.insertProjectContact(contact, projectId);
+        })
+      );
+    }
 
     // update location
     if (plan.location) {
       await this.projectRepository.updateProjectLocation(projectId, plan.location);
     }
 
-    //TODO: FINISH UPDATE FUNCTION
     //update region
-
-    //update focus
+    if (plan.location.region) {
+      await this.projectRepository.updateProjectRegion(plan.location.region, projectId);
+    }
 
     return planResponse;
   }

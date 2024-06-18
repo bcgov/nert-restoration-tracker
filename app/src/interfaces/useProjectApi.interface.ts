@@ -274,7 +274,8 @@ export interface IGetProjectForViewResponseContactArrayItem {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: string;
   is_primary: string;
 }

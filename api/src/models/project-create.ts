@@ -57,6 +57,7 @@ export class PostPlanObject {
 
 export class PostEditPlanObject {
   project: PostPlanData;
+  focus: PostFocusData;
   contact: PostContactData;
   location: PostLocationData;
 
@@ -64,6 +65,7 @@ export class PostEditPlanObject {
     defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
 
     this.project = (obj?.project && new PostPlanData(obj.project)) || null;
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
     this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
   }

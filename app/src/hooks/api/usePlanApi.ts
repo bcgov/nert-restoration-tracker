@@ -100,8 +100,32 @@ const usePlanApi = (axios: AxiosInstance) => {
     planId: number,
     PlanData: IEditPlanRequest
   ): Promise<IEditPlanResponse> => {
+    // Handle the project image file
+    // remove the image file off project json
+    const projectImage = PlanData.project.project_image;
+    PlanData.project.project_image = null;
+    PlanData.project.image_url = undefined;
+
+    const imageKey = PlanData.project.image_key;
+    PlanData.project.image_key = undefined;
+
     const { data } = await axios.put(`api/plan/${planId}/update`, PlanData);
 
+    const projectId = data.project_id;
+
+    /*
+     * Upload Thumbnail Image
+     * If a project image is provided, upload it to S3 and associate it with the project.
+     * If an image URL is provided, associate it with the project. and move the image to the correct location
+     */
+    if (projectImage) {
+      await uploadPlanAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    } else if (imageKey) {
+      await axios.post(`/api/project/${projectId}/attachments/update`, {
+        key: imageKey,
+        fileType: S3FileType.THUMBNAIL
+      });
+    }
     return data;
   };
 

@@ -7,6 +7,7 @@ import {
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseLocation
 } from './useProjectApi.interface';
+import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 
 // [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
@@ -27,6 +28,7 @@ export interface ICreatePlanRequest
 
 export interface IEditPlanRequest
   extends IPlanGeneralInformationForm,
+    IPlanFocusForm,
     IPlanContactForm,
     IPlanLocationForm {}
 
@@ -47,6 +49,7 @@ export interface IGetUserPlansListResponse {
 
 export interface IGetPlanForViewResponse {
   project: IGetProjectForViewResponseDetails;
+  focus: { focuses: IMultiAutocompleteFieldOption[] };
   location: IGetProjectForViewResponseLocation;
   contact: IGetProjectForViewResponseContact;
 }

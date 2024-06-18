@@ -44,7 +44,7 @@ PUT.apiDoc = {
       'application/json': {
         schema: {
           title: 'Plan Put Object',
-          required: ['project', 'contact', 'location'],
+          required: ['project', 'focus', 'contact', 'location'],
           type: 'object',
           additionalProperties: false,
           properties: {
@@ -79,6 +79,19 @@ PUT.apiDoc = {
                 }
               }
             },
+            focus: {
+              title: 'Plan focuses',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                focuses: {
+                  type: 'array',
+                  items: {
+                    type: 'number'
+                  }
+                }
+              }
+            },
             contact: {
               title: 'Project contact',
               type: 'object',
@@ -90,7 +103,7 @@ PUT.apiDoc = {
                   items: {
                     title: 'contacts',
                     type: 'object',
-                    required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                    required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public', 'is_primary'],
                     properties: {
                       first_name: {
                         type: 'string'
@@ -101,8 +114,12 @@ PUT.apiDoc = {
                       email_address: {
                         type: 'string'
                       },
-                      agency: {
+                      organization: {
                         type: 'string'
+                      },
+                      phone_number: {
+                        type: 'string',
+                        nullable: true
                       },
                       is_public: {
                         type: 'string',
