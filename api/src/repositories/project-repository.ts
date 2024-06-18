@@ -427,33 +427,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Get Range Data
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<any>}
-   * @memberof ProjectRepository
-   */
-  async getRangeData(projectId: number): Promise<any> {
-    try {
-      const sqlStatement = SQL`
-        SELECT
-          *
-        FROM
-          project_caribou_population_unit
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-      return (response && response.rows) || null;
-    } catch (error) {
-      defaultLog.debug({ label: 'getRangeData', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * get Location Data for a project if user is admin or system user
    *
    * @param {boolean} isUserAdmin
@@ -1065,46 +1038,6 @@ export class ProjectRepository extends BaseRepository {
       return response.rows[0];
     } catch (error) {
       defaultLog.debug({ label: 'insertSpecies', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Insert a project Range.
-   *
-   * @param {number} rangeId
-   * @param {number} projectId
-   * @return {*}  {Promise<{ project_caribou_population_unit_id: number }>}
-   * @memberof ProjectRepository
-   */
-  async insertRange(rangeId: number, projectId: number): Promise<{ project_caribou_population_unit_id: number }> {
-    defaultLog.debug({ label: 'insertRange', message: 'params', rangeId, projectId });
-
-    try {
-      const sqlStatement = SQL`
-      INSERT INTO project_caribou_population_unit (
-        caribou_population_id,
-        project_id
-      ) VALUES (
-        ${rangeId},
-        ${projectId}
-      )
-      RETURNING
-        project_caribou_population_unit_id;
-    `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert range', [
-          'ProjectRepository->insertRange',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'insertRange', message: 'error', error });
       throw error;
     }
   }
@@ -1748,37 +1681,6 @@ export class ProjectRepository extends BaseRepository {
       }
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectRegion', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Delete a project Range.
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteProjectRange(projectId: number) {
-    defaultLog.debug({ label: 'deleteProjectRange', message: 'params', projectId });
-
-    try {
-      const sqlStatement = SQL`
-        DELETE
-          from project_caribou_population_unit
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Range', [
-          'ProjectRepository->deleteProjectRange',
-          'response was null or undefined'
-        ]);
-      }
-    } catch (error) {
-      defaultLog.debug({ label: 'deleteProjectRange', message: 'error', error });
       throw error;
     }
   }

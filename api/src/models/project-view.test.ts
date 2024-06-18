@@ -261,7 +261,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData();
     });
 
-    it('sets geometry, region and range', function () {
+    it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
       expect(locationData.region).to.eql('');
     });
@@ -274,7 +274,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData([], []);
     });
 
-    it('sets geometry, region and range', function () {
+    it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
       expect(locationData.region).to.eql('');
     });
@@ -318,7 +318,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData(locationDataObj, regionDataObj);
     });
 
-    it('sets the geometry, region and range', function () {
+    it('sets the geometry, region', function () {
       expect(locationData.geometry).to.eql(geometry);
       expect(locationData.region).to.eql(1);
     });

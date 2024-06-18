@@ -297,7 +297,7 @@ describe.skip('CreateProjectPage', () => {
             objectives: '',
             project_name: 'draft project name'
           },
-          location: { geometry: [], priority: 'false', range: undefined, region: '' },
+          location: { geometry: [], priority: 'false', region: '' },
           iucn: {
             classificationDetails: [
               {

@@ -29,7 +29,13 @@ describe.skip('ProjectAdvancedFilters', () => {
     const { getByLabelText } = render(
       <MemoryRouter>
         <Formik initialValues={ProjectAdvancedFiltersInitialValues} onSubmit={() => {}}>
-          <ProjectAdvancedFilters funding_agency={[]} contact_agency={[]} ranges={[]} region={[]} />
+          <ProjectAdvancedFilters
+            funding_agency={[]}
+            contact_agency={[]}
+            region={[]}
+            status={[]}
+            focus={[]}
+          />
         </Formik>
       </MemoryRouter>
     );
@@ -58,8 +64,9 @@ describe.skip('ProjectAdvancedFilters', () => {
           <ProjectAdvancedFilters
             funding_agency={funding_agency}
             contact_agency={contact_agency}
-            ranges={[]}
             region={[]}
+            status={[]}
+            focus={[]}
           />
         </Formik>
       </MemoryRouter>
@@ -90,9 +97,9 @@ describe.skip('ProjectAdvancedFilters', () => {
       funding_agency: [1],
       start_date: '',
       end_date: '',
-      keyword: 'temp3',
-      species: [1]
+      keyword: 'temp3'
     };
+
     const funding_agency = [
       { value: 1, label: 'label1' },
       { value: 2, label: 'label2' },
@@ -108,8 +115,9 @@ describe.skip('ProjectAdvancedFilters', () => {
           <ProjectAdvancedFilters
             funding_agency={funding_agency}
             contact_agency={contact_agency}
-            ranges={[]}
             region={[]}
+            status={[]}
+            focus={[]}
           />
         </Formik>
       </MemoryRouter>

@@ -183,59 +183,6 @@ COMMENT ON TABLE audit_log IS 'Holds record level audit log data for the entire 
 ;
 
 -- 
--- TABLE: caribou_population_unit 
---
-
-CREATE TABLE caribou_population_unit(
-    caribou_population_unit_id    integer                     GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                          varchar(300),
-    description                   varchar(3000),
-    geometry                      geometry(geometry, 3005),
-    geography                     geography(geometry),
-    geojson                       jsonb,
-    record_effective_date         date                        NOT NULL,
-    record_end_date               date,
-    create_date                   timestamptz(6)              DEFAULT now() NOT NULL,
-    create_user                   integer                     NOT NULL,
-    update_date                   timestamptz(6),
-    update_user                   integer,
-    revision_count                integer                     DEFAULT 0 NOT NULL,
-    CONSTRAINT caribou_population_unit_pk PRIMARY KEY (caribou_population_unit_id)
-)
-;
-
-
-
-COMMENT ON COLUMN caribou_population_unit.caribou_population_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN caribou_population_unit.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.geometry IS 'The containing geometry of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.geography IS 'The containing geography of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.geojson IS 'A JSON representation of the geometry that provides necessary details for shape manipulation in client side tools.'
-;
-COMMENT ON COLUMN caribou_population_unit.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN caribou_population_unit.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN caribou_population_unit.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN caribou_population_unit.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN caribou_population_unit.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN caribou_population_unit.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN caribou_population_unit.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE caribou_population_unit IS 'A list of caribou population units.'
-;
-
--- 
 -- TABLE: contact_type 
 --
 
@@ -277,50 +224,6 @@ COMMENT ON COLUMN contact_type.update_user IS 'The id of the user who updated th
 COMMENT ON COLUMN contact_type.revision_count IS 'Revision count used for concurrency control.'
 ;
 COMMENT ON TABLE contact_type IS 'A list of contact types. Example types include "Coordinator".'
-;
-
--- 
--- TABLE: feature_type 
---
-
-CREATE TABLE feature_type(
-    feature_type_id          integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                     varchar(300)      NOT NULL,
-    description              varchar(250),
-    record_effective_date    date              NOT NULL,
-    record_end_date          date,
-    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user              integer           NOT NULL,
-    update_date              timestamptz(6),
-    update_user              integer,
-    revision_count           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT feature_type_pk_1 PRIMARY KEY (feature_type_id)
-)
-;
-
-
-
-COMMENT ON COLUMN feature_type.feature_type_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN feature_type.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN feature_type.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN feature_type.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN feature_type.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN feature_type.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN feature_type.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN feature_type.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN feature_type.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN feature_type.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE feature_type IS 'A list of linear feature types.'
 ;
 
 -- 
@@ -918,44 +821,6 @@ COMMENT ON TABLE project_attachment IS 'A list of project attachments.'
 ;
 
 -- 
--- TABLE: project_caribou_population_unit 
---
-
-CREATE TABLE project_caribou_population_unit(
-    project_caribou_population_unit_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    project_id                            integer           NOT NULL,
-    caribou_population_unit_id            integer           NOT NULL,
-    create_date                           timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                           integer           NOT NULL,
-    update_date                           timestamptz(6),
-    update_user                           integer,
-    revision_count                        integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT "PK63" PRIMARY KEY (project_caribou_population_unit_id)
-)
-;
-
-
-
-COMMENT ON COLUMN project_caribou_population_unit.project_caribou_population_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.project_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.caribou_population_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE project_caribou_population_unit IS 'A associative entity that joins projects and caribou population units.'
-;
-
--- 
 -- TABLE: project_contact 
 --
 
@@ -1353,7 +1218,7 @@ CREATE TABLE project_species(
 
 COMMENT ON COLUMN project_species.project_species_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_species.wldtaxonomic_units_id IS 'System generated UID for a taxon.'
+COMMENT ON COLUMN project_species.wldtaxonomic_units_id IS 'Foreign key to taxonomy service describing the taxonomic unit of the record.'
 ;
 COMMENT ON COLUMN project_species.project_id IS 'System generated surrogate primary key identifier.'
 ;
@@ -1717,77 +1582,6 @@ COMMENT ON TABLE webform_draft IS 'A persistent store for draft webform data. Fo
 ;
 
 -- 
--- TABLE: wldtaxonomic_units 
---
-
-CREATE TABLE wldtaxonomic_units(
-    wldtaxonomic_units_id      integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    unit_name1                 varchar(50)       NOT NULL,
-    unit_name2                 varchar(50),
-    unit_name3                 varchar(50),
-    taxon_authority            varchar(100),
-    code                       varchar(35),
-    english_name               varchar(50),
-    tty_kingdom                varchar(10)       NOT NULL,
-    tty_name                   varchar(20)       NOT NULL,
-    tcn_id                     numeric(10, 0),
-    txn_id                     numeric(10, 0),
-    sensitive_data_flag        varchar(1),
-    breed_in_bc_flag           varchar(1),
-    introduced_species_flag    varchar(1),
-    phylo_sort_sequence        numeric(10, 0),
-    start_date                 date,
-    end_date                   date,
-    note                       varchar(2000),
-    element_subnational_id     numeric(10, 0),
-    CONSTRAINT wldtaxonomic_units_pk PRIMARY KEY (wldtaxonomic_units_id)
-)
-;
-
-
-
-COMMENT ON COLUMN wldtaxonomic_units.wldtaxonomic_units_id IS 'System generated UID for a taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.unit_name1 IS 'The first part of a species or taxon  name.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.unit_name2 IS 'Idenifies the species.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.unit_name3 IS 'Subspecies name.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.taxon_authority IS 'Name of the author(s) who first described the species, eg. Linnae'
-;
-COMMENT ON COLUMN wldtaxonomic_units.code IS 'Code commonly used to identify a taxon usually at a species or su'
-;
-COMMENT ON COLUMN wldtaxonomic_units.english_name IS 'Common english name of the species or taxa. Ex. Grizzly Bear'
-;
-COMMENT ON COLUMN wldtaxonomic_units.tty_kingdom IS 'The kingdom the taxon hierarchy represents'
-;
-COMMENT ON COLUMN wldtaxonomic_units.tty_name IS 'The name of the taxon level, eg. PHYLUM, ORDER, GENUS, etc'
-;
-COMMENT ON COLUMN wldtaxonomic_units.tcn_id IS 'FK: WLD_COMMON_NAMES'
-;
-COMMENT ON COLUMN wldtaxonomic_units.txn_id IS 'System generated UID for a taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.sensitive_data_flag IS 'Indicates that the data is sensitive and access restricted'
-;
-COMMENT ON COLUMN wldtaxonomic_units.breed_in_bc_flag IS 'Indicates whether or not an animal breeds in BC.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.introduced_species_flag IS 'Indicates that species is not native to British Columbia.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.phylo_sort_sequence IS 'The phologenetic sequence order of the taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.start_date IS 'The date the taxon name becomes effective.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.end_date IS 'The date a taxon becomes obsolete.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.note IS 'Free form text about the taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.element_subnational_id IS 'Identifier that can be used to link this record to the matching Biotics field.'
-;
-COMMENT ON TABLE wldtaxonomic_units IS 'A table to mimic a view into SPI taxonomic data, specifically CWI_TXN.WLDTAXONOMIC_UNITS, for development purposes. This table should be replaced by live views of the data in production systems.'
-;
-
--- 
 -- INDEX: "Ref299" 
 --
 
@@ -1822,18 +1616,6 @@ CREATE UNIQUE INDEX administrative_activity_status_type_nuk1 ON administrative_a
 --
 
 CREATE UNIQUE INDEX administrative_activity_type_nuk1 ON administrative_activity_type(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
--- INDEX: caribou_population_unit_nuk1 
---
-
-CREATE UNIQUE INDEX caribou_population_unit_nuk1 ON caribou_population_unit(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
--- INDEX: feature_type_nuk1 
---
-
-CREATE UNIQUE INDEX feature_type_nuk1 ON feature_type(name, (record_end_date is NULL)) where record_end_date is null
 ;
 -- 
 -- INDEX: first_nations_nuk1 
@@ -1930,18 +1712,6 @@ CREATE UNIQUE INDEX project_attachment_uk1 ON project_attachment(project_id, fil
 --
 
 CREATE INDEX "Ref1313" ON project_attachment(project_id)
-;
--- 
--- INDEX: "Ref1347" 
---
-
-CREATE INDEX "Ref1347" ON project_caribou_population_unit(project_id)
-;
--- 
--- INDEX: "Ref6748" 
---
-
-CREATE INDEX "Ref6748" ON project_caribou_population_unit(caribou_population_unit_id)
 ;
 -- 
 -- INDEX: "Ref1340" 
@@ -2068,12 +1838,6 @@ CREATE UNIQUE INDEX project_spatial_component_type_uk1 ON project_spatial_compon
 --
 
 CREATE UNIQUE INDEX project_species_uk1 ON project_species(project_id, wldtaxonomic_units_id)
-;
--- 
--- INDEX: "Ref5843" 
---
-
-CREATE INDEX "Ref5843" ON project_species(wldtaxonomic_units_id)
 ;
 -- 
 -- INDEX: "Ref1344" 
@@ -2270,21 +2034,6 @@ ALTER TABLE project_attachment ADD CONSTRAINT "Refproject13"
 
 
 -- 
--- TABLE: project_caribou_population_unit 
---
-
-ALTER TABLE project_caribou_population_unit ADD CONSTRAINT "Refproject47" 
-    FOREIGN KEY (project_id)
-    REFERENCES project(project_id)
-;
-
-ALTER TABLE project_caribou_population_unit ADD CONSTRAINT "Refcaribou_population_unit48" 
-    FOREIGN KEY (caribou_population_unit_id)
-    REFERENCES caribou_population_unit(caribou_population_unit_id)
-;
-
-
--- 
 -- TABLE: project_contact 
 --
 
@@ -2382,11 +2131,6 @@ ALTER TABLE project_spatial_component ADD CONSTRAINT "Refproject_spatial_compone
 -- 
 -- TABLE: project_species 
 --
-
-ALTER TABLE project_species ADD CONSTRAINT "Refwldtaxonomic_units43" 
-    FOREIGN KEY (wldtaxonomic_units_id)
-    REFERENCES wldtaxonomic_units(wldtaxonomic_units_id)
-;
 
 ALTER TABLE project_species ADD CONSTRAINT "Refproject44" 
     FOREIGN KEY (project_id)
