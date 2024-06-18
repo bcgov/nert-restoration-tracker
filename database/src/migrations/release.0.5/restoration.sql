@@ -830,8 +830,9 @@ CREATE TABLE project_contact(
     contact_type_id       integer           NOT NULL,
     first_name            varchar(50),
     last_name             varchar(50),
-    agency                varchar(100)      NOT NULL,
+    organization          varchar(100)      NOT NULL,
     email_address         varchar(300),
+    phone_number          varchar(20),
     is_primary            character(1)      NOT NULL,
     is_public             character(1)      NOT NULL,
     create_date           timestamptz(6)    DEFAULT now() NOT NULL,
@@ -855,7 +856,9 @@ COMMENT ON COLUMN project_contact.first_name IS 'The first name of the contact.'
 ;
 COMMENT ON COLUMN project_contact.last_name IS 'The last name of the contact.'
 ;
-COMMENT ON COLUMN project_contact.agency IS 'The agency name of the contact.'
+COMMENT ON COLUMN project_contact.organization IS 'The organization name of the contact.'
+;
+COMMENT ON COLUMN project_contact.phone_number IS 'The phone number of the contact.'
 ;
 COMMENT ON COLUMN project_contact.email_address IS 'The email address of the contact.'
 ;
