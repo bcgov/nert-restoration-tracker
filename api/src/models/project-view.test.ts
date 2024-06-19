@@ -181,9 +181,10 @@ describe('GetContactData', () => {
         first_name: 'first',
         last_name: 'last',
         email_address: 'email@example.com',
-        agency: 'agency',
         is_public: 'Y',
-        is_primary: 'Y'
+        is_primary: 'Y',
+        organization: 'organization',
+        phone_number: '123-456-7890'
       }
     ];
 
@@ -197,9 +198,10 @@ describe('GetContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
           is_public: 'true',
-          is_primary: 'true'
+          is_primary: 'true',
+          organization: 'organization',
+          phone_number: '123-456-7890'
         }
       ]);
     });
