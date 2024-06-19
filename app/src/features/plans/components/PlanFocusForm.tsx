@@ -4,13 +4,12 @@ import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { focusOptions } from 'constants/misc';
-
 import React from 'react';
 import yup from 'utils/YupSchema';
 
 export interface IPlanFocusForm {
   focus: {
-    focuses: IMultiAutocompleteFieldOption[];
+    focuses: IMultiAutocompleteFieldOption[] | number[];
   };
 }
 

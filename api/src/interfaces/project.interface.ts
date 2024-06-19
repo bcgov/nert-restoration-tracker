@@ -11,6 +11,7 @@ export interface ICreatePlan {
 
 export interface IEditPlan {
   project: PostPlanData;
+  focus: PostFocusData;
   contact: PostContactData;
   location: PostLocationData;
 }

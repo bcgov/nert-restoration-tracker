@@ -410,7 +410,7 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
    * @param {number} projectId
    * @return {*} {any>}  could be a project or a plan response
    */
-  const getProjectPlanForView = async (projectId: number): Promise<any> => {
+  const getProjectPlanForView = async (projectId: number): Promise<IGetProjectForViewResponse> => {
     const { data } = await axios.get(`/api/public/project/${projectId}/view`);
 
     return data;

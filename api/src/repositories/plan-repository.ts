@@ -106,11 +106,7 @@ export class PlanRepository extends BaseRepository {
           brief_desc = ${project.brief_desc},
           state_code = ${project.state_code},
           start_date = ${project.start_date},
-          end_date = ${project.end_date},
-          is_healing_land = ${project.is_healing_land},
-          is_healing_people = ${project.is_healing_people},
-          is_land_initiative = ${project.is_land_initiative},
-          is_cultural_initiative = ${project.is_cultural_initiative}
+          end_date = ${project.end_date}
         WHERE project_id = ${projectId}
         RETURNING
           project_id;

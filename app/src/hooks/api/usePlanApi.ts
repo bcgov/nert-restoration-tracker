@@ -5,6 +5,7 @@ import {
   ICreatePlanResponse,
   IEditPlanRequest,
   IEditPlanResponse,
+  IGetPlanForEditResponse,
   IGetPlanForViewResponse,
   IGetUserPlansListResponse,
   IPlanAdvancedFilterRequest
@@ -90,6 +91,18 @@ const usePlanApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Get Plan details based on its ID for editing purposes.
+   *
+   * @param {number} planId
+   * @return {*}  {Promise<IGetPlanForEditResponse>}
+   */
+  const getPlanByIdForUpdate = async (planId: number): Promise<IGetPlanForEditResponse> => {
+    const { data } = await axios.get(`/api/plan/${planId}/update`);
+
+    return data;
+  };
+
+  /**
    * Update an existing Plan.
    *
    * @param {number} planId
@@ -100,6 +113,18 @@ const usePlanApi = (axios: AxiosInstance) => {
     planId: number,
     PlanData: IEditPlanRequest
   ): Promise<IEditPlanResponse> => {
+    // if project image is provided, handle it
+    if (PlanData.project.project_image) {
+      // if image key is provided, remove the image from the project
+
+      const projectImage = PlanData.project.project_image;
+      PlanData.project.project_image = null;
+      PlanData.project.image_url = undefined;
+      PlanData.project.image_key = undefined;
+
+      await uploadPlanAttachments(planId, projectImage, S3FileType.THUMBNAIL);
+    }
+
     const { data } = await axios.put(`api/plan/${planId}/update`, PlanData);
 
     return data;
@@ -174,6 +199,7 @@ const usePlanApi = (axios: AxiosInstance) => {
     getPlansList,
     createPlan,
     getPlanById,
+    getPlanByIdForUpdate,
     updatePlan,
     deletePlan,
     getUserPlansList,

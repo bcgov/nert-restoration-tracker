@@ -171,7 +171,7 @@ export class ProjectRepository extends BaseRepository {
       `);
         sqlStatementJustAgencies.append(SQL`
         SELECT
-          agency
+          organization
         FROM
           project_contact
         WHERE
@@ -596,8 +596,8 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<{ project_focus_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertProjectFocus(focusData: PostFocusData, projectId: number): Promise<{ project_id: number }> {
-    defaultLog.debug({ label: 'insertProjectFocus', message: 'params', focusData });
+  async updateProjectFocus(focusData: PostFocusData, projectId: number): Promise<{ project_id: number }> {
+    defaultLog.debug({ label: 'updateProjectFocus', message: 'params', focusData });
 
     try {
       let is_healing_land = false;
@@ -637,14 +637,14 @@ export class ProjectRepository extends BaseRepository {
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to insert project focus', [
-          'ProjectRepository->insertProjectFocus',
+          'ProjectRepository->updateProjectFocus',
           'rowCount was null or undefined, expected rowCount = 1'
         ]);
       }
 
       return response.rows[0];
     } catch (error) {
-      defaultLog.debug({ label: 'insertProjectFocus', message: 'error', error });
+      defaultLog.debug({ label: 'updateProjectFocus', message: 'error', error });
       throw error;
     }
   }
@@ -1219,51 +1219,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Update a project Contact.
-   *
-   * @param {IPostContact} contact
-   * @param {number} projectId
-   * @return {*}  {Promise<{ project_contact_id: number }>}
-   * @memberof ProjectRepository
-   */
-  async updateProjectContact(contact: IPostContact, projectId: number): Promise<{ project_contact_id: number }> {
-    defaultLog.debug({ label: 'updateProjectContact', message: 'params', contact });
-
-    try {
-      const sqlStatement = SQL`
-        UPDATE project_contact
-        SET
-          first_name = ${contact.first_name},
-          last_name = ${contact.last_name},
-          agency = ${contact.organization},
-          email_address = ${contact.email_address},
-          is_public = ${contact.is_public ? 'Y' : 'N'},
-          is_primary = ${contact.is_primary ? 'Y' : 'N'}
-        WHERE
-          project_id = ${projectId}
-        AND
-          contact_type_id = (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator')
-        RETURNING
-          project_contact_id;
-      `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to update Contact', [
-          'ProjectRepository->updateProjectContact',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'updateProjectContact', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * Update a project Location.
    *
    * @param {number} projectId
@@ -1330,6 +1285,38 @@ export class ProjectRepository extends BaseRepository {
       return result;
     } catch (error) {
       defaultLog.debug({ label: 'updateProjectLocation', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Update a project Region Details.
+   *
+   * @param {number} projectId
+   * @param {number} regionNumber
+   * @return {*}  {Promise<{ nrm_region_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async updateProjectRegion(projectId: number, regionNumber: number): Promise<{ nrm_region_id: number }> {
+    defaultLog.debug({ label: 'updateProjectRegion', message: 'params', projectId, regionNumber });
+
+    try {
+      const sqlStatement = SQL`
+      UPDATE nrm_region
+      SET
+        objectid = ${regionNumber},
+        name = ${regionNumber}
+      WHERE
+        project_id = ${projectId}
+      RETURNING
+        nrm_region_id;
+    `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'updateProjectRegion', message: 'error', error });
       throw error;
     }
   }
