@@ -15,24 +15,23 @@ import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React from 'react';
 import yup from 'utils/YupSchema';
 
-export interface IAddProjectParticipantsFormArrayItem {
+export interface IAddPlanParticipantsFormArrayItem {
   userIdentifier: string;
   identitySource: string;
   roleId: number;
 }
 
-export interface IAddProjectParticipantsForm {
-  participants: IAddProjectParticipantsFormArrayItem[];
+export interface IAddPlanParticipantsForm {
+  participants: IAddPlanParticipantsFormArrayItem[];
 }
 
-export const AddProjectParticipantsFormArrayItemInitialValues: IAddProjectParticipantsFormArrayItem =
-  {
-    userIdentifier: '',
-    identitySource: '',
-    roleId: '' as unknown as number
-  };
+export const AddProjectParticipantsFormArrayItemInitialValues: IAddPlanParticipantsFormArrayItem = {
+  userIdentifier: '',
+  identitySource: '',
+  roleId: '' as unknown as number
+};
 
-export const AddProjectParticipantsFormInitialValues: IAddProjectParticipantsForm = {
+export const AddProjectParticipantsFormInitialValues: IAddPlanParticipantsForm = {
   participants: [AddProjectParticipantsFormArrayItemInitialValues]
 };
 
@@ -52,7 +51,7 @@ export interface AddProjectParticipantsFormProps {
 
 const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (props) => {
   const { values, handleChange, handleSubmit, getFieldMeta } =
-    useFormikContext<IAddProjectParticipantsForm>();
+    useFormikContext<IAddPlanParticipantsForm>();
 
   return (
     <form onSubmit={handleSubmit}>

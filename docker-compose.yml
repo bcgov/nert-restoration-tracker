@@ -25,6 +25,9 @@ services:
       - POSTGRES_PASSWORD=${DB_ADMIN_PASS}
       - POSTGRES_DB=${DB_DATABASE}
       - PORT=5432
+      - NUM_SEED_PROJECTS=${NUM_SEED_PROJECTS}
+      - NUM_SEED_PLANS=${NUM_SEED_PLANS}
+      - PROJECT_SEEDER_USER_IDENTIFIER=${PROJECT_SEEDER_USER_IDENTIFIER}
     networks:
       - local-network
     volumes:
