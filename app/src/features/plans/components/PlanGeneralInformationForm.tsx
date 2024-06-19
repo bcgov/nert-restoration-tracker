@@ -40,7 +40,8 @@ export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationFor
     is_cultural_initiative: false,
     project_image: null,
     image_url: '',
-    image_key: ''
+    image_key: '',
+    attachment_id: undefined
   }
 };
 

@@ -85,7 +85,7 @@ const EditPlanPage: React.FC = () => {
 
   useEffect(() => {
     const getEditPlanFields = async () => {
-      const response = await restorationTrackerApi.plan.getPlanById(projectId);
+      const response = await restorationTrackerApi.plan.getPlanByIdForUpdate(projectId);
 
       const focus = handleFocusFormValues(response.project);
 

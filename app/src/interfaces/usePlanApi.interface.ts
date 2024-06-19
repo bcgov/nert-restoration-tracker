@@ -3,6 +3,7 @@ import { IPlanFocusForm } from 'features/plans/components/PlanFocusForm';
 import { IPlanGeneralInformationForm } from 'features/plans/components/PlanGeneralInformationForm';
 import { IPlanLocationForm } from 'features/plans/components/PlanLocationForm';
 import {
+  IGetProjectForEditResponseDetails,
   IGetProjectForViewResponseContact,
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseLocation
@@ -49,6 +50,13 @@ export interface IGetUserPlansListResponse {
 
 export interface IGetPlanForViewResponse {
   project: IGetProjectForViewResponseDetails;
+  focus: { focuses: IMultiAutocompleteFieldOption[] };
+  location: IGetProjectForViewResponseLocation;
+  contact: IGetProjectForViewResponseContact;
+}
+
+export interface IGetPlanForEditResponse {
+  project: IGetProjectForEditResponseDetails;
   focus: { focuses: IMultiAutocompleteFieldOption[] };
   location: IGetProjectForViewResponseLocation;
   contact: IGetProjectForViewResponseContact;
