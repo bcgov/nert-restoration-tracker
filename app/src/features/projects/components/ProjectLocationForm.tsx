@@ -117,7 +117,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
 
-  // Mask change indicator
+  /**
+   * Mask change indicator
+   * This is important in mainting the order between the map and the list
+   */
   const [mask, setMask] = useState<null | number>(null);
 
   const getUploadHandler = (): IUploadHandler => {
@@ -290,10 +293,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
         <Box className="feature-box">
           <MapFeatureList
-            features={values.location.geometry}
             mask={[mask, setMask]}
             maskState={[maskState, setMaskState]}
             activeFeatureState={[activeFeature, setActiveFeature]}
+            formikProps={formikProps}
           />
         </Box>
 
