@@ -101,7 +101,7 @@ GET.apiDoc = {
                     items: {
                       title: 'contacts',
                       type: 'object',
-                      required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                      required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public', 'is_primary'],
                       properties: {
                         first_name: {
                           type: 'string'
@@ -112,7 +112,10 @@ GET.apiDoc = {
                         email_address: {
                           type: 'string'
                         },
-                        agency: {
+                        organization: {
+                          type: 'string'
+                        },
+                        phone_number: {
                           type: 'string'
                         },
                         is_public: {
@@ -146,10 +149,6 @@ GET.apiDoc = {
                   },
                   region: {
                     type: 'number'
-                  },
-                  range: {
-                    type: 'number',
-                    nullable: true
                   }
                 }
               }

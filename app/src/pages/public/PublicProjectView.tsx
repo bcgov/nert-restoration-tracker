@@ -24,6 +24,7 @@ import {
 } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
+import ProjectConservationAreas from 'features/projects/view/components/ProjectConservationAreas';
 
 const pageStyles = {
   conservationAreChip: {
@@ -281,42 +282,12 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                                     : 'No'}
                               </Typography>
                               {project.location.is_within_overlapping === 'Y' && (
-                                <Box ml={1}>
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 1. String with 100 characters conservation area name1 conservation area name1'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 2. String with 100 characters conservation area name2 conservation area name2'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 3. String with 100 characters conservation area name3 conservation area name3'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 4. String with 100 characters conservation area name4 conservation area name4'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 5. String with 100 characters conservation area name5 conservation area name5'
-                                    )}
-                                  />
+                                <Box
+                                  ml={1}
+                                  display="flex"
+                                  flexDirection={'column'}
+                                  alignItems="left">
+                                  <ProjectConservationAreas projectViewData={project} />
                                 </Box>
                               )}
                             </Box>

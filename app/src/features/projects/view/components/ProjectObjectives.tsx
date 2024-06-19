@@ -3,6 +3,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
+import { Box } from '@mui/material';
 
 const pageStyles = {
   objectiveChip: {
@@ -43,24 +44,27 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
   const {
     projectViewData: { objectives }
   } = props;
-
   const hasObjectives = objectives.objectives && objectives.objectives.length > 0;
-
   return (
-    <>
-      {hasObjectives &&
-        objectives.objectives.map((item: string, index) => (
-          <Chip
-            key={index}
-            data-testid="objective_item"
-            size="small"
-            sx={pageStyles.objectiveChip}
-            label={objectiveStyled(item)}
-          />
-        ))}
+    <Box mt={1}>
+      <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+        Project Objectives:
+      </Typography>
+      <Box display="flex" flexDirection={'column'} alignItems="left">
+        {hasObjectives &&
+          objectives.objectives.map((item: string, index) => (
+            <Chip
+              key={index}
+              data-testid="objective_item"
+              size="small"
+              sx={pageStyles.objectiveChip}
+              label={objectiveStyled(item)}
+            />
+          ))}
 
-      {!hasObjectives && <Chip label="No Objectives" data-testid="no_objective_loaded" />}
-    </>
+        {!hasObjectives && <Chip label="No Objectives" data-testid="no_objective_loaded" />}
+      </Box>
+    </Box>
   );
 };
 

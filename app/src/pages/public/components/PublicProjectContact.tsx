@@ -87,7 +87,8 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
                       {contactDetails.email_address}
                     </Link>
                   </div>
-                  <div>{contactDetails.agency}</div>
+                  <div>{contactDetails.organization}</div>
+                  <div>{contactDetails.phone_number}</div>
                 </Box>
               </Box>
               <Box>

@@ -67,26 +67,6 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'ranges',
-      schema: {
-        oneOf: [
-          {
-            type: 'string',
-            nullable: true
-          },
-          {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            nullable: true
-          }
-        ]
-      },
-      allowEmptyValue: true
-    },
-    {
-      in: 'query',
       name: 'region',
       schema: {
         oneOf: [
@@ -197,10 +177,6 @@ GET.apiDoc = {
                       items: {
                         ...(geoJsonFeature as object)
                       }
-                    },
-                    range: {
-                      type: 'number',
-                      nullable: true
                     },
                     region: {
                       type: 'number'

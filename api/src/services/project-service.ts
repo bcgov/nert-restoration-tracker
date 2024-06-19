@@ -4,6 +4,7 @@ import { HTTP400 } from '../errors/custom-error';
 import { models } from '../models/models';
 import {
   IPostAuthorization,
+  IPostConservationArea,
   IPostContact,
   IPostIUCN,
   IPostObjective,
@@ -279,23 +280,13 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async getLocationData(projectId: number): Promise<GetLocationData> {
-    const [geometryRows, regionRows] = await Promise.all([
+    const [geometryRows, regionRows, conservationAreaRows] = await Promise.all([
       this.projectRepository.getGeometryData(projectId),
-      this.projectRepository.getRegionData(projectId)
+      this.projectRepository.getRegionData(projectId),
+      this.projectRepository.getConservationAreasData(projectId)
     ]);
 
-    return new GetLocationData(geometryRows, regionRows);
-  }
-
-  /**
-   * Get range data by project id.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<any>}
-   * @memberof ProjectService
-   */
-  async getRangeData(projectId: number): Promise<any> {
-    return this.projectRepository.getRangeData(projectId);
+    return new GetLocationData(geometryRows, regionRows, conservationAreaRows);
   }
 
   /**
@@ -379,6 +370,15 @@ export class ProjectService extends DBService {
       Promise.all(
         postProjectData.objective.objectives?.map((objective: IPostObjective) =>
           this.insertObjective(objective.objective, projectId)
+        ) || []
+      )
+    );
+
+    // Handle conservation areas
+    promises.push(
+      Promise.all(
+        postProjectData.location.conservationAreas?.map((conservationArea: IPostConservationArea) =>
+          this.insertConservationArea(conservationArea.conservationArea, projectId)
         ) || []
       )
     );
@@ -468,7 +468,7 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async insertFocus(focusData: PostFocusData, project_id: number): Promise<number> {
-    const response = await this.projectRepository.insertProjectFocus(focusData, project_id);
+    const response = await this.projectRepository.updateProjectFocus(focusData, project_id);
 
     return response.project_id;
   }
@@ -527,6 +527,20 @@ export class ProjectService extends DBService {
     const response = await this.projectRepository.insertObjective(objective, projectId);
 
     return response.objective_id;
+  }
+
+  /**
+   * Insert a new project consevation area.
+   *
+   * @param {string} conservationArea
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertConservationArea(conservationArea: string, projectId: number): Promise<number> {
+    const response = await this.projectRepository.insertConservationArea(conservationArea, projectId);
+
+    return response.conservation_area_id;
   }
 
   /**
@@ -592,20 +606,6 @@ export class ProjectService extends DBService {
     const response = await this.projectRepository.insertSpecies(speciesId, projectId);
 
     return response.project_species_id;
-  }
-
-  /**
-   * Insert a new range.
-   *
-   * @param {number} rangeNumber
-   * @param {number} projectId
-   * @return {*}  {Promise<number>}
-   * @memberof ProjectService
-   */
-  async insertRange(rangeNumber: number, projectId: number): Promise<number> {
-    const response = await this.projectRepository.insertRange(rangeNumber, projectId);
-
-    return response.project_caribou_population_unit_id;
   }
 
   /**
@@ -752,6 +752,28 @@ export class ProjectService extends DBService {
 
     await Promise.all([...insertObjectivesPromises]);
   }
+
+  // /**
+  //  * Update project conservation areas data.
+  //  *
+  //  * @param {number} projectId
+  //  * @param {IUpdateProject} entities
+  //  * @return {*}  {Promise<void>}
+  //  * @memberof ProjectService
+  //  */
+  // async updateConservationAreasData(projectId: number, entities: IUpdateProject): Promise<void> {
+  //   const putConservationAreasData =
+  //     (entities?.conservationArea && new models.project.PutConservationAreasData(entities.conservationArea)) || null;
+
+  //   await this.projectRepository.deleteProjectConservationAreas(projectId);
+
+  //   const insertConservationAreasPromises =
+  //     putConservationAreasData?.conservationAreas?.map((conservationArea: string) =>
+  //       this.insertConservationArea(conservationArea, projectId)
+  //     ) || [];
+
+  //   await Promise.all([...insertConservationAreasPromises]);
+  // }
 
   /**
    * Update project funding data.

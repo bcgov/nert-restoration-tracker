@@ -9,7 +9,6 @@ import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
@@ -21,7 +20,7 @@ import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
 import { RoleGuard } from 'components/security/Guards';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { attachmentType, focus, ICONS } from 'constants/misc';
+import { focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
@@ -35,19 +34,13 @@ import {
 } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { S3FileType } from 'constants/attachments';
+import ProjectDetails from './components/ProjectDetails';
 
 const pageStyles = {
   conservationAreChip: {
     marginBottom: '2px',
     justifyContent: 'left'
-  },
-  conservAreaLabel: {
-    color: '#545454',
-    fontSize: '0.78rem',
-    fontWeight: 500,
-    textTransform: 'none',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
   },
   titleContainerActions: {
     '& button + button': {
@@ -89,6 +82,7 @@ const ViewProjectPage: React.FC = () => {
   const [isLoadingProject, setIsLoadingProject] = useState(false);
   const [project, setProject] = useState<IGetProjectForViewResponse | null>(null);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
+  const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
   const codes = useCodes();
 
@@ -111,12 +105,21 @@ const ViewProjectPage: React.FC = () => {
       try {
         const response = await restorationTrackerApi.project.getProjectAttachments(
           projectId,
-          attachmentType.ATTACHMENTS
+          S3FileType.ATTACHMENTS
         );
 
-        if (!response?.attachmentsList) return;
+        if (response?.attachmentsList) {
+          setAttachmentsList([...response.attachmentsList]);
+        }
 
-        setAttachmentsList([...response.attachmentsList]);
+        const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
+          projectId,
+          S3FileType.THUMBNAIL
+        );
+
+        if (thumbnailResponse?.attachmentsList) {
+          setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
       } catch (error) {
         return error;
       }
@@ -142,14 +145,6 @@ const ViewProjectPage: React.FC = () => {
 
   const closeMapDialog = () => {
     setOpenFullScreen(false);
-  };
-
-  const conservationAreaStyled = (conservationArea: string) => {
-    return (
-      <Typography sx={pageStyles.conservAreaLabel} aria-label={`${conservationArea}`}>
-        {conservationArea}
-      </Typography>
-    );
   };
 
   return (
@@ -245,159 +240,12 @@ const ViewProjectPage: React.FC = () => {
                 <Box mb={1}>
                   <Paper elevation={2}>
                     <Box p={1}>
-                      <Grid container spacing={0}>
-                        <Grid item xs={2}>
-                          <Card sx={{ maxWidth: 200, borderRadius: '16px' }}>
-                            <CardMedia
-                              sx={{ height: 200, borderRadius: '16px' }}
-                              image="https://nrs.objectstore.gov.bc.ca/nerdel/local/restoration/projects/31/attachments/lizard.png"
-                              title="green iguana"
-                            />
-                          </Card>
-                        </Grid>
-                        <Grid item xs={10}>
-                          <Box ml={1}>
-                            <Box>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary"
-                                noWrap>
-                                Project Size (Ha):
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.location.size_ha}
-                              </Typography>
-                            </Box>
+                      <ProjectDetails
+                        project={project}
+                        thumbnailImageUrl={thumbnailImage[0]?.url}
+                      />
 
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Number of Sites:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.location.number_sites}
-                              </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Number of People Involved:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.project.people_involved}
-                              </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Project part of a publicly available restoration plan:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
-                              </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Project within or overlapping known area of cultural or conservation
-                                priority:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.location.is_within_overlapping === 'D'
-                                  ? "Don't know"
-                                  : project.location.is_within_overlapping === 'Y'
-                                    ? 'Yes'
-                                    : 'No'}
-                              </Typography>
-                              {project.location.is_within_overlapping === 'Y' && (
-                                <Box ml={1}>
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 1. String with 100 characters conservation area name1 conservation area name1'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 2. String with 100 characters conservation area name2 conservation area name2'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 3. String with 100 characters conservation area name3 conservation area name3'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 4. String with 100 characters conservation area name4 conservation area name4'
-                                    )}
-                                  />
-                                  <Chip
-                                    size="small"
-                                    sx={pageStyles.conservationAreChip}
-                                    label={conservationAreaStyled(
-                                      'Conservation area name 5. String with 100 characters conservation area name5 conservation area name5'
-                                    )}
-                                  />
-                                </Box>
-                              )}
-                            </Box>
-                          </Box>
-                        </Grid>
-                      </Grid>
-
-                      <Box mt={1}>
-                        <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
-                          Project Objectives:
-                        </Typography>
-                        <Box display="flex" flexDirection={'column'} alignItems="left">
-                          <ProjectObjectives projectViewData={project} />
-                        </Box>
-                      </Box>
+                      <ProjectObjectives projectViewData={project} />
                     </Box>
                   </Paper>
                 </Box>

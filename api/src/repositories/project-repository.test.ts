@@ -445,44 +445,6 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('getRangeData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should return array in rows', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        query: async () => {
-          return mockQueryResponse;
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.getRangeData(1);
-
-      expect(response).to.deep.equal([]);
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        query: async () => {
-          throw new Error('error');
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.getRangeData(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
   describe('getSpatialSearch', () => {
     afterEach(() => {
       sinon.restore();
@@ -712,7 +674,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertProjectFocus', () => {
+  describe('updateProjectFocus', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -728,7 +690,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertProjectFocus({ id: 1 } as any, 1);
+      const response = await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
 
       expect(response).to.eql({ project_id: 1 });
     });
@@ -745,7 +707,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertProjectFocus({ id: 1 } as any, 1);
+        await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to insert project focus');
       }
@@ -761,7 +723,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertProjectFocus({ id: 1 } as any, 1);
+        await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1247,61 +1209,6 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertRange', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should insert range and return id on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [{ project_caribou_population_unit_id: 1 }] } as any as Promise<
-        QueryResult<any>
-      >;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.insertRange(1, 1);
-
-      expect(response).to.eql({ project_caribou_population_unit_id: 1 });
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.insertRange(1, 1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to insert range');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.insertRange(1, 1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
   describe('insertProjectRegion', () => {
     afterEach(() => {
       sinon.restore();
@@ -1377,7 +1284,7 @@ describe('ProjectRepository', () => {
           region: 1,
           number_sites: 1,
           size_ha: 1,
-          name_area_conservation_priority: []
+          conservationAreas: []
         },
         1
       );
@@ -1403,7 +1310,7 @@ describe('ProjectRepository', () => {
             region: 1,
             number_sites: 1,
             size_ha: 1,
-            name_area_conservation_priority: []
+            conservationAreas: []
           },
           1
         );
@@ -1428,7 +1335,7 @@ describe('ProjectRepository', () => {
             region: 1,
             number_sites: 1,
             size_ha: 1,
-            name_area_conservation_priority: []
+            conservationAreas: []
           },
           1
         );
@@ -1503,89 +1410,6 @@ describe('ProjectRepository', () => {
           objectives: 'string',
           revision_count: 1
         });
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
-  describe('updateProjectContact', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should update project contact and return id on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [{ project_contact_id: 1 }] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.updateProjectContact(
-        {
-          first_name: 'first_name',
-          last_name: 'last_name',
-          email_address: 'email',
-          agency: 'agency',
-          is_public: true,
-          is_primary: true
-        },
-        1
-      );
-
-      expect(response).to.eql({ project_contact_id: 1 });
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.updateProjectContact(
-          {
-            first_name: 'first_name',
-            last_name: 'last_name',
-            email_address: 'email',
-            agency: 'agency',
-            is_public: true,
-            is_primary: true
-          },
-          1
-        );
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to update Contact');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.updateProjectContact(
-          {
-            first_name: 'first_name',
-            last_name: 'last_name',
-            email_address: 'email',
-            agency: 'agency',
-            is_public: true,
-            is_primary: true
-          },
-          1
-        );
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1695,59 +1519,6 @@ describe('ProjectRepository', () => {
 
       try {
         await projectRepository.deleteProject(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
-  describe('deleteObjectives', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should delete objectives and return true on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [{ project_id: 1 }] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.deleteObjectives(1);
-
-      expect(response).to.eql(undefined);
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = null as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.deleteObjectives(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to delete Objectives');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.deleteObjectives(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -2198,53 +1969,6 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
       try {
         await projectRepository.deleteProjectRegion(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
-  describe('deleteProjectRange', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should delete project range and return true on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [true] } as any as Promise<QueryResult<any>>;
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-      const response = await projectRepository.deleteProjectRange(1);
-      expect(response).to.eql(undefined);
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = null as any as Promise<QueryResult<any>>;
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-      try {
-        await projectRepository.deleteProjectRange(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to delete Project Range');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-      try {
-        await projectRepository.deleteProjectRange(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

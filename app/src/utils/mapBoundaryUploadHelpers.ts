@@ -1,34 +1,21 @@
 import bbox from '@turf/bbox';
 import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
-import { BBox, Feature, GeoJSON } from 'geojson';
+import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
 
+interface cleanGeoJSONProps {
+  (geojson: GeoJSON | FeatureCollection): FeatureCollection;
+}
+
 /**
- *
- * @param file File object to upload
- * @param name Name of the formik field that the parsed geometry will be saved to
- * @param formikProps The formik props
- * @returns
+ * Clean the GeoJSON object by adding default properties and removing any invalid features
+ * @param geojson
+ * @returns Cleaned GeoJSON FeatureCollection
  */
-export const handleGeoJSONUpload = async <T>(
-  file: File,
-  name: string,
-  formikProps: FormikContextType<T>
-) => {
-  const { values, setFieldValue, setFieldError } = formikProps;
-
-  const fileAsString = await file?.text().then((jsonString: string) => {
-    return jsonString;
-  });
-
-  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
-    setFieldError(name, 'You must upload a GeoJSON file, please try again.');
-    return;
-  }
-
+export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
   const cleanFeature = (feature: Feature) => {
     // Exit out if the feature is not a Polygon or MultiPolygon
     if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
@@ -54,32 +41,66 @@ export const handleGeoJSONUpload = async <T>(
    * @param callback
    * @returns Cleaned GeoJSON
    */
-  const cleanGeoJSON = (geojson: GeoJSON) => {
-    if (geojson.type === 'Feature') {
-      const cleanF = cleanFeature(geojson);
-      return { type: 'FeatureCollection', features: [cleanF] };
-    } else if (geojson.type === 'FeatureCollection') {
-      const cleanFeatures = geojson.features.map(cleanFeature);
-      if (cleanFeatures.length === 0) {
-        return { type: 'FeatureCollection', features: [] };
-      } else {
-        return { type: 'FeatureCollection', features: cleanFeatures };
-      }
-    } else {
-      setFieldError(
-        name,
-        'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
-      );
-      return { type: 'FeatureCollection', features: [] };
-    }
-  };
+  if (geojson.type === 'Feature') {
+    const cleanF = cleanFeature(geojson);
+    return { type: 'FeatureCollection', features: [cleanF] as Feature[] };
+  } else if (geojson.type === 'FeatureCollection') {
+    const cleanF = geojson.features.map(cleanFeature).filter((f): f is Feature => f !== undefined);
+    return { type: 'FeatureCollection', features: cleanF as Feature[] };
+  } else {
+    console.error(
+      'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
+    );
+    return { type: 'FeatureCollection', features: [] };
+  }
+};
+
+export interface recalculateFeatureIdsProps {
+  (features: Feature[]): Feature[];
+}
+
+/**
+ * Recalculate the IDs within a feature array
+ * @param features array
+ * @returns features array with recalculated IDs
+ */
+export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feature[]) => {
+  return features.map((feature: Feature, index: number) => {
+    feature.properties = feature.properties || {};
+    feature.properties.id = index + 1;
+    return feature;
+  });
+};
+
+/**
+ *
+ * @param file File object to upload
+ * @param name Name of the formik field that the parsed geometry will be saved to
+ * @param formikProps The formik props
+ * @returns
+ */
+export const handleGeoJSONUpload = async <T>(
+  file: File,
+  name: string,
+  formikProps: FormikContextType<T>
+) => {
+  const { values, setFieldValue, setFieldError } = formikProps;
+
+  const fileAsString = await file?.text().then((jsonString: string) => {
+    return jsonString;
+  });
+
+  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
+    setFieldError(name, 'You must upload a GeoJSON file, please try again.');
+    return;
+  }
 
   try {
     const geojson = JSON.parse(fileAsString);
 
     const geojsonWithAttributes = cleanGeoJSON(geojson);
-    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
 
+    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
     if (geojsonWithAttributes?.features.length <= 0) {
       setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
       return;
@@ -89,10 +110,7 @@ export const handleGeoJSONUpload = async <T>(
     const allFeatures = [...get(values, name), ...geojsonWithAttributes.features];
 
     // Recalculate the IDs for all features
-    const allFeaturesWithIds = allFeatures.map((feature, index) => {
-      feature.properties.id = index + 1;
-      return feature;
-    });
+    const allFeaturesWithIds = recalculateFeatureIds(allFeatures);
 
     setFieldValue(name, allFeaturesWithIds);
   } catch (error) {

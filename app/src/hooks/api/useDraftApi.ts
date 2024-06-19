@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+import { S3FileType } from 'constants/attachments';
 import {
   IDraftResponse,
   IGetDraftResponse,
@@ -23,13 +24,45 @@ const useDraftApi = (axios: AxiosInstance) => {
   const createDraft = async (
     draftIsProject: boolean,
     draftName: string,
-    draftData: unknown
+    draftData: any
   ): Promise<IDraftResponse> => {
+    //remove the image file off project json
+    const projectImage = draftData.project.project_image;
+    draftData.project.project_image = null;
+
     const { data } = await axios.post('/api/draft', {
       is_project: draftIsProject,
       name: draftName,
       data: draftData
     });
+
+    // upload the image file if it exists
+    if (projectImage) {
+      await uploadDraftAttachments(data.id, projectImage, S3FileType.DRAFT);
+    }
+    return data;
+  };
+
+  /**
+   * Upload project attachments.
+   *
+   * @param {number} projectId
+   * @param {File} file
+   * @param {CancelTokenSource} [cancelTokenSource]
+   * @param {(progressEvent: ProgressEvent) => void} [onProgress]
+   * @return {*}  {Promise<string[]>}
+   */
+  const uploadDraftAttachments = async (
+    draftId: number,
+    file: File,
+    fileType: string
+  ): Promise<void> => {
+    const req_message = new FormData();
+
+    req_message.append('media', file);
+    req_message.append('fileType', fileType);
+
+    const { data } = await axios.post(`/api/draft/${draftId}/attachments/upload`, req_message);
 
     return data;
   };
@@ -45,14 +78,22 @@ const useDraftApi = (axios: AxiosInstance) => {
   const updateDraft = async (
     id: number,
     draftName: string,
-    draftData: unknown
+    draftData: any
   ): Promise<IDraftResponse> => {
+    //remove the image file off project json
+    const projectImage = draftData.project.project_image;
+    draftData.project.project_image = null;
+
     const { data } = await axios.put('/api/draft', {
       id: id,
       name: draftName,
       data: draftData
     });
 
+    // upload the image file if it exists
+    if (projectImage) {
+      await uploadDraftAttachments(data.id, projectImage, S3FileType.DRAFT);
+    }
     return data;
   };
 

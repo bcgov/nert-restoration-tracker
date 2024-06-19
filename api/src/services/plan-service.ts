@@ -2,9 +2,11 @@ import { PROJECT_ROLE } from '../constants/roles';
 import { IDBConnection } from '../database/db';
 import { ICreatePlan, IEditPlan, IGetPlan } from '../interfaces/project.interface';
 import { GetContactData, GetLocationData, GetProjectData } from '../models/project-view';
+import { AttachmentRepository } from '../repositories/attachment-repository';
 import { PlanRepository } from '../repositories/plan-repository';
 import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
+import { getS3SignedURL } from '../utils/file-utils';
 import { AttachmentService } from './attachment-service';
 import { ProjectService } from './project-service';
 import { DBService } from './service';
@@ -14,6 +16,7 @@ export class PlanService extends DBService {
   planRepository: PlanRepository;
   projectParticipationRepository: ProjectParticipationRepository;
   projectService: ProjectService;
+  attachmentRepository: AttachmentRepository;
 
   constructor(connection: IDBConnection) {
     super(connection);
@@ -21,6 +24,7 @@ export class PlanService extends DBService {
     this.planRepository = new PlanRepository(connection);
     this.projectParticipationRepository = new ProjectParticipationRepository(connection);
     this.projectService = new ProjectService(connection);
+    this.attachmentRepository = new AttachmentRepository(connection);
   }
 
   /**
@@ -92,7 +96,7 @@ export class PlanService extends DBService {
     );
 
     // insert focus
-    await this.projectRepository.insertProjectFocus(plan.focus, planResponse.project_id);
+    await this.projectRepository.updateProjectFocus(plan.focus, planResponse.project_id);
 
     // insert location
     await this.projectRepository.insertProjectLocation(plan.location, planResponse.project_id);
@@ -112,6 +116,43 @@ export class PlanService extends DBService {
   }
 
   /**
+   * Get a plan by ID for edit.
+   *
+   * @param {number} id
+   * @return {*}  {Promise<IProject>}
+   * @memberof PlanService
+   */
+  async getPlanByIdForEdit(id: number, isPublic = false): Promise<IGetPlan> {
+    const [projectData, contactData, locationData, attachmentData] = await Promise.all([
+      this.projectRepository.getProjectData(id),
+      this.projectRepository.getContactData(id, isPublic),
+      this.projectService.getLocationData(id),
+      this.attachmentRepository.getProjectAttachmentsByType(id, 'thumbnail')
+    ]);
+
+    if (attachmentData.length === 0) {
+      return {
+        project: projectData,
+        contact: contactData,
+        location: locationData
+      };
+    }
+
+    const imageUrl = await getS3SignedURL(attachmentData[0].key);
+    const newProjectData = {
+      ...projectData,
+      image_url: imageUrl,
+      image_key: attachmentData[0].key
+    };
+
+    return {
+      project: newProjectData,
+      contact: contactData,
+      location: locationData
+    };
+  }
+
+  /**
    * Update a plan.
    *
    * @param {number} projectId
@@ -123,22 +164,29 @@ export class PlanService extends DBService {
     // update project
     const planResponse = await this.planRepository.updatePlan(plan.project, projectId);
 
+    // update focus
+    await this.projectRepository.updateProjectFocus(plan.focus, planResponse.project_id);
+
     // update contacts
-    Promise.all(
-      plan.contact.contacts.map(async (contact) => {
-        await this.projectRepository.insertProjectContact(contact, projectId);
-      })
-    );
+    if (plan.contact.contacts.length > 0) {
+      await this.projectRepository.deleteProjectContact(projectId);
+
+      Promise.all(
+        plan.contact.contacts.map(async (contact) => {
+          await this.projectRepository.insertProjectContact(contact, projectId);
+        })
+      );
+    }
 
     // update location
     if (plan.location) {
       await this.projectRepository.updateProjectLocation(projectId, plan.location);
     }
 
-    //TODO: FINISH UPDATE FUNCTION
     //update region
-
-    //update focus
+    if (plan.location.region) {
+      await this.projectRepository.updateProjectRegion(plan.location.region, projectId);
+    }
 
     return planResponse;
   }

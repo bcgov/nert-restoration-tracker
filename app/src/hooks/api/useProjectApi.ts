@@ -1,5 +1,5 @@
 import { AxiosInstance, CancelTokenSource } from 'axios';
-import { attachmentType } from 'constants/misc';
+import { S3FileType } from 'constants/attachments';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import {
   IAddProjectParticipant,
@@ -54,7 +54,7 @@ const useProjectApi = (axios: AxiosInstance) => {
    */
   const getProjectAttachments = async (
     projectId: number,
-    type?: attachmentType
+    type?: S3FileType
   ): Promise<IGetProjectAttachmentsResponse> => {
     const { data } = await axios.get(`/api/project/${projectId}/attachments/list`, {
       params: { type: type },
@@ -156,7 +156,32 @@ const useProjectApi = (axios: AxiosInstance) => {
    * @return {*}  {Promise<ICreateProjectResponse>}
    */
   const createProject = async (project: ICreateProjectRequest): Promise<ICreateProjectResponse> => {
+    // Handle the project image file
+    // remove the image file off project json
+    const projectImage = project.project.project_image;
+    project.project.project_image = null;
+    project.project.image_url = undefined;
+
+    const imageKey = project.project.image_key;
+    project.project.image_key = undefined;
+
     const { data } = await axios.post('/api/project/create', project);
+
+    const projectId = data.id;
+
+    /*
+     * Upload Thumbnail Image
+     * If a project image is provided, upload it to S3 and associate it with the project.
+     * If an image URL is provided, associate it with the project. and move the image to the correct location
+     */
+    if (projectImage) {
+      await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    } else if (imageKey) {
+      await axios.post(`/api/project/${projectId}/attachments/update`, {
+        key: imageKey,
+        fileType: S3FileType.THUMBNAIL
+      });
+    }
 
     return data;
   };
@@ -173,12 +198,14 @@ const useProjectApi = (axios: AxiosInstance) => {
   const uploadProjectAttachments = async (
     projectId: number,
     file: File,
+    fileType: string,
     cancelTokenSource?: CancelTokenSource,
     onProgress?: (progressEvent: ProgressEvent) => void
   ): Promise<IUploadAttachmentResponse> => {
     const req_message = new FormData();
 
     req_message.append('media', file);
+    req_message.append('fileType', fileType);
 
     const { data } = await axios.post(`/api/project/${projectId}/attachments/upload`, req_message, {
       cancelToken: cancelTokenSource?.token,
@@ -383,7 +410,7 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
    * @param {number} projectId
    * @return {*} {any>}  could be a project or a plan response
    */
-  const getProjectPlanForView = async (projectId: number): Promise<any> => {
+  const getProjectPlanForView = async (projectId: number): Promise<IGetProjectForViewResponse> => {
     const { data } = await axios.get(`/api/public/project/${projectId}/view`);
 
     return data;

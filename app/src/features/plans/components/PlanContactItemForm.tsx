@@ -18,7 +18,8 @@ export interface IPlanContactItemForm {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  phone_number: string;
+  organization: string;
   is_public: string;
   is_primary: string;
 }
@@ -27,7 +28,8 @@ export const PlanContactItemInitialValues: IPlanContactItemForm = {
   first_name: '',
   last_name: '',
   email_address: '',
-  agency: '',
+  phone_number: '',
+  organization: '',
   is_public: 'false',
   is_primary: 'false'
 };
@@ -40,13 +42,17 @@ export const PlanContactItemYupSchema = yup.object().shape({
     .max(500, 'Cannot exceed 500 characters')
     .email('Must be a valid email address')
     .required('Required'),
-  agency: yup.string().max(300, 'Cannot exceed 300 characters').required('Required').nullable(),
+  organization: yup
+    .string()
+    .max(300, 'Cannot exceed 300 characters')
+    .required('Required')
+    .nullable(),
   is_public: yup.string().required('Required'),
   is_primary: yup.string().required('Required')
 });
 
 export interface IPlanContactItemFormProps {
-  coordinator_agency: string[];
+  organization: string[];
 }
 
 /*
@@ -59,10 +65,12 @@ export interface IPlanContactItemFormProps {
 const PlanContactItemForm: React.FC<IPlanContactItemFormProps> = (props) => {
   const { values, touched, errors, handleChange } = useFormikContext<IPlanContactItemForm>();
 
+  const [checkPublic, setCheckPublic] = React.useState(false);
+
   return (
     <form data-testid="contact-item-form">
       <Box component="fieldset">
-        <Typography id="agency_details" component="legend">
+        <Typography id="organization_details" component="legend">
           Contact Details
         </Typography>
         <Grid container spacing={3}>
@@ -94,15 +102,40 @@ const PlanContactItemForm: React.FC<IPlanContactItemFormProps> = (props) => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
+            <CustomTextField name="phone_number" label="Phone Number" />
+          </Grid>
+          <Grid item xs={12} md={6}>
             <AutocompleteFreeSoloField
-              id="contact_agency"
-              name="agency"
-              label="Contact Agency"
-              options={props.coordinator_agency}
+              id="contact_organization"
+              name="organization"
+              label="Organization"
+              options={props.organization}
               required={true}
             />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  id="isPublicCheck"
+                  name="public_check"
+                  aria-label="First Nation or Indigenous Governing Body"
+                  checked={checkPublic}
+                  value={String(!checkPublic)}
+                  onChange={() => {
+                    setCheckPublic(!checkPublic);
+                  }}
+                />
+              }
+              label={
+                <Typography color="textSecondary">
+                  First Nation or Indigenous Governing Body
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -124,38 +157,40 @@ const PlanContactItemForm: React.FC<IPlanContactItemFormProps> = (props) => {
           </Grid>
         </Grid>
       </Box>
-      <Box mt={4}>
-        <FormControl
-          required={true}
-          component="fieldset"
-          error={touched.is_public && Boolean(errors.is_public)}>
-          <Typography id="share_contact_details" component="legend">
-            Share Contact Details
-          </Typography>
-          <Typography color="textSecondary">
-            Do you want this person's contact information visible to the public?
-          </Typography>
-          <Box mt={2} pl={1}>
-            <RadioGroup
-              name="is_public"
-              aria-label="Share Contact Details"
-              value={values.is_public}
-              onChange={handleChange}>
-              <FormControlLabel
-                value="true"
-                control={<Radio color="primary" size="small" />}
-                label="Yes"
-              />
-              <FormControlLabel
-                value="false"
-                control={<Radio color="primary" size="small" />}
-                label="No"
-              />
-              <FormHelperText>{errors.is_public}</FormHelperText>
-            </RadioGroup>
-          </Box>
-        </FormControl>
-      </Box>
+      {checkPublic && (
+        <Box mt={4}>
+          <FormControl
+            required={true}
+            component="fieldset"
+            error={touched.is_public && Boolean(errors.is_public)}>
+            <Typography color="textSecondary">
+              If you are a First Nation or an Indigenous Governing Body, you can hide the contact
+              details information from the public. Do you wish to hide these details from the
+              public?
+            </Typography>
+            <Box mt={2} pl={1}>
+              <RadioGroup
+                name="is_public"
+                aria-label="Share Contact Details"
+                value={values.is_public}
+                onChange={handleChange}>
+                <FormControlLabel
+                  value="true"
+                  control={<Radio color="primary" size="small" />}
+                  label="Yes"
+                />
+                <FormControlLabel
+                  value="false"
+                  control={<Radio color="primary" size="small" />}
+                  label="No"
+                />
+                <FormHelperText>{errors.is_public}</FormHelperText>
+              </RadioGroup>
+            </Box>
+          </FormControl>
+        </Box>
+      )}
+
       <Box mt={4}>
         <Divider />
       </Box>

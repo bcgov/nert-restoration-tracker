@@ -206,7 +206,7 @@ POST.apiDoc = {
                   items: {
                     title: 'contacts',
                     type: 'object',
-                    required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                    required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public', 'is_primary'],
                     properties: {
                       first_name: {
                         type: 'string'
@@ -217,7 +217,7 @@ POST.apiDoc = {
                       email_address: {
                         type: 'string'
                       },
-                      agency: {
+                      organization: {
                         type: 'string'
                       },
                       is_public: {
@@ -227,6 +227,10 @@ POST.apiDoc = {
                       is_primary: {
                         type: 'string',
                         enum: ['true', 'false']
+                      },
+                      phone_number: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
@@ -331,11 +335,17 @@ POST.apiDoc = {
                 number_sites: {
                   type: 'number'
                 },
-                name_area_conservation_priority: {
+                conservationAreas: {
                   type: 'array',
+                  additionalProperties: true,
                   items: {
-                    title: 'Cultural or conservation area name',
-                    type: 'string'
+                    title: 'Project conservation areas',
+                    type: 'object',
+                    properties: {
+                      conservationArea: {
+                        type: 'string'
+                      }
+                    }
                   }
                 },
                 geometry: {
@@ -345,7 +355,14 @@ POST.apiDoc = {
                   }
                 },
                 region: {
-                  type: 'number'
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ]
                 }
               }
             },
@@ -412,7 +429,6 @@ export function createProject(): RequestHandler {
     // TODO: Grab the project_image here... if it get's passed in the request body.
 
     const sanitizedProjectPostData = new PostProjectObject(req.body);
-
     try {
       await connection.open();
 

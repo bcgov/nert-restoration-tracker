@@ -297,7 +297,7 @@ describe.skip('CreateProjectPage', () => {
             objectives: '',
             project_name: 'draft project name'
           },
-          location: { geometry: [], priority: 'false', range: undefined, region: '' },
+          location: { geometry: [], priority: 'false', region: '' },
           iucn: {
             classificationDetails: [
               {
@@ -308,7 +308,7 @@ describe.skip('CreateProjectPage', () => {
             ]
           },
           funding: { fundingSources: [] },
-          partnerships: { indigenous_partnerships: [], stakeholder_partnerships: [] },
+          partnership: { partnerships: [] },
           species: { focal_species: [] }
         });
 

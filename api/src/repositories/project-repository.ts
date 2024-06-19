@@ -171,7 +171,7 @@ export class ProjectRepository extends BaseRepository {
       `);
         sqlStatementJustAgencies.append(SQL`
         SELECT
-          agency
+          organization
         FROM
           project_contact
         WHERE
@@ -271,6 +271,33 @@ export class ProjectRepository extends BaseRepository {
       return response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getObjectivesData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get Conservation Areas Data
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<any>}
+   * @memberof ProjectRepository
+   */
+  async getConservationAreasData(projectId: number): Promise<any> {
+    try {
+      const sqlStatement = SQL`
+        SELECT
+        conservation_area
+        FROM
+        conservation_area
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getConservationAreasData', message: 'error', error });
       throw error;
     }
   }
@@ -395,33 +422,6 @@ export class ProjectRepository extends BaseRepository {
       return (response && response.rows) || null;
     } catch (error) {
       defaultLog.debug({ label: 'getRegionData', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Get Range Data
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<any>}
-   * @memberof ProjectRepository
-   */
-  async getRangeData(projectId: number): Promise<any> {
-    try {
-      const sqlStatement = SQL`
-        SELECT
-          *
-        FROM
-          project_caribou_population_unit
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-      return (response && response.rows) || null;
-    } catch (error) {
-      defaultLog.debug({ label: 'getRangeData', message: 'error', error });
       throw error;
     }
   }
@@ -556,14 +556,15 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
         INSERT INTO project_contact (
-          project_id, contact_type_id, first_name, last_name, agency, email_address, is_public, is_primary
+          project_id, contact_type_id, first_name, last_name, organization, email_address, phone_number, is_public, is_primary
         ) VALUES (
           ${projectId},
           (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator'),
           ${contact.first_name},
           ${contact.last_name},
-          ${contact.agency},
+          ${contact.organization},
           ${contact.email_address},
+          ${contact.phone_number},
           ${contact.is_public ? 'Y' : 'N'},
           ${contact.is_primary ? 'Y' : 'N'}
         )
@@ -595,8 +596,8 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<{ project_focus_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertProjectFocus(focusData: PostFocusData, projectId: number): Promise<{ project_id: number }> {
-    defaultLog.debug({ label: 'insertProjectFocus', message: 'params', focusData });
+  async updateProjectFocus(focusData: PostFocusData, projectId: number): Promise<{ project_id: number }> {
+    defaultLog.debug({ label: 'updateProjectFocus', message: 'params', focusData });
 
     try {
       let is_healing_land = false;
@@ -636,14 +637,14 @@ export class ProjectRepository extends BaseRepository {
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to insert project focus', [
-          'ProjectRepository->insertProjectFocus',
+          'ProjectRepository->updateProjectFocus',
           'rowCount was null or undefined, expected rowCount = 1'
         ]);
       }
 
       return response.rows[0];
     } catch (error) {
-      defaultLog.debug({ label: 'insertProjectFocus', message: 'error', error });
+      defaultLog.debug({ label: 'updateProjectFocus', message: 'error', error });
       throw error;
     }
   }
@@ -872,6 +873,46 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Insert a project conservation area.
+   *
+   * @param {string} conservationArea
+   * @param {number} projectId
+   * @return {*}  {Promise<{ conservationArea_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async insertConservationArea(conservationArea: string, projectId: number): Promise<{ conservation_area_id: number }> {
+    defaultLog.debug({ label: 'insertConservationArea', message: 'params', conservationArea });
+
+    try {
+      const sqlStatement = SQL`
+      INSERT INTO conservation_area (
+        project_id,
+        conservation_area
+      ) VALUES (
+        ${projectId},
+        ${conservationArea}
+      )
+      RETURNING
+      conservation_area_id;
+    `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to insert project conservation area', [
+          'ProjectRepository->insertConservationArea',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'insertConservationArea', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Insert a project permit.
    *
    * @param {string} permitNumber
@@ -1002,46 +1043,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Insert a project Range.
-   *
-   * @param {number} rangeId
-   * @param {number} projectId
-   * @return {*}  {Promise<{ project_caribou_population_unit_id: number }>}
-   * @memberof ProjectRepository
-   */
-  async insertRange(rangeId: number, projectId: number): Promise<{ project_caribou_population_unit_id: number }> {
-    defaultLog.debug({ label: 'insertRange', message: 'params', rangeId, projectId });
-
-    try {
-      const sqlStatement = SQL`
-      INSERT INTO project_caribou_population_unit (
-        caribou_population_id,
-        project_id
-      ) VALUES (
-        ${rangeId},
-        ${projectId}
-      )
-      RETURNING
-        project_caribou_population_unit_id;
-    `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert range', [
-          'ProjectRepository->insertRange',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'insertRange', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * Insert a project region.
    *
    * @param {number} regionNumber
@@ -1068,13 +1069,6 @@ export class ProjectRepository extends BaseRepository {
     `;
 
       const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert project region', [
-          'ProjectRepository->insertProjectRegion',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
 
       const result = (response && response.rows && response.rows[0]) || null;
 
@@ -1225,51 +1219,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Update a project Contact.
-   *
-   * @param {IPostContact} contact
-   * @param {number} projectId
-   * @return {*}  {Promise<{ project_contact_id: number }>}
-   * @memberof ProjectRepository
-   */
-  async updateProjectContact(contact: IPostContact, projectId: number): Promise<{ project_contact_id: number }> {
-    defaultLog.debug({ label: 'updateProjectContact', message: 'params', contact });
-
-    try {
-      const sqlStatement = SQL`
-        UPDATE project_contact
-        SET
-          first_name = ${contact.first_name},
-          last_name = ${contact.last_name},
-          agency = ${contact.agency},
-          email_address = ${contact.email_address},
-          is_public = ${contact.is_public ? 'Y' : 'N'},
-          is_primary = ${contact.is_primary ? 'Y' : 'N'}
-        WHERE
-          project_id = ${projectId}
-        AND
-          contact_type_id = (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator')
-        RETURNING
-          project_contact_id;
-      `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to update Contact', [
-          'ProjectRepository->updateProjectContact',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'updateProjectContact', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * Update a project Location.
    *
    * @param {number} projectId
@@ -1341,6 +1290,38 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
+   * Update a project Region Details.
+   *
+   * @param {number} projectId
+   * @param {number} regionNumber
+   * @return {*}  {Promise<{ nrm_region_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async updateProjectRegion(projectId: number, regionNumber: number): Promise<{ nrm_region_id: number }> {
+    defaultLog.debug({ label: 'updateProjectRegion', message: 'params', projectId, regionNumber });
+
+    try {
+      const sqlStatement = SQL`
+      UPDATE nrm_region
+      SET
+        objectid = ${regionNumber},
+        name = ${regionNumber}
+      WHERE
+        project_id = ${projectId}
+      RETURNING
+        nrm_region_id;
+    `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'updateProjectRegion', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
    * Delete a project.
    *
    * @param {number} projectId
@@ -1367,37 +1348,6 @@ export class ProjectRepository extends BaseRepository {
       return result;
     } catch (error) {
       defaultLog.debug({ label: 'deleteProject', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Delete a project objectives
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteObjectives(projectId: number) {
-    defaultLog.debug({ label: 'deleteObjectives', message: 'params', projectId });
-
-    try {
-      const sqlStatement = SQL`
-        DELETE
-          from objective
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Objectives', [
-          'ProjectRepository->deleteObjectives',
-          'response was null or undefined'
-        ]);
-      }
-    } catch (error) {
-      defaultLog.debug({ label: 'deleteObjectives', message: 'error', error });
       throw error;
     }
   }
@@ -1522,6 +1472,37 @@ export class ProjectRepository extends BaseRepository {
       }
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectObjectives', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a project conservation areas.
+   *
+   * @param {number} projectId
+   * @memberof ProjectRepository
+   */
+  async deleteProjectConservationAreas(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE
+          from conservation_area
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (!response) {
+        throw new ApiExecuteSQLError('Failed to delete Project conservation areas', [
+          'ProjectRepository->deleteProjectConservationAreas',
+          'response was null or undefined'
+        ]);
+      }
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'error', error });
       throw error;
     }
   }
@@ -1687,37 +1668,6 @@ export class ProjectRepository extends BaseRepository {
       }
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectRegion', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Delete a project Range.
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteProjectRange(projectId: number) {
-    defaultLog.debug({ label: 'deleteProjectRange', message: 'params', projectId });
-
-    try {
-      const sqlStatement = SQL`
-        DELETE
-          from project_caribou_population_unit
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Range', [
-          'ProjectRepository->deleteProjectRange',
-          'response was null or undefined'
-        ]);
-      }
-    } catch (error) {
-      defaultLog.debug({ label: 'deleteProjectRange', message: 'error', error });
       throw error;
     }
   }

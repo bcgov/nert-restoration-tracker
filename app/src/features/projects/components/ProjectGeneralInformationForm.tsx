@@ -1,24 +1,13 @@
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import CustomTextField from 'components/fields/CustomTextField';
-
-import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
-
-import FileUpload from 'components/attachments/FileUpload';
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import yup from 'utils/YupSchema';
-
-import { ConfigContext } from 'contexts/configContext';
-
 import './styles/projectImage.css';
+import ThumbnailImageField from 'components/fields/ThumbnailImageField';
 
 export interface IProjectGeneralInformationForm {
   project: {
@@ -35,7 +24,9 @@ export interface IProjectGeneralInformationForm {
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
     people_involved: number | null;
-    project_image: string;
+    project_image?: File | null;
+    image_url?: string;
+    image_key?: string;
   };
 }
 
@@ -54,7 +45,9 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     is_land_initiative: false,
     is_cultural_initiative: false,
     people_involved: null,
-    project_image: ''
+    project_image: null,
+    image_url: '',
+    image_key: ''
   }
 };
 
@@ -70,114 +63,6 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   })
 });
 
-// Fixing a lame typescript error
-const positionAbsolute = 'absolute' as const;
-const positionRelative = 'relative' as const;
-
-const uploadImageStyles = {
-  general: {
-    position: positionRelative,
-    marginTop: '23px',
-    maxWidth: '230px'
-  },
-  description: {
-    fontSize: '12px',
-    color: '#6E6E6E',
-    marginBottom: '2px'
-  },
-  thumbnail: {
-    borderRadius: '25px'
-  },
-  thumbnailAction: {
-    position: positionAbsolute,
-    top: '12px',
-    right: '-10px'
-  },
-  thumbnailDelete: {
-    color: 'white',
-    transition: 'all ease-out 0.2s',
-    opacity: 0.7,
-    fontSize: '2.0rem'
-  }
-};
-
-// Our type for the image setter
-interface setImageFunction {
-  (image: string): void;
-}
-
-const uploadImage = (setImage: setImageFunction): IUploadHandler => {
-  return async (file) => {
-    const processImage = (image: any) => {
-      const img = new Image();
-      img.src = image;
-
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const width = img.width;
-        const height = img.height;
-        const aspectRatio = width / height;
-
-        const res = 256; // The largest we want the thumbnail to be is 256 x 256
-        const newWidth = Math.sqrt(res * res * aspectRatio);
-        const newHeight = Math.sqrt((res * res) / aspectRatio);
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-
-        ctx?.drawImage(img, 0, 0, newWidth, newHeight);
-
-        const dataUrl = canvas.toDataURL();
-
-        setImage(dataUrl);
-      };
-    };
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      processImage(reader.result);
-    };
-    reader.readAsDataURL(file);
-    return Promise.resolve();
-  };
-};
-
-/**
- * Delete the image if one exists
- * @param image Image to delete
- * @param setImage State function to set the image
- */
-const deleteImage = (image: string, setImage: (image: string) => void) => {
-  if (image) setImage('');
-};
-
-/**
- * Thumbnail image using MUI Card
- */
-interface ThumbnailImageCardProps {
-  image: string;
-  setImage: setImageFunction;
-}
-const ThumbnailImageCard: React.FC<ThumbnailImageCardProps> = ({ image, setImage }) => {
-  return (
-    <Card sx={uploadImageStyles.thumbnail}>
-      <CardMedia component="img" height="200" image={image} alt="Project" />
-      <CardActions sx={uploadImageStyles.thumbnailAction}>
-        <IconButton
-          title="Delete Image"
-          onClick={() => {
-            deleteImage(image, setImage);
-          }}>
-          <DeleteForeverOutlinedIcon
-            className="delete-image-button"
-            sx={uploadImageStyles.thumbnailDelete}
-          />
-        </IconButton>
-      </CardActions>
-    </Card>
-  );
-};
-
 /**
  * Create project - General information section
  *
@@ -186,39 +71,9 @@ const ThumbnailImageCard: React.FC<ThumbnailImageCardProps> = ({ image, setImage
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
-  const config = useContext(ConfigContext);
-
-  const { setFieldValue } = formikProps;
-
-  const [image, setImage] = useState('' as any);
-
-  // When the image is updated make sure to update the formik field
-  useEffect(() => {
-    setFieldValue('project.project_image', image);
-  }, [image]);
-
   return (
     <Grid container spacing={3}>
-      <div style={uploadImageStyles.general}>
-        <div style={uploadImageStyles.description}>Project Image</div>
-        {image ? (
-          <ThumbnailImageCard image={image} setImage={setImage} />
-        ) : (
-          <FileUpload
-            uploadHandler={uploadImage(setImage)}
-            dropZoneProps={{
-              maxFileSize: config?.MAX_IMAGE_UPLOAD_SIZE || 52428800,
-              maxNumFiles: config?.MAX_IMAGE_NUM_FILES || 1,
-              multiple: config?.ALLOW_MULTIPLE_IMAGE_UPLOADS || false,
-              acceptedFileExtensionsHumanReadable: 'PNG & JPG',
-              acceptedFileExtensions: {
-                'image/png': ['.png'],
-                'image/jpeg': ['.jpg', '.jpeg']
-              }
-            }}
-          />
-        )}
-      </div>
+      <ThumbnailImageField />
       <Grid item xs={12} md={8}>
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>

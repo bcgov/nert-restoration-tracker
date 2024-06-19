@@ -57,6 +57,7 @@ export class PostPlanObject {
 
 export class PostEditPlanObject {
   project: PostPlanData;
+  focus: PostFocusData;
   contact: PostContactData;
   location: PostLocationData;
 
@@ -64,6 +65,7 @@ export class PostEditPlanObject {
     defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
 
     this.project = (obj?.project && new PostPlanData(obj.project)) || null;
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
     this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
   }
@@ -73,7 +75,8 @@ export interface IPostContact {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: boolean;
   is_primary: boolean;
 }
@@ -96,7 +99,8 @@ export class PostContactData {
           first_name: item.first_name,
           last_name: item.last_name,
           email_address: item.email_address,
-          agency: item.agency,
+          organization: item.organization,
+          phone_number: item.phone_number,
           is_public: JSON.parse(item.is_public),
           is_primary: JSON.parse(item.is_primary)
         }))) ||
@@ -181,6 +185,33 @@ export class PostObjectivesData {
         obj.objectives.map((item: any) => {
           return {
             objective: item.objective
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IPostConservationArea {
+  conservationArea: string;
+}
+
+/**
+ * Processes POST /project conservationAreas data
+ *
+ * @export
+ * @class PostConservationAreasData
+ */
+export class PostConservationAreasData {
+  conservationAreas: IPostConservationArea[];
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostConservationAreasData', message: 'params', obj });
+
+    this.conservationAreas =
+      (obj?.conservationAreas?.length &&
+        obj.conservationAreas.map((item: any) => {
+          return {
+            conservationArea: item.conservationArea
           };
         })) ||
       [];
@@ -279,6 +310,10 @@ export class PostSpeciesData {
   }
 }
 
+export interface IPostConservationArea {
+  conservationArea: string;
+}
+
 /**
  * Processes POST /project location data
  *
@@ -291,7 +326,7 @@ export class PostLocationData {
   region: number;
   number_sites: number;
   size_ha: number;
-  name_area_conservation_priority: string[];
+  conservationAreas: IPostConservationArea[];
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostLocationData', message: 'params', obj });
@@ -301,11 +336,11 @@ export class PostLocationData {
     this.region = obj?.region || null;
     this.number_sites = obj?.number_sites || null;
     this.size_ha = obj?.size_ha || null;
-    this.name_area_conservation_priority =
-      (obj?.name_area_conservation_priority?.length &&
-        obj.name_area_conservation_priority.map((item: any) => {
+    this.conservationAreas =
+      (obj?.conservationAreas?.length &&
+        obj.conservationAreas.map((item: any) => {
           return {
-            name_area_conservation_priority: item.name_area_conservation_priority
+            conservationArea: item.conservationArea
           };
         })) ||
       [];

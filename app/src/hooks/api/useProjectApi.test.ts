@@ -14,7 +14,7 @@ import {
 } from 'interfaces/useProjectApi.interface';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import useProjectApi, { usePublicProjectApi } from './useProjectApi';
-import { attachmentType } from 'constants/misc';
+import { S3FileType } from 'constants/attachments';
 
 describe('useProjectApi', () => {
   let mock: any;
@@ -143,13 +143,19 @@ describe('useProjectApi', () => {
 
     mock.onPost(`/api/project/${projectId}/attachments/upload`).reply(200, 'result 1');
 
-    const result = await useProjectApi(axios).uploadProjectAttachments(projectId, file);
+    const result = await useProjectApi(axios).uploadProjectAttachments(
+      projectId,
+      file,
+      S3FileType.ATTACHMENTS
+    );
 
     expect(result).toEqual('result 1');
   });
 
   it('createProject works as expected', async () => {
-    const projectData = {} as unknown as ICreateProjectRequest;
+    const projectData = {
+      project: { project_image: undefined, image_url: undefined, image_key: undefined }
+    } as unknown as ICreateProjectRequest;
 
     mock.onPost('/api/project/create').reply(200, {
       id: 1
@@ -311,7 +317,7 @@ describe('usePublicProjectApi', () => {
 
     const result = await useProjectApi(axios).getProjectAttachments(
       projectId,
-      attachmentType.ATTACHMENTS
+      S3FileType.ATTACHMENTS
     );
 
     expect(result.attachmentsList).toEqual([

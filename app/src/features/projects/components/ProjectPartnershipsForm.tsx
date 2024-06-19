@@ -14,22 +14,11 @@ import React from 'react';
 import yup from 'utils/YupSchema';
 
 const pageStyles = {
-  formButtons: {
-    '& button': {
-      margin: '0.3rem'
-    }
-  },
-  addRowButton: {
-    fontWeight: 700
-  },
   customListItem: {
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 0,
     paddingRight: '5rem'
-  },
-  input: {
-    display: 'none'
   }
 };
 
@@ -78,11 +67,13 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
 const ProjectPartnershipsForm: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectPartnershipsForm>();
 
+  if (!values || !values.partnership || !values.partnership.partnerships) return null;
+
   return (
     <>
       <FieldArray
         name="partnership.partnerships"
-        render={(arrayHelpers: any) => (
+        render={(arrayHelpers) => (
           <>
             {values.partnership.partnerships?.map((partnership, index) => {
               const partnershipMeta = getFieldMeta(
@@ -100,7 +91,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                             <CustomTextField
                               name={`partnership.partnerships.[${index}].partnership`}
                               label="Partnership"
-                              maxLength={100}
+                              maxLength={300}
                               other={{
                                 value: partnership.partnership,
                                 error: partnershipMeta.touched && Boolean(partnershipMeta.error),

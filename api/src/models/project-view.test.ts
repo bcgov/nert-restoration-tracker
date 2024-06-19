@@ -181,9 +181,10 @@ describe('GetContactData', () => {
         first_name: 'first',
         last_name: 'last',
         email_address: 'email@example.com',
-        agency: 'agency',
         is_public: 'Y',
-        is_primary: 'Y'
+        is_primary: 'Y',
+        organization: 'organization',
+        phone_number: '123-456-7890'
       }
     ];
 
@@ -197,9 +198,10 @@ describe('GetContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
           is_public: 'true',
-          is_primary: 'true'
+          is_primary: 'true',
+          organization: 'organization',
+          phone_number: '123-456-7890'
         }
       ]);
     });
@@ -261,7 +263,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData();
     });
 
-    it('sets geometry, region and range', function () {
+    it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
       expect(locationData.region).to.eql('');
     });
@@ -274,7 +276,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData([], []);
     });
 
-    it('sets geometry, region and range', function () {
+    it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
       expect(locationData.region).to.eql('');
     });
@@ -318,7 +320,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData(locationDataObj, regionDataObj);
     });
 
-    it('sets the geometry, region and range', function () {
+    it('sets the geometry, region', function () {
       expect(locationData.geometry).to.eql(geometry);
       expect(locationData.region).to.eql(1);
     });

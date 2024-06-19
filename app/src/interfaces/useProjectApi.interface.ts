@@ -146,7 +146,6 @@ export interface IGetProjectForUpdateResponsePermit {
 
 export interface IGetProjectForUpdateResponseLocation {
   geometry: Feature[];
-  range: string;
   priority: string;
   revision_count: number;
 }
@@ -244,6 +243,30 @@ export interface IGetProjectForViewResponseDetails {
   region: string;
 }
 
+export interface IGetProjectForEditResponseDetails {
+  plan: any;
+  project: any;
+  state_code: number;
+  is_project: boolean;
+  project_id: number;
+  project_name: string;
+  start_date: string;
+  end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
+  publish_date: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
+  region: string;
+  image_url: string;
+  image_key: string;
+}
+
 export interface IGetProjectForViewResponseSpecies {
   focal_species: number[];
   focal_species_names?: string[];
@@ -258,20 +281,25 @@ export interface IGetProjectForViewResponsePermit {
   permits: IGetProjectForViewResponsePermitArrayItem[];
 }
 
+export interface IGetProjectForViewResponseConservationAreas {
+  conservationAreas: string;
+}
+
 export interface IGetProjectForViewResponseLocation {
   geometry: Feature[];
   is_within_overlapping: string;
   region: number;
   number_sites: number;
   size_ha: number;
-  name_area_conservation_priority: string[];
+  conservationAreas: IGetProjectForViewResponseConservationAreas[];
 }
 
 export interface IGetProjectForViewResponseContactArrayItem {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: string;
   is_primary: string;
 }

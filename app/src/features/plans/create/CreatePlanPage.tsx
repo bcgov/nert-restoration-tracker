@@ -103,9 +103,6 @@ const CreatePlanPage: React.FC = () => {
   // Used by the draft logic to fetch the values of a step form that has not been validated/completed
   const formikRef = useRef<FormikProps<ICreatePlanRequest>>(null);
 
-  // Ability to bypass showing the 'Are you sure you want to cancel' dialog
-  // const [enableCancelCheck, setEnableCancelCheck] = useState(true);
-
   const defaultCancelDialogProps = {
     dialogTitle: CreatePlanI18N.cancelTitle,
     dialogText: CreatePlanI18N.cancelText,
@@ -146,7 +143,6 @@ const CreatePlanPage: React.FC = () => {
   useEffect(() => {
     const getDraftPlanFields = async () => {
       const response = await restorationTrackerApi.draft.getDraft(queryParams.draftId);
-      console.log('response', response);
       setHasLoadedDraftData(true);
 
       if (!response || !response.data) {
@@ -255,6 +251,7 @@ const CreatePlanPage: React.FC = () => {
         dialogError: (error as APIError)?.message,
         dialogErrorDetails: (error as APIError)?.errors
       });
+      setOpenYesNoDialog(false);
     }
   };
 
@@ -328,6 +325,14 @@ const CreatePlanPage: React.FC = () => {
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}
         onYes={() => {
+          if (!formikRef.current?.isValid) {
+            showCreateErrorDialog({
+              dialogTitle: 'Error Creating Plan',
+              dialogError: 'Please fill out all required fields.'
+            });
+
+            setOpenYesNoDialog(false);
+          }
           formikRef.current?.handleSubmit();
         }}
       />
@@ -365,8 +370,6 @@ const CreatePlanPage: React.FC = () => {
               enableReinitialize={true}
               initialValues={initialPlanFormData}
               validationSchema={PlanFormYupSchema}
-              validateOnBlur={true}
-              validateOnChange={false}
               onSubmit={handlePlanCreation}>
               <>
                 <Box ml={1} my={3}>
@@ -394,7 +397,7 @@ const CreatePlanPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <PlanContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
+                        organization={codes.codes.coordinator_agency.map((item) => item.name)}
                       />
                     </Grid>
                   </Grid>

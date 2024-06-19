@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
-import SQL from 'sql-template-strings';
 import { SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
+import { DraftRepository } from '../../../repositories/draft-repository';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { getLogger } from '../../../utils/logger';
 
@@ -74,16 +74,13 @@ export function deleteDraft(): RequestHandler {
     try {
       await connection.open();
 
-      const deleteDraftSQLStatement = SQL`
-        DELETE from webform_draft
-        WHERE webform_draft_id = ${Number(req.params.draftId)};
-      `;
+      const draftRepository = new DraftRepository(connection);
 
-      const result = await connection.query(deleteDraftSQLStatement.text, deleteDraftSQLStatement.values);
+      const draftResponse = await draftRepository.deleteDraft(Number(req.params.draftId));
 
       await connection.commit();
 
-      return res.status(200).json(result && result.rowCount);
+      return res.status(200).json(draftResponse);
     } catch (error) {
       defaultLog.error({ label: 'deleteDraft', message: 'error', error });
       await connection.rollback();
