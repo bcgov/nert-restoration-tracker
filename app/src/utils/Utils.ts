@@ -1,7 +1,9 @@
 import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
+import { focusOptions } from 'constants/misc';
 import { IConfig } from 'contexts/configContext';
 import dayjs from 'dayjs';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
+import { IGetProjectForViewResponseDetails } from 'interfaces/useProjectApi.interface';
 
 /**
  * Checks if a url string starts with an `http(s)://` protocol, and adds `https://` if it does not.
@@ -212,4 +214,42 @@ export const getFormattedIdentitySource = (
     default:
       return null;
   }
+};
+
+export const handleFocusFormValues = (project: IGetProjectForViewResponseDetails): number[] => {
+  const newValues = [] as number[];
+
+  if (project.is_healing_land) {
+    const option = focusOptions.find((option) => option.label === 'Healing the Land');
+    if (option) {
+      newValues.push(option.value);
+    }
+  }
+
+  if (project.is_healing_people) {
+    const option = focusOptions.find((option) => option.label === 'Healing the People');
+    if (option) {
+      newValues.push(option.value);
+    }
+  }
+
+  if (project.is_land_initiative) {
+    const option = focusOptions.find(
+      (option) => option.label === 'Land Based Restoration Initiative'
+    );
+    if (option) {
+      newValues.push(option.value);
+    }
+  }
+
+  if (project.is_cultural_initiative) {
+    const option = focusOptions.find(
+      (option) => option.label === 'Cultural or Community Investment Initiative'
+    );
+    if (option) {
+      newValues.push(option.value);
+    }
+  }
+
+  return newValues;
 };

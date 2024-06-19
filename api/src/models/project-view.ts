@@ -58,7 +58,8 @@ interface IGetContact {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: string;
   is_primary: string;
 }
@@ -74,7 +75,8 @@ export class GetContactData {
             first_name: item.first_name || '',
             last_name: item.last_name || '',
             email_address: item.email_address || '',
-            agency: item.agency || '',
+            organization: item.organization || '',
+            phone_number: item.phone_number || '',
             is_public: item.is_public === 'Y' ? 'true' : 'false',
             is_primary: item.is_primary === 'Y' ? 'true' : 'false'
           };
