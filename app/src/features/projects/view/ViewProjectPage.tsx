@@ -33,7 +33,7 @@ import {
   IGetProjectForViewResponse
 } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { S3FileType } from 'constants/attachments';
 import ProjectDetails from './components/ProjectDetails';
 
@@ -66,7 +66,7 @@ const pageStyles = {
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  // const history = useNavigate();
+  const history = useNavigate();
   const urlParams: Record<string, string | number | undefined> = useParams();
 
   if (!urlParams['id']) {
@@ -208,8 +208,7 @@ const ViewProjectPage: React.FC = () => {
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                  // onClick={() => history('users')}
-                >
+                  onClick={() => history(`/admin/projects/${urlParams['id']}/users`)}>
                   Project Team
                 </Button>
                 <Button

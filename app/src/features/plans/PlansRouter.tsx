@@ -1,6 +1,5 @@
 import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import ProjectParticipantsPage from 'features/projects/participants/ProjectParticipantsPage';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
@@ -9,6 +8,7 @@ import ProjectsPlansListPage from '../projects/ProjectsPlansListPage';
 import CreatePlanPage from './create/CreatePlanPage';
 import EditPlanPage from './edit/EditProjectPage';
 import ViewPlanPage from './view/ViewPlanPage';
+import PlanParticipantsPage from './participants/PlanParticipantsPage';
 
 /**
  * Router for all `/admin/plans/*` pages.
@@ -71,7 +71,7 @@ const PlansRouter: React.FC = () => {
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
               fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
-              <ProjectParticipantsPage />
+              <PlanParticipantsPage />
             </RoleGuard>
           }
         />

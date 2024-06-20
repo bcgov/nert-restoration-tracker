@@ -60,7 +60,7 @@ export class UserRepository extends BaseRepository {
         ON
             uis.user_identity_source_id = su.user_identity_source_id
         WHERE
-            su.user_identifier = ${userIdentifier}
+            su.user_identifier = ${userIdentifier.toLowerCase()}
         AND
             uis.name = ${identitySource}
         GROUP BY

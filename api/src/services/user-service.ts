@@ -99,7 +99,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async ensureSystemUser(userGuid: string | null, userIdentifier: string, identitySource: string): Promise<UserObject> {
-    // Check if the user exists in SIMS
+    // Check if the user exists in NERT
     let userObject = userGuid
       ? await this.getUserByGuid(userGuid)
       : await this.getUserByIdentifier(userIdentifier, identitySource);
