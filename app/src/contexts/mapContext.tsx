@@ -1,76 +1,41 @@
-import React from 'react';
-
-export interface IUseState<T> {
-  0: T;
-  1: React.Dispatch<React.SetStateAction<T>>;
-}
-
-export interface ILayerVisibility {
-  boundary: IUseState<boolean>;
-  wells: IUseState<boolean>;
-  projects: IUseState<boolean>;
-  plans: IUseState<boolean>;
-  wildlife: IUseState<boolean>;
-  indigenous: IUseState<boolean>;
-  baselayer: IUseState<string>;
-}
-
-export interface ILayerVisibilityDefaultValues {
-  boundary: boolean;
-  wells: boolean;
-  projects: boolean;
-  plans: boolean;
-  wildlife: boolean;
-  indigenous: boolean;
-  baselayer: string;
-}
-
-export const layerVisibilityDefaultValues = {
-  boundary: true,
-  wells: false,
-  projects: true,
-  plans: true,
-  wildlife: false,
-  indigenous: false,
-  baselayer: 'maptiler.raster-dem'
-};
-
-export class LayerVisibility implements ILayerVisibility {
-  boundary: IUseState<boolean>;
-  wells: IUseState<boolean>;
-  projects: IUseState<boolean>;
-  plans: IUseState<boolean>;
-  wildlife: IUseState<boolean>;
-  indigenous: IUseState<boolean>;
-  baselayer: IUseState<string>;
-
-  constructor(init: ILayerVisibilityDefaultValues) {
-    const [boundary, setBoundary] = React.useState<boolean>(init.boundary);
-    const [wells, setWells] = React.useState<boolean>(init.wells);
-    const [projects, setProjects] = React.useState<boolean>(init.projects);
-    const [plans, setPlans] = React.useState<boolean>(init.plans);
-    const [wildlife, setWildlife] = React.useState<boolean>(init.wildlife);
-    const [indigenous, setIndigenous] = React.useState<boolean>(init.indigenous);
-    const [baselayer, setBaselayer] = React.useState<string>(init.baselayer);
-
-    this.boundary = [boundary, setBoundary];
-    this.wells = [wells, setWells];
-    this.projects = [projects, setProjects];
-    this.plans = [plans, setPlans];
-    this.wildlife = [wildlife, setWildlife];
-    this.indigenous = [indigenous, setIndigenous];
-    this.baselayer = [baselayer, setBaselayer];
-  }
-}
+import { Feature } from 'geojson';
+import { LngLatLike } from 'maplibre-gl';
+import {
+  ILayerVisibility,
+  ILayerVisibilityDefaultValues,
+  IMarkerState,
+  IMaskState,
+  IToolTipState,
+  IUseState,
+  LayerVisibility,
+  layerVisibilityDefaultValues,
+  MarkerHandler,
+  MaskHandler,
+  ToolTipHandler
+} from 'models/maps';
+import React, { useState } from 'react';
 
 export interface IMapState {
   layerVisibility: ILayerVisibility;
   setVisibility: (visibility: ILayerVisibilityDefaultValues) => void;
+  tooltipHandler: IToolTipState;
+  markerHandler: IMarkerState;
+  maskHandler: IMaskState;
+  activeFeatureState: IUseState<number | undefined>;
+  zoom: number;
+  center?: LngLatLike;
+  features?: Feature[];
+  centroids?: boolean;
 }
 
 export const MapStateContext = React.createContext<IMapState>({
   layerVisibility: {} as unknown as ILayerVisibility,
-  setVisibility: () => {}
+  setVisibility: () => {},
+  tooltipHandler: {} as unknown as IToolTipState,
+  markerHandler: {} as unknown as IMarkerState,
+  maskHandler: {} as unknown as IMaskState,
+  activeFeatureState: [undefined, () => {}],
+  zoom: 6
 });
 
 export const MapStateContextProvider: React.FC<React.PropsWithChildren> = (props) => {
@@ -86,9 +51,21 @@ export const MapStateContextProvider: React.FC<React.PropsWithChildren> = (props
     layerVisibility.baselayer[1](visibility.baselayer);
   };
 
+  const tooltipHandler = new ToolTipHandler();
+  const markerHandler = new MarkerHandler();
+  const maskHandler = new MaskHandler();
+
+  const activeFeatureState = useState<number | undefined>(undefined);
+
   const mapState: IMapState = {
     layerVisibility,
-    setVisibility
+    setVisibility,
+    tooltipHandler,
+    markerHandler,
+    maskHandler,
+    activeFeatureState,
+    center: [-124, 57],
+    zoom: 6
   };
 
   return <MapStateContext.Provider value={mapState}>{props.children}</MapStateContext.Provider>;

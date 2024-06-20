@@ -21,11 +21,11 @@ import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -108,21 +108,9 @@ export interface IProjectLocationFormProps {
  */
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
-  const mapContext = useContext(MapStateContext);
-
   const { errors, touched, values, handleChange } = formikProps;
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
-
-  const [maskState, setMaskState] = useState<boolean[]>(
-    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
-  );
-
-  /**
-   * Mask change indicator
-   * This is important in mainting the order between the map and the list
-   */
-  const [mask, setMask] = useState<null | number>(null);
 
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
@@ -132,12 +120,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       return Promise.resolve();
     };
   };
-
-  /**
-   * State to share with the map to indicate which
-   * feature is selected or hovered over
-   */
-  const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
   return (
     <>
@@ -272,20 +254,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
 
         <Box className="feature-box">
-          <MapFeatureList
-            mask={[mask, setMask]}
-            maskState={[maskState, setMaskState]}
-            activeFeatureState={[activeFeature, setActiveFeature]}
-            formikProps={formikProps}
-          />
+          <MapFeatureList features={values.location.geometry}/>
         </Box>
 
         <Box height={500}>
-          <MapContainer
-            mapId={'project_location_map'}
-            layerVisibility={mapContext.layerVisibility}
-            features={values.location.geometry}
-          />
+          <MapContainer mapId={'project_location_map'} features={values.location.geometry} />
         </Box>
         {errors?.location?.geometry && (
           <Box pt={2}>

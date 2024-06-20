@@ -1,9 +1,8 @@
-import { Feature, FeatureCollection, Geometry } from '@turf/turf';
 import maplibre, { GeoJSONSource, LngLatLike, Map, NavigationControl, Source } from 'maplibre-gl';
 import * as turf from '@turf/turf';
-import { ILayerVisibility, IUseState } from 'contexts/mapContext';
-import { GeoJsonProperties } from 'geojson';
+import { Feature, FeatureCollection, Geometry } from 'geojson';
 import {
+  IMarkerState,
   initMapBaseSource,
   initMapCommunityLayer,
   initMapCommunitySource,
@@ -20,8 +19,9 @@ import {
   initMapNEBoundaryLayer,
   initMapNEBoundarySource,
   initMapWildlifeAreasLayer,
-  initMapWildlifeAreasSource
-} from 'constants/map';
+  initMapWildlifeAreasSource,
+  IToolTipState
+} from 'models/maps';
 import {
   addMapLayer,
   addMapSource,
@@ -32,36 +32,20 @@ import {
   handleLoadImages,
   handleTooltip
 } from './mapLibreUtils';
+import { ILayerVisibility, IUseState } from 'models/maps';
+import { IMarker } from 'components/map/components/MarkerCluster';
 
 let map: maplibre.Map;
-
-export interface IMarkerState {
-  projectMarker: HTMLImageElement | ImageBitmap | undefined;
-  planMarker: HTMLImageElement | ImageBitmap | undefined;
-  setProjectMarker: (marker: HTMLImageElement | ImageBitmap) => void;
-  setPlanMarker: (marker: HTMLImageElement | ImageBitmap) => void;
-}
-
-export interface ITooltipState {
-  tooltip: HTMLDivElement | null;
-  setTooltip: (tooltip: HTMLDivElement | null) => void;
-  tooltipVisible: boolean;
-  setTooltipVisible: (visible: boolean) => void;
-  tooltipX: number;
-  setTooltipX: (x: number) => void;
-  tooltipY: number;
-  setTooltipY: (y: number) => void;
-}
 
 /**
  * # initializeMap - Initialize the map with the features
  *
  * @param {string} mapId
  * @param {number} zoom
- * @param {Feature<Geometry, GeoJsonProperties>[]} features
+ * @param {Feature[]} features
  * @param {ILayerVisibility} layerVisibility
  * @param {IMarkerState} markerState
- * @param {(IUseState<number | null>)} activeFeatureState
+ * @param {(IUseState<number | undefined>)} activeFeatureState
  * @param {ITooltipState} tooltipState
  * @param {(LngLatLike | undefined)} [center]
  * @param {boolean} [centroids]
@@ -69,17 +53,17 @@ export interface ITooltipState {
 export const initializeMap = (
   mapId: string,
   zoom: number,
-  features: Feature<Geometry, GeoJsonProperties>[],
+  features: Feature[],
   layerVisibility: ILayerVisibility,
   markerState: IMarkerState,
-  activeFeatureState: IUseState<number | null>,
-  tooltipState: ITooltipState,
+  activeFeatureState: IUseState<number | undefined>,
+  tooltipState: IToolTipState,
   center?: LngLatLike | undefined,
-  centroids?: boolean
+  centroids?: boolean,
+  markers?: IMarker[]
 ) => {
-  const markerGeoJSON: FeatureCollection = centroids
-    ? convertToCentroidGeoJSON(features)
-    : convertToGeoJSON(features);
+  const markerGeoJSON: FeatureCollection =
+    centroids && markers ? convertToCentroidGeoJSON(markers) : convertToGeoJSON(features);
 
   map = new Map({
     container: mapId,
@@ -126,7 +110,7 @@ export const initializeMap = (
     /**
      * Draw the masked polygons
      */
-    const maskGeojson: FeatureCollection<Geometry, GeoJsonProperties> = {
+    const maskGeojson: FeatureCollection = {
       type: 'FeatureCollection',
       features: []
     };
@@ -140,7 +124,7 @@ export const initializeMap = (
       });
 
     // TODO: Fix this any
-    addMapSource(map, 'mask', initMapMaskSource(maskGeojson as any));
+    addMapSource(map, 'mask', initMapMaskSource(maskGeojson));
     addMapLayer(map, initMapMaskLayer());
 
     /**
@@ -154,7 +138,7 @@ export const initializeMap = (
     addMapLayer(map, initMapNEBoundaryLayer(layerVisibility.boundary));
 
     /*****************Project/Plans********************/
-    addMapSource(map, 'markers', initMapMarkersSource(markerGeoJSON as any, centroids || false));
+    addMapSource(map, 'markers', initMapMarkersSource(markerGeoJSON, centroids || false));
     addMapLayer(map, initMapMarkerProjectLayer(layerVisibility.projects));
     addMapLayer(map, initMapMarkerPlanLayer(layerVisibility.plans));
     addMapLayer(map, initMapMarkerClusterPointsLayer());
@@ -196,7 +180,7 @@ export const initializeMap = (
  * @return Array containing the mask centroid and radius
  */
 export const initializeMasks = (feature: Feature): [turf.helpers.Position, number] => {
-  const centroid = turf.centroid(feature);
+  const centroid = turf.centroid(feature as turf.Feature);
   const bbox = turf.bbox(feature);
 
   const p1 = turf.point([bbox[0], bbox[1]]);
@@ -224,22 +208,21 @@ export const initializeMasks = (feature: Feature): [turf.helpers.Position, numbe
  * @param array - the feature data
  * @returns object - the GeoJSON object
  */
-export const convertToCentroidGeoJSON = (
-  features: Feature<Geometry, GeoJsonProperties>[]
-): FeatureCollection => {
+export const convertToCentroidGeoJSON = (features: IMarker[]): FeatureCollection => {
   const geojson: FeatureCollection = {
     type: 'FeatureCollection',
     features: features.map((feature) => {
+      const f = feature.popup && feature.popup.props.featureData;
       return {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: feature.geometry.coordinates
+          coordinates: feature.position as [number, number]
         },
         properties: {
-          id: feature.properties?.id,
-          name: feature.properties?.name,
-          is_project: feature.properties?.is_project
+          id: f?.id || 0,
+          name: f?.name || '',
+          is_project: f?.is_project || false
         }
       };
     })
@@ -344,13 +327,12 @@ export const createMask = (
  *
  *
  * @param {maplibre.Map} map
- * @param {(IUseState<number | null>)} hoverState
- * @param {(IUseState<number | null>)} featureState
+ * @param {(IUseState<number | undefined>)} featureState
  * @return {*}  {void}
  */
 export const checkFeatureState = (
   map: maplibre.Map,
-  featureState: IUseState<number | null>
+  featureState: IUseState<number | undefined>
 ): void => {
   if (!map.getSource('markers')) return; // Exit if markers are not initialized
 

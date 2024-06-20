@@ -1,12 +1,14 @@
-import maplibre, { Popup } from 'maplibre-gl';
+import maplibre, { MapGeoJSONFeature, Popup } from 'maplibre-gl';
 import {
+  IMarkerState,
   initMapActivitiesLayer,
   initMapActivitiesSource,
   initMapWellLayer,
-  initMapWellSource
-} from 'constants/map';
-import { ILayerVisibility, IUseState } from 'contexts/mapContext';
-import { checkFeatureState, IMarkerState, ITooltipState } from './mapUtils';
+  initMapWellSource,
+  IToolTipState
+} from 'models/maps';
+import { ILayerVisibility, IUseState } from 'models/maps';
+import { checkFeatureState } from './mapUtils';
 
 /**
  * # addMapSource - Add a source to the map
@@ -72,11 +74,11 @@ export const handleLoadImages = async (
    * image icons styling for geojson points.
    */
   const projectMarkerFile = await map.loadImage('/assets/icon/marker-icon.png');
-  markerState?.setProjectMarker(projectMarkerFile.data);
+  markerState?.projectMarkerState[1](projectMarkerFile.data);
   map.addImage('blue-marker', projectMarkerFile.data);
 
   const planMarkerFile = await map.loadImage('/assets/icon/marker-icon2.png');
-  markerState?.setPlanMarker(planMarkerFile.data);
+  markerState?.planMarkerState[1](planMarkerFile.data);
   map.addImage('orange-marker', planMarkerFile.data);
 };
 
@@ -88,20 +90,30 @@ export const handleLoadImages = async (
  */
 export const handleHoverPolygons = (
   map: maplibre.Map,
-  activeFeatureState: IUseState<number | null>
+  activeFeatureState: IUseState<number | undefined>
 ) => {
   // Hover over polygons
   map
-    .on('mouseenter', 'markerPolygon', (e: any) => {
-      map.getCanvas().style.cursor = 'pointer';
+    .on(
+      'mouseenter',
+      'markerPolygon',
+      (
+        e: maplibre.MapMouseEvent & {
+          features?: MapGeoJSONFeature[] | undefined;
+        } & NonNullable<unknown>
+      ) => {
+        if (!e.features) return;
 
-      checkFeatureState(map, activeFeatureState);
-      activeFeatureState[1](e.features[0].id);
-    })
+        map.getCanvas().style.cursor = 'pointer';
+
+        checkFeatureState(map, activeFeatureState);
+        activeFeatureState[1](Number(e.features[0].id));
+      }
+    )
     .on('mouseleave', 'markerPolygon', () => {
       map.getCanvas().style.cursor = '';
 
-      activeFeatureState[1](null);
+      activeFeatureState[1](undefined);
     });
 };
 
@@ -112,22 +124,32 @@ export const handleHoverPolygons = (
  */
 export const handleClusterClick = (map: maplibre.Map) => {
   // Click on a cluster
-  map.on('click', 'markerClusters.points', (e: any) => {
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const clusterId = e.features[0].properties.cluster_id;
+  map.on(
+    'click',
+    'markerClusters.points',
+    (
+      e: maplibre.MapMouseEvent & {
+        features?: MapGeoJSONFeature[] | undefined;
+      } & NonNullable<unknown>
+    ) => {
+      if (!e.features || e.features[0].geometry.type !== 'Point') return;
 
-    // @ts-ignore
-    map
-      .getSource('markers')
+      const coordinates = e.features[0].geometry.coordinates;
+      const clusterId = e.features[0].properties.cluster_id;
+
       // @ts-ignore
-      .getClusterExpansionZoom(clusterId)
-      .then((zoom: number) => {
-        map.easeTo({
-          center: coordinates,
-          zoom: zoom
+      map
+        .getSource('markers')
+        // @ts-ignore
+        .getClusterExpansionZoom(clusterId)
+        .then((zoom: number) => {
+          map.easeTo({
+            center: coordinates as maplibre.LngLatLike,
+            zoom: zoom
+          });
         });
-      });
-  });
+    }
+  );
 };
 
 /**
@@ -149,39 +171,36 @@ export const handleMouseMove = (map: maplibre.Map) => {
  *
  * @param {maplibre.Map} map
  */
-export const handleTooltip = (map: maplibre.Map, tooltipState: ITooltipState) => {
-  let hoverStatePlans: any = false;
-  const showTooltip = (e: any) => {
+export const handleTooltip = (map: maplibre.Map, tooltipState: IToolTipState) => {
+  const showTooltip = (
+    e: maplibre.MapMouseEvent & {
+      features?: MapGeoJSONFeature[] | undefined;
+    } & NonNullable<unknown>
+  ) => {
     map.getCanvas().style.cursor = 'pointer';
 
-    tooltipState.setTooltipVisible(true);
+    tooltipState.tooltipVisibleState[1](true);
+
+    if (!e.features || e.features[0].geometry.type !== 'Point') {
+      return;
+    }
 
     /**
      * Calculate the coordinates of the tooltip based on
      * the mouse position and icon size
      */
-    const coordinates = e.features[0].geometry.coordinates;
-    const location = map.project(coordinates);
-    tooltipState.setTooltipX(location.x + 10);
-    tooltipState.setTooltipY(location.y - 34);
-    tooltipState.setTooltip(e.features[0].properties.name);
 
-    if (hoverStatePlans !== false) {
-      map.setFeatureState(
-        {
-          source: 'markers',
-          id: hoverStatePlans
-        },
-        { hover: true }
-      );
-    }
+    const coordinates = e.features[0].geometry.coordinates;
+    const location = map.project(coordinates as maplibre.LngLatLike);
+    const name = e.features[0].properties && e.features[0].properties.name;
+    tooltipState.tooltipXYState[1]([location.x + 10, location.y - 34]);
+    tooltipState.tooltipInfo[1](name);
 
     // Geometry state
-    hoverStatePlans = e.features[0].id;
     map.setFeatureState(
       {
         source: 'markers',
-        id: hoverStatePlans
+        id: e.features[0].id
       },
       { hover: true }
     );
@@ -189,8 +208,8 @@ export const handleTooltip = (map: maplibre.Map, tooltipState: ITooltipState) =>
 
   const hideTooltip = () => {
     map.getCanvas().style.cursor = '';
-    tooltipState.setTooltipVisible(false);
-    tooltipState.setTooltip(null);
+    tooltipState.tooltipVisibleState[1](false);
+    tooltipState.tooltipInfo[1]('');
   };
 
   // Hover over the plans
@@ -209,16 +228,26 @@ export const handleTooltip = (map: maplibre.Map, tooltipState: ITooltipState) =>
  */
 export const handleAddProjectPopup = (map: maplibre.Map) => {
   /* Add popup for the points */
-  map.on('click', 'markerProjects.points', (e: any) => {
-    const prop = e.features[0].properties;
+  map.on(
+    'click',
+    'markerProjects.points',
+    (
+      e: maplibre.MapMouseEvent & {
+        features?: MapGeoJSONFeature[] | undefined;
+      } & NonNullable<unknown>
+    ) => {
+      if (!e.features) return;
 
-    const html = makePopup(prop.name, prop.id, true);
+      const prop = e.features[0].properties;
 
-    new Popup({ offset: { bottom: [0, -14] } as maplibre.Offset })
-      .setLngLat(e.lngLat)
-      .setHTML(html)
-      .addTo(map);
-  });
+      const html = makePopup(prop.name, prop.id, true);
+
+      new Popup({ offset: { bottom: [0, -14] } as maplibre.Offset })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+    }
+  );
 };
 
 /**
@@ -228,18 +257,28 @@ export const handleAddProjectPopup = (map: maplibre.Map) => {
  */
 export const handleAddPlanPopup = (map: maplibre.Map) => {
   /* Add popup for the points */
-  map.on('click', 'markerPlans.points', (e: any) => {
-    const prop = e.features[0].properties;
+  map.on(
+    'click',
+    'markerPlans.points',
+    (
+      e: maplibre.MapMouseEvent & {
+        features?: MapGeoJSONFeature[] | undefined;
+      } & NonNullable<unknown>
+    ) => {
+      if (!e.features) return;
 
-    // TBD: Currently the /plans route is not available
-    // const html = makePopup(prop.name, prop.id, false);
-    const html = makePopup(prop.name, prop.id, false);
+      const prop = e.features[0].properties;
 
-    new Popup({ offset: { bottom: [0, -14] } as maplibre.Offset })
-      .setLngLat(e.lngLat)
-      .setHTML(html)
-      .addTo(map);
-  });
+      // TBD: Currently the /plans route is not available
+      // const html = makePopup(prop.name, prop.id, false);
+      const html = makePopup(prop.name, prop.id, false);
+
+      new Popup({ offset: { bottom: [0, -14] } as maplibre.Offset })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+    }
+  );
 };
 
 /**

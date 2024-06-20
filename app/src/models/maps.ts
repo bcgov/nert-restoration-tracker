@@ -1,8 +1,131 @@
+import React, { useState } from 'react';
 import maplibre from 'maplibre-gl';
-import { communities } from './layers/communities';
-import { north_east_boundary } from './layers/north_east_boundary';
-import { IUseState } from 'contexts/mapContext';
 import { FeatureCollection } from 'geojson';
+import { communities } from 'constants/layers/communities';
+import { north_east_boundary } from 'constants/layers/north_east_boundary';
+
+export interface IUseState<T> {
+  0: T;
+  1: React.Dispatch<React.SetStateAction<T>>;
+}
+
+export interface ILayerVisibility {
+  boundary: IUseState<boolean>;
+  wells: IUseState<boolean>;
+  projects: IUseState<boolean>;
+  plans: IUseState<boolean>;
+  wildlife: IUseState<boolean>;
+  indigenous: IUseState<boolean>;
+  baselayer: IUseState<string>;
+}
+
+export interface ILayerVisibilityDefaultValues {
+  boundary: boolean;
+  wells: boolean;
+  projects: boolean;
+  plans: boolean;
+  wildlife: boolean;
+  indigenous: boolean;
+  baselayer: string;
+}
+
+export const layerVisibilityDefaultValues = {
+  boundary: true,
+  wells: false,
+  projects: true,
+  plans: true,
+  wildlife: false,
+  indigenous: false,
+  baselayer: 'maptiler.raster-dem'
+};
+
+export class LayerVisibility implements ILayerVisibility {
+  boundary: IUseState<boolean>;
+  wells: IUseState<boolean>;
+  projects: IUseState<boolean>;
+  plans: IUseState<boolean>;
+  wildlife: IUseState<boolean>;
+  indigenous: IUseState<boolean>;
+  baselayer: IUseState<string>;
+
+  constructor(init: ILayerVisibilityDefaultValues) {
+    const [boundary, setBoundary] = useState<boolean>(init.boundary);
+    const [wells, setWells] = useState<boolean>(init.wells);
+    const [projects, setProjects] = useState<boolean>(init.projects);
+    const [plans, setPlans] = useState<boolean>(init.plans);
+    const [wildlife, setWildlife] = useState<boolean>(init.wildlife);
+    const [indigenous, setIndigenous] = useState<boolean>(init.indigenous);
+    const [baselayer, setBaselayer] = useState<string>(init.baselayer);
+
+    this.boundary = [boundary, setBoundary];
+    this.wells = [wells, setWells];
+    this.projects = [projects, setProjects];
+    this.plans = [plans, setPlans];
+    this.wildlife = [wildlife, setWildlife];
+    this.indigenous = [indigenous, setIndigenous];
+    this.baselayer = [baselayer, setBaselayer];
+  }
+}
+
+export interface IToolTipState {
+  tooltipVisibleState: IUseState<boolean>;
+  tooltipInfo: IUseState<string>;
+  tooltipXYState: IUseState<number[]>; // [x, y]
+}
+
+export class ToolTipHandler implements IToolTipState {
+  tooltipVisibleState: IUseState<boolean>;
+  tooltipInfo: IUseState<string>;
+  tooltipXYState: IUseState<number[]>;
+
+  constructor() {
+    const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
+    const [tooltip, setTooltip] = useState<string>('');
+    const [tooltipXY, setTooltipXY] = useState<number[]>([0, 0]);
+
+    this.tooltipVisibleState = [tooltipVisible, setTooltipVisible];
+    this.tooltipInfo = [tooltip, setTooltip];
+    this.tooltipXYState = [tooltipXY, setTooltipXY];
+  }
+}
+
+export interface IMarkerState {
+  planMarkerState: IUseState<HTMLImageElement | ImageBitmap | undefined>;
+  projectMarkerState: IUseState<HTMLImageElement | ImageBitmap | undefined>;
+}
+
+export class MarkerHandler implements IMarkerState {
+  planMarkerState: IUseState<HTMLImageElement | ImageBitmap | undefined>;
+  projectMarkerState: IUseState<HTMLImageElement | ImageBitmap | undefined>;
+
+  constructor() {
+    const [planMarker, setPlanMarker] = useState<HTMLImageElement | ImageBitmap | undefined>();
+    const [projectMarker, setProjectMarker] = useState<
+      HTMLImageElement | ImageBitmap | undefined
+    >();
+
+    this.planMarkerState = [planMarker, setPlanMarker];
+    this.projectMarkerState = [projectMarker, setProjectMarker];
+  }
+}
+
+export interface IMaskState {
+  maskState: IUseState<boolean[]>;
+  mask: IUseState<null | number>;
+}
+
+export class MaskHandler implements IMaskState {
+  maskState: IUseState<boolean[]>;
+  mask: IUseState<null | number>;
+
+  constructor() {
+    const [maskState, setMaskState] = useState<boolean[]>([]);
+    const [mask, setMask] = useState<null | number>(null);
+
+    this.maskState = [maskState, setMaskState];
+    this.mask = [mask, setMask];
+  }
+}
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
 const baseUrl = `https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=${MAPTILER_API_KEY}`;

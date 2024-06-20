@@ -11,7 +11,6 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import MapContainer from 'components/map/MapContainer2';
 import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { DialogContext } from 'contexts/dialogContext';
@@ -23,12 +22,9 @@ import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
 import { DeletePlanI18N } from 'constants/i18n';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { Card, Chip, Tooltip } from '@mui/material';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import InfoIcon from '@mui/icons-material/Info';
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
@@ -183,31 +179,6 @@ const ViewPlanPage: React.FC = () => {
     }
   };
 
-  // const closeMapDialog = () => {
-  //   setOpenFullScreen(false);
-  // };
-
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
-  };
-
   if (!codes.isReady || !codes.codes || !planWithDetails) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
@@ -322,9 +293,7 @@ const ViewPlanPage: React.FC = () => {
                   <Box height={500}>
                     <MapContainer
                       mapId={'plan_location_map'}
-                      layerVisibility={layerVisibility}
                       features={planWithDetails.location.geometry}
-                      mask={null}
                     />
                   </Box>
                 </Paper>

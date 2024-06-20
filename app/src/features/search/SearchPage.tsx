@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer2';
 import { SearchFeaturePopup } from 'components/map/components/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { APIError } from 'hooks/api/useAxios';
@@ -11,9 +10,10 @@ import { LatLngTuple } from 'leaflet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
-import { ILayerVisibility } from 'constants/map';
 import { IGetSearchResultsResponse } from 'interfaces/useSearchApi.interface';
 import { Feature } from '@turf/turf';
+import { ILayerVisibility } from 'models/maps';
+import MapContainer from 'components/map/MapContainer';
 
 /**
  * Page to search for and display a list of records spatially.
@@ -96,12 +96,7 @@ const SearchPage: React.FC = () => {
    */
   return (
     <Box sx={{ height: '100%' }}>
-      <MapContainer
-        mapId="search_boundary_map"
-        features={geometries}
-        layerVisibility={layerVisibility}
-        centroids={true}
-      />
+      <MapContainer mapId="search_boundary_map" features={[]} markers={geometries} />
       <LayerSwitcher layerVisibility={layerVisibility} />
     </Box>
   );
