@@ -3,6 +3,7 @@ import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
 import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
+import { max } from 'lodash-es';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -73,7 +74,13 @@ export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feat
 };
 
 /**
- *
+ * handleGeoJSONUpload
+ * Convert the a file object to a string. Then perfrom the following:
+ * 1. Check if the file is a GeoJSON file
+ * 2. Check if the projection is correct
+ * 3. Check that there is at least one polygon or multipolygon feature
+ * 4. Inforse a reasonable limit on the number of features
+ * 5. Check that the minimal required properties are present
  * @param file File object to upload
  * @param name Name of the formik field that the parsed geometry will be saved to
  * @param formikProps The formik props
@@ -90,10 +97,38 @@ export const handleGeoJSONUpload = async <T>(
     return jsonString;
   });
 
+  // 1. Check if the file is a GeoJSON file
   if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
     setFieldError(name, 'You must upload a GeoJSON file, please try again.');
     return;
   }
+
+  // 2. Check if the projection is correct
+  if (!fileAsString?.match(/\[\s*-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+\s*\]/)) {
+    setFieldError(name, 'Only GeoJSON files with EPSG:4326 projection are supported.');
+    return;
+  }
+
+  // 3. Check that there is at least one polygon or multipolygon feature
+  if (!fileAsString?.match(/"type":\s*"Polygon"/) && !fileAsString?.match(/"type":\s*"MultiPolygon"/)) {
+    setFieldError(name, 'At least one Polygon or MultiPolygon feature is required.');
+    return;
+  }
+
+  // 4. Count the number of features
+  const featureCount = fileAsString?.match(/"type":\s*"Feature"/g)?.length;
+  const maxFeatures = parseInt(process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100', 10);
+  if (featureCount && featureCount > maxFeatures) {
+    setFieldError(name, `A maximum of ${maxFeatures} features are supported.`);
+    return;
+  }
+
+  // 5. Check that the minimal required properties are present
+  if (!fileAsString?.match(/"site_?name"/gi) || !fileAsString?.match(/"area_?hectares"/gi)) {
+    setFieldError(name, 'Please ensure that the GeoJSON file contains both Site_Name and Area_Hectares properties.');
+    return;
+  }
+
 
   try {
     const geojson = JSON.parse(fileAsString);
