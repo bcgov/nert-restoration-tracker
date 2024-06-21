@@ -1,4 +1,5 @@
 import { mdiAccountCircleOutline } from '@mdi/js';
+import { Grid } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -33,28 +34,32 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
           <Box my={1} key={index}>
             <Card sx={{ borderRadius: '10px' }}>
               <CardHeader
-                sx={{ mt: -1 }}
                 avatar={<Avatar src={mdiAccountCircleOutline} aria-label="contact" />}
-                title={contactDetails.first_name + contactDetails.last_name}
+                title={`${contactDetails.first_name} ${contactDetails.last_name}`}
                 subheader={
-                  <>
-                    <Link href={'mailto:' + contactDetails.email_address}>
-                      {contactDetails.email_address}
-                    </Link>
-                    {contactDetails.is_primary === 'true' ? (
-                      <Box>
-                        <Chip size="small" label="PRIMARY" />
-                      </Box>
-                    ) : (
-                      <></>
-                    )}
-                  </>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Link href={'mailto:' + contactDetails.email_address}>
+                        {contactDetails.email_address}
+                      </Link>
+                      <Box>{contactDetails.phone_number}</Box>
+                    </Grid>
+                    <Grid item xs={6} textAlign={'center'}>
+                      {contactDetails.is_primary === 'true' ? (
+                        <Box>
+                          <Chip size="small" label="PRIMARY" />
+                        </Box>
+                      ) : (
+                        <></>
+                      )}
+                    </Grid>
+                  </Grid>
                 }
                 data-testid="contact_name"
               />
-              <CardContent sx={{ my: -3 }}>
+              <CardContent sx={{ my: -2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  <b>Organization:</b> {contactDetails.agency}
+                  <b>Organization:</b> {contactDetails.organization}
                 </Typography>
               </CardContent>
             </Card>

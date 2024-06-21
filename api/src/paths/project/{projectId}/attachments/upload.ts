@@ -141,6 +141,14 @@ export function uploadAttachment(): RequestHandler {
 
       const attachmentService = new AttachmentService(connection);
 
+      //check if image is thumbnail && if a thumbnail already exists
+      if (fileType === 'thumbnail') {
+        const existingThumbnails = await attachmentService.getAttachmentsByType(projectId, 'thumbnail');
+        if (existingThumbnails.attachmentsList.length > 0) {
+          await attachmentService.deleteAttachment(projectId, existingThumbnails.attachmentsList[0].id);
+        }
+      }
+
       const s3Key = generateS3FileKey({
         projectId: projectId,
         fileName: rawMediaFile.originalname,

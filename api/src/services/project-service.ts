@@ -468,7 +468,7 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async insertFocus(focusData: PostFocusData, project_id: number): Promise<number> {
-    const response = await this.projectRepository.insertProjectFocus(focusData, project_id);
+    const response = await this.projectRepository.updateProjectFocus(focusData, project_id);
 
     return response.project_id;
   }
