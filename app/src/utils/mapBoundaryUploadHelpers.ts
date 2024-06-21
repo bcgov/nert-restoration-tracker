@@ -3,7 +3,6 @@ import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
 import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
 import { LatLngBoundsExpression } from 'leaflet';
-import { max } from 'lodash-es';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
 
