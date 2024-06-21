@@ -16,6 +16,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
@@ -159,6 +161,50 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
+  /**
+   * State for the GeoJSON description dialog
+   */
+  const [geoJSONDescriptionOpen, setGeoJSONDescriptionOpen] = useState(false);
+
+  const openGeoJSONDescription = () => {
+    setGeoJSONDescriptionOpen(true);
+  };
+
+  /**
+   * GeoJSON description dialog content
+   */
+  const GeoJSONDescription = () => {
+    return (
+      <Box>
+        <Typography variant="body1">
+          <List dense={true} sx={{ listStyleType: 'disc', listStylePosition: 'inside' }}>
+            <ListItem sx={{ display: 'list-item' }}>
+              All coordinates should be in the Geographic projection (EPSG:4326).
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              At least one Polygon or MultiPolygon feature is required.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per
+              file.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              The property <b>Site_Name</b> must be present, containing the site name.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              The property <b>Area_Hectares</b> must be present, containing the area of the site in
+              Hectares.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              Optional - Set the boolean value of <i>Masked_Location</i> to <i>true</i> if you want
+              the feature to be obscured by a mask.
+            </ListItem>
+          </List>
+        </Typography>
+      </Box>
+    );
+  };
+
   return (
     <>
       <Box mb={5} mt={0}>
@@ -272,7 +318,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             Upload a GeoJSON file to define your project boundary.
           </Typography>
           <Tooltip title="GeoJSON Properties Information" placement="right">
-            <IconButton>
+            <IconButton onClick={openGeoJSONDescription}>
               <InfoIcon color="info" />
             </IconButton>
           </Tooltip>
@@ -296,7 +342,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             mask={[mask, setMask]}
             maskState={[maskState, setMaskState]}
             activeFeatureState={[activeFeature, setActiveFeature]}
-            formikProps={formikProps}
           />
         </Box>
 
@@ -331,6 +376,13 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             }
           }}
         />
+      </ComponentDialog>
+
+      <ComponentDialog
+        open={geoJSONDescriptionOpen}
+        dialogTitle="The GeoJSON file should align with the following criteria:"
+        onClose={() => setGeoJSONDescriptionOpen(false)}>
+        <GeoJSONDescription />
       </ComponentDialog>
     </>
   );
