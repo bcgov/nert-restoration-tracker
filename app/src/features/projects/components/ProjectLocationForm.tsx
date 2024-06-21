@@ -171,19 +171,34 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   };
 
   /**
-   * GeoJSON description dialog content 
+   * GeoJSON description dialog content
    */
   const GeoJSONDescription = () => {
     return (
       <Box>
         <Typography variant="body1">
-          <List dense={true} sx={{listStyleType: 'disc',listStylePosition: 'inside'}}>
-            <ListItem sx={{display: 'list-item'}}>All coordinates should be in the Geographic projection (EPSG:4326).</ListItem>
-            <ListItem sx={{display: 'list-item'}}>At least one Polygon or MultiPolygon feature is required.</ListItem>
-            <ListItem sx={{display: 'list-item'}}>No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per file.</ListItem>
-            <ListItem sx={{display: 'list-item'}}>The property <b>Site_Name</b> must be present, containing the site name.</ListItem>
-            <ListItem sx={{display: 'list-item'}}>The property <b>Area_Hectares</b> must be present, containing the area of the site in Hectares.</ListItem>
-            <ListItem sx={{display: 'list-item'}}>Optional - Set the boolean value of <i>Masked_Location</i> to <i>true</i> if you want the feature to be obscured by a mask.</ListItem>
+          <List dense={true} sx={{ listStyleType: 'disc', listStylePosition: 'inside' }}>
+            <ListItem sx={{ display: 'list-item' }}>
+              All coordinates should be in the Geographic projection (EPSG:4326).
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              At least one Polygon or MultiPolygon feature is required.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per
+              file.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              The property <b>Site_Name</b> must be present, containing the site name.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              The property <b>Area_Hectares</b> must be present, containing the area of the site in
+              Hectares.
+            </ListItem>
+            <ListItem sx={{ display: 'list-item' }}>
+              Optional - Set the boolean value of <i>Masked_Location</i> to <i>true</i> if you want
+              the feature to be obscured by a mask.
+            </ListItem>
           </List>
         </Typography>
       </Box>
@@ -367,10 +382,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         open={geoJSONDescriptionOpen}
         dialogTitle="The GeoJSON file should align with the following criteria:"
         onClose={() => setGeoJSONDescriptionOpen(false)}>
-          <GeoJSONDescription />
+        <GeoJSONDescription />
       </ComponentDialog>
-
-      
     </>
   );
 };

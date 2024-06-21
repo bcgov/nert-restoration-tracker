@@ -109,7 +109,10 @@ export const handleGeoJSONUpload = async <T>(
   }
 
   // 3. Check that there is at least one polygon or multipolygon feature
-  if (!fileAsString?.match(/"type":\s*"Polygon"/) && !fileAsString?.match(/"type":\s*"MultiPolygon"/)) {
+  if (
+    !fileAsString?.match(/"type":\s*"Polygon"/) &&
+    !fileAsString?.match(/"type":\s*"MultiPolygon"/)
+  ) {
     setFieldError(name, 'At least one Polygon or MultiPolygon feature is required.');
     return;
   }
@@ -124,7 +127,10 @@ export const handleGeoJSONUpload = async <T>(
 
   // 5. Check that the minimal required properties are present
   if (!fileAsString?.match(/"site_?name"/gi) || !fileAsString?.match(/"area_?hectares"/gi)) {
-    setFieldError(name, 'Please ensure that the GeoJSON file contains both Site_Name and Area_Hectares properties.');
+    setFieldError(
+      name,
+      'Please ensure that the GeoJSON file contains both Site_Name and Area_Hectares properties.'
+    );
     return;
   }
 
