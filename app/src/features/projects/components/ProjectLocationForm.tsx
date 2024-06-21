@@ -254,11 +254,15 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
 
         <Box className="feature-box">
-          <MapFeatureList features={values.location.geometry}/>
+          <MapFeatureList features={values.location.geometry} />
         </Box>
 
         <Box height={500}>
-          <MapContainer mapId={'project_location_map'} features={values.location.geometry} />
+          <MapContainer
+            mapId={'project_location_map'}
+            layerSwitcher={false}
+            features={values.location.geometry}
+          />
         </Box>
         {errors?.location?.geometry && (
           <Box pt={2}>

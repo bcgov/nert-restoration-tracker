@@ -13,7 +13,7 @@ import {
   Radio,
   RadioGroup
 } from '@mui/material';
-import { ILayerVisibility } from 'constants/map';
+import { ILayerVisibility } from 'models/maps';
 import React, { useState } from 'react';
 
 export interface ILayerSwitcherProps {
@@ -61,11 +61,11 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
   const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
     props.layerVisibility;
 
-  const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
+  const toggleLayerSwitcher = () => setSwitcherOpen(!switcherOpen);
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
 
-  const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const baseMapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
   };
 
@@ -73,14 +73,14 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
     <div>
       {switcherOpen ? (
         <Box title="Open Layer Picker" sx={buttonStyle}>
-          <IconButton onClick={toggleLayerswitcher}>
+          <IconButton onClick={toggleLayerSwitcher}>
             <LayersIcon />
           </IconButton>
         </Box>
       ) : (
         <Box sx={switcherStyle}>
           <Box title="Close Layer Picker" sx={switcherCloseStyle}>
-            <IconButton onClick={toggleLayerswitcher}>
+            <IconButton onClick={toggleLayerSwitcher}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -137,7 +137,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
           </FormGroup>
           <hr />
           <b>Base Layers</b>
-          <RadioGroup value={baselayer[0]} onChange={basemapChanged}>
+          <RadioGroup value={baselayer[0]} onChange={baseMapChanged}>
             <FormControlLabel value="hybrid" control={<Radio />} label="Satellite" />
             <FormControlLabel value="terrain" control={<Radio />} label="Terrain" />
             <FormControlLabel value="bcgov" control={<Radio />} label="BC Gov" />

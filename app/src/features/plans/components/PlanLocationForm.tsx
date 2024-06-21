@@ -17,10 +17,12 @@ import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/MapFeatureList';
+import { MapStateContextProvider } from 'contexts/mapContext';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
+import { LngLatLike } from 'maplibre-gl';
 import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
@@ -68,35 +70,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IPlanLocationForm>();
   const { errors, touched, values, handleChange } = formikProps;
 
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
-  };
-
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
-
-  const [maskState, setMaskState] = useState<boolean[]>(
-    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
-  );
-
-  // Mask change indicator
-  const [mask, setMask] = useState<null | number>(null);
 
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
@@ -106,12 +80,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
       return Promise.resolve();
     };
   };
-
-  /**
-   * State to share with the map to indicate which
-   * feature is selected or hovered over
-   */
-  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
 
   return (
     <>
@@ -202,21 +170,22 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         </Box>
 
         <Box className="feature-box">
-          <MapFeatureList
-            features={values.location.geometry}
-            mask={[mask, setMask]}
-            maskState={[maskState, setMaskState]}
-            activeFeatureState={[activeFeature, setActiveFeature]}
-          />
+          <MapFeatureList features={values.location.geometry} />
         </Box>
 
         <Box height={500}>
-          <MapContainer
-            mapId={'plan_location_map'}
-            layerVisibility={layerVisibility}
-            features={values.location.geometry}
-          />
+          <MapStateContextProvider
+            mapId="plan_location_form_map"
+            center={[-124, 57] as LngLatLike}
+            zoom={6}>
+            <MapContainer
+              mapId={'plan_location_form_map'}
+              layerSwitcher={false}
+              features={values.location.geometry}
+            />
+          </MapStateContextProvider>
         </Box>
+
         {errors?.location?.geometry && (
           <Box pt={2}>
             <Typography style={{ fontSize: '16px', color: '#f44336' }}>

@@ -14,6 +14,9 @@ import {
   ToolTipHandler
 } from 'models/maps';
 import React, { useState } from 'react';
+import * as maplibre from 'maplibre-gl';
+import { rerenderMap } from 'utils/mapUtils';
+import { IMarker } from 'components/map/components/MarkerCluster';
 
 export interface IMapState {
   layerVisibility: ILayerVisibility;
@@ -22,8 +25,9 @@ export interface IMapState {
   markerHandler: IMarkerState;
   maskHandler: IMaskState;
   activeFeatureState: IUseState<number | undefined>;
-  zoom: number;
-  center?: LngLatLike;
+  map: maplibre.Map | undefined;
+  initMap: () => void;
+  updateMap: (features: Feature[], markers?: IMarker[]) => void;
   features?: Feature[];
   centroids?: boolean;
 }
@@ -35,10 +39,22 @@ export const MapStateContext = React.createContext<IMapState>({
   markerHandler: {} as unknown as IMarkerState,
   maskHandler: {} as unknown as IMaskState,
   activeFeatureState: [undefined, () => {}],
-  zoom: 6
+  map: {} as unknown as maplibre.Map,
+  initMap: () => {},
+  updateMap: () => {}
 });
 
-export const MapStateContextProvider: React.FC<React.PropsWithChildren> = (props) => {
+let map: maplibre.Map;
+
+export interface IMapStateContextProviderProps {
+  children: React.ReactNode;
+  mapId: string;
+  center?: LngLatLike;
+  zoom: number;
+}
+
+export const MapStateContextProvider: React.FC<IMapStateContextProviderProps> = (props) => {
+  console.log('props', props);
   const layerVisibility = new LayerVisibility(layerVisibilityDefaultValues);
 
   const setVisibility = (visibility: ILayerVisibilityDefaultValues) => {
@@ -52,10 +68,43 @@ export const MapStateContextProvider: React.FC<React.PropsWithChildren> = (props
   };
 
   const tooltipHandler = new ToolTipHandler();
+  console.log('tooltipHandler', tooltipHandler);
   const markerHandler = new MarkerHandler();
+  console.log('markerHandler', markerHandler);
   const maskHandler = new MaskHandler();
+  console.log('maskHandler', maskHandler);
 
   const activeFeatureState = useState<number | undefined>(undefined);
+
+  const initMap = () => {
+    map = new maplibre.Map({
+      container: props.mapId,
+      style: '/styles/hybrid.json',
+      center: props.center,
+      zoom: props.zoom,
+      maxPitch: 80,
+      hash: 'loc',
+      attributionControl: {
+        compact: true,
+        customAttribution: 'Powered by <a href="https://esri.com">Esri</a>'
+      }
+    });
+  };
+
+  const updateMap = (features: Feature[], markers?: IMarker[]) => {
+    const centroids = Boolean(markers);
+
+    rerenderMap(
+      map,
+      layerVisibility,
+      markerHandler,
+      activeFeatureState,
+      tooltipHandler,
+      centroids,
+      features,
+      markers
+    );
+  };
 
   const mapState: IMapState = {
     layerVisibility,
@@ -64,8 +113,9 @@ export const MapStateContextProvider: React.FC<React.PropsWithChildren> = (props
     markerHandler,
     maskHandler,
     activeFeatureState,
-    center: [-124, 57],
-    zoom: 6
+    map,
+    initMap,
+    updateMap
   };
 
   return <MapStateContext.Provider value={mapState}>{props.children}</MapStateContext.Provider>;

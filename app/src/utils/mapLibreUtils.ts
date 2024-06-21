@@ -74,11 +74,11 @@ export const handleLoadImages = async (
    * image icons styling for geojson points.
    */
   const projectMarkerFile = await map.loadImage('/assets/icon/marker-icon.png');
-  markerState?.projectMarkerState[1](projectMarkerFile.data);
+  markerState.projectMarkerState[1](projectMarkerFile.data);
   map.addImage('blue-marker', projectMarkerFile.data);
 
   const planMarkerFile = await map.loadImage('/assets/icon/marker-icon2.png');
-  markerState?.planMarkerState[1](planMarkerFile.data);
+  markerState.planMarkerState[1](planMarkerFile.data);
   map.addImage('orange-marker', planMarkerFile.data);
 };
 

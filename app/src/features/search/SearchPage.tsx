@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
-import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IMarker } from 'components/map/components/MarkerCluster';
 import { SearchFeaturePopup } from 'components/map/components/SearchFeaturePopup';
 import { AuthStateContext } from 'contexts/authStateContext';
@@ -12,8 +11,9 @@ import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 import { IGetSearchResultsResponse } from 'interfaces/useSearchApi.interface';
 import { Feature } from '@turf/turf';
-import { ILayerVisibility } from 'models/maps';
 import MapContainer from 'components/map/MapContainer';
+import { MapStateContextProvider } from 'contexts/mapContext';
+import { LngLatLike } from 'maplibre-gl';
 
 /**
  * Page to search for and display a list of records spatially.
@@ -71,33 +71,21 @@ const SearchPage: React.FC = () => {
   }, [performSearch, getSearchResults]);
 
   /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility: ILayerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
-  };
-
-  /**
    * Displays search results visualized on a map spatially.
    */
   return (
     <Box sx={{ height: '100%' }}>
-      <MapContainer mapId="search_boundary_map" features={[]} markers={geometries} />
-      <LayerSwitcher layerVisibility={layerVisibility} />
+      <MapStateContextProvider
+        mapId="search_boundary_map"
+        center={[-124, 57] as LngLatLike}
+        zoom={6}>
+        <MapContainer
+          mapId="search_boundary_map"
+          layerSwitcher={true}
+          features={[]}
+          markers={geometries}
+        />
+      </MapStateContextProvider>
     </Box>
   );
 };

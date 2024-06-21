@@ -1,4 +1,4 @@
-import maplibre, { GeoJSONSource, LngLatLike, Map, NavigationControl, Source } from 'maplibre-gl';
+import maplibre, { GeoJSONSource, NavigationControl, Source } from 'maplibre-gl';
 import * as turf from '@turf/turf';
 import { Feature, FeatureCollection, Geometry } from 'geojson';
 import {
@@ -35,10 +35,8 @@ import {
 import { ILayerVisibility, IUseState } from 'models/maps';
 import { IMarker } from 'components/map/components/MarkerCluster';
 
-let map: maplibre.Map;
-
 /**
- * # initializeMap - Initialize the map with the features
+ * # rerenderMap - Initialize the map with the features
  *
  * @param {string} mapId
  * @param {number} zoom
@@ -50,33 +48,18 @@ let map: maplibre.Map;
  * @param {(LngLatLike | undefined)} [center]
  * @param {boolean} [centroids]
  */
-export const initializeMap = (
-  mapId: string,
-  zoom: number,
-  features: Feature[],
+export const rerenderMap = (
+  map: maplibre.Map,
   layerVisibility: ILayerVisibility,
   markerState: IMarkerState,
   activeFeatureState: IUseState<number | undefined>,
   tooltipState: IToolTipState,
-  center?: LngLatLike | undefined,
   centroids?: boolean,
+  features?: Feature[],
   markers?: IMarker[]
 ) => {
   const markerGeoJSON: FeatureCollection =
-    centroids && markers ? convertToCentroidGeoJSON(markers) : convertToGeoJSON(features);
-
-  map = new Map({
-    container: mapId,
-    style: '/styles/hybrid.json',
-    center: center,
-    zoom: zoom,
-    maxPitch: 80,
-    hash: 'loc',
-    attributionControl: {
-      compact: true,
-      customAttribution: 'Powered by <a href="https://esri.com">Esri</a>'
-    }
-  });
+    markers && centroids ? convertToCentroidGeoJSON(markers) : convertToGeoJSON(features || []);
 
   map.addControl(
     new NavigationControl({
@@ -115,15 +98,16 @@ export const initializeMap = (
       features: []
     };
 
-    features
-      .filter((feature: Feature) => feature.properties?.maskedLocation)
-      .forEach((feature: Feature) => {
-        const specs: [turf.helpers.Position, number] = initializeMasks(feature);
-        const maskPolygon = createMask(specs, feature);
-        maskGeojson.features.push(maskPolygon);
-      });
+    if (features?.length) {
+      features
+        .filter((feature: Feature) => feature.properties?.maskedLocation)
+        .forEach((feature: Feature) => {
+          const specs: [turf.helpers.Position, number] = initializeMasks(feature);
+          const maskPolygon = createMask(specs, feature);
+          maskGeojson.features.push(maskPolygon);
+        });
+    }
 
-    // TODO: Fix this any
     addMapSource(map, 'mask', initMapMaskSource(maskGeojson));
     addMapLayer(map, initMapMaskLayer());
 
@@ -220,9 +204,9 @@ export const convertToCentroidGeoJSON = (features: IMarker[]): FeatureCollection
           coordinates: feature.position as [number, number]
         },
         properties: {
-          id: f?.id || 0,
-          name: f?.name || '',
-          is_project: f?.is_project || false
+          id: f.id,
+          name: f.name,
+          is_project: f.is_project
         }
       };
     })

@@ -6,7 +6,6 @@ import React, { useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
-import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
 import { FieldArray } from 'formik';
 import { MapStateContext } from 'contexts/mapContext';
 
@@ -83,12 +82,7 @@ const MapFeatureList: React.FC<IMapFeatureListProps> = (props) => {
                       label="Mask"
                     />
                   </FormGroup>
-                  <IconButton
-                    title="Delete Feature"
-                    onClick={async () => {
-                      await arrayHelpers.remove(index);
-                      await recalculateFeatureIds(features);
-                    }}>
+                  <IconButton title="Delete Feature" onClick={() => arrayHelpers.remove(index)}>
                     <DeleteForeverOutlinedIcon />
                   </IconButton>
                 </Box>

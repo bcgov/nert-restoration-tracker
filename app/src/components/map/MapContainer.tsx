@@ -3,12 +3,15 @@ import { MapStateContext } from 'contexts/mapContext';
 import { Feature } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 import React, { useContext, useEffect } from 'react';
-import MapFeatureList from './MapFeatureList';
-import { initializeMap } from 'utils/mapUtils';
 import { IMarker } from './components/MarkerCluster';
+import LayerSwitcher from './components/LayerSwitcher';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import './mapContainer2Style.css'; // Custom styling
+import { LayerVisibility, layerVisibilityDefaultValues, ToolTipHandler } from 'models/maps';
 
 export interface IMapContainerProps {
   mapId: string;
+  layerSwitcher: boolean;
   features: Feature[];
   markers?: IMarker[];
 }
@@ -17,51 +20,39 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const { mapId, features, markers } = props;
 
   const mapContext = useContext(MapStateContext);
-  const { tooltipHandler } = mapContext;
+  const tooltipHandler = new ToolTipHandler();
+  const layerVisibility = new LayerVisibility(layerVisibilityDefaultValues);
 
-  const centroids = Boolean(markers);
-
-  // Update the map if the features change
   useEffect(() => {
-    initializeMap(
-      mapId,
-      mapContext.zoom,
-      features,
-      mapContext.layerVisibility,
-      mapContext.markerHandler,
-      mapContext.activeFeatureState,
-      mapContext.tooltipHandler,
-      mapContext.center,
-      centroids,
-      markers || []
-    );
-  }, [features]);
+    if (!mapContext.map) {
+      mapContext.initMap();
+    }
+
+    mapContext.updateMap(features, markers);
+  }, [features, markers, mapContext, tooltipHandler, layerVisibility]);
 
   return (
-    <>
-      <Box className="feature-box">
-        <MapFeatureList features={features} />
-      </Box>
-
-      <Box height={500}>
+    <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div
+        id={mapId}
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%'
+        }}>
         <div
-          id={mapId}
+          id={`${mapId}-tooltip}`}
+          className={tooltipHandler.tooltipVisibleState[0] ? 'visible' : 'tooltip'}
           style={{
-            width: '100%',
-            height: '100%'
+            left: tooltipHandler.tooltipXYState[0][0],
+            top: tooltipHandler.tooltipXYState[0][1]
           }}>
-          <div
-            id="tooltip"
-            className={tooltipHandler.tooltipVisibleState[0] ? 'visible' : 'tooltip'}
-            style={{
-              left: tooltipHandler.tooltipXYState[0][0],
-              top: tooltipHandler.tooltipXYState[0][1]
-            }}>
-            {tooltipHandler.tooltipInfo[0]}
-          </div>
+          {tooltipHandler.tooltipInfo[0]}
         </div>
-      </Box>
-    </>
+      </div>
+      {/* LayerSwitcher component is optional */}
+      {props.layerSwitcher && <LayerSwitcher layerVisibility={layerVisibility} />}
+    </Box>
   );
 };
 

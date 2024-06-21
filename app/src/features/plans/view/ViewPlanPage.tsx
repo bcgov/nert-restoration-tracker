@@ -28,6 +28,8 @@ import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/State
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
+import { MapStateContextProvider } from 'contexts/mapContext';
+import { LngLatLike } from 'maplibre-gl';
 
 const pageStyles = {
   titleContainerActions: {
@@ -179,7 +181,7 @@ const ViewPlanPage: React.FC = () => {
     }
   };
 
-  if (!codes.isReady || !codes.codes || !planWithDetails) {
+  if (!codes.isReady || !codes.codes || !planWithDetails || !planWithDetails.location) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -291,10 +293,16 @@ const ViewPlanPage: React.FC = () => {
                     <Typography variant="h2">Location</Typography>
                   </Box>
                   <Box height={500}>
-                    <MapContainer
-                      mapId={'plan_location_map'}
-                      features={planWithDetails.location.geometry}
-                    />
+                    <MapStateContextProvider
+                      mapId="plan_location_map"
+                      center={[-124, 57] as LngLatLike}
+                      zoom={6}>
+                      <MapContainer
+                        mapId={'plan_location_map'}
+                        layerSwitcher={false}
+                        features={planWithDetails.location.geometry}
+                      />
+                    </MapStateContextProvider>
                   </Box>
                 </Paper>
                 <Box mt={2} />
