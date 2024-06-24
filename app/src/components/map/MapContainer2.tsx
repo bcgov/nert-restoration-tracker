@@ -46,6 +46,15 @@ const drawWells = (map: maplibre.Map, wells: any) => {
   const orphanedActivitiesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
 
+  /**
+   * Another layer to display is Dormant Wells
+   * Example of display is seen here https://geoweb-ags.bc-er.ca/portal/apps/webappviewer/index.html?id=b8a2b40512a8493284fc3c322077e677
+   * This layer is around 2.4Mg in size and should possibly be consumed as a vector tile
+   * Test out limiting it with these query parameters "(DORMANT_SITE_STATUS = 'Dormant') AND (OPERATOR_ABBREVIATION <> 'ORPHAN') AND (WELL_AUTHORITY_NUMBER <> '02210')"
+   */
+  const dormantWellsURL =
+    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+
   map.addSource('orphanedWells', {
     type: 'geojson',
     data: orphanedSitesURL
