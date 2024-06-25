@@ -15,7 +15,8 @@ import {
   GetIUCNClassificationData,
   GetPartnershipsData,
   GetPermitData,
-  GetProjectData
+  GetProjectData,
+  IGetConservationArea
 } from '../models/project-view';
 import { getLogger } from '../utils/logger';
 import { generateGeometryCollectionSQL } from '../utils/spatial-utils';
@@ -282,7 +283,7 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<any>}
    * @memberof ProjectRepository
    */
-  async getConservationAreasData(projectId: number): Promise<any> {
+  async getConservationAreasData(projectId: number): Promise<IGetConservationArea[]> {
     try {
       const sqlStatement = SQL`
         SELECT
@@ -1176,31 +1177,23 @@ export class ProjectRepository extends BaseRepository {
     });
 
     try {
-      const sqlStatement: SQLStatement = SQL`
-      UPDATE project SET `;
-
-      const sqlSetStatements: SQLStatement[] = [];
-
-      if (project) {
-        sqlSetStatements.push(SQL`name = ${project.name}`);
-        sqlSetStatements.push(SQL`start_date = ${project.start_date}`);
-        sqlSetStatements.push(SQL`end_date = ${project.end_date}`);
-        sqlSetStatements.push(SQL`objectives = ${project.objectives}`);
-      }
-
-      sqlSetStatements.forEach((item, index) => {
-        sqlStatement.append(item);
-        if (index < sqlSetStatements.length - 1) {
-          sqlStatement.append(',');
-        }
-      });
-
-      sqlStatement.append(SQL`
-      WHERE
-        project_id = ${projectId}
-      AND
-        revision_count = ${project.revision_count};
-      `);
+      const sqlStatement = SQL`
+        UPDATE project
+        SET
+          name = ${project.name},
+          brief_desc = ${project.brief_desc},
+          is_project = ${project.is_project},
+          state_code = ${project.state_code},
+          start_date = ${project.start_date},
+          end_date = ${project.end_date},
+          actual_start_date = ${project.actual_start_date},
+          actual_end_date = ${project.actual_end_date},
+          people_involved = ${project.people_involved}
+        WHERE
+          project_id = ${projectId}
+        RETURNING
+          project_id;
+      `;
 
       const response = await this.connection.sql(sqlStatement);
 
@@ -1369,14 +1362,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Contact', [
-          'ProjectRepository->deleteProjectContact',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectContact', message: 'error', error });
       throw error;
@@ -1400,14 +1386,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Permit', [
-          'ProjectRepository->deleteProjectPermit',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectPermit', message: 'error', error });
       throw error;
@@ -1426,19 +1405,12 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
         DELETE
-          from project_partnership
+          from partnership
         WHERE
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Partnership', [
-          'ProjectRepository->deleteProjectPartnership',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectPartnership', message: 'error', error });
       throw error;
@@ -1462,14 +1434,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Objectives', [
-          'ProjectRepository->deleteProjectObjectives',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectObjectives', message: 'error', error });
       throw error;
@@ -1493,14 +1458,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project conservation areas', [
-          'ProjectRepository->deleteProjectConservationAreas',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'error', error });
       throw error;
@@ -1524,14 +1482,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project IUCN', [
-          'ProjectRepository->deleteProjectIUCN',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectIUCN', message: 'error', error });
       throw error;
@@ -1555,14 +1506,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Funding Source', [
-          'ProjectRepository->deleteProjectFundingSource',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectFundingSource', message: 'error', error });
       throw error;
@@ -1627,14 +1571,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Location', [
-          'ProjectRepository->deleteProjectLocation',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectLocation', message: 'error', error });
       throw error;
@@ -1658,14 +1595,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Region', [
-          'ProjectRepository->deleteProjectRegion',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectRegion', message: 'error', error });
       throw error;
@@ -1689,16 +1619,33 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Species', [
-          'ProjectRepository->deleteProjectSpecies',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectSpecies', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a project Conservation Area.
+   *
+   * @param {number} projectId
+   * @memberof ProjectRepository
+   */
+  async deleteProjectConservationArea(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectConservationArea', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE
+          from conservation_area
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      await this.connection.sql(sqlStatement);
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteProjectConservationArea', message: 'error', error });
       throw error;
     }
   }

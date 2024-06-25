@@ -28,7 +28,7 @@ export interface IProjectPartnershipsFormArrayItem {
 
 export interface IProjectPartnershipsForm {
   partnership: {
-    partnerships: IProjectPartnershipsFormArrayItem[];
+    partnerships: IProjectPartnershipsFormArrayItem[] | string[];
   };
 }
 

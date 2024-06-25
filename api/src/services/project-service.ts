@@ -1,7 +1,6 @@
 import { PROJECT_ROLE } from '../constants/roles';
 import { IDBConnection } from '../database/db';
 import { HTTP400 } from '../errors/custom-error';
-import { models } from '../models/models';
 import {
   IPostAuthorization,
   IPostConservationArea,
@@ -9,13 +8,20 @@ import {
   IPostIUCN,
   IPostObjective,
   IPostPartnership,
+  PostContactData,
   PostFocusData,
+  PostFundingData,
   PostFundingSource,
+  PostIUCNData,
   PostLocationData,
+  PostObjectivesData,
+  PostPartnershipsData,
   PostProjectData,
   PostProjectObject,
-  PostRestPlanData
+  PostRestPlanData,
+  PostSpeciesData
 } from '../models/project-create';
+import { ProjectUpdateObject, PutProjectObject } from '../models/project-update';
 import {
   GetContactData,
   GetFundingData,
@@ -28,7 +34,6 @@ import {
   GetSpeciesData,
   ProjectObject
 } from '../models/project-view';
-import { IUpdateProject } from '../paths/project/{projectId}/update';
 import {
   IProjectParticipation,
   ProjectParticipationRepository
@@ -165,7 +170,50 @@ export class ProjectService extends DBService {
       contact: contactData,
       permit: permitData,
       partnerships: partnershipsData,
-      objectives: objectivesData,
+      objective: objectivesData,
+      funding: fundingData,
+      location: locationData
+    };
+  }
+
+  /**
+   * Get a project by its id for editing.
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<ProjectUpdateObject>}
+   * @memberof ProjectService
+   */
+  async getProjectByIdForEdit(projectId: number): Promise<ProjectUpdateObject> {
+    const [
+      projectData,
+      speciesData,
+      iucnData,
+      contactData,
+      permitData,
+      partnershipsData,
+      objectivesData,
+      fundingData,
+      locationData
+    ] = await Promise.all([
+      this.getProjectData(projectId),
+      this.getSpeciesData(projectId),
+      this.getIUCNClassificationData(projectId),
+      this.getContactData(projectId, false),
+      this.getPermitData(projectId, false),
+      this.getPartnershipsData(projectId),
+      this.getObjectivesData(projectId),
+      this.getFundingData(projectId),
+      this.getLocationData(projectId)
+    ]);
+
+    return {
+      project: projectData,
+      species: speciesData,
+      iucn: iucnData,
+      contact: contactData,
+      permit: permitData,
+      partnerships: partnershipsData,
+      objective: objectivesData,
       funding: fundingData,
       location: locationData
     };
@@ -612,42 +660,47 @@ export class ProjectService extends DBService {
    * Update a project.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PutProjectObject} entities
    * @memberof ProjectService
    */
-  async updateProject(projectId: number, entities: IUpdateProject) {
+  async updateProject(projectId: number, entities: PutProjectObject) {
     const promises: Promise<any>[] = [];
 
     if (entities?.project) {
-      promises.push(this.updateProjectData(projectId, entities));
+      promises.push(this.updateProjectData(projectId, entities.project));
+    }
+
+    if (entities?.focus) {
+      promises.push(this.projectRepository.updateProjectFocus(entities.focus, projectId));
     }
 
     if (entities?.contact) {
-      promises.push(this.updateContactData(projectId, entities));
+      promises.push(this.updateContactData(projectId, entities.contact));
     }
 
     if (entities?.partnership) {
-      promises.push(this.updateProjectPartnershipsData(projectId, entities));
+      promises.push(this.updateProjectPartnershipsData(projectId, entities.partnership));
     }
 
     if (entities?.objective) {
-      promises.push(this.updateProjectObjectivesData(projectId, entities));
+      promises.push(this.updateProjectObjectivesData(projectId, entities.objective));
     }
 
     if (entities?.iucn) {
-      promises.push(this.updateProjectIUCNData(projectId, entities));
+      promises.push(this.updateProjectIUCNData(projectId, entities.iucn));
     }
 
     if (entities?.funding) {
-      promises.push(this.updateProjectFundingData(projectId, entities));
+      promises.push(this.updateProjectFundingData(projectId, entities.funding));
     }
 
     if (entities?.location) {
-      promises.push(this.updateProjectSpatialData(projectId, entities));
-      promises.push(this.updateProjectRegionData(projectId, entities));
+      promises.push(this.updateProjectSpatialData(projectId, entities.location));
+      promises.push(this.updateProjectRegionData(projectId, entities.location));
+      promises.push(this.updateProjectConservationAreaData(projectId, entities.location));
     }
     if (entities?.species) {
-      promises.push(this.updateProjectSpeciesData(projectId, entities));
+      promises.push(this.updateProjectSpeciesData(projectId, entities.species));
     }
 
     await Promise.all(promises);
@@ -657,31 +710,27 @@ export class ProjectService extends DBService {
    * Update project data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostProjectData} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const projectData = entities?.project && new models.project.PutProjectData(entities.project);
-
+  async updateProjectData(projectId: number, projectData: PostProjectData): Promise<void> {
     if (!projectData) {
       throw new HTTP400('Failed to parse request body');
     }
     // Update project table
-    return this.projectRepository.updateProject(projectId, projectData);
+    this.projectRepository.updateProject(projectId, projectData);
   }
 
   /**
    * Update project contact data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostEditProjectObject} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateContactData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putContactData = new models.project.PostContactData(entities.contact);
-
+  async updateContactData(projectId: number, putContactData: PostContactData): Promise<void> {
     await this.projectRepository.deleteProjectContact(projectId);
 
     const insertContactPromises =
@@ -696,13 +745,11 @@ export class ProjectService extends DBService {
    * Update project IUCN data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostIUCNData} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectIUCNData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putIUCNData = (entities?.iucn && new models.project.PutIUCNData(entities.iucn)) || null;
-
+  async updateProjectIUCNData(projectId: number, putIUCNData: PostIUCNData): Promise<void> {
     await this.projectRepository.deleteProjectIUCN(projectId);
 
     const insertIUCNPromises =
@@ -717,19 +764,17 @@ export class ProjectService extends DBService {
    * Update project partnerships data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostPartnershipsData} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectPartnershipsData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putPartnershipsData =
-      (entities?.partnership && new models.project.PutPartnershipsData(entities.partnership)) || null;
-
+  async updateProjectPartnershipsData(projectId: number, partnershipsData: PostPartnershipsData): Promise<void> {
     await this.projectRepository.deleteProjectPartnership(projectId);
 
     const insertPartnershipsPromises =
-      putPartnershipsData?.partnerships?.map((partnership: string) => this.insertPartnership(partnership, projectId)) ||
-      [];
+      partnershipsData?.partnerships?.map((partnershipData: { partnership: string }) =>
+        this.insertPartnership(partnershipData.partnership, projectId)
+      ) || [];
 
     await Promise.all([...insertPartnershipsPromises]);
   }
@@ -738,58 +783,34 @@ export class ProjectService extends DBService {
    * Update project objectives data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostObjectivesData} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectObjectivesData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putObjectivesData = (entities?.objective && new models.project.PutObjectivesData(entities.objective)) || null;
-
+  async updateProjectObjectivesData(projectId: number, objectivesData: PostObjectivesData): Promise<void> {
     await this.projectRepository.deleteProjectObjectives(projectId);
 
     const insertObjectivesPromises =
-      putObjectivesData?.objectives?.map((objective: string) => this.insertObjective(objective, projectId)) || [];
+      objectivesData?.objectives?.map((objectiveData: { objective: string }) =>
+        this.insertObjective(objectiveData.objective, projectId)
+      ) || [];
 
     await Promise.all([...insertObjectivesPromises]);
   }
-
-  // /**
-  //  * Update project conservation areas data.
-  //  *
-  //  * @param {number} projectId
-  //  * @param {IUpdateProject} entities
-  //  * @return {*}  {Promise<void>}
-  //  * @memberof ProjectService
-  //  */
-  // async updateConservationAreasData(projectId: number, entities: IUpdateProject): Promise<void> {
-  //   const putConservationAreasData =
-  //     (entities?.conservationArea && new models.project.PutConservationAreasData(entities.conservationArea)) || null;
-
-  //   await this.projectRepository.deleteProjectConservationAreas(projectId);
-
-  //   const insertConservationAreasPromises =
-  //     putConservationAreasData?.conservationAreas?.map((conservationArea: string) =>
-  //       this.insertConservationArea(conservationArea, projectId)
-  //     ) || [];
-
-  //   await Promise.all([...insertConservationAreasPromises]);
-  // }
 
   /**
    * Update project funding data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostFundingData} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectFundingData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putFundingSources = entities?.funding && new models.project.PutFundingData(entities.funding);
-
+  async updateProjectFundingData(projectId: number, fundingSources: PostFundingData): Promise<void> {
     await this.projectRepository.deleteProjectFundingSource(projectId);
 
     await Promise.all(
-      putFundingSources?.fundingSources?.map((item) => {
+      fundingSources?.funding_sources?.map((item) => {
         return this.insertFundingSource(item, projectId);
       }) || []
     );
@@ -799,62 +820,71 @@ export class ProjectService extends DBService {
    * Update project spatial data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostLocationData} location
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectSpatialData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putLocationData = entities?.location && new models.project.PutLocationData(entities.location);
-
+  async updateProjectSpatialData(projectId: number, location: PostLocationData): Promise<void> {
     await this.projectRepository.deleteProjectLocation(projectId);
 
-    if (!putLocationData?.geometry) {
+    if (!location?.geometry) {
       // No spatial data to insert
       return;
     }
 
-    await this.insertProjectSpatial(putLocationData, projectId);
+    await this.insertProjectSpatial(location, projectId);
   }
 
   /**
    * Update project region data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostLocationData} location
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectRegionData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putRegionData = entities?.location && new models.project.PutLocationData(entities.location);
-
+  async updateProjectRegionData(projectId: number, location: PostLocationData): Promise<void> {
     await this.projectRepository.deleteProjectRegion(projectId);
 
-    if (!putRegionData?.region) {
+    if (!location?.region) {
       // No spatial data to insert
       return;
     }
-    await this.projectRepository.insertProjectRegion(putRegionData.region, projectId);
+    await this.projectRepository.insertProjectRegion(location.region, projectId);
+  }
+
+  async updateProjectConservationAreaData(projectId: number, location: PostLocationData): Promise<void> {
+    await this.projectRepository.deleteProjectConservationArea(projectId);
+
+    if (!location?.conservationAreas) {
+      // No spatial data to insert
+      return;
+    }
+
+    await Promise.all(
+      location?.conservationAreas.map((conservationArea: IPostConservationArea) =>
+        this.insertConservationArea(conservationArea.conservationArea, projectId)
+      )
+    );
   }
 
   /**
    * Update project species data.
    *
    * @param {number} projectId
-   * @param {IUpdateProject} entities
+   * @param {PostSpeciesData} entities
    * @return {*}  {Promise<void>}
    * @memberof ProjectService
    */
-  async updateProjectSpeciesData(projectId: number, entities: IUpdateProject): Promise<void> {
-    const putSpeciesData = entities?.species && new models.project.PutSpeciesData(entities.species);
-
+  async updateProjectSpeciesData(projectId: number, species: PostSpeciesData): Promise<void> {
     await this.projectRepository.deleteProjectSpecies(projectId);
 
-    if (!putSpeciesData?.focal_species.length) {
+    if (!species?.focal_species.length) {
       return;
     }
 
     await Promise.all(
-      putSpeciesData?.focal_species.map((speciesId: number) => {
+      species?.focal_species.map((speciesId: number) => {
         this.insertSpecies(speciesId, projectId);
       })
     );
@@ -892,7 +922,7 @@ export class ProjectService extends DBService {
       contact: GetContactData;
       permit: GetPermitData;
       partnerships: GetPartnershipsData;
-      objectives: GetObjectivesData;
+      objective: GetObjectivesData;
       funding: GetFundingData;
       location: GetLocationData;
     }[]

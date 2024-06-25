@@ -42,9 +42,9 @@ const objectiveStyled = (objective: string) => {
  */
 const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
   const {
-    projectViewData: { objectives }
+    projectViewData: { objective }
   } = props;
-  const hasObjectives = objectives.objectives && objectives.objectives.length > 0;
+  const hasObjectives = objective.objectives && objective.objectives.length > 0;
   return (
     <Box mt={1}>
       <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
@@ -52,13 +52,13 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
       </Typography>
       <Box display="flex" flexDirection={'column'} alignItems="left">
         {hasObjectives &&
-          objectives.objectives.map((item: string, index) => (
+          objective.objectives.map((item: { objective: string }, index) => (
             <Chip
               key={index}
               data-testid="objective_item"
               size="small"
               sx={pageStyles.objectiveChip}
-              label={objectiveStyled(item)}
+              label={objectiveStyled(item.objective)}
             />
           ))}
 

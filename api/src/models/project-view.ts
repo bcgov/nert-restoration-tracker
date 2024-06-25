@@ -7,7 +7,7 @@ export type ProjectObject = {
   contact: GetContactData;
   permit: GetPermitData;
   partnerships: GetPartnershipsData;
-  objectives: GetObjectivesData;
+  objective: GetObjectivesData;
   funding: GetFundingData;
   location: GetLocationData;
 };
@@ -138,12 +138,12 @@ export interface IGetObjective {
 export class GetObjectivesData {
   objectives: IGetObjective[];
 
-  constructor(objectives?: any[]) {
-    this.objectives = (objectives?.length && objectives.map((item: any) => item.objective)) || [];
+  constructor(objectives?: IGetObjective[]) {
+    this.objectives = (objectives?.length && objectives.map((item: IGetObjective) => item)) || [];
   }
 }
 
-export interface IGetconservationArea {
+export interface IGetConservationArea {
   conservationArea: string;
 }
 
@@ -153,9 +153,9 @@ export class GetLocationData {
   region?: number;
   number_sites?: number;
   size_ha?: number;
-  conservationAreas?: IGetconservationArea[];
+  conservationAreas?: IGetConservationArea[];
 
-  constructor(locationData?: any[], regionData?: any[], conservationAreaData?: any[]) {
+  constructor(locationData?: any[], regionData?: any[], conservationAreaData?: IGetConservationArea[]) {
     const locationDataItem = locationData && locationData.length && locationData[0];
     this.geometry = (locationDataItem?.geojson?.length && locationDataItem.geojson) || [];
     this.is_within_overlapping = locationData && locationData?.length && locationData[0]?.is_within_overlapping;

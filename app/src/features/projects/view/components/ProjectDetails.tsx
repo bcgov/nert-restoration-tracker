@@ -33,6 +33,7 @@ export interface IProjectDetails {
  */
 const ProjectDetails: React.FC<IProjectDetails> = (props) => {
   const { project, thumbnailImageUrl } = props;
+  console.log('project', project);
 
   const conservationAreaStyled = (conservationArea: string) => {
     return (
@@ -127,45 +128,18 @@ const ProjectDetails: React.FC<IProjectDetails> = (props) => {
                   ? 'Yes'
                   : 'No'}
             </Typography>
-            {project.location.is_within_overlapping === 'Y' && (
-              <Box ml={1}>
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 1. String with 100 characters conservation area name1 conservation area name1'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 2. String with 100 characters conservation area name2 conservation area name2'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 3. String with 100 characters conservation area name3 conservation area name3'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 4. String with 100 characters conservation area name4 conservation area name4'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 5. String with 100 characters conservation area name5 conservation area name5'
-                  )}
-                />
-              </Box>
-            )}
+            {project.location.is_within_overlapping === 'Y' &&
+              project.location.conservationAreas &&
+              project.location.conservationAreas.map(
+                (data: { conservation_area: string }, index) => (
+                  <Chip
+                    key={index}
+                    size="small"
+                    sx={pageStyles.conservationAreChip}
+                    label={conservationAreaStyled(data.conservation_area)}
+                  />
+                )
+              )}
           </Box>
         </Box>
       </Grid>

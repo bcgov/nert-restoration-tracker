@@ -5,7 +5,10 @@ import {
   IAddProjectParticipant,
   ICreateProjectRequest,
   ICreateProjectResponse,
+  IEditProjectRequest,
   IGetProjectAttachmentsResponse,
+  IGetProjectForEditResponse,
+  IGetProjectForEditResponseDetails,
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponse,
   IGetUserProjectsListResponse,
@@ -134,16 +137,29 @@ const useProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Get project details based on its ID for viewing purposes.
+   *
+   * @param {number} projectId
+   * @return {*} {Promise<IGetProjectForViewResponse>}
+   */
+  const getProjectByIdForEdit = async (projectId: number): Promise<IGetProjectForEditResponse> => {
+    const { data } = await axios.get(`/api/project/${projectId}/update`);
+
+    return data;
+  };
+
+  /**
    * Update an existing project.
    *
    * @param {number} projectId
-   * @param {IGetProjectForViewResponse} projectData
+   * @param {IEditProjectRequest} projectData
    * @return {*}  {Promise<any>}
    */
   const updateProject = async (
     projectId: number,
-    projectData: IGetProjectForViewResponse
+    projectData: IEditProjectRequest
   ): Promise<any> => {
+    console.log('projectData', projectData);
     const { data } = await axios.put(`api/project/${projectId}/update`, projectData);
 
     return data;
@@ -199,8 +215,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     projectId: number,
     file: File,
     fileType: string,
-    cancelTokenSource?: CancelTokenSource,
-    onProgress?: (progressEvent: ProgressEvent) => void
+    cancelTokenSource?: CancelTokenSource
   ): Promise<IUploadAttachmentResponse> => {
     const req_message = new FormData();
 
@@ -208,8 +223,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     req_message.append('fileType', fileType);
 
     const { data } = await axios.post(`/api/project/${projectId}/attachments/upload`, req_message, {
-      cancelToken: cancelTokenSource?.token,
-      onUploadProgress: onProgress
+      cancelToken: cancelTokenSource?.token
     });
 
     return data;
@@ -335,6 +349,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     getProjectsList,
     createProject,
     getProjectById,
+    getProjectByIdForEdit,
     uploadProjectAttachments,
     updateProject,
     getProjectAttachments,

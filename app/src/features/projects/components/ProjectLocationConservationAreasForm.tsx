@@ -114,11 +114,7 @@ const ProjectLocationConservationAreas: React.FC<IProjectConservationAreasProps>
               <Box pt={0.5}>
                 <Button
                   disabled={
-                    !values.location.conservationAreas[
-                      values.location.conservationAreas.length - 1
-                    ].conservationArea.trim() ||
-                    values.location.conservationAreas.length >= 5 ||
-                    props.isOverlapping !== 'true'
+                    values.location.conservationAreas.length >= 5 || props.isOverlapping !== 'true'
                   }
                   type="button"
                   variant="outlined"

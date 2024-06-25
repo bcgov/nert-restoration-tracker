@@ -10,7 +10,6 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import { EditProjectI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm from 'features/projects/components/ProjectAuthorizationForm';
@@ -19,20 +18,22 @@ import ProjectFundingForm from 'features/projects/components/ProjectFundingForm'
 import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
 import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
-import ProjectIUCNForm from 'features/projects/components/ProjectWildlifeForm';
 import {
   ProjectFormInitialValues,
   ProjectFormYupSchema
 } from 'features/projects/create/CreateProjectPage';
-import { Form, Formik, FormikProps } from 'formik';
-// import History from 'history';
+import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import { IEditProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactRouterPrompt from 'react-router-prompt';
+import ProjectObjectivesForm from '../components/ProjectObjectivesForm';
+import ProjectFocusForm from '../components/ProjectFocusForm';
+import ProjectWildlifeForm from '../components/ProjectWildlifeForm';
+import { handleFocusFormValues } from 'utils/Utils';
+import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
 
 const pageStyles = {
   actionButton: {
@@ -63,34 +64,47 @@ const pageStyles = {
  */
 const EditProjectPage: React.FC = () => {
   const history = useNavigate();
+  const dialogContext = useContext(DialogContext);
+  const codes = useCodes();
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
 
-  const codes = useCodes();
-
   const [hasLoadedDraftData, setHasLoadedDraftData] = useState(false);
 
   // Reference to pass to the formik component in order to access its state at any time
   // Used by the draft logic to fetch the values of a step form that has not been validated/completed
-  const formikRef = useRef<FormikProps<IGetProjectForViewResponse>>(null);
+  const formikRef = useRef<FormikProps<IEditProjectRequest>>(null);
 
-  // Ability to bypass showing the 'Are you sure you want to cancel' dialog
-  const [enableCancelCheck, setEnableCancelCheck] = useState(true);
-
-  const dialogContext = useContext(DialogContext);
-
-  const [initialProjectFormData, setInitialProjectFormData] = useState<IGetProjectForViewResponse>(
-    ProjectFormInitialValues as unknown as IGetProjectForViewResponse
+  const [initialProjectFormData, setInitialProjectFormData] = useState<IEditProjectRequest>(
+    ProjectFormInitialValues as unknown as IEditProjectRequest
   );
+  console.log('initialProjectFormData', initialProjectFormData);
 
   useEffect(() => {
     const getEditProjectFields = async () => {
-      const response = await restorationTrackerApi.project.getProjectById(projectId);
+      const response = await restorationTrackerApi.project.getProjectByIdForEdit(projectId);
 
-      setInitialProjectFormData(response);
+      const focus = handleFocusFormValues(response.project);
+
+      const editProject = {
+        ...response,
+        focus: {
+          focuses: focus,
+          people_involved: response.project.people_involved
+        },
+        restoration_plan: {
+          is_project_part_public_plan: Boolean(response.project.is_project_part_public_plan)
+        },
+        location: {
+          ...response.location,
+          is_within_overlapping: response.location.is_within_overlapping === 'Y' ? 'true' : 'false'
+        }
+      };
+
+      setInitialProjectFormData(editProject);
 
       if (!response || !response.project.project_id) {
         return;
@@ -109,9 +123,13 @@ const EditProjectPage: React.FC = () => {
   /**
    * Handle project edits.
    */
-  const handleProjectEdits = async (values: IGetProjectForViewResponse) => {
+  const handleProjectEdits = async (values: IEditProjectRequest) => {
+    console.log('values', values);
+    console.log('formikRef', formikRef.current?.errors);
+
     try {
       const response = await restorationTrackerApi.project.updateProject(projectId, values);
+      console.log('response', response);
 
       if (!response?.id) {
         showEditErrorDialog({
@@ -119,8 +137,6 @@ const EditProjectPage: React.FC = () => {
         });
         return;
       }
-
-      setEnableCancelCheck(false);
 
       history(`/admin/projects/${response.id}`);
     } catch (error) {
@@ -130,11 +146,6 @@ const EditProjectPage: React.FC = () => {
         dialogErrorDetails: (error as APIError)?.errors
       });
     }
-  };
-
-  const handleCancel = () => {
-    dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history(`/admin/projects/${projectId}`);
   };
 
   const defaultErrorDialogProps = {
@@ -149,7 +160,7 @@ const EditProjectPage: React.FC = () => {
   const defaultCancelDialogProps = {
     dialogTitle: EditProjectI18N.cancelTitle,
     dialogText: EditProjectI18N.cancelText,
-    open: false,
+    open: true,
     onClose: () => {
       dialogContext.setYesNoDialog({ open: false });
     },
@@ -172,42 +183,17 @@ const EditProjectPage: React.FC = () => {
     });
   };
 
+  const handleCancel = () => {
+    dialogContext.setYesNoDialog(defaultCancelDialogProps);
+  };
+
   if (!codes.codes || !hasLoadedDraftData) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  /**
-   * Intercepts all navigation attempts (when used with a `Prompt`).
-   *
-   * Returning true allows the navigation, returning false prevents it.
-   *
-   * @param {History.Location} location
-   * @return {*}
-   */
-  const handleLocationChange = () => {
-    if (!dialogContext.yesNoDialogProps.open) {
-      // If the cancel dialog is not open: open it
-      dialogContext.setYesNoDialog({
-        ...defaultCancelDialogProps,
-        onYes: () => {
-          dialogContext.setYesNoDialog({ open: false });
-          history(location.pathname);
-        },
-        open: true
-      });
-      return false;
-    }
-
-    // If the cancel dialog is already open and another location change action is triggered: allow it
-    return true;
-  };
-
+  console.log('formik', formikRef.current?.errors);
   return (
     <>
-      <ReactRouterPrompt when={enableCancelCheck}>
-        {({ isActive }) => isActive && handleLocationChange()}
-      </ReactRouterPrompt>
-
       <Container maxWidth="xl">
         <Box mb={3}>
           <Breadcrumbs>
@@ -232,162 +218,189 @@ const EditProjectPage: React.FC = () => {
         </Box>
 
         <Box component={Paper} p={4}>
-          <Formik<IGetProjectForViewResponse>
+          <Formik<IEditProjectRequest>
             innerRef={formikRef}
             enableReinitialize={true}
             initialValues={initialProjectFormData}
             validationSchema={ProjectFormYupSchema}
-            validateOnBlur={true}
+            validateOnBlur={false}
             validateOnChange={false}
             onSubmit={handleProjectEdits}>
             <>
-              <ScrollToFormikError />
-
-              <Form noValidate>
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">General Information</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectGeneralInformationForm />
-
-                      <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectIUCNForm
-                          classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map(
-                              (item) => {
-                                return { value: item.id, label: item.name };
-                              }
-                            ) || []
-                          }
-                          subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn1_id: item.iucn1_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                          subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn2_id: item.iucn2_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                        />
-                      </Box>
-                    </Grid>
+              <Box my={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">General Information</Typography>
                   </Grid>
-                </Box>
 
-                <Divider></Divider>
-
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Contacts</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
-                      />
-                    </Grid>
+                  <Grid item xs={12} md={9}>
+                    <ProjectGeneralInformationForm />
+                    <Box component="fieldset" my={2} mx={0}>
+                      <ProjectObjectivesForm />
+                    </Box>
+                    <ProjectFocusForm />
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider></Divider>
+              <Divider />
 
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Authorizations</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectAuthorizationForm />
-                    </Grid>
+              <Box my={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">Contacts</Typography>
                   </Grid>
-                </Box>
 
-                <Divider></Divider>
+                  <Grid item xs={12} md={9}>
+                    <ProjectContactForm
+                      organization={codes.codes.coordinator_agency.map((item) => item.name)}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
 
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Funding and Partnerships</Typography>
-                    </Grid>
+              <Divider />
 
-                    <Grid item xs={12} md={9}>
-                      <Box component="fieldset" mx={0}>
-                        <ProjectFundingForm
-                          fundingSources={codes.codes.funding_source.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          investment_action_category={codes.codes.investment_action_category.map(
+              <Box ml={1} my={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Actions Beneficial to Wildlife and/or Fish</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <Box component="fieldset" mx={0}>
+                      <ProjectWildlifeForm
+                        classifications={
+                          codes.codes.iucn_conservation_action_level_1_classification?.map(
                             (item) => {
-                              return { value: item.id, label: item.name, fs_id: item.fs_id };
+                              return { value: item.id, label: item.name };
                             }
-                          )}
-                        />
-                      </Box>
-
-                      <Box component="fieldset" mt={5} mx={0}>
-                        <ProjectPartnershipsForm />
-                      </Box>
-                    </Grid>
+                          ) || []
+                        }
+                        subClassifications1={
+                          codes.codes.iucn_conservation_action_level_2_subclassification?.map(
+                            (item) => {
+                              return {
+                                value: item.id,
+                                iucn1_id: item.iucn1_id,
+                                label: item.name
+                              };
+                            }
+                          ) || []
+                        }
+                        subClassifications2={
+                          codes.codes.iucn_conservation_action_level_3_subclassification?.map(
+                            (item) => {
+                              return {
+                                value: item.id,
+                                iucn2_id: item.iucn2_id,
+                                label: item.name
+                              };
+                            }
+                          ) || []
+                        }
+                      />
+                    </Box>
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider></Divider>
+              <Divider />
 
-                <Box my={5}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Location</Typography>
-                    </Grid>
+              <Box my={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">Authorizations</Typography>
+                  </Grid>
 
-                    <Grid item xs={12} md={9}>
-                      <ProjectLocationForm
-                        regions={codes.codes.regions.map((item) => {
+                  <Grid item xs={12} md={9}>
+                    <ProjectAuthorizationForm />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider />
+
+              <Box my={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">Funding and Partnerships</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <Box component="fieldset" mx={0}>
+                      <ProjectFundingForm
+                        fundingSources={codes.codes.funding_source.map((item) => {
                           return { value: item.id, label: item.name };
                         })}
+                        investment_action_category={codes.codes.investment_action_category.map(
+                          (item) => {
+                            return { value: item.id, label: item.name, fs_id: item.fs_id };
+                          }
+                        )}
                       />
-                    </Grid>
+                    </Box>
+
+                    <Box component="fieldset" mt={5} mx={0}>
+                      <ProjectPartnershipsForm />
+                    </Box>
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider></Divider>
+              <Divider />
 
-                <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    type="submit"
-                    data-testid="project-save-button">
-                    Save Project
-                  </Button>
-                  <Button
-                    variant="text"
-                    color="primary"
-                    size="large"
-                    data-testid="project-cancel-buttton"
-                    onClick={handleCancel}>
-                    Cancel
-                  </Button>
-                </Box>
-              </Form>
+              <Box my={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">Location</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <ProjectLocationForm
+                      regions={codes.codes.regions.map((item) => {
+                        return { value: item.id, label: item.name };
+                      })}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider />
+
+              <Box ml={1} mt={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">Restoration Plan</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <ProjectRestorationPlanForm />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider />
+
+              <Box mt={5} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  type="submit"
+                  onClick={() => formikRef.current?.submitForm()}
+                  data-testid="project-save-button">
+                  Save Project
+                </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  size="large"
+                  data-testid="project-cancel-buttton"
+                  onClick={handleCancel}>
+                  Cancel
+                </Button>
+              </Box>
             </>
           </Formik>
         </Box>

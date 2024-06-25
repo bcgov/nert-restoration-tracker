@@ -1,3 +1,4 @@
+import { IPlanFocusForm } from 'features/plans/components/PlanFocusForm';
 import { IProjectAuthorizationForm } from 'features/projects/components/ProjectAuthorizationForm';
 import { IProjectContactForm } from 'features/projects/components/ProjectContactForm';
 import { IProjectFocusForm } from 'features/projects/components/ProjectFocusForm';
@@ -110,6 +111,18 @@ export enum UPDATE_GET_ENTITIES {
   partnerships = 'partnerships'
 }
 
+export interface IEditProjectRequest
+  extends IProjectGeneralInformationForm,
+    IProjectObjectivesForm,
+    IProjectFocusForm,
+    IProjectContactForm,
+    IProjectWildlifeForm,
+    IProjectAuthorizationForm,
+    IProjectFundingForm,
+    IProjectPartnershipsForm,
+    IProjectRestorationPlanForm,
+    IProjectLocationForm {}
+
 /**
  * An interface for a single instance of project metadata, for update-only use cases.
  *
@@ -218,7 +231,22 @@ export interface IGetProjectForViewResponse {
   iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
   partnerships: IGetProjectForViewResponsePartnerships;
-  objectives: IGetProjectForViewResponseObjectives;
+  objective: IGetProjectForViewResponseObjectives;
+}
+
+export interface IGetProjectForEditResponse {
+  project: IGetProjectForEditResponseDetails;
+  objective: IGetProjectForViewResponseObjectives;
+  focus: { focuses: number[]; people_involved: number };
+  contact: IGetProjectForViewResponseContact;
+  species: IGetProjectForViewResponseSpecies;
+  permit: IGetProjectForViewResponsePermit;
+  location: IGetProjectForViewResponseLocation;
+  authorization: IGetProjectForViewResponseAuthorization;
+  iucn: IGetProjectForViewResponseIUCN;
+  funding: IGetProjectForViewResponseFundingData;
+  partnership: IGetProjectForViewResponsePartnerships;
+  restoration_plan: { is_project_part_public_plan: boolean };
 }
 
 export interface IGetProjectForViewResponseDetails {
@@ -282,7 +310,7 @@ export interface IGetProjectForViewResponsePermit {
 }
 
 export interface IGetProjectForViewResponseConservationAreas {
-  conservationAreas: string;
+  conservation_area: string;
 }
 
 export interface IGetProjectForViewResponseLocation {
@@ -340,9 +368,12 @@ export interface IGetProjectForViewResponsePartnerships {
 }
 
 export interface IGetProjectForViewResponseObjectives {
-  objectives: string[];
+  objectives: { objective: string }[];
 }
 
+export interface IGetProjectForViewResponseAuthorization {
+  authorizations: { authorization_ref: string; authorization_type: string }[];
+}
 /**
  * A single media item.
  *

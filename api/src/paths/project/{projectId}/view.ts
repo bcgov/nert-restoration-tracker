@@ -288,6 +288,17 @@ GET.apiDoc = {
                 type: 'object',
                 required: ['geometry', 'region'],
                 properties: {
+                  conservationAreas: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        conservationArea: {
+                          type: 'string'
+                        }
+                      }
+                    }
+                  },
                   geometry: {
                     type: 'array',
                     items: {
@@ -342,6 +353,7 @@ export function viewProject(): RequestHandler {
       const projectService = new ProjectService(connection);
 
       const result = await projectService.getProjectById(Number(req.params.projectId));
+      console.log('result', result);
 
       await connection.commit();
 

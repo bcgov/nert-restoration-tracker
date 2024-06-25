@@ -1,106 +1,98 @@
-import { Feature } from 'geojson';
-import { IPostIUCN, PostFundingSource } from './project-create';
+import {
+  PostAuthorizationData,
+  PostContactData,
+  PostFocusData,
+  PostFundingData,
+  PostIUCNData,
+  PostLocationData,
+  PostObjectivesData,
+  PostPartnershipsData,
+  PostProjectData,
+  PostRestPlanData,
+  PostSpeciesData
+} from './project-create';
+import {
+  GetContactData,
+  GetFundingData,
+  GetIUCNClassificationData,
+  GetLocationData,
+  GetObjectivesData,
+  GetPartnershipsData,
+  GetPermitData,
+  GetProjectData,
+  GetSpeciesData
+} from './project-view';
 
-export class PutIUCNData {
-  classificationDetails: IPostIUCN[];
+export type ProjectUpdateObject = {
+  project: GetProjectData;
+  species: GetSpeciesData;
+  iucn: GetIUCNClassificationData;
+  contact: GetContactData;
+  permit: GetPermitData;
+  partnerships: GetPartnershipsData;
+  objective: GetObjectivesData;
+  funding: GetFundingData;
+  location: GetLocationData;
+};
+
+export class PutProjectObject {
+  contact: PostContactData;
+  species: PostSpeciesData;
+  authorization: PostAuthorizationData;
+  project: PostProjectData;
+  location: PostLocationData;
+  iucn: PostIUCNData;
+  funding: PostFundingData;
+  partnership: PostPartnershipsData;
+  objective: PostObjectivesData;
+  focus: PostFocusData;
+  restoration_plan: PostRestPlanData;
 
   constructor(obj?: any) {
-    this.classificationDetails =
-      (obj?.classificationDetails?.length &&
-        obj.classificationDetails.map((item: any) => {
-          return {
-            classification: item.classification,
-            subClassification1: item.subClassification1,
-            subClassification2: item.subClassification2
-          };
-        })) ||
-      [];
+    this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
+    this.species = (obj?.species && new PostSpeciesData(obj.species)) || null;
+    this.authorization = (obj?.authorization && new PostAuthorizationData(obj.authorization)) || null;
+    this.project = (obj?.project && new PostProjectData(obj.project)) || null;
+    this.location = (obj?.location && new PostLocationData(obj.location)) || null;
+    this.funding = (obj?.funding && new PostFundingData(obj.funding)) || null;
+    this.iucn = (obj?.iucn && new PostIUCNData(obj.iucn)) || null;
+    this.partnership = (obj?.partnership && new PostPartnershipsData(obj.partnership)) || [];
+    this.objective = (obj?.objective && new PostObjectivesData(obj.objective)) || [];
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
+    this.restoration_plan = (obj?.restoration_plan && new PostRestPlanData(obj.restoration_plan)) || null;
   }
 }
 
 export class PutProjectData {
+  is_project: boolean;
   name: string;
+  state_code: number;
   start_date: string;
   end_date: string;
-  objectives: string;
-  revision_count: number;
+  actual_start_date: string;
+  actual_end_date: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
 
   constructor(obj?: any) {
+    this.is_project = obj?.is_project || null;
     this.name = obj?.project_name || null;
+    this.state_code = obj?.state_code || 0;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;
-    this.objectives = obj?.objectives || null;
-    this.revision_count = obj?.revision_count ?? null;
-  }
-}
-
-export interface IPutConservationArea {
-  conservationArea: string;
-}
-export class PutLocationData {
-  geometry: Feature[];
-  region: number;
-  is_within_overlapping: string;
-  number_sites: number;
-  size_ha: number;
-  conservationAreas: IPutConservationArea[];
-  revision_count: number;
-
-  constructor(obj?: any) {
-    this.geometry = (obj?.geometry?.length && obj.geometry) || [];
-    this.region = obj?.region || null;
-    this.number_sites = obj?.number_sites || null;
-    this.size_ha = obj?.size_ha || null;
-    this.is_within_overlapping = (obj?.is_within_overlapping && JSON.parse(obj.is_within_overlapping)) || null;
-    this.conservationAreas =
-      (obj?.conservationAreas?.length &&
-        obj.conservationAreas.map((item: any) => {
-          return {
-            conservationArea: item.conservationArea
-          };
-        })) ||
-      [];
-    this.revision_count = obj?.revision_count ?? null;
-  }
-}
-
-export class PutPartnershipsData {
-  partnerships: string[];
-
-  constructor(obj?: any) {
-    this.partnerships = (obj?.partnerships?.length && obj.partnerships) || [];
-  }
-}
-
-export class PutObjectivesData {
-  objectives: string[];
-
-  constructor(obj?: any) {
-    this.objectives = (obj?.objectives?.length && obj.objectives) || [];
-  }
-}
-
-export class PutConservationAreasData {
-  conservationAreas: string[];
-
-  constructor(obj?: any) {
-    this.conservationAreas = (obj?.conservationAreas?.length && obj.conservationAreas) || [];
-  }
-}
-
-export class PutFundingData {
-  fundingSources: PostFundingSource[];
-
-  constructor(obj?: any) {
-    this.fundingSources =
-      (obj?.fundingSources?.length && obj.fundingSources.map((item: any) => new PostFundingSource(item))) || [];
-  }
-}
-
-export class PutSpeciesData {
-  focal_species: number[];
-
-  constructor(obj?: any) {
-    this.focal_species = (obj?.focal_species.length && obj.focal_species) || [];
+    this.actual_start_date = obj?.actual_start_date || null;
+    this.actual_end_date = obj?.actual_end_date || null;
+    this.brief_desc = obj?.brief_desc || '';
+    this.is_healing_land = obj?.is_healing_land || null;
+    this.is_healing_people = obj?.is_healing_people || null;
+    this.is_land_initiative = obj?.is_land_initiative || null;
+    this.is_cultural_initiative = obj?.is_cultural_initiative || null;
+    this.people_involved = obj?.people_involved || null;
+    this.is_project_part_public_plan = obj?.is_project_part_public_plan || null;
   }
 }
