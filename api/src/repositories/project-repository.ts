@@ -10,11 +10,11 @@ import {
 } from '../models/project-create';
 import { PutProjectData } from '../models/project-update';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData,
   IGetConservationArea
 } from '../models/project-view';
@@ -199,10 +199,10 @@ export class ProjectRepository extends BaseRepository {
    * Get Permit Data
    *
    * @param {number} projectId
-   * @return {*}  {Promise<GetPermitData>}
+   * @return {*}  {Promise<GetAuthorizationData>}
    * @memberof ProjectRepository
    */
-  async getPermitData(projectId: number): Promise<GetPermitData> {
+  async getAuthorizationData(projectId: number): Promise<GetAuthorizationData> {
     try {
       const sqlStatement = SQL`
       SELECT
@@ -214,10 +214,11 @@ export class ProjectRepository extends BaseRepository {
     `;
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      console.log('response', response);
 
-      return new GetPermitData(response.rows);
+      return new GetAuthorizationData(response.rows);
     } catch (error) {
-      defaultLog.debug({ label: 'getPermitData', message: 'error', error });
+      defaultLog.debug({ label: 'getAuthorizationData', message: 'error', error });
       throw error;
     }
   }
@@ -296,7 +297,11 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
-      return response.rows;
+      const conservationAreas = response.rows.map((row: { conservation_area: string }) => {
+        return { conservationArea: row.conservation_area };
+      });
+
+      return conservationAreas;
     } catch (error) {
       defaultLog.debug({ label: 'getConservationAreasData', message: 'error', error });
       throw error;
@@ -922,8 +927,12 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<{ permit_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertPermit(permitNumber: string, permitType: string, projectId: number): Promise<{ permit_id: number }> {
-    defaultLog.debug({ label: 'insertPermit', message: 'params', permitNumber, permitType, projectId });
+  async insertAuthorization(
+    permitNumber: string,
+    permitType: string,
+    projectId: number
+  ): Promise<{ permit_id: number }> {
+    defaultLog.debug({ label: 'insertAuthorization', message: 'params', permitNumber, permitType, projectId });
 
     try {
       const systemUserId = this.connection.systemUserId();
@@ -947,15 +956,15 @@ export class ProjectRepository extends BaseRepository {
       const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert permit', [
-          'ProjectRepository->insertPermit',
+        throw new ApiExecuteSQLError('Failed to insert permit ("authorization")', [
+          'ProjectRepository->insertAuthorization',
           'rowCount was null or undefined, expected rowCount = 1'
         ]);
       }
 
       return response.rows[0];
     } catch (error) {
-      defaultLog.debug({ label: 'insertPermit', message: 'error', error });
+      defaultLog.debug({ label: 'insertAuthorization', message: 'error', error });
       throw error;
     }
   }
@@ -1369,14 +1378,8 @@ export class ProjectRepository extends BaseRepository {
     }
   }
 
-  /**
-   * Delete a project permit.
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteProjectPermit(projectId: number) {
-    defaultLog.debug({ label: 'deleteProjectPermit', message: 'params', projectId });
+  async deleteProjectAuthorization(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectAuthorization', message: 'params', projectId });
 
     try {
       const sqlStatement = SQL`
@@ -1388,7 +1391,7 @@ export class ProjectRepository extends BaseRepository {
 
       await this.connection.sql(sqlStatement);
     } catch (error) {
-      defaultLog.debug({ label: 'deleteProjectPermit', message: 'error', error });
+      defaultLog.debug({ label: 'deleteProjectAuthorization', message: 'error', error });
       throw error;
     }
   }

@@ -12,13 +12,13 @@ import {
   PostSpeciesData
 } from './project-create';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetLocationData,
   GetObjectivesData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData,
   GetSpeciesData
 } from './project-view';
@@ -28,7 +28,7 @@ export type ProjectUpdateObject = {
   species: GetSpeciesData;
   iucn: GetIUCNClassificationData;
   contact: GetContactData;
-  permit: GetPermitData;
+  authorization: GetAuthorizationData;
   partnerships: GetPartnershipsData;
   objective: GetObjectivesData;
   funding: GetFundingData;

@@ -3,6 +3,7 @@ import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../__mocks__/db';
+import { PutProjectData } from '../models/project-update';
 import {
   GetContactData,
   GetFundingData,
@@ -1363,10 +1364,8 @@ describe('ProjectRepository', () => {
       const response = await projectRepository.updateProject(1, {
         name: 'name',
         start_date: 'string-date',
-        end_date: 'string-date',
-        objectives: 'string',
-        revision_count: 1
-      });
+        end_date: 'string-date'
+      } as PutProjectData);
 
       expect(response).to.eql({ project_id: 1 });
     });
@@ -1385,10 +1384,8 @@ describe('ProjectRepository', () => {
         await projectRepository.updateProject(1, {
           name: 'name',
           start_date: 'string-date',
-          end_date: 'string-date',
-          objectives: 'string',
-          revision_count: 1
-        });
+          end_date: 'string-date'
+        } as PutProjectData);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to update project');
       }
@@ -1406,10 +1403,8 @@ describe('ProjectRepository', () => {
         await projectRepository.updateProject(1, {
           name: 'name',
           start_date: 'string-date',
-          end_date: 'string-date',
-          objectives: 'string',
-          revision_count: 1
-        });
+          end_date: 'string-date'
+        } as PutProjectData);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

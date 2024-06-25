@@ -44,7 +44,8 @@ export class TaxonomyService extends ESService {
         ...searchRequest
       });
     } catch (error) {
-      defaultLog.debug({ label: 'elasticSearch', message: 'error', error });
+      defaultLog.debug({ label: 'elasticSearch', message: 'error' });
+      return undefined;
     }
   }
 
@@ -84,19 +85,24 @@ export class TaxonomyService extends ESService {
    * @memberof TaxonomyService
    */
   async getTaxonomyFromIds(ids: string[] | number[]): Promise<SearchHit<ITaxonomySource>[]> {
-    const response = await this.elasticSearch({
-      query: {
-        terms: {
-          _id: ids
+    try {
+      const response = await this.elasticSearch({
+        query: {
+          terms: {
+            _id: ids
+          }
         }
-      }
-    });
+      });
 
-    if (!response) {
+      if (!response) {
+        return [];
+      }
+
+      return response.hits.hits;
+    } catch (error) {
+      defaultLog.debug({ label: 'getTaxonomyFromIds', message: 'error' });
       return [];
     }
-
-    return response.hits.hits;
   }
 
   /**
@@ -107,15 +113,24 @@ export class TaxonomyService extends ESService {
    * @memberof TaxonomyService
    */
   async getSpeciesFromIds(ids: string[] | number[]): Promise<{ id: string; label: string }[]> {
-    const response = await this.elasticSearch({
-      query: {
-        terms: {
-          _id: ids
+    try {
+      const response = await this.elasticSearch({
+        query: {
+          terms: {
+            _id: ids
+          }
         }
-      }
-    });
+      });
 
-    return response ? this._sanitizeSpeciesData(response.hits.hits) : [];
+      if (!response) {
+        return [];
+      }
+
+      return response ? this._sanitizeSpeciesData(response.hits.hits) : [];
+    } catch (error) {
+      defaultLog.debug({ label: 'getSpeciesFromIds', message: 'error' });
+      return [];
+    }
   }
 
   async searchSpecies(term: string) {

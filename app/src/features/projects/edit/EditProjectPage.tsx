@@ -81,7 +81,6 @@ const EditProjectPage: React.FC = () => {
   const [initialProjectFormData, setInitialProjectFormData] = useState<IEditProjectRequest>(
     ProjectFormInitialValues as unknown as IEditProjectRequest
   );
-  console.log('initialProjectFormData', initialProjectFormData);
 
   useEffect(() => {
     const getEditProjectFields = async () => {
@@ -89,6 +88,7 @@ const EditProjectPage: React.FC = () => {
 
       const focus = handleFocusFormValues(response.project);
 
+      // Merge the response with the initial form data
       const editProject = {
         ...response,
         focus: {

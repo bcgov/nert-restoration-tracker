@@ -33,7 +33,6 @@ export interface IProjectDetails {
  */
 const ProjectDetails: React.FC<IProjectDetails> = (props) => {
   const { project, thumbnailImageUrl } = props;
-  console.log('project', project);
 
   const conservationAreaStyled = (conservationArea: string) => {
     return (
@@ -131,12 +130,12 @@ const ProjectDetails: React.FC<IProjectDetails> = (props) => {
             {project.location.is_within_overlapping === 'Y' &&
               project.location.conservationAreas &&
               project.location.conservationAreas.map(
-                (data: { conservation_area: string }, index) => (
+                (data: { conservationArea: string }, index) => (
                   <Chip
                     key={index}
                     size="small"
                     sx={pageStyles.conservationAreChip}
-                    label={conservationAreaStyled(data.conservation_area)}
+                    label={conservationAreaStyled(data.conservationArea)}
                   />
                 )
               )}

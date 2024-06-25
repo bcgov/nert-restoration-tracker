@@ -8,6 +8,7 @@ import {
   IPostIUCN,
   IPostObjective,
   IPostPartnership,
+  PostAuthorizationData,
   PostContactData,
   PostFocusData,
   PostFundingData,
@@ -23,13 +24,13 @@ import {
 } from '../models/project-create';
 import { ProjectUpdateObject, PutProjectObject } from '../models/project-update';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetLocationData,
   GetObjectivesData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData,
   GetSpeciesData,
   ProjectObject
@@ -146,7 +147,7 @@ export class ProjectService extends DBService {
       speciesData,
       iucnData,
       contactData,
-      permitData,
+      authorizationData,
       partnershipsData,
       objectivesData,
       fundingData,
@@ -156,7 +157,7 @@ export class ProjectService extends DBService {
       this.getSpeciesData(projectId),
       this.getIUCNClassificationData(projectId),
       this.getContactData(projectId, isPublic),
-      this.getPermitData(projectId, isPublic),
+      this.getAuthorizationData(projectId, isPublic),
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
       this.getFundingData(projectId),
@@ -168,7 +169,7 @@ export class ProjectService extends DBService {
       species: speciesData,
       iucn: iucnData,
       contact: contactData,
-      permit: permitData,
+      authorization: authorizationData,
       partnerships: partnershipsData,
       objective: objectivesData,
       funding: fundingData,
@@ -189,21 +190,21 @@ export class ProjectService extends DBService {
       speciesData,
       iucnData,
       contactData,
-      permitData,
       partnershipsData,
       objectivesData,
       fundingData,
-      locationData
+      locationData,
+      authorizationData
     ] = await Promise.all([
       this.getProjectData(projectId),
       this.getSpeciesData(projectId),
       this.getIUCNClassificationData(projectId),
       this.getContactData(projectId, false),
-      this.getPermitData(projectId, false),
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
       this.getFundingData(projectId),
-      this.getLocationData(projectId)
+      this.getLocationData(projectId),
+      this.getAuthorizationData(projectId, false)
     ]);
 
     return {
@@ -211,11 +212,11 @@ export class ProjectService extends DBService {
       species: speciesData,
       iucn: iucnData,
       contact: contactData,
-      permit: permitData,
       partnerships: partnershipsData,
       objective: objectivesData,
       funding: fundingData,
-      location: locationData
+      location: locationData,
+      authorization: authorizationData
     };
   }
 
@@ -271,18 +272,18 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Get permit data by project id.
+   * Get authorization data by project id.
    *
    * @param {number} projectId
    * @param {boolean} isPublic
-   * @return {*}  {Promise<GetPermitData>}
+   * @return {*}  {Promise<GetAuthorizationData>}
    * @memberof ProjectService
    */
-  async getPermitData(projectId: number, isPublic: boolean): Promise<GetPermitData> {
+  async getAuthorizationData(projectId: number, isPublic: boolean): Promise<GetAuthorizationData> {
     if (isPublic) {
-      return new GetPermitData();
+      return new GetAuthorizationData();
     }
-    return this.projectRepository.getPermitData(projectId);
+    return this.projectRepository.getAuthorizationData(projectId);
   }
 
   /**
@@ -435,7 +436,7 @@ export class ProjectService extends DBService {
     promises.push(
       Promise.all(
         postProjectData.authorization.authorizations.map((authorization: IPostAuthorization) =>
-          this.insertPermit(authorization.authorization_ref, authorization.authorization_type, projectId)
+          this.insertAuthorization(authorization.authorization_ref, authorization.authorization_type, projectId)
         )
       )
     );
@@ -592,16 +593,24 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Insert a new project permit.
+   * Insert a new project authorization.
    *
-   * @param {string} permitNumber
-   * @param {string} permitType
+   * @param {string} authorizationNumber
+   * @param {string} authorizationType
    * @param {number} projectId
    * @return {*}  {Promise<number>}
    * @memberof ProjectService
    */
-  async insertPermit(permitNumber: string, permitType: string, projectId: number): Promise<number> {
-    const response = await this.projectRepository.insertPermit(permitNumber, permitType, projectId);
+  async insertAuthorization(
+    authorizationNumber: string,
+    authorizationType: string,
+    projectId: number
+  ): Promise<number> {
+    const response = await this.projectRepository.insertAuthorization(
+      authorizationNumber,
+      authorizationType,
+      projectId
+    );
 
     return response.permit_id;
   }
@@ -692,6 +701,10 @@ export class ProjectService extends DBService {
 
     if (entities?.funding) {
       promises.push(this.updateProjectFundingData(projectId, entities.funding));
+    }
+
+    if (entities?.authorization) {
+      promises.push(this.updateProjectAuthorizationData(projectId, entities.authorization));
     }
 
     if (entities?.location) {
@@ -816,6 +829,16 @@ export class ProjectService extends DBService {
     );
   }
 
+  async updateProjectAuthorizationData(projectId: number, authorizationData: PostAuthorizationData): Promise<void> {
+    await this.projectRepository.deleteProjectAuthorization(projectId);
+
+    await Promise.all(
+      authorizationData?.authorizations.map((authorization) => {
+        return this.insertAuthorization(authorization.authorization_ref, authorization.authorization_type, projectId);
+      }) || []
+    );
+  }
+
   /**
    * Update project spatial data.
    *
@@ -902,7 +925,7 @@ export class ProjectService extends DBService {
    *       species: GetSpeciesData;
    *       iucn: GetIUCNClassificationData;
    *       contact: GetContactData;
-   *       permit: GetPermitData;
+   *       authorization: GetAuthorizationData;
    *       partnerships: GetPartnershipsData;
    *       objectives: GetObjectivesData;
    *       funding: GetFundingData;
@@ -920,7 +943,7 @@ export class ProjectService extends DBService {
       species: GetSpeciesData;
       iucn: GetIUCNClassificationData;
       contact: GetContactData;
-      permit: GetPermitData;
+      authorization: GetAuthorizationData;
       partnerships: GetPartnershipsData;
       objective: GetObjectivesData;
       funding: GetFundingData;

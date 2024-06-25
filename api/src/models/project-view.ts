@@ -5,7 +5,7 @@ export type ProjectObject = {
   species: GetSpeciesData;
   iucn: GetIUCNClassificationData;
   contact: GetContactData;
-  permit: GetPermitData;
+  authorization: GetAuthorizationData;
   partnerships: GetPartnershipsData;
   objective: GetObjectivesData;
   funding: GetFundingData;
@@ -100,21 +100,21 @@ export class GetSpeciesData {
   }
 }
 
-export interface IGetPermit {
-  permit_number: string;
-  permit_type: string;
+export interface IGetAuthorization {
+  authorization_ref: string;
+  authorization_type: string;
 }
 
-export class GetPermitData {
-  permits: IGetPermit[];
+export class GetAuthorizationData {
+  authorizations: IGetAuthorization[];
 
-  constructor(permitData?: any[]) {
-    this.permits =
-      (permitData?.length &&
-        permitData.map((item: any) => {
+  constructor(authData?: any[]) {
+    this.authorizations =
+      (authData?.length &&
+        authData.map((item: any) => {
           return {
-            permit_number: item.number,
-            permit_type: item.type
+            authorization_ref: item.number,
+            authorization_type: item.type
           };
         })) ||
       [];

@@ -7,7 +7,6 @@ import { models } from '../../../../models/models';
 import { authorizeRequestHandler } from '../../../../request-handlers/security/authorization';
 import { ProjectService } from '../../../../services/project-service';
 import { getLogger } from '../../../../utils/logger';
-import { addFundingSourceApiDocObject } from '../../../../utils/shared-api-docs';
 
 const defaultLog = getLogger('/api/projects/{projectId}/funding-sources/add');
 
@@ -30,7 +29,84 @@ export const POST: Operation = [
   addFundingSource()
 ];
 
-POST.apiDoc = addFundingSourceApiDocObject('Add a funding source of a project.', 'new project funding source id');
+POST.apiDoc = {
+  description: 'Add a funding source of a project.',
+  tags: ['funding-sources'],
+  security: [
+    {
+      Bearer: []
+    }
+  ],
+  parameters: [
+    {
+      in: 'path',
+      name: 'projectId',
+      schema: {
+        type: 'number'
+      },
+      required: true
+    }
+  ],
+  requestBody: {
+    description: 'Add funding source request object.',
+    content: {
+      'application/json': {
+        schema: {
+          title: 'Project funding source post request object',
+          type: 'object',
+          required: ['agency_id', 'investment_action_category', 'funding_amount', 'start_date', 'end_date'],
+          properties: {
+            agency_id: {
+              type: 'number'
+            },
+            investment_action_category: {
+              type: 'number'
+            },
+            agency_project_id: {
+              type: 'string'
+            },
+            funding_amount: {
+              type: 'number'
+            },
+            start_date: {
+              type: 'string',
+              description: 'ISO 8601 date string'
+            },
+            end_date: {
+              type: 'string',
+              description: 'ISO 8601 date string'
+            }
+          }
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: 'new project funding source id',
+      content: {
+        'application/json': {
+          schema: {
+            title: 'funding source id',
+            type: 'object',
+            required: ['id'],
+            properties: {
+              id: {
+                type: 'number'
+              }
+            }
+          }
+        }
+      }
+    },
+    401: {
+      $ref: '#/components/responses/401'
+    },
+    default: {
+      $ref: '#/components/responses/default'
+    }
+  }
+};
 
 export function addFundingSource(): RequestHandler {
   return async (req, res) => {
@@ -69,7 +145,7 @@ export function addFundingSource(): RequestHandler {
 
       await connection.commit();
 
-      return res.status(200).json(response);
+      return res.status(200).json({ id: response });
     } catch (error) {
       defaultLog.error({ label: 'addFundingSource', message: 'error', error });
       await connection.rollback();

@@ -58,7 +58,7 @@ const ProjectLocationConservationAreas: React.FC<IProjectConservationAreasProps>
     <>
       <FieldArray
         name="location.conservationAreas"
-        render={(arrayHelpers: any) => {
+        render={(arrayHelpers) => {
           return (
             <>
               {values.location.conservationAreas?.map((conservationArea, index) => {

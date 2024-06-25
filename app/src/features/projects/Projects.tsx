@@ -208,17 +208,17 @@ export default function Projects() {
             enableReinitialize={true}>
             <ProjectFilter
               contact_agency={
-                codes.codes.coordinator_agency?.map((item: any) => {
+                codes.codes.coordinator_agency?.map((item: { id: number; name: string }) => {
                   return item.name;
                 }) || []
               }
               funding_agency={
-                codes.codes.funding_source.map((item: { id: any; name: any }) => {
+                codes.codes.funding_source.map((item: { id: number; name: string }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }
               region={
-                codes.codes.regions.map((item: { id: any; name: any }) => {
+                codes.codes.regions.map((item: { id: number; name: string }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }

@@ -75,6 +75,7 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
 const ProjectAuthorizationForm: React.FC = () => {
   const { values, handleChange, getFieldMeta, errors } =
     useFormikContext<IProjectAuthorizationForm>();
+  console.log('values', values);
 
   const authorizationTypes = [
     'Forestry License to Cut',
@@ -94,6 +95,7 @@ const ProjectAuthorizationForm: React.FC = () => {
         render={(arrayHelpers) => (
           <>
             {values.authorization &&
+              values.authorization.authorizations &&
               values.authorization.authorizations?.map((authorization, index) => {
                 const authorizationRefMeta = getFieldMeta(
                   `authorization.authorizations.[${index}].authorization_ref`
