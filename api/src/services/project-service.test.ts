@@ -8,7 +8,6 @@ import { HTTPError } from '../errors/custom-error';
 import * as projectCreateModels from '../models/project-create';
 import * as projectUpdateModels from '../models/project-update';
 import * as projectViewModels from '../models/project-view';
-import { IUpdateProject } from '../paths/project/{projectId}/update';
 import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { ProjectService } from './project-service';
@@ -235,7 +234,7 @@ describe.skip('ProjectService', () => {
     });
   });
 
-  describe('getPermitData', () => {
+  describe('getAuthorizationData', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -243,13 +242,13 @@ describe.skip('ProjectService', () => {
     it('returns row on success when isPublic is false', async () => {
       const mockDBConnection = getMockDBConnection();
 
-      sinon.stub(ProjectRepository.prototype, 'getPermitData').resolves({ id: 1 } as any);
+      sinon.stub(ProjectRepository.prototype, 'getAuthorizationData').resolves({ id: 1 } as any);
 
       const projectId = 1;
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.getPermitData(projectId, false);
+      const result = await projectService.getAuthorizationData(projectId, false);
 
       expect(result).to.eql(undefined);
     });
@@ -257,13 +256,13 @@ describe.skip('ProjectService', () => {
     it('returns empty permit data when isPublic is true', async () => {
       const mockDBConnection = getMockDBConnection();
 
-      sinon.stub(ProjectRepository.prototype, 'getPermitData').resolves({ id: 1 } as any);
+      sinon.stub(ProjectRepository.prototype, 'getAuthorizationData').resolves({ id: 1 } as any);
 
       const projectId = 1;
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.getPermitData(projectId, true);
+      const result = await projectService.getAuthorizationData(projectId, true);
 
       expect(result).to.eql({ id: 1 });
     });
@@ -579,7 +578,7 @@ describe.skip('ProjectService', () => {
     });
   });
 
-  describe('insertPermit', () => {
+  describe('insertAuthorization', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -587,11 +586,11 @@ describe.skip('ProjectService', () => {
     it('returns id on success', async () => {
       const mockDBConnection = getMockDBConnection();
 
-      sinon.stub(ProjectRepository.prototype, 'insertPermit').resolves({ permit_id: 1 } as any);
+      sinon.stub(ProjectRepository.prototype, 'insertAuthorization').resolves({ permit_id: 1 } as any);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.insertPermit('string', 'string', 1);
+      const result = await projectService.insertAuthorization('string', 'string', 1);
 
       expect(result).equals(1);
     });
@@ -664,7 +663,7 @@ describe.skip('ProjectService', () => {
       const mockDBConnection = getMockDBConnection();
 
       const projectId = 1;
-      const entities: IUpdateProject = entitiesInitValue;
+      const entities: projectUpdateModels.PutProjectObject = entitiesInitValue as any;
 
       const projectService = new ProjectService(mockDBConnection);
 
@@ -686,16 +685,18 @@ describe.skip('ProjectService', () => {
       const mockDBConnection = getMockDBConnection();
 
       const projectId = 1;
-      const entities: IUpdateProject = {
-        project: new projectUpdateModels.PutProjectData(),
+      const entities: projectUpdateModels.PutProjectObject = {
+        project: new projectCreateModels.PostProjectData(),
         contact: new projectCreateModels.PostContactData(),
         authorization: new projectCreateModels.PostAuthorizationData(),
-        partnership: new projectUpdateModels.PutPartnershipsData(),
-        objective: new projectUpdateModels.PutObjectivesData(),
-        iucn: new projectUpdateModels.PutIUCNData(),
-        funding: new projectUpdateModels.PutFundingData(),
-        location: new projectUpdateModels.PutLocationData(),
-        species: new projectUpdateModels.PutSpeciesData()
+        partnership: new projectCreateModels.PostPartnershipsData(),
+        objective: new projectCreateModels.PostObjectivesData(),
+        iucn: new projectCreateModels.PostIUCNData(),
+        funding: new projectCreateModels.PostFundingData(),
+        location: new projectCreateModels.PostLocationData(),
+        species: new projectCreateModels.PostSpeciesData(),
+        focus: new projectCreateModels.PostFocusData(),
+        restoration_plan: new projectCreateModels.PostRestPlanData()
       };
 
       const projectService = new ProjectService(mockDBConnection);
@@ -738,7 +739,7 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
         contact: {
           contacts: [
@@ -746,19 +747,20 @@ describe.skip('ProjectService', () => {
               first_name: 'Katelyn',
               last_name: 'Williams',
               email_address: 'fuvaxacix@mailinator.com',
-              agency: 'Non ut ullamco incid',
-              is_public: 'true',
-              is_primary: 'true'
+              organization: 'Non ut ullamco incid',
+              is_public: true,
+              is_primary: true,
+              phone_number: '123-456-7890'
             }
           ]
-        }
-      };
+        } as any
+      } as any;
 
       const insertContactStub = sinon.stub(ProjectService.prototype, 'insertContact').resolves(1);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateContactData(projectId, entities);
+      await projectService.updateContactData(projectId, entities.contact);
 
       expect(insertContactStub).to.have.been.calledOnce;
     });
@@ -777,24 +779,24 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
         iucn: {
           classificationDetails: [
             {
               classification: 1,
-              subclassification1: 1,
-              subclassification2: 1
+              subClassification1: 1,
+              subClassification2: 1
             }
           ]
         }
-      };
+      } as any;
 
       const insertIUCNStub = sinon.stub(ProjectService.prototype, 'insertClassificationDetail').resolves(1);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateProjectIUCNData(projectId, entities);
+      await projectService.updateProjectIUCNData(projectId, entities.iucn);
 
       expect(insertIUCNStub).to.have.been.calledOnce;
     });
@@ -813,18 +815,18 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
         partnership: {
-          partnerships: ['partner1', 'partner2']
+          partnerships: [{ partnership: 'partner1' }, { partnership: 'partner2' }]
         }
-      };
+      } as any;
 
       const insertPartnershipStub = sinon.stub(ProjectService.prototype, 'insertPartnership').resolves(1);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateProjectPartnershipsData(projectId, entities);
+      await projectService.updateProjectPartnershipsData(projectId, entities.partnership);
 
       expect(insertPartnershipStub).to.have.been.calledTwice;
     });
@@ -843,18 +845,18 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
         objective: {
-          objectives: ['objective1', 'objective2']
+          objectives: [{ objective: 'objective1' }, { objective: 'objective2' }]
         }
-      };
+      } as any;
 
       const insertObjectiveStub = sinon.stub(ProjectService.prototype, 'insertObjective').resolves(1);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateProjectObjectivesData(projectId, entities);
+      await projectService.updateProjectObjectivesData(projectId, entities.objective);
 
       expect(insertObjectiveStub).to.have.been.calledTwice;
     });
@@ -873,7 +875,7 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
         funding: {
           fundingSources: [
@@ -891,13 +893,13 @@ describe.skip('ProjectService', () => {
             }
           ]
         }
-      };
+      } as any;
 
       const insertFundingSourceStub = sinon.stub(ProjectService.prototype, 'insertFundingSource').resolves(1);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateProjectFundingData(projectId, entities);
+      await projectService.updateProjectFundingData(projectId, entities.funding);
 
       expect(insertFundingSourceStub).to.have.been.calledOnce;
     });
@@ -922,15 +924,15 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
-        location: new projectUpdateModels.PutLocationData()
-      };
+        location: new projectCreateModels.PostLocationData()
+      } as any;
 
       const projectService = new ProjectService(mockDBConnection);
 
       try {
-        await projectService.updateProjectRegionData(projectId, entities);
+        await projectService.updateProjectRegionData(projectId, entities.location);
         expect.fail();
       } catch (actualError) {
         expect((actualError as HTTPError).message).to.equal('Failed to build SQL delete statement');
@@ -952,19 +954,18 @@ describe.skip('ProjectService', () => {
       });
 
       const projectId = 1;
-      const entities: IUpdateProject = {
+      const entities: projectUpdateModels.PutProjectObject = {
         ...entitiesInitValue,
         species: {
-          focal_species: [1, 2],
-          focal_species_names: ['abc', 'def']
+          focal_species: [1, 2]
         }
-      };
+      } as any;
 
       const insertSpeciesStub = sinon.stub(ProjectService.prototype, 'insertSpecies').resolves();
 
       const projectService = new ProjectService(mockDBConnection);
 
-      await projectService.updateProjectSpeciesData(projectId, entities);
+      await projectService.updateProjectSpeciesData(projectId, entities.species);
 
       expect(insertSpeciesStub).to.have.been.calledTwice;
     });

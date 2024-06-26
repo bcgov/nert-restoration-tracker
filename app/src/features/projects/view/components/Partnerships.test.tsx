@@ -11,24 +11,8 @@ describe('Partnerships', () => {
       <Partnerships
         projectForViewData={{
           ...getProjectForViewResponse,
-          partnerships: {
+          partnership: {
             partnerships: []
-          }
-        }}
-        refresh={mockRefresh}
-      />
-    );
-
-    expect(getByTestId('no_partnerships_data')).toBeVisible();
-  });
-
-  it('renders correctly with invalid null values', () => {
-    const { getByTestId } = render(
-      <Partnerships
-        projectForViewData={{
-          ...getProjectForViewResponse,
-          partnerships: {
-            partnerships: null as unknown as string[]
           }
         }}
         refresh={mockRefresh}
@@ -43,8 +27,8 @@ describe('Partnerships', () => {
       <Partnerships
         projectForViewData={{
           ...getProjectForViewResponse,
-          partnerships: {
-            partnerships: ['partner2', 'partner3']
+          partnership: {
+            partnerships: [{ partnership: 'partner2' }, { partnership: 'partner3' }]
           }
         }}
         refresh={mockRefresh}

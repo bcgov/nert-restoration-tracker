@@ -35,11 +35,13 @@ import {
   GetSpeciesData,
   ProjectObject
 } from '../models/project-view';
+import { AttachmentRepository } from '../repositories/attachment-repository';
 import {
   IProjectParticipation,
   ProjectParticipationRepository
 } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
+import { getS3SignedURL } from '../utils/file-utils';
 import { doAllProjectsHaveAProjectLeadIfUserIsRemoved } from '../utils/user-utils';
 import { DBService } from './service';
 import { TaxonomyService } from './taxonomy-service';
@@ -47,11 +49,13 @@ import { TaxonomyService } from './taxonomy-service';
 export class ProjectService extends DBService {
   projectRepository: ProjectRepository;
   projectParticipantRepository: ProjectParticipationRepository;
+  attachmentRepository: AttachmentRepository;
 
   constructor(connection: IDBConnection) {
     super(connection);
     this.projectRepository = new ProjectRepository(connection);
     this.projectParticipantRepository = new ProjectParticipationRepository(connection);
+    this.attachmentRepository = new AttachmentRepository(connection);
   }
   /**
    * Gets the project participant, adding them if they do not already exist.
@@ -194,7 +198,8 @@ export class ProjectService extends DBService {
       objectivesData,
       fundingData,
       locationData,
-      authorizationData
+      authorizationData,
+      attachmentData
     ] = await Promise.all([
       this.getProjectData(projectId),
       this.getSpeciesData(projectId),
@@ -204,11 +209,32 @@ export class ProjectService extends DBService {
       this.getObjectivesData(projectId),
       this.getFundingData(projectId),
       this.getLocationData(projectId),
-      this.getAuthorizationData(projectId, false)
+      this.getAuthorizationData(projectId, false),
+      this.attachmentRepository.getProjectAttachmentsByType(projectId, 'thumbnail')
     ]);
 
+    if (attachmentData.length === 0) {
+      return {
+        project: projectData,
+        species: speciesData,
+        iucn: iucnData,
+        contact: contactData,
+        partnership: partnershipsData,
+        objective: objectivesData,
+        funding: fundingData,
+        location: locationData,
+        authorization: authorizationData
+      };
+    }
+    const imageUrl = await getS3SignedURL(attachmentData[0].key);
+    const newProjectData = {
+      ...projectData,
+      image_url: imageUrl,
+      image_key: attachmentData[0].key
+    };
+
     return {
-      project: projectData,
+      project: newProjectData,
       species: speciesData,
       iucn: iucnData,
       contact: contactData,

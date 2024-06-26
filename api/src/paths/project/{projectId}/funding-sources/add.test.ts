@@ -116,6 +116,6 @@ describe('add a funding source', () => {
 
     await result(sampleReq, sampleRes as any, null as unknown as any);
 
-    expect(actualResult).to.eql(1);
+    expect(actualResult).to.eql({ id: 1 });
   });
 });

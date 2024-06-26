@@ -499,6 +499,12 @@ GET.apiDoc = {
                     description: 'Status of the project being published/unpublished',
                     nullable: true
                   },
+                  image_url: {
+                    type: 'string'
+                  },
+                  image_key: {
+                    type: 'string'
+                  },
                   revision_count: {
                     type: 'number'
                   }
@@ -762,11 +768,11 @@ export function updateProject(): RequestHandler {
     try {
       const projectId = Number(req.params?.projectId);
 
-      const entities = new PutProjectObject(req.body);
-
       if (!projectId) {
         throw new HTTP400('Missing required path parameter: projectId');
       }
+
+      const entities = new PutProjectObject(req.body);
 
       if (!entities) {
         throw new HTTP400('Missing required request body');

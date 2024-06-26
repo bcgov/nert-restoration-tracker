@@ -158,6 +158,18 @@ const useProjectApi = (axios: AxiosInstance) => {
     projectId: number,
     projectData: IEditProjectRequest
   ): Promise<{ id: number }> => {
+    // if project image is provided, handle it
+    if (projectData.project.project_image) {
+      // if image key is provided, remove the image from the project
+
+      const projectImage = projectData.project.project_image;
+      projectData.project.project_image = null;
+      projectData.project.image_url = undefined;
+      projectData.project.image_key = undefined;
+
+      await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    }
+
     const { data } = await axios.put(`api/project/${projectId}/update`, projectData);
 
     return data;

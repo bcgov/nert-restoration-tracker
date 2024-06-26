@@ -138,7 +138,7 @@ export interface IGetObjective {
 export class GetObjectivesData {
   objectives: IGetObjective[];
 
-  constructor(objectives?: IGetObjective[]) {
+  constructor(objectives?: any[]) {
     this.objectives = (objectives?.length && objectives.map((item: IGetObjective) => item)) || [];
   }
 }

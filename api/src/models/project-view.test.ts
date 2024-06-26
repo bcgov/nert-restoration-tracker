@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetLocationData,
   GetObjectivesData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData,
   GetSpeciesData
 } from './project-view';
@@ -47,7 +47,7 @@ describe('GetPartnershipsData', () => {
     });
 
     it('sets partnerships', function () {
-      expect(data.partnerships).to.eql(['partner 1', 'partner 2']);
+      expect(data.partnerships).to.eql([{ partnership: 'partner 1' }, { partnership: 'partner 2' }]);
     });
   });
 
@@ -61,7 +61,7 @@ describe('GetPartnershipsData', () => {
     });
 
     it('sets partnerships', function () {
-      expect(data.partnerships).to.eql(['partner 3', 'partner 4']);
+      expect(data.partnerships).to.eql([{ partnership: 'partner 3' }, { partnership: 'partner 4' }]);
     });
   });
 });
@@ -101,7 +101,7 @@ describe('GetObjectivesData', () => {
     });
 
     it('sets objectives', function () {
-      expect(data.objectives).to.eql(['objective 1', 'objective 2']);
+      expect(data.objectives).to.eql([{ objective: 'objective 1' }, { objective: 'objective 2' }]);
     });
   });
 
@@ -115,7 +115,7 @@ describe('GetObjectivesData', () => {
     });
 
     it('sets objectives', function () {
-      expect(data.objectives).to.eql(['objective 3', 'objective 4']);
+      expect(data.objectives).to.eql([{ objective: 'objective 3' }, { objective: 'objective 4' }]);
     });
   });
 });
@@ -377,23 +377,23 @@ describe('GetProjectData', () => {
   });
 });
 
-describe('GetPermitData', () => {
+describe('GetAuthorizationData', () => {
   describe('No values provided', () => {
-    let projectPermitData: GetPermitData;
+    let projectPermitData: GetAuthorizationData;
 
     before(() => {
-      projectPermitData = new GetPermitData(null as unknown as any[]);
+      projectPermitData = new GetAuthorizationData(null as unknown as any[]);
     });
 
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([]);
+    it('sets authorizations', function () {
+      expect(projectPermitData.authorizations).to.eql([]);
     });
   });
 
   describe('All values provided', () => {
-    let projectPermitData: GetPermitData;
+    let projectPermitData: GetAuthorizationData;
 
-    const permits = [
+    const authorizations = [
       {
         number: '1',
         type: 'permit type'
@@ -401,14 +401,14 @@ describe('GetPermitData', () => {
     ];
 
     before(() => {
-      projectPermitData = new GetPermitData(permits);
+      projectPermitData = new GetAuthorizationData(authorizations);
     });
 
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([
+    it('sets authorizations', function () {
+      expect(projectPermitData.authorizations).to.eql([
         {
-          permit_number: '1',
-          permit_type: 'permit type'
+          authorization_ref: '1',
+          authorization_type: 'permit type'
         }
       ]);
     });
@@ -445,16 +445,14 @@ describe('GetFundingData', () => {
 
     const fundingDataObj = [
       {
-        id: 1,
         agency_id: '1',
-        agency_name: 'Agency name',
         agency_project_id: 'Agency123',
         investment_action_category: 'Investment',
-        investment_action_category_name: 'Investment name',
         start_date: '01/01/2020',
         end_date: '01/01/2021',
         funding_amount: 123,
-        revision_count: 0
+        is_public: 'false',
+        description: 'description'
       }
     ];
 

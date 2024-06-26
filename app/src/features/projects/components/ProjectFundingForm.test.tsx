@@ -69,16 +69,14 @@ describe('ProjectFundingForm', () => {
       funding: {
         fundingSources: [
           {
-            id: 11,
-            agency_name: 'agency_name',
             agency_id: 1,
             investment_action_category: 1,
-            investment_action_category_name: 'Action 23',
+            description: 'description',
             agency_project_id: '111',
             funding_amount: 222,
             start_date: '2021-03-14',
             end_date: '2021-04-14',
-            revision_count: 23
+            is_public: 'false'
           }
         ]
       }
@@ -112,28 +110,24 @@ describe('ProjectFundingForm', () => {
       funding: {
         fundingSources: [
           {
-            id: 11,
             agency_id: 1,
-            agency_name: 'agency_name',
             investment_action_category: 1,
-            investment_action_category_name: 'action 1',
+            description: 'description',
             agency_project_id: '111',
             funding_amount: 222,
             start_date: '2021-03-14',
             end_date: '2021-04-14',
-            revision_count: 23
+            is_public: 'false'
           },
           {
-            id: 12,
             agency_id: 2,
-            agency_name: 'agency_name',
             investment_action_category: 2,
-            investment_action_category_name: 'category 1',
-            agency_project_id: '112',
-            funding_amount: 223,
-            start_date: '2021-03-15',
-            end_date: '2021-04-15',
-            revision_count: 24
+            description: 'description',
+            agency_project_id: '222',
+            funding_amount: 222,
+            start_date: '2022-03-24',
+            end_date: '2022-04-24',
+            is_public: 'false'
           }
         ]
       }
@@ -166,7 +160,7 @@ describe('ProjectFundingForm', () => {
     fireEvent.click(addButton);
 
     await waitFor(() => {
-      expect(queryByText('Agency Details')).toBeInTheDocument();
+      expect(queryByText('Funding Sources')).toBeInTheDocument();
     });
   });
 
@@ -176,16 +170,14 @@ describe('ProjectFundingForm', () => {
         funding: {
           fundingSources: [
             {
-              id: 11,
               agency_id: 1,
-              agency_name: 'agency name',
               investment_action_category: 1,
-              investment_action_category_name: 'action 1',
+              description: 'description',
               agency_project_id: '111',
               funding_amount: 222,
               start_date: '2021-03-14',
               end_date: '2021-04-14',
-              revision_count: 23
+              is_public: 'false'
             }
           ]
         }
@@ -216,7 +208,7 @@ describe('ProjectFundingForm', () => {
 
       fireEvent.click(editButton);
 
-      expect(await queryByText('Agency Details')).toBeInTheDocument();
+      expect(await queryByText('Funding Sources')).toBeInTheDocument();
 
       const cancelButton = await getByText('Cancel');
       expect(cancelButton).toBeInTheDocument();
@@ -236,16 +228,14 @@ describe('ProjectFundingForm', () => {
         funding: {
           fundingSources: [
             {
-              id: 11,
               agency_id: 1,
-              agency_name: 'agency_name',
               investment_action_category: 1,
-              investment_action_category_name: 'action 1',
+              description: 'description',
               agency_project_id: '111',
               funding_amount: 222,
               start_date: '2021-03-14',
               end_date: '2021-04-14',
-              revision_count: 23
+              is_public: 'false'
             }
           ]
         }

@@ -5,11 +5,11 @@ import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../__mocks__/db';
 import { PutProjectData } from '../models/project-update';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData
 } from '../models/project-view';
 import { ProjectRepository } from './project-repository';
@@ -202,7 +202,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('getPermitData', () => {
+  describe('getAuthorizationData', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -217,9 +217,9 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.getPermitData(1);
+      const response = await projectRepository.getAuthorizationData(1);
 
-      expect(response).to.deep.equal(new GetPermitData([]));
+      expect(response).to.deep.equal(new GetAuthorizationData([]));
     });
 
     it('catches errors and throws', async () => {
@@ -232,7 +232,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.getPermitData(1);
+        await projectRepository.getAuthorizationData(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1046,7 +1046,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertPermit', () => {
+  describe('insertAuthorization', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -1062,7 +1062,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertPermit('string', 'string', 1);
+      const response = await projectRepository.insertAuthorization('string', 'string', 1);
 
       expect(response).to.eql({ permit_id: 1 });
     });
@@ -1079,9 +1079,9 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertPermit('string', 'string', 1);
+        await projectRepository.insertAuthorization('string', 'string', 1);
       } catch (error: any) {
-        expect(error.message).to.equal('Failed to insert permit');
+        expect(error.message).to.equal('Failed to insert permit ("authorization")');
       }
     });
 
@@ -1095,7 +1095,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertPermit('string', 'string', 1);
+        await projectRepository.insertAuthorization('string', 'string', 1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1573,7 +1573,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('deleteProjectPermit', () => {
+  describe('deleteProjectAuthorization', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -1588,7 +1588,7 @@ describe('ProjectRepository', () => {
       });
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.deleteProjectPermit(1);
+      const response = await projectRepository.deleteProjectAuthorization(1);
 
       expect(response).to.eql(undefined);
     });
@@ -1604,7 +1604,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.deleteProjectPermit(1);
+        await projectRepository.deleteProjectAuthorization(1);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to delete Project Permit');
       }
@@ -1619,7 +1619,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.deleteProjectPermit(1);
+        await projectRepository.deleteProjectAuthorization(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
