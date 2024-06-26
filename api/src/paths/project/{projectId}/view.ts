@@ -353,7 +353,6 @@ export function viewProject(): RequestHandler {
       const projectService = new ProjectService(connection);
 
       const result = await projectService.getProjectById(Number(req.params.projectId));
-      console.log('result', result);
 
       await connection.commit();
 

@@ -170,7 +170,7 @@ export class ProjectService extends DBService {
       iucn: iucnData,
       contact: contactData,
       authorization: authorizationData,
-      partnerships: partnershipsData,
+      partnership: partnershipsData,
       objective: objectivesData,
       funding: fundingData,
       location: locationData
@@ -212,7 +212,7 @@ export class ProjectService extends DBService {
       species: speciesData,
       iucn: iucnData,
       contact: contactData,
-      partnerships: partnershipsData,
+      partnership: partnershipsData,
       objective: objectivesData,
       funding: fundingData,
       location: locationData,
@@ -944,7 +944,7 @@ export class ProjectService extends DBService {
       iucn: GetIUCNClassificationData;
       contact: GetContactData;
       authorization: GetAuthorizationData;
-      partnerships: GetPartnershipsData;
+      partnership: GetPartnershipsData;
       objective: GetObjectivesData;
       funding: GetFundingData;
       location: GetLocationData;

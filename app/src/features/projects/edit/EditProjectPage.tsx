@@ -124,12 +124,8 @@ const EditProjectPage: React.FC = () => {
    * Handle project edits.
    */
   const handleProjectEdits = async (values: IEditProjectRequest) => {
-    console.log('values', values);
-    console.log('formikRef', formikRef.current?.errors);
-
     try {
       const response = await restorationTrackerApi.project.updateProject(projectId, values);
-      console.log('response', response);
 
       if (!response?.id) {
         showEditErrorDialog({
@@ -191,7 +187,6 @@ const EditProjectPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  console.log('formik', formikRef.current?.errors);
   return (
     <>
       <Container maxWidth="xl">
@@ -340,9 +335,14 @@ const EditProjectPage: React.FC = () => {
                         )}
                       />
                     </Box>
-
                     <Box component="fieldset" mt={5} mx={0}>
-                      <ProjectPartnershipsForm />
+                      <Typography component="legend">Partnerships</Typography>
+                      <Box>
+                        <Typography variant="body2" color="textSecondary">
+                          List any partnerships that are involved in this project.
+                        </Typography>
+                        <ProjectPartnershipsForm />
+                      </Box>
                     </Box>
                   </Grid>
                 </Grid>

@@ -28,12 +28,12 @@ export interface IProjectPartnershipsFormArrayItem {
 
 export interface IProjectPartnershipsForm {
   partnership: {
-    partnerships: IProjectPartnershipsFormArrayItem[] | string[];
+    partnerships: IProjectPartnershipsFormArrayItem[];
   };
 }
 
 export const ProjectPartnershipsFormArrayItemInitialValues: IProjectPartnershipsFormArrayItem = {
-  partnership: '' as unknown as string
+  partnership: '' as string
 };
 
 export const ProjectPartnershipFormInitialValues: IProjectPartnershipsForm = {
@@ -66,66 +66,62 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
  */
 const ProjectPartnershipsForm: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectPartnershipsForm>();
-
-  if (!values || !values.partnership || !values.partnership.partnerships) return null;
+  console.log('values', values);
 
   return (
-    <>
+    <Box mt={2}>
       <FieldArray
         name="partnership.partnerships"
         render={(arrayHelpers) => (
           <>
-            {values.partnership.partnerships?.map((partnership, index) => {
-              const partnershipMeta = getFieldMeta(
-                `partnership.partnerships.[${index}].partnership`
-              );
+            {values.partnership &&
+              values.partnership.partnerships?.map((partnership, index) => {
+                const partnershipMeta = getFieldMeta(
+                  `partnership.partnerships.[${index}].partnership`
+                );
 
-              return (
-                /* partnerships List */
-                <Grid container spacing={3} key={index}>
-                  <Grid item xs={12} md={10.5}>
-                    <List>
-                      <ListItem sx={pageStyles.customListItem}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} md={10.5}>
-                            <CustomTextField
-                              name={`partnership.partnerships.[${index}].partnership`}
-                              label="Partnership"
-                              maxLength={300}
-                              other={{
-                                value: partnership.partnership,
-                                error: partnershipMeta.touched && Boolean(partnershipMeta.error),
-                                helperText: partnershipMeta.touched && partnershipMeta.error
-                              }}
-                            />
+                return (
+                  /* partnerships List */
+                  <Grid container spacing={3} key={index}>
+                    <Grid item xs={12} md={10.5}>
+                      <List>
+                        <ListItem sx={pageStyles.customListItem}>
+                          <Grid container spacing={3}>
+                            <Grid item xs={12} md={10.5}>
+                              <CustomTextField
+                                name={`partnership.partnerships.[${index}].partnership`}
+                                label="Partnership"
+                                maxLength={300}
+                                other={{
+                                  value: partnership.partnership,
+                                  error: partnershipMeta.touched && Boolean(partnershipMeta.error),
+                                  helperText: partnershipMeta.touched && partnershipMeta.error
+                                }}
+                              />
+                            </Grid>
                           </Grid>
-                        </Grid>
-                        {index >= 1 && (
-                          <ListItemSecondaryAction>
-                            <IconButton
-                              color="primary"
-                              data-testid="delete-icon"
-                              aria-label="remove partnership"
-                              onClick={() => arrayHelpers.remove(index)}
-                              edge="end"
-                              size="large">
-                              <Icon path={mdiTrashCanOutline} size={1} />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        )}
-                      </ListItem>
-                    </List>
+                          {index >= 1 && (
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                color="primary"
+                                data-testid="delete-icon"
+                                aria-label="remove partnership"
+                                onClick={() => arrayHelpers.remove(index)}
+                                edge="end"
+                                size="large">
+                                <Icon path={mdiTrashCanOutline} size={1} />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          )}
+                        </ListItem>
+                      </List>
+                    </Grid>
                   </Grid>
-                </Grid>
-              );
-            })}
+                );
+              })}
             <Box pt={0.5}>
               <Button
-                disabled={
-                  !values.partnership.partnerships[
-                    values.partnership.partnerships.length - 1
-                  ].partnership.trim() || values.partnership.partnerships.length >= 5
-                }
+                disabled={values.partnership && values.partnership.partnerships.length >= 5}
                 type="button"
                 variant="outlined"
                 color="primary"
@@ -147,7 +143,7 @@ const ProjectPartnershipsForm: React.FC = () => {
           </Box>
         )}
       </Box>
-    </>
+    </Box>
   );
 };
 

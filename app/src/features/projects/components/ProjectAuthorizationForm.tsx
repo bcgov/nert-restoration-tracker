@@ -75,7 +75,6 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
 const ProjectAuthorizationForm: React.FC = () => {
   const { values, handleChange, getFieldMeta, errors } =
     useFormikContext<IProjectAuthorizationForm>();
-  console.log('values', values);
 
   const authorizationTypes = [
     'Forestry License to Cut',

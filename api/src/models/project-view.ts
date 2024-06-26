@@ -6,7 +6,7 @@ export type ProjectObject = {
   iucn: GetIUCNClassificationData;
   contact: GetContactData;
   authorization: GetAuthorizationData;
-  partnerships: GetPartnershipsData;
+  partnership: GetPartnershipsData;
   objective: GetObjectivesData;
   funding: GetFundingData;
   location: GetLocationData;
@@ -128,7 +128,7 @@ export class GetPartnershipsData {
   partnerships: IGetPartnership[];
 
   constructor(partnerships?: any[]) {
-    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item.partnership)) || [];
+    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item)) || [];
   }
 }
 
@@ -191,16 +191,14 @@ export class GetIUCNClassificationData {
 }
 
 interface IGetFundingSource {
-  id: number;
   agency_id: number;
   investment_action_category: number;
-  investment_action_category_name: string;
-  agency_name: string;
+  description: string;
+  agency_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  agency_project_id: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export class GetFundingData {
@@ -211,16 +209,14 @@ export class GetFundingData {
       (fundingData &&
         fundingData.map((item: any) => {
           return {
-            id: item.id,
             agency_id: item.agency_id,
             investment_action_category: item.investment_action_category,
-            investment_action_category_name: item.investment_action_category_name,
-            agency_name: item.agency_name,
+            description: item.description,
+            agency_project_id: item.agency_project_id,
             funding_amount: item.funding_amount,
             start_date: item.start_date,
             end_date: item.end_date,
-            agency_project_id: item.agency_project_id,
-            revision_count: item.revision_count ?? 0
+            is_public: 'false'
           };
         })) ||
       [];

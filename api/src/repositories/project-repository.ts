@@ -214,7 +214,6 @@ export class ProjectRepository extends BaseRepository {
     `;
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-      console.log('response', response);
 
       return new GetAuthorizationData(response.rows);
     } catch (error) {
@@ -761,6 +760,7 @@ export class ProjectRepository extends BaseRepository {
   ): Promise<{ project_funding_source_id: number }> {
     defaultLog.debug({ label: 'insertFundingSource', message: 'params', fundingSource });
 
+    //TODO: add is_public to the funding source
     try {
       const sqlStatement = SQL`
       INSERT INTO project_funding_source (

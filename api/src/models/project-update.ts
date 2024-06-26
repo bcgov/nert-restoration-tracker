@@ -29,7 +29,7 @@ export type ProjectUpdateObject = {
   iucn: GetIUCNClassificationData;
   contact: GetContactData;
   authorization: GetAuthorizationData;
-  partnerships: GetPartnershipsData;
+  partnership: GetPartnershipsData;
   objective: GetObjectivesData;
   funding: GetFundingData;
   location: GetLocationData;

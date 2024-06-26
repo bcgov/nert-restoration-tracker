@@ -103,6 +103,7 @@ export interface IEditProjectRequest
   extends IProjectGeneralInformationForm,
     IProjectObjectivesForm,
     IProjectFocusForm,
+    IProjectAuthorizationForm,
     IProjectContactForm,
     IProjectWildlifeForm,
     IProjectAuthorizationForm,
@@ -131,7 +132,7 @@ export interface IGetProjectForViewResponse {
   contact: IGetProjectForViewResponseContact;
   iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
-  partnerships: IGetProjectForViewResponsePartnerships;
+  partnership: IGetProjectForViewResponsePartnerships;
   objective: IGetProjectForViewResponseObjectives;
 }
 
@@ -243,24 +244,25 @@ export interface IGetProjectForViewResponseIUCN {
 }
 
 interface IGetProjectForViewResponseFundingSource {
-  id: number;
   agency_id: number;
-  agency_name: string;
   investment_action_category: number;
-  investment_action_category_name: string;
+  description: string;
+  agency_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  agency_project_id: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export interface IGetProjectForViewResponseFundingData {
   fundingSources: IGetProjectForViewResponseFundingSource[];
 }
 
+export interface IGetProjectForViewResponsePartnershipsArrayItem {
+  partnership: string;
+}
 export interface IGetProjectForViewResponsePartnerships {
-  partnerships: string[];
+  partnerships: IGetProjectForViewResponsePartnershipsArrayItem[];
 }
 
 export interface IGetProjectForViewResponseObjectives {
