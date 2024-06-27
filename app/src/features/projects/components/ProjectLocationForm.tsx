@@ -59,7 +59,7 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    // region: yup.string().required('Required'),
+    region: yup.string().required('Required'),
     geometry: yup
       .array()
       .min(1, 'You must specify a project boundary')

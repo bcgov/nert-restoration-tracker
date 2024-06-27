@@ -45,7 +45,7 @@ export const ProjectAuthorizationFormArrayItemInitialValues: IProjectAuthorizati
 
 export const ProjectAuthorizationFormInitialValues: IProjectAuthorizationForm = {
   authorization: {
-    authorizations: []
+    authorizations: [ProjectAuthorizationFormArrayItemInitialValues]
   }
 };
 
@@ -57,9 +57,15 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
         yup.object().shape({
           authorization_ref: yup
             .string()
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
+            .max(100, 'Cannot exceed 100 characters'),
+
+          authorization_type: yup
+            .string()
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
             .max(100, 'Cannot exceed 100 characters')
-            .required('Required'),
-          authorization_type: yup.string().required('Required')
         })
       )
       .nullable()

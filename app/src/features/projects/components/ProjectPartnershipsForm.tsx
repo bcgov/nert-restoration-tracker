@@ -66,7 +66,6 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
  */
 const ProjectPartnershipsForm: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectPartnershipsForm>();
-  console.log('values', values);
 
   return (
     <Box mt={2}>

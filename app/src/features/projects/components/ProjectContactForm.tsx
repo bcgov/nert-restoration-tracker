@@ -32,7 +32,11 @@ export const ProjectContactInitialValues: IProjectContactForm = {
 
 export const ProjectContactYupSchema = yup.object().shape({
   contact: yup.object().shape({
-    contacts: yup.array().of(ProjectContactItemYupSchema)
+    contacts: yup
+      .array()
+      .of(ProjectContactItemYupSchema)
+      .min(1, 'You must add at least one Contact')
+      .required('Required')
   })
 });
 
@@ -44,7 +48,7 @@ export type IProjectContactFormProps = IProjectContactItemFormProps;
  * @return {*}
  */
 const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ organization }) => {
-  const { values } = useFormikContext<IProjectContactForm>();
+  const { values, errors } = useFormikContext<IProjectContactForm>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -60,6 +64,15 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ organization }
         <Typography variant="body1" color="textSecondary">
           Specify all contacts for the project.
         </Typography>
+      </Box>
+      <Box mt={1} mb={2}>
+        {errors.contact &&
+          errors.contact.contacts &&
+          typeof errors.contact.contacts == 'string' && (
+            <Typography variant="body2" color="error">
+              {errors.contact.contacts}
+            </Typography>
+          )}
       </Box>
       <Box>
         <FieldArray

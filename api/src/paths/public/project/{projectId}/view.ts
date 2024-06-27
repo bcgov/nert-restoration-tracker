@@ -30,7 +30,7 @@ GET.apiDoc = {
           schema: {
             title: 'Project get response object, for view purposes',
             type: 'object',
-            required: ['project', 'permit', 'contact', 'location', 'iucn', 'funding'],
+            required: ['project', 'authorization', 'contact', 'location', 'iucn', 'funding'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -92,16 +92,14 @@ GET.apiDoc = {
                 }
               },
               contact: {
-                title: 'Project contact',
                 type: 'object',
-                required: ['contacts'],
                 properties: {
                   contacts: {
                     type: 'array',
                     items: {
-                      title: 'contacts',
+                      title: 'Project contact',
                       type: 'object',
-                      required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                      required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public'],
                       properties: {
                         first_name: {
                           type: 'string'
@@ -112,7 +110,10 @@ GET.apiDoc = {
                         email_address: {
                           type: 'string'
                         },
-                        agency: {
+                        organization: {
+                          type: 'string'
+                        },
+                        phone_number: {
                           type: 'string'
                         },
                         is_public: {
@@ -120,29 +121,28 @@ GET.apiDoc = {
                           enum: ['true', 'false']
                         },
                         is_primary: {
-                          type: 'string',
-                          enum: ['true', 'false']
+                          type: 'string'
                         }
                       }
                     }
                   }
                 }
               },
-              permit: {
+              authorization: {
                 type: 'object',
-                required: ['permits'],
+                required: ['authorizations'],
                 properties: {
-                  permits: {
+                  authorizations: {
                     type: 'array',
                     items: {
-                      title: 'Project permit',
-                      required: ['permit_number', 'permit_type'],
+                      title: 'Project authorization',
+                      required: ['authorization_ref', 'authorization_type'],
                       type: 'object',
                       properties: {
-                        permit_number: {
+                        authorization_ref: {
                           type: 'string'
                         },
-                        permit_type: {
+                        authorization_type: {
                           type: 'string'
                         }
                       }
