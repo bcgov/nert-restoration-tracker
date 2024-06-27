@@ -10,12 +10,13 @@ import {
 } from '../models/project-create';
 import { PutProjectData } from '../models/project-update';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetPartnershipsData,
-  GetPermitData,
-  GetProjectData
+  GetProjectData,
+  IGetConservationArea
 } from '../models/project-view';
 import { getLogger } from '../utils/logger';
 import { generateGeometryCollectionSQL } from '../utils/spatial-utils';
@@ -198,10 +199,10 @@ export class ProjectRepository extends BaseRepository {
    * Get Permit Data
    *
    * @param {number} projectId
-   * @return {*}  {Promise<GetPermitData>}
+   * @return {*}  {Promise<GetAuthorizationData>}
    * @memberof ProjectRepository
    */
-  async getPermitData(projectId: number): Promise<GetPermitData> {
+  async getAuthorizationData(projectId: number): Promise<GetAuthorizationData> {
     try {
       const sqlStatement = SQL`
       SELECT
@@ -214,9 +215,9 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
-      return new GetPermitData(response.rows);
+      return new GetAuthorizationData(response.rows);
     } catch (error) {
-      defaultLog.debug({ label: 'getPermitData', message: 'error', error });
+      defaultLog.debug({ label: 'getAuthorizationData', message: 'error', error });
       throw error;
     }
   }
@@ -282,7 +283,7 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<any>}
    * @memberof ProjectRepository
    */
-  async getConservationAreasData(projectId: number): Promise<any> {
+  async getConservationAreasData(projectId: number): Promise<IGetConservationArea[]> {
     try {
       const sqlStatement = SQL`
         SELECT
@@ -295,7 +296,11 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
-      return response.rows;
+      const conservationAreas = response.rows.map((row: { conservation_area: string }) => {
+        return { conservationArea: row.conservation_area };
+      });
+
+      return conservationAreas;
     } catch (error) {
       defaultLog.debug({ label: 'getConservationAreasData', message: 'error', error });
       throw error;
@@ -309,44 +314,95 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<GetFundingData>}
    * @memberof ProjectRepository
    */
-  async getFundingData(projectId: number): Promise<GetFundingData> {
+  async getFundingData(projectId: number, isPublic: boolean): Promise<GetFundingData> {
     try {
-      const sqlStatement = SQL`
-      SELECT
-        pfs.project_funding_source_id as id,
-        fs.funding_source_id as agency_id,
-        pfs.funding_amount::numeric::int,
-        pfs.funding_start_date as start_date,
-        pfs.funding_end_date as end_date,
-        iac.investment_action_category_id as investment_action_category,
-        iac.name as investment_action_category_name,
-        fs.name as agency_name,
-        pfs.funding_source_project_id as agency_project_id,
-        pfs.revision_count as revision_count
-      FROM
-        project_funding_source as pfs
-      LEFT OUTER JOIN
-        investment_action_category as iac
-      ON
-        pfs.investment_action_category_id = iac.investment_action_category_id
-      LEFT OUTER JOIN
-        funding_source as fs
-      ON
-        iac.funding_source_id = fs.funding_source_id
-      WHERE
-        pfs.project_id = ${projectId}
-      GROUP BY
-        pfs.project_funding_source_id,
-        fs.funding_source_id,
-        pfs.funding_source_project_id,
-        pfs.funding_amount,
-        pfs.funding_start_date,
-        pfs.funding_end_date,
-        iac.investment_action_category_id,
-        iac.name,
-        fs.name,
-        pfs.revision_count
-    `;
+      const sqlStatement = SQL``;
+
+      if (isPublic) {
+        sqlStatement.append(SQL`
+          SELECT
+            pfs.project_funding_source_id as id,
+            fs.funding_source_id as agency_id,
+            pfs.funding_amount::numeric::int,
+            pfs.funding_start_date as start_date,
+            pfs.funding_end_date as end_date,
+            iac.investment_action_category_id as investment_action_category,
+            iac.name as investment_action_category_name,
+            fs.name as agency_name,
+            pfs.description as description,
+            pfs.is_public as is_public,
+            pfs.funding_source_project_id as agency_project_id,
+            pfs.revision_count as revision_count
+          FROM
+            project_funding_source as pfs
+          LEFT OUTER JOIN
+            investment_action_category as iac
+          ON
+            pfs.investment_action_category_id = iac.investment_action_category_id
+          LEFT OUTER JOIN
+            funding_source as fs
+          ON
+            iac.funding_source_id = fs.funding_source_id
+          WHERE
+            pfs.project_id = ${projectId}
+          AND
+            pfs.is_public = 'Y'
+          GROUP BY
+            pfs.project_funding_source_id,
+            fs.funding_source_id,
+            pfs.funding_source_project_id,
+            pfs.funding_amount,
+            pfs.funding_start_date,
+            pfs.funding_end_date,
+            iac.investment_action_category_id,
+            iac.name,
+            fs.name,
+            pfs.description,
+            pfs.is_public,
+            pfs.revision_count
+        `);
+      } else {
+        sqlStatement.append(SQL`
+          SELECT
+            pfs.project_funding_source_id as id,
+            fs.funding_source_id as agency_id,
+            pfs.funding_amount::numeric::int,
+            pfs.funding_start_date as start_date,
+            pfs.funding_end_date as end_date,
+            iac.investment_action_category_id as investment_action_category,
+            iac.name as investment_action_category_name,
+            fs.name as agency_name,
+            pfs.description as description,
+            pfs.is_public as is_public,
+            pfs.funding_source_project_id as agency_project_id,
+            pfs.revision_count as revision_count
+          FROM
+            project_funding_source as pfs
+          LEFT OUTER JOIN
+            investment_action_category as iac
+          ON
+            pfs.investment_action_category_id = iac.investment_action_category_id
+          LEFT OUTER JOIN
+            funding_source as fs
+          ON
+            iac.funding_source_id = fs.funding_source_id
+          WHERE
+            pfs.project_id = ${projectId}
+          GROUP BY
+            pfs.project_funding_source_id,
+            fs.funding_source_id,
+            pfs.funding_source_project_id,
+            pfs.funding_amount,
+            pfs.funding_start_date,
+            pfs.funding_end_date,
+            iac.investment_action_category_id,
+            iac.name,
+            fs.name,
+            pfs.description,
+            pfs.is_public,
+            pfs.revision_count
+        `);
+      }
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
@@ -763,14 +819,18 @@ export class ProjectRepository extends BaseRepository {
         funding_source_project_id,
         funding_amount,
         funding_start_date,
-        funding_end_date
+        funding_end_date,
+        description,
+        is_public
       ) VALUES (
         ${projectId},
         ${fundingSource.investment_action_category},
         ${fundingSource.agency_project_id},
         ${fundingSource.funding_amount},
         ${fundingSource.start_date},
-        ${fundingSource.end_date}
+        ${fundingSource.end_date},
+        ${fundingSource.description},
+        ${fundingSource.is_public}
       )
       RETURNING
         project_funding_source_id;
@@ -921,8 +981,12 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<{ permit_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertPermit(permitNumber: string, permitType: string, projectId: number): Promise<{ permit_id: number }> {
-    defaultLog.debug({ label: 'insertPermit', message: 'params', permitNumber, permitType, projectId });
+  async insertAuthorization(
+    permitNumber: string,
+    permitType: string,
+    projectId: number
+  ): Promise<{ permit_id: number }> {
+    defaultLog.debug({ label: 'insertAuthorization', message: 'params', permitNumber, permitType, projectId });
 
     try {
       const systemUserId = this.connection.systemUserId();
@@ -946,15 +1010,15 @@ export class ProjectRepository extends BaseRepository {
       const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert permit', [
-          'ProjectRepository->insertPermit',
+        throw new ApiExecuteSQLError('Failed to insert permit ("authorization")', [
+          'ProjectRepository->insertAuthorization',
           'rowCount was null or undefined, expected rowCount = 1'
         ]);
       }
 
       return response.rows[0];
     } catch (error) {
-      defaultLog.debug({ label: 'insertPermit', message: 'error', error });
+      defaultLog.debug({ label: 'insertAuthorization', message: 'error', error });
       throw error;
     }
   }
@@ -1176,31 +1240,23 @@ export class ProjectRepository extends BaseRepository {
     });
 
     try {
-      const sqlStatement: SQLStatement = SQL`
-      UPDATE project SET `;
-
-      const sqlSetStatements: SQLStatement[] = [];
-
-      if (project) {
-        sqlSetStatements.push(SQL`name = ${project.name}`);
-        sqlSetStatements.push(SQL`start_date = ${project.start_date}`);
-        sqlSetStatements.push(SQL`end_date = ${project.end_date}`);
-        sqlSetStatements.push(SQL`objectives = ${project.objectives}`);
-      }
-
-      sqlSetStatements.forEach((item, index) => {
-        sqlStatement.append(item);
-        if (index < sqlSetStatements.length - 1) {
-          sqlStatement.append(',');
-        }
-      });
-
-      sqlStatement.append(SQL`
-      WHERE
-        project_id = ${projectId}
-      AND
-        revision_count = ${project.revision_count};
-      `);
+      const sqlStatement = SQL`
+        UPDATE project
+        SET
+          name = ${project.name},
+          brief_desc = ${project.brief_desc},
+          is_project = ${project.is_project},
+          state_code = ${project.state_code},
+          start_date = ${project.start_date},
+          end_date = ${project.end_date},
+          actual_start_date = ${project.actual_start_date},
+          actual_end_date = ${project.actual_end_date},
+          people_involved = ${project.people_involved}
+        WHERE
+          project_id = ${projectId}
+        RETURNING
+          project_id;
+      `;
 
       const response = await this.connection.sql(sqlStatement);
 
@@ -1369,28 +1425,15 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Contact', [
-          'ProjectRepository->deleteProjectContact',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectContact', message: 'error', error });
       throw error;
     }
   }
 
-  /**
-   * Delete a project permit.
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteProjectPermit(projectId: number) {
-    defaultLog.debug({ label: 'deleteProjectPermit', message: 'params', projectId });
+  async deleteProjectAuthorization(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectAuthorization', message: 'params', projectId });
 
     try {
       const sqlStatement = SQL`
@@ -1400,16 +1443,9 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Permit', [
-          'ProjectRepository->deleteProjectPermit',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
-      defaultLog.debug({ label: 'deleteProjectPermit', message: 'error', error });
+      defaultLog.debug({ label: 'deleteProjectAuthorization', message: 'error', error });
       throw error;
     }
   }
@@ -1426,19 +1462,12 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
         DELETE
-          from project_partnership
+          from partnership
         WHERE
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Partnership', [
-          'ProjectRepository->deleteProjectPartnership',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectPartnership', message: 'error', error });
       throw error;
@@ -1462,14 +1491,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Objectives', [
-          'ProjectRepository->deleteProjectObjectives',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectObjectives', message: 'error', error });
       throw error;
@@ -1493,14 +1515,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project conservation areas', [
-          'ProjectRepository->deleteProjectConservationAreas',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'error', error });
       throw error;
@@ -1524,14 +1539,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project IUCN', [
-          'ProjectRepository->deleteProjectIUCN',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectIUCN', message: 'error', error });
       throw error;
@@ -1555,14 +1563,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Funding Source', [
-          'ProjectRepository->deleteProjectFundingSource',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectFundingSource', message: 'error', error });
       throw error;
@@ -1627,14 +1628,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Location', [
-          'ProjectRepository->deleteProjectLocation',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectLocation', message: 'error', error });
       throw error;
@@ -1658,14 +1652,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Region', [
-          'ProjectRepository->deleteProjectRegion',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectRegion', message: 'error', error });
       throw error;
@@ -1689,16 +1676,33 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.sql(sqlStatement);
-
-      if (!response) {
-        throw new ApiExecuteSQLError('Failed to delete Project Species', [
-          'ProjectRepository->deleteProjectSpecies',
-          'response was null or undefined'
-        ]);
-      }
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectSpecies', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a project Conservation Area.
+   *
+   * @param {number} projectId
+   * @memberof ProjectRepository
+   */
+  async deleteProjectConservationArea(projectId: number) {
+    defaultLog.debug({ label: 'deleteProjectConservationArea', message: 'params', projectId });
+
+    try {
+      const sqlStatement = SQL`
+        DELETE
+          from conservation_area
+        WHERE
+          project_id = ${projectId};
+      `;
+
+      await this.connection.sql(sqlStatement);
+    } catch (error) {
+      defaultLog.debug({ label: 'deleteProjectConservationArea', message: 'error', error });
       throw error;
     }
   }

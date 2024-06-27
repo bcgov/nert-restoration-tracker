@@ -70,10 +70,13 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         id: index,
         projectId: row.project.project_id,
         projectName: row.project.project_name,
-        authRef: row.permit.permits
-          .map((item: { permit_number: any }) => item.permit_number)
+        authRef: row.authorization.authorizations
+          .map(
+            (item: { authorization_ref: string; authorization_type: string }) =>
+              item.authorization_ref
+          )
           .join(', '),
-        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        org: row.contact.contacts.map((item) => item.organization).join(', '),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
         actualStartDate: row.project.actual_start_date,

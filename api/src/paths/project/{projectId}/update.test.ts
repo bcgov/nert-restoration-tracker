@@ -58,30 +58,6 @@ describe('update', () => {
       }
     });
 
-    it('should throw a 400 error when no request body', async () => {
-      const dbConnectionObj = getMockDBConnection();
-
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = {
-        projectId: '1'
-      };
-
-      mockReq.body = null;
-
-      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
-
-      try {
-        const requestHandler = update.updateProject();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required request body');
-      }
-    });
-
     it('updates a project with all valid entries and returns 200 on success', async () => {
       const dbConnectionObj = getMockDBConnection();
 

@@ -15,7 +15,7 @@ export interface IPartnershipsProps {
 const Partnerships: React.FC<IPartnershipsProps> = (props) => {
   const {
     projectForViewData: {
-      partnerships: { partnerships }
+      partnership: { partnerships }
     }
   } = props;
 
@@ -24,14 +24,14 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
   return (
     <>
       {hasPartnerships &&
-        partnerships?.map((partnership: string, index: number) => {
+        partnerships?.map((data: { partnership: string }, index: number) => {
           return (
             <Typography
               key={index}
               variant="body2"
               color="textSecondary"
               data-testid="partnerships_data">
-              {partnership}
+              {data.partnership}
             </Typography>
           );
         })}

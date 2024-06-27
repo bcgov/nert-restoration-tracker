@@ -156,7 +156,7 @@ GET.apiDoc = {
             items: {
               title: 'Project get response object, for view purposes',
               type: 'object',
-              required: ['project', 'species', 'permit', 'contact', 'location', 'iucn', 'funding'],
+              required: ['project', 'species', 'authorization', 'contact', 'location', 'iucn', 'funding'],
               properties: {
                 project: {
                   description: 'Basic project metadata',
@@ -244,7 +244,7 @@ GET.apiDoc = {
                       items: {
                         title: 'Project contact',
                         type: 'object',
-                        required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public'],
+                        required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public'],
                         properties: {
                           first_name: {
                             type: 'string'
@@ -255,7 +255,10 @@ GET.apiDoc = {
                           email_address: {
                             type: 'string'
                           },
-                          agency: {
+                          organization: {
+                            type: 'string'
+                          },
+                          phone_number: {
                             type: 'string'
                           },
                           is_public: {
@@ -270,21 +273,21 @@ GET.apiDoc = {
                     }
                   }
                 },
-                permit: {
+                authorization: {
                   type: 'object',
-                  required: ['permits'],
+                  required: ['authorizations'],
                   properties: {
-                    permits: {
+                    authorizations: {
                       type: 'array',
                       items: {
-                        title: 'Project permit',
-                        required: ['permit_number', 'permit_type'],
+                        title: 'Project authorization',
+                        required: ['authorization_ref', 'authorization_type'],
                         type: 'object',
                         properties: {
-                          permit_number: {
+                          authorization_ref: {
                             type: 'string'
                           },
-                          permit_type: {
+                          authorization_type: {
                             type: 'string'
                           }
                         }
@@ -309,19 +312,13 @@ GET.apiDoc = {
                           'end_date'
                         ],
                         properties: {
-                          id: {
-                            type: 'number'
-                          },
                           agency_id: {
                             type: 'number'
                           },
                           investment_action_category: {
                             type: 'number'
                           },
-                          investment_action_category_name: {
-                            type: 'string'
-                          },
-                          agency_name: {
+                          description: {
                             type: 'string'
                           },
                           funding_amount: {
@@ -335,12 +332,9 @@ GET.apiDoc = {
                             oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                             description: 'ISO 8601 date string for the funding end_date'
                           },
-                          agency_project_id: {
+                          is_public: {
                             type: 'string',
-                            nullable: true
-                          },
-                          revision_count: {
-                            type: 'number'
+                            enum: ['true', 'false']
                           }
                         }
                       }

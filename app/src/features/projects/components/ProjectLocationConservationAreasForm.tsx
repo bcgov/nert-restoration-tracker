@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
 import React from 'react';
+import { IProjectLocationForm } from './ProjectLocationForm';
 
 const pageStyles = {
   customListItem: {
@@ -21,44 +22,28 @@ const pageStyles = {
   }
 };
 
-export interface IProjectConservationAreasProps {
-  isOverlapping: string;
-}
-
 export interface IProjectLocationConservationAreasArrayItem {
   conservationArea: string;
-}
-
-export interface IProjectLocationConservationAreasForm {
-  location: {
-    conservationAreas: IProjectLocationConservationAreasArrayItem[];
-  };
 }
 
 export const ProjectLocationConservationAreasFormArrayItemInitialValues: IProjectLocationConservationAreasArrayItem =
   {
     conservationArea: '' as unknown as string
   };
-export const ProjectConservationAreaInitialValues: IProjectLocationConservationAreasForm = {
-  location: {
-    conservationAreas: [ProjectLocationConservationAreasFormArrayItemInitialValues]
-  }
-};
 
 /**
  * Create project - Conservation areas
  *
  * @return {*}
  */
-const ProjectLocationConservationAreas: React.FC<IProjectConservationAreasProps> = (props) => {
-  const { values, getFieldMeta, errors } =
-    useFormikContext<IProjectLocationConservationAreasForm>();
+const ProjectLocationConservationAreas: React.FC = () => {
+  const { values, getFieldMeta, errors } = useFormikContext<IProjectLocationForm>();
 
   return (
     <>
       <FieldArray
         name="location.conservationAreas"
-        render={(arrayHelpers: any) => {
+        render={(arrayHelpers) => {
           return (
             <>
               {values.location.conservationAreas?.map((conservationArea, index) => {
@@ -79,8 +64,9 @@ const ProjectLocationConservationAreas: React.FC<IProjectConservationAreasProps>
                                 label="Conservation Area"
                                 maxLength={100}
                                 other={{
-                                  disabled: props.isOverlapping !== 'true',
-                                  required: !index ? true : false,
+                                  disabled: values.location.is_within_overlapping !== 'true',
+                                  required:
+                                    values.location.is_within_overlapping === 'true' ? true : false,
                                   value: conservationArea.conservationArea,
                                   error:
                                     conservationAreaMeta.touched &&
@@ -94,7 +80,7 @@ const ProjectLocationConservationAreas: React.FC<IProjectConservationAreasProps>
                           {index >= 1 && (
                             <ListItemSecondaryAction>
                               <IconButton
-                                disabled={props.isOverlapping !== 'true'}
+                                disabled={values.location.is_within_overlapping !== 'true'}
                                 color="primary"
                                 data-testid="delete-icon"
                                 aria-label="remove conservation area"
@@ -114,11 +100,8 @@ const ProjectLocationConservationAreas: React.FC<IProjectConservationAreasProps>
               <Box pt={0.5}>
                 <Button
                   disabled={
-                    !values.location.conservationAreas[
-                      values.location.conservationAreas.length - 1
-                    ].conservationArea.trim() ||
                     values.location.conservationAreas.length >= 5 ||
-                    props.isOverlapping !== 'true'
+                    values.location.is_within_overlapping !== 'true'
                   }
                   type="button"
                   variant="outlined"

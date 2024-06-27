@@ -279,10 +279,6 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
-      // Remove empty partnerships
-      projectPostObject.partnership.partnerships =
-        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
-
       // Confirm that the project is not a draft
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;

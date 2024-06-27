@@ -6,7 +6,6 @@ import { HTTP400 } from '../../../../../errors/custom-error';
 import { authorizeRequestHandler } from '../../../../../request-handlers/security/authorization';
 import { ProjectService } from '../../../../../services/project-service';
 import { getLogger } from '../../../../../utils/logger';
-import { deleteFundingSourceApiDocObject } from '../../../../../utils/shared-api-docs';
 
 const defaultLog = getLogger('/api/projects/{projectId}/funding-sources/{pfsId}/delete');
 
@@ -29,10 +28,58 @@ export const DELETE: Operation = [
   deleteFundingSource()
 ];
 
-DELETE.apiDoc = deleteFundingSourceApiDocObject(
-  'Delete a funding source of a project.',
-  'Row count of successfully deleted funding sources'
-);
+DELETE.apiDoc = {
+  description: 'Delete a funding source of a project.',
+  tags: ['funding-sources'],
+  security: [
+    {
+      Bearer: []
+    }
+  ],
+  parameters: [
+    {
+      in: 'path',
+      name: 'projectId',
+      schema: {
+        type: 'number'
+      },
+      required: true
+    },
+    {
+      in: 'path',
+      name: 'pfsId',
+      schema: {
+        type: 'number'
+      },
+      required: true
+    }
+  ],
+  responses: {
+    200: {
+      description: 'funding source id of successfully deleted funding sources',
+      content: {
+        'application/json': {
+          schema: {
+            title: 'funding source id',
+            type: 'object',
+            required: ['id'],
+            properties: {
+              id: {
+                type: 'number'
+              }
+            }
+          }
+        }
+      }
+    },
+    401: {
+      $ref: '#/components/responses/401'
+    },
+    default: {
+      $ref: '#/components/responses/default'
+    }
+  }
+};
 
 export function deleteFundingSource(): RequestHandler {
   return async (req, res) => {
@@ -64,7 +111,7 @@ export function deleteFundingSource(): RequestHandler {
 
       await connection.commit();
 
-      return res.status(200).json(response.project_funding_source_id);
+      return res.status(200).json({ id: response.project_funding_source_id });
     } catch (error) {
       defaultLog.error({ label: 'deleteFundingSource', message: 'error', error });
       await connection.rollback();

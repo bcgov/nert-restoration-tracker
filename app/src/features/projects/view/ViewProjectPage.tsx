@@ -216,8 +216,7 @@ const ViewProjectPage: React.FC = () => {
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                  // onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}
-                >
+                  onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
                   Edit Project
                 </Button>
                 <Button

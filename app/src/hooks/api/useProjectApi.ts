@@ -5,7 +5,9 @@ import {
   IAddProjectParticipant,
   ICreateProjectRequest,
   ICreateProjectResponse,
+  IEditProjectRequest,
   IGetProjectAttachmentsResponse,
+  IGetProjectForEditResponse,
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponse,
   IGetUserProjectsListResponse,
@@ -134,16 +136,40 @@ const useProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Get project details based on its ID for viewing purposes.
+   *
+   * @param {number} projectId
+   * @return {*} {Promise<IGetProjectForViewResponse>}
+   */
+  const getProjectByIdForEdit = async (projectId: number): Promise<IGetProjectForEditResponse> => {
+    const { data } = await axios.get(`/api/project/${projectId}/update`);
+
+    return data;
+  };
+
+  /**
    * Update an existing project.
    *
    * @param {number} projectId
-   * @param {IGetProjectForViewResponse} projectData
+   * @param {IEditProjectRequest} projectData
    * @return {*}  {Promise<any>}
    */
   const updateProject = async (
     projectId: number,
-    projectData: IGetProjectForViewResponse
-  ): Promise<any> => {
+    projectData: IEditProjectRequest
+  ): Promise<{ id: number }> => {
+    // if project image is provided, handle it
+    if (projectData.project.project_image) {
+      // if image key is provided, remove the image from the project
+
+      const projectImage = projectData.project.project_image;
+      projectData.project.project_image = null;
+      projectData.project.image_url = undefined;
+      projectData.project.image_key = undefined;
+
+      await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    }
+
     const { data } = await axios.put(`api/project/${projectId}/update`, projectData);
 
     return data;
@@ -199,8 +225,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     projectId: number,
     file: File,
     fileType: string,
-    cancelTokenSource?: CancelTokenSource,
-    onProgress?: (progressEvent: ProgressEvent) => void
+    cancelTokenSource?: CancelTokenSource
   ): Promise<IUploadAttachmentResponse> => {
     const req_message = new FormData();
 
@@ -208,8 +233,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     req_message.append('fileType', fileType);
 
     const { data } = await axios.post(`/api/project/${projectId}/attachments/upload`, req_message, {
-      cancelToken: cancelTokenSource?.token,
-      onUploadProgress: onProgress
+      cancelToken: cancelTokenSource?.token
     });
 
     return data;
@@ -220,9 +244,9 @@ const useProjectApi = (axios: AxiosInstance) => {
    *
    * @param {number} projectId
    * @param {number} pfsId
-   * @returns {*} {Promise<any>}
+   * @returns {*} {Promise<{ id: number }>}
    */
-  const deleteFundingSource = async (projectId: number, pfsId: number): Promise<any> => {
+  const deleteFundingSource = async (projectId: number, pfsId: number): Promise<{ id: number }> => {
     const { data } = await axios.delete(
       `/api/project/${projectId}/funding-sources/${pfsId}/delete`
     );
@@ -234,26 +258,23 @@ const useProjectApi = (axios: AxiosInstance) => {
    * Add new funding source based on projectId
    *
    * @param {number} projectId
-   * @returns {*} {Promise<any>}
+   * @returns {*} {Promise<{ id: number }>}
    */
-  const addFundingSource = async (projectId: number, fundingSource: any): Promise<any> => {
+  const addFundingSource = async (
+    projectId: number,
+    fundingSource: {
+      agency_id: number;
+      investment_action_category: number;
+      funding_amount: number;
+      start_date: string;
+      end_date: string;
+    }
+  ): Promise<{ id: number }> => {
     const { data } = await axios.post(
       `/api/project/${projectId}/funding-sources/add`,
       fundingSource
     );
 
-    return data;
-  };
-
-  /**
-   * Publish/unpublish a project.
-   *
-   * @param {number} projectId the project id
-   * @param {boolean} publish set to `true` to publish the project, `false` to unpublish the project.
-   * @return {*}  {Promise<any>}
-   */
-  const publishProject = async (projectId: number, publish: boolean): Promise<any> => {
-    const { data } = await axios.put(`/api/project/${projectId}/publish`, { publish: publish });
     return data;
   };
 
@@ -335,6 +356,7 @@ const useProjectApi = (axios: AxiosInstance) => {
     getProjectsList,
     createProject,
     getProjectById,
+    getProjectByIdForEdit,
     uploadProjectAttachments,
     updateProject,
     getProjectAttachments,
@@ -342,7 +364,6 @@ const useProjectApi = (axios: AxiosInstance) => {
     deleteFundingSource,
     addFundingSource,
     deleteProject,
-    publishProject,
     getProjectParticipants,
     addProjectParticipants,
     removeProjectParticipant,

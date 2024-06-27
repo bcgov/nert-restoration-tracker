@@ -181,7 +181,6 @@ export function getPlansList(): RequestHandler {
 
       // Get all plans data for the planIds
       const plans = await planService.getPlansByIds(planIds);
-      console.log('plans', plans);
 
       await connection.commit();
 

@@ -29,7 +29,7 @@ const CalendarEndIcon = () => {
  * Start/end date fields - commonly used throughout forms
  *
  */
-const PlanStartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
+const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
   const {
     formikProps: { values, errors, touched, setFieldValue },
     startName,
@@ -141,4 +141,4 @@ const PlanStartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
   );
 };
 
-export default PlanStartEndDateFields;
+export default StartEndDateFields;

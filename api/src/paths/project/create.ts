@@ -280,6 +280,10 @@ POST.apiDoc = {
                       investment_action_category: {
                         type: 'number'
                       },
+                      description: {
+                        type: 'string',
+                        nullable: true
+                      },
                       agency_project_id: {
                         type: 'string'
                       },
@@ -293,6 +297,10 @@ POST.apiDoc = {
                       end_date: {
                         type: 'string',
                         description: 'ISO 8601 date string'
+                      },
+                      is_public: {
+                        type: 'string',
+                        enum: ['true', 'false']
                       }
                     }
                   }
@@ -426,8 +434,6 @@ export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
 
-    // TODO: Grab the project_image here... if it get's passed in the request body.
-
     const sanitizedProjectPostData = new PostProjectObject(req.body);
     try {
       await connection.open();
@@ -435,8 +441,6 @@ export function createProject(): RequestHandler {
       const projectService = new ProjectService(connection);
 
       const projectId = await projectService.createProject(sanitizedProjectPostData);
-
-      // TODO: Save the thumbnail to s3 as a project attachment. This will hopefully be achieved by the FileUpload component and/or updating the project through the API.
 
       await connection.commit();
 

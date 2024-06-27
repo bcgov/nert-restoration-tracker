@@ -1,14 +1,11 @@
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
 import Typography from '@mui/material/Typography';
 import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
 import CustomTextField from 'components/fields/CustomTextField';
+import IsPublic from 'components/fields/IsPublic';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
@@ -62,7 +59,8 @@ export interface IProjectContactItemFormProps {
  * @return {*}
  */
 const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) => {
-  const { values, touched, errors, handleChange } = useFormikContext<IProjectContactItemForm>();
+  const { values, touched, errors, setFieldValue, handleChange } =
+    useFormikContext<IProjectContactItemForm>();
 
   const [checkPublic, setCheckPublic] = React.useState(false);
 
@@ -157,37 +155,12 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
         </Grid>
       </Box>
       {checkPublic && (
-        <Box mt={4}>
-          <FormControl
-            required={true}
-            component="fieldset"
-            error={touched.is_public && Boolean(errors.is_public)}>
-            <Typography color="textSecondary">
-              If you are a First Nation or an Indigenous Governing Body, you can hide the contact
-              details information from the public. Do you wish to hide these details from the
-              public?
-            </Typography>
-            <Box mt={2} pl={1}>
-              <RadioGroup
-                name="is_public"
-                aria-label="Share Contact Details"
-                value={values.is_public}
-                onChange={handleChange}>
-                <FormControlLabel
-                  value="true"
-                  control={<Radio color="primary" size="small" />}
-                  label="Yes"
-                />
-                <FormControlLabel
-                  value="false"
-                  control={<Radio color="primary" size="small" />}
-                  label="No"
-                />
-                <FormHelperText>{errors.is_public}</FormHelperText>
-              </RadioGroup>
-            </Box>
-          </FormControl>
-        </Box>
+        <IsPublic
+          touched={touched.is_public}
+          errors={errors.is_public}
+          values={values.is_public}
+          handleChange={(value: string) => setFieldValue('is_public', value)}
+        />
       )}
     </form>
   );

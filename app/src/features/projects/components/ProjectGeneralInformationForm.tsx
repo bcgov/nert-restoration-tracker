@@ -2,7 +2,12 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
-import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
+import {
+  getStateCodeFromLabel,
+  getStateLabelFromCode,
+  getStatusStyle,
+  states
+} from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
@@ -71,6 +76,8 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
+  const state = getStateLabelFromCode(formikProps.values.project.state_code);
+
   return (
     <Grid container spacing={3}>
       <ThumbnailImageField />
@@ -91,12 +98,12 @@ const ProjectGeneralInformationForm: React.FC = () => {
               label="Project Status"
               other={{
                 InputProps: {
-                  readOnly: true,
+                  readOnly: true, //TODO: STATUS will need to be updated based on the workflow
                   startAdornment: (
                     <Chip
                       size="small"
-                      sx={getStatusStyle(getStateCodeFromLabel(states.DRAFT))}
-                      label={states.DRAFT}
+                      sx={getStatusStyle(getStateCodeFromLabel(state || states.DRAFT))}
+                      label={state || states.DRAFT}
                     />
                   )
                 }
