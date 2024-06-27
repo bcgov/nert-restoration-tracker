@@ -25,7 +25,7 @@ export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
     const p = feature.properties || {};
 
     p.siteName = p.siteName || p.Site_Name || '';
-    p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 100) / 100;
+    p.areaHectares = p.areaHectares || p.AREA_HA || Math.round(area / 100) / 100;
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
     feature.properties = p;
@@ -129,7 +129,7 @@ export const handleGeoJSONUpload = async <T>(
   if (!fileAsString?.match(/"site_?name"/gi) || !fileAsString?.match(/"area_?hectares"/gi)) {
     setFieldError(
       name,
-      'Please ensure that the GeoJSON file contains both Site_Name and Area_Hectares properties.'
+      'Please ensure that the GeoJSON file contains both Site_Name and AREA_HA properties.'
     );
     return;
   }

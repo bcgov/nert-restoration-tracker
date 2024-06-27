@@ -192,7 +192,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               The property <b>Site_Name</b> must be present, containing the site name.
             </ListItem>
             <ListItem sx={{ display: 'list-item' }}>
-              The property <b>Area_Hectares</b> must be present, containing the area of the site in
+              The property <b>AREA_HA</b> must be present, containing the area of the site in
               Hectares.
             </ListItem>
             <ListItem sx={{ display: 'list-item' }}>
