@@ -9,6 +9,11 @@ import yup from 'utils/YupSchema';
 
 declare module 'yup' {
   interface StringSchema {
+    isConservationAreasRequired(
+      booleanName: string,
+      message?: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
     /**
      * Determine if the string is a valid date string. Does nothing if the string is null.
      *

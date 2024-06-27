@@ -98,7 +98,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
               label="Project Status"
               other={{
                 InputProps: {
-                  readOnly: true,
+                  readOnly: true, //TODO: STATUS will need to be updated based on the workflow
                   startAdornment: (
                     <Chip
                       size="small"

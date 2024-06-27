@@ -23,6 +23,7 @@ export interface IIsPublicProps {
  */
 const IsPublic: React.FC<IIsPublicProps> = (props) => {
   const { values, touched, errors, handleChange } = props;
+  console.log('values', values);
 
   return (
     <Box mt={4}>
@@ -40,12 +41,12 @@ const IsPublic: React.FC<IIsPublicProps> = (props) => {
             <FormControlLabel
               value="true"
               control={<Radio color="primary" size="small" />}
-              label="Yes"
+              label="No"
             />
             <FormControlLabel
               value="false"
               control={<Radio color="primary" size="small" />}
-              label="No"
+              label="Yes"
             />
             <FormHelperText>{errors}</FormHelperText>
           </RadioGroup>

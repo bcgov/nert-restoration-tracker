@@ -164,7 +164,7 @@ export class ProjectService extends DBService {
       this.getAuthorizationData(projectId, isPublic),
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
-      this.getFundingData(projectId),
+      this.getFundingData(projectId, isPublic),
       this.getLocationData(projectId)
     ]);
 
@@ -207,7 +207,7 @@ export class ProjectService extends DBService {
       this.getContactData(projectId, false),
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
-      this.getFundingData(projectId),
+      this.getFundingData(projectId, false),
       this.getLocationData(projectId),
       this.getAuthorizationData(projectId, false),
       this.attachmentRepository.getProjectAttachmentsByType(projectId, 'thumbnail')
@@ -343,8 +343,8 @@ export class ProjectService extends DBService {
    * @return {*}  {Promise<GetFundingData>}
    * @memberof ProjectService
    */
-  async getFundingData(projectId: number): Promise<GetFundingData> {
-    return this.projectRepository.getFundingData(projectId);
+  async getFundingData(projectId: number, isPublic: boolean): Promise<GetFundingData> {
+    return this.projectRepository.getFundingData(projectId, isPublic);
   }
 
   /**

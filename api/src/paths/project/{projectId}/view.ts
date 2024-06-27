@@ -205,21 +205,22 @@ GET.apiDoc = {
                     type: 'array',
                     items: {
                       type: 'object',
-                      required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
+                      required: [
+                        'agency_id',
+                        'funding_amount',
+                        'investment_action_category',
+                        'start_date',
+                        'end_date',
+                        'is_public'
+                      ],
                       properties: {
-                        id: {
-                          type: 'number'
-                        },
                         agency_id: {
                           type: 'number'
                         },
                         investment_action_category: {
                           type: 'number'
                         },
-                        investment_action_category_name: {
-                          type: 'string'
-                        },
-                        agency_name: {
+                        description: {
                           type: 'string'
                         },
                         funding_amount: {
@@ -233,12 +234,9 @@ GET.apiDoc = {
                           oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                           description: 'ISO 8601 date string for the funding end_date'
                         },
-                        agency_project_id: {
+                        is_public: {
                           type: 'string',
-                          nullable: true
-                        },
-                        revision_count: {
-                          type: 'number'
+                          enum: ['true', 'false']
                         }
                       }
                     }

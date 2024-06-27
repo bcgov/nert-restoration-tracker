@@ -314,44 +314,95 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<GetFundingData>}
    * @memberof ProjectRepository
    */
-  async getFundingData(projectId: number): Promise<GetFundingData> {
+  async getFundingData(projectId: number, isPublic: boolean): Promise<GetFundingData> {
     try {
-      const sqlStatement = SQL`
-      SELECT
-        pfs.project_funding_source_id as id,
-        fs.funding_source_id as agency_id,
-        pfs.funding_amount::numeric::int,
-        pfs.funding_start_date as start_date,
-        pfs.funding_end_date as end_date,
-        iac.investment_action_category_id as investment_action_category,
-        iac.name as investment_action_category_name,
-        fs.name as agency_name,
-        pfs.funding_source_project_id as agency_project_id,
-        pfs.revision_count as revision_count
-      FROM
-        project_funding_source as pfs
-      LEFT OUTER JOIN
-        investment_action_category as iac
-      ON
-        pfs.investment_action_category_id = iac.investment_action_category_id
-      LEFT OUTER JOIN
-        funding_source as fs
-      ON
-        iac.funding_source_id = fs.funding_source_id
-      WHERE
-        pfs.project_id = ${projectId}
-      GROUP BY
-        pfs.project_funding_source_id,
-        fs.funding_source_id,
-        pfs.funding_source_project_id,
-        pfs.funding_amount,
-        pfs.funding_start_date,
-        pfs.funding_end_date,
-        iac.investment_action_category_id,
-        iac.name,
-        fs.name,
-        pfs.revision_count
-    `;
+      const sqlStatement = SQL``;
+
+      if (isPublic) {
+        sqlStatement.append(SQL`
+          SELECT
+            pfs.project_funding_source_id as id,
+            fs.funding_source_id as agency_id,
+            pfs.funding_amount::numeric::int,
+            pfs.funding_start_date as start_date,
+            pfs.funding_end_date as end_date,
+            iac.investment_action_category_id as investment_action_category,
+            iac.name as investment_action_category_name,
+            fs.name as agency_name,
+            pfs.description as description,
+            pfs.is_public as is_public,
+            pfs.funding_source_project_id as agency_project_id,
+            pfs.revision_count as revision_count
+          FROM
+            project_funding_source as pfs
+          LEFT OUTER JOIN
+            investment_action_category as iac
+          ON
+            pfs.investment_action_category_id = iac.investment_action_category_id
+          LEFT OUTER JOIN
+            funding_source as fs
+          ON
+            iac.funding_source_id = fs.funding_source_id
+          WHERE
+            pfs.project_id = ${projectId}
+          AND
+            pfs.is_public = 'Y'
+          GROUP BY
+            pfs.project_funding_source_id,
+            fs.funding_source_id,
+            pfs.funding_source_project_id,
+            pfs.funding_amount,
+            pfs.funding_start_date,
+            pfs.funding_end_date,
+            iac.investment_action_category_id,
+            iac.name,
+            fs.name,
+            pfs.description,
+            pfs.is_public,
+            pfs.revision_count
+        `);
+      } else {
+        sqlStatement.append(SQL`
+          SELECT
+            pfs.project_funding_source_id as id,
+            fs.funding_source_id as agency_id,
+            pfs.funding_amount::numeric::int,
+            pfs.funding_start_date as start_date,
+            pfs.funding_end_date as end_date,
+            iac.investment_action_category_id as investment_action_category,
+            iac.name as investment_action_category_name,
+            fs.name as agency_name,
+            pfs.description as description,
+            pfs.is_public as is_public,
+            pfs.funding_source_project_id as agency_project_id,
+            pfs.revision_count as revision_count
+          FROM
+            project_funding_source as pfs
+          LEFT OUTER JOIN
+            investment_action_category as iac
+          ON
+            pfs.investment_action_category_id = iac.investment_action_category_id
+          LEFT OUTER JOIN
+            funding_source as fs
+          ON
+            iac.funding_source_id = fs.funding_source_id
+          WHERE
+            pfs.project_id = ${projectId}
+          GROUP BY
+            pfs.project_funding_source_id,
+            fs.funding_source_id,
+            pfs.funding_source_project_id,
+            pfs.funding_amount,
+            pfs.funding_start_date,
+            pfs.funding_end_date,
+            iac.investment_action_category_id,
+            iac.name,
+            fs.name,
+            pfs.description,
+            pfs.is_public,
+            pfs.revision_count
+        `);
+      }
 
       const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
 
@@ -760,7 +811,6 @@ export class ProjectRepository extends BaseRepository {
   ): Promise<{ project_funding_source_id: number }> {
     defaultLog.debug({ label: 'insertFundingSource', message: 'params', fundingSource });
 
-    //TODO: add is_public to the funding source
     try {
       const sqlStatement = SQL`
       INSERT INTO project_funding_source (
@@ -769,14 +819,18 @@ export class ProjectRepository extends BaseRepository {
         funding_source_project_id,
         funding_amount,
         funding_start_date,
-        funding_end_date
+        funding_end_date,
+        description,
+        is_public
       ) VALUES (
         ${projectId},
         ${fundingSource.investment_action_category},
         ${fundingSource.agency_project_id},
         ${fundingSource.funding_amount},
         ${fundingSource.start_date},
-        ${fundingSource.end_date}
+        ${fundingSource.end_date},
+        ${fundingSource.description},
+        ${fundingSource.is_public}
       )
       RETURNING
         project_funding_source_id;

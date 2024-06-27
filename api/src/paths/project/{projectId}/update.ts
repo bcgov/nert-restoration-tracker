@@ -297,6 +297,10 @@ PUT.apiDoc = {
                       investment_action_category: {
                         type: 'number'
                       },
+                      description: {
+                        type: 'string',
+                        nullable: true
+                      },
                       agency_project_id: {
                         type: 'string'
                       },
@@ -347,7 +351,14 @@ PUT.apiDoc = {
                   type: 'string'
                 },
                 size_ha: {
-                  type: 'number',
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ],
                   nullable: true
                 },
                 number_sites: {
@@ -773,6 +784,7 @@ export function updateProject(): RequestHandler {
       }
 
       const entities = new PutProjectObject(req.body);
+      console.log('entities', entities);
 
       if (!entities) {
         throw new HTTP400('Missing required request body');

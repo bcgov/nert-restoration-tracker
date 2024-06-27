@@ -280,6 +280,10 @@ POST.apiDoc = {
                       investment_action_category: {
                         type: 'number'
                       },
+                      description: {
+                        type: 'string',
+                        nullable: true
+                      },
                       agency_project_id: {
                         type: 'string'
                       },
@@ -293,6 +297,10 @@ POST.apiDoc = {
                       end_date: {
                         type: 'string',
                         description: 'ISO 8601 date string'
+                      },
+                      is_public: {
+                        type: 'string',
+                        enum: ['true', 'false']
                       }
                     }
                   }
