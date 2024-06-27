@@ -111,7 +111,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         <Box className="feature-name">
           {feature.properties?.siteName || `Area ${item.index + 1}`}
         </Box>
-        <Box className="feature-size">{feature.properties?.areaHectares || 0} Ha</Box>
+        <Box className="feature-size">{feature.properties?.areaHa || 0} Ha</Box>
         <FormGroup>
           <FormControlLabel
             control={
