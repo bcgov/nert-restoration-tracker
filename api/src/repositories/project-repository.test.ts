@@ -330,7 +330,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.getFundingData(1);
+      const response = await projectRepository.getFundingData(1, false);
 
       expect(response).to.deep.equal(new GetFundingData([]));
     });
@@ -345,7 +345,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.getFundingData(1);
+        await projectRepository.getFundingData(1, false);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -871,7 +871,9 @@ describe('ProjectRepository', () => {
           agency_project_id: 'string',
           funding_amount: 100,
           start_date: 'date',
-          end_date: 'date'
+          end_date: 'date',
+          description: 'string',
+          is_public: true
         },
         1
       );
@@ -898,7 +900,9 @@ describe('ProjectRepository', () => {
             agency_project_id: 'string',
             funding_amount: 100,
             start_date: 'date',
-            end_date: 'date'
+            end_date: 'date',
+            description: 'string',
+            is_public: true
           },
           1
         );
@@ -924,7 +928,9 @@ describe('ProjectRepository', () => {
             agency_project_id: 'string',
             funding_amount: 100,
             start_date: 'date',
-            end_date: 'date'
+            end_date: 'date',
+            description: 'string',
+            is_public: true
           },
           1
         );

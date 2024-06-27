@@ -330,7 +330,7 @@ describe.skip('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.getFundingData(projectId);
+      const result = await projectService.getFundingData(projectId, false);
 
       expect(result).to.deep.include(new projectViewModels.GetFundingData(mockRowObj));
     });
