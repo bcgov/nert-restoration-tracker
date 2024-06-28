@@ -53,13 +53,13 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
     number_sites: '' as unknown as number,
     is_within_overlapping: 'false',
     size_ha: '' as unknown as number,
-    conservationAreas: [{ conservationArea: '' as unknown as string }]
+    conservationAreas: []
   }
 };
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    // region: yup.string().required('Required'),
+    region: yup.string().required('Required'),
     geometry: yup
       .array()
       .min(1, 'You must specify a project boundary')
@@ -71,14 +71,14 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
       .array()
       .of(
         yup.object().shape({
-          conservationArea: yup
-            .string()
-            .max(100, 'Cannot exceed 100 characters')
-            .trim()
-            .required('Please enter a conservation area')
+          conservationArea: yup.string().max(100, 'Cannot exceed 100 characters')
         })
       )
       .isUniqueConservationArea('Conservation area entries must be unique')
+      .isConservationAreasRequired(
+        'is_within_overlapping',
+        'Conservation areas are required when project is within or overlapping a known area of cultural or conservation'
+      )
   })
 });
 
@@ -284,7 +284,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
 
         <Box component="fieldset" mb={4}>
-          <ProjectLocationConservationAreas isOverlapping={values.location.is_within_overlapping} />
+          <ProjectLocationConservationAreas />
         </Box>
 
         <Box mb={4}>

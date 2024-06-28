@@ -6,40 +6,36 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import DollarAmountField from 'components/fields/DollarAmountField';
 import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
-import StartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
 import { IInvestmentActionCategoryOption } from './ProjectFundingForm';
+import StartEndDateFields from 'components/fields/PlanStartEndDateFields';
+import IsPublic from 'components/fields/IsPublic';
 
 export interface IProjectFundingFormArrayItem {
-  id: number;
   agency_id: number;
-  agency_name: string;
   investment_action_category: number;
-  investment_action_category_name: string;
+  description: string;
   agency_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export const ProjectFundingFormArrayItemInitialValues: IProjectFundingFormArrayItem = {
-  id: 0,
   agency_id: '' as unknown as number,
-  agency_name: '',
   investment_action_category: '' as unknown as number,
-  investment_action_category_name: '',
+  description: '',
   agency_project_id: '',
   funding_amount: '' as unknown as number,
   start_date: '',
   end_date: '',
-  revision_count: 0
+  is_public: 'false'
 };
 
 export const ProjectFundingFormArrayItemYupSchema = yup.object().shape({
@@ -48,6 +44,7 @@ export const ProjectFundingFormArrayItemYupSchema = yup.object().shape({
     .transform((value) => (isNaN(value) && null) || value)
     .required('Required'),
   investment_action_category: yup.number().required('Required'),
+  description: yup.string().max(255, 'Cannot exceed 255 characters').nullable().notRequired(),
   agency_project_id: yup.string().max(50, 'Cannot exceed 50 characters').nullable().notRequired(),
   funding_amount: yup
     .number()
@@ -61,7 +58,8 @@ export const ProjectFundingFormArrayItemYupSchema = yup.object().shape({
     .string()
     .isValidDateString()
     .required('Required')
-    .isEndDateAfterStartDate('start_date')
+    .isEndDateAfterStartDate('start_date'),
+  is_public: yup.string().required('Required')
 });
 
 export interface IProjectFundingItemFormProps {
@@ -92,19 +90,16 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
 
   return (
     <form data-testid="funding-item-form" onSubmit={handleSubmit}>
-      <Box component="fieldset">
-        <Typography id="agency_details" component="legend">
-          Agency Details
-        </Typography>
+      <Box component="fieldset" mt={1}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <FormControl variant="outlined" required={true} style={{ width: '100%' }}>
-              <InputLabel id="agency_id-label">Agency Name</InputLabel>
+              <InputLabel id="agency_id-label">Funding Organization Name</InputLabel>
               <Select
                 id="agency_id"
                 name="agency_id"
                 labelId="agency_id-label"
-                label="Agency Name"
+                label="Funding Organization Name"
                 value={values.agency_id}
                 onChange={(event) => {
                   handleChange(event);
@@ -126,8 +121,10 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   }
                 }}
                 error={touched.agency_id && Boolean(errors.agency_id)}
-                displayEmpty
-                inputProps={{ 'aria-label': 'Agency Name', 'data-testid': 'agency-id' }}>
+                inputProps={{
+                  'aria-label': 'Funding Organization Name',
+                  'data-testid': 'agency-id'
+                }}>
                 {props.fundingSources.map((item) => (
                   <MenuItem key={item.value} value={item.value}>
                     {item.label}
@@ -153,7 +150,6 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
                   error={
                     touched.investment_action_category && Boolean(errors.investment_action_category)
                   }
-                  displayEmpty
                   inputProps={{
                     'aria-label': `${investment_action_category_label}`,
                     'data-testid': 'investment_action_category'
@@ -172,13 +168,11 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
             </Grid>
           )}
           <Grid item xs={12}>
+            <CustomTextField name="description" label="Description" />
+          </Grid>
+          <Grid item xs={12}>
             <CustomTextField name="agency_project_id" label="Agency Project ID" />
           </Grid>
-        </Grid>
-      </Box>
-      <Box component="fieldset" mt={5}>
-        <Typography component="legend">Funding Details</Typography>
-        <Grid container spacing={3}>
           <Grid item xs={12}>
             <DollarAmountField
               required={true}
@@ -187,13 +181,23 @@ const ProjectFundingItemForm: React.FC<IProjectFundingItemFormProps> = (props) =
               label="Funding Amount"
             />
           </Grid>
-          <StartEndDateFields
-            formikProps={formikProps}
-            startName={'start_date'}
-            endName={'end_date'}
-            startRequired={true}
-            endRequired={true}
-          />
+          <Grid item xs={12}>
+            <StartEndDateFields
+              formikProps={formikProps}
+              startName={'start_date'}
+              endName={'end_date'}
+              startRequired={true}
+              endRequired={true}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <IsPublic
+              touched={touched.is_public}
+              errors={errors.is_public}
+              values={values.is_public}
+              handleChange={(value: string) => setFieldValue('is_public', value)}
+            />
+          </Grid>
         </Grid>
       </Box>
       <Box mt={4}>

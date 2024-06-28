@@ -11,8 +11,8 @@ describe('ProjectPermits', () => {
       <ProjectAuthorizations
         projectForViewData={{
           ...getProjectForViewResponse,
-          permit: {
-            permits: []
+          authorization: {
+            authorizations: []
           }
         }}
         refresh={mockRefresh}
@@ -22,16 +22,16 @@ describe('ProjectPermits', () => {
     expect(getByTestId('no_authorization_loaded')).toBeVisible();
   });
 
-  it('renders permits data correctly', async () => {
+  it('renders authorizations data correctly', async () => {
     const { getByTestId, getByText } = render(
       <ProjectAuthorizations
         projectForViewData={{
           ...getProjectForViewResponse,
-          permit: {
-            permits: [
+          authorization: {
+            authorizations: [
               {
-                permit_number: '123',
-                permit_type: 'Test Permit Type'
+                authorization_ref: '123',
+                authorization_type: 'Test Permit Type'
               }
             ]
           }

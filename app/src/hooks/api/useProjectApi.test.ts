@@ -2,6 +2,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import {
   ICreateProjectRequest,
+  IEditProjectRequest,
   IGetProjectForViewResponseContact,
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseFundingData,
@@ -17,7 +18,7 @@ import useProjectApi, { usePublicProjectApi } from './useProjectApi';
 import { S3FileType } from 'constants/attachments';
 
 describe('useProjectApi', () => {
-  let mock: any;
+  let mock: MockAdapter;
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
@@ -120,7 +121,13 @@ describe('useProjectApi', () => {
     });
 
     const result = await useProjectApi(axios).addFundingSource(projectId, {
-      funding_source_name: 'funding source name'
+      agency_id: 'funding source name'
+    } as unknown as {
+      agency_id: number;
+      investment_action_category: number;
+      funding_amount: number;
+      start_date: string;
+      end_date: string;
     });
 
     expect(result).toEqual({ id: 1 });
@@ -231,7 +238,7 @@ describe('useProjectApi', () => {
       funding: {} as IGetProjectForViewResponseFundingData,
       partnerships: {} as IGetProjectForViewResponsePartnerships,
       objectives: {} as IGetProjectForViewResponseObjectives
-    };
+    } as unknown as IEditProjectRequest;
 
     const result = await useProjectApi(axios).updateProject(projectId, newProjectData);
 
@@ -240,7 +247,7 @@ describe('useProjectApi', () => {
 });
 
 describe('usePublicProjectApi', () => {
-  let mock: any;
+  let mock: MockAdapter;
 
   beforeEach(() => {
     mock = new MockAdapter(axios);

@@ -5,9 +5,9 @@ export type ProjectObject = {
   species: GetSpeciesData;
   iucn: GetIUCNClassificationData;
   contact: GetContactData;
-  permit: GetPermitData;
-  partnerships: GetPartnershipsData;
-  objectives: GetObjectivesData;
+  authorization: GetAuthorizationData;
+  partnership: GetPartnershipsData;
+  objective: GetObjectivesData;
   funding: GetFundingData;
   location: GetLocationData;
 };
@@ -100,21 +100,21 @@ export class GetSpeciesData {
   }
 }
 
-export interface IGetPermit {
-  permit_number: string;
-  permit_type: string;
+export interface IGetAuthorization {
+  authorization_ref: string;
+  authorization_type: string;
 }
 
-export class GetPermitData {
-  permits: IGetPermit[];
+export class GetAuthorizationData {
+  authorizations: IGetAuthorization[];
 
-  constructor(permitData?: any[]) {
-    this.permits =
-      (permitData?.length &&
-        permitData.map((item: any) => {
+  constructor(authData?: any[]) {
+    this.authorizations =
+      (authData?.length &&
+        authData.map((item: any) => {
           return {
-            permit_number: item.number,
-            permit_type: item.type
+            authorization_ref: item.number,
+            authorization_type: item.type
           };
         })) ||
       [];
@@ -128,7 +128,7 @@ export class GetPartnershipsData {
   partnerships: IGetPartnership[];
 
   constructor(partnerships?: any[]) {
-    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item.partnership)) || [];
+    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item)) || [];
   }
 }
 
@@ -139,11 +139,11 @@ export class GetObjectivesData {
   objectives: IGetObjective[];
 
   constructor(objectives?: any[]) {
-    this.objectives = (objectives?.length && objectives.map((item: any) => item.objective)) || [];
+    this.objectives = (objectives?.length && objectives.map((item: IGetObjective) => item)) || [];
   }
 }
 
-export interface IGetconservationArea {
+export interface IGetConservationArea {
   conservationArea: string;
 }
 
@@ -153,9 +153,9 @@ export class GetLocationData {
   region?: number;
   number_sites?: number;
   size_ha?: number;
-  conservationAreas?: IGetconservationArea[];
+  conservationAreas?: IGetConservationArea[];
 
-  constructor(locationData?: any[], regionData?: any[], conservationAreaData?: any[]) {
+  constructor(locationData?: any[], regionData?: any[], conservationAreaData?: IGetConservationArea[]) {
     const locationDataItem = locationData && locationData.length && locationData[0];
     this.geometry = (locationDataItem?.geojson?.length && locationDataItem.geojson) || [];
     this.is_within_overlapping = locationData && locationData?.length && locationData[0]?.is_within_overlapping;
@@ -191,16 +191,14 @@ export class GetIUCNClassificationData {
 }
 
 interface IGetFundingSource {
-  id: number;
   agency_id: number;
   investment_action_category: number;
-  investment_action_category_name: string;
-  agency_name: string;
+  description: string;
+  agency_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  agency_project_id: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export class GetFundingData {
@@ -211,16 +209,14 @@ export class GetFundingData {
       (fundingData &&
         fundingData.map((item: any) => {
           return {
-            id: item.id,
             agency_id: item.agency_id,
             investment_action_category: item.investment_action_category,
-            investment_action_category_name: item.investment_action_category_name,
-            agency_name: item.agency_name,
+            description: item.description,
+            agency_project_id: item.agency_project_id,
             funding_amount: item.funding_amount,
             start_date: item.start_date,
             end_date: item.end_date,
-            agency_project_id: item.agency_project_id,
-            revision_count: item.revision_count ?? 0
+            is_public: 'false'
           };
         })) ||
       [];

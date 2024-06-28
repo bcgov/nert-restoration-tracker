@@ -54,7 +54,7 @@ GET.apiDoc = {
           schema: {
             title: 'Project get response object, for view purposes',
             type: 'object',
-            required: ['project', 'species', 'permit', 'contact', 'location', 'iucn', 'funding'],
+            required: ['project', 'species', 'authorization', 'contact', 'location', 'iucn', 'funding'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -174,21 +174,21 @@ GET.apiDoc = {
                   }
                 }
               },
-              permit: {
+              authorization: {
                 type: 'object',
-                required: ['permits'],
+                required: ['authorizations'],
                 properties: {
-                  permits: {
+                  authorizations: {
                     type: 'array',
                     items: {
-                      title: 'Project permit',
-                      required: ['permit_number', 'permit_type'],
+                      title: 'Project authorization',
+                      required: ['authorization_ref', 'authorization_type'],
                       type: 'object',
                       properties: {
-                        permit_number: {
+                        authorization_ref: {
                           type: 'string'
                         },
-                        permit_type: {
+                        authorization_type: {
                           type: 'string'
                         }
                       }
@@ -205,21 +205,22 @@ GET.apiDoc = {
                     type: 'array',
                     items: {
                       type: 'object',
-                      required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
+                      required: [
+                        'agency_id',
+                        'funding_amount',
+                        'investment_action_category',
+                        'start_date',
+                        'end_date',
+                        'is_public'
+                      ],
                       properties: {
-                        id: {
-                          type: 'number'
-                        },
                         agency_id: {
                           type: 'number'
                         },
                         investment_action_category: {
                           type: 'number'
                         },
-                        investment_action_category_name: {
-                          type: 'string'
-                        },
-                        agency_name: {
+                        description: {
                           type: 'string'
                         },
                         funding_amount: {
@@ -233,12 +234,9 @@ GET.apiDoc = {
                           oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                           description: 'ISO 8601 date string for the funding end_date'
                         },
-                        agency_project_id: {
+                        is_public: {
                           type: 'string',
-                          nullable: true
-                        },
-                        revision_count: {
-                          type: 'number'
+                          enum: ['true', 'false']
                         }
                       }
                     }
@@ -288,6 +286,17 @@ GET.apiDoc = {
                 type: 'object',
                 required: ['geometry', 'region'],
                 properties: {
+                  conservationAreas: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        conservationArea: {
+                          type: 'string'
+                        }
+                      }
+                    }
+                  },
                   geometry: {
                     type: 'array',
                     items: {

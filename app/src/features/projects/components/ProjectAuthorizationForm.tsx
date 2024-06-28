@@ -51,15 +51,24 @@ export const ProjectAuthorizationFormInitialValues: IProjectAuthorizationForm = 
 
 export const ProjectAuthorizationFormYupSchema = yup.object().shape({
   authorization: yup.object().shape({
-    authorizations: yup.array().of(
-      yup.object().shape({
-        authorization_ref: yup
-          .string()
-          .max(100, 'Cannot exceed 100 characters')
-          .required('Required'),
-        authorization_type: yup.string().required('Required')
-      })
-    )
+    authorizations: yup
+      .array()
+      .of(
+        yup.object().shape({
+          authorization_ref: yup
+            .string()
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
+            .max(100, 'Cannot exceed 100 characters'),
+
+          authorization_type: yup
+            .string()
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
+            .max(100, 'Cannot exceed 100 characters')
+        })
+      )
+      .nullable()
     // .isUniquePermitNumber('Authorization reference must be unique')
   })
 });
@@ -90,82 +99,88 @@ const ProjectAuthorizationForm: React.FC = () => {
         name="authorization.authorizations"
         render={(arrayHelpers) => (
           <>
-            {values.authorization.authorizations?.map((authorization, index) => {
-              const authorizationRefMeta = getFieldMeta(
-                `authorization.authorizations.[${index}].authorization_ref`
-              );
-              const authorizationTypeMeta = getFieldMeta(
-                `authorization.authorizations.[${index}].authorization_type`
-              );
+            {values.authorization &&
+              values.authorization.authorizations &&
+              values.authorization.authorizations?.map((authorization, index) => {
+                const authorizationRefMeta = getFieldMeta(
+                  `authorization.authorizations.[${index}].authorization_ref`
+                );
+                const authorizationTypeMeta = getFieldMeta(
+                  `authorization.authorizations.[${index}].authorization_type`
+                );
 
-              return (
-                /* authorization List List */
-                <Grid container spacing={3} key={index}>
-                  <Grid item xs={12} md={9}>
-                    <List>
-                      <ListItem sx={pageStyles.customListItem}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={6}>
-                            <FormControl fullWidth size="small" required={true} variant="outlined">
-                              <InputLabel id="authorization-type-label">
-                                Authorization Type
-                              </InputLabel>
-                              <Select
-                                id="authorization-type-select"
-                                name={`authorization.authorizations.[${index}].authorization_type`}
-                                labelId="authorization-type-label"
-                                label="Authorization Type"
-                                value={authorization.authorization_type}
-                                onChange={handleChange}
-                                error={
-                                  authorizationTypeMeta.touched &&
-                                  Boolean(authorizationTypeMeta.error)
-                                }
-                                inputProps={{ 'aria-label': 'Authorization Type' }}>
-                                {authorizationTypes.map((authorizationType, index2) => (
-                                  <MenuItem key={index2} value={authorizationType}>
-                                    {authorizationType}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                              <FormHelperText error={true}>
-                                {authorizationTypeMeta.touched && authorizationTypeMeta.error}
-                              </FormHelperText>
-                            </FormControl>
+                return (
+                  /* authorization List List */
+                  <Grid container spacing={3} key={index}>
+                    <Grid item xs={12} md={9}>
+                      <List>
+                        <ListItem sx={pageStyles.customListItem}>
+                          <Grid container spacing={3}>
+                            <Grid item xs={6}>
+                              <FormControl
+                                fullWidth
+                                size="small"
+                                required={true}
+                                variant="outlined">
+                                <InputLabel id="authorization-type-label">
+                                  Authorization Type
+                                </InputLabel>
+                                <Select
+                                  id="authorization-type-select"
+                                  name={`authorization.authorizations.[${index}].authorization_type`}
+                                  labelId="authorization-type-label"
+                                  label="Authorization Type"
+                                  value={authorization.authorization_type}
+                                  onChange={handleChange}
+                                  error={
+                                    authorizationTypeMeta.touched &&
+                                    Boolean(authorizationTypeMeta.error)
+                                  }
+                                  inputProps={{ 'aria-label': 'Authorization Type' }}>
+                                  {authorizationTypes.map((authorizationType, index2) => (
+                                    <MenuItem key={index2} value={authorizationType}>
+                                      {authorizationType}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                <FormHelperText error={true}>
+                                  {authorizationTypeMeta.touched && authorizationTypeMeta.error}
+                                </FormHelperText>
+                              </FormControl>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <CustomTextField
+                                name={`authorization.authorizations.[${index}].authorization_ref`}
+                                label="Authorization Reference"
+                                other={{
+                                  required: true,
+                                  value: authorization.authorization_ref,
+                                  error:
+                                    authorizationRefMeta.touched &&
+                                    Boolean(authorizationRefMeta.error),
+                                  helperText:
+                                    authorizationRefMeta.touched && authorizationRefMeta.error
+                                }}
+                              />
+                            </Grid>
                           </Grid>
-                          <Grid item xs={6}>
-                            <CustomTextField
-                              name={`authorization.authorizations.[${index}].authorization_ref`}
-                              label="Authorization Reference"
-                              other={{
-                                required: true,
-                                value: authorization.authorization_ref,
-                                error:
-                                  authorizationRefMeta.touched &&
-                                  Boolean(authorizationRefMeta.error),
-                                helperText:
-                                  authorizationRefMeta.touched && authorizationRefMeta.error
-                              }}
-                            />
-                          </Grid>
-                        </Grid>
-                        <ListItemSecondaryAction>
-                          <IconButton
-                            color="primary"
-                            data-testid="delete-icon"
-                            aria-label="remove authorization"
-                            onClick={() => arrayHelpers.remove(index)}
-                            edge="end"
-                            size="large">
-                            <Icon path={mdiTrashCanOutline} size={1}></Icon>
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                    </List>
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              color="primary"
+                              data-testid="delete-icon"
+                              aria-label="remove authorization"
+                              onClick={() => arrayHelpers.remove(index)}
+                              edge="end"
+                              size="large">
+                              <Icon path={mdiTrashCanOutline} size={1}></Icon>
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      </List>
+                    </Grid>
                   </Grid>
-                </Grid>
-              );
-            })}
+                );
+              })}
             <Box pt={0.5}>
               <Button
                 type="button"

@@ -47,6 +47,16 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                   {item.agency_project_id}
                 </Typography>
               </div>
+              {item.description && (
+                <div>
+                  <Typography variant="body2" component="dt" color="textSecondary">
+                    Description:
+                  </Typography>
+                  <Typography variant="body2" component="dd">
+                    {item.description}
+                  </Typography>
+                </div>
+              )}
               <div>
                 <Typography variant="body2" component="dt" color="textSecondary">
                   Start Date:

@@ -3,12 +3,13 @@ import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../__mocks__/db';
+import { PutProjectData } from '../models/project-update';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
   GetIUCNClassificationData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData
 } from '../models/project-view';
 import { ProjectRepository } from './project-repository';
@@ -201,7 +202,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('getPermitData', () => {
+  describe('getAuthorizationData', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -216,9 +217,9 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.getPermitData(1);
+      const response = await projectRepository.getAuthorizationData(1);
 
-      expect(response).to.deep.equal(new GetPermitData([]));
+      expect(response).to.deep.equal(new GetAuthorizationData([]));
     });
 
     it('catches errors and throws', async () => {
@@ -231,7 +232,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.getPermitData(1);
+        await projectRepository.getAuthorizationData(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -329,7 +330,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.getFundingData(1);
+      const response = await projectRepository.getFundingData(1, false);
 
       expect(response).to.deep.equal(new GetFundingData([]));
     });
@@ -344,7 +345,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.getFundingData(1);
+        await projectRepository.getFundingData(1, false);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -870,7 +871,9 @@ describe('ProjectRepository', () => {
           agency_project_id: 'string',
           funding_amount: 100,
           start_date: 'date',
-          end_date: 'date'
+          end_date: 'date',
+          description: 'string',
+          is_public: true
         },
         1
       );
@@ -897,7 +900,9 @@ describe('ProjectRepository', () => {
             agency_project_id: 'string',
             funding_amount: 100,
             start_date: 'date',
-            end_date: 'date'
+            end_date: 'date',
+            description: 'string',
+            is_public: true
           },
           1
         );
@@ -923,7 +928,9 @@ describe('ProjectRepository', () => {
             agency_project_id: 'string',
             funding_amount: 100,
             start_date: 'date',
-            end_date: 'date'
+            end_date: 'date',
+            description: 'string',
+            is_public: true
           },
           1
         );
@@ -1045,7 +1052,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertPermit', () => {
+  describe('insertAuthorization', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -1061,7 +1068,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertPermit('string', 'string', 1);
+      const response = await projectRepository.insertAuthorization('string', 'string', 1);
 
       expect(response).to.eql({ permit_id: 1 });
     });
@@ -1078,9 +1085,9 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertPermit('string', 'string', 1);
+        await projectRepository.insertAuthorization('string', 'string', 1);
       } catch (error: any) {
-        expect(error.message).to.equal('Failed to insert permit');
+        expect(error.message).to.equal('Failed to insert permit ("authorization")');
       }
     });
 
@@ -1094,7 +1101,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertPermit('string', 'string', 1);
+        await projectRepository.insertAuthorization('string', 'string', 1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1363,10 +1370,8 @@ describe('ProjectRepository', () => {
       const response = await projectRepository.updateProject(1, {
         name: 'name',
         start_date: 'string-date',
-        end_date: 'string-date',
-        objectives: 'string',
-        revision_count: 1
-      });
+        end_date: 'string-date'
+      } as PutProjectData);
 
       expect(response).to.eql({ project_id: 1 });
     });
@@ -1385,10 +1390,8 @@ describe('ProjectRepository', () => {
         await projectRepository.updateProject(1, {
           name: 'name',
           start_date: 'string-date',
-          end_date: 'string-date',
-          objectives: 'string',
-          revision_count: 1
-        });
+          end_date: 'string-date'
+        } as PutProjectData);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to update project');
       }
@@ -1406,10 +1409,8 @@ describe('ProjectRepository', () => {
         await projectRepository.updateProject(1, {
           name: 'name',
           start_date: 'string-date',
-          end_date: 'string-date',
-          objectives: 'string',
-          revision_count: 1
-        });
+          end_date: 'string-date'
+        } as PutProjectData);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1578,7 +1579,7 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('deleteProjectPermit', () => {
+  describe('deleteProjectAuthorization', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -1593,7 +1594,7 @@ describe('ProjectRepository', () => {
       });
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.deleteProjectPermit(1);
+      const response = await projectRepository.deleteProjectAuthorization(1);
 
       expect(response).to.eql(undefined);
     });
@@ -1609,7 +1610,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.deleteProjectPermit(1);
+        await projectRepository.deleteProjectAuthorization(1);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to delete Project Permit');
       }
@@ -1624,7 +1625,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.deleteProjectPermit(1);
+        await projectRepository.deleteProjectAuthorization(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

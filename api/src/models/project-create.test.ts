@@ -367,7 +367,9 @@ describe('PostFundingSource', () => {
       agency_project_id: 'agency project id',
       funding_amount: 20,
       start_date: '2020/04/04',
-      end_date: '2020/05/05'
+      end_date: '2020/05/05',
+      description: 'description',
+      is_public: 'true'
     };
 
     before(() => {
@@ -538,7 +540,24 @@ describe('PostFundingData', () => {
           agency_project_id: 'agency project id',
           funding_amount: 12,
           start_date: '2020/04/03',
-          end_date: '2020/05/05'
+          end_date: '2020/05/05',
+          description: 'description',
+          is_public: 'true'
+        }
+      ]
+    };
+
+    const objReturn = {
+      fundingSources: [
+        {
+          agency_id: 1,
+          investment_action_category: 1,
+          agency_project_id: 'agency project id',
+          funding_amount: 12,
+          start_date: '2020/04/03',
+          end_date: '2020/05/05',
+          description: 'description',
+          is_public: true
         }
       ]
     };
@@ -548,7 +567,7 @@ describe('PostFundingData', () => {
     });
 
     it('sets funding_sources', () => {
-      expect(data.funding_sources).to.eql(obj.fundingSources);
+      expect(data.funding_sources).to.eql(objReturn.fundingSources);
     });
   });
 });

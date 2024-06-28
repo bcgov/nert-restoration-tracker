@@ -71,7 +71,7 @@ const ProjectObjectivesForm: React.FC = () => {
     <>
       <FieldArray
         name="objective.objectives"
-        render={(arrayHelpers: any) => (
+        render={(arrayHelpers) => (
           <>
             {values.objective.objectives?.map((objective, index) => {
               const objectiveMeta = getFieldMeta(`objective.objectives.[${index}].objective`);

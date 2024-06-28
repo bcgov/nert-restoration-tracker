@@ -40,6 +40,7 @@ export async function seed(knex: Knex): Promise<void> {
         ${insertProjectContactData(projectId)}
         ${insertProjectSpatialData(projectId)}
         ${insertProjectNRMRegionData(projectId)}
+        ${insertProjectObjectiveData(projectId)}
       `);
     }
   }
@@ -77,7 +78,9 @@ const checkAnyProjectExists = () => `
   SELECT
     project_id
   FROM
-    project;
+    project
+  WHERE
+    is_project = true;
 `;
 
 const getInsertUserInfo = (userIdentifier: string) => `
@@ -124,8 +127,8 @@ const insertProjectSpatialData = (projectId: number) => `
     is_within_overlapping,
     number_sites,
     size_ha,
-    geojson,
-    geography
+    geography,
+    geojson
   ) VALUES (
     ${projectId},
     (SELECT project_spatial_component_type_id from project_spatial_component_type WHERE name = 'Boundary'),
@@ -133,121 +136,40 @@ const insertProjectSpatialData = (projectId: number) => `
     'N',
     1,
     100,
-    '{
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
+    'POLYGON ((-121.904297 50.930738, -121.904297 51.971346, -120.19043 51.971346, -120.19043 50.930738, -121.904297 50.930738))',
+    '[
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
             [
-              -124.02326844801064,
-              58.21576618631002
-            ],
-            [
-              -124.59574232852532,
-              58.30564107574736
-            ],
-            [
-              -125.64529166758705,
-              57.84206861781087
-            ],
-            [
-              -125.31624816418848,
-              57.13477061095344
-            ],
-            [
-              -125.0889676390496,
-              56.801625935629886
-            ],
-            [
-              -124.07005384826604,
-              55.792738316850574
-            ],
-            [
-              -123.58473473535227,
-              55.98640773478431
-            ],
-            [
-              -123.13032137577162,
-              56.33110164809847
-            ],
-            [
-              -123.36579661119214,
-              57.1219196332043
-            ],
-            [
-              -123.42801859617094,
-              57.54067623435009
-            ],
-            [
-              -124.02326844801064,
-              58.21576618631002
+              [
+                -121.904297,
+                50.930738
+              ],
+              [
+                -121.904297,
+                51.971346
+              ],
+              [
+                -120.19043,
+                51.971346
+              ],
+              [
+                -120.19043,
+                50.930738
+              ],
+              [
+                -121.904297,
+                50.930738
+              ]
             ]
           ]
-        ]
-      },
-      "properties": {}
-    }',
-    public.geography(
-      public.ST_Force2D(
-        public.ST_SetSRID(
-          public.ST_Force2D(public.ST_GeomFromGeoJSON('
-            {
-                "type": "Polygon",
-                "coordinates": [
-                  [
-                    [
-                      -124.02326844801064,
-                      58.21576618631002
-                    ],
-                    [
-                      -124.59574232852532,
-                      58.30564107574736
-                    ],
-                    [
-                      -125.64529166758705,
-                      57.84206861781087
-                    ],
-                    [
-                      -125.31624816418848,
-                      57.13477061095344
-                    ],
-                    [
-                      -125.0889676390496,
-                      56.801625935629886
-                    ],
-                    [
-                      -124.07005384826604,
-                      55.792738316850574
-                    ],
-                    [
-                      -123.58473473535227,
-                      55.98640773478431
-                    ],
-                    [
-                      -123.13032137577162,
-                      56.33110164809847
-                    ],
-                    [
-                      -123.36579661119214,
-                      57.1219196332043
-                    ],
-                    [
-                      -123.42801859617094,
-                      57.54067623435009
-                    ],
-                    [
-                      -124.02326844801064,
-                      58.21576618631002
-                    ]
-                  ]
-                ]
-              }
-          ')
-          ), 4326
-        )
-      )
-    )
+        },
+        "properties": {}
+      }
+    ]'
   )
   RETURNING
   project_spatial_component_id
@@ -258,6 +180,14 @@ const insertProjectContactData = (projectId: number) => `
     project_id, contact_type_id, first_name, last_name, organization, email_address, phone_number, is_public, is_primary
   ) VALUES (
     ${projectId}, 1, 'John', 'Doe', 'Ministry of Forests', 'john@email.com', '250-555-5555', 'Y', 'Y'
+  );
+`;
+
+const insertProjectObjectiveData = (projectId: number) => `
+  INSERT INTO objective (
+    project_id, objective
+  ) VALUES (
+    ${projectId}, $$${faker.lorem.sentences(3)}$$
   );
 `;
 

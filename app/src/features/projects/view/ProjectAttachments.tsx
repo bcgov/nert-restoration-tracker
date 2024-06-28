@@ -35,13 +35,12 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
-    return (file, cancelToken, handleFileUploadProgress) => {
+    return (file, cancelToken) => {
       return restorationTrackerApi.project.uploadProjectAttachments(
         projectId,
         file,
         S3FileType.ATTACHMENTS,
-        cancelToken,
-        handleFileUploadProgress
+        cancelToken
       );
     };
   };

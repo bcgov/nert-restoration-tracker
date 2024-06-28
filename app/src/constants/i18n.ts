@@ -112,7 +112,7 @@ export const EditObservationI18N = {
 };
 
 export const AddFundingI18N = {
-  addTitle: 'Add Funding Source',
+  addTitle: 'Funding Details',
   addErrorTitle: 'Error Adding Funding Source',
   addErrorText:
     'An error has occurred while attempting to add your funding source details, please try again. If the error persists, please contact your system administrator.'

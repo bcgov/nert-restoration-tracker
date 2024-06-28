@@ -930,6 +930,8 @@ CREATE TABLE project_funding_source(
     funding_amount                   money             NOT NULL,
     funding_start_date               date              NOT NULL,
     funding_end_date                 date              NOT NULL,
+    description                      varchar(3000),
+    is_public                        boolean           DEFAULT false,
     create_date                      timestamptz(6)    DEFAULT now() NOT NULL,
     create_user                      integer           NOT NULL,
     update_date                      timestamptz(6),
@@ -954,6 +956,10 @@ COMMENT ON COLUMN project_funding_source.funding_amount IS 'Funding amount from 
 COMMENT ON COLUMN project_funding_source.funding_start_date IS 'Start date for funding from the source.'
 ;
 COMMENT ON COLUMN project_funding_source.funding_end_date IS 'End date for funding from the source.'
+;
+COMMENT ON COLUMN project_funding_source.description IS 'The description of the record.'
+;
+COMMENT ON COLUMN project_funding_source.is_public IS 'Indicates whether the funding source is public or not.'
 ;
 COMMENT ON COLUMN project_funding_source.create_date IS 'The datetime the record was created.'
 ;

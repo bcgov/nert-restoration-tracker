@@ -39,7 +39,7 @@ export const getFocusLabelFromCode = (focusCode: number) => {
   );
 };
 
-export const getFocusCodeFromLabel = (focusLabel: string) => {
+export const getFocusCodeFromLabel = (focusLabel: string): number => {
   return (
     {
       [focus.HEALING_THE_LAND]: 1,

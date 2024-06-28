@@ -131,7 +131,6 @@ const EditPlanPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history(`/admin/plans/${projectId}`);
   };
 
   const defaultErrorDialogProps = {
@@ -146,7 +145,7 @@ const EditPlanPage: React.FC = () => {
   const defaultCancelDialogProps = {
     dialogTitle: EditProjectI18N.cancelTitle,
     dialogText: EditProjectI18N.cancelText,
-    open: false,
+    open: true,
     onClose: () => {
       dialogContext.setYesNoDialog({ open: false });
     },

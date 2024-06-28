@@ -12,7 +12,7 @@ import yup from 'utils/YupSchema';
 
 export interface IProjectFocusForm {
   focus: {
-    focuses: IMultiAutocompleteFieldOption[];
+    focuses: IMultiAutocompleteFieldOption[] | number[];
     people_involved: number | null;
   };
 }
@@ -41,6 +41,7 @@ export const ProjectFocusFormYupSchema = yup.object().shape({
 const ProjectFocusForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectFocusForm>();
   const { values } = formikProps;
+
   return (
     <>
       <Typography component="legend">Healing the Land and/or People</Typography>
@@ -62,9 +63,8 @@ const ProjectFocusForm: React.FC = () => {
                   name="focus.people_involved"
                   label="Number of People Involved"
                   required={
-                    values.focus.focuses &&
+                    values.focus &&
                     values.focus.focuses.some((values) => {
-                      // @ts-ignore
                       return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
                     })
                       ? true

@@ -393,6 +393,8 @@ export class PostFundingSource {
   funding_amount: number;
   start_date: string;
   end_date: string;
+  description: string;
+  is_public: boolean;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostFundingSource', message: 'params', obj });
@@ -403,6 +405,8 @@ export class PostFundingSource {
     this.funding_amount = obj?.funding_amount || null;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;
+    this.description = obj?.description || null;
+    this.is_public = obj?.is_public === 'true' ? true : false;
   }
 }
 

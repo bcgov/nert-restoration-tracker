@@ -6,7 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { RedirectURL } from 'utils/AppRoutesUtils';
 import ProjectsPlansListPage from '../projects/ProjectsPlansListPage';
 import CreatePlanPage from './create/CreatePlanPage';
-import EditPlanPage from './edit/EditProjectPage';
+import EditPlanPage from './edit/EditPlanPage';
 import ViewPlanPage from './view/ViewPlanPage';
 import PlanParticipantsPage from './participants/PlanParticipantsPage';
 

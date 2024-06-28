@@ -99,103 +99,18 @@ export interface ICreateProjectRequest
     IProjectRestorationPlanForm,
     IProjectLocationForm {}
 
-export enum UPDATE_GET_ENTITIES {
-  contact = 'contact',
-  permit = 'permit',
-  project = 'project',
-  objectives = 'objectives',
-  location = 'location',
-  iucn = 'iucn',
-  funding = 'funding',
-  partnerships = 'partnerships'
-}
-
-/**
- * An interface for a single instance of project metadata, for update-only use cases.
- *
- * @export
- * @interface IGetProjectForUpdateResponse
- */
-export interface IGetProjectForUpdateResponse {
-  project?: IGetGeneralInformationForUpdateResponseDetails;
-  permit?: IGetProjectForUpdateResponsePermit;
-  location?: IGetProjectForUpdateResponseLocation;
-  contact?: IGetProjectForUpdateResponseContact;
-  iucn?: IGetProjectForUpdateResponseIUCN;
-  funding?: IGetProjectForUpdateResponseFundingData;
-  partnerships?: IGetProjectForUpdateResponsePartnerships;
-  objectives?: IGetProjectForUpdateResponseObjectives;
-}
-
-export interface IGetGeneralInformationForUpdateResponseDetails {
-  project_name: string;
-  start_date: string;
-  end_date: string;
-  objectives: string;
-  revision_count: number;
-}
-
-interface IGetProjectForUpdateResponsePermitArrayItem {
-  permit_number: string;
-  permit_type: string;
-}
-
-export interface IGetProjectForUpdateResponsePermit {
-  permits: IGetProjectForUpdateResponsePermitArrayItem[];
-}
-
-export interface IGetProjectForUpdateResponseLocation {
-  geometry: Feature[];
-  priority: string;
-  revision_count: number;
-}
-
-export interface IGetProjectForUpdateResponseContactArrayItem {
-  first_name: string;
-  last_name: string;
-  email_address: string;
-  agency: string;
-  is_public: string;
-  is_primary: string;
-}
-
-export interface IGetProjectForUpdateResponseContact {
-  contacts: IGetProjectForUpdateResponseContactArrayItem[];
-}
-
-interface IGetProjectForUpdateResponseIUCNArrayItem {
-  classification: number;
-  subClassification1: number;
-  subClassification2: number;
-}
-
-export interface IGetProjectForUpdateResponseIUCN {
-  classificationDetails: IGetProjectForUpdateResponseIUCNArrayItem[];
-}
-
-interface IGetProjectForUpdateResponseFundingSource {
-  id: number;
-  agency_id: number;
-  investment_action_category: number;
-  investment_action_category_name: string;
-  agency_project_id: string;
-  funding_amount: number;
-  start_date: string;
-  end_date: string;
-  revision_count: number;
-}
-
-export interface IGetProjectForUpdateResponseFundingData {
-  fundingSources: IGetProjectForUpdateResponseFundingSource[];
-}
-
-export interface IGetProjectForUpdateResponsePartnerships {
-  partnerships: string[];
-}
-
-export interface IGetProjectForUpdateResponseObjectives {
-  objectives: string[];
-}
+export interface IEditProjectRequest
+  extends IProjectGeneralInformationForm,
+    IProjectObjectivesForm,
+    IProjectFocusForm,
+    IProjectAuthorizationForm,
+    IProjectContactForm,
+    IProjectWildlifeForm,
+    IProjectAuthorizationForm,
+    IProjectFundingForm,
+    IProjectPartnershipsForm,
+    IProjectRestorationPlanForm,
+    IProjectLocationForm {}
 
 export interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
@@ -212,18 +127,30 @@ export interface IProjectsListProps {
 export interface IGetProjectForViewResponse {
   project: IGetProjectForViewResponseDetails;
   species: IGetProjectForViewResponseSpecies;
-  permit: IGetProjectForViewResponsePermit;
+  authorization: IGetProjectForViewResponseAuthorization;
   location: IGetProjectForViewResponseLocation;
   contact: IGetProjectForViewResponseContact;
   iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
-  partnerships: IGetProjectForViewResponsePartnerships;
-  objectives: IGetProjectForViewResponseObjectives;
+  partnership: IGetProjectForViewResponsePartnerships;
+  objective: IGetProjectForViewResponseObjectives;
+}
+
+export interface IGetProjectForEditResponse {
+  project: IGetProjectForEditResponseDetails;
+  objective: IGetProjectForViewResponseObjectives;
+  focus: { focuses: number[]; people_involved: number };
+  contact: IGetProjectForViewResponseContact;
+  species: IGetProjectForViewResponseSpecies;
+  location: IGetProjectForViewResponseLocation;
+  authorization: IGetProjectForViewResponseAuthorization;
+  iucn: IGetProjectForViewResponseIUCN;
+  funding: IGetProjectForViewResponseFundingData;
+  partnership: IGetProjectForViewResponsePartnerships;
+  restoration_plan: { is_project_part_public_plan: boolean };
 }
 
 export interface IGetProjectForViewResponseDetails {
-  plan: any;
-  project: any;
   state_code: number;
   is_project: boolean;
   project_id: number;
@@ -244,8 +171,6 @@ export interface IGetProjectForViewResponseDetails {
 }
 
 export interface IGetProjectForEditResponseDetails {
-  plan: any;
-  project: any;
   state_code: number;
   is_project: boolean;
   project_id: number;
@@ -282,7 +207,7 @@ export interface IGetProjectForViewResponsePermit {
 }
 
 export interface IGetProjectForViewResponseConservationAreas {
-  conservationAreas: string;
+  conservationArea: string;
 }
 
 export interface IGetProjectForViewResponseLocation {
@@ -319,30 +244,34 @@ export interface IGetProjectForViewResponseIUCN {
 }
 
 interface IGetProjectForViewResponseFundingSource {
-  id: number;
   agency_id: number;
-  agency_name: string;
   investment_action_category: number;
-  investment_action_category_name: string;
+  description: string;
+  agency_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  agency_project_id: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export interface IGetProjectForViewResponseFundingData {
   fundingSources: IGetProjectForViewResponseFundingSource[];
 }
 
+export interface IGetProjectForViewResponsePartnershipsArrayItem {
+  partnership: string;
+}
 export interface IGetProjectForViewResponsePartnerships {
-  partnerships: string[];
+  partnerships: IGetProjectForViewResponsePartnershipsArrayItem[];
 }
 
 export interface IGetProjectForViewResponseObjectives {
-  objectives: string[];
+  objectives: { objective: string }[];
 }
 
+export interface IGetProjectForViewResponseAuthorization {
+  authorizations: { authorization_ref: string; authorization_type: string }[];
+}
 /**
  * A single media item.
  *

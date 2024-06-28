@@ -224,4 +224,29 @@ yup.addMethod(yup.array, 'isUniqueObjective', function (message: string) {
   });
 });
 
+yup.addMethod(
+  yup.array,
+  'isConservationAreasRequired',
+  function (booleanName: string, message: string) {
+    return this.test('is-conservation-areas-required', message, function (value) {
+      if (!value) {
+        return false;
+      }
+
+      if (this.parent[booleanName] === 'false') {
+        return true;
+      }
+
+      if (value.length > 0) {
+        return value.every((data: { conservationArea: string }) => {
+          if (!data.conservationArea) {
+            return false;
+          }
+          return data.conservationArea !== '';
+        });
+      }
+    });
+  }
+);
+
 export default yup;
