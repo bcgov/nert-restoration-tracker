@@ -40,11 +40,7 @@ describe.skip('ProjectsListPage', () => {
           permits: [{ permit_number: 1 }, { permit_number: 2 }, { permit_number: 3 }]
         },
         contact: {
-          contacts: [
-            {
-              coordinator_agency: 'contact agency'
-            }
-          ]
+          contacts: []
         }
       } as unknown as IGetProjectForViewResponse
     ];
@@ -80,11 +76,7 @@ describe.skip('ProjectsListPage', () => {
           permits: [{ permit_number: 1 }, { permit_number: 2 }, { permit_number: 3 }]
         },
         contact: {
-          contacts: [
-            {
-              coordinator_agency: 'contact agency'
-            }
-          ]
+          contacts: []
         }
       } as unknown as IGetProjectForViewResponse
     ];
@@ -94,7 +86,6 @@ describe.skip('ProjectsListPage', () => {
         name: 'draft name',
         start_date: '2022-02-09',
         end_date: '2022-02-09',
-        coordinator_agency: 'string',
         permits_list: 'string',
         completion_status: 'Draft',
         is_project: true
@@ -140,11 +131,7 @@ describe.skip('ProjectsListPage', () => {
           permits: [{ permit_number: 1 }, { permit_number: 2 }, { permit_number: 3 }]
         },
         contact: {
-          contacts: [
-            {
-              coordinator_agency: 'contact agency'
-            }
-          ]
+          contacts: []
         }
       } as unknown as IGetProjectForViewResponse
     ];
@@ -182,7 +169,6 @@ describe.skip('ProjectsListPage', () => {
         name: 'draft name',
         start_date: '2022-02-09',
         end_date: '2022-02-09',
-        coordinator_agency: 'string',
         permits_list: 'string',
         completion_status: 'Draft',
         is_project: true

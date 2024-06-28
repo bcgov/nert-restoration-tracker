@@ -1,25 +1,10 @@
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import ThumbnailImageCard from 'components/attachments/ThumbnailImageCard';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-
-const pageStyles = {
-  conservationAreChip: {
-    marginBottom: '2px',
-    justifyContent: 'left'
-  },
-  conservAreaLabel: {
-    color: '#545454',
-    fontSize: '0.78rem',
-    fontWeight: 500,
-    textTransform: 'none',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  }
-};
+import ProjectConservationAreas from './ProjectConservationAreas';
 
 export interface IProjectDetails {
   project: IGetProjectForViewResponse;
@@ -33,14 +18,6 @@ export interface IProjectDetails {
  */
 const ProjectDetails: React.FC<IProjectDetails> = (props) => {
   const { project, thumbnailImageUrl } = props;
-
-  const conservationAreaStyled = (conservationArea: string) => {
-    return (
-      <Typography sx={pageStyles.conservAreaLabel} aria-label={`${conservationArea}`}>
-        {conservationArea}
-      </Typography>
-    );
-  };
 
   return (
     <Grid container spacing={2}>
@@ -127,18 +104,11 @@ const ProjectDetails: React.FC<IProjectDetails> = (props) => {
                   ? 'Yes'
                   : 'No'}
             </Typography>
-            {project.location.is_within_overlapping === 'Y' &&
-              project.location.conservationAreas &&
-              project.location.conservationAreas.map(
-                (data: { conservationArea: string }, index) => (
-                  <Chip
-                    key={index}
-                    size="small"
-                    sx={pageStyles.conservationAreChip}
-                    label={conservationAreaStyled(data.conservationArea)}
-                  />
-                )
-              )}
+            {project.location.is_within_overlapping === 'Y' && (
+              <Box ml={1} display="flex" flexDirection={'column'} alignItems="left">
+                <ProjectConservationAreas projectViewData={project} />
+              </Box>
+            )}
           </Box>
         </Box>
       </Grid>

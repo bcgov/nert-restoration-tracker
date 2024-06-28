@@ -62,8 +62,6 @@ const pageStyles = {
 
 export const PlanAdvancedFiltersInitialValues: IPlanAdvancedFilters = {
   keyword: '',
-  contact_agency: '',
-  funding_agency: [],
   permit_number: '',
   start_date: '',
   end_date: '',
@@ -74,8 +72,6 @@ export const PlanAdvancedFiltersInitialValues: IPlanAdvancedFilters = {
 
 export interface IPlanAdvancedFilters {
   keyword?: string;
-  contact_agency?: string | string[];
-  funding_agency?: number | number[];
   permit_number?: string;
   start_date?: string;
   end_date?: string;
@@ -86,8 +82,6 @@ export interface IPlanAdvancedFilters {
 
 export const PlanAdvancedFiltersKeyLabels = {
   keyword: { label: 'Keyword' },
-  contact_agency: { label: 'Plan name' },
-  funding_agency: { label: 'Funding Agency', codeSet: 'funding_agency' },
   permit_number: { label: 'Permit Number' },
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
@@ -98,8 +92,6 @@ export const PlanAdvancedFiltersKeyLabels = {
 
 export interface IPlanAdvancedFiltersProps {
   filterChipParams: IPlanAdvancedFilters;
-  contact_agency: string[];
-  funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
   status: IMultiAutocompleteFieldOption[];
   focus: IMultiAutocompleteFieldOption[];
@@ -111,7 +103,7 @@ export interface IPlanAdvancedFiltersProps {
  * @return {*}
  */
 const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
-  const { filterChipParams, contact_agency, funding_agency, region, status, focus } = props;
+  const { filterChipParams, region, status, focus } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [isFiltersChipsOpen, setIsFiltersChipsOpen] = useState(false);
@@ -173,10 +165,6 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
   };
 
   const getChipLabel = (key: string, value: string) => {
-    if (!funding_agency?.entries) {
-      return '';
-    }
-
     const filterKeyLabel = PlanAdvancedFiltersKeyLabels[key].label;
     let filterValueLabel = '';
 
@@ -298,13 +286,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
 
           {isAdvancedFiltersOpen && (
             <Box my={5}>
-              <PlanAdvancedFilters
-                contact_agency={contact_agency}
-                funding_agency={funding_agency}
-                region={region}
-                status={status}
-                focus={focus}
-              />
+              <PlanAdvancedFilters region={region} status={status} focus={focus} />
 
               <Box textAlign="right" mt={3}>
                 <Button

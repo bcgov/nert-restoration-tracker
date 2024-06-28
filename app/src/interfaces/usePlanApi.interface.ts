@@ -13,8 +13,6 @@ import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocomple
 // [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
   keyword?: string;
-  contact_agency?: string | string[];
-  funding_agency?: number | number[];
   permit_number?: string;
   species?: number | number[];
   start_date?: string;

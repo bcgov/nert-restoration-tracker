@@ -3,7 +3,6 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../__mocks__/db';
-import { coordinator_agency } from '../constants/codes';
 import { CodeRepository } from '../repositories/code-repository';
 import { CodeService } from './code-service';
 
@@ -44,7 +43,6 @@ describe('CodeService', () => {
         'first_nations',
         'funding_source',
         'investment_action_category',
-        'coordinator_agency',
         'iucn_conservation_action_level_1_classification',
         'iucn_conservation_action_level_2_subclassification',
         'iucn_conservation_action_level_3_subclassification',
@@ -59,7 +57,6 @@ describe('CodeService', () => {
       expect(response.first_nations).to.eql(queryReturn);
       expect(response.funding_source).to.eql(queryReturn);
       expect(response.investment_action_category).to.eql(queryReturn);
-      expect(response.coordinator_agency).to.eql(coordinator_agency);
       expect(response.iucn_conservation_action_level_1_classification).to.eql(queryReturn);
       expect(response.iucn_conservation_action_level_2_subclassification).to.eql(queryReturn);
       expect(response.iucn_conservation_action_level_3_subclassification).to.eql(queryReturn);
@@ -92,7 +89,6 @@ describe('CodeService', () => {
         'first_nations',
         'funding_source',
         'investment_action_category',
-        'coordinator_agency',
         'iucn_conservation_action_level_1_classification',
         'iucn_conservation_action_level_2_subclassification',
         'iucn_conservation_action_level_3_subclassification',
@@ -104,7 +100,6 @@ describe('CodeService', () => {
       expect(response.first_nations).to.eql([]);
       expect(response.funding_source).to.eql([]);
       expect(response.investment_action_category).to.eql([]);
-      expect(response.coordinator_agency).to.eql(coordinator_agency);
       expect(response.iucn_conservation_action_level_1_classification).to.eql([]);
       expect(response.iucn_conservation_action_level_2_subclassification).to.eql([]);
       expect(response.iucn_conservation_action_level_3_subclassification).to.eql([]);

@@ -280,28 +280,18 @@ PUT.apiDoc = {
                 fundingSources: {
                   type: 'array',
                   items: {
-                    title: 'Project funding agency',
+                    title: 'Project funding organization',
                     type: 'object',
-                    required: [
-                      'agency_id',
-                      'funding_amount',
-                      'investment_action_category',
-                      'start_date',
-                      'end_date',
-                      'is_public'
-                    ],
+                    required: ['organization_name', 'funding_amount', 'is_public'],
                     properties: {
-                      agency_id: {
-                        type: 'number'
-                      },
-                      investment_action_category: {
-                        type: 'number'
+                      organization_name: {
+                        type: 'string'
                       },
                       description: {
                         type: 'string',
                         nullable: true
                       },
-                      agency_project_id: {
+                      funding_project_id: {
                         type: 'string'
                       },
                       funding_amount: {
@@ -309,11 +299,13 @@ PUT.apiDoc = {
                       },
                       start_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
                       },
                       end_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
                       },
                       is_public: {
                         type: 'string',
@@ -627,42 +619,39 @@ GET.apiDoc = {
                 }
               },
               funding: {
-                description: 'The project funding details',
+                title: 'Project funding sources',
                 type: 'object',
                 required: ['fundingSources'],
                 properties: {
                   fundingSources: {
                     type: 'array',
                     items: {
+                      title: 'Project funding organization',
                       type: 'object',
-                      required: [
-                        'agency_id',
-                        'funding_amount',
-                        'investment_action_category',
-                        'start_date',
-                        'end_date',
-                        'is_public'
-                      ],
+                      required: ['organization_name', 'funding_amount', 'is_public'],
                       properties: {
-                        agency_id: {
-                          type: 'number'
-                        },
-                        investment_action_category: {
-                          type: 'number'
+                        organization_name: {
+                          type: 'string'
                         },
                         description: {
+                          type: 'string',
+                          nullable: true
+                        },
+                        funding_project_id: {
                           type: 'string'
                         },
                         funding_amount: {
                           type: 'number'
                         },
                         start_date: {
-                          oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                          description: 'ISO 8601 date string for the funding start date'
+                          type: 'string',
+                          description: 'ISO 8601 date string',
+                          nullable: true
                         },
                         end_date: {
-                          oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                          description: 'ISO 8601 date string for the funding end_date'
+                          type: 'string',
+                          description: 'ISO 8601 date string',
+                          nullable: true
                         },
                         is_public: {
                           type: 'string',

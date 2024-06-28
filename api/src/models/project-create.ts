@@ -379,7 +379,7 @@ export class PostIUCNData {
 }
 
 /**
- * A single project funding agency.
+ * A single project funding organization.
  *
  * @See PostFundingData
  *
@@ -387,21 +387,19 @@ export class PostIUCNData {
  * @class PostFundingSource
  */
 export class PostFundingSource {
-  agency_id: number;
-  investment_action_category: number;
-  agency_project_id: string;
+  organization_name: string;
+  description: string;
+  funding_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  description: string;
   is_public: boolean;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostFundingSource', message: 'params', obj });
 
-    this.agency_id = obj?.agency_id || null;
-    this.investment_action_category = obj?.investment_action_category || null;
-    this.agency_project_id = obj?.agency_project_id || null;
+    this.organization_name = obj?.organization_name || null;
+    this.funding_project_id = obj?.funding_project_id || null;
     this.funding_amount = obj?.funding_amount || null;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;

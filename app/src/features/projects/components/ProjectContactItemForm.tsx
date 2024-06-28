@@ -3,7 +3,6 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
 import CustomTextField from 'components/fields/CustomTextField';
 import IsPublic from 'components/fields/IsPublic';
 import { useFormikContext } from 'formik';
@@ -47,10 +46,6 @@ export const ProjectContactItemYupSchema = yup.object().shape({
   is_primary: yup.string().required('Required')
 });
 
-export interface IProjectContactItemFormProps {
-  organization: string[];
-}
-
 /*
  * A modal form for a single project contact.
  *
@@ -58,7 +53,7 @@ export interface IProjectContactItemFormProps {
  *
  * @return {*}
  */
-const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) => {
+const ProjectContactItemForm: React.FC = () => {
   const { values, touched, errors, setFieldValue, handleChange } =
     useFormikContext<IProjectContactItemForm>();
 
@@ -102,12 +97,12 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
             <CustomTextField name="phone_number" label="Phone Number" />
           </Grid>
           <Grid item xs={12} md={6}>
-            <AutocompleteFreeSoloField
-              id="organization"
+            <CustomTextField
               name="organization"
               label="Organization"
-              options={props.organization}
-              required={true}
+              other={{
+                required: true
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>

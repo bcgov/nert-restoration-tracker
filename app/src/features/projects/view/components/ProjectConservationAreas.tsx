@@ -45,13 +45,13 @@ const ProjectConservationAreas: React.FC<IProjectConservationAreasProps> = (prop
   return (
     <>
       {hasConservationAreas &&
-        location.conservationAreas.map((item: any, index) => (
+        location.conservationAreas.map((item: { conservationArea: string }, index) => (
           <Chip
             key={index}
             data-testid="conservationArea_item"
             size="small"
             sx={pageStyles.conservationAreaChip}
-            label={conservationAreaStyled(item.conservation_area)}
+            label={conservationAreaStyled(item.conservationArea)}
           />
         ))}
 

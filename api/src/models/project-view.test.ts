@@ -445,14 +445,13 @@ describe('GetFundingData', () => {
 
     const fundingDataObj = [
       {
-        agency_id: '1',
-        agency_project_id: 'Agency123',
-        investment_action_category: 'Investment',
+        organization_name: 'name',
+        description: 'description',
+        funding_project_id: 'Agency123',
+        funding_amount: 123,
         start_date: '01/01/2020',
         end_date: '01/01/2021',
-        funding_amount: 123,
-        is_public: 'false',
-        description: 'description'
+        is_public: 'false'
       }
     ];
 

@@ -3,9 +3,30 @@
  * - See types/yup.d.ts
  */
 
+import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { focus, getFocusCodeFromLabel } from 'constants/misc';
 import dayjs from 'dayjs';
 import * as yup from 'yup';
+
+yup.addMethod(yup.number, 'isNumberOfPeopleInvolvedRequired', function (message: string) {
+  return this.test('is-number-of-people-involved-required', message, function (value) {
+    if (this.parent.focuses) {
+      const isPeople = this.parent.focuses.some(
+        (values: number | IMultiAutocompleteFieldOption) => {
+          return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
+        }
+      )
+        ? true
+        : false;
+
+      if (isPeople) {
+        return value !== null;
+      }
+      return true;
+    }
+  });
+});
 
 yup.addMethod(yup.array, 'isUniquePermitNumber', function (message: string) {
   return this.test('is-unique-permit-number', message, (values) => {
@@ -229,21 +250,22 @@ yup.addMethod(
   'isConservationAreasRequired',
   function (booleanName: string, message: string) {
     return this.test('is-conservation-areas-required', message, function (value) {
-      if (!value) {
-        return false;
-      }
-
       if (this.parent[booleanName] === 'false') {
         return true;
       }
 
-      if (value.length > 0) {
-        return value.every((data: { conservationArea: string }) => {
+      if (value && value.length > 0) {
+        return value.some((data) => {
           if (!data.conservationArea) {
             return false;
           }
+
           return data.conservationArea !== '';
         });
+      }
+
+      if (!value) {
+        return false;
       }
     });
   }

@@ -46,11 +46,6 @@ export interface IInvestmentActionCategoryOption extends IMultiAutocompleteField
   fs_id: number;
 }
 
-export interface IProjectFundingFormProps {
-  fundingSources: IMultiAutocompleteFieldOption[];
-  investment_action_category: IInvestmentActionCategoryOption[];
-}
-
 const pageStyles = {
   title: {
     flexGrow: 1,
@@ -85,7 +80,7 @@ const pageStyles = {
  *
  * @return {*}
  */
-const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
+const ProjectFundingForm: React.FC = () => {
   const { values } = useFormikContext<IProjectFundingForm>();
 
   // Tracks information about the current funding source item that is being added/edited
@@ -115,12 +110,7 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                 dialogTitle={AddFundingI18N.addTitle}
                 open={isModalOpen}
                 component={{
-                  element: (
-                    <ProjectFundingItemForm
-                      fundingSources={props.fundingSources}
-                      investment_action_category={props.investment_action_category}
-                    />
-                  ),
+                  element: <ProjectFundingItemForm />,
                   initialValues: currentProjectFundingFormArrayItem.values,
                   validationSchema: ProjectFundingFormArrayItemYupSchema
                 }}
@@ -157,24 +147,14 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                   </ListItem>
                 )}
                 {values.funding.fundingSources.map((fundingSource, index) => {
-                  const investment_action_category_label =
-                    (fundingSource.agency_id === 1 && 'Investment Action') ||
-                    (fundingSource.agency_id === 2 && 'Investment Category') ||
-                    null;
-
-                  const investment_action_category_value = props.investment_action_category.filter(
-                    (item) => item.value === fundingSource.investment_action_category
-                  )?.[0]?.label;
-
                   return (
                     <ListItem dense sx={pageStyles.fundingListItem} key={index}>
                       <Paper sx={pageStyles.fundingListItemInner}>
                         <Toolbar sx={pageStyles.fundingListItemToolbar}>
                           <Typography sx={pageStyles.title}>
-                            {getCodeValueNameByID(props.fundingSources, fundingSource.agency_id)}
-                            {investment_action_category_label && (
+                            {fundingSource.organization_name && (
                               <span style={pageStyles.titleDesc}>
-                                ({investment_action_category_value})
+                                ({fundingSource.organization_name})
                               </span>
                             )}
                           </Typography>
@@ -209,10 +189,10 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                           <Grid container spacing={2}>
                             <Grid item xs={12} sm={6} md={4}>
                               <Typography variant="body2" color="textSecondary">
-                                Agency Project ID
+                                Funding Project ID
                               </Typography>
                               <Typography variant="body1">
-                                {fundingSource.agency_project_id}
+                                {fundingSource.funding_project_id}
                               </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>

@@ -231,9 +231,7 @@ const EditPlanPage: React.FC = () => {
                   </Grid>
 
                   <Grid item xs={12} md={9}>
-                    <PlanContactForm
-                      organization={codes.codes.coordinator_agency.map((item) => item.name)}
-                    />
+                    <PlanContactForm />
                   </Grid>
                 </Grid>
               </Box>
