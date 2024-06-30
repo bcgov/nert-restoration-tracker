@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
-import { IStaticLayer, IStaticLayerFeature } from 'components/map/components/StaticLayers';
-import MapContainer from 'components/map/MapContainer';
+import { IStaticLayerFeature } from 'components/map/components/StaticLayers';
+import MapContainer from 'components/map/MapContainer2';
 import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
 import { LatLngBoundsExpression } from 'leaflet';
 import React, { useEffect, useState } from 'react';
@@ -47,20 +47,32 @@ export interface ILocationBoundaryProps {
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
 
-  const [bounds, setBounds] = useState<LatLngBoundsExpression | undefined>(undefined);
-  const [staticLayers, setStaticLayers] = useState<IStaticLayer[]>([]);
-
-  useEffect(() => {
     const locationFeatures: IStaticLayerFeature[] = locationData.geometry.map((item) => {
       return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
     });
 
-    const allLayers: IStaticLayer[] = [{ layerName: 'Boundary', features: locationFeatures }];
+    const bounds = calculateUpdatedMapBounds([...locationFeatures].map((item) => item.geoJSON),true);
 
-    setBounds(calculateUpdatedMapBounds([...locationFeatures].map((item) => item.geoJSON)));
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
 
-    setStaticLayers(allLayers);
-  }, [locationData.geometry]);
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
 
   return (
     <Box
@@ -71,9 +83,9 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
       sx={pageStyles.mapContainer}>
       <MapContainer
         mapId="project_location_form_map"
-        staticLayers={staticLayers}
+        features={locationData.geometry}
         bounds={bounds}
-        scrollWheelZoom={props.scrollWheelZoom || false}
+        layerVisibility={layerVisibility}
       />
     </Box>
   );

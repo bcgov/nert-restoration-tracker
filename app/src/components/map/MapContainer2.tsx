@@ -6,8 +6,6 @@ import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer2Style.css'; // Custom styling
-import { arch } from 'os';
-import { blue } from '@mui/material/colors';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -20,6 +18,7 @@ export interface IMapContainerProps {
   mapId: string;
   center?: any;
   zoom?: any;
+  bounds?: any;
   features?: any;
   layerVisibility?: any;
   centroids?: boolean;
@@ -300,24 +299,22 @@ const initializeMap = (
   centroids = false,
   tooltipState?: any,
   activeFeatureState?: any,
-  markerState?: any
+  markerState?: any,
+  bounds?: any,
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
   const {
-    // tooltip,
     setTooltip,
-    // tooltipVisible,
     setTooltipVisible,
-    // tooltipX,
     setTooltipX,
-    // tooltipY,
     setTooltipY
   } = tooltipState;
 
-  const { projectMarker, setProjectMarker, planMarker, setPlanMarker } = markerState;
+  const { setProjectMarker, setPlanMarker } = markerState;
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
+
 
   map = new Map({
     container: mapId,
@@ -339,6 +336,16 @@ const initializeMap = (
       visualizePitch: true
     })
   );
+
+  /**
+   *  XXX: This is breaking the map by drawing the unwanted basemap over top of the map
+   *  There also appears to be a race condition so seeing this issue is random.
+   */
+  if (bounds) {
+    map.fitBounds(bounds, { padding: 50 });
+    console.log('bounds', bounds);
+    console.log('actual bounds', map.getBounds());
+  }
 
   /**
    * # loadLayers
@@ -545,12 +552,12 @@ const initializeMap = (
         map.getCanvas().style.cursor = 'pointer';
 
         checkFeatureState(activeFeatureState);
-        activeFeatureState[1](e.features[0].id);
+        if (activeFeatureState[1]) activeFeatureState[1](e.features[0].id);
       })
       .on('mouseleave', 'markerPolygon', () => {
         map.getCanvas().style.cursor = '';
 
-        activeFeatureState[1](null);
+        if (activeFeatureState[1]) activeFeatureState[1](null);
       });
 
     // Zoom in until cluster breaks apart.
@@ -846,6 +853,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
 
+  const { bounds } = props || null;
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -889,7 +898,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       centroids,
       tooltipState,
       activeFeatureState,
-      markerState
+      markerState,
+      bounds
     );
   }, [features]);
 

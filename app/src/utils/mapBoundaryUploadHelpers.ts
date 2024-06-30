@@ -206,13 +206,26 @@ export const latLngBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpr
 };
 
 /**
+ * Converts a bounding box to a long/lat bounds expression
+ * @param boundingBox
+ * @returns
+ */
+export const lonLatBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpression => {
+  return [
+    [boundingBox[0], boundingBox[1]],
+    [boundingBox[2], boundingBox[3]]
+  ];
+};
+
+/**
  * Calculates the bounding box that encompasses all of the given features
  *
  * @param features The features used to calculate the map bounds
  * @returns The Lat/Long bounding box, or undefined if a bounding box cannot be calculated.
  */
 export const calculateUpdatedMapBounds = (
-  features: Feature[]
+  features: Feature[],
+  lngLat?: boolean
 ): LatLngBoundsExpression | undefined => {
   const bboxCoords = calculateFeatureBoundingBox(features);
 
@@ -220,7 +233,11 @@ export const calculateUpdatedMapBounds = (
     return;
   }
 
-  return latLngBoundsFromBoundingBox(bboxCoords);
+  if (lngLat) {
+    return lonLatBoundsFromBoundingBox(bboxCoords);
+  } else {  
+    return latLngBoundsFromBoundingBox(bboxCoords);
+  }
 };
 
 /*
