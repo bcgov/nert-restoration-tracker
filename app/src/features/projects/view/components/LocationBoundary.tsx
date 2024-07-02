@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 import { IStaticLayerFeature } from 'components/map/components/StaticLayers';
 import MapContainer from 'components/map/MapContainer2';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
-import { LatLngBoundsExpression } from 'leaflet';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 
 const pageStyles = {
@@ -31,6 +31,10 @@ const pageStyles = {
       border: '1px solid #ccccccc',
       borderRadius: '4px'
     }
+  },
+  layerSwitcherContainer: {
+    position: 'relative',
+    bottom: '-70px'
   }
 };
 
@@ -58,7 +62,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
    */
   const boundary = useState<boolean>(true);
   const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
+  const projects = useState<boolean>(false);
   const plans = useState<boolean>(true);
   const wildlife = useState<boolean>(false);
   const indigenous = useState<boolean>(false);
@@ -74,11 +78,11 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     baselayer
   };
 
+
   return (
     <Box
       width="100%"
       height="100%"
-      overflow="hidden"
       data-testid="map_container"
       sx={pageStyles.mapContainer}>
       <MapContainer
@@ -87,6 +91,9 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
         bounds={bounds}
         layerVisibility={layerVisibility}
       />
+      <Box sx={pageStyles.layerSwitcherContainer}>
+        <LayerSwitcher layerVisibility={layerVisibility} open={false}/>
+      </Box>
     </Box>
   );
 };

@@ -24,7 +24,7 @@ export interface ILayerSwitcherProps {
     wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
-  };
+  }, open?: boolean;
 }
 
 const switcherStyle = {
@@ -43,7 +43,6 @@ const switcherCloseStyle = {
   right: '2px',
   top: '2px'
 };
-
 const buttonStyle = {
   position: 'absolute',
   bottom: '120px',
@@ -68,9 +67,9 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
   const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
     props.layerVisibility;
 
-  const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
+  const [switcherOpen, setSwitcherOpen] = useState(props.open ? true : false);
 
-  const [switcherOpen, setSwitcherOpen] = useState(false);
+  const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
 
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
@@ -78,7 +77,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
 
   return (
     <div>
-      {switcherOpen ? (
+      {!switcherOpen ? (
         <Box title="Open Layer Picker" sx={buttonStyle}>
           <IconButton onClick={toggleLayerswitcher}>
             <LayersIcon />

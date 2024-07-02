@@ -325,7 +325,7 @@ const initializeMap = (
     hash: 'loc',
     attributionControl: {
       compact: true,
-      customAttribution: 'Powered by <a href="https://esri.com">Esri</a>'
+      customAttribution: 'Basemap from <a href="https://esri.com">Esri</a>'
     }
   });
 
@@ -341,11 +341,6 @@ const initializeMap = (
    *  XXX: This is breaking the map by drawing the unwanted basemap over top of the map
    *  There also appears to be a race condition so seeing this issue is random.
    */
-  if (bounds) {
-    map.fitBounds(bounds, { padding: 50 });
-    console.log('bounds', bounds);
-    console.log('actual bounds', map.getBounds());
-  }
 
   /**
    * # loadLayers
@@ -724,6 +719,11 @@ const initializeMap = (
     });
     // Add the well layers
     drawWells(map, wells);
+
+    // If bounds are provided, fit the map to the bounds with a buffer
+    if (bounds) {
+      map.fitBounds(bounds, { padding: 50 });
+    }
   });
 };
 

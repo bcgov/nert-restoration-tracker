@@ -71,8 +71,6 @@ interface IProjectViewFormProps {
 const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
   const { project, codes } = props;
 
-  const [openFullScreen, setOpenFullScreen] = React.useState(false);
-
   const [isLoadingAttachments, setIsLoadingAttachments] = useState(false);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
 

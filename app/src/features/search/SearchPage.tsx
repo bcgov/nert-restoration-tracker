@@ -99,7 +99,7 @@ const SearchPage: React.FC = () => {
         layerVisibility={layerVisibility}
         centroids={true}
       />
-      <LayerSwitcher layerVisibility={layerVisibility} />
+      <LayerSwitcher layerVisibility={layerVisibility} open={true}/>
     </Box>
   );
 };
