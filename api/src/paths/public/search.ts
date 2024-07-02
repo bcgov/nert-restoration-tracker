@@ -77,6 +77,8 @@ export function getSearchResults(): RequestHandler {
 
       await connection.commit();
 
+      // TODO: Switch all geometries with masks to use the mask instead of the geometry
+
       if (!response || !response.rows) {
         return res.status(200).json(null);
       }

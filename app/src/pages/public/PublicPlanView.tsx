@@ -1,11 +1,7 @@
-import { mdiArrowLeft, mdiFullscreen } from '@mdi/js';
-import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
@@ -13,21 +9,8 @@ import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import React, { useState } from 'react';
+import React from 'react';
 
-const pageStyles = {
-  fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
-    }
-  }
-};
 
 interface IPlanViewFormProps {
   plan: IGetPlanForViewResponse;

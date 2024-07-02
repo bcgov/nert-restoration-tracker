@@ -1,13 +1,9 @@
-import { mdiArrowLeft, mdiFullscreen } from '@mdi/js';
-import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
@@ -25,37 +21,6 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 import ProjectConservationAreas from 'features/projects/view/components/ProjectConservationAreas';
-
-const pageStyles = {
-  conservationAreChip: {
-    marginBottom: '2px',
-    justifyContent: 'left'
-  },
-  conservAreaLabel: {
-    color: '#545454',
-    fontSize: '0.78rem',
-    fontWeight: 500,
-    textTransform: 'none',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  titleContainerActions: {
-    '& button + button': {
-      marginLeft: '1rem'
-    }
-  },
-  fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
-    }
-  }
-};
 
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
