@@ -545,7 +545,7 @@ describe('PostFundingData', () => {
           start_date: '01/01/2020',
           end_date: '01/01/2021',
           funding_amount: 123,
-          is_public: 'false'
+          is_public: false
         }
       ]
     };
