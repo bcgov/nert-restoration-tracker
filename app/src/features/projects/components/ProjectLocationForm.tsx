@@ -23,7 +23,7 @@ import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';

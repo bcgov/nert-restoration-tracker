@@ -1,9 +1,7 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer2';
-import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
+import MapContainer from 'components/map/MapContainer';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
@@ -21,7 +19,7 @@ const SearchPage: React.FC = () => {
   const restorationApi = useRestorationTrackerApi();
 
   const [performSearch, setPerformSearch] = useState<boolean>(true);
-  const [geometries, setGeometries] = useState<IMarker[]>([]);
+  const [geometries, setGeometries] = useState([]);
 
   const { keycloakWrapper } = useContext(AuthStateContext);
 
@@ -36,7 +34,7 @@ const SearchPage: React.FC = () => {
         return;
       }
 
-      const clusteredPointGeometries: IMarker[] = [];
+      const clusteredPointGeometries: any  = [];
 
       response.forEach((result: any) => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
@@ -44,7 +42,7 @@ const SearchPage: React.FC = () => {
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          popup: <SearchFeaturePopup featureData={result} />
+          feature: result 
         });
       });
 

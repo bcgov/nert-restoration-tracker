@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
-import { IStaticLayerFeature } from 'components/map/components/StaticLayers';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
@@ -51,7 +50,7 @@ export interface ILocationBoundaryProps {
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
 
-  const locationFeatures: IStaticLayerFeature[] = locationData.geometry.map((item) => {
+  const locationFeatures:any [] = locationData.geometry.map((item) => {
     return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
   });
 

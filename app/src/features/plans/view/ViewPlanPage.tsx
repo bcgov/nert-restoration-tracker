@@ -19,7 +19,7 @@ import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
 import { DeletePlanI18N } from 'constants/i18n';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { Card, Chip, Tooltip } from '@mui/material';

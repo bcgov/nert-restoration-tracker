@@ -5,7 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
-import './mapContainer2Style.css'; // Custom styling
+import './mapContainer.css'; // Custom styling
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -146,7 +146,7 @@ const convertToCentroidGeoJSON = (features: any) => {
   const geojson = {
     type: 'FeatureCollection',
     features: features.map((feature: any) => {
-      const f = feature.popup.props.featureData;
+      const f = feature.feature;
       return {
         type: 'Feature',
         geometry: {
