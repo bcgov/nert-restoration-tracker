@@ -1,8 +1,4 @@
-import {
-  mdiAccountMultipleOutline,
-  mdiFilePdfBox,
-  mdiPencilOutline
-} from '@mdi/js';
+import { mdiAccountMultipleOutline, mdiFilePdfBox, mdiPencilOutline } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -132,7 +128,6 @@ const ViewProjectPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
-
   return (
     <>
       <Container maxWidth="xl" data-testid="view_project_page_component">
@@ -260,7 +255,6 @@ const ViewProjectPage: React.FC = () => {
           </Box>
         </Card>
       </Container>
-
     </>
   );
 };

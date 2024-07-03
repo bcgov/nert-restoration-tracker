@@ -11,7 +11,6 @@ import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import React from 'react';
 
-
 interface IPlanViewFormProps {
   plan: IGetPlanForViewResponse;
   codes: IGetAllCodeSetsResponse;
@@ -24,7 +23,6 @@ interface IPlanViewFormProps {
  */
 const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
   const { plan, codes } = props;
-
 
   return (
     <>
@@ -67,7 +65,6 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
           </Grid>
         </Box>
       </Container>
-
     </>
   );
 };

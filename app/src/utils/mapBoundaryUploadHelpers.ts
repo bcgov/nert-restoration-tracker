@@ -235,7 +235,7 @@ export const calculateUpdatedMapBounds = (
 
   if (lngLat) {
     return lonLatBoundsFromBoundingBox(bboxCoords);
-  } else {  
+  } else {
     return latLngBoundsFromBoundingBox(bboxCoords);
   }
 };

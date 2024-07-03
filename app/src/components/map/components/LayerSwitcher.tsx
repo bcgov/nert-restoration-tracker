@@ -24,7 +24,8 @@ export interface ILayerSwitcherProps {
     wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
-  }, open?: boolean;
+  };
+  open?: boolean;
 }
 
 const switcherStyle = {

@@ -300,21 +300,15 @@ const initializeMap = (
   tooltipState?: any,
   activeFeatureState?: any,
   markerState?: any,
-  bounds?: any,
+  bounds?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
-  const {
-    setTooltip,
-    setTooltipVisible,
-    setTooltipX,
-    setTooltipY
-  } = tooltipState;
+  const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
   const { setProjectMarker, setPlanMarker } = markerState;
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
-
 
   map = new Map({
     container: mapId,

@@ -67,7 +67,6 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
     }
   }, [isLoadingAttachments, getAttachments]);
 
-
   return (
     <>
       <Container maxWidth="xl" data-testid="view_project_page_component">
@@ -277,7 +276,6 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
           </Box>
         </Card>
       </Container>
-
     </>
   );
 };

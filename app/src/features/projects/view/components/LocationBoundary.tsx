@@ -51,11 +51,14 @@ export interface ILocationBoundaryProps {
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
 
-    const locationFeatures: IStaticLayerFeature[] = locationData.geometry.map((item) => {
-      return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
-    });
+  const locationFeatures: IStaticLayerFeature[] = locationData.geometry.map((item) => {
+    return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
+  });
 
-    const bounds = calculateUpdatedMapBounds([...locationFeatures].map((item) => item.geoJSON),true);
+  const bounds = calculateUpdatedMapBounds(
+    [...locationFeatures].map((item) => item.geoJSON),
+    true
+  );
 
   /**
    * Reactive state to share between the layer picker and the map
@@ -78,13 +81,8 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     baselayer
   };
 
-
   return (
-    <Box
-      width="100%"
-      height="100%"
-      data-testid="map_container"
-      sx={pageStyles.mapContainer}>
+    <Box width="100%" height="100%" data-testid="map_container" sx={pageStyles.mapContainer}>
       <MapContainer
         mapId="project_location_form_map"
         features={locationData.geometry}
@@ -92,7 +90,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
         layerVisibility={layerVisibility}
       />
       <Box sx={pageStyles.layerSwitcherContainer}>
-        <LayerSwitcher layerVisibility={layerVisibility} open={false}/>
+        <LayerSwitcher layerVisibility={layerVisibility} open={false} />
       </Box>
     </Box>
   );
