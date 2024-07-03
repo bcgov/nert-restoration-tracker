@@ -2,7 +2,7 @@ import { Feature } from 'geojson';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import React from 'react';
+import React, {useEffect} from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
@@ -36,6 +36,17 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
       cursor: 'pointer'
     }
   };
+
+  /**
+   * When editing an existing project or plan there may be some existing features
+   * that need to be updated. This effect will recalculate the feature ids.
+   */
+  useEffect(() => {
+    const featureList = get(values, 'location.geometry');
+    if (featureList.length > 0) {
+      setFieldValue('location.geometry', recalculateFeatureIds(featureList));
+    }
+  }, []);
 
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the feature object

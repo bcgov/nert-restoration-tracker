@@ -111,7 +111,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    * State to share with the map to indicate which
    * feature is selected or hovered over
    */
-  const [activeFeature, setActiveFeature] = useState<Feature | null>(null);
+  const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
   return (
     <>
@@ -203,7 +203,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
         <Box className="feature-box">
           <MapFeatureList
-            features={values.location.geometry}
             mask={[mask, setMask]}
             maskState={[maskState, setMaskState]}
             activeFeatureState={[activeFeature, setActiveFeature]}
@@ -215,6 +214,9 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             mapId={'plan_location_map'}
             layerVisibility={layerVisibility}
             features={values.location.geometry}
+            mask={mask}
+            maskState={maskState}
+            activeFeatureState={[activeFeature, setActiveFeature]}
           />
         </Box>
         {errors?.location?.geometry && (
