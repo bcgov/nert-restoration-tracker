@@ -24,8 +24,6 @@ export interface IGetProjectAttachment {
  */
 export interface IProjectAdvancedFilterRequest {
   keyword?: string;
-  contact_agency?: string | string[];
-  funding_agency?: number | number[];
   permit_number?: string;
   species?: number | number[];
   start_date?: string;
@@ -97,7 +95,9 @@ export interface ICreateProjectRequest
     IProjectFundingForm,
     IProjectPartnershipsForm,
     IProjectRestorationPlanForm,
-    IProjectLocationForm {}
+    IProjectLocationForm {
+  [key: string]: any;
+}
 
 export interface IEditProjectRequest
   extends IProjectGeneralInformationForm,
@@ -243,11 +243,11 @@ export interface IGetProjectForViewResponseIUCN {
   classificationDetails: IGetProjectForViewResponseIUCNArrayItem[];
 }
 
-interface IGetProjectForViewResponseFundingSource {
-  agency_id: number;
+export interface IGetProjectForViewResponseFundingSource {
+  organization_name: string;
   investment_action_category: number;
   description: string;
-  agency_project_id: string;
+  funding_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;

@@ -117,11 +117,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                         <ListItem sx={pageStyles.customListItem}>
                           <Grid container spacing={3}>
                             <Grid item xs={6}>
-                              <FormControl
-                                fullWidth
-                                size="small"
-                                required={true}
-                                variant="outlined">
+                              <FormControl fullWidth size="small" variant="outlined">
                                 <InputLabel id="authorization-type-label">
                                   Authorization Type
                                 </InputLabel>
@@ -153,7 +149,6 @@ const ProjectAuthorizationForm: React.FC = () => {
                                 name={`authorization.authorizations.[${index}].authorization_ref`}
                                 label="Authorization Reference"
                                 other={{
-                                  required: true,
                                   value: authorization.authorization_ref,
                                   error:
                                     authorizationRefMeta.touched &&
@@ -164,17 +159,19 @@ const ProjectAuthorizationForm: React.FC = () => {
                               />
                             </Grid>
                           </Grid>
-                          <ListItemSecondaryAction>
-                            <IconButton
-                              color="primary"
-                              data-testid="delete-icon"
-                              aria-label="remove authorization"
-                              onClick={() => arrayHelpers.remove(index)}
-                              edge="end"
-                              size="large">
-                              <Icon path={mdiTrashCanOutline} size={1}></Icon>
-                            </IconButton>
-                          </ListItemSecondaryAction>
+                          {index >= 1 && (
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                color="primary"
+                                data-testid="delete-icon"
+                                aria-label="remove authorization"
+                                onClick={() => arrayHelpers.remove(index)}
+                                edge="end"
+                                size="large">
+                                <Icon path={mdiTrashCanOutline} size={1}></Icon>
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          )}
                         </ListItem>
                       </List>
                     </Grid>

@@ -42,7 +42,6 @@ export default function Projects() {
       const values = {
         keyword: urlParams.keyword,
         contact_agency: urlParams.contact_agency,
-        funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
@@ -50,10 +49,6 @@ export default function Projects() {
         status: urlParams.status,
         focus: urlParams.focus
       } as IProjectAdvancedFilters;
-
-      if (values.funding_agency === undefined) {
-        values.funding_agency = [];
-      }
 
       return values;
     }
@@ -207,16 +202,6 @@ export default function Projects() {
             onReset={handleReset}
             enableReinitialize={true}>
             <ProjectFilter
-              contact_agency={
-                codes.codes.coordinator_agency?.map((item: { id: number; name: string }) => {
-                  return item.name;
-                }) || []
-              }
-              funding_agency={
-                codes.codes.funding_source.map((item: { id: number; name: string }) => {
-                  return { value: item.id, label: item.name };
-                }) || []
-              }
               region={
                 codes.codes.regions.map((item: { id: number; name: string }) => {
                   return { value: item.id, label: item.name };

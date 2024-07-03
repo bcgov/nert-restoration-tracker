@@ -866,13 +866,12 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.insertFundingSource(
         {
-          investment_action_category: 1,
-          agency_id: 1,
-          agency_project_id: 'string',
-          funding_amount: 100,
-          start_date: 'date',
-          end_date: 'date',
-          description: 'string',
+          organization_name: 'agency name',
+          description: 'ABC123',
+          funding_project_id: 'investment action',
+          funding_amount: 333,
+          start_date: '2021-01-10',
+          end_date: '2021-01-20',
           is_public: true
         },
         1
@@ -895,13 +894,12 @@ describe('ProjectRepository', () => {
       try {
         await projectRepository.insertFundingSource(
           {
-            investment_action_category: 1,
-            agency_id: 1,
-            agency_project_id: 'string',
-            funding_amount: 100,
-            start_date: 'date',
-            end_date: 'date',
-            description: 'string',
+            organization_name: 'agency name',
+            description: 'ABC123',
+            funding_project_id: 'investment action',
+            funding_amount: 333,
+            start_date: '2021-01-10',
+            end_date: '2021-01-20',
             is_public: true
           },
           1
@@ -923,13 +921,12 @@ describe('ProjectRepository', () => {
       try {
         await projectRepository.insertFundingSource(
           {
-            investment_action_category: 1,
-            agency_id: 1,
-            agency_project_id: 'string',
-            funding_amount: 100,
-            start_date: 'date',
-            end_date: 'date',
-            description: 'string',
+            organization_name: 'agency name',
+            description: 'ABC123',
+            funding_project_id: 'investment action',
+            funding_amount: 333,
+            start_date: '2021-01-10',
+            end_date: '2021-01-20',
             is_public: true
           },
           1

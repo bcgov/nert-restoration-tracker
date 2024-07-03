@@ -12,8 +12,6 @@ import React from 'react';
 import { IProjectAdvancedFilters } from './ProjectFilter';
 
 export interface IProjectAdvancedFiltersProps {
-  contact_agency: string[];
-  funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
   status: IMultiAutocompleteFieldOption[];
   focus: IMultiAutocompleteFieldOption[];

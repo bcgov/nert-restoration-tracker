@@ -33,7 +33,6 @@ describe('PublicProjectsListPage', () => {
         name: 'Project 1',
         start_date: '2020-01-01',
         end_date: '2020-01-02',
-        coordinator_agency: 'contact agency',
         permits_list: '1, 2, 3'
       }
     ]);
@@ -57,7 +56,6 @@ describe('PublicProjectsListPage', () => {
         name: 'Project 1',
         start_date: '2020-01-01',
         end_date: null,
-        coordinator_agency: 'contact agency',
         permits_list: '1, 2, 3',
         completion_status: 'Active'
       }

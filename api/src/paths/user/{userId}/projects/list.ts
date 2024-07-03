@@ -41,7 +41,7 @@ GET.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'Project response object.',
+      description: 'Project Plans response object.',
       content: {
         'application/json': {
           schema: {
@@ -49,12 +49,20 @@ GET.apiDoc = {
             items: {
               title: 'Project get response object, for view purposes',
               type: 'object',
-              required: ['project', 'permit', 'contact', 'location', 'iucn', 'funding'],
+              required: ['project', 'species', 'authorization', 'contact', 'location', 'iucn', 'funding'],
               properties: {
                 project: {
                   description: 'Basic project metadata',
                   type: 'object',
-                  required: ['project_id', 'project_name', 'start_date', 'end_date', 'publish_date'],
+                  required: [
+                    'project_id',
+                    'project_name',
+                    'start_date',
+                    'end_date',
+                    'actual_start_date',
+                    'actual_end_date',
+                    'publish_date'
+                  ],
                   properties: {
                     id: {
                       description: 'Project id',
@@ -73,6 +81,16 @@ GET.apiDoc = {
                       description: 'ISO 8601 date string for the project end date',
                       nullable: true
                     },
+                    actual_start_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual start date',
+                      nullable: true
+                    },
+                    actual_end_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual end date',
+                      nullable: true
+                    },
                     objectives: {
                       type: 'string'
                     },
@@ -83,6 +101,25 @@ GET.apiDoc = {
                     },
                     revision_count: {
                       type: 'number'
+                    }
+                  }
+                },
+                species: {
+                  description: 'The project species',
+                  type: 'object',
+                  required: ['focal_species', 'focal_species_names'],
+                  properties: {
+                    focal_species: {
+                      type: 'array',
+                      items: {
+                        type: 'number'
+                      }
+                    },
+                    focal_species_names: {
+                      type: 'array',
+                      items: {
+                        type: 'string'
+                      }
                     }
                   }
                 },
@@ -118,7 +155,7 @@ GET.apiDoc = {
                       items: {
                         title: 'Project contact',
                         type: 'object',
-                        required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public'],
+                        required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public'],
                         properties: {
                           first_name: {
                             type: 'string'
@@ -129,7 +166,10 @@ GET.apiDoc = {
                           email_address: {
                             type: 'string'
                           },
-                          agency: {
+                          organization: {
+                            type: 'string'
+                          },
+                          phone_number: {
                             type: 'string'
                           },
                           is_public: {
@@ -144,21 +184,21 @@ GET.apiDoc = {
                     }
                   }
                 },
-                permit: {
+                authorization: {
                   type: 'object',
-                  required: ['permits'],
+                  required: ['authorizations'],
                   properties: {
-                    permits: {
+                    authorizations: {
                       type: 'array',
                       items: {
-                        title: 'Project permit',
-                        required: ['permit_number', 'permit_type'],
+                        title: 'Project authorization',
+                        required: ['authorization_ref', 'authorization_type'],
                         type: 'object',
                         properties: {
-                          permit_number: {
+                          authorization_ref: {
                             type: 'string'
                           },
-                          permit_type: {
+                          authorization_type: {
                             type: 'string'
                           }
                         }
@@ -167,56 +207,43 @@ GET.apiDoc = {
                   }
                 },
                 funding: {
-                  description: 'The project funding details',
+                  title: 'Project funding sources',
                   type: 'object',
                   required: ['fundingSources'],
                   properties: {
                     fundingSources: {
                       type: 'array',
                       items: {
+                        title: 'Project funding organization',
                         type: 'object',
-                        required: [
-                          'agency_id',
-                          'funding_amount',
-                          'investment_action_category',
-                          'start_date',
-                          'end_date'
-                        ],
+                        required: ['organization_name', 'funding_amount', 'is_public'],
                         properties: {
-                          id: {
-                            type: 'number'
-                          },
-                          agency_id: {
-                            type: 'number'
-                          },
-                          investment_action_category: {
-                            type: 'number'
-                          },
-                          investment_action_category_name: {
+                          organization_name: {
                             type: 'string'
                           },
-                          agency_name: {
+                          description: {
+                            type: 'string',
+                            nullable: true
+                          },
+                          funding_project_id: {
                             type: 'string'
                           },
                           funding_amount: {
                             type: 'number'
                           },
                           start_date: {
-                            oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                            description: 'ISO 8601 date string for the funding start date',
+                            type: 'string',
+                            description: 'ISO 8601 date string',
                             nullable: true
                           },
                           end_date: {
-                            oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                            description: 'ISO 8601 date string for the funding end_date',
-                            nullable: true
-                          },
-                          agency_project_id: {
                             type: 'string',
+                            description: 'ISO 8601 date string',
                             nullable: true
                           },
-                          revision_count: {
-                            type: 'number'
+                          is_public: {
+                            type: 'string',
+                            enum: ['true', 'false']
                           }
                         }
                       }
@@ -243,7 +270,7 @@ GET.apiDoc = {
                   }
                 },
                 objective: {
-                  description: 'Project objectives',
+                  title: 'Project objectives',
                   type: 'object',
                   required: ['objectives'],
                   properties: {
@@ -264,13 +291,16 @@ GET.apiDoc = {
                 location: {
                   description: 'The project location object',
                   type: 'object',
-                  required: ['geometry'],
+                  required: ['geometry', 'region'],
                   properties: {
                     geometry: {
                       type: 'array',
                       items: {
                         ...(geoJsonFeature as object)
                       }
+                    },
+                    region: {
+                      type: 'number'
                     }
                   }
                 }

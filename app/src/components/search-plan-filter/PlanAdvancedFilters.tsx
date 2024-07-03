@@ -12,8 +12,6 @@ import React from 'react';
 import { IPlanAdvancedFilters } from './PlanFilter';
 
 export interface IPlanAdvancedFiltersProps {
-  contact_agency: string[];
-  funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
   status: IMultiAutocompleteFieldOption[];
   focus: IMultiAutocompleteFieldOption[];

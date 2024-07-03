@@ -21,7 +21,6 @@ export type CodeSet<T extends ICode = ICode> = T[];
  * @interface IGetAllCodeSetsResponse
  */
 export interface IGetAllCodeSetsResponse {
-  coordinator_agency: CodeSet;
   first_nations: CodeSet;
   funding_source: CodeSet;
   investment_action_category: CodeSet<{ id: number; fs_id: number; name: string }>;

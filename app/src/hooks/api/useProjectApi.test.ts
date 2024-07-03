@@ -115,34 +115,6 @@ describe('useProjectApi', () => {
     expect(result).toEqual(getProjectForViewResponse);
   });
 
-  it('addFundingSource works as expected', async () => {
-    mock.onPost(`/api/project/${projectId}/funding-sources/add`).reply(200, {
-      id: 1
-    });
-
-    const result = await useProjectApi(axios).addFundingSource(projectId, {
-      agency_id: 'funding source name'
-    } as unknown as {
-      agency_id: number;
-      investment_action_category: number;
-      funding_amount: number;
-      start_date: string;
-      end_date: string;
-    });
-
-    expect(result).toEqual({ id: 1 });
-  });
-
-  it('deleteFundingSource works as expected', async () => {
-    const pfsId = 2;
-
-    mock.onDelete(`/api/project/${projectId}/funding-sources/${pfsId}/delete`).reply(200, true);
-
-    const result = await useProjectApi(axios).deleteFundingSource(projectId, pfsId);
-
-    expect(result).toEqual(true);
-  });
-
   it('uploadProjectAttachments works as expected', async () => {
     const file = new File(['foo'], 'foo.txt', {
       type: 'text/plain'
