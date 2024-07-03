@@ -40,7 +40,7 @@ const defaultAuthState = {
   }
 };
 
-describe.skip('ViewProjectPage', () => {
+xdescribe.skip('ViewProjectPage', () => {
   beforeEach(() => {
     mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
   });
