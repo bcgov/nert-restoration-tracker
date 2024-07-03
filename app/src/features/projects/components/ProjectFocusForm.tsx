@@ -27,8 +27,12 @@ export const ProjectFocusFormInitialValues: IProjectFocusForm = {
 export const ProjectFocusFormYupSchema = yup.object().shape({
   focus: yup.object().shape({
     focuses: yup.array().min(1, 'You must select at least one option').required('Required'),
-    // people_involved: yup.number().positive().integer().nullable().required(`Required when selecting "${focus.HEALING_THE_PEOPLE}"`)
-    people_involved: yup.number().positive().integer().nullable()
+    people_involved: yup
+      .number()
+      .nullable()
+      .isNumberOfPeopleInvolvedRequired(
+        'People Involved is required when Healing the People is selected'
+      )
   })
 });
 

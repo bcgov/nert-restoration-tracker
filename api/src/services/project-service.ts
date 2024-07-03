@@ -791,10 +791,15 @@ export class ProjectService extends DBService {
   async updateProjectIUCNData(projectId: number, putIUCNData: PostIUCNData): Promise<void> {
     await this.projectRepository.deleteProjectIUCN(projectId);
 
-    const insertIUCNPromises =
-      putIUCNData?.classificationDetails?.map((iucnClassification: IPostIUCN) =>
-        this.insertClassificationDetail(iucnClassification.subClassification2, projectId)
-      ) || [];
+    const insertIUCNPromises = putIUCNData?.classificationDetails?.map((iucnClassification: IPostIUCN) => {
+      if (
+        iucnClassification.classification &&
+        iucnClassification.subClassification1 &&
+        iucnClassification.subClassification2
+      )
+        return this.insertClassificationDetail(iucnClassification.subClassification2, projectId);
+      else return [];
+    });
 
     await Promise.all(insertIUCNPromises);
   }

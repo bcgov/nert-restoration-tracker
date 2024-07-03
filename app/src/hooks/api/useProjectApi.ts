@@ -240,45 +240,6 @@ const useProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
-   * Delete funding source based on project and funding source ID
-   *
-   * @param {number} projectId
-   * @param {number} pfsId
-   * @returns {*} {Promise<{ id: number }>}
-   */
-  const deleteFundingSource = async (projectId: number, pfsId: number): Promise<{ id: number }> => {
-    const { data } = await axios.delete(
-      `/api/project/${projectId}/funding-sources/${pfsId}/delete`
-    );
-
-    return data;
-  };
-
-  /**
-   * Add new funding source based on projectId
-   *
-   * @param {number} projectId
-   * @returns {*} {Promise<{ id: number }>}
-   */
-  const addFundingSource = async (
-    projectId: number,
-    fundingSource: {
-      agency_id: number;
-      investment_action_category: number;
-      funding_amount: number;
-      start_date: string;
-      end_date: string;
-    }
-  ): Promise<{ id: number }> => {
-    const { data } = await axios.post(
-      `/api/project/${projectId}/funding-sources/add`,
-      fundingSource
-    );
-
-    return data;
-  };
-
-  /**
    * Get all project participants.
    *
    * @param {number} projectId
@@ -361,8 +322,6 @@ const useProjectApi = (axios: AxiosInstance) => {
     updateProject,
     getProjectAttachments,
     deleteProjectAttachment,
-    deleteFundingSource,
-    addFundingSource,
     deleteProject,
     getProjectParticipants,
     addProjectParticipants,

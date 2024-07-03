@@ -279,6 +279,20 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      // Remove empty partnerships
+      projectPostObject.partnership.partnerships =
+        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
+
+      // Remove empty Authorizations
+      projectPostObject.authorization.authorizations =
+        projectPostObject.authorization.authorizations.filter((authorization) =>
+          authorization.authorization_ref.trim()
+        );
+
+      // Remove empty Conservation Areas
+      projectPostObject.location.conservationAreas =
+        projectPostObject.location.conservationAreas.filter((area) => area.conservationArea.trim());
+
       // Confirm that the project is not a draft
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
@@ -358,6 +372,22 @@ const CreateProjectPage: React.FC = () => {
     });
   };
 
+  //useEffect to catch and display formik errors
+  useEffect(() => {
+    if (formikRef.current?.errors) {
+      const errorsText = Object.keys(formikRef.current.errors).map((key) => {
+        return `${key}: ${JSON.stringify(formikRef.current?.errors[key])}`;
+      });
+
+      dialogContext.setErrorDialog({
+        dialogTitle: 'Please correct the errors in the form before submitting.',
+        dialogText: errorsText.join('\n'),
+        ...defaultErrorDialogProps,
+        open: true
+      });
+    }
+  }, [formikRef.current?.errors]);
+
   if (!codes.codes) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
@@ -387,7 +417,10 @@ const CreateProjectPage: React.FC = () => {
         open={openYesNoDialog}
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}
-        onYes={() => formikRef.current?.submitForm()}
+        onYes={() => {
+          setOpenYesNoDialog(false);
+          formikRef.current?.submitForm();
+        }}
       />
 
       <Box mb={1} ml={3}>
@@ -422,7 +455,7 @@ const CreateProjectPage: React.FC = () => {
             enableReinitialize={true}
             initialValues={initialProjectFormData}
             validationSchema={ProjectFormYupSchema}
-            validateOnBlur={true}
+            validateOnBlur={false}
             validateOnChange={false}
             onSubmit={handleProjectCreation}>
             <>
@@ -452,9 +485,7 @@ const CreateProjectPage: React.FC = () => {
                     </Grid>
 
                     <Grid item xs={12} md={9}>
-                      <ProjectContactForm
-                        organization={codes.codes.coordinator_agency.map((item) => item.name)}
-                      />
+                      <ProjectContactForm />
                     </Grid>
                   </Grid>
                 </Box>
@@ -512,11 +543,17 @@ const CreateProjectPage: React.FC = () => {
                 <Box ml={1} my={3}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Authorizations</Typography>
+                      <Typography variant="h2">Funding and Partnerships</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
-                      <ProjectAuthorizationForm />
+                      <Box component="fieldset" mx={0}>
+                        <ProjectFundingForm />
+                      </Box>
+
+                      <Box component="fieldset" mt={4} mx={0}>
+                        <ProjectPartnershipsForm />
+                      </Box>
                     </Grid>
                   </Grid>
                 </Box>
@@ -526,26 +563,11 @@ const CreateProjectPage: React.FC = () => {
                 <Box ml={1} my={3}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Funding and Partnerships</Typography>
+                      <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
                     <Grid item xs={12} md={9}>
-                      <Box component="fieldset" mx={0}>
-                        <ProjectFundingForm
-                          fundingSources={codes.codes.funding_source.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          investment_action_category={codes.codes.investment_action_category.map(
-                            (item) => {
-                              return { value: item.id, label: item.name, fs_id: item.fs_id };
-                            }
-                          )}
-                        />
-                      </Box>
-
-                      <Box component="fieldset" mt={4} mx={0}>
-                        <ProjectPartnershipsForm />
-                      </Box>
+                      <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>
                 </Box>

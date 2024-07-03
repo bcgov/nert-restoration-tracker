@@ -59,9 +59,7 @@ describe('UsersDetailPage', () => {
       project: null
     } as any);
 
-    mockRestorationTrackerApi().codes.getAllCodeSets.mockResolvedValue({
-      coordinator_agency: [{ id: 1, name: 'agency 1' }]
-    } as any);
+    mockRestorationTrackerApi().codes.getAllCodeSets.mockResolvedValue({} as any);
 
     const { getAllByTestId } = render(
       <RouterProvider router={router}>

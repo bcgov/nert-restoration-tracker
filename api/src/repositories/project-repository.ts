@@ -163,7 +163,7 @@ export class ProjectRepository extends BaseRepository {
         project_id = ${projectId}
     `;
 
-      //Will build this sql to select agency ONLY IF the contact is public
+      //Will build this sql to select organization ONLY IF the contact is public
       const sqlStatementJustAgencies = SQL``;
 
       if (isPublic) {
@@ -322,85 +322,37 @@ export class ProjectRepository extends BaseRepository {
         sqlStatement.append(SQL`
           SELECT
             pfs.project_funding_source_id as id,
-            fs.funding_source_id as agency_id,
+            pfs.organization_name,
             pfs.funding_amount::numeric::int,
             pfs.funding_start_date as start_date,
             pfs.funding_end_date as end_date,
-            iac.investment_action_category_id as investment_action_category,
-            iac.name as investment_action_category_name,
-            fs.name as agency_name,
             pfs.description as description,
             pfs.is_public as is_public,
-            pfs.funding_source_project_id as agency_project_id,
+            pfs.funding_project_id,
             pfs.revision_count as revision_count
           FROM
             project_funding_source as pfs
-          LEFT OUTER JOIN
-            investment_action_category as iac
-          ON
-            pfs.investment_action_category_id = iac.investment_action_category_id
-          LEFT OUTER JOIN
-            funding_source as fs
-          ON
-            iac.funding_source_id = fs.funding_source_id
           WHERE
             pfs.project_id = ${projectId}
           AND
-            pfs.is_public = 'Y'
-          GROUP BY
-            pfs.project_funding_source_id,
-            fs.funding_source_id,
-            pfs.funding_source_project_id,
-            pfs.funding_amount,
-            pfs.funding_start_date,
-            pfs.funding_end_date,
-            iac.investment_action_category_id,
-            iac.name,
-            fs.name,
-            pfs.description,
-            pfs.is_public,
-            pfs.revision_count
+            pfs.is_public = true;
         `);
       } else {
         sqlStatement.append(SQL`
           SELECT
             pfs.project_funding_source_id as id,
-            fs.funding_source_id as agency_id,
+            pfs.organization_name,
             pfs.funding_amount::numeric::int,
             pfs.funding_start_date as start_date,
             pfs.funding_end_date as end_date,
-            iac.investment_action_category_id as investment_action_category,
-            iac.name as investment_action_category_name,
-            fs.name as agency_name,
-            pfs.description as description,
-            pfs.is_public as is_public,
-            pfs.funding_source_project_id as agency_project_id,
+            pfs.description,
+            pfs.is_public,
+            pfs.funding_project_id,
             pfs.revision_count as revision_count
           FROM
             project_funding_source as pfs
-          LEFT OUTER JOIN
-            investment_action_category as iac
-          ON
-            pfs.investment_action_category_id = iac.investment_action_category_id
-          LEFT OUTER JOIN
-            funding_source as fs
-          ON
-            iac.funding_source_id = fs.funding_source_id
           WHERE
-            pfs.project_id = ${projectId}
-          GROUP BY
-            pfs.project_funding_source_id,
-            fs.funding_source_id,
-            pfs.funding_source_project_id,
-            pfs.funding_amount,
-            pfs.funding_start_date,
-            pfs.funding_end_date,
-            iac.investment_action_category_id,
-            iac.name,
-            fs.name,
-            pfs.description,
-            pfs.is_public,
-            pfs.revision_count
+            pfs.project_id = ${projectId};
         `);
       }
 
@@ -815,8 +767,8 @@ export class ProjectRepository extends BaseRepository {
       const sqlStatement = SQL`
       INSERT INTO project_funding_source (
         project_id,
-        investment_action_category_id,
-        funding_source_project_id,
+        organization_name,
+        funding_project_id,
         funding_amount,
         funding_start_date,
         funding_end_date,
@@ -824,8 +776,8 @@ export class ProjectRepository extends BaseRepository {
         is_public
       ) VALUES (
         ${projectId},
-        ${fundingSource.investment_action_category},
-        ${fundingSource.agency_project_id},
+        ${fundingSource.organization_name},
+        ${fundingSource.funding_project_id},
         ${fundingSource.funding_amount},
         ${fundingSource.start_date},
         ${fundingSource.end_date},

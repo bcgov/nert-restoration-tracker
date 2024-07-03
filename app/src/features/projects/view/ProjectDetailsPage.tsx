@@ -139,7 +139,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           size="medium"
           data-testid="FundingSourceTitle"
         />
-        <FundingSource projectForViewData={projectForViewData} refresh={refresh} />
+        <FundingSource projectForViewData={projectForViewData} />
       </Box>
       <Divider />
       <Box mt={2}>

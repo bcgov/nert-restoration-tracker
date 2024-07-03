@@ -41,8 +41,6 @@ export default function PublicPlans() {
       const urlParams = qs.parse(location.search.replace('?', ''));
       const values = {
         keyword: urlParams.keyword,
-        contact_agency: urlParams.contact_agency,
-        funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
@@ -50,10 +48,6 @@ export default function PublicPlans() {
         status: urlParams.status,
         focus: urlParams.focus
       } as IPlanAdvancedFilters;
-
-      if (values.funding_agency === undefined) {
-        values.funding_agency = [];
-      }
 
       return values;
     }
@@ -206,18 +200,8 @@ export default function PublicPlans() {
             onReset={handleReset}
             enableReinitialize={true}>
             <PlanFilter
-              contact_agency={
-                codes.codes.coordinator_agency?.map((item: any) => {
-                  return item.name;
-                }) || []
-              }
-              funding_agency={
-                codes.codes.funding_source.map((item: { id: any; name: any }) => {
-                  return { value: item.id, label: item.name };
-                }) || []
-              }
               region={
-                codes.codes.regions.map((item: { id: any; name: any }) => {
+                codes.codes.regions.map((item: { id: string | number; name: string }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }

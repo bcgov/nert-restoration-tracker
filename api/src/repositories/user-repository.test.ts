@@ -42,7 +42,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email@email.com',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -96,7 +96,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -150,7 +150,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -186,7 +186,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -240,7 +240,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -294,7 +294,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -348,7 +348,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -402,7 +402,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -438,7 +438,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;
@@ -474,7 +474,7 @@ describe('UserRepository', () => {
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
-          agency: null
+          organization: null
         }
       ];
       const mockQueryResponse = { rowCount: 1, rows: mockResponse } as any as Promise<QueryResult<any>>;

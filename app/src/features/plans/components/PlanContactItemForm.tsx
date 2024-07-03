@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Typography from '@mui/material/Typography';
-import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
 import CustomTextField from 'components/fields/CustomTextField';
 import { useFormikContext } from 'formik';
 import React from 'react';
@@ -51,10 +50,6 @@ export const PlanContactItemYupSchema = yup.object().shape({
   is_primary: yup.string().required('Required')
 });
 
-export interface IPlanContactItemFormProps {
-  organization: string[];
-}
-
 /*
  * A modal form for a single Plan contact.
  *
@@ -62,7 +57,7 @@ export interface IPlanContactItemFormProps {
  *
  * @return {*}
  */
-const PlanContactItemForm: React.FC<IPlanContactItemFormProps> = (props) => {
+const PlanContactItemForm: React.FC = () => {
   const { values, touched, errors, handleChange } = useFormikContext<IPlanContactItemForm>();
 
   const [checkPublic, setCheckPublic] = React.useState(false);
@@ -105,13 +100,7 @@ const PlanContactItemForm: React.FC<IPlanContactItemFormProps> = (props) => {
             <CustomTextField name="phone_number" label="Phone Number" />
           </Grid>
           <Grid item xs={12} md={6}>
-            <AutocompleteFreeSoloField
-              id="contact_organization"
-              name="organization"
-              label="Organization"
-              options={props.organization}
-              required={true}
-            />
+            <CustomTextField name="organization" label="Organization" />
           </Grid>
           <Grid item xs={12} md={6}>
             <FormControlLabel

@@ -12,7 +12,6 @@ import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 import PlanContactItemForm, {
   IPlanContactItemForm,
-  IPlanContactItemFormProps,
   PlanContactItemInitialValues,
   PlanContactItemYupSchema
 } from './PlanContactItemForm';
@@ -40,14 +39,12 @@ export const PlanContactYupSchema = yup.object().shape({
   })
 });
 
-export type IPlanContactFormProps = IPlanContactItemFormProps;
-
 /**
  * Create Plan - contact section
  *
  * @return {*}
  */
-const PlanContactForm: React.FC<IPlanContactFormProps> = ({ organization }) => {
+const PlanContactForm: React.FC = () => {
   const { values, errors } = useFormikContext<IPlanContactForm>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,7 +79,7 @@ const PlanContactForm: React.FC<IPlanContactFormProps> = ({ organization }) => {
                 dialogTitle={'Add Contact'}
                 open={isModalOpen}
                 component={{
-                  element: <PlanContactItemForm organization={organization} />,
+                  element: <PlanContactItemForm />,
                   initialValues: currentPlanContact.values,
                   validationSchema: PlanContactItemYupSchema
                 }}

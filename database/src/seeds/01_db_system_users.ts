@@ -42,6 +42,12 @@ const systemUsers = [
     user_guid: 'F4663727DE89489C8B7CFA81E4FA99B3'
   },
   {
+    identifier: 'kjartane',
+    type: SYSTEM_IDENTITY_SOURCE.BCEID_BASIC,
+    roleId: SYSTEM_USER_ROLE_ID.CREATOR,
+    user_guid: '6F76D664023A4EABAD52B95512D6607C'
+  },
+  {
     identifier: 'hdave',
     type: SYSTEM_IDENTITY_SOURCE.IDIR,
     roleId: SYSTEM_USER_ROLE_ID.SYSTEM_ADMINISTRATOR,

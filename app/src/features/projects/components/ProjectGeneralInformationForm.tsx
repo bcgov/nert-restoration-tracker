@@ -59,8 +59,14 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
 export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
   project: yup.object().shape({
     project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
-    start_date: yup.string().nullable().isValidDateString(),
+    start_date: yup.string().isValidDateString().required('Required'),
     end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
+    actual_start_date: yup.string().nullable().isValidDateString(),
+    actual_end_date: yup
+      .string()
+      .nullable()
+      .isValidDateString()
+      .isEndDateAfterStartDate('actual_start_date'),
     brief_desc: yup
       .string()
       .max(500, 'Cannot exceed 500 characters')
@@ -124,7 +130,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
             formikProps={formikProps}
             plannedStartName={'project.start_date'}
             plannedEndName={'project.end_date'}
-            plannedStartRequired={false}
+            plannedStartRequired={true}
             plannedEndRequired={false}
             actualStartName={'project.actual_start_date'}
             actualEndName={'project.actual_end_date'}

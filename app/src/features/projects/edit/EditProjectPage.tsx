@@ -124,6 +124,19 @@ const EditProjectPage: React.FC = () => {
    * Handle project edits.
    */
   const handleProjectEdits = async (values: IEditProjectRequest) => {
+    // Remove empty partnerships
+    values.partnership.partnerships = values.partnership.partnerships.filter((partner) =>
+      partner.partnership.trim()
+    );
+
+    // Remove empty Authorizations
+    values.authorization.authorizations = values.authorization.authorizations.filter(
+      (authorization) => authorization.authorization_ref.trim()
+    );
+
+    // Set size_ha to 0 if it is not set
+    values.location.size_ha = values.location.size_ha ? values.location.size_ha : 0;
+
     try {
       const response = await restorationTrackerApi.project.updateProject(projectId, values);
 
@@ -247,9 +260,7 @@ const EditProjectPage: React.FC = () => {
                   </Grid>
 
                   <Grid item xs={12} md={9}>
-                    <ProjectContactForm
-                      organization={codes.codes.coordinator_agency.map((item) => item.name)}
-                    />
+                    <ProjectContactForm />
                   </Grid>
                 </Grid>
               </Box>
@@ -324,16 +335,7 @@ const EditProjectPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <Box component="fieldset" mx={0}>
-                      <ProjectFundingForm
-                        fundingSources={codes.codes.funding_source.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
-                        investment_action_category={codes.codes.investment_action_category.map(
-                          (item) => {
-                            return { value: item.id, label: item.name, fs_id: item.fs_id };
-                          }
-                        )}
-                      />
+                      <ProjectFundingForm />
                     </Box>
                     <Box component="fieldset" mt={5} mx={0}>
                       <Typography component="legend">Partnerships</Typography>

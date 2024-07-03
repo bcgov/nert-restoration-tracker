@@ -1,4 +1,3 @@
-import { coordinator_agency } from '../constants/codes';
 import { IDBConnection } from '../database/db';
 import { CodeRepository, IAllCodeSets } from '../repositories/code-repository';
 import { getNRMRegions } from './../utils/spatial-utils';
@@ -21,8 +20,6 @@ export class CodeService extends DBService {
     const [
       [
         first_nations,
-        funding_source,
-        investment_action_category,
         iucn_conservation_action_level_1_classification,
         iucn_conservation_action_level_2_subclassification,
         iucn_conservation_action_level_3_subclassification,
@@ -34,8 +31,6 @@ export class CodeService extends DBService {
     ] = await Promise.all([
       Promise.all([
         this.codeRepository.getFirstNations(),
-        this.codeRepository.getFundingSource(),
-        this.codeRepository.getInvestmentActionCategory(),
         this.codeRepository.getIUCNConservationActionLevel1Classification(),
         this.codeRepository.getIUCNConservationActionLevel2Subclassification(),
         this.codeRepository.getIUCNConservationActionLevel3Subclassification(),
@@ -48,16 +43,13 @@ export class CodeService extends DBService {
 
     return {
       first_nations,
-      funding_source,
-      investment_action_category,
       iucn_conservation_action_level_1_classification,
       iucn_conservation_action_level_2_subclassification,
       iucn_conservation_action_level_3_subclassification,
       system_roles,
       project_roles,
       administrative_activity_status_type,
-      regions,
-      coordinator_agency
+      regions
     };
   }
 }

@@ -23,7 +23,6 @@ export interface IIsPublicProps {
  */
 const IsPublic: React.FC<IIsPublicProps> = (props) => {
   const { values, touched, errors, handleChange } = props;
-  console.log('values', values);
 
   return (
     <Box mt={4}>
