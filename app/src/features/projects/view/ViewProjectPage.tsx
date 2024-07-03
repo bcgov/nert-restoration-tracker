@@ -1,8 +1,6 @@
 import {
   mdiAccountMultipleOutline,
-  mdiArrowLeft,
   mdiFilePdfBox,
-  mdiFullscreen,
   mdiPencilOutline
 } from '@mdi/js';
 import { Icon } from '@mdi/react';
@@ -12,9 +10,7 @@ import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
@@ -74,8 +70,6 @@ const ViewProjectPage: React.FC = () => {
   }
 
   const projectId = Number(urlParams['id']);
-
-  const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
   const restorationTrackerApi = useRestorationTrackerApi();
 
@@ -138,14 +132,6 @@ const ViewProjectPage: React.FC = () => {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
-  // Full Screen Map Dialog
-  const openMapDialog = () => {
-    setOpenFullScreen(true);
-  };
-
-  const closeMapDialog = () => {
-    setOpenFullScreen(false);
-  };
 
   return (
     <>
@@ -252,16 +238,6 @@ const ViewProjectPage: React.FC = () => {
                   <Paper elevation={2}>
                     <Box height="500px" position="relative">
                       <LocationBoundary locationData={project.location} />
-                      <Box position="absolute" top="80px" left="10px" zIndex="999">
-                        <IconButton
-                          aria-label="view full screen map"
-                          title="View full screen map"
-                          sx={pageStyles.fullScreenBtn}
-                          onClick={openMapDialog}
-                          size="large">
-                          <Icon path={mdiFullscreen} size={1} />
-                        </IconButton>
-                      </Box>
                     </Box>
                   </Paper>
                 </Box>
@@ -285,20 +261,6 @@ const ViewProjectPage: React.FC = () => {
         </Card>
       </Container>
 
-      <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
-        <Box pr={3} pl={1} display="flex" alignItems="center">
-          <Box mr={1}>
-            <IconButton onClick={closeMapDialog} aria-label="back to project" size="large">
-              <Icon path={mdiArrowLeft} size={1} />
-            </IconButton>
-          </Box>
-        </Box>
-        <Box display="flex" height="100%" flexDirection="column">
-          <Box flex="1 1 auto">
-            <LocationBoundary locationData={project.location} scrollWheelZoom={true} />
-          </Box>
-        </Box>
-      </Dialog>
     </>
   );
 };
