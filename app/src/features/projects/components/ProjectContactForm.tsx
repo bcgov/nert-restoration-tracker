@@ -12,7 +12,6 @@ import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 import ProjectContactItemForm, {
   IProjectContactItemForm,
-  IProjectContactItemFormProps,
   ProjectContactItemInitialValues,
   ProjectContactItemYupSchema
 } from './ProjectContactItemForm';
@@ -40,14 +39,12 @@ export const ProjectContactYupSchema = yup.object().shape({
   })
 });
 
-export type IProjectContactFormProps = IProjectContactItemFormProps;
-
 /**
  * Create project - contact section
  *
  * @return {*}
  */
-const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ organization }) => {
+const ProjectContactForm: React.FC = () => {
   const { values, errors } = useFormikContext<IProjectContactForm>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,7 +80,7 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ organization }
                 dialogTitle={'Add Contact'}
                 open={isModalOpen}
                 component={{
-                  element: <ProjectContactItemForm organization={organization} />,
+                  element: <ProjectContactItemForm />,
                   initialValues: currentProjectContact.values,
                   validationSchema: ProjectContactItemYupSchema
                 }}

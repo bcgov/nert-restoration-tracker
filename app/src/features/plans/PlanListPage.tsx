@@ -74,7 +74,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
           getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
             ? PlanTableI18N.multiYear
             : PlanTableI18N.annual,
-        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        org: row.contact.contacts.map((item) => item.organization).join(', '),
         startDate: row.project.start_date,
         endDate: row.project.end_date,
         statusCode: row.project.state_code,

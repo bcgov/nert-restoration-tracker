@@ -271,100 +271,6 @@ COMMENT ON TABLE first_nations IS 'A list of first nations.'
 ;
 
 -- 
--- TABLE: funding_source 
---
-
-CREATE TABLE funding_source(
-    funding_source_id        integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                     varchar(100)      NOT NULL,
-    description              varchar(250),
-    record_effective_date    date              NOT NULL,
-    record_end_date          date,
-    project_id_optional      boolean           NOT NULL,
-    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user              integer           NOT NULL,
-    update_date              timestamptz(6),
-    update_user              integer,
-    revision_count           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT funding_source_pk PRIMARY KEY (funding_source_id)
-)
-;
-
-
-
-COMMENT ON COLUMN funding_source.funding_source_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN funding_source.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN funding_source.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN funding_source.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN funding_source.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN funding_source.project_id_optional IS 'Provides whether the project id for the identified funding source is optional. A value of "Y" provides that the project id is optional and a value of "N" provides that the project id is not optional.'
-;
-COMMENT ON COLUMN funding_source.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN funding_source.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN funding_source.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN funding_source.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN funding_source.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE funding_source IS 'Agency or Ministry funding the project.'
-;
-
--- 
--- TABLE: investment_action_category 
---
-
-CREATE TABLE investment_action_category(
-    investment_action_category_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    funding_source_id                integer           NOT NULL,
-    name                             varchar(300),
-    description                      varchar(250),
-    record_effective_date            date              NOT NULL,
-    record_end_date                  date,
-    create_date                      timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                      integer           NOT NULL,
-    update_date                      timestamptz(6),
-    update_user                      integer,
-    revision_count                   integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT investment_action_category_pk PRIMARY KEY (investment_action_category_id)
-)
-;
-
-
-
-COMMENT ON COLUMN investment_action_category.investment_action_category_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN investment_action_category.funding_source_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN investment_action_category.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN investment_action_category.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN investment_action_category.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN investment_action_category.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN investment_action_category.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN investment_action_category.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN investment_action_category.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN investment_action_category.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN investment_action_category.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE investment_action_category IS 'The investment or action categories associated with the funding source. Funding sources may have no investment or action category thus the default category of Not Applicable is used.'
-;
-
--- 
 -- TABLE: iucn_conservation_action_level_1_classification 
 --
 
@@ -924,12 +830,12 @@ COMMENT ON TABLE project_first_nation IS 'A associative entity that joins projec
 
 CREATE TABLE project_funding_source(
     project_funding_source_id        integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    investment_action_category_id    integer           NOT NULL,
     project_id                       integer           NOT NULL,
-    funding_source_project_id        varchar(50),
+    organization_name                varchar(300)      NOT NULL,
+    funding_project_id               varchar(50),
     funding_amount                   money             NOT NULL,
-    funding_start_date               date              NOT NULL,
-    funding_end_date                 date              NOT NULL,
+    funding_start_date               date,
+    funding_end_date                 date,
     description                      varchar(3000),
     is_public                        boolean           DEFAULT false,
     create_date                      timestamptz(6)    DEFAULT now() NOT NULL,
@@ -945,11 +851,11 @@ CREATE TABLE project_funding_source(
 
 COMMENT ON COLUMN project_funding_source.project_funding_source_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_funding_source.investment_action_category_id IS 'System generated surrogate primary key identifier.'
-;
 COMMENT ON COLUMN project_funding_source.project_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_funding_source.funding_source_project_id IS 'Idenfification number used by funding source to reference the project'
+COMMENT ON COLUMN project_funding_source.organization_name IS 'The name of the funding source.'
+;
+COMMENT ON COLUMN project_funding_source.funding_project_id IS 'Identification number used by funding source to reference the project'
 ;
 COMMENT ON COLUMN project_funding_source.funding_amount IS 'Funding amount from funding source.'
 ;
@@ -1633,24 +1539,6 @@ CREATE UNIQUE INDEX administrative_activity_type_nuk1 ON administrative_activity
 CREATE UNIQUE INDEX first_nations_nuk1 ON first_nations(name, (record_end_date is NULL)) where record_end_date is null
 ;
 -- 
--- INDEX: funding_source_nuk1 
---
-
-CREATE UNIQUE INDEX funding_source_nuk1 ON funding_source(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
--- INDEX: investment_action_category_nuk1 
---
-
-CREATE UNIQUE INDEX investment_action_category_nuk1 ON investment_action_category(name, record_end_date, funding_source_id)
-;
--- 
--- INDEX: "Ref253" 
---
-
-CREATE INDEX "Ref253" ON investment_action_category(funding_source_id)
-;
--- 
 -- INDEX: iucn_conservation_action_level_1_classification_nuk1 
 --
 
@@ -1756,13 +1644,7 @@ CREATE INDEX "Ref132" ON project_first_nation(project_id)
 -- INDEX: project_funding_source_uk1 
 --
 
-CREATE UNIQUE INDEX project_funding_source_uk1 ON project_funding_source(funding_source_project_id, investment_action_category_id, project_id)
-;
--- 
--- INDEX: "Ref24" 
---
-
-CREATE INDEX "Ref24" ON project_funding_source(investment_action_category_id)
+CREATE UNIQUE INDEX project_funding_source_uk1 ON project_funding_source(funding_project_id, project_id)
 ;
 -- 
 -- INDEX: "Ref135" 
@@ -1978,16 +1860,6 @@ ALTER TABLE administrative_activity ADD CONSTRAINT "Refadministrative_activity_s
 
 
 -- 
--- TABLE: investment_action_category 
---
-
-ALTER TABLE investment_action_category ADD CONSTRAINT "Reffunding_source3" 
-    FOREIGN KEY (funding_source_id)
-    REFERENCES funding_source(funding_source_id)
-;
-
-
--- 
 -- TABLE: iucn_conservation_action_level_2_subclassification 
 --
 
@@ -2075,11 +1947,6 @@ ALTER TABLE project_first_nation ADD CONSTRAINT "Refproject2"
 -- 
 -- TABLE: project_funding_source 
 --
-
-ALTER TABLE project_funding_source ADD CONSTRAINT "Refinvestment_action_category4" 
-    FOREIGN KEY (investment_action_category_id)
-    REFERENCES investment_action_category(investment_action_category_id)
-;
 
 ALTER TABLE project_funding_source ADD CONSTRAINT "Refproject5" 
     FOREIGN KEY (project_id)

@@ -8,7 +8,28 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import yup from 'utils/YupSchema';
 
 declare module 'yup' {
+  interface NumberSchema {
+    /**
+     * Determine if number of people involved is required based on a boolean value.
+     *
+     * @param {string} [message]
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof StringSchema
+     */
+    isNumberOfPeopleInvolvedRequired(
+      message?: string
+    ): yup.NumberSchema<number | undefined, Record<number, any>, number | undefined>;
+  }
+
   interface StringSchema {
+    /**
+     * Determine if conservation areas are required based on a boolean value.
+     *
+     * @param {string} booleanName
+     * @param {string} [message]
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof StringSchema
+     */
     isConservationAreasRequired(
       booleanName: string,
       message?: string

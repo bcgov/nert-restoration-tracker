@@ -265,26 +265,22 @@ POST.apiDoc = {
               title: 'Project funding sources',
               type: 'object',
               required: ['fundingSources'],
-              additionalProperties: false,
               properties: {
                 fundingSources: {
                   type: 'array',
                   items: {
-                    title: 'Project funding agency',
+                    title: 'Project funding organization',
                     type: 'object',
-                    required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
+                    required: ['organization_name', 'funding_amount', 'is_public'],
                     properties: {
-                      agency_id: {
-                        type: 'number'
-                      },
-                      investment_action_category: {
-                        type: 'number'
+                      organization_name: {
+                        type: 'string'
                       },
                       description: {
                         type: 'string',
                         nullable: true
                       },
-                      agency_project_id: {
+                      funding_project_id: {
                         type: 'string'
                       },
                       funding_amount: {
@@ -292,11 +288,13 @@ POST.apiDoc = {
                       },
                       start_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
                       },
                       end_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
                       },
                       is_public: {
                         type: 'string',
@@ -435,6 +433,7 @@ export function createProject(): RequestHandler {
     const connection = getDBConnection(req['keycloak_token']);
 
     const sanitizedProjectPostData = new PostProjectObject(req.body);
+    console.log('sanitizedProjectPostData', sanitizedProjectPostData);
     try {
       await connection.open();
 

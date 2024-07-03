@@ -3,8 +3,6 @@ import React from 'react';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import FundingSource from './FundingSource';
 
-const mockRefresh = jest.fn();
-
 describe('FundingSource', () => {
   it('renders correctly with 1 funding source', () => {
     const { getByText } = render(
@@ -14,21 +12,18 @@ describe('FundingSource', () => {
           funding: {
             fundingSources: [
               {
-                id: 0,
-                agency_id: 1,
-                agency_name: 'agency name',
-                agency_project_id: 'ABC123',
+                organization_name: 'agency name',
+                description: 'ABC123',
                 investment_action_category: 1,
-                investment_action_category_name: 'investment action',
+                funding_project_id: 'investment action',
                 funding_amount: 333,
                 start_date: '2021-01-10',
                 end_date: '2021-01-20',
-                revision_count: 1
+                is_public: 'string'
               }
             ]
           }
         }}
-        refresh={mockRefresh}
       />
     );
 
@@ -48,7 +43,6 @@ describe('FundingSource', () => {
             fundingSources: []
           }
         }}
-        refresh={mockRefresh}
       />
     );
 

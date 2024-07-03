@@ -32,7 +32,8 @@ import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
 import ProjectLocationConservationAreas, {
-  IProjectLocationConservationAreasArrayItem
+  IProjectLocationConservationAreasArrayItem,
+  ProjectLocationConservationAreasFormArrayItemInitialValues
 } from 'features/projects/components/ProjectLocationConservationAreasForm';
 
 export interface IProjectLocationForm {
@@ -53,7 +54,7 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
     number_sites: '' as unknown as number,
     is_within_overlapping: 'false',
     size_ha: '' as unknown as number,
-    conservationAreas: []
+    conservationAreas: [ProjectLocationConservationAreasFormArrayItemInitialValues]
   }
 };
 
@@ -71,7 +72,7 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
       .array()
       .of(
         yup.object().shape({
-          conservationArea: yup.string().max(100, 'Cannot exceed 100 characters')
+          conservationArea: yup.string().max(100, 'Cannot exceed 100 characters').nullable()
         })
       )
       .isUniqueConservationArea('Conservation area entries must be unique')

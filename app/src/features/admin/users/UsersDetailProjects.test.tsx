@@ -276,7 +276,6 @@ describe('UsersDetailProjects', () => {
       mockUseCodes.mockReturnValue({
         codes: {
           ...codes,
-          coordinator_agency: [{ id: 1, name: 'agency 1' }],
           project_roles: [
             { id: 1, name: 'Project Lead' },
             { id: 2, name: 'Editor' },
@@ -321,7 +320,6 @@ describe('UsersDetailProjects', () => {
       mockUseCodes.mockReturnValue({
         codes: {
           ...codes,
-          coordinator_agency: [{ id: 1, name: 'agency 1' }],
           project_roles: [
             { id: 1, name: 'Project Lead' },
             { id: 2, name: 'Editor' },
@@ -380,7 +378,6 @@ describe('UsersDetailProjects', () => {
       mockUseCodes.mockReturnValue({
         codes: {
           ...codes,
-          coordinator_agency: [{ id: 1, name: 'agency 1' }],
           project_roles: [
             { id: 1, name: 'Project Lead' },
             { id: 2, name: 'Editor' },

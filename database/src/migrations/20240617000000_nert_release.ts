@@ -36,7 +36,6 @@ export async function up(knex: Knex): Promise<void> {
   const tr_generated_journal_triggers = fs.readFileSync(
     path.join(__dirname, DB_RELEASE, 'tr_generated_journal_triggers.sql')
   );
-  const tr_project_funding_source = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'tr_project_funding_source.sql'));
   const tr_project = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'tr_project.sql'));
   const tr_permit = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'tr_permit.sql'));
   const api_get_system_constant = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'api_get_system_constant.sql'));
@@ -48,10 +47,6 @@ export async function up(knex: Knex): Promise<void> {
 
   const populate_system_constants = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_constant.sql'));
   const populate_first_nations = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_first_nations.sql'));
-  const populate_funding_source = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_funding_source.sql'));
-  const populate_investment_action_category = fs.readFileSync(
-    path.join(__dirname, DB_RELEASE, 'populate_investment_action_category.sql')
-  );
   const populate_iucn_classifications = fs.readFileSync(
     path.join(__dirname, DB_RELEASE, 'populate_iucn_classifications.sql')
   );
@@ -112,7 +107,6 @@ export async function up(knex: Knex): Promise<void> {
     ${api_user_is_administrator}
     ${tr_journal_trigger}
     ${tr_generated_journal_triggers}
-    ${tr_project_funding_source}
     ${tr_project}
     ${tr_permit}
     ${api_get_system_constant}
@@ -124,8 +118,6 @@ export async function up(knex: Knex): Promise<void> {
     set search_path = restoration, public;
     ${populate_system_constants}
     ${populate_first_nations}
-    ${populate_funding_source}
-    ${populate_investment_action_category}
     ${populate_iucn_classifications}
     ${populate_project_role}
     ${populate_system_role}

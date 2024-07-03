@@ -59,16 +59,16 @@ describe('PostProjectObject', () => {
             first_name: 'first',
             last_name: 'last',
             email_address: 'email@example.com',
-            agency: 'agency',
+            organization: 'organization',
             is_public: 'true',
             is_primary: 'true'
           }
         ]
       },
-      permit: {
-        permits: [
+      authorization: {
+        authorizations: [
           {
-            permit_number: 1
+            authorization_ref: 1
           }
         ]
       },
@@ -110,9 +110,8 @@ describe('PostProjectObject', () => {
       funding: {
         funding_sources: [
           {
-            agency_id: 1,
-            investment_action_category: 1,
-            agency_project_id: 'agency project id',
+            organization_name: 'name',
+            funding_project_id: 'organization project id',
             funding_amount: 12,
             start_date: '2020/04/03',
             end_date: '2020/05/05'
@@ -333,16 +332,12 @@ describe('PostFundingSource', () => {
       projectFundingData = new PostFundingSource(null);
     });
 
-    it('sets agency_id', () => {
-      expect(projectFundingData.agency_id).to.equal(null);
+    it('sets organization_name', () => {
+      expect(projectFundingData.organization_name).to.equal(null);
     });
 
-    it('sets investment_action_category', () => {
-      expect(projectFundingData.investment_action_category).to.equal(null);
-    });
-
-    it('sets agency_project_id', () => {
-      expect(projectFundingData.agency_project_id).to.equal(null);
+    it('sets funding_project_id', () => {
+      expect(projectFundingData.funding_project_id).to.equal(null);
     });
 
     it('sets funding_amount', () => {
@@ -362,9 +357,8 @@ describe('PostFundingSource', () => {
     let projectFundingData: PostFundingSource;
 
     const obj = {
-      agency_id: 1,
-      investment_action_category: 1,
-      agency_project_id: 'agency project id',
+      organization_name: 'name',
+      funding_project_id: 'organization project id',
       funding_amount: 20,
       start_date: '2020/04/04',
       end_date: '2020/05/05',
@@ -376,16 +370,12 @@ describe('PostFundingSource', () => {
       projectFundingData = new PostFundingSource(obj);
     });
 
-    it('sets agency_id', () => {
-      expect(projectFundingData.agency_id).to.equal(obj.agency_id);
+    it('sets organization_name', () => {
+      expect(projectFundingData.organization_name).to.equal(obj.organization_name);
     });
 
-    it('sets investment_action_category', () => {
-      expect(projectFundingData.investment_action_category).to.equal(obj.investment_action_category);
-    });
-
-    it('sets agency_project_id', () => {
-      expect(projectFundingData.agency_project_id).to.equal(obj.agency_project_id);
+    it('sets funding_project_id', () => {
+      expect(projectFundingData.funding_project_id).to.equal(obj.funding_project_id);
     });
 
     it('sets funding_amount', () => {
@@ -535,14 +525,13 @@ describe('PostFundingData', () => {
     const obj = {
       fundingSources: [
         {
-          agency_id: 1,
-          investment_action_category: 1,
-          agency_project_id: 'agency project id',
-          funding_amount: 12,
-          start_date: '2020/04/03',
-          end_date: '2020/05/05',
+          organization_name: 'name',
           description: 'description',
-          is_public: 'true'
+          funding_project_id: 'Agency123',
+          start_date: '01/01/2020',
+          end_date: '01/01/2021',
+          funding_amount: 123,
+          is_public: 'false'
         }
       ]
     };
@@ -550,14 +539,13 @@ describe('PostFundingData', () => {
     const objReturn = {
       fundingSources: [
         {
-          agency_id: 1,
-          investment_action_category: 1,
-          agency_project_id: 'agency project id',
-          funding_amount: 12,
-          start_date: '2020/04/03',
-          end_date: '2020/05/05',
+          organization_name: 'name',
           description: 'description',
-          is_public: true
+          funding_project_id: 'Agency123',
+          start_date: '01/01/2020',
+          end_date: '01/01/2021',
+          funding_amount: 123,
+          is_public: false
         }
       ]
     };

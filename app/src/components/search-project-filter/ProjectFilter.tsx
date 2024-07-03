@@ -62,8 +62,6 @@ const pageStyles = {
 
 export const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
   keyword: '',
-  contact_agency: '',
-  funding_agency: [],
   permit_number: '',
   start_date: '',
   end_date: '',
@@ -74,8 +72,6 @@ export const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
 
 export interface IProjectAdvancedFilters {
   keyword?: string;
-  contact_agency?: string | string[];
-  funding_agency?: number | number[];
   permit_number?: string;
   start_date?: string;
   end_date?: string;
@@ -86,8 +82,6 @@ export interface IProjectAdvancedFilters {
 
 export const ProjectAdvancedFiltersKeyLabels = {
   keyword: { label: 'Keyword' },
-  contact_agency: { label: 'Project Name' },
-  funding_agency: { label: 'Funding Organizations', codeSet: 'funding_agency' },
   permit_number: { label: 'Authorization Reference' },
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
@@ -98,8 +92,6 @@ export const ProjectAdvancedFiltersKeyLabels = {
 
 export interface IProjectAdvancedFiltersProps {
   filterChipParams: IProjectAdvancedFilters;
-  contact_agency: string[];
-  funding_agency: IMultiAutocompleteFieldOption[];
   region: IMultiAutocompleteFieldOption[];
   status: IMultiAutocompleteFieldOption[];
   focus: IMultiAutocompleteFieldOption[];
@@ -111,7 +103,7 @@ export interface IProjectAdvancedFiltersProps {
  * @return {*}
  */
 const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
-  const { filterChipParams, contact_agency, funding_agency, region, status, focus } = props;
+  const { filterChipParams, region, status, focus } = props;
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [isFiltersChipsOpen, setIsFiltersChipsOpen] = useState(false);
@@ -173,10 +165,6 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
   };
 
   const getChipLabel = (key: string, value: string) => {
-    if (!funding_agency?.entries) {
-      return '';
-    }
-
     const filterKeyLabel = ProjectAdvancedFiltersKeyLabels[key].label;
     let filterValueLabel = '';
 
@@ -296,13 +284,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
 
           {isAdvancedFiltersOpen && (
             <Box my={5}>
-              <ProjectAdvancedFilters
-                contact_agency={contact_agency}
-                funding_agency={funding_agency}
-                region={region}
-                status={status}
-                focus={focus}
-              />
+              <ProjectAdvancedFilters region={region} status={status} focus={focus} />
 
               <Box textAlign="right" mt={3}>
                 <Button

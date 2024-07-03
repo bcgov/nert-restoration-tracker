@@ -22,12 +22,6 @@ export interface IGetPlan {
   location: GetLocationData;
 }
 
-export interface IPlan {
-  project: IProject;
-  contact: IContact;
-  location: ILocation;
-}
-
 export interface IProject {
   project_id?: number;
   is_project: boolean;
@@ -47,19 +41,6 @@ export interface IProject {
   is_project_part_public_plan: boolean;
   publish_date?: string;
   revision_count?: number;
-}
-
-export interface IContact {
-  contacts: IContact[];
-}
-
-export interface IContact {
-  first_name: string;
-  last_name: string;
-  email_address: string;
-  agency: string;
-  is_public: boolean;
-  is_primary: boolean;
 }
 
 export interface ILocation {

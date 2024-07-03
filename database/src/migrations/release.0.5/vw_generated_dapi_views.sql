@@ -3,8 +3,6 @@
  create or replace view administrative_activity_type as select * from restoration.administrative_activity_type;
  create or replace view contact_type as select * from restoration.contact_type;
  create or replace view first_nations as select * from restoration.first_nations;
- create or replace view funding_source as select * from restoration.funding_source;
- create or replace view investment_action_category as select * from restoration.investment_action_category;
  create or replace view iucn_conservation_action_level_1_classification as select * from restoration.iucn_conservation_action_level_1_classification;
  create or replace view iucn_conservation_action_level_2_subclassification as select * from restoration.iucn_conservation_action_level_2_subclassification;
  create or replace view iucn_conservation_action_level_3_subclassification as select * from restoration.iucn_conservation_action_level_3_subclassification;

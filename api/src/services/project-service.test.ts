@@ -429,7 +429,7 @@ describe.skip('ProjectService', () => {
   //             first_name: 'John',
   //             last_name: 'Smith',
   //             email_address: 'john@smith.com',
-  //             agency: 'ABC Consulting',
+  //             organization: 'ABC Consulting',
   //             is_public: false,
   //             is_primary: true
   //           }
@@ -439,11 +439,11 @@ describe.skip('ProjectService', () => {
   //         funding_sources: [
   //           {
   //             id: 0,
-  //             agency_id: 20,
-  //             agency_name: '',
+  //             organization_id: 20,
+  //             organization_name: '',
   //             investment_action_category: 59,
   //             investment_action_category_name: '',
-  //             agency_project_id: 'Agency123',
+  //             organization_project_id: 'Agency123',
   //             funding_amount: 123,
   //             start_date: '2022-02-27',
   //             end_date: '2022-03-26',
@@ -880,9 +880,9 @@ describe.skip('ProjectService', () => {
         funding: {
           fundingSources: [
             {
-              agency_id: 16,
-              agency_name: 'My agency',
-              agency_project_id: 'ABC123',
+              organization_id: 16,
+              organization_name: 'My organization',
+              organization_project_id: 'ABC123',
               start_date: '2022-03-01',
               end_date: '2022-03-26',
               funding_amount: 222,

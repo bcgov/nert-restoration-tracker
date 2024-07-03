@@ -79,7 +79,7 @@ describe('update', () => {
         },
         iucn: {},
         contact: {},
-        permit: {},
+        authorization: {},
         funding: {},
         partnerships: {},
         objectives: {},
