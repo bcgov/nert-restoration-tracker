@@ -4,7 +4,7 @@ import * as faker from "faker";
 export function navigate_project() {
   // Create project
   cy.wait(1000);
-  cy.visit("/admin/projects/create");
+  cy.visit("/projects");
   cy.wait(1000);
 }
 

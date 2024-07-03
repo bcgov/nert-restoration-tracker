@@ -13,8 +13,10 @@
   "devDependencies": {
     "@babel/core": "^7.5.4",
     "@types/node": "^14.0.13",
-    "cypress": "^9.1.0",
+    "cypress": "^9.7.0",
     "cypress-file-upload": "^5.0.8",
+    "cypress-keycloak-commands": "^1.2.0",
+    "cypress-localstorage-commands": "^2.2.6",
     "cypress-plugin-tab": "^1.0.5",
     "eslint": "^8.0.1",
     "eslint-config-airbnb-base": "^14.1.0",
