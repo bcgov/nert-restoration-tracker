@@ -658,57 +658,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Insert a project permit.
-   *
-   * @param {string} permitNumber
-   * @param {string} permitType
-   * @param {number} projectId
-   * @param {number} systemUserId
-   * @return {*}
-   * @memberof ProjectRepository
-   */
-  async insertProjectPermit(
-    permitNumber: string,
-    permitType: string,
-    projectId: number,
-    systemUserId: number
-  ): Promise<{ permit_id: number }> {
-    defaultLog.debug({ label: 'insertProjectPermit', message: 'params', permitNumber, permitType, projectId });
-
-    try {
-      const sqlStatement = SQL`
-      INSERT INTO permit (
-        project_id,
-        number,
-        type,
-        system_user_id
-      ) VALUES (
-        ${projectId},
-        ${permitNumber},
-        ${permitType},
-        ${systemUserId}
-      )
-      RETURNING
-        permit_id;
-    `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert project permit', [
-          'ProjectRepository->insertProjectPermit',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'insertProjectPermit', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * Insert a project partnership.
    *
    * @param {PostRestPlanData} restPlanData
@@ -929,6 +878,7 @@ export class ProjectRepository extends BaseRepository {
    *
    * @param {string} permitNumber
    * @param {string} permitType
+   * @param {string} permitDesc
    * @param {number} projectId
    * @return {*}  {Promise<{ permit_id: number }>}
    * @memberof ProjectRepository
@@ -936,9 +886,17 @@ export class ProjectRepository extends BaseRepository {
   async insertAuthorization(
     permitNumber: string,
     permitType: string,
+    permitDesc: string,
     projectId: number
   ): Promise<{ permit_id: number }> {
-    defaultLog.debug({ label: 'insertAuthorization', message: 'params', permitNumber, permitType, projectId });
+    defaultLog.debug({
+      label: 'insertAuthorization',
+      message: 'params',
+      permitNumber,
+      permitType,
+      permitDesc,
+      projectId
+    });
 
     try {
       const systemUserId = this.connection.systemUserId();
@@ -948,11 +906,13 @@ export class ProjectRepository extends BaseRepository {
         project_id,
         number,
         type,
+        description,
         system_user_id
       ) VALUES (
         ${projectId},
         ${permitNumber},
         ${permitType},
+        ${permitDesc},
         ${systemUserId}
       )
       RETURNING
