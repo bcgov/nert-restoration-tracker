@@ -29,6 +29,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
+import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 
 const pageStyles = {
   titleContainerActions: {
@@ -134,6 +135,12 @@ const ViewPlanPage: React.FC = () => {
   const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
     dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
   };
+
+  const bounds = calculateUpdatedMapBounds(
+    planWithDetails?.location.geometry || [],
+    true
+  ) || null;
+
 
   const deleteErrorDialogProps = {
     dialogTitle: DeletePlanI18N.deleteErrorTitle,
@@ -325,6 +332,7 @@ const ViewPlanPage: React.FC = () => {
                       mapId={'plan_location_map'}
                       layerVisibility={layerVisibility}
                       features={planWithDetails.location.geometry}
+                      bounds={bounds}
                       mask={null}
                     />
                   </Box>
