@@ -51,9 +51,8 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         projectId: row.project.project_id,
         projectName: row.project.project_name,
         authRef: row.authorization.authorizations
-          .map(
-            (item: { authorization_ref: string; authorization_type: string }) =>
-              item.authorization_ref
+          .map((item: { authorization_ref: string; authorization_type: string }) =>
+            item.authorization_ref ? item.authorization_ref : 'Pending'
           )
           .join(', '),
         org: row.contact.contacts.map((item) => item.organization).join(', '),
