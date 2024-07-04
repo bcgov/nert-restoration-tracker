@@ -11,5 +11,10 @@
   "viewportHeight": 900,
   "viewportWidth": 1440,
   "baseUrl": "http://localhost:7100",
-  "oldbaseUrl":"https://dev-restoration-tracker.apps.silver.devops.gov.bc.ca"
+  "oldbaseUrl": "https://dev-restoration-tracker.apps.silver.devops.gov.bc.ca",
+  "env": {
+    "auth_base_url": "https://dev.loginproxy.gov.bc.ca/auth",
+    "auth_realm": "standard",
+    "auth_client_id": "nert-public-5352"
+  }
 }

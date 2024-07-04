@@ -9,23 +9,25 @@
 // ***********************************************
 
 import "cypress-file-upload";
+import "cypress-keycloak-commands";
+import "cypress-localstorage-commands";
 import "./keycloak.js";
 
-Cypress.Commands.overwrite('login', (originalFn) => {
+Cypress.Commands.overwrite("login", (originalFn: any) => {
   originalFn({
     root: Cypress.env("authUrl"),
     realm: Cypress.env("authRealm"),
     username: Cypress.env("username"),
     password: Cypress.env("password"),
     client_id: Cypress.env("authClientId"),
-    redirect_uri: Cypress.env("host"),
-  })
-})
+    redirect_uri: Cypress.env("host")
+  });
+});
 
-Cypress.Commands.overwrite('logout', (originalFn) => {
+Cypress.Commands.overwrite("logout", (originalFn: any) => {
   originalFn({
     root: Cypress.env("authUrl"),
     realm: Cypress.env("authRealm"),
-    redirect_uri: Cypress.env("host"),
-  })
-})
+    redirect_uri: Cypress.env("host")
+  });
+});
