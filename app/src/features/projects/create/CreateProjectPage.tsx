@@ -286,7 +286,7 @@ const CreateProjectPage: React.FC = () => {
       // Remove empty Authorizations
       projectPostObject.authorization.authorizations =
         projectPostObject.authorization.authorizations.filter((authorization) =>
-          authorization.authorization_ref.trim()
+          authorization.authorization_type.trim()
         );
 
       // Remove empty Conservation Areas
