@@ -222,6 +222,9 @@ export const projectCreatePostRequestObject = {
               },
               authorization_type: {
                 type: 'string'
+              },
+              permit_description: {
+                type: 'string'
               }
             }
           }

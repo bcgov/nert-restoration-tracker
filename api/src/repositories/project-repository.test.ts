@@ -731,62 +731,6 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertProjectPermit', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should insert project permit and return id on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [{ permit_id: 1 }] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.insertProjectPermit('permit', 'type', 1, 1);
-
-      expect(response).to.eql({ permit_id: 1 });
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.insertProjectPermit('permit', 'type', 1, 1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to insert project permit');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.insertProjectPermit('permit', 'type', 1, 1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
   describe('insertProjectRestPlan', () => {
     afterEach(() => {
       sinon.restore();
@@ -1065,7 +1009,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertAuthorization('string', 'string', 1);
+      const response = await projectRepository.insertAuthorization('string', 'string', 'string', 1);
 
       expect(response).to.eql({ permit_id: 1 });
     });
@@ -1082,7 +1026,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertAuthorization('string', 'string', 1);
+        await projectRepository.insertAuthorization('string', 'string', 'string', 1);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to insert permit ("authorization")');
       }
@@ -1098,7 +1042,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertAuthorization('string', 'string', 1);
+        await projectRepository.insertAuthorization('string', 'string', 'string', 1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

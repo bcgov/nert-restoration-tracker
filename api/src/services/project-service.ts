@@ -462,7 +462,12 @@ export class ProjectService extends DBService {
     promises.push(
       Promise.all(
         postProjectData.authorization.authorizations.map((authorization: IPostAuthorization) =>
-          this.insertAuthorization(authorization.authorization_ref, authorization.authorization_type, projectId)
+          this.insertAuthorization(
+            authorization.authorization_ref,
+            authorization.authorization_type,
+            authorization.authorization_desc,
+            projectId
+          )
         )
       )
     );
@@ -623,6 +628,7 @@ export class ProjectService extends DBService {
    *
    * @param {string} authorizationNumber
    * @param {string} authorizationType
+   * @param {string} authorizationDesc
    * @param {number} projectId
    * @return {*}  {Promise<number>}
    * @memberof ProjectService
@@ -630,11 +636,13 @@ export class ProjectService extends DBService {
   async insertAuthorization(
     authorizationNumber: string,
     authorizationType: string,
+    authorizationDesc: string,
     projectId: number
   ): Promise<number> {
     const response = await this.projectRepository.insertAuthorization(
       authorizationNumber,
       authorizationType,
+      authorizationDesc,
       projectId
     );
 
@@ -865,7 +873,12 @@ export class ProjectService extends DBService {
 
     await Promise.all(
       authorizationData?.authorizations.map((authorization) => {
-        return this.insertAuthorization(authorization.authorization_ref, authorization.authorization_type, projectId);
+        return this.insertAuthorization(
+          authorization.authorization_ref,
+          authorization.authorization_type,
+          authorization.authorization_desc,
+          projectId
+        );
       }) || []
     );
   }

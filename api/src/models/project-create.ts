@@ -111,6 +111,7 @@ export class PostContactData {
 export interface IPostAuthorization {
   authorization_ref: string;
   authorization_type: string;
+  authorization_desc: string;
 }
 
 /**
@@ -130,7 +131,8 @@ export class PostAuthorizationData {
         obj.authorizations.map((item: any) => {
           return {
             authorization_ref: item.authorization_ref,
-            authorization_type: item.authorization_type
+            authorization_type: item.authorization_type,
+            authorization_desc: item.authorization_desc
           };
         })) ||
       [];

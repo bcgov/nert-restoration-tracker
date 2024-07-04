@@ -103,6 +103,7 @@ export class GetSpeciesData {
 export interface IGetAuthorization {
   authorization_ref: string;
   authorization_type: string;
+  authorization_desc: string;
 }
 
 export class GetAuthorizationData {
@@ -114,7 +115,8 @@ export class GetAuthorizationData {
         authData.map((item: any) => {
           return {
             authorization_ref: item.number,
-            authorization_type: item.type
+            authorization_type: item.type,
+            authorization_desc: item.description
           };
         })) ||
       [];

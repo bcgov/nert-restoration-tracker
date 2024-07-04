@@ -396,7 +396,8 @@ describe('GetAuthorizationData', () => {
     const authorizations = [
       {
         number: '1',
-        type: 'permit type'
+        type: 'permit type',
+        description: 'description'
       }
     ];
 
@@ -408,7 +409,8 @@ describe('GetAuthorizationData', () => {
       expect(projectPermitData.authorizations).to.eql([
         {
           authorization_ref: '1',
-          authorization_type: 'permit type'
+          authorization_type: 'permit type',
+          authorization_desc: 'description'
         }
       ]);
     });

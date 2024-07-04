@@ -460,6 +460,7 @@ CREATE TABLE permit(
     project_id                   integer,
     number                       varchar(100)      NOT NULL,
     type                         varchar(300)      NOT NULL,
+    description                  varchar(300),
     coordinator_first_name       varchar(50),
     coordinator_last_name        varchar(50),
     coordinator_email_address    varchar(500),
@@ -485,7 +486,9 @@ COMMENT ON COLUMN permit.project_id IS 'System generated surrogate primary key i
 ;
 COMMENT ON COLUMN permit.number IS 'Permit number provided by FrontCounter BC.'
 ;
-COMMENT ON COLUMN permit.type IS 'The tye of the permit.'
+COMMENT ON COLUMN permit.type IS 'The type of the permit.'
+;
+COMMENT ON COLUMN permit.description IS 'Description of the permit.'
 ;
 COMMENT ON COLUMN permit.coordinator_first_name IS 'The first name of the permit coordinator.'
 ;

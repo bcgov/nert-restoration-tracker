@@ -200,6 +200,7 @@ export interface IGetProjectForViewResponseSpecies {
 interface IGetProjectForViewResponsePermitArrayItem {
   permit_number: string;
   permit_type: string;
+  permit_description: string;
 }
 
 export interface IGetProjectForViewResponsePermit {
@@ -270,7 +271,11 @@ export interface IGetProjectForViewResponseObjectives {
 }
 
 export interface IGetProjectForViewResponseAuthorization {
-  authorizations: { authorization_ref: string; authorization_type: string }[];
+  authorizations: {
+    authorization_ref: string;
+    authorization_type: string;
+    authorization_desc: string;
+  }[];
 }
 /**
  * A single media item.

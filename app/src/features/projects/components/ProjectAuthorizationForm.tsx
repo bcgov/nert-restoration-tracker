@@ -30,6 +30,7 @@ const pageStyles = {
 export interface IProjectAuthorizationFormArrayItem {
   authorization_ref: string;
   authorization_type: string;
+  authorization_desc: string;
 }
 
 export interface IProjectAuthorizationForm {
@@ -39,8 +40,9 @@ export interface IProjectAuthorizationForm {
 }
 
 export const ProjectAuthorizationFormArrayItemInitialValues: IProjectAuthorizationFormArrayItem = {
-  authorization_ref: '',
-  authorization_type: ''
+  authorization_ref: '' as string,
+  authorization_type: '' as string,
+  authorization_desc: '' as string
 };
 
 export const ProjectAuthorizationFormInitialValues: IProjectAuthorizationForm = {
@@ -60,15 +62,20 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
             .nullable()
             .transform((value, orig) => (orig.trim() === '' ? null : value))
             .max(100, 'Cannot exceed 100 characters'),
-
           authorization_type: yup
             .string()
             .nullable()
             .transform((value, orig) => (orig.trim() === '' ? null : value))
-            .max(100, 'Cannot exceed 100 characters')
+            .max(100, 'Cannot exceed 100 characters'),
+          authorization_desc: yup
+            .string()
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
+            .max(200, 'Cannot exceed 200 characters')
         })
       )
       .nullable()
+
     // .isUniquePermitNumber('Authorization reference must be unique')
   })
 });
@@ -108,15 +115,18 @@ const ProjectAuthorizationForm: React.FC = () => {
                 const authorizationTypeMeta = getFieldMeta(
                   `authorization.authorizations.[${index}].authorization_type`
                 );
+                const authorizationDescMeta = getFieldMeta(
+                  `authorization.authorizations.[${index}].authorization_desc`
+                );
 
                 return (
                   /* authorization List List */
                   <Grid container spacing={3} key={index}>
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12}>
                       <List>
                         <ListItem sx={pageStyles.customListItem}>
                           <Grid container spacing={3}>
-                            <Grid item xs={6}>
+                            <Grid item xs={4}>
                               <FormControl fullWidth size="small" variant="outlined">
                                 <InputLabel id="authorization-type-label">
                                   Authorization Type
@@ -144,7 +154,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                                 </FormHelperText>
                               </FormControl>
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={4}>
                               <CustomTextField
                                 name={`authorization.authorizations.[${index}].authorization_ref`}
                                 label="Authorization Reference"
@@ -158,20 +168,37 @@ const ProjectAuthorizationForm: React.FC = () => {
                                 }}
                               />
                             </Grid>
+                            <Grid item xs={4}>
+                              <CustomTextField
+                                name={`authorization.authorizations.[${index}].authorization_desc`}
+                                label="Authorization Description"
+                                other={{
+                                  required: !(authorization.authorization_type != 'Other'),
+                                  value: authorization.authorization_desc,
+                                  error:
+                                    authorizationDescMeta.touched &&
+                                    Boolean(authorizationDescMeta.error),
+                                  helperText:
+                                    authorizationDescMeta.touched && authorizationDescMeta.error
+                                }}
+                              />
+                            </Grid>
+                            {index >= 1 && (
+                              <Grid item xs={2} mt={-3}>
+                                <ListItemSecondaryAction>
+                                  <IconButton
+                                    color="primary"
+                                    data-testid="delete-icon"
+                                    aria-label="remove authorization"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                    edge="end"
+                                    size="large">
+                                    <Icon path={mdiTrashCanOutline} size={1}></Icon>
+                                  </IconButton>
+                                </ListItemSecondaryAction>
+                              </Grid>
+                            )}
                           </Grid>
-                          {index >= 1 && (
-                            <ListItemSecondaryAction>
-                              <IconButton
-                                color="primary"
-                                data-testid="delete-icon"
-                                aria-label="remove authorization"
-                                onClick={() => arrayHelpers.remove(index)}
-                                edge="end"
-                                size="large">
-                                <Icon path={mdiTrashCanOutline} size={1}></Icon>
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          )}
                         </ListItem>
                       </List>
                     </Grid>
@@ -180,6 +207,11 @@ const ProjectAuthorizationForm: React.FC = () => {
               })}
             <Box pt={0.5}>
               <Button
+                disabled={
+                  !values.authorization.authorizations[
+                    values.authorization.authorizations.length - 1
+                  ].authorization_type.trim() || values.authorization.authorizations.length >= 5
+                }
                 type="button"
                 variant="outlined"
                 color="primary"

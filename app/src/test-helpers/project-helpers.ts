@@ -28,7 +28,8 @@ export const getProjectForViewResponse: IGetProjectForViewResponse = {
     authorizations: [
       {
         authorization_ref: '123',
-        authorization_type: 'Permit type'
+        authorization_type: 'Permit type',
+        authorization_desc: 'Description'
       }
     ]
   },
