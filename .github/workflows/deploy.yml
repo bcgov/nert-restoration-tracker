@@ -490,8 +490,8 @@ jobs:
       CYPRESS_BASE_URL: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
       CYPRESS_host: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
       CYPRESS_ENVIRONMENT: ${{ github.base_ref }}
-      CYPRESS_authRealm: '35r1iman'
-      CYPRESS_authClientId: 'restoration'
+      CYPRESS_authRealm: 'standard'
+      CYPRESS_authClientId: 'https://dev.loginproxy.gov.bc.ca'
       CYPRESS_authUrl: 'https://${{ github.base_ref }}.oidc.gov.bc.ca'
     needs:
       - deployDatabase
