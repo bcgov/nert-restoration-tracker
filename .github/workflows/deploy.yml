@@ -491,8 +491,8 @@ jobs:
       CYPRESS_host: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
       CYPRESS_ENVIRONMENT: ${{ github.base_ref }}
       CYPRESS_authRealm: 'standard'
-      CYPRESS_authClientId: 'https://dev.loginproxy.gov.bc.ca'
-      CYPRESS_authUrl: 'https://${{ github.base_ref }}.oidc.gov.bc.ca'
+      CYPRESS_authClientId: 'habitat-restoration-tracker-4718'
+      CYPRESS_authUrl: 'https://dev.loginproxy.gov.bc.ca'
     needs:
       - deployDatabase
       - deployDatabaseSetup
