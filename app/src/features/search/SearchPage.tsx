@@ -1,13 +1,10 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer2';
-import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
+import MapContainer from 'components/map/MapContainer';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { LatLngTuple } from 'leaflet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
@@ -21,9 +18,11 @@ const SearchPage: React.FC = () => {
   const restorationApi = useRestorationTrackerApi();
 
   const [performSearch, setPerformSearch] = useState<boolean>(true);
-  const [geometries, setGeometries] = useState<IMarker[]>([]);
+  const [geometries, setGeometries] = useState([]);
 
   const { keycloakWrapper } = useContext(AuthStateContext);
+
+  type LatLngTuple = [number, number, number?];
 
   const getSearchResults = useCallback(async () => {
     try {
@@ -36,7 +35,7 @@ const SearchPage: React.FC = () => {
         return;
       }
 
-      const clusteredPointGeometries: IMarker[] = [];
+      const clusteredPointGeometries: any = [];
 
       response.forEach((result: any) => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
@@ -44,7 +43,7 @@ const SearchPage: React.FC = () => {
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          popup: <SearchFeaturePopup featureData={result} />
+          feature: result
         });
       });
 
@@ -99,7 +98,7 @@ const SearchPage: React.FC = () => {
         layerVisibility={layerVisibility}
         centroids={true}
       />
-      <LayerSwitcher layerVisibility={layerVisibility} />
+      <LayerSwitcher layerVisibility={layerVisibility} open={true} />
     </Box>
   );
 };

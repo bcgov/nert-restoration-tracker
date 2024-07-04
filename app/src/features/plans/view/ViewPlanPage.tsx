@@ -19,7 +19,8 @@ import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
-import MapContainer from 'components/map/MapContainer2';
+import MapContainer from 'components/map/MapContainer';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { DeletePlanI18N } from 'constants/i18n';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { Card, Chip, Tooltip } from '@mui/material';
@@ -28,12 +29,17 @@ import InfoIcon from '@mui/icons-material/Info';
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
+import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 
 const pageStyles = {
   titleContainerActions: {
     '& button + button': {
       marginLeft: '1rem'
     }
+  },
+  layerSwitcherContainer: {
+    position: 'relative',
+    bottom: '-70px'
   },
   fullScreenBtn: {
     padding: '3px',
@@ -129,6 +135,8 @@ const ViewPlanPage: React.FC = () => {
   const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
     dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
   };
+
+  const bounds = calculateUpdatedMapBounds(planWithDetails?.location.geometry || [], true) || null;
 
   const deleteErrorDialogProps = {
     dialogTitle: DeletePlanI18N.deleteErrorTitle,
@@ -320,8 +328,12 @@ const ViewPlanPage: React.FC = () => {
                       mapId={'plan_location_map'}
                       layerVisibility={layerVisibility}
                       features={planWithDetails.location.geometry}
+                      bounds={bounds}
                       mask={null}
                     />
+                  </Box>
+                  <Box sx={pageStyles.layerSwitcherContainer}>
+                    <LayerSwitcher layerVisibility={layerVisibility} />
                   </Box>
                 </Paper>
                 <Box mt={2} />
@@ -335,25 +347,6 @@ const ViewPlanPage: React.FC = () => {
           </Box>
         </Card>
       </Container>
-
-      {/* <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
-        <Box pr={3} pl={1} display="flex" alignItems="center">
-          <Box mr={1}>
-            <IconButton onClick={closeMapDialog} aria-label="back to plan" size="large">
-              <Icon path={mdiArrowLeft} size={1} />
-            </IconButton>
-          </Box>
-        </Box>
-        <Box display="flex" height="100%" flexDirection="column">
-          <Box flex="1 1 auto">
-            <MapContainer
-              mapId={'plan_location_map'}
-              layerVisibility={layerVisibility}
-              features={planWithDetails.location.geometry}
-            />
-          </Box>
-        </Box>
-      </Dialog> */}
     </>
   );
 };

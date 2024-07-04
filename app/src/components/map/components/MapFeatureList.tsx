@@ -2,7 +2,7 @@ import { Feature } from 'geojson';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import React from 'react';
+import React, { useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
@@ -111,7 +111,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         <Box className="feature-name">
           {feature.properties?.siteName || `Area ${item.index + 1}`}
         </Box>
-        <Box className="feature-size">{feature.properties?.areaHectares || 0} Ha</Box>
+        <Box className="feature-size">{feature.properties?.areaHa || 0} Ha</Box>
         <FormGroup>
           <FormControlLabel
             control={
