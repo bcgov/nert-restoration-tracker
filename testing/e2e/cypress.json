@@ -15,6 +15,6 @@
   "env": {
     "auth_base_url": "https://dev.loginproxy.gov.bc.ca/auth",
     "auth_realm": "standard",
-    "auth_client_id": "habitat-restoration-tracker-4718"
+    "auth_client_id": "nert-public-5352"
   }
 }
