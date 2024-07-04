@@ -83,23 +83,6 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
   })
 });
 
-export const ProjectObjectiveFormYupSchema = yup.object().shape({
-  objective: yup.object().shape({
-    objectives: yup
-      .array()
-      .of(
-        yup.object().shape({
-          objective: yup
-            .string()
-            .max(300, 'Cannot exceed 500 characters')
-            .trim()
-            .required('Please enter an objective')
-        })
-      )
-      .isUniqueObjective('Objective entries must be unique')
-  })
-});
-
 export interface IProjectLocationFormProps {
   regions: IAutocompleteFieldOption<number>[];
 }

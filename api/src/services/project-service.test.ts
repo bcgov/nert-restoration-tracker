@@ -590,7 +590,7 @@ describe.skip('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.insertAuthorization('string', 'string', 1);
+      const result = await projectService.insertAuthorization('string', 'string', 'string', 1);
 
       expect(result).equals(1);
     });

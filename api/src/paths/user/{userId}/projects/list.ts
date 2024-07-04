@@ -192,13 +192,16 @@ GET.apiDoc = {
                       type: 'array',
                       items: {
                         title: 'Project authorization',
-                        required: ['authorization_ref', 'authorization_type'],
+                        required: ['authorization_ref', 'authorization_type', 'authorization_desc'],
                         type: 'object',
                         properties: {
                           authorization_ref: {
                             type: 'string'
                           },
                           authorization_type: {
+                            type: 'string'
+                          },
+                          authorization_desc: {
                             type: 'string'
                           }
                         }
