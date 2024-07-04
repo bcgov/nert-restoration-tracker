@@ -458,7 +458,7 @@ CREATE TABLE permit(
     permit_id                    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     system_user_id               integer           NOT NULL,
     project_id                   integer,
-    number                       varchar(100)      NOT NULL,
+    number                       varchar(100),
     type                         varchar(300)      NOT NULL,
     description                  varchar(300),
     coordinator_first_name       varchar(50),
@@ -492,8 +492,7 @@ COMMENT ON COLUMN permit.description IS 'Description of the permit.'
 ;
 COMMENT ON COLUMN permit.coordinator_first_name IS 'The first name of the permit coordinator.'
 ;
-COMMENT ON COLUMN permit.coordinator_last_name IS 'The last name of the permit coordinator.
-'
+COMMENT ON COLUMN permit.coordinator_last_name IS 'The last name of the permit coordinator.'
 ;
 COMMENT ON COLUMN permit.coordinator_email_address IS 'The email address.'
 ;
@@ -1587,7 +1586,7 @@ CREATE INDEX "Ref1346" ON nrm_region(project_id)
 -- INDEX: permit_uk1 
 --
 
-CREATE UNIQUE INDEX permit_uk1 ON permit(number)
+CREATE INDEX permit_uk1 ON permit(number)
 ;
 -- 
 -- INDEX: "Ref2926" 
