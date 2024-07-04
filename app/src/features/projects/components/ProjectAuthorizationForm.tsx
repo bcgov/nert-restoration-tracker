@@ -159,6 +159,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                                 name={`authorization.authorizations.[${index}].authorization_ref`}
                                 label="Authorization Reference"
                                 other={{
+                                  disabled: !authorization.authorization_type,
                                   value: authorization.authorization_ref,
                                   error:
                                     authorizationRefMeta.touched &&
@@ -173,6 +174,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                                 name={`authorization.authorizations.[${index}].authorization_desc`}
                                 label="Authorization Description"
                                 other={{
+                                  disabled: !authorization.authorization_type,
                                   required: !(authorization.authorization_type != 'Other'),
                                   value: authorization.authorization_desc,
                                   error:
