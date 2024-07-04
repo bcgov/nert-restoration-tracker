@@ -5,7 +5,6 @@ import MapContainer from 'components/map/MapContainer';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { LatLngTuple } from 'leaflet';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
@@ -22,6 +21,8 @@ const SearchPage: React.FC = () => {
   const [geometries, setGeometries] = useState([]);
 
   const { keycloakWrapper } = useContext(AuthStateContext);
+
+  type LatLngTuple = [number, number, number?];
 
   const getSearchResults = useCallback(async () => {
     try {

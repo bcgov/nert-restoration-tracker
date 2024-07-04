@@ -49,7 +49,6 @@
     "express": "~4.18.3",
     "formik": "~2.4.5",
     "keycloak-js": "~23.0.7",
-    "leaflet": "^1.9.4",
     "lodash-es": "~4.17.21",
     "maplibre-gl": "^4.3.2",
     "qs": "~6.11.2",
