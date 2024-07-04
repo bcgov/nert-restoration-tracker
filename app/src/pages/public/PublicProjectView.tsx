@@ -1,13 +1,9 @@
-import { mdiArrowLeft, mdiFullscreen } from '@mdi/js';
-import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
@@ -26,37 +22,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 import ProjectConservationAreas from 'features/projects/view/components/ProjectConservationAreas';
 
-const pageStyles = {
-  conservationAreChip: {
-    marginBottom: '2px',
-    justifyContent: 'left'
-  },
-  conservAreaLabel: {
-    color: '#545454',
-    fontSize: '0.78rem',
-    fontWeight: 500,
-    textTransform: 'none',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  titleContainerActions: {
-    '& button + button': {
-      marginLeft: '1rem'
-    }
-  },
-  fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
-    }
-  }
-};
-
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
   codes: IGetAllCodeSetsResponse;
@@ -70,8 +35,6 @@ interface IProjectViewFormProps {
 // export default function PublicProjectView() {
 const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
   const { project, codes } = props;
-
-  const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
   const [isLoadingAttachments, setIsLoadingAttachments] = useState(false);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
@@ -103,23 +66,6 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
       setIsLoadingAttachments(true);
     }
   }, [isLoadingAttachments, getAttachments]);
-
-  // Full Screen Map Dialog
-  const openMapDialog = () => {
-    setOpenFullScreen(true);
-  };
-
-  const closeMapDialog = () => {
-    setOpenFullScreen(false);
-  };
-
-  const conservationAreaStyled = (conservationArea: string) => {
-    return (
-      <Typography sx={pageStyles.conservAreaLabel} aria-label={`${conservationArea}`}>
-        {conservationArea}
-      </Typography>
-    );
-  };
 
   return (
     <>
@@ -311,16 +257,6 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                   <Paper elevation={2}>
                     <Box height="500px" position="relative">
                       <LocationBoundary locationData={project.location} />
-                      <Box position="absolute" top="80px" left="10px" zIndex="999">
-                        <IconButton
-                          aria-label="view full screen map"
-                          title="View full screen map"
-                          sx={pageStyles.fullScreenBtn}
-                          onClick={openMapDialog}
-                          size="large">
-                          <Icon path={mdiFullscreen} size={1} />
-                        </IconButton>
-                      </Box>
                     </Box>
                   </Paper>
                 </Box>
@@ -340,21 +276,6 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
           </Box>
         </Card>
       </Container>
-
-      <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
-        <Box pr={3} pl={1} display="flex" alignItems="center">
-          <Box>
-            <IconButton onClick={closeMapDialog} size="large">
-              <Icon path={mdiArrowLeft} size={1} />
-            </IconButton>
-          </Box>
-        </Box>
-        <Box display="flex" height="100%" flexDirection="column">
-          <Box flex="1 1 auto">
-            <LocationBoundary locationData={project.location} />
-          </Box>
-        </Box>
-      </Dialog>
     </>
   );
 };
