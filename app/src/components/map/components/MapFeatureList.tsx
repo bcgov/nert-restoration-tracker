@@ -37,17 +37,6 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     }
   };
 
-  /**
-   * When editing an existing project or plan there may be some existing features
-   * that need to be updated. This effect will recalculate the feature ids.
-   */
-  useEffect(() => {
-    const featureList = get(values, 'location.geometry');
-    if (featureList.length > 0) {
-      setFieldValue('location.geometry', recalculateFeatureIds(featureList));
-    }
-  }, []);
-
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the feature object
     // @ts-ignore - Couldn't make typescript happy here, Event with null checks :(
