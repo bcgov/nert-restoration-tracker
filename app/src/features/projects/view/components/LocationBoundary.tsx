@@ -50,7 +50,7 @@ export interface ILocationBoundaryProps {
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
 
-  const locationFeatures:any [] = locationData.geometry.map((item) => {
+  const locationFeatures: any[] = locationData.geometry.map((item) => {
     return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
   });
 

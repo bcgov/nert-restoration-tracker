@@ -34,7 +34,7 @@ const SearchPage: React.FC = () => {
         return;
       }
 
-      const clusteredPointGeometries: any  = [];
+      const clusteredPointGeometries: any = [];
 
       response.forEach((result: any) => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
@@ -42,7 +42,7 @@ const SearchPage: React.FC = () => {
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          feature: result 
+          feature: result
         });
       });
 

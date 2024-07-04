@@ -136,11 +136,7 @@ const ViewPlanPage: React.FC = () => {
     dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
   };
 
-  const bounds = calculateUpdatedMapBounds(
-    planWithDetails?.location.geometry || [],
-    true
-  ) || null;
-
+  const bounds = calculateUpdatedMapBounds(planWithDetails?.location.geometry || [], true) || null;
 
   const deleteErrorDialogProps = {
     dialogTitle: DeletePlanI18N.deleteErrorTitle,
@@ -338,7 +334,7 @@ const ViewPlanPage: React.FC = () => {
                   </Box>
                   <Box sx={pageStyles.layerSwitcherContainer}>
                     <LayerSwitcher layerVisibility={layerVisibility} />
-                    </Box>
+                  </Box>
                 </Paper>
                 <Box mt={2} />
               </Grid>
@@ -351,7 +347,6 @@ const ViewPlanPage: React.FC = () => {
           </Box>
         </Card>
       </Container>
-
     </>
   );
 };
