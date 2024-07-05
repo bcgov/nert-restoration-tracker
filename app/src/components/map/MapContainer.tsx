@@ -331,10 +331,6 @@ const initializeMap = (
     })
   );
 
-  /**
-   *  XXX: This is breaking the map by drawing the unwanted basemap over top of the map
-   *  There also appears to be a race condition so seeing this issue is random.
-   */
 
   /**
    * # loadLayers
