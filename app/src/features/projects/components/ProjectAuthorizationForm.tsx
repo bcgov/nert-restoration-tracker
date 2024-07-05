@@ -69,6 +69,10 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
             .max(100, 'Cannot exceed 100 characters'),
           authorization_desc: yup
             .string()
+            .isAuthDescriptionRequired(
+              'Other',
+              'Authorization Description is required when Authorization Type is Other'
+            )
             .nullable()
             .transform((value, orig) => (orig.trim() === '' ? null : value))
             .max(200, 'Cannot exceed 200 characters')
@@ -210,9 +214,11 @@ const ProjectAuthorizationForm: React.FC = () => {
             <Box pt={0.5}>
               <Button
                 disabled={
-                  !values.authorization.authorizations[
-                    values.authorization.authorizations.length - 1
-                  ].authorization_type.trim() || values.authorization.authorizations.length >= 5
+                  (values.authorization.authorizations.length &&
+                    !values.authorization.authorizations[
+                      values.authorization.authorizations.length - 1
+                    ].authorization_type.trim()) ||
+                  values.authorization.authorizations.length >= 5
                 }
                 type="button"
                 variant="outlined"

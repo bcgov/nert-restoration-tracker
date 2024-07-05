@@ -255,6 +255,10 @@ POST.apiDoc = {
                       },
                       authorization_type: {
                         type: 'string'
+                      },
+                      authorization_desc: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
@@ -433,7 +437,6 @@ export function createProject(): RequestHandler {
     const connection = getDBConnection(req['keycloak_token']);
 
     const sanitizedProjectPostData = new PostProjectObject(req.body);
-    console.log('sanitizedProjectPostData', sanitizedProjectPostData);
     try {
       await connection.open();
 

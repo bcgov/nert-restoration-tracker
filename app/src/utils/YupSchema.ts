@@ -9,6 +9,18 @@ import { focus, getFocusCodeFromLabel } from 'constants/misc';
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 
+yup.addMethod(
+  yup.string,
+  'isAuthDescriptionRequired',
+  function (AuthType: string, message: string) {
+    return this.test('is-auth-description-required', message, function (value) {
+      if (this.parent.authorization_type) {
+        return this.parent.authorization_type == AuthType ? !!value : true;
+      }
+    });
+  }
+);
+
 yup.addMethod(yup.number, 'isNumberOfPeopleInvolvedRequired', function (message: string) {
   return this.test('is-number-of-people-involved-required', message, function (value) {
     if (this.parent.focuses) {
