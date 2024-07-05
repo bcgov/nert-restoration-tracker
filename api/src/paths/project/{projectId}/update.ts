@@ -266,6 +266,10 @@ PUT.apiDoc = {
                       },
                       authorization_type: {
                         type: 'string'
+                      },
+                      authorization_desc: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
@@ -773,7 +777,6 @@ export function updateProject(): RequestHandler {
       }
 
       const entities = new PutProjectObject(req.body);
-      console.log('entities', entities);
 
       if (!entities) {
         throw new HTTP400('Missing required request body');

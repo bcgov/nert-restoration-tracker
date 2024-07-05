@@ -131,7 +131,7 @@ const EditProjectPage: React.FC = () => {
 
     // Remove empty Authorizations
     values.authorization.authorizations = values.authorization.authorizations.filter(
-      (authorization) => authorization.authorization_ref.trim()
+      (authorization) => authorization.authorization_type.trim()
     );
 
     // Set size_ha to 0 if it is not set

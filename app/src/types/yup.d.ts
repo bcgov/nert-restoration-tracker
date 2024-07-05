@@ -23,6 +23,20 @@ declare module 'yup' {
 
   interface StringSchema {
     /**
+     * Determine if Auth Description is required based on a boolean value.
+     *
+     *
+     * @param {string} AuthType
+     * @param {string} [message]
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof NumberSchema
+     */
+    isAuthDescriptionRequired(
+      AuthType: string,
+      message?: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
      * Determine if conservation areas are required based on a boolean value.
      *
      * @param {string} booleanName
