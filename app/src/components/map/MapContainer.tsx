@@ -25,6 +25,7 @@ export interface IMapContainerProps {
   mask?: null | number; // Store what mask just changed
   maskState?: boolean[]; // Store which features are masked
   activeFeatureState?: any; // Store which feature is active
+  autoFocus?: boolean;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -292,15 +293,16 @@ const checkFeatureState = (featureState: any) => {
 
 const initializeMap = (
   mapId: string,
-  center: any = [-124, 57],
-  zoom = 6,
+  center: any = [-124, 55],
+  zoom = 5,
   features?: any, // There's no features when first creating a record
   layerVisibility?: any,
   centroids = false,
   tooltipState?: any,
   activeFeatureState?: any,
   markerState?: any,
-  bounds?: any
+  bounds?: any,
+  autoFocus?: boolean
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -315,7 +317,7 @@ const initializeMap = (
     style: '/styles/hybrid.json',
     center: center,
     zoom: zoom,
-    maxPitch: 80,
+    maxPitch: 65,
     hash: 'loc',
     attributionControl: {
       compact: true,
@@ -717,7 +719,14 @@ const initializeMap = (
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {
       map.fitBounds(bounds, { padding: 50 });
+    } else if (autoFocus && features.length > 0) {
+      const featureCollection = turf.featureCollection(features);
+      const newBounds = turf.bbox(featureCollection);
+
+      // @ts-ignore - turf types are incorrect here
+      map.fitBounds(newBounds, { padding: 150 });
     }
+
   });
 };
 
@@ -847,6 +856,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
 
+  const autoFocus = props.autoFocus || false;
+
   const { bounds } = props || null;
 
   // Tooltip variables
@@ -893,7 +904,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       tooltipState,
       activeFeatureState,
       markerState,
-      bounds
+      bounds,
+      autoFocus
     );
   }, [features]);
 

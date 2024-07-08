@@ -2,7 +2,6 @@ import bbox from '@turf/bbox';
 import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
 import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
-import { LatLngBoundsExpression } from 'leaflet';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -198,7 +197,7 @@ export const calculateFeatureBoundingBox = (features: Feature[]): BBox | undefin
  * @param boundingBox
  * @returns
  */
-export const latLngBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpression => {
+export const latLngBoundsFromBoundingBox = (boundingBox: BBox): any => {
   return [
     [boundingBox[1], boundingBox[0]],
     [boundingBox[3], boundingBox[2]]
@@ -210,7 +209,7 @@ export const latLngBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpr
  * @param boundingBox
  * @returns
  */
-export const lonLatBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpression => {
+export const lonLatBoundsFromBoundingBox = (boundingBox: BBox): any => {
   return [
     [boundingBox[0], boundingBox[1]],
     [boundingBox[2], boundingBox[3]]
@@ -226,7 +225,7 @@ export const lonLatBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpr
 export const calculateUpdatedMapBounds = (
   features: Feature[],
   lngLat?: boolean
-): LatLngBoundsExpression | undefined => {
+): any | undefined => {
   const bboxCoords = calculateFeatureBoundingBox(features);
 
   if (!bboxCoords) {

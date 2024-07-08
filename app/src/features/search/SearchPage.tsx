@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import * as turf from '@turf/turf';
 import centroid from '@turf/centroid';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import MapContainer from 'components/map/MapContainer';
@@ -7,7 +8,10 @@ import { APIError } from 'hooks/api/useAxios';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { isAuthenticated } from 'utils/authUtils';
+import ne_boundary from 'components/map/layers/north_east_boundary.json';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
+
+const projectBoundary = turf.bbox(ne_boundary);
 
 /**
  * Page to search for and display a list of records spatially.
@@ -96,6 +100,7 @@ const SearchPage: React.FC = () => {
         mapId="search_boundary_map"
         features={geometries}
         layerVisibility={layerVisibility}
+        // bounds={projectBoundary}
         centroids={true}
       />
       <LayerSwitcher layerVisibility={layerVisibility} open={true} />
