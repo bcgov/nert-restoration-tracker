@@ -803,17 +803,17 @@ const checkLayerVisibility = (layers: any, features: any) => {
     };
     // Changing a base layer operates a little differently
     if (layer === 'baselayer' && map.getStyle()) {
-      const currentStyle = map.getStyle();
-      const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
-      const currentBase = rasterSource.tiles[0];
+      // const currentStyle = map.getStyle();
+      // const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
+      // const currentBase = rasterSource.tiles[0];
 
-      if (!Object.hasOwn(baseLayerUrls, layers.baselayer[0])) return;
-      const newBase: string = baseLayerUrls[layers.baselayer[0]];
+      // if (!Object.hasOwn(baseLayerUrls, layers.baselayer[0])) return;
+      // const newBase: string = baseLayerUrls[layers.baselayer[0]];
 
-      if (currentBase !== newBase) {
-        currentStyle.sources['raster-tiles'] = [] as any;
-        map.setStyle(currentStyle);
-      }
+      // if (currentBase !== newBase) {
+      //   currentStyle.sources['raster-tiles'] = [] as any;
+      //   map.setStyle(currentStyle);
+      // }
     }
   });
 
@@ -835,6 +835,8 @@ const checkLayerVisibility = (layers: any, features: any) => {
     map.getSource('markers').setData({ type: 'FeatureCollection', features: filteredFeatures });
   }
 };
+
+let counter = 0;
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const { mapId, center, zoom, features, centroids, layerVisibility } = props;
@@ -879,6 +881,9 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   // Update the map if the features change
   useEffect(() => {
+    // console.log('initializeMap features:', features.length);
+    console.log('initializeMap counter++:', counter++);
+
     initializeMap(
       mapId,
       center,
