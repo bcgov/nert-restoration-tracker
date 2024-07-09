@@ -3,11 +3,11 @@ import { DialogContextProvider } from 'contexts/dialogContext';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
+import { useNertApi } from '../../../hooks/useNertApi';
 import UsersDetailHeader from './UsersDetailHeader';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 const mockUseApi = {
   user: {
     deleteSystemUser: jest.fn<Promise<number>, []>()

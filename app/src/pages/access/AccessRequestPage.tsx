@@ -6,27 +6,30 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { AccessRequestI18N } from 'constants/i18n';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import {
-  IBCeIDAccessRequestDataObject,
+  IBCeIDBasicAccessRequestDataObject,
+  IBCeIDBusinessAccessRequestDataObject,
   IIDIRAccessRequestDataObject
 } from 'interfaces/useAdminApi.interface';
 import React, { ReactElement, useContext, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BCeIDRequestForm, {
-  BCeIDRequestFormInitialValues,
-  BCeIDRequestFormYupSchema
+  BCeIDBasicRequestFormInitialValues,
+  BCeIDBasicRequestFormYupSchema,
+  BCeIDBusinessRequestFormInitialValues,
+  BCeIDBusinessRequestFormYupSchema
 } from './BCeIDRequestForm';
 import IDIRRequestForm, {
   IDIRRequestFormInitialValues,
   IDIRRequestFormYupSchema
 } from './IDIRRequestForm';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import useDataLoader from 'hooks/useDataLoader';
 
 const pageStyles = {
   actionButton: {
@@ -43,10 +46,10 @@ const pageStyles = {
  * @return {*}
  */
 export const AccessRequestPage: React.FC = () => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const nertApi = useNertApi();
   const history = useNavigate();
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
 
   const dialogContext = useContext(DialogContext);
 
@@ -64,7 +67,8 @@ export const AccessRequestPage: React.FC = () => {
 
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
 
-  const codes = useCodes();
+  const codesDataLoader = useDataLoader(() => nertApi.codes.getAllCodeSets());
+  codesDataLoader.load();
 
   const showAccessRequestErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
     dialogContext.setErrorDialog({
@@ -77,16 +81,20 @@ export const AccessRequestPage: React.FC = () => {
   };
 
   const handleSubmitAccessRequest = async (
-    values: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject
+    values:
+      | IIDIRAccessRequestDataObject
+      | IBCeIDBasicAccessRequestDataObject
+      | IBCeIDBusinessAccessRequestDataObject
   ) => {
     try {
-      const response = await restorationTrackerApi.admin.createAdministrativeActivity({
+      const response = await nertApi.admin.createAdministrativeActivity({
         ...values,
-        userGuid: keycloakWrapper?.getUserGuid() as string,
-        name: keycloakWrapper?.displayName as string,
-        username: keycloakWrapper?.getUserIdentifier() as string,
-        email: keycloakWrapper?.email as string,
-        identitySource: keycloakWrapper?.getIdentitySource() as string
+        userGuid: authStateContext.nertUserWrapper.userGuid as string,
+        name: authStateContext.nertUserWrapper.displayName as string,
+        username: authStateContext.nertUserWrapper.userIdentifier as string,
+        email: authStateContext.nertUserWrapper.email as string,
+        identitySource: authStateContext.nertUserWrapper.identitySource as string,
+        displayName: authStateContext.nertUserWrapper.displayName as string
       });
 
       if (!response?.id) {
@@ -97,7 +105,7 @@ export const AccessRequestPage: React.FC = () => {
       }
       setIsSubmittingRequest(false);
 
-      keycloakWrapper?.refresh();
+      authStateContext.nertUserWrapper.refresh();
 
       history('/request-submitted');
     } catch (error) {
@@ -112,36 +120,36 @@ export const AccessRequestPage: React.FC = () => {
     }
   };
 
-  if (!keycloakWrapper?.keycloak.authenticated) {
-    // User is not logged in
-    return <Navigate replace to={{ pathname: '/' }} />;
-  }
+  let initialValues:
+    | IIDIRAccessRequestDataObject
+    | IBCeIDBasicAccessRequestDataObject
+    | IBCeIDBusinessAccessRequestDataObject;
 
-  if (!keycloakWrapper.hasLoadedAllUserInfo) {
-    // User data has not been loaded, can not yet determine if they have a role
-    return <CircularProgress className="pageProgress" />;
-  }
+  let validationSchema:
+    | typeof IDIRRequestFormYupSchema
+    | typeof BCeIDBasicRequestFormYupSchema
+    | typeof BCeIDBusinessRequestFormYupSchema;
 
-  if (keycloakWrapper?.hasAccessRequest) {
-    // User already has a pending access request
-    return <Navigate replace to={{ pathname: '/request-submitted' }} />;
-  }
-
-  let initialValues: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject;
-  let validationSchema: typeof IDIRRequestFormYupSchema | typeof BCeIDRequestFormYupSchema;
   let requestForm: ReactElement;
 
-  if (
-    keycloakWrapper?.getIdentitySource() === SYSTEM_IDENTITY_SOURCE.BCEID_BASIC ||
-    keycloakWrapper?.getIdentitySource() === SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS
-  ) {
-    initialValues = BCeIDRequestFormInitialValues;
-    validationSchema = BCeIDRequestFormYupSchema;
-    requestForm = <BCeIDRequestForm />;
-  } else {
-    initialValues = IDIRRequestFormInitialValues;
-    validationSchema = IDIRRequestFormYupSchema;
-    requestForm = <IDIRRequestForm codes={codes.codes} />;
+  switch (authStateContext.nertUserWrapper.identitySource) {
+    case SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS:
+      initialValues = BCeIDBusinessRequestFormInitialValues;
+      validationSchema = BCeIDBusinessRequestFormYupSchema;
+      requestForm = <BCeIDRequestForm accountType={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS} />;
+      break;
+
+    case SYSTEM_IDENTITY_SOURCE.BCEID_BASIC:
+      initialValues = BCeIDBasicRequestFormInitialValues;
+      validationSchema = BCeIDBasicRequestFormYupSchema;
+      requestForm = <BCeIDRequestForm accountType={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC} />;
+      break;
+
+    case SYSTEM_IDENTITY_SOURCE.IDIR:
+    default:
+      initialValues = IDIRRequestFormInitialValues;
+      validationSchema = IDIRRequestFormYupSchema;
+      requestForm = <IDIRRequestForm codes={codesDataLoader.data} />;
   }
 
   return (

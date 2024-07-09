@@ -1,6 +1,6 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { AuthStateContext } from 'contexts/authStateContext';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
@@ -8,8 +8,8 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
 import MyProjectsPlansListPage from './MyProjectsPlansListPage';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 const mockUseApi = {
   codes: {
     getAllCodeSets: jest.fn<Promise<object>, []>()

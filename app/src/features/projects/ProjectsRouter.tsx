@@ -1,4 +1,4 @@
-import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
+import { ProjectRoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import EditProjectPage from 'features/projects/edit/EditProjectPage';
@@ -38,40 +38,41 @@ const ProjectsRouter: React.FC = () => {
         <Route
           path=":id/edit"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => (
-                <Route path="" element={<Navigate replace to={`/projects/${projectId}`} />} />
-              )}>
+              validProjectPermissions={[]}
+              fallback={<Route path="" element={<Navigate replace to={`/projects`} />} />}>
               <EditProjectPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
         <Route
           path=":id/details"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[
                 PROJECT_ROLE.PROJECT_LEAD,
                 PROJECT_ROLE.PROJECT_EDITOR,
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
-              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}>
+              validProjectPermissions={[]}
+              fallback={<Navigate replace to={`/projects`} />}>
               <ViewProjectPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
         <Route
           path=":id/users"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => <Navigate replace to={`/projects/${projectId}`} />}>
+              validProjectPermissions={[]}
+              fallback={<Navigate replace to={`/projects`} />}>
               <ProjectParticipantsPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
       </Route>

@@ -11,7 +11,7 @@ import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { ProjectParticipantsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useState } from 'react';
@@ -38,7 +38,7 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
   const history = useNavigate();
   const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [openAddParticipantsDialog, setOpenAddParticipantsDialog] = useState(false);
 

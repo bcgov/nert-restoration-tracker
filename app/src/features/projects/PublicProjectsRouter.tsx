@@ -1,5 +1,4 @@
-import { NoRoleGuard } from 'components/security/Guards';
-import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
+import { UnAuthGuard } from 'components/security/Guards';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
 import PublicProjectPlanView from 'pages/public/PublicProjectPlanView';
 import PublicProjectsPlansListPage from 'pages/public/PublicProjectsPlansListPage';
@@ -21,16 +20,9 @@ const PublicProjectsRouter: React.FC = () => {
         <Route
           path=":id/details"
           element={
-            <NoRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[
-                PROJECT_ROLE.PROJECT_LEAD,
-                PROJECT_ROLE.PROJECT_EDITOR,
-                PROJECT_ROLE.PROJECT_VIEWER
-              ]}
-              fallback={(projectId) => <Navigate replace to={`/admin/projects/${projectId}`} />}>
+            <UnAuthGuard fallback={<Navigate replace to={`/admin/projects`} />}>
               <PublicProjectPlanView />
-            </NoRoleGuard>
+            </UnAuthGuard>
           }
         />
       </Route>

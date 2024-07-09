@@ -15,7 +15,7 @@ import MultiAutocompleteFieldVariableSize, {
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL } from 'constants/misc';
 import { FieldArray, useFormikContext } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { debounce } from 'lodash-es';
 import React, { useCallback, useState } from 'react';
 import yup from 'utils/YupSchema';
@@ -107,7 +107,7 @@ const ProjectWildlifeForm: React.FC<IProjectIUCNFormProps> = (props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const openAttachment = async (attachment: string) => window.open(attachment);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const convertOptions = (value: any): IMultiAutocompleteFieldOption[] =>
     value.map((item: any) => {

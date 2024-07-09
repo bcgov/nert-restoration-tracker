@@ -1,7 +1,7 @@
 // import { cleanup, render, waitFor } from '@testing-library/react';
 // import { SYSTEM_ROLE } from 'constants/roles';
 // import { AuthStateContext, IAuthState } from 'contexts/authStateContext';
-// import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+// import { useNertApi } from 'hooks/useNertApi';
 // import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 // import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 // import React from 'react';
@@ -11,8 +11,8 @@
 // import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 // import ViewProjectPage from './ViewProjectPage';
 
-// jest.mock('../../../hooks/useRestorationTrackerApi');
-// const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+// jest.mock('../../../hooks/useNertApi');
+// const mockRestorationTrackerApi = useNertApi as jest.Mock;
 // const mockUseApi = {
 //   project: {
 //     getProjectById: jest.fn<Promise<IGetProjectForViewResponse>, [number]>()

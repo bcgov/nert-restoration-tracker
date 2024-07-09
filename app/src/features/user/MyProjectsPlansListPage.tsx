@@ -2,7 +2,7 @@ import Container from '@mui/material/Container';
 import { AuthStateContext } from 'contexts/authStateContext';
 import MyPlans from 'features/user/MyPlans';
 import MyProjects from 'features/user/MyProjects';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
@@ -11,7 +11,7 @@ import React, { useContext, useEffect, useState } from 'react';
 const MyProjectsPlansListPage: React.FC = () => {
   const { keycloakWrapper } = useContext(AuthStateContext);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [projects, setProjects] = useState<IGetProjectForViewResponse[]>([]);
   const [plans, setPlans] = useState<IGetPlanForViewResponse[]>([]);

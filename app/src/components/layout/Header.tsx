@@ -1,5 +1,6 @@
-import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
+import { mdiAccountCircle, mdiLoginVariant } from '@mdi/js';
 import Icon from '@mdi/react';
+import { MenuItem } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,7 +9,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import OtherLink from '@mui/material/Link';
 import { alpha } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,10 +16,10 @@ import Typography from '@mui/material/Typography';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
 import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { ConfigContext } from 'contexts/configContext';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
@@ -119,12 +119,12 @@ const Header: React.FC = () => {
   const nert_version = mmm ?? '0.0.0.NA';
   const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
 
   // Authenticated view
   const LoggedInUser = () => {
-    const identitySource = keycloakWrapper?.getIdentitySource() || '';
-    const userIdentifier = keycloakWrapper?.getUserIdentifier() || '';
+    const identitySource = authStateContext.nertUserWrapper.identitySource || '';
+    const userIdentifier = authStateContext.nertUserWrapper.userIdentifier || '';
     const formattedUsername = [
       getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
       userIdentifier
@@ -133,55 +133,87 @@ const Header: React.FC = () => {
       .join('/');
 
     return (
-      <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
-        <Icon path={mdiAccountCircle} size={1.12} />
-        <Box ml={1}>{formattedUsername}</Box>
-        <Box px={2}>
-          <Divider orientation="vertical" />
+      <>
+        <Box
+          display={{ xs: 'none', lg: 'flex' }}
+          alignItems="center"
+          sx={{
+            fontSize: '16px',
+            fontWeight: 700
+          }}>
+          <Box
+            display="flex"
+            alignItems="center"
+            sx={{
+              padding: '6px 14px',
+              lineHeight: '1.75'
+            }}>
+            <Icon path={mdiAccountCircle} size={1} />
+            <Box ml={1}>{formattedUsername}</Box>
+          </Box>
+          <Divider
+            orientation="vertical"
+            sx={{
+              marginRight: '6px',
+              height: '20px',
+              borderColor: '#fff'
+            }}
+          />
+          <Button
+            component="a"
+            variant="text"
+            onClick={() => authStateContext.auth.signoutRedirect()}
+            data-testid="menu_log_out"
+            sx={{
+              color: 'inherit',
+              fontSize: '16px',
+              fontWeight: 700,
+              textTransform: 'none'
+            }}>
+            Log Out
+          </Button>
         </Box>
-        <Link to="/logout" data-testid="menu_log_out">
-          Log Out
-        </Link>
-        <Box pl={2}>
-          <Divider orientation="vertical" />
-        </Box>
-        <IconButton
-          aria-label="need help"
-          sx={pageStyles.govHeaderIconButton}
-          onClick={showSupportDialog}
-          size="large">
-          <Icon path={mdiHelpCircle} size={1.12} />
-        </IconButton>
-      </Box>
+        <MenuItem
+          component="a"
+          color="#1a5a96"
+          onClick={() => authStateContext.auth.signoutRedirect()}
+          data-testid="collapsed_menu_log_out"
+          sx={{
+            display: { xs: 'block', lg: 'none' }
+          }}>
+          Log out
+        </MenuItem>
+      </>
     );
   };
 
   // Unauthenticated public view
   const PublicViewUser = () => {
+    const authStateContext = useAuthStateContext();
+
     return (
-      <Box display="flex" sx={pageStyles.userProfile} alignItems="center" my="auto">
+      <>
         <Button
-          onClick={() => keycloakWrapper?.keycloak.login()}
-          type="submit"
-          variant="contained"
-          color="primary"
+          component="a"
+          color="inherit"
+          variant="text"
+          onClick={() => authStateContext.auth.signinRedirect()}
           disableElevation
-          startIcon={<Icon path={mdiLoginVariant} size={1.12} />}
-          data-testid="login">
+          startIcon={<Icon path={mdiLoginVariant} size={1} />}
+          data-testid="menu_log_in"
+          sx={{
+            p: 1,
+            fontSize: '16px',
+            fontWeight: 700,
+            textTransform: 'none'
+          }}>
           Log In
         </Button>
-        <IconButton sx={pageStyles.govHeaderIconButton} onClick={showSupportDialog} size="large">
-          <Icon path={mdiHelpCircle} size={1.12} />
-        </IconButton>
-      </Box>
+      </>
     );
   };
 
   const [open, setOpen] = React.useState(false);
-
-  const showSupportDialog = () => {
-    setOpen(true);
-  };
 
   const hideSupportDialog = () => {
     setOpen(false);

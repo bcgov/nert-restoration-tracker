@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
@@ -14,7 +14,7 @@ import UsersDetailProjects from './UsersDetailProjects';
  * @return {*}
  */
 const UsersDetailPage: React.FC = () => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [selectedUser, setSelectedUser] = useState<IGetUserResponse | null>(null);
 

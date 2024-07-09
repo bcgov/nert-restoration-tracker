@@ -2,7 +2,6 @@ import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { getAPIUserDBConnection } from '../../database/db';
 import { HTTP400, HTTP500 } from '../../errors/custom-error';
-import { hasPendingAdministrativeActivitiesResponseObject } from '../../openapi/schemas/administrative-activity';
 import { AdministrativeActivityService } from '../../services/administrative-activity-service';
 import { getUserIdentifier } from '../../utils/keycloak-utils';
 import { getLogger } from '../../utils/logger';
@@ -11,7 +10,7 @@ const defaultLog = getLogger('paths/administrative-activity-request');
 
 export const POST: Operation = [createAdministrativeActivity()];
 
-export const GET: Operation = [getPendingAccessRequestsCount()];
+export const GET: Operation = [getAdministrativeActivityStanding()];
 
 POST.apiDoc = {
   description: 'Create a new Administrative Activity.',
@@ -99,7 +98,17 @@ GET.apiDoc = {
       content: {
         'application/json': {
           schema: {
-            ...(hasPendingAdministrativeActivitiesResponseObject as object)
+            title: 'Has Pending Administrative Activities Response Object',
+            type: 'object',
+            required: ['has_pending_access_request', 'has_one_or_more_project_roles'],
+            properties: {
+              has_pending_access_request: {
+                type: 'boolean'
+              },
+              has_one_or_more_project_roles: {
+                type: 'boolean'
+              }
+            }
           }
         }
       }
@@ -163,7 +172,7 @@ export function createAdministrativeActivity(): RequestHandler {
  *
  * @returns {RequestHandler}
  */
-export function getPendingAccessRequestsCount(): RequestHandler {
+export function getAdministrativeActivityStanding(): RequestHandler {
   return async (req, res) => {
     const connection = getAPIUserDBConnection();
 
@@ -184,7 +193,7 @@ export function getPendingAccessRequestsCount(): RequestHandler {
 
       return res.status(200).json(response);
     } catch (error) {
-      defaultLog.error({ label: 'getPendingAccessRequestsCount', message: 'error', error });
+      defaultLog.error({ label: 'getAdministrativeActivityStanding', message: 'error', error });
 
       throw error;
     } finally {

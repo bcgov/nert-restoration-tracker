@@ -1,5 +1,5 @@
 import { SystemRoleGuard } from 'components/security/Guards';
-import { AuthenticatedRouteGuard } from 'components/security/RouteGuards';
+import { SystemRoleRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
 import PlansRouter from 'features/plans/PlansRouter';
@@ -38,67 +38,67 @@ export const AppRouter = () => {
           <Route
             path="/access-request"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <AccessRequestPage />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/request-submitted"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <RequestSubmitted />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/logout"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <LogOutPage />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/admin/search"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <SearchPage />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/admin/projects/*"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <ProjectsRouter />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/admin/plans/*"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <PlansRouter />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/admin/user/*"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <UserRouter />
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
           <Route
             path="/admin/users/*"
             element={
-              <AuthenticatedRouteGuard>
+              <SystemRoleRouteGuard>
                 <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
                   <AdminUsersRouter />
                 </SystemRoleGuard>
-              </AuthenticatedRouteGuard>
+              </SystemRoleRouteGuard>
             }
           />
         </Route>

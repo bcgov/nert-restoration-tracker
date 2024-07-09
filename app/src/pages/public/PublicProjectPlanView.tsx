@@ -1,6 +1,6 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicPlanView from 'pages/public/PublicPlanView';
@@ -17,7 +17,7 @@ export default function PublicProjectPlanView() {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectPlanId = Number(urlParams['id']);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const [isLoadingProjectPlan, setIsLoadingProjectPlan] = useState(false);
   const [projectPlanDetails, setProjectPlanDetails] = useState<
     (IGetProjectForViewResponse & IGetPlanForViewResponse) | null

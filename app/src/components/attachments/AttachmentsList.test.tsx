@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import AttachmentsList from './AttachmentsList';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
+jest.mock('../../hooks/useNertApi');
 
 describe('AttachmentsList', () => {
   afterEach(() => {

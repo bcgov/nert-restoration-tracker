@@ -1,3 +1,4 @@
+import { PROJECT_PERMISSION, PROJECT_ROLE } from 'constants/roles';
 import { IProjectAuthorizationForm } from 'features/projects/components/ProjectAuthorizationForm';
 import { IProjectContactForm } from 'features/projects/components/ProjectContactForm';
 import { IProjectFocusForm } from 'features/projects/components/ProjectFocusForm';
@@ -317,3 +318,25 @@ export interface IAddProjectParticipant {
   identitySource: string;
   roleId: number;
 }
+
+export interface IGetProjectParticipant {
+  project_participation_id: number;
+  project_id: number;
+  system_user_id: number;
+  identity_source: string;
+  user_identifier: string;
+  email: string | null;
+  display_name: string;
+  agency: string | null;
+  project_role_ids: number[];
+  project_role_names: string[];
+  project_role_permissions: string[];
+}
+
+export type IGetUserProjectParticipantResponse = {
+  project_id: number;
+  system_user_id: number;
+  project_role_ids: number[];
+  project_role_names: PROJECT_ROLE[];
+  project_role_permissions: PROJECT_PERMISSION[];
+} | null;

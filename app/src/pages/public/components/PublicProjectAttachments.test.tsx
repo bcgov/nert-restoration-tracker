@@ -1,11 +1,11 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import PublicProjectAttachments from './PublicProjectAttachments';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 const mockUseApi = {
   public: {
     project: {

@@ -11,13 +11,14 @@ import useProjectApi, { usePublicProjectApi } from './api/useProjectApi';
 import useSearchApi, { usePublicSearchApi } from './api/useSearchApi';
 import useTaxonomyApi from './api/useTaxonomyApi';
 import useUserApi from './api/useUserApi';
+import useProjectParticipationApi from './api/useProjectParticipationApi';
 
 /**
  * Returns a set of supported api methods.
  *
  * @return {*} object whose properties are supported api methods.
  */
-export const useRestorationTrackerApi = () => {
+export const useNertApi = () => {
   const config = useContext(ConfigContext);
   const apiAxios = useAxios(config?.API_HOST);
 
@@ -39,6 +40,8 @@ export const useRestorationTrackerApi = () => {
 
   const external = useExternalApi(axios);
 
+  const projectParticipation = useProjectParticipationApi(apiAxios);
+
   const publicApis = {
     project: usePublicProjectApi(apiAxios),
     search: usePublicSearchApi(apiAxios)
@@ -54,6 +57,7 @@ export const useRestorationTrackerApi = () => {
     user,
     admin,
     external,
+    projectParticipation,
     public: publicApis
   };
 };

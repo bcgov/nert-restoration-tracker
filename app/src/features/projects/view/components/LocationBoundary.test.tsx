@@ -1,23 +1,23 @@
 // import { render, waitFor } from '@testing-library/react';
 // import { Feature } from 'geojson';
-// import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+// import { useNertApi } from 'hooks/useNertApi';
 // import React from 'react';
 // import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 // import LocationBoundary from './LocationBoundary';
 
-// jest.mock('../../../../hooks/useRestorationTrackerApi');
+// jest.mock('../../../../hooks/useNertApi');
 
 // const mockRefresh = jest.fn();
 
-// const mockuseRestorationTrackerApi = {
+// const mockuseNertApi = {
 //   external: {
 //     post: jest.fn()
 //   }
 // };
 
 // const mockRestorationTrackerApi = (
-//   useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
-// ).mockReturnValue(mockuseRestorationTrackerApi);
+//   useNertApi as unknown as jest.Mock<typeof mockuseNertApi>
+// ).mockReturnValue(mockuseNertApi);
 
 describe('LocationBoundary', () => {
   it('Render me a location boundary', async () => {});

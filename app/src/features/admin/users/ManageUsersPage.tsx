@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import { AdministrativeActivityStatusType, AdministrativeActivityType } from 'constants/misc';
 import AccessRequestList from 'features/admin/users/AccessRequestList';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React, { useEffect, useState } from 'react';
@@ -17,7 +17,7 @@ import ActiveUsersList from './ActiveUsersList';
  * @return {*}
  */
 const ManageUsersPage: React.FC = () => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [accessRequests, setAccessRequests] = useState<IGetAccessRequestsListResponse[]>([]);
   const [isLoadingAccessRequests, setIsLoadingAccessRequests] = useState(false);

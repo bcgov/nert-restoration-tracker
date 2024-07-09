@@ -1,4 +1,4 @@
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { useEffect, useState } from 'react';
 import { useAsync } from './useAsync';
@@ -16,7 +16,7 @@ export interface IUseCodes {
  * @return {*}  {IUseCodes}
  */
 export default function useCodes(): IUseCodes {
-  const api = useRestorationTrackerApi();
+  const api = useNertApi();
 
   const [codes, setCodes] = useState<IGetAllCodeSetsResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(false);

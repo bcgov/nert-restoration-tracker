@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, waitFor, within } from '@testing-library/react';
 import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContextProvider } from 'contexts/dialogContext';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { getMockAuthState } from 'test-helpers/auth-helpers';
@@ -14,8 +14,8 @@ const routes = [
 
 const router = createMemoryRouter(routes, { initialEntries: ['/access-request'] });
 
-jest.mock('../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 
 const mockUseApi = {
   codes: {

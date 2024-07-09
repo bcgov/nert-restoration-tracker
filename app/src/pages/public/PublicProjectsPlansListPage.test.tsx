@@ -1,11 +1,11 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import PublicProjectsListPage from './PublicProjectsPlansListPage';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
-const mockUseRestorationTrackerApi = {
+jest.mock('../../hooks/useNertApi');
+const mockuseNertApi = {
   public: {
     project: {
       getProjectsList: jest.fn()
@@ -14,8 +14,8 @@ const mockUseRestorationTrackerApi = {
 };
 
 const mockRestorationTrackerApi = (
-  useRestorationTrackerApi as unknown as jest.Mock<typeof mockUseRestorationTrackerApi>
-).mockReturnValue(mockUseRestorationTrackerApi);
+  useNertApi as unknown as jest.Mock<typeof mockuseNertApi>
+).mockReturnValue(mockuseNertApi);
 
 describe('PublicProjectsListPage', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
+import { ProjectRoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
@@ -39,40 +39,41 @@ const PlansRouter: React.FC = () => {
         <Route
           path=":id/edit"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => (
-                <Route path="" element={<Navigate replace to={`/plans/${projectId}`} />} />
-              )}>
+              validProjectPermissions={[]}
+              fallback={<Route path="" element={<Navigate replace to={`/plans`} />} />}>
               <EditPlanPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
         <Route
           path=":id/details"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[
                 PROJECT_ROLE.PROJECT_LEAD,
                 PROJECT_ROLE.PROJECT_EDITOR,
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
-              fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
+              validProjectPermissions={[]}
+              fallback={<Navigate replace to={`/plans`} />}>
               <ViewPlanPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
         <Route
           path=":id/users"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
+              validProjectPermissions={[]}
+              fallback={<Navigate replace to={`/plans`} />}>
               <PlanParticipantsPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
       </Route>

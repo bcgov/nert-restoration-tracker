@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import AccessRequestList from 'features/admin/users/AccessRequestList';
 import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import {
   IAccessRequestDataObject,
   IGetAccessRequestsListResponse
@@ -10,14 +10,14 @@ import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React from 'react';
 import { codes } from 'test-helpers/code-helpers';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
+jest.mock('../../../hooks/useNertApi');
 const mockUseApi = {
   admin: {
     approveAccessRequest: jest.fn(),
     denyAccessRequest: jest.fn()
   }
 };
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 
 const renderContainer = (
   accessRequests: IGetAccessRequestsListResponse[],

@@ -4,7 +4,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import ActiveUsersList, { IActiveUsersListProps } from './ActiveUsersList';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
+jest.mock('../../../hooks/useNertApi');
 
 const renderContainer = (props: IActiveUsersListProps) => {
   const routes = [{ path: '/123', element: <ActiveUsersList {...props} /> }];

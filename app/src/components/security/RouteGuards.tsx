@@ -1,114 +1,122 @@
 import CircularProgress from '@mui/material/CircularProgress';
-import { AuthStateContext } from 'contexts/authStateContext';
-import qs from 'qs';
+import { PROJECT_PERMISSION, PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
+import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { useContext } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Route } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { hasAtLeastOneValidValue } from 'utils/authUtils';
+
+export interface ISystemRoleRouteGuardProps {
+  /**
+   * Indicates the sufficient roles needed to access this route, if any.
+   *
+   * Note: The user only needs 1 of the valid roles, when multiple are specified.
+   *
+   * @type {SYSTEM_ROLE[]}
+   */
+  validRoles?: SYSTEM_ROLE[];
+  /**
+   * The children to render if the user has the required roles.
+   *
+   * @type {JSX.Element}
+   * @memberof ISystemRoleRouteGuardProps
+   */
+  children?: JSX.Element;
+}
+
+export interface IProjectRoleRouteGuardProps {
+  /**
+   * Indicates the sufficient project roles needed to access this route, if any.
+   *
+   * Note: The user only needs 1 of the valid roles, when multiple are specified.
+   *
+   * @type {PROJECT_ROLE[]}
+   */
+  validProjectRoles?: PROJECT_ROLE[];
+
+  /**
+   * Indicates the sufficient project permissions needed to access this route, if any.
+   *
+   * Note: The user only needs 1 of the valid roles, when multiple are specified.
+   *
+   * @type {PROJECT_PERMISSION[]}
+   */
+  validProjectPermissions?: PROJECT_PERMISSION[];
+
+  /**
+   * Indicates the sufficient system roles that will grant access to this route, if any.
+   *
+   * Note: The user only needs 1 of the valid roles, when multiple are specified.
+   *
+   * @type {SYSTEM_ROLE[]}
+   */
+  validSystemRoles?: SYSTEM_ROLE[];
+  /**
+   * The children to render if the user has the required roles.
+   *
+   * @type {JSX.Element}
+   * @memberof ISystemRoleRouteGuardProps
+   */
+  children?: JSX.Element;
+}
 
 /**
- * Special route guard that requires the user to be authenticated, but also accounts for routes that are exceptions to
- * requiring authentication, and accounts for the case where a user can authenticate, but has not yet been granted
- * application access.
+ * Route guard that requires the user to have at least 1 of the specified system roles.
  *
- * Only relevant on top-level routers. Child routers can leverage regular guards.
+ * Note: Does not check if they are already authenticated.
  *
- * @param {*} { children }
+ * @param {ISystemRoleRouteGuardProps} props
  * @return {*}
  */
-export const AuthenticatedRouteGuard = ({ children }: { children: JSX.Element }) => {
-  return (
-    <CheckForAuthLoginParam>
-      <WaitForKeycloakToLoadUserInfo>
-        <CheckIfAuthenticatedUser>{children}</CheckIfAuthenticatedUser>
-      </WaitForKeycloakToLoadUserInfo>
-    </CheckForAuthLoginParam>
-  );
-};
+export const SystemRoleRouteGuard = (props: ISystemRoleRouteGuardProps) => {
+  const { validRoles, children, ...rest } = props;
 
-/**
- * Checks for query param `authLogin=true`. If set, force redirect the user to the keycloak login page.
- *
- * Redirects the user as appropriate, or renders the `children`.
- *
- * @param {*} { children }
- * @return {*}
- */
-const CheckForAuthLoginParam = ({ children }: { children: JSX.Element }) => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
 
-  const location = useLocation();
-
-  if (!keycloakWrapper?.keycloak.authenticated) {
-    const urlParams = qs.parse(location.search.replace('?', ''));
-    const authLoginUrlParam = urlParams.authLogin;
-    // check for urlParam to force login
-    if (authLoginUrlParam) {
-      // remove authLogin url param from url to stop possible loop redirect
-      const redirectUrlParams = qs.stringify(urlParams, {
-        filter: (prefix) => prefix !== 'authLogin'
-      });
-      const redirectUri = `${window.location.origin}${location.pathname}?${redirectUrlParams}`;
-
-      // trigger login
-      keycloakWrapper?.keycloak.login({ redirectUri: redirectUri });
-    }
-
-    return <Navigate replace to="/" />;
-  }
-
-  return <>{children}</>;
-};
-
-/**
- * Waits for the keycloakWrapper to finish loading user info.
- *
- * Renders a spinner or the `children`.
- *
- * @param {*} { children }
- * @return {*}
- */
-const WaitForKeycloakToLoadUserInfo = ({ children }: { children: JSX.Element }) => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
-
-  if (!keycloakWrapper?.hasLoadedAllUserInfo) {
+  if (authStateContext.auth.isLoading || authStateContext.nertUserWrapper.isLoading) {
     // User data has not been loaded, can not yet determine if user has sufficient roles
-    return <CircularProgress className="pageProgress" size={40} />;
+    return <CircularProgress className="pageProgress" data-testid="system-role-guard-spinner" />;
   }
 
-  return <>{children}</>;
+  if (!hasAtLeastOneValidValue(validRoles, authStateContext.nertUserWrapper.roleNames)) {
+    return <Navigate to="/forbidden" />;
+  }
+
+  return <Route {...rest}>{children}</Route>;
 };
 
 /**
- * Checks if the user is a registered user or has a pending access request.
+ * Route guard that requires the user to have at least 1 of the specified project roles.
  *
- * Redirects the user as appropriate, or renders the `children`.
+ * Note: Does not check if they are already authenticated.
  *
- * @param {*} { children }
+ * @param {IProjectRoleRouteGuardProps} props
  * @return {*}
  */
-const CheckIfAuthenticatedUser = ({ children }: { children: JSX.Element }) => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+export const ProjectRoleRouteGuard = (props: IProjectRoleRouteGuardProps) => {
+  const { validSystemRoles, validProjectRoles, validProjectPermissions, children, ...rest } = props;
 
-  const location = useLocation();
+  const authStateContext = useAuthStateContext();
 
-  if (!keycloakWrapper?.systemUserId) {
-    // User is not a registered system user
-    if (keycloakWrapper?.hasAccessRequest) {
-      // The user has a pending access request, restrict them to the request-submitted or logout pages
-      if (location.pathname !== '/request-submitted' && location.pathname !== '/logout') {
-        return <Navigate replace to="/request-submitted" />;
-      }
-    } else {
-      // The user does not have a pending access request, restrict them to the access-request, request-submitted or logout pages
-      if (
-        location.pathname !== '/access-request' &&
-        location.pathname !== '/request-submitted' &&
-        location.pathname !== '/logout'
-      ) {
-        // User attempted to go to restricted page
-        return <Navigate replace to="/forbidden" />;
-      }
-    }
+  const projectAuthStateContext = useContext(ProjectAuthStateContext);
+
+  if (
+    authStateContext.auth.isLoading ||
+    authStateContext.nertUserWrapper.isLoading ||
+    !projectAuthStateContext.hasLoadedParticipantInfo
+  ) {
+    // Participant data has not been loaded, can not yet determine if user has sufficient roles
+    return <CircularProgress className="pageProgress" data-testid="project-role-guard-spinner" />;
   }
 
-  return <>{children}</>;
+  if (
+    !projectAuthStateContext.hasProjectRole(validProjectRoles) &&
+    !projectAuthStateContext.hasSystemRole(validSystemRoles) &&
+    !projectAuthStateContext.hasProjectPermission(validProjectPermissions)
+  ) {
+    return <Navigate to="/forbidden" />;
+  }
+
+  return <Route {...rest}>{children}</Route>;
 };

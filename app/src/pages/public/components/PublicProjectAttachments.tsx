@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse
@@ -21,7 +21,7 @@ export interface IPublicProjectAttachmentsProps {
 const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () => {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
 
