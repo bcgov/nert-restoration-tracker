@@ -51,11 +51,15 @@ export function getSearchResults(): RequestHandler {
     const connection = getAPIUserDBConnection();
 
     try {
+      // TODO: Add project size, status, number of sites and link to project thumbnail
       const sqlStatement = SQL`
         SELECT
           p.project_id as id,
           p.name,
           p.is_project,
+          p.state_code,
+          psc.number_sites,
+          psc.size_ha,
           public.ST_asGeoJSON(psc.geography) as geometry
         FROM
           project p
@@ -84,6 +88,7 @@ export function getSearchResults(): RequestHandler {
       }
 
       const result: any[] = _extractResults(response.rows);
+      console.log('result', result);
 
       return res.status(200).json(result);
     } catch (error) {

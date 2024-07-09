@@ -118,6 +118,9 @@ export function _extractResults(rows: any[]): any[] {
       id: row.id,
       name: row.name,
       is_project: row.is_project,
+      state_code: row.state_code,
+      number_sites: row.number_sites,
+      size_ha: row.size_ha,
       geometry: row.geometry && [JSON.parse(row.geometry)]
     };
 

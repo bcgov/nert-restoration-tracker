@@ -6,6 +6,9 @@ import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer.css'; // Custom styling
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { S3FileType } from 'constants/attachments';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -157,7 +160,10 @@ const convertToCentroidGeoJSON = (features: any) => {
         properties: {
           id: f.id,
           name: f.name,
-          is_project: f.is_project
+          is_project: f.is_project,
+          state_code: f.state_code,
+          number_sites: f.number_sites,
+          size_ha: f.size_ha,
         }
       };
     })
@@ -593,8 +599,17 @@ const initializeMap = (
     };
 
     /* Add popup for the points */
-    map.on('click', 'markerProjects.points', (e: any) => {
+    map.on('click', 'markerProjects.points', async (e: any) => {
       const prop = e.features![0].properties;
+      console.log('e', e, 'prop', prop)
+      console.log('e.features', e.features)
+
+      // const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
+      //   prop.id,
+      //   S3FileType.THUMBNAIL
+      // );
+
+      // console.log('thumbnailResponse', thumbnailResponse);
 
       const html = makePopup(prop.name, prop.id, true);
 
@@ -859,6 +874,9 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const autoFocus = props.autoFocus || false;
 
   const { bounds } = props || null;
+
+  const restorationTrackerApi = useRestorationTrackerApi();
+
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
