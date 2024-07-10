@@ -138,9 +138,19 @@ const Header: React.FC = () => {
         <Box px={2}>
           <Divider orientation="vertical" />
         </Box>
-        <Link to="/logout" data-testid="menu_log_out">
+        <Button
+          component="a"
+          variant="text"
+          onClick={() => authStateContext.auth.signoutRedirect()}
+          data-testid="menu_log_out"
+          sx={{
+            color: 'inherit',
+            fontSize: '16px',
+            fontWeight: 700,
+            textTransform: 'none'
+          }}>
           Log Out
-        </Link>
+        </Button>
         <Box pl={2}>
           <Divider orientation="vertical" />
         </Box>
