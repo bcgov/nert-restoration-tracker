@@ -99,8 +99,8 @@ export const getGenericizedKeycloakUserInformation = (
   // database patch function
   if (isIdirUserInformation(keycloakUserInformation)) {
     data = {
-      user_guid: keycloakUserInformation.idir_user_guid,
-      user_identifier: keycloakUserInformation.idir_username,
+      user_guid: keycloakUserInformation.idir_user_guid.toLowerCase(),
+      user_identifier: keycloakUserInformation.idir_username.toLowerCase(),
       user_identity_source: SYSTEM_IDENTITY_SOURCE.IDIR,
       display_name: keycloakUserInformation.display_name,
       email: keycloakUserInformation.email,
@@ -109,8 +109,8 @@ export const getGenericizedKeycloakUserInformation = (
     };
   } else if (isBceidBusinessUserInformation(keycloakUserInformation)) {
     data = {
-      user_guid: keycloakUserInformation.bceid_user_guid,
-      user_identifier: keycloakUserInformation.bceid_username,
+      user_guid: keycloakUserInformation.bceid_user_guid.toLowerCase(),
+      user_identifier: keycloakUserInformation.bceid_username.toLowerCase(),
       user_identity_source: SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS,
       display_name: keycloakUserInformation.display_name,
       email: keycloakUserInformation.email,
@@ -120,8 +120,8 @@ export const getGenericizedKeycloakUserInformation = (
     };
   } else {
     data = {
-      user_guid: keycloakUserInformation.bceid_user_guid,
-      user_identifier: keycloakUserInformation.bceid_username,
+      user_guid: keycloakUserInformation.bceid_user_guid.toLowerCase(),
+      user_identifier: keycloakUserInformation.bceid_username.toLowerCase(),
       user_identity_source: SYSTEM_IDENTITY_SOURCE.BCEID_BASIC,
       display_name: keycloakUserInformation.display_name,
       email: keycloakUserInformation.email,

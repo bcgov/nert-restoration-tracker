@@ -187,7 +187,7 @@ export function getAdministrativeActivityStanding(): RequestHandler {
 
       const administrativeActivityService = new AdministrativeActivityService(connection);
 
-      const response = await administrativeActivityService.countPendingAdministrativeActivities(userIdentifier);
+      const response = await administrativeActivityService.getAdministrativeActivityStanding(userIdentifier);
 
       await connection.commit();
 

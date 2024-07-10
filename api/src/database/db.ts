@@ -499,17 +499,17 @@ export const getDBConnection = function (keycloakToken: KeycloakUserInformation)
     }
 
     const patchSystemUserSQLStatement = SQL`
-      SELECT api_patch_system_user(
-        ${data.user_guid},
-        ${data.user_identifier},
-        ${data.user_identity_source},
-        ${data.email},
-        ${data.display_name},
-        ${data.given_name || null},
-        ${data.family_name || null},
-        ${data.agency || null}
+    SELECT api_patch_system_user(
+      ${data.user_guid},
+      ${data.user_identifier},
+      ${data.user_identity_source},
+      ${data.email},
+      ${data.display_name},
+      ${data.given_name || null},
+      ${data.family_name || null},
+      ${data.agency || null}
       )
-    `;
+      `;
 
     await _client.query(patchSystemUserSQLStatement.text, patchSystemUserSQLStatement.values);
   };
@@ -525,7 +525,7 @@ export const getDBConnection = function (keycloakToken: KeycloakUserInformation)
    */
   const _setSystemUserContext = async (userGuid: string, userIdentitySource: SYSTEM_IDENTITY_SOURCE) => {
     const setSystemUserContextSQLStatement = SQL`
-      SELECT api_set_context(${userGuid}, ${userIdentitySource});
+    SELECT api_set_context(${userGuid.toLowerCase()}, ${userIdentitySource});
     `;
 
     const response = await _client.query(

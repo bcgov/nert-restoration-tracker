@@ -3,7 +3,7 @@ import { PROJECT_PERMISSION, PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { useContext } from 'react';
-import { Route } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { hasAtLeastOneValidValue } from 'utils/authUtils';
 
@@ -70,7 +70,7 @@ export interface IProjectRoleRouteGuardProps {
  * @return {*}
  */
 export const SystemRoleRouteGuard = (props: ISystemRoleRouteGuardProps) => {
-  const { validRoles, children, ...rest } = props;
+  const { validRoles } = props;
 
   const authStateContext = useAuthStateContext();
 
@@ -83,7 +83,7 @@ export const SystemRoleRouteGuard = (props: ISystemRoleRouteGuardProps) => {
     return <Navigate to="/forbidden" />;
   }
 
-  return <Route {...rest}>{children}</Route>;
+  return <Outlet />;
 };
 
 /**
@@ -95,11 +95,15 @@ export const SystemRoleRouteGuard = (props: ISystemRoleRouteGuardProps) => {
  * @return {*}
  */
 export const ProjectRoleRouteGuard = (props: IProjectRoleRouteGuardProps) => {
-  const { validSystemRoles, validProjectRoles, validProjectPermissions, children, ...rest } = props;
+  const { validSystemRoles, validProjectRoles, validProjectPermissions } = props;
 
   const authStateContext = useAuthStateContext();
 
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
+
+  if (!projectAuthStateContext.hasLoadedParticipantInfo) {
+    projectAuthStateContext.getProjectParticipant();
+  }
 
   if (
     authStateContext.auth.isLoading ||
@@ -118,5 +122,5 @@ export const ProjectRoleRouteGuard = (props: IProjectRoleRouteGuardProps) => {
     return <Navigate to="/forbidden" />;
   }
 
-  return <Route {...rest}>{children}</Route>;
+  return <Outlet />;
 };

@@ -2,7 +2,7 @@ import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import useDataLoader from 'hooks/useDataLoader';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetUserProjectParticipantResponse } from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { hasAtLeastOneValidValue } from 'utils/authUtils';
 
@@ -29,6 +29,7 @@ export const ProjectAuthStateContextProvider: React.FC<React.PropsWithChildren> 
   const participantDataLoader = useDataLoader((projectId: number) =>
     nertApi.projectParticipation.getUserProjectParticipant(projectId)
   );
+
   const authStateContext = useAuthStateContext();
 
   const urlParams: Record<string, string | number | undefined> = useParams();

@@ -1,14 +1,14 @@
-import { ProjectRoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import CreateProjectPage from 'features/projects/create/CreateProjectPage';
 import EditProjectPage from 'features/projects/edit/EditProjectPage';
-import ProjectsLayout from 'features/projects/ProjectsLayout';
 import ViewProjectPage from 'features/projects/view/ViewProjectPage';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { RedirectURL } from 'utils/AppRoutesUtils';
 import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
 import ProjectsPlansListPage from './ProjectsPlansListPage';
+import ProjectsLayout from 'layouts/ProjectsLayout';
+import { ProjectRoleGuard } from 'components/security/Guards';
+import { RedirectURL } from 'utils/AppRoutesUtils';
 
 /**
  * Router for all `/admin/project/*` pages.
@@ -19,22 +19,13 @@ const ProjectsRouter: React.FC = () => {
   return (
     <Routes>
       <Route element={<ProjectsLayout />}>
+        {/*  Redirect any unknown routes to the projects page */}
         <Route path="/" element={<ProjectsPlansListPage />} />
         <Route path=":id" element={<RedirectURL basePath="/admin/projects" />} />
-        <Route
-          path="/create"
-          element={
-            <SystemRoleGuard
-              validSystemRoles={[
-                SYSTEM_ROLE.SYSTEM_ADMIN,
-                SYSTEM_ROLE.DATA_ADMINISTRATOR,
-                SYSTEM_ROLE.PROJECT_CREATOR
-              ]}
-              fallback={<Navigate replace to={'/projects'} />}>
-              <CreateProjectPage />
-            </SystemRoleGuard>
-          }
-        />
+        {/* Create */}
+        <Route path="/create" element={<CreateProjectPage />} />
+
+        {/* Edit */}
         <Route
           path=":id/edit"
           element={
@@ -47,6 +38,9 @@ const ProjectsRouter: React.FC = () => {
             </ProjectRoleGuard>
           }
         />
+
+        {/* View */}
+        <Route path=":id" element={<Navigate replace to=":id/details" />} />
         <Route
           path=":id/details"
           element={
@@ -63,6 +57,8 @@ const ProjectsRouter: React.FC = () => {
             </ProjectRoleGuard>
           }
         />
+
+        {/* Participants */}
         <Route
           path=":id/users"
           element={

@@ -7,9 +7,9 @@ import AccessRequestList from 'features/admin/users/AccessRequestList';
 import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
-import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React, { useEffect, useState } from 'react';
 import ActiveUsersList from './ActiveUsersList';
+import { ISystemUser } from 'interfaces/useUserApi.interface';
 
 /**
  * Page to display user management data/functionality.
@@ -23,7 +23,7 @@ const ManageUsersPage: React.FC = () => {
   const [isLoadingAccessRequests, setIsLoadingAccessRequests] = useState(false);
   const [hasLoadedAccessRequests, setHasLoadedAccessRequests] = useState(false);
 
-  const [activeUsers, setActiveUsers] = useState<IGetUserResponse[]>([]);
+  const [activeUsers, setActiveUsers] = useState<ISystemUser[]>([]);
   const [isLoadingActiveUsers, setIsLoadingActiveUsers] = useState(false);
   const [hasLoadedActiveUsers, setHasLoadedActiveUsers] = useState(false);
 

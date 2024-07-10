@@ -1331,6 +1331,11 @@ CREATE TABLE system_user(
     system_user_id             integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     user_identity_source_id    integer           NOT NULL,
     user_identifier            varchar(200)      NOT NULL,
+    email                      varchar(300),
+    display_name               varchar(50),
+    given_name                 varchar(50),
+    family_name                varchar(50),
+    agency                     varchar(50),
     record_effective_date      date              NOT NULL,
     record_end_date            date,
     create_date                timestamptz(6)    DEFAULT now() NOT NULL,
@@ -1349,6 +1354,16 @@ COMMENT ON COLUMN system_user.system_user_id IS 'System generated surrogate prim
 COMMENT ON COLUMN system_user.user_identity_source_id IS 'System generated surrogate primary key identifier.'
 ;
 COMMENT ON COLUMN system_user.user_identifier IS 'The identifier of the user.'
+;
+COMMENT ON COLUMN system_user.email IS 'The email address of the user.'
+;
+COMMENT ON COLUMN system_user.display_name IS 'The display name of the user.'
+;
+COMMENT ON COLUMN system_user.given_name IS 'The given name of the user.'
+;
+COMMENT ON COLUMN system_user.family_name IS 'The family name of the user.'
+;
+COMMENT ON COLUMN system_user.agency IS 'The agency of the user.'
 ;
 COMMENT ON COLUMN system_user.record_effective_date IS 'Record level effective date.'
 ;

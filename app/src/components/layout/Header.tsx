@@ -124,7 +124,9 @@ const Header: React.FC = () => {
   // Authenticated view
   const LoggedInUser = () => {
     const identitySource = authStateContext.nertUserWrapper.identitySource || '';
+    console.log('identitySource', identitySource);
     const userIdentifier = authStateContext.nertUserWrapper.userIdentifier || '';
+    console.log('userIdentifier', userIdentifier);
     const formattedUsername = [
       getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
       userIdentifier
@@ -132,6 +134,7 @@ const Header: React.FC = () => {
       .filter(Boolean)
       .join('/');
 
+    console.log('formattedUsername', formattedUsername);
     return (
       <>
         <Box
@@ -249,10 +252,7 @@ const Header: React.FC = () => {
                 <VersionEnvironmentLabel />
               </Box>
             </Link>
-            <UnAuthGuard>
-              <PublicViewUser />
-            </UnAuthGuard>
-            <AuthGuard>
+            <AuthGuard fallback={<PublicViewUser />}>
               <LoggedInUser />
             </AuthGuard>
           </Box>

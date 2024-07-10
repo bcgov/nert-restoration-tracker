@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import PublicLayout from './PublicLayout';
+import AppLayout from './AppLayout';
 
-describe('PublicLayout', () => {
+describe('AppLayout', () => {
   it('renders correctly', () => {
     // process.env.REACT_APP_NODE_ENV = 'local';
 
     const renderObject = (
-      <PublicLayout>
+      <AppLayout>
         <div>
           <p>The public layout content</p>
         </div>
-      </PublicLayout>
+      </AppLayout>
     );
 
     const routes = [{ path: '/', element: renderObject }];

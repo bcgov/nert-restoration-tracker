@@ -119,7 +119,7 @@ const EditPlanPage: React.FC = () => {
         return;
       }
 
-      history(`/admin/plans/${response.project_id}`);
+      history(`/admin/plans/${urlParams['id']}/details`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: 'Error Editing Project',
@@ -154,7 +154,7 @@ const EditPlanPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history(`/admin/projects/${projectId}`);
+      history(`/admin/plans/${urlParams['id']}/details`);
     }
   };
 

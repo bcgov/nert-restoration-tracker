@@ -6,7 +6,7 @@ import Header from 'components/layout/Header';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-const PublicLayout = () => {
+const AppLayout = () => {
   function isSupportedBrowser() {
     if (
       navigator.userAgent.indexOf('Chrome') !== -1 ||
@@ -45,4 +45,4 @@ const PublicLayout = () => {
   );
 };
 
-export default PublicLayout;
+export default AppLayout;

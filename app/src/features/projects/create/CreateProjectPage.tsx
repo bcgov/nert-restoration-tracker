@@ -77,6 +77,7 @@ import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 
 const pageStyles = {
   actionButton: {
@@ -132,7 +133,6 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
   const codes = useCodes();
@@ -321,8 +321,7 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
-      history(`/admin/projects/${createProjectResponse.id}`);
+      history(`/admin/projects/${createProjectResponse.id}/details`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',

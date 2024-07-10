@@ -99,11 +99,11 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
   };
 
   const deActivateSystemUser = async (user: ISystemUser) => {
-    if (!user?.system_user_id) {
+    if (!user?.id) {
       return;
     }
     try {
-      await restorationTrackerApi.user.deleteSystemUser(user.system_user_id);
+      await restorationTrackerApi.user.deleteSystemUser(user.id);
 
       showSnackBar({
         snackbarMessage: (
@@ -167,13 +167,13 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
   };
 
   const changeSystemUserRole = async (user: ISystemUser, roleId: number, roleName: string) => {
-    if (!user?.system_user_id) {
+    if (!user?.id) {
       return;
     }
     const roleIds = [roleId];
 
     try {
-      await restorationTrackerApi.user.updateSystemUserRoles(user.system_user_id, roleIds);
+      await restorationTrackerApi.user.updateSystemUserRoles(user.id, roleIds);
 
       showSnackBar({
         snackbarMessage: (
@@ -300,7 +300,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                 activeUsers
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
-                    <TableRow data-testid={`active-user-row-${index}`} key={row.system_user_id}>
+                    <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
                       <TableCell>
                         <strong>{row.user_identifier || 'Not Applicable'}</strong>
                       </TableCell>
@@ -334,8 +334,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                               {
                                 menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
                                 menuLabel: 'View Users Details',
-                                menuOnClick: () =>
-                                  history(`/admin/users/${row.system_user_id}`, { state: row })
+                                menuOnClick: () => history(`/admin/users/${row.id}`, { state: row })
                               },
                               {
                                 menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,

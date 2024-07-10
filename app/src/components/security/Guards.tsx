@@ -108,7 +108,6 @@ export const ProjectRoleGuard = (props: PropsWithChildren<IProjectRoleGuardProps
  */
 export const AuthGuard = (props: PropsWithChildren<IGuardProps>) => {
   const authStateContext = useAuthStateContext();
-  console.log('authStateContext', authStateContext);
 
   if (!authStateContext.auth.isAuthenticated || authStateContext.nertUserWrapper.isLoading) {
     if (props.fallback) {

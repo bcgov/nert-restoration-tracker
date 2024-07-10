@@ -341,7 +341,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         variant="body2"
                         onClick={
                           draftCode != row.statusCode
-                            ? () => history(`/admin/projects/${row.projectId}`)
+                            ? () => history(`/admin/projects/${row.projectId}/details`)
                             : () => history(`/admin/projects/create?draftId=${row.projectId}`)
                         }>
                         {row.projectName}

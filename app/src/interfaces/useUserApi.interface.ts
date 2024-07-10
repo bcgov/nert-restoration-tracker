@@ -1,5 +1,5 @@
 export interface ISystemUser {
-  system_user_id: number;
+  id: number;
   user_identifier: string;
   user_guid: string | null;
   identity_source: string;

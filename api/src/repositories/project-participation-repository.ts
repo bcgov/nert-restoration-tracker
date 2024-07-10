@@ -2,6 +2,7 @@ import SQL from 'sql-template-strings';
 import { ApiExecuteSQLError } from '../errors/custom-error';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
+import { UserObject } from './user-repository';
 
 const defaultLog = getLogger('Repositories/ProjectParticipationRepository');
 
@@ -105,6 +106,86 @@ export class ProjectParticipationRepository extends BaseRepository {
       defaultLog.debug({ label: 'getParticipantsFromAllSystemUsersProjects', message: 'error', error });
       throw error;
     }
+  }
+
+  /**
+   * Get a project user by project and system user id. Returns null if the system user is not a participant of the
+   * project.
+   *
+   * @param {number} projectId
+   * @param {number} systemUserId
+   * @return {*}  {(Promise<(ProjectUser & SystemUser) | null>)}
+   * @memberof ProjectParticipationRepository
+   */
+  async getProjectParticipant(
+    projectId: number,
+    systemUserId: number
+  ): Promise<(IProjectParticipation & UserObject) | null> {
+    const sqlStatement = SQL`
+      SELECT
+        su.system_user_id,
+        su.user_identifier,
+        su.user_guid,
+        su.record_end_date,
+        uis.name AS identity_source,
+        array_remove(array_agg(sr.system_role_id), NULL) AS role_ids,
+        array_remove(array_agg(sr.name), NULL) AS role_names,
+        su.email,
+        su.display_name,
+        su.given_name,
+        su.family_name,
+        su.agency,
+        pp.project_participation_id,
+        pp.project_id,
+        array_remove(array_agg(pr.project_role_id), NULL) AS project_role_ids,
+        array_remove(array_agg(pr.name), NULL) AS project_role_names,
+        array_remove(array_agg(pp2.name), NULL) as project_role_permissions
+      FROM
+        project_participation pp
+      LEFT JOIN project_role pr
+        ON pp.project_role_id = pr.project_role_id
+      LEFT JOIN project_role_permission prp
+        ON pp.project_role_id = prp.project_role_id
+      LEFT JOIN project_permission pp2
+        ON pp2.project_permission_id = prp.project_permission_id
+      LEFT JOIN system_user su
+        ON pp.system_user_id = su.system_user_id
+      LEFT JOIN
+        system_user_role sur
+        ON su.system_user_id = sur.system_user_id
+      LEFT JOIN
+        system_role sr
+        ON sur.system_role_id = sr.system_role_id
+      LEFT JOIN
+        user_identity_source uis
+        ON uis.user_identity_source_id = su.user_identity_source_id
+      WHERE
+        pp.project_id = ${projectId}
+      AND
+        pp.system_user_id = ${systemUserId}
+      AND
+        su.record_end_date is NULL
+      GROUP BY
+        su.system_user_id,
+        su.record_end_date,
+        su.user_identifier,
+        su.user_guid,
+        uis.name,
+        su.email,
+        su.display_name,
+        su.given_name,
+        su.family_name,
+        su.agency,
+        pp.project_participation_id,
+        pp.project_id,
+        pp.create_date
+      ORDER BY
+        pp.create_date DESC;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows?.[0] || null;
   }
 
   /**

@@ -50,19 +50,17 @@ export interface INertUserWrapper {
    */
   hasOneOrMoreProjectRoles: boolean;
   /**
-   * Force this sims user wrapper to refresh its data.
+   * Force this nert user wrapper to refresh its data.
    */
   refresh: () => void;
 }
 
 function useNertUserWrapper(): INertUserWrapper {
   const auth = useAuth();
-  console.log('auth', auth);
 
   const nertApi = useNertApi();
 
   const nertUserDataLoader = useDataLoader(() => nertApi.user.getUser());
-  console.log('nertUserDataLoader', nertUserDataLoader);
 
   const administrativeActivityStandingDataLoader = useDataLoader(() =>
     nertApi.admin.getAdministrativeActivityStanding()
@@ -74,17 +72,14 @@ function useNertUserWrapper(): INertUserWrapper {
   }
 
   const isLoading =
-  !nertUserDataLoader.isReady || !administrativeActivityStandingDataLoader.isReady;
-  console.log('isLoading', isLoading);
+    !nertUserDataLoader.isReady || !administrativeActivityStandingDataLoader.isReady;
 
-  const systemUserId = nertUserDataLoader.data?.system_user_id;
-  console.log('systemUserId', systemUserId);
+  const systemUserId = nertUserDataLoader.data?.id;
 
   const userGuid =
-  nertUserDataLoader.data?.user_guid ||
-  (auth.user?.profile?.idir_user_guid as string)?.toLowerCase() ||
-  (auth.user?.profile?.bceid_user_guid as string)?.toLowerCase();
-  console.log('userGuid', userGuid);
+    nertUserDataLoader.data?.user_guid ||
+    (auth.user?.profile?.idir_user_guid as string)?.toLowerCase() ||
+    (auth.user?.profile?.bceid_user_guid as string)?.toLowerCase();
 
   const userIdentifier =
     nertUserDataLoader.data?.user_identifier ||

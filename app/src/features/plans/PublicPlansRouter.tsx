@@ -1,5 +1,5 @@
 import { UnAuthGuard } from 'components/security/Guards';
-import ProjectsLayout from 'features/projects/ProjectsLayout';
+import ProjectsLayout from 'layouts/ProjectsLayout';
 import PublicProjectPlanView from 'pages/public/PublicProjectPlanView';
 import PublicProjectsPlansListPage from 'pages/public/PublicProjectsPlansListPage';
 import React from 'react';

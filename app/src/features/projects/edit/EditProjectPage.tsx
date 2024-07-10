@@ -147,7 +147,7 @@ const EditProjectPage: React.FC = () => {
         return;
       }
 
-      history(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${response.id}/details`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: 'Error Editing Project',
@@ -178,7 +178,7 @@ const EditProjectPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history(`/admin/projects/${projectId}`);
+      history(`/admin/projects/${urlParams['id']}/details`);
     }
   };
 
