@@ -1,4 +1,3 @@
-import { UnAuthGuard } from 'components/security/Guards';
 import ProjectsLayout from 'layouts/ProjectsLayout';
 import PublicProjectPlanView from 'pages/public/PublicProjectPlanView';
 import PublicProjectsPlansListPage from 'pages/public/PublicProjectsPlansListPage';
@@ -17,14 +16,7 @@ const PublicProjectsRouter: React.FC = () => {
       <Route path=":id" element={<RedirectURL basePath="/projects" />} />
       <Route element={<ProjectsLayout />}>
         <Route path="/" element={<PublicProjectsPlansListPage />} />
-        <Route
-          path=":id/details"
-          element={
-            <UnAuthGuard fallback={<Navigate replace to={`/admin/projects`} />}>
-              <PublicProjectPlanView />
-            </UnAuthGuard>
-          }
-        />
+        <Route path=":id/details" element={<PublicProjectPlanView />} />
       </Route>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}

@@ -15,10 +15,8 @@ import { ISystemUser } from 'interfaces/useUserApi.interface';
  */
 const UsersDetailPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
-  console.log('restorationTrackerApi', restorationTrackerApi);
 
   const [selectedUser, setSelectedUser] = useState<ISystemUser | null>(null);
-  console.log('selectedUser', selectedUser);
 
   const urlParams: Record<string, string | number | undefined> = useParams();
   useEffect(() => {
@@ -31,7 +29,6 @@ const UsersDetailPage: React.FC = () => {
       const user = await restorationTrackerApi.user.getUserById(id);
       setSelectedUser(user);
     };
-    console.log('urlParams[asd]', urlParams['id']);
 
     getUser();
   }, [restorationTrackerApi.user, urlParams, selectedUser]);

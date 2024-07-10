@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
+import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import MapContainer from 'components/map/MapContainer';
+import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import { useNertApi } from 'hooks/useNertApi';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 
 /**
@@ -22,10 +24,26 @@ const SearchPage: React.FC = () => {
   const authStateContext = useAuthStateContext();
 
   type LatLngTuple = [number, number, number?];
+  const dialogContext = useContext(DialogContext);
 
+  const showFilterErrorDialog = useCallback(
+    (textDialogProps?: Partial<IErrorDialogProps>) => {
+      dialogContext.setErrorDialog({
+        onClose: () => {
+          dialogContext.setErrorDialog({ open: false });
+        },
+        onOk: () => {
+          dialogContext.setErrorDialog({ open: false });
+        },
+        ...textDialogProps,
+        open: true
+      });
+    },
+    [dialogContext]
+  );
   const getSearchResults = useCallback(async () => {
     try {
-      const response = authStateContext.auth.isAuthenticated
+      const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
 
@@ -50,12 +68,11 @@ const SearchPage: React.FC = () => {
       setGeometries(clusteredPointGeometries);
     } catch (error) {
       const apiError = error as APIError;
-      console.log('apiError', apiError);
-      // showFilterErrorDialog({
-      //   dialogTitle: 'Error Searching For Results',
-      //   dialogError: apiError?.message,
-      //   dialogErrorDetails: apiError?.errors
-      // });
+      showFilterErrorDialog({
+        dialogTitle: 'Error Searching For Results',
+        dialogError: apiError?.message,
+        dialogErrorDetails: apiError?.errors
+      });
     }
   }, [restorationApi.search, restorationApi.public.search, authStateContext.auth]);
 

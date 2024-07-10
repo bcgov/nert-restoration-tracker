@@ -120,21 +120,17 @@ const Header: React.FC = () => {
   const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
   const authStateContext = useAuthStateContext();
+  const identitySource = authStateContext.nertUserWrapper.identitySource || '';
+  const userIdentifier = authStateContext.nertUserWrapper.userIdentifier || '';
+  const formattedUsername = [
+    getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
+    userIdentifier
+  ]
+    .filter(Boolean)
+    .join('/');
 
   // Authenticated view
   const LoggedInUser = () => {
-    const identitySource = authStateContext.nertUserWrapper.identitySource || '';
-    console.log('identitySource', identitySource);
-    const userIdentifier = authStateContext.nertUserWrapper.userIdentifier || '';
-    console.log('userIdentifier', userIdentifier);
-    const formattedUsername = [
-      getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
-      userIdentifier
-    ]
-      .filter(Boolean)
-      .join('/');
-
-    console.log('formattedUsername', formattedUsername);
     return (
       <>
         <Box
@@ -152,7 +148,9 @@ const Header: React.FC = () => {
               lineHeight: '1.75'
             }}>
             <Icon path={mdiAccountCircle} size={1} />
-            <Box ml={1}>{formattedUsername}</Box>
+            <Box ml={1}>
+              <Typography>{formattedUsername}</Typography>
+            </Box>
           </Box>
           <Divider
             orientation="vertical"
@@ -252,7 +250,10 @@ const Header: React.FC = () => {
                 <VersionEnvironmentLabel />
               </Box>
             </Link>
-            <AuthGuard fallback={<PublicViewUser />}>
+            <UnAuthGuard>
+              <PublicViewUser />
+            </UnAuthGuard>
+            <AuthGuard>
               <LoggedInUser />
             </AuthGuard>
           </Box>
@@ -264,15 +265,22 @@ const Header: React.FC = () => {
             sx={pageStyles.mainNavToolbar}
             role="navigation"
             aria-label="Main Navigation">
-            <UnAuthGuard>
-              <Link to="/projects" id="menu_projects">
-                All Projects/All Plans
-              </Link>
-              <Link to="/search" id="menu_search">
-                Map
-              </Link>
-            </UnAuthGuard>
-            <AuthGuard>
+            <SystemRoleGuard
+              validSystemRoles={[
+                SYSTEM_ROLE.SYSTEM_ADMIN,
+                SYSTEM_ROLE.DATA_ADMINISTRATOR,
+                SYSTEM_ROLE.PROJECT_CREATOR
+              ]}
+              fallback={
+                <>
+                  <Link to="/projects" id="menu_projects">
+                    All Projects/All Plans
+                  </Link>
+                  <Link to="/search" id="menu_search">
+                    Map
+                  </Link>
+                </>
+              }>
               <Link to="/admin/projects" id="menu_projects">
                 All Projects/All Plans
               </Link>
@@ -287,7 +295,7 @@ const Header: React.FC = () => {
                   Manage Users
                 </Link>
               </SystemRoleGuard>
-            </AuthGuard>
+            </SystemRoleGuard>
           </Toolbar>
         </Box>
       </AppBar>
