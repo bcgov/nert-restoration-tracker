@@ -2,6 +2,11 @@ import * as turf from '@turf/turf';
 import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
+import ReactDomServer from 'react-dom/server';
 import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
@@ -9,6 +14,7 @@ import './mapContainer.css'; // Custom styling
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
 import { S3FileType } from 'constants/attachments';
+import { create } from 'domain';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -598,6 +604,25 @@ const initializeMap = (
         </div>`;
     };
 
+    /**
+     * Create a React Dom for the popup content
+     * TODO: Port over the raw HTML above to JSX
+     */
+    const MapPopup = (props: any) => {
+      const name = props.name;
+      const id = props.id;
+      const isProject = props.isProject;
+      return (
+        <Box >
+          Testing from a react popup {name} {id} {isProject.toString()}
+        </Box>
+      )
+    };
+
+    console.log(ReactDomServer.renderToString(<MapPopup name='test' id='123' isProject={true}/>));
+
+
+
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', async (e: any) => {
       const prop = e.features![0].properties;
@@ -875,6 +900,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const { bounds } = props || null;
 
+  // TODO: Pass this to the map init function
   const restorationTrackerApi = useRestorationTrackerApi();
 
 
