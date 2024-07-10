@@ -1,6 +1,6 @@
-import { mdiAccountCircle, mdiLoginVariant } from '@mdi/js';
+import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
 import Icon from '@mdi/react';
-import { MenuItem } from '@mui/material';
+import { IconButton } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -132,59 +132,26 @@ const Header: React.FC = () => {
   // Authenticated view
   const LoggedInUser = () => {
     return (
-      <>
-        <Box
-          display={{ xs: 'none', lg: 'flex' }}
-          alignItems="center"
-          sx={{
-            fontSize: '16px',
-            fontWeight: 700
-          }}>
-          <Box
-            display="flex"
-            alignItems="center"
-            sx={{
-              padding: '6px 14px',
-              lineHeight: '1.75'
-            }}>
-            <Icon path={mdiAccountCircle} size={1} />
-            <Box ml={1}>
-              <Typography>{formattedUsername}</Typography>
-            </Box>
-          </Box>
-          <Divider
-            orientation="vertical"
-            sx={{
-              marginRight: '6px',
-              height: '20px',
-              borderColor: '#fff'
-            }}
-          />
-          <Button
-            component="a"
-            variant="text"
-            onClick={() => authStateContext.auth.signoutRedirect()}
-            data-testid="menu_log_out"
-            sx={{
-              color: 'inherit',
-              fontSize: '16px',
-              fontWeight: 700,
-              textTransform: 'none'
-            }}>
-            Log Out
-          </Button>
+      <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
+        <Icon path={mdiAccountCircle} size={1.12} />
+        <Box ml={1}>{formattedUsername}</Box>
+        <Box px={2}>
+          <Divider orientation="vertical" />
         </Box>
-        <MenuItem
-          component="a"
-          color="#1a5a96"
-          onClick={() => authStateContext.auth.signoutRedirect()}
-          data-testid="collapsed_menu_log_out"
-          sx={{
-            display: { xs: 'block', lg: 'none' }
-          }}>
-          Log out
-        </MenuItem>
-      </>
+        <Link to="/logout" data-testid="menu_log_out">
+          Log Out
+        </Link>
+        <Box pl={2}>
+          <Divider orientation="vertical" />
+        </Box>
+        <IconButton
+          aria-label="need help"
+          sx={pageStyles.govHeaderIconButton}
+          onClick={showSupportDialog}
+          size="large">
+          <Icon path={mdiHelpCircle} size={1.12} />
+        </IconButton>
+      </Box>
     );
   };
 
@@ -215,6 +182,10 @@ const Header: React.FC = () => {
   };
 
   const [open, setOpen] = React.useState(false);
+
+  const showSupportDialog = () => {
+    setOpen(true);
+  };
 
   const hideSupportDialog = () => {
     setOpen(false);
