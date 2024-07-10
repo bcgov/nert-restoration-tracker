@@ -21,11 +21,7 @@ export const ensureProtocol = (
     return `${'http://'}${url}`;
   }
 
-  if (
-    url.startsWith('https://') ||
-    url.startsWith('http://localhost') ||
-    url.startsWith('http://host.docker.internal')
-  ) {
+  if (url.startsWith('https://') || url.startsWith('http://localhost')) {
     return url;
   }
 
