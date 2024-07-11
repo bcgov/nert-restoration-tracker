@@ -1,3 +1,4 @@
+import { Card } from '@mui/material';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
@@ -6,10 +7,24 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
-import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import React from 'react';
+import React, { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import MapContainer from 'components/map/MapContainer';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
+import { Tooltip } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { focus, ICONS } from 'constants/misc';
+import PlanDetails from 'features/plans/view/components/PlanDetails';
+import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
+
+const pageStyles = {
+  layerSwitcherContainer: {
+    position: 'relative',
+    bottom: '-70px'
+  }
+};
 
 interface IPlanViewFormProps {
   plan: IGetPlanForViewResponse;
@@ -24,46 +39,122 @@ interface IPlanViewFormProps {
 const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
   const { plan, codes } = props;
 
+  const bounds = calculateUpdatedMapBounds(plan?.location.geometry || [], true) || null;
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
+
   return (
     <>
       <Container maxWidth="xl" data-testid="view_plan_page_component">
-        <Box mb={5} display="flex" justifyContent="space-between">
-          <Box>
-            <Typography variant="h1">{plan.project.project_name}</Typography>
-            <Box mt={1.5} display="flex" flexDirection={'row'} alignItems="center">
-              <Typography variant="subtitle2" component="span" color="textSecondary">
-                Plan Status:
+        <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
+          <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
+            <Box>
+              <Typography variant="h1">
+                <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Project" />{' '}
+                {plan.project.project_name}
               </Typography>
-              <Box ml={1}>
-                <Chip
-                  size="small"
-                  sx={getStatusStyle(plan.project.state_code)}
-                  label={getStateLabelFromCode(plan.project.state_code)}
-                />
+              <Box mt={0.3} display="flex" flexDirection={'row'} alignItems="center">
+                <Typography variant="subtitle2" component="span" color="textSecondary">
+                  Plan Status:
+                </Typography>
+                <Box ml={1}>
+                  <Chip
+                    size="small"
+                    sx={getStatusStyle(plan.project.state_code)}
+                    label={getStateLabelFromCode(plan.project.state_code)}
+                  />
+                  <Tooltip title={'Plan workflow information'} placement="right">
+                    <IconButton color={'info'}>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+              <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
+                <Typography variant="subtitle2" component="span" color="textSecondary">
+                  Plan Focus:
+                </Typography>
+                <Box ml={1}>
+                  {plan.project.is_healing_land && (
+                    <Chip size="small" color={'default'} label={focus.HEALING_THE_LAND} />
+                  )}
+                  {plan.project.is_healing_people && (
+                    <Chip size="small" color={'default'} label={focus.HEALING_THE_PEOPLE} />
+                  )}
+                  {plan.project.is_land_initiative && (
+                    <Chip
+                      size="small"
+                      color={'default'}
+                      label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
+                    />
+                  )}
+                  {plan.project.is_cultural_initiative && (
+                    <Chip
+                      size="small"
+                      color={'default'}
+                      label={focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE}
+                    />
+                  )}
+                </Box>
               </Box>
             </Box>
           </Box>
-        </Box>
 
-        <Box mt={2}>
-          <Grid container spacing={3}>
-            <Grid item md={8}>
-              <Box mb={3}>
+          <Box mx={1} mb={1}>
+            <Grid container spacing={1}>
+              <Grid item md={8}>
+                <Box mb={1}>
+                  <Paper elevation={2}>
+                    <Box p={1}>
+                      <PlanDetails plan={plan} thumbnailImageUrl={''} />
+                    </Box>
+                  </Paper>
+                </Box>
                 <Paper elevation={2}>
-                  <Box height="500px" position="relative">
-                    <LocationBoundary locationData={plan.location} />
+                  <Box p={2}>
+                    <Typography variant="h2">Location</Typography>
+                  </Box>
+                  <Box height={500}>
+                    <MapContainer
+                      mapId={'plan_location_map'}
+                      layerVisibility={layerVisibility}
+                      features={plan.location.geometry}
+                      bounds={bounds}
+                      mask={null}
+                    />
+                  </Box>
+                  <Box sx={pageStyles.layerSwitcherContainer}>
+                    <LayerSwitcher layerVisibility={layerVisibility} />
                   </Box>
                 </Paper>
-              </Box>
+                <Box mt={2} />
+              </Grid>
+              <Grid item md={4}>
+                <Paper elevation={2}>
+                  <PlanDetailsPage planForViewData={plan} codes={codes} />
+                </Paper>
+              </Grid>
             </Grid>
-
-            <Grid item md={4}>
-              <Paper elevation={2}>
-                <PlanDetailsPage planForViewData={plan} codes={codes} />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Box>
+          </Box>
+        </Card>
       </Container>
     </>
   );

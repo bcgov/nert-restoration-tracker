@@ -30,7 +30,6 @@ import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { ProjectRoleGuard } from 'components/security/Guards';
-import { useAuth } from 'react-oidc-context';
 
 const pageStyles = {
   titleContainerActions: {

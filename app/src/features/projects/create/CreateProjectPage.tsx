@@ -20,7 +20,6 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -77,7 +76,6 @@ import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
-import { useAuthStateContext } from 'hooks/useAuthStateContext';
 
 const pageStyles = {
   actionButton: {

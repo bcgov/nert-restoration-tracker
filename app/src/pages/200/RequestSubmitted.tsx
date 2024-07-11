@@ -1,29 +1,18 @@
 import { mdiCheck } from '@mdi/js';
 import Icon from '@mdi/react';
+import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useAuth } from 'react-oidc-context';
 
 const RequestSubmitted = () => {
-  const authStateContext = useAuthStateContext();
+  const auth = useAuth();
 
-  if (!authStateContext.auth || authStateContext.nertUserWrapper.isLoading) {
-    return <CircularProgress className="pageProgress" />;
-  }
-
-  if (authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles) {
-    // User already has a role
-    return <Navigate replace to={{ pathname: '/admin/projects' }} />;
-  }
-
-  if (authStateContext.nertUserWrapper.hasAccessRequest) {
-    // User has no pending access request
-    return <Navigate replace to={{ pathname: '/' }} />;
+  if (!auth) {
+    return <CircularProgress className="pageProgress" size={40} />;
   }
 
   return (
@@ -35,7 +24,7 @@ const RequestSubmitted = () => {
         <Box pt={4}>
           <Button
             onClick={() => {
-              authStateContext.auth.signoutRedirect();
+              auth.signoutRedirect();
             }}
             type="submit"
             size="large"

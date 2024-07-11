@@ -19,9 +19,9 @@ export default function PublicProjectPlanView() {
 
   const restorationTrackerApi = useNertApi();
   const [isLoadingProjectPlan, setIsLoadingProjectPlan] = useState(false);
-  const [projectPlanDetails, setProjectPlanDetails] = useState<
-    (IGetProjectForViewResponse & IGetPlanForViewResponse) | null
-  >(null);
+  const [projectPlanDetails, setProjectPlanDetails] = useState<IGetProjectForViewResponse | null>(
+    null
+  );
 
   const codes = useCodes();
 
@@ -53,7 +53,7 @@ export default function PublicProjectPlanView() {
   return (
     <>
       {!isProject ? (
-        <PublicPlanView plan={projectPlanDetails} codes={codes.codes} />
+        <PublicPlanView plan={projectPlanDetails as IGetPlanForViewResponse} codes={codes.codes} />
       ) : (
         <PublicProjectView project={projectPlanDetails} codes={codes.codes} />
       )}
