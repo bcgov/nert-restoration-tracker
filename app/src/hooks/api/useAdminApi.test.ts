@@ -67,10 +67,10 @@ describe('useAdminApi', () => {
     });
   });
 
-  it('hasPendingAdministrativeActivities works as expected', async () => {
+  it('getAdministrativeActivityStanding works as expected', async () => {
     mock.onGet('/api/administrative-activity').reply(200, 10);
 
-    const result = await useAdminApi(axios).hasPendingAdministrativeActivities();
+    const result = await useAdminApi(axios).getAdministrativeActivityStanding();
 
     expect(result).toEqual(10);
   });

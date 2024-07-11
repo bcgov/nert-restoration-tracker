@@ -19,7 +19,11 @@ export type IAccessRequestDataObject = {
   email: string;
   identitySource: string;
   displayName: string;
-} & (IIDIRAccessRequestDataObject | IBCeIDBasicAccessRequestDataObject | IBCeIDBusinessAccessRequestDataObject);
+} & (
+  | IIDIRAccessRequestDataObject
+  | IBCeIDBasicAccessRequestDataObject
+  | IBCeIDBusinessAccessRequestDataObject
+);
 
 export interface IGetAccessRequestsListResponse {
   id: number;

@@ -1,10 +1,10 @@
 import { render, waitFor } from '@testing-library/react';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import ReviewAccessRequestForm, {
   ReviewAccessRequestFormInitialValues,
   ReviewAccessRequestFormYupSchema
 } from 'features/admin/users/ReviewAccessRequestForm';
 import { Formik } from 'formik';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
 import React from 'react';
 import { codes } from 'test-helpers/code-helpers';
@@ -28,7 +28,8 @@ describe('ReviewAccessRequestForm', () => {
           email: 'test data email',
           identitySource: SYSTEM_IDENTITY_SOURCE.IDIR,
           role: 2,
-          reason: 'reason for request'
+          reason: 'reason for request',
+          displayName: 'test display name'
         }
       };
 
@@ -78,7 +79,8 @@ describe('ReviewAccessRequestForm', () => {
           email: 'test data email',
           identitySource: SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS,
           company: 'test company',
-          reason: 'reason for request'
+          reason: 'reason for request',
+          displayName: 'test display name'
         }
       };
 
