@@ -1,17 +1,16 @@
 import Container from '@mui/material/Container';
-import { AuthStateContext } from 'contexts/authStateContext';
 import MyPlans from 'features/user/MyPlans';
 import MyProjects from 'features/user/MyProjects';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MyProjectsPlansListPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
-
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const authStateContext = useAuthStateContext();
+  const restorationTrackerApi = useNertApi();
 
   const [projects, setProjects] = useState<IGetProjectForViewResponse[]>([]);
   const [plans, setPlans] = useState<IGetPlanForViewResponse[]>([]);
@@ -21,12 +20,15 @@ const MyProjectsPlansListPage: React.FC = () => {
   //projects and drafts
   useEffect(() => {
     const getProjects = async () => {
-      if (!keycloakWrapper?.hasLoadedAllUserInfo) {
+      if (
+        authStateContext.nertUserWrapper.isLoading ||
+        !authStateContext.nertUserWrapper.systemUserId
+      ) {
         return;
       }
 
       const projectsResponse = await restorationTrackerApi.project.getUserProjectsList(
-        keycloakWrapper.systemUserId
+        authStateContext.nertUserWrapper.systemUserId
       );
 
       setIsLoading(false);
@@ -34,12 +36,15 @@ const MyProjectsPlansListPage: React.FC = () => {
     };
 
     const getPlans = async () => {
-      if (!keycloakWrapper?.hasLoadedAllUserInfo) {
+      if (
+        authStateContext.nertUserWrapper.isLoading ||
+        !authStateContext.nertUserWrapper.systemUserId
+      ) {
         return;
       }
 
       const plansResponse = await restorationTrackerApi.plan.getUserPlansList(
-        keycloakWrapper.systemUserId
+        authStateContext.nertUserWrapper.systemUserId
       );
 
       setIsLoading(false);
@@ -60,7 +65,7 @@ const MyProjectsPlansListPage: React.FC = () => {
       getPlans();
       getDrafts();
     }
-  }, [restorationTrackerApi, isLoading, keycloakWrapper]);
+  }, [restorationTrackerApi, isLoading, authStateContext]);
 
   //TODO: add plans loading to list
   return (

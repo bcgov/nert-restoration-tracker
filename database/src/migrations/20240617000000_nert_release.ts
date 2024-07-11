@@ -31,6 +31,9 @@ export async function up(knex: Knex): Promise<void> {
   const api_get_context_system_user_role_id = fs.readFileSync(
     path.join(__dirname, DB_RELEASE, 'api_get_context_system_user_role_id.sql')
   );
+
+  const api_patch_system_user = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'api_patch_system_user.sql'));
+
   const api_user_is_administrator = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'api_user_is_administrator.sql'));
   const tr_journal_trigger = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'tr_journal_trigger.sql'));
   const tr_generated_journal_triggers = fs.readFileSync(
@@ -104,6 +107,7 @@ export async function up(knex: Knex): Promise<void> {
     ${tr_generated_audit_triggers}
     ${api_get_context_user_id}
     ${api_get_context_system_user_role_id}
+    ${api_patch_system_user}
     ${api_user_is_administrator}
     ${tr_journal_trigger}
     ${tr_generated_journal_triggers}

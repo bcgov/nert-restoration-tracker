@@ -77,7 +77,7 @@ describe('updateAccessRequest', () => {
   });
 });
 
-describe('getPendingAccessRequestsCount', () => {
+describe('getAdministrativeActivityStanding', () => {
   afterEach(() => {
     sinon.restore();
   });
@@ -101,12 +101,12 @@ describe('getPendingAccessRequestsCount', () => {
   };
 
   it('should throw a 400 error when no user identifier', async () => {
-    sinon.stub(keycloak_utils, 'getUserIdentifier').returns(null);
+    sinon.stub(keycloak_utils, 'getUserIdentifier').returns(null as unknown as string);
 
     sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
 
     try {
-      const result = administrative_activity.getPendingAccessRequestsCount();
+      const result = administrative_activity.getAdministrativeActivityStanding();
 
       await result(sampleReq, null as unknown as any, null as unknown as any);
       expect.fail();
@@ -126,13 +126,15 @@ describe('getPendingAccessRequestsCount', () => {
       }
     });
 
-    sinon.stub(AdministrativeActivityService.prototype, 'countPendingAdministrativeActivities').resolves(0);
+    sinon
+      .stub(AdministrativeActivityService.prototype, 'getAdministrativeActivityStanding')
+      .resolves({ has_pending_access_request: false, has_one_or_more_project_roles: false } as any);
 
-    const result = administrative_activity.getPendingAccessRequestsCount();
+    const result = administrative_activity.getAdministrativeActivityStanding();
 
     await result(sampleReq, sampleRes as any, null as unknown as any);
 
-    expect(actualResult).to.equal(0);
+    expect(actualResult).to.eql({ has_pending_access_request: false, has_one_or_more_project_roles: false });
   });
 
   it('should return rowCount on success', async () => {
@@ -145,12 +147,14 @@ describe('getPendingAccessRequestsCount', () => {
       }
     });
 
-    sinon.stub(AdministrativeActivityService.prototype, 'countPendingAdministrativeActivities').resolves(1);
+    sinon
+      .stub(AdministrativeActivityService.prototype, 'getAdministrativeActivityStanding')
+      .resolves({ has_pending_access_request: false, has_one_or_more_project_roles: true });
 
-    const result = administrative_activity.getPendingAccessRequestsCount();
+    const result = administrative_activity.getAdministrativeActivityStanding();
 
     await result(sampleReq, sampleRes as any, null as unknown as any);
 
-    expect(actualResult).to.equal(1);
+    expect(actualResult).to.eql({ has_pending_access_request: false, has_one_or_more_project_roles: true });
   });
 });

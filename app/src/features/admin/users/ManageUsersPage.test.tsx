@@ -1,6 +1,6 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
@@ -18,9 +18,9 @@ const renderContainer = () => {
   );
 };
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
+jest.mock('../../../hooks/useNertApi');
 
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 
 const mockUseApi = {
   admin: {

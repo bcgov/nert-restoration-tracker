@@ -4,7 +4,7 @@ import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import ProjectsListPage from './ProjectsListPage';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
+jest.mock('../../../hooks/useNertApi');
 
 describe.skip('ProjectsListPage', () => {
   test('renders properly when no projects are given', async () => {

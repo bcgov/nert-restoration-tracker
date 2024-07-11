@@ -48,7 +48,6 @@ export interface IGetUserPlansListResponse {
 
 export interface IGetPlanForViewResponse {
   project: IGetProjectForViewResponseDetails;
-  focus: { focuses: IMultiAutocompleteFieldOption[] };
   location: IGetProjectForViewResponseLocation;
   contact: IGetProjectForViewResponseContact;
 }

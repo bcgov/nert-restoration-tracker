@@ -6,7 +6,7 @@ import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
 import { S3FileType } from 'constants/attachments';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
   IUploadAttachmentResponse
@@ -28,7 +28,7 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const { attachmentsList, getAttachments } = props;
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 

@@ -3,6 +3,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ManageUsersPage from './users/ManageUsersPage';
 import UsersDetailPage from './users/UsersDetailPage';
+import { RedirectURL } from 'utils/AppRoutesUtils';
 
 /**
  * Router for all `/admin/users/*` pages.
@@ -12,9 +13,11 @@ import UsersDetailPage from './users/UsersDetailPage';
 const AdminUsersRouter: React.FC = () => {
   return (
     <Routes>
-      <Route element={<AdminUsersLayout />}>
-        <Route path="/" element={<ManageUsersPage />} />
-        <Route path="/:id" element={<UsersDetailPage />} />
+      <Route path="/*" element={<AdminUsersLayout />}>
+        <Route index element={<ManageUsersPage />} />
+        <Route path=":id" element={<RedirectURL basePath="/admin/users" />} />
+        <Route path=":id" element={<Navigate replace to=":id/details" />} />
+        <Route path=":id/details" element={<UsersDetailPage />} />
       </Route>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}

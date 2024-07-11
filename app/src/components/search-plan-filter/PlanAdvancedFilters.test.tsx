@@ -1,13 +1,13 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import PlanAdvancedFilters from './PlanAdvancedFilters';
 import { IPlanAdvancedFilters, PlanAdvancedFiltersInitialValues } from './PlanFilter';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
-const mockuseRestorationTrackerApi = {
+jest.mock('../../hooks/useNertApi');
+const mockuseNertApi = {
   taxonomy: {
     searchSpecies: jest.fn().mockResolvedValue({ searchResponse: [] }),
     getSpeciesFromIds: jest.fn().mockResolvedValue({ searchResponse: [] })
@@ -15,8 +15,8 @@ const mockuseRestorationTrackerApi = {
 };
 
 const mockRestorationTrackerApi = (
-  useRestorationTrackerApi as unknown as jest.Mock<typeof mockuseRestorationTrackerApi>
-).mockReturnValue(mockuseRestorationTrackerApi);
+  useNertApi as unknown as jest.Mock<typeof mockuseNertApi>
+).mockReturnValue(mockuseNertApi);
 
 describe.skip('ProjectAdvancedFilters', () => {
   beforeEach(() => {

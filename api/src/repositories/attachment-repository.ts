@@ -1,5 +1,5 @@
 import SQL from 'sql-template-strings';
-import { getKnexQueryBuilder } from '../database/db';
+import { getKnex } from '../database/db';
 import { ApiExecuteSQLError } from '../errors/custom-error';
 import { S3FileType } from '../utils/file-utils';
 import { getLogger } from '../utils/logger';
@@ -47,7 +47,7 @@ export class AttachmentRepository extends BaseRepository {
     defaultLog.debug({ label: 'getProjectAttachments', message: 'params', projectId, attachmentType });
 
     try {
-      const queryBuilder = getKnexQueryBuilder()
+      const queryBuilder = getKnex()
         .select(
           'project_attachment.project_attachment_id',
           'project_attachment.file_name',

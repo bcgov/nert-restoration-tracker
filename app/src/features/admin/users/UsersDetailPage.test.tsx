@@ -2,7 +2,7 @@ import { cleanup, render, waitFor } from '@testing-library/react';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
+import { useNertApi } from '../../../hooks/useNertApi';
 import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
 import UsersDetailPage from './UsersDetailPage';
@@ -11,8 +11,8 @@ const routes = [{ path: '/admin/users/1', element: <UsersDetailPage /> }];
 
 const router = createMemoryRouter(routes, { initialEntries: ['/admin/users/1'] });
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 const mockUseApi = {
   user: {
     getUserById: jest.fn<Promise<IGetUserResponse>, []>()

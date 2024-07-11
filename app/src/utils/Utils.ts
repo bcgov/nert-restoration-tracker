@@ -1,12 +1,13 @@
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
 import { focusOptions } from 'constants/misc';
 import { IConfig } from 'contexts/configContext';
 import dayjs from 'dayjs';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import { IGetProjectForViewResponseDetails } from 'interfaces/useProjectApi.interface';
 
 /**
- * Checks if a url string starts with an `http(s)://` protocol, and adds `https://` if it does not.
+ * Checks if a url string starts with an `http[s]://` protocol, and adds `https://` if it does not. If the url
+ * begins with `localhost` or `host.docker.internal`, the `http` protocol is used.
  *
  * @param {string} url
  * @param {('http://' | 'https://')} [protocol='https://'] The protocol to add, if necessary. Defaults to `https://`.
@@ -16,9 +17,39 @@ export const ensureProtocol = (
   url: string,
   protocol: 'http://' | 'https://' = 'https://'
 ): string => {
-  return ((url.startsWith('http://') || url.startsWith('https://')) && url) || `${protocol}${url}`;
+  if (url.startsWith('localhost') || url.startsWith('host.docker.internal')) {
+    return `${'http://'}${url}`;
+  }
+
+  if (url.startsWith('https://') || url.startsWith('http://localhost')) {
+    return url;
+  }
+
+  if (url.startsWith('http://')) {
+    // If protocol is HTTPS, upgrade the URL
+    if (protocol === 'https://') {
+      return `${'https://'}${url.slice(7)}`;
+    }
+  }
+
+  return `${protocol}${url}`;
 };
 
+/**
+ * Builds a URL from multiple (possibly null or undefined) url parts, stripping any
+ * double slashes from the resulting URL.
+ *
+ * @param {(string | undefined)[]} urlParts The parts of the URL
+ * @returns The built URL
+ */
+export const buildUrl = (...urlParts: (string | undefined)[]): string => {
+  return urlParts
+    .filter((urlPart): urlPart is string => Boolean(urlPart))
+    .map((urlPart) => String(urlPart).trim()) // Trim leading and trailing whitespace
+    .filter(Boolean)
+    .join('/')
+    .replace(/([^:]\/)\/+/g, '$1'); // Trim double slashes
+};
 /**
  * Formats a date range into a formatted string.
  *

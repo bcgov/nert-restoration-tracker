@@ -1,7 +1,7 @@
-import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import MyProjectsPlansListPage from './MyProjectsPlansListPage';
+import ProjectsLayout from 'layouts/ProjectsLayout';
 
 /**
  * Router for all user specific pages.

@@ -10,8 +10,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import CustomTextField from 'components/fields/CustomTextField';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { FieldArray, useFormikContext } from 'formik';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
 import React from 'react';
 import yup from 'utils/YupSchema';
 
@@ -46,7 +46,7 @@ export const AddSystemUsersFormYupSchema = yup.object().shape({
 });
 
 export interface AddSystemUsersFormProps {
-  system_roles: any[];
+  system_roles: { value: number; label: string }[];
 }
 
 const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
@@ -95,7 +95,6 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             labelId="login_method"
                             label="Login Method"
                             value={systemUser.identitySource}
-                            labelWidth={300}
                             onChange={handleChange}
                             error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}
                             displayEmpty
@@ -136,7 +135,6 @@ const AddSystemUsersForm: React.FC<AddSystemUsersFormProps> = (props) => {
                             labelId="system_role"
                             label="System Role"
                             value={systemUser.system_role}
-                            labelWidth={300}
                             onChange={handleChange}
                             error={systemRoleMeta.touched && Boolean(systemRoleMeta.error)}
                             displayEmpty

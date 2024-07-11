@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
+import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import MapContainer from 'components/map/MapContainer';
-import { AuthStateContext } from 'contexts/authStateContext';
+import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 
 /**
@@ -15,18 +16,34 @@ import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers'
  * @return {*}
  */
 const SearchPage: React.FC = () => {
-  const restorationApi = useRestorationTrackerApi();
+  const restorationApi = useNertApi();
 
   const [performSearch, setPerformSearch] = useState<boolean>(true);
   const [geometries, setGeometries] = useState([]);
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
 
   type LatLngTuple = [number, number, number?];
+  const dialogContext = useContext(DialogContext);
 
+  const showFilterErrorDialog = useCallback(
+    (textDialogProps?: Partial<IErrorDialogProps>) => {
+      dialogContext.setErrorDialog({
+        onClose: () => {
+          dialogContext.setErrorDialog({ open: false });
+        },
+        onOk: () => {
+          dialogContext.setErrorDialog({ open: false });
+        },
+        ...textDialogProps,
+        open: true
+      });
+    },
+    [dialogContext]
+  );
   const getSearchResults = useCallback(async () => {
     try {
-      const response = isAuthenticated(keycloakWrapper)
+      const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
 
@@ -51,14 +68,13 @@ const SearchPage: React.FC = () => {
       setGeometries(clusteredPointGeometries);
     } catch (error) {
       const apiError = error as APIError;
-      console.log('apiError', apiError);
-      // showFilterErrorDialog({
-      //   dialogTitle: 'Error Searching For Results',
-      //   dialogError: apiError?.message,
-      //   dialogErrorDetails: apiError?.errors
-      // });
+      showFilterErrorDialog({
+        dialogTitle: 'Error Searching For Results',
+        dialogError: apiError?.message,
+        dialogErrorDetails: apiError?.errors
+      });
     }
-  }, [restorationApi.search, restorationApi.public.search, keycloakWrapper]);
+  }, [restorationApi.search, restorationApi.public.search, authStateContext.auth]);
 
   useEffect(() => {
     if (performSearch) {

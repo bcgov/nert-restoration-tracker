@@ -13,7 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
@@ -56,7 +56,7 @@ export interface IProjectDetailsProps {
  */
 const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   const { userDetails } = props;
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
   const history = useNavigate();
 
@@ -275,7 +275,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
   const { row, user_identifier, projectRoleCodes, refresh } = props;
 
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const errorDialogProps = {
     dialogTitle: ProjectParticipantsI18N.updateParticipantRoleErrorTitle,

@@ -20,7 +20,6 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -71,7 +70,7 @@ import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -132,8 +131,7 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
   const codes = useCodes();
 
@@ -321,8 +319,7 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
-      history(`/admin/projects/${createProjectResponse.id}`);
+      history(`/admin/projects/${createProjectResponse.id}/details`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',

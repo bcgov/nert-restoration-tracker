@@ -36,23 +36,22 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
+import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
   const history = useNavigate();
-  const { keycloakWrapper } = useContext(AuthStateContext);
-  const isUserCreator =
-    isAuthenticated(keycloakWrapper) &&
-    keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
-      ? false
-      : true;
+  const projectAuthStateContext = useContext(ProjectAuthStateContext);
+
+  const isUserCreator = projectAuthStateContext.hasProjectRole([
+    SYSTEM_ROLE.SYSTEM_ADMIN,
+    SYSTEM_ROLE.DATA_ADMINISTRATOR
+  ]);
 
   let rowsPlanFilterOutArchived = plans;
   if (rowsPlanFilterOutArchived && isUserCreator) {

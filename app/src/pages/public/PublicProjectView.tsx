@@ -12,7 +12,7 @@ import { focus, ICONS } from 'constants/misc';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
 import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
   IGetProjectAttachment,
@@ -39,7 +39,7 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
   const [isLoadingAttachments, setIsLoadingAttachments] = useState(false);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const getAttachments = useCallback(
     async (forceFetch: boolean) => {

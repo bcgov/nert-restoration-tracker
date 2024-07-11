@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import IUCNClassification from 'features/projects/view/components/IUCNClassification';
 import Partnerships from 'features/projects/view/components/Partnerships';
@@ -14,6 +13,7 @@ import FundingSource from './components/FundingSource';
 import GeneralInformation from './components/GeneralInformation';
 import ProjectAuthorizations from './components/ProjectAuthorizations';
 import ProjectContact from './components/ProjectContact';
+import { ProjectRoleGuard } from 'components/security/Guards';
 
 export interface IProjectDetailsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -100,27 +100,29 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           size="medium"
           data-testid="ContactsTitle"
         />
-        <RoleGuard
+        <ProjectRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
           validProjectRoles={[
             PROJECT_ROLE.PROJECT_LEAD,
             PROJECT_ROLE.PROJECT_EDITOR,
             PROJECT_ROLE.PROJECT_VIEWER
           ]}
+          validProjectPermissions={[]}
           fallback={
             <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
           }>
           <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
-        </RoleGuard>
+        </ProjectRoleGuard>
       </Box>
       <Divider />
-      <RoleGuard
+      <ProjectRoleGuard
         validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
         validProjectRoles={[
           PROJECT_ROLE.PROJECT_LEAD,
           PROJECT_ROLE.PROJECT_EDITOR,
           PROJECT_ROLE.PROJECT_VIEWER
-        ]}>
+        ]}
+        validProjectPermissions={[]}>
         <Box mt={2}>
           <Chip
             sx={pageStyles.secTitle}
@@ -130,7 +132,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           />
           <ProjectAuthorizations projectForViewData={projectForViewData} refresh={refresh} />
         </Box>
-      </RoleGuard>
+      </ProjectRoleGuard>
       <Divider />
       <Box mt={2}>
         <Chip

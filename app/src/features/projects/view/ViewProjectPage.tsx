@@ -10,7 +10,6 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
-import { RoleGuard } from 'components/security/Guards';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
@@ -19,7 +18,7 @@ import ProjectObjectives from 'features/projects/view/components/ProjectObjectiv
 import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
   IGetProjectForViewResponse
@@ -28,6 +27,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { S3FileType } from 'constants/attachments';
 import ProjectDetails from './components/ProjectDetails';
+import { ProjectRoleGuard } from 'components/security/Guards';
 
 const pageStyles = {
   conservationAreChip: {
@@ -67,7 +67,7 @@ const ViewProjectPage: React.FC = () => {
 
   const projectId = Number(urlParams['id']);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
   const [project, setProject] = useState<IGetProjectForViewResponse | null>(null);
@@ -180,9 +180,10 @@ const ViewProjectPage: React.FC = () => {
               </Box>
             </Box>
 
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+              validProjectPermissions={[]}>
               <Box mr={1} mt={1} sx={pageStyles.titleContainerActions}>
                 <Button
                   aria-label="manage project team"
@@ -210,7 +211,7 @@ const ViewProjectPage: React.FC = () => {
                   Print
                 </Button>
               </Box>
-            </RoleGuard>
+            </ProjectRoleGuard>
           </Box>
 
           <Box mx={1} mb={1}>

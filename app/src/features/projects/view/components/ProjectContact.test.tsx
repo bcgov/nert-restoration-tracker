@@ -3,7 +3,7 @@ import React from 'react';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import ProjectContact from './ProjectContact';
 
-jest.mock('../../../../hooks/useRestorationTrackerApi');
+jest.mock('../../../../hooks/useNertApi');
 
 const mockRefresh = jest.fn();
 
