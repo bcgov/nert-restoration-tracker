@@ -22,18 +22,6 @@ describe('getPublicProjectAttachments', () => {
     }
   } as any;
 
-  let actualResult: any = null;
-
-  const sampleRes = {
-    status: () => {
-      return {
-        json: (result: any) => {
-          actualResult = result;
-        }
-      };
-    }
-  };
-
   afterEach(() => {
     sinon.restore();
   });
@@ -59,10 +47,18 @@ describe('getPublicProjectAttachments', () => {
 
     sinon.stub(AttachmentService.prototype, 'getAttachmentsByType').resolves(new GetAttachmentsData());
 
-    await getPublicProjectAttachments()(sampleReq, sampleRes as any, null as unknown as any);
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
-    expect(actualResult).to.be.eql(new GetAttachmentsData());
+    mockReq.params = { projectId: '1' };
+
+    const requestHandler = getPublicProjectAttachments();
+
+    await requestHandler(mockReq, mockRes, mockNext);
+
+    expect(mockRes.jsonValue).to.eql({ attachmentsList: [] });
+    expect(mockRes.statusValue).to.equal(200);
   });
+
   it('should throw an error when list attachments fails', async () => {
     const dbConnectionObj = getMockDBConnection({ rollback: sinon.stub(), release: sinon.stub() });
 

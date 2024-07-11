@@ -20,7 +20,6 @@ const pageStyles = {
 };
 
 export interface IPublicAttachmentsListProps {
-  projectId: number;
   attachmentsList: IGetProjectAttachment[];
   getAttachments: (forceFetch: boolean) => void;
 }

@@ -3,6 +3,7 @@ import { Operation } from 'express-openapi';
 import { getAPIUserDBConnection } from '../../../../../database/db';
 import { HTTP400 } from '../../../../../errors/custom-error';
 import { AttachmentService } from '../../../../../services/attachment-service';
+import { S3FileType } from '../../../../../utils/file-utils';
 import { getLogger } from '../../../../../utils/logger';
 
 const defaultLog = getLogger('/api/public/project/{projectId}/attachments/list');
@@ -45,7 +46,8 @@ GET.apiDoc = {
                       type: 'string'
                     },
                     size: {
-                      type: 'number'
+                      type: 'number',
+                      nullable: true
                     },
                     url: {
                       type: 'string'
@@ -69,7 +71,7 @@ GET.apiDoc = {
 
 export function getPublicProjectAttachments(): RequestHandler {
   return async (req, res) => {
-    defaultLog.debug({ label: 'Get attachments list', message: 'params', req_params: req.params });
+    defaultLog.debug({ label: 'Get public attachments list', message: 'params', req_params: req.params });
 
     if (!req.params.projectId) {
       throw new HTTP400('Missing required path param `projectId`');
@@ -78,18 +80,20 @@ export function getPublicProjectAttachments(): RequestHandler {
     const projectId = Number(req.params.projectId);
     const connection = getAPIUserDBConnection();
 
+    const queryType = (req.query as { type: S3FileType | S3FileType[] | null }).type || [];
+
     try {
       await connection.open();
 
       const attachmentService = new AttachmentService(connection);
 
-      const data = await attachmentService.getAttachmentsByType(projectId, 'attachments');
+      const data = await attachmentService.getAttachmentsByType(projectId, queryType);
 
       await connection.commit();
 
       return res.status(200).json(data);
     } catch (error) {
-      defaultLog.error({ label: 'getProjectAttachments', message: 'error', error });
+      defaultLog.error({ label: 'getPublicProjectAttachments', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {

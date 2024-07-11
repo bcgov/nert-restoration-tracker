@@ -1,16 +1,12 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useNertApi } from 'hooks/useNertApi';
-import {
-  IGetProjectAttachment,
-  IGetProjectForViewResponse
-} from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
+import React from 'react';
 import PublicAttachmentsList from './PublicAttachmentsList';
 
 export interface IPublicProjectAttachmentsProps {
-  projectForViewData: IGetProjectForViewResponse;
+  attachmentsList: IGetProjectAttachment[];
+  getAttachments: (forceFetch: boolean) => void;
 }
 
 /**
@@ -18,38 +14,8 @@ export interface IPublicProjectAttachmentsProps {
  *
  * @return {*}
  */
-const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () => {
-  const urlParams: Record<string, string | number | undefined> = useParams();
-  const projectId = Number(urlParams['id']);
-  const restorationTrackerApi = useNertApi();
-
-  const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
-
-  const getAttachments = useCallback(
-    async (forceFetch: boolean) => {
-      if (attachmentsList.length && !forceFetch) {
-        return;
-      }
-
-      try {
-        const response =
-          await restorationTrackerApi.public.project.getProjectAttachments(projectId);
-
-        if (!response?.attachmentsList) {
-          return;
-        }
-
-        setAttachmentsList([...response.attachmentsList]);
-      } catch (error) {
-        return error;
-      }
-    },
-    [attachmentsList.length, restorationTrackerApi.public.project, projectId]
-  );
-
-  useEffect(() => {
-    getAttachments(false);
-  }, []);
+const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = (props) => {
+  const { attachmentsList, getAttachments } = props;
 
   return (
     <Box>
@@ -58,11 +24,7 @@ const PublicProjectAttachments: React.FC<IPublicProjectAttachmentsProps> = () =>
       </Box>
 
       <Box>
-        <PublicAttachmentsList
-          projectId={projectId}
-          attachmentsList={attachmentsList}
-          getAttachments={getAttachments}
-        />
+        <PublicAttachmentsList attachmentsList={attachmentsList} getAttachments={getAttachments} />
       </Box>
     </Box>
   );
