@@ -2,19 +2,12 @@ import * as turf from '@turf/turf';
 import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Chip from '@mui/material/Chip';
 import ReactDomServer from 'react-dom/server';
 import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer.css'; // Custom styling
-import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { S3FileType } from 'constants/attachments';
-import { create } from 'domain';
+import MapPopup from './components/Popup';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -169,7 +162,7 @@ const convertToCentroidGeoJSON = (features: any) => {
           is_project: f.is_project,
           state_code: f.state_code,
           number_sites: f.number_sites,
-          size_ha: f.size_ha,
+          size_ha: f.size_ha
         }
       };
     })
@@ -582,52 +575,88 @@ const initializeMap = (
     });
 
     /**
-     * # makePopup
-     * Try and standardize the popup for the projects and plans
-     * @param name
-     * @param id
-     * @param isProject
-     * @returns HTML string
-     */
-    const makePopup = (name: string, id: string, isProject: boolean) => {
-      const divStyle = '"text-align: center;"';
-      const buttonStyle =
-        '"margin-top: 1rem; font-size: 1.2em; font-weight: bold; background: #003366; cursor: pointer; border-radius: 5px; color: white; padding: 7px 20px; border: none; text-align: center; text-decoration: none; display: inline-block; font-family: Arial, sans-serif;"';
-      return `
-        <div style=${divStyle}>
-          <div>${isProject ? 'Project' : 'Plan'} Name: <b>${name}</b></div>
-          <div class="view-btn">
-            <a href="/${isProject ? 'projects' : 'plans'}/${id}" >
-              <button style=${buttonStyle} title="Take me to the details page">View Project Details</button>
-            </a>
-          </div>
-        </div>`;
-    };
-
-    /**
      * Create a React Dom for the popup content
-     * TODO: Port over the raw HTML above to JSX
      */
-    const MapPopup = (props: any) => {
-      const name = props.name;
-      const id = props.id;
-      const isProject = props.isProject;
-      return (
-        <Box >
-          Testing from a react popup {name} {id} {isProject.toString()}
-        </Box>
-      )
-    };
+    // const MapPopup = (props: any) => {
+    //   const id = props.id;
+    //   const name = props.name;
+    //   const isProject = props.is_project;
+    //   const numberSites = props.number_sites;
+    //   const sizeHa = props.size_ha;
+    //   const stateCode = props.state_code;
 
-    console.log(ReactDomServer.renderToString(<MapPopup name='test' id='123' isProject={true}/>));
-
-
+    //   const style = {
+    //     popup: {
+    //       textAlign: 'center' as React.CSSProperties['textAlign']
+    //     },
+    //     description: {
+    //       textAlign: 'left' as React.CSSProperties['textAlign'],
+    //       display: 'grid',
+    //       gridTemplateColumns: '1fr 1fr',
+    //       gridColumnGap: '1rem'
+    //     },
+    //     value: {
+    //       fontWeight: 'bold' as React.CSSProperties['fontWeight']
+    //     },
+    //     button: {
+    //       marginTop: '1rem',
+    //       fontSize: '1.2em',
+    //       fontWeight: 'bold',
+    //       background: '#003366',
+    //       cursor: 'pointer',
+    //       borderRadius: '5px',
+    //       color: 'white',
+    //       padding: '7px 20px',
+    //       border: 'none',
+    //       textAlign: 'center',
+    //       textDecoration: 'none',
+    //       display: 'inline-block',
+    //       fontFamily: 'Arial, sans-serif'
+    //     } as React.CSSProperties
+    //   };
+    //   return (
+    //     <div style={style.popup}>
+    //       <div style={style.description}>
+    //         <div>{isProject? 'Project' : 'Plan'} Name:</div>
+    //         <div style={style.value}>{name}</div>
+    //         <div>{isProject? 'Project' : 'Plan'} Size (Ha):</div>
+    //         <div style={style.value}>{sizeHa}</div>
+    //         <div>{isProject? 'Project' : 'Plan'} Status:</div>
+    //         <div style={style.value}>{stateCode}</div> 
+    //         <div>Number of Sites:</div>
+    //         <div style={style.value}>{numberSites}</div>
+    //       </div>
+    //       <div>
+    //         <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
+    //           <button style={style.button}>
+    //             View {isProject ? 'Project' : 'Plan'} Details
+    //           </button>
+    //         </a>
+    //       </div>
+    //     </div>
+    //   );
+    // };
 
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', async (e: any) => {
       const prop = e.features![0].properties;
-      console.log('e', e, 'prop', prop)
-      console.log('e.features', e.features)
+      const id = prop.id;
+      const name = prop.name;
+      const isProject = prop.is_project;
+      const numberSites = prop.number_sites;
+      const sizeHa = prop.size_ha;
+      const stateCode = prop.state_code;
+
+      const mapPopupHtml = ReactDomServer.renderToString(
+        <MapPopup
+          name={name}
+          id={id}
+          is_project={isProject}
+          number_sites={numberSites}
+          size_ha={sizeHa}
+          state_code={stateCode}
+        />
+      );
 
       // const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
       //   prop.id,
@@ -636,10 +665,11 @@ const initializeMap = (
 
       // console.log('thumbnailResponse', thumbnailResponse);
 
-      const html = makePopup(prop.name, prop.id, true);
-
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(mapPopupHtml)
+        .addTo(map);
     });
     map.on('mousemove', 'markerProjects.points', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -651,13 +681,26 @@ const initializeMap = (
     /* Add popup for the points */
     map.on('click', 'markerPlans.points', (e: any) => {
       const prop = e.features![0].properties;
+      const id = prop.id;
+      const name = prop.name;
+      const isProject = prop.is_project;
+      const numberSites = prop.number_sites;
+      const sizeHa = prop.size_ha;
+      const stateCode = prop.state_code;
 
-      // TBD: Currently the /plans route is not available
-      // const html = makePopup(prop.name, prop.id, false);
-      const html = makePopup(prop.name, prop.id, false);
+      const mapPopupHtml = ReactDomServer.renderToString(
+        <MapPopup
+          name={name}
+          id={id}
+          is_project={isProject}
+          number_sites={numberSites}
+          size_ha={sizeHa}
+          state_code={stateCode}
+        />
+      );
 
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(mapPopupHtml).addTo(map);
     });
 
     let hoverStatePlans: any = false;
@@ -766,7 +809,6 @@ const initializeMap = (
       // @ts-ignore - turf types are incorrect here
       map.fitBounds(newBounds, { padding: 150 });
     }
-
   });
 };
 
@@ -899,10 +941,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const autoFocus = props.autoFocus || false;
 
   const { bounds } = props || null;
-
-  // TODO: Pass this to the map init function
-  const restorationTrackerApi = useRestorationTrackerApi();
-
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);

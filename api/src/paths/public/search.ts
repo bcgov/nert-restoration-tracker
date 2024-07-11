@@ -51,7 +51,6 @@ export function getSearchResults(): RequestHandler {
     const connection = getAPIUserDBConnection();
 
     try {
-      // TODO: Add project size, status, number of sites and link to project thumbnail
       const sqlStatement = SQL`
         SELECT
           p.project_id as id,

@@ -1,6 +1,9 @@
 /**
  * Maplibre related styles are best imported from here. 
  */
+.maplibregl-popup {
+  max-width: 300px !important;
+}
 
 .maplibregl-popup-content {
   border-radius: 10px;
