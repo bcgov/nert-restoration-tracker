@@ -260,6 +260,11 @@ const Header: React.FC = () => {
                   <Link to="/search" id="menu_search">
                     Map
                   </Link>
+                  <AuthGuard>
+                    <Link to="/access-request" id="menu_request_access">
+                      Request Access
+                    </Link>
+                  </AuthGuard>
                 </>
               }>
               <Link to="/admin/projects" id="menu_projects">

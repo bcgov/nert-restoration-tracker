@@ -204,7 +204,7 @@ export const AccessRequestPage: React.FC = () => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        history('/logout');
+                        authStateContext.auth.signoutRedirect();
                       }}
                       sx={pageStyles.actionButton}
                       data-testid="logout-button">

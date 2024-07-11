@@ -5,26 +5,23 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { AuthStateContext } from 'contexts/authStateContext';
-import React, { useContext } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 const RequestSubmitted = () => {
-  const history = useNavigate();
+  const authStateContext = useAuthStateContext();
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
-
-  if (!keycloakWrapper?.hasLoadedAllUserInfo) {
-    // User data has not been loaded, can not yet determine if they have a role
+  if (!authStateContext.auth || authStateContext.nertUserWrapper.isLoading) {
     return <CircularProgress className="pageProgress" />;
   }
 
-  if (keycloakWrapper?.systemRoles.length) {
+  if (authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles) {
     // User already has a role
     return <Navigate replace to={{ pathname: '/admin/projects' }} />;
   }
 
-  if (!keycloakWrapper.hasAccessRequest) {
+  if (authStateContext.nertUserWrapper.hasAccessRequest) {
     // User has no pending access request
     return <Navigate replace to={{ pathname: '/' }} />;
   }
@@ -38,7 +35,7 @@ const RequestSubmitted = () => {
         <Box pt={4}>
           <Button
             onClick={() => {
-              history('/logout');
+              authStateContext.auth.signoutRedirect();
             }}
             type="submit"
             size="large"
