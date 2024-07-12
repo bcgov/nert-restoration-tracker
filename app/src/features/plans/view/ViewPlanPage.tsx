@@ -8,12 +8,11 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -30,6 +29,7 @@ import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
+import { ProjectRoleGuard } from 'components/security/Guards';
 
 const pageStyles = {
   titleContainerActions: {
@@ -75,7 +75,7 @@ const ViewPlanPage: React.FC = () => {
 
   // const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [isLoadingPlan, setIsLoadingPlan] = useState(false);
   const [planWithDetails, setPlanWithDetails] = useState<IGetPlanForViewResponse | null>(null);
@@ -271,9 +271,10 @@ const ViewPlanPage: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+              validProjectPermissions={[]}>
               <Box p={2} sx={pageStyles.titleContainerActions}>
                 <Button
                   aria-label="manage plan team"
@@ -290,9 +291,10 @@ const ViewPlanPage: React.FC = () => {
                   onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}>
                   Edit Plan
                 </Button>
-                <RoleGuard
+                <ProjectRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
+                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
+                  validProjectPermissions={[]}>
                   <Button
                     aria-label="delete plan"
                     variant="outlined"
@@ -301,9 +303,9 @@ const ViewPlanPage: React.FC = () => {
                     onClick={showDeletePlanDialog}>
                     Delete
                   </Button>
-                </RoleGuard>
+                </ProjectRoleGuard>
               </Box>
-            </RoleGuard>
+            </ProjectRoleGuard>
           </Box>
 
           <Box mx={1} mb={1}>

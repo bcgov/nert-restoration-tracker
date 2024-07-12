@@ -1,14 +1,14 @@
-import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
+import { ProjectRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import ProjectsLayout from 'features/projects/ProjectsLayout';
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { RedirectURL } from 'utils/AppRoutesUtils';
 import ProjectsPlansListPage from '../projects/ProjectsPlansListPage';
 import CreatePlanPage from './create/CreatePlanPage';
 import EditPlanPage from './edit/EditPlanPage';
 import ViewPlanPage from './view/ViewPlanPage';
 import PlanParticipantsPage from './participants/PlanParticipantsPage';
+import ProjectsLayout from 'layouts/ProjectsLayout';
+import { RedirectURL } from 'utils/AppRoutesUtils';
 
 /**
  * Router for all `/admin/plans/*` pages.
@@ -21,58 +21,46 @@ const PlansRouter: React.FC = () => {
       <Route element={<ProjectsLayout />}>
         <Route path="/" element={<ProjectsPlansListPage />} />
         <Route path=":id" element={<RedirectURL basePath="/admin/plans" />} />
-        <Route
-          path="/create"
-          element={
-            <SystemRoleGuard
-              validSystemRoles={[
-                SYSTEM_ROLE.SYSTEM_ADMIN,
-                SYSTEM_ROLE.DATA_ADMINISTRATOR,
-                SYSTEM_ROLE.PROJECT_CREATOR
-              ]}
-              fallback={<Navigate replace to={'/plans'} />}>
-              <CreatePlanPage />
-            </SystemRoleGuard>
-          }
-        />
+        <Route path="/create" element={<CreatePlanPage />} />
 
         <Route
           path=":id/edit"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => (
-                <Route path="" element={<Navigate replace to={`/plans/${projectId}`} />} />
-              )}>
+              validProjectPermissions={[]}
+              fallback={<Route path="" element={<Navigate replace to={`/plans`} />} />}>
               <EditPlanPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
         <Route
           path=":id/details"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[
                 PROJECT_ROLE.PROJECT_LEAD,
                 PROJECT_ROLE.PROJECT_EDITOR,
                 PROJECT_ROLE.PROJECT_VIEWER
               ]}
-              fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
+              validProjectPermissions={[]}
+              fallback={<Navigate replace to={`/plans`} />}>
               <ViewPlanPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
         <Route
           path=":id/users"
           element={
-            <RoleGuard
+            <ProjectRoleGuard
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              fallback={(projectId) => <Navigate replace to={`/plans/${projectId}`} />}>
+              validProjectPermissions={[]}
+              fallback={<Navigate replace to={`/plans`} />}>
               <PlanParticipantsPage />
-            </RoleGuard>
+            </ProjectRoleGuard>
           }
         />
       </Route>

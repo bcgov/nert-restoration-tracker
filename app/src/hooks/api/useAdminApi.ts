@@ -4,7 +4,8 @@ import {
   IAccessRequestDataObject,
   IgcNotifyGenericMessage,
   IgcNotifyRecipient,
-  IGetAccessRequestsListResponse
+  IGetAccessRequestsListResponse,
+  IGetAdministrativeActivityStanding
 } from 'interfaces/useAdminApi.interface';
 import qs from 'qs';
 
@@ -96,15 +97,16 @@ const useAdminApi = (axios: AxiosInstance) => {
   };
 
   /**
-   * Has pending access requests.
+   * Get the administrative activity standing.
    *
-   * @return {*} {Promise<number>}
+   * @return {*}  {Promise<IGetAdministrativeActivityStanding>}
    */
-  const hasPendingAdministrativeActivities = async (): Promise<number> => {
-    const { data } = await axios.get('/api/administrative-activity');
+  const getAdministrativeActivityStanding =
+    async (): Promise<IGetAdministrativeActivityStanding> => {
+      const { data } = await axios.get('/api/administrative-activity');
 
-    return data;
-  };
+      return data;
+    };
 
   /**
    * Grant one or more system roles to a user.
@@ -151,7 +153,7 @@ const useAdminApi = (axios: AxiosInstance) => {
     approveAccessRequest,
     denyAccessRequest,
     createAdministrativeActivity,
-    hasPendingAdministrativeActivities,
+    getAdministrativeActivityStanding,
     addSystemUserRoles,
     addSystemUser
   };

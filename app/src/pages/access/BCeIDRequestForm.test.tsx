@@ -2,22 +2,23 @@ import { render } from '@testing-library/react';
 import { Formik } from 'formik';
 import React from 'react';
 import BCeIDRequestForm, {
-  BCeIDRequestFormInitialValues,
-  BCeIDRequestFormYupSchema
+  BCeIDBasicRequestFormInitialValues,
+  BCeIDBasicRequestFormYupSchema
 } from './BCeIDRequestForm';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 
 describe('BCeIDRequestForm', () => {
-  it('matches the snapshot', () => {
+  it('matches basic bc id view', () => {
     const { getByTestId } = render(
       <Formik
-        initialValues={BCeIDRequestFormInitialValues}
-        validationSchema={BCeIDRequestFormYupSchema}
+        initialValues={BCeIDBasicRequestFormInitialValues}
+        validationSchema={BCeIDBasicRequestFormYupSchema}
         onSubmit={async () => {}}>
-        {() => <BCeIDRequestForm />}
+        {() => <BCeIDRequestForm accountType={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC} />}
       </Formik>
     );
 
-    expect(getByTestId('company')).toBeVisible();
+    // expect(getByTestId('company')).toBeVisible();
     expect(getByTestId('reason')).toBeVisible();
   });
 });

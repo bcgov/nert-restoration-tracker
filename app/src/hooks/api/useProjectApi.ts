@@ -403,9 +403,18 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
    * @returns {*} {Promise<IGetProjectAttachmentsResponse>}
    */
   const getProjectAttachments = async (
-    projectId: number
+    projectId: number,
+    type?: S3FileType
   ): Promise<IGetProjectAttachmentsResponse> => {
-    const { data } = await axios.get(`/api/public/project/${projectId}/attachments/list`);
+    const { data } = await axios.get(`/api/public/project/${projectId}/attachments/list`, {
+      params: { type: type },
+      paramsSerializer: (params) => {
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
+      }
+    });
 
     return data;
   };

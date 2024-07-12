@@ -14,11 +14,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { ConfigContext } from 'contexts/configContext';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { Fragment, useContext, useState } from 'react';
 import ReactPlayer from 'react-player/file';
-import { isAuthenticated } from 'utils/authUtils';
 
 interface IInfoDialogProps {
   isProject: boolean;
@@ -60,9 +59,11 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
     setIsError(true);
   };
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
-  const userPath = isAuthenticated(keycloakWrapper)
-    ? keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
+  const authStateContext = useAuthStateContext();
+  const userPath = authStateContext.auth.isAuthenticated
+    ? authStateContext.nertUserWrapper.roleNames?.find((role) =>
+        [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR].includes(role as SYSTEM_ROLE)
+      )
       ? 'auth/admin'
       : 'auth/user'
     : 'public';

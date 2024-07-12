@@ -19,7 +19,7 @@ import { ProjectParticipantsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { CodeSet, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
   IGetProjectForViewResponse,
@@ -51,7 +51,7 @@ const pageStyles = {
 const ProjectParticipantsPage: React.FC = () => {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(true);
   const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
@@ -299,7 +299,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
   const { row, projectRoleCodes, refresh } = props;
 
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const defaultErrorDialogProps = {
     dialogTitle: ProjectParticipantsI18N.updateParticipantRoleErrorTitle,

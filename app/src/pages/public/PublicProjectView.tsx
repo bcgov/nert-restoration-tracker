@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -12,7 +11,7 @@ import { focus, ICONS } from 'constants/misc';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
 import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
   IGetProjectAttachment,
@@ -20,7 +19,8 @@ import {
 } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
-import ProjectConservationAreas from 'features/projects/view/components/ProjectConservationAreas';
+import { S3FileType } from 'constants/attachments';
+import ProjectDetails from 'features/projects/view/components//ProjectDetails';
 
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
@@ -35,11 +35,11 @@ interface IProjectViewFormProps {
 // export default function PublicProjectView() {
 const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
   const { project, codes } = props;
-
   const [isLoadingAttachments, setIsLoadingAttachments] = useState(false);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
+  const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const getAttachments = useCallback(
     async (forceFetch: boolean) => {
@@ -47,12 +47,22 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
 
       try {
         const response = await restorationTrackerApi.public.project.getProjectAttachments(
-          Number(project.project.project_id)
+          Number(project.project.project_id),
+          S3FileType.ATTACHMENTS
         );
 
-        if (!response?.attachmentsList) return;
+        if (response?.attachmentsList) {
+          setAttachmentsList([...response.attachmentsList]);
+        }
 
-        setAttachmentsList([...response.attachmentsList]);
+        const thumbnailResponse = await restorationTrackerApi.public.project.getProjectAttachments(
+          Number(project.project.project_id),
+          S3FileType.THUMBNAIL
+        );
+
+        if (thumbnailResponse?.attachmentsList) {
+          setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
       } catch (error) {
         return error;
       }
@@ -126,129 +136,12 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                 <Box mb={1}>
                   <Paper elevation={2}>
                     <Box p={1}>
-                      <Grid container spacing={0}>
-                        <Grid item xs={2}>
-                          <Card sx={{ maxWidth: 200, borderRadius: '16px' }}>
-                            <CardMedia
-                              sx={{ height: 200, borderRadius: '16px' }}
-                              image="https://nrs.objectstore.gov.bc.ca/nerdel/local/restoration/projects/31/attachments/lizard.png"
-                              title="green iguana"
-                            />
-                          </Card>
-                        </Grid>
-                        <Grid item xs={10}>
-                          <Box ml={1}>
-                            <Box>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary"
-                                noWrap>
-                                Project Size (Ha):
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.location.size_ha}
-                              </Typography>
-                            </Box>
+                      <ProjectDetails
+                        project={project}
+                        thumbnailImageUrl={thumbnailImage[0]?.url}
+                      />
 
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Number of Sites:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.location.number_sites}
-                              </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Number of People Involved:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.project.people_involved}
-                              </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Project part of a publicly available restoration plan:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {!project.project.is_project_part_public_plan ? 'No' : 'Yes'}
-                              </Typography>
-                            </Box>
-
-                            <Box mt={-0.6}>
-                              <Typography
-                                variant="subtitle2"
-                                component="span"
-                                color="textSecondary">
-                                Project within or overlapping known area of cultural or conservation
-                                priority:
-                              </Typography>
-                              <Typography
-                                ml={1}
-                                sx={{ fontWeight: 'bold' }}
-                                variant="subtitle2"
-                                component="span"
-                                color="textPrimary">
-                                {project.location.is_within_overlapping === 'D'
-                                  ? "Don't know"
-                                  : project.location.is_within_overlapping === 'Y'
-                                    ? 'Yes'
-                                    : 'No'}
-                              </Typography>
-                              {project.location.is_within_overlapping === 'Y' && (
-                                <Box
-                                  ml={1}
-                                  display="flex"
-                                  flexDirection={'column'}
-                                  alignItems="left">
-                                  <ProjectConservationAreas projectViewData={project} />
-                                </Box>
-                              )}
-                            </Box>
-                          </Box>
-                        </Grid>
-                      </Grid>
-
-                      <Box mt={1}>
-                        <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
-                          Project Objectives:
-                        </Typography>
-                        <Box display="flex" flexDirection={'column'} alignItems="left">
-                          <ProjectObjectives projectViewData={project} />
-                        </Box>
-                      </Box>
+                      <ProjectObjectives projectViewData={project} />
                     </Box>
                   </Paper>
                 </Box>
@@ -263,7 +156,10 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
 
                 {/* Documents */}
                 <Paper elevation={2}>
-                  <PublicProjectAttachments projectForViewData={project} />
+                  <PublicProjectAttachments
+                    attachmentsList={attachmentsList}
+                    getAttachments={getAttachments}
+                  />
                 </Paper>
               </Grid>
 

@@ -21,3 +21,15 @@ export enum PROJECT_ROLE {
   PROJECT_EDITOR = 'Project Reviewer',
   PROJECT_VIEWER = 'Project Team Member'
 }
+
+/**
+ * Role permissions.
+ *
+ * @export
+ * @enum {string}
+ */
+export enum PROJECT_PERMISSION {
+  PROJECT_LEAD = 'Project Lead',
+  PROJECT_EDITOR = 'Project Reviewer',
+  PROJECT_VIEWER = 'Project Team Member'
+}

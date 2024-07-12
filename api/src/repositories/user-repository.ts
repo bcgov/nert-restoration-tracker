@@ -14,6 +14,11 @@ export interface UserObject {
   identity_source: string;
   role_ids: number[];
   role_names: string[];
+  display_name?: string;
+  given_name?: string;
+  family_name?: string;
+  agency?: string;
+  email?: string;
 }
 
 /**

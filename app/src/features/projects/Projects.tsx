@@ -15,7 +15,7 @@ import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -27,7 +27,7 @@ export default function Projects() {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
   const history = useNavigate();
   const location = useLocation();
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
   const [isLoading, setIsLoading] = useState(true);
 

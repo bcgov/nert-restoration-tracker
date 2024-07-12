@@ -197,6 +197,61 @@ export class AdministrativeActivityRepository extends BaseRepository {
   }
 
   /**
+   * SQL query to count pending records in the administrative_activity table for a given user GUID
+   *
+   * @param {string} userGUID
+   * @return {*}  {(Promise<IAdministrativeActivityStanding>)}
+   * @memberof AdministrativeActivityRepository
+   */
+  async getAdministrativeActivityStanding(userGUID: string): Promise<IAdministrativeActivityStanding> {
+    const sqlStatement = SQL`
+      WITH
+        administrative_activity_with_status
+      AS (
+        SELECT
+          CASE
+            WHEN COUNT(*) > 0 THEN TRUE
+            ELSE FALSE
+          END AS has_pending_access_request
+        FROM
+          administrative_activity aa
+        LEFT OUTER JOIN
+          administrative_activity_status_type aast
+        ON
+          aa.administrative_activity_status_type_id = aast.administrative_activity_status_type_id
+        WHERE
+            LOWER(aa.data ->> 'userGuid') =  LOWER(${userGUID})
+        AND
+          aast.name = 'Pending'
+      ),
+        system_user_project_roles
+      AS (
+        SELECT
+          CASE
+            WHEN COUNT(*) > 0 THEN TRUE
+            ELSE FALSE
+          END AS has_one_or_more_project_roles
+        FROM
+          project_participation pp
+        LEFT JOIN
+          system_user su 
+        ON
+          pp.system_user_id = su.system_user_id 
+        WHERE
+          LOWER(su.user_guid) = LOWER(${userGUID})
+      ) SELECT
+        *
+      FROM
+        administrative_activity_with_status,
+        system_user_project_roles;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows[0];
+  }
+
+  /**
    * SQL query to update an existing administrative activity record.
    *
    * @param {number} administrativeActivityId

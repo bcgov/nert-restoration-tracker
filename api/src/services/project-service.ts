@@ -41,6 +41,7 @@ import {
   ProjectParticipationRepository
 } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
+import { UserObject } from '../repositories/user-repository';
 import { getS3SignedURL } from '../utils/file-utils';
 import { doAllProjectsHaveAProjectLeadIfUserIsRemoved } from '../utils/user-utils';
 import { DBService } from './service';
@@ -93,6 +94,21 @@ export class ProjectService extends DBService {
    */
   async getProjectParticipants(projectId: number): Promise<IProjectParticipation[]> {
     return this.projectParticipantRepository.getAllProjectParticipants(projectId);
+  }
+
+  /**
+   * Get the project participant for the given project id and system user.
+   *
+   * @param {number} projectId
+   * @param {number} systemUserId
+   * @return {*}  {(Promise<(IProjectParticipation| UserObject) | null>)}
+   * @memberof ProjectParticipationService
+   */
+  async getProjectParticipant(
+    projectId: number,
+    systemUserId: number
+  ): Promise<(IProjectParticipation | UserObject) | null> {
+    return this.projectParticipantRepository.getProjectParticipant(projectId, systemUserId);
   }
 
   /**

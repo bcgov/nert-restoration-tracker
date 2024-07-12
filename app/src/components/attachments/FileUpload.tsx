@@ -119,7 +119,7 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
     : [];
   const approvedExtensions = allApprovedExtensions.map((value) => value[0]);
 
-  const checkApproved = (e) => {
+  const checkApproved = (e: any) => {
     const match =
       approvedExtensions.some((extension) => extension === e.dataTransfer.items[0].type) || false;
     setUploadCheckApproved(match);

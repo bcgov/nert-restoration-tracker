@@ -11,7 +11,7 @@ import {
 
 describe('ensureProtocol', () => {
   it('does nothing if string already has `http://`', async () => {
-    const url = 'http://someurl.com';
+    const url = 'https://someurl.com';
     const urlWithProtocol = ensureProtocol(url);
     expect(urlWithProtocol).toEqual(url);
   });
@@ -138,15 +138,23 @@ describe('getLogOutUrl', () => {
   it('returns null when config is missing `KEYCLOAK_CONFIG.url`', () => {
     const config = {
       API_HOST: '',
+      REACT_APP_OBJECT_STORE_URL: '',
+      REACT_APP_OBJECT_STORE_BUCKET_NAME: '',
       CHANGE_VERSION: '',
       NODE_ENV: '',
+      REACT_APP_NODE_ENV: '',
       VERSION: '',
       KEYCLOAK_CONFIG: {
         url: '',
         realm: 'myrealm',
         clientId: ''
       },
-      SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com'
+      SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com',
+      MAX_UPLOAD_NUM_FILES: 10,
+      MAX_UPLOAD_FILE_SIZE: 52428800,
+      MAX_IMAGE_UPLOAD_SIZE: 10485760,
+      MAX_IMAGE_NUM_FILES: 1,
+      ALLOW_MULTIPLE_IMAGE_UPLOADS: false
     };
 
     expect(getLogOutUrl(config)).toBeUndefined();
@@ -155,15 +163,23 @@ describe('getLogOutUrl', () => {
   it('returns null when config is missing `KEYCLOAK_CONFIG.realm`', () => {
     const config = {
       API_HOST: '',
+      REACT_APP_OBJECT_STORE_URL: '',
+      REACT_APP_OBJECT_STORE_BUCKET_NAME: '',
       CHANGE_VERSION: '',
       NODE_ENV: '',
+      REACT_APP_NODE_ENV: '',
       VERSION: '',
       KEYCLOAK_CONFIG: {
         url: 'https://www.keycloaklogout.com/auth',
         realm: '',
         clientId: ''
       },
-      SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com'
+      SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com',
+      MAX_UPLOAD_NUM_FILES: 10,
+      MAX_UPLOAD_FILE_SIZE: 52428800,
+      MAX_IMAGE_UPLOAD_SIZE: 10485760,
+      MAX_IMAGE_NUM_FILES: 1,
+      ALLOW_MULTIPLE_IMAGE_UPLOADS: false
     };
 
     expect(getLogOutUrl(config)).toBeUndefined();
@@ -172,15 +188,23 @@ describe('getLogOutUrl', () => {
   it('returns null when config is missing `SITEMINDER_LOGOUT_URL`', () => {
     const config = {
       API_HOST: '',
+      REACT_APP_OBJECT_STORE_URL: '',
+      REACT_APP_OBJECT_STORE_BUCKET_NAME: '',
       CHANGE_VERSION: '',
       NODE_ENV: '',
+      REACT_APP_NODE_ENV: '',
       VERSION: '',
       KEYCLOAK_CONFIG: {
         url: 'https://www.keycloaklogout.com/auth',
         realm: 'myrealm',
         clientId: ''
       },
-      SITEMINDER_LOGOUT_URL: ''
+      SITEMINDER_LOGOUT_URL: '',
+      MAX_UPLOAD_NUM_FILES: 10,
+      MAX_UPLOAD_FILE_SIZE: 52428800,
+      MAX_IMAGE_UPLOAD_SIZE: 10485760,
+      MAX_IMAGE_NUM_FILES: 1,
+      ALLOW_MULTIPLE_IMAGE_UPLOADS: false
     };
 
     expect(getLogOutUrl(config)).toBeUndefined();
@@ -197,15 +221,23 @@ describe('getLogOutUrl', () => {
 
     const config = {
       API_HOST: '',
+      REACT_APP_OBJECT_STORE_URL: '',
+      REACT_APP_OBJECT_STORE_BUCKET_NAME: '',
       CHANGE_VERSION: '',
       NODE_ENV: '',
+      REACT_APP_NODE_ENV: '',
       VERSION: '',
       KEYCLOAK_CONFIG: {
         url: 'https://www.keycloaklogout.com/auth',
         realm: 'myrealm',
         clientId: ''
       },
-      SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com'
+      SITEMINDER_LOGOUT_URL: 'https://www.siteminderlogout.com',
+      MAX_UPLOAD_NUM_FILES: 10,
+      MAX_UPLOAD_FILE_SIZE: 52428800,
+      MAX_IMAGE_UPLOAD_SIZE: 10485760,
+      MAX_IMAGE_NUM_FILES: 1,
+      ALLOW_MULTIPLE_IMAGE_UPLOADS: false
     };
 
     expect(getLogOutUrl(config)).toEqual(
@@ -216,7 +248,7 @@ describe('getLogOutUrl', () => {
 
 describe('getFormattedFileSize', () => {
   it('returns `0 KB` if no file size exists', async () => {
-    const formattedFileSize = getFormattedFileSize(null as unknown);
+    const formattedFileSize = getFormattedFileSize(null as any);
     expect(formattedFileSize).toEqual('0 KB');
   });
 

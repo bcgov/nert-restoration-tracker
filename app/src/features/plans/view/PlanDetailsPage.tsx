@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import ProjectContact from 'features/projects/view/components/ProjectContact';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
@@ -8,6 +7,7 @@ import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import PublicProjectContact from 'pages/public/components/PublicProjectContact';
 import React from 'react';
 import PlanGeneralInformation from './components/PlanGeneralInformation';
+import { ProjectRoleGuard } from 'components/security/Guards';
 
 export interface IPlanDetailsProps {
   planForViewData: IGetPlanForViewResponse;
@@ -89,18 +89,19 @@ const PlanDetailsPage: React.FC<IPlanDetailsProps> = (props) => {
         <Typography variant="body1" component={'h3'} data-testid="ContactsTitle">
           Plan Contacts
         </Typography>
-        <RoleGuard
+        <ProjectRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
           validProjectRoles={[
             PROJECT_ROLE.PROJECT_LEAD,
             PROJECT_ROLE.PROJECT_EDITOR,
             PROJECT_ROLE.PROJECT_VIEWER
           ]}
+          validProjectPermissions={[]}
           fallback={
             <PublicProjectContact projectForViewData={planForViewData} refresh={refresh} />
           }>
           <ProjectContact projectForViewData={planForViewData} refresh={refresh} />
-        </RoleGuard>
+        </ProjectRoleGuard>
       </Box>
     </Box>
   );

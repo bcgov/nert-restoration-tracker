@@ -36,23 +36,24 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
+import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
   const history = useNavigate();
-  const { keycloakWrapper } = useContext(AuthStateContext);
-  const isUserCreator =
-    isAuthenticated(keycloakWrapper) &&
-    keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
-      ? false
-      : true;
+
+  const projectAuthStateContext = useContext(ProjectAuthStateContext);
+  const isUserCreator = projectAuthStateContext.hasSystemRole([
+    SYSTEM_ROLE.SYSTEM_ADMIN,
+    SYSTEM_ROLE.DATA_ADMINISTRATOR
+  ])
+    ? false
+    : true;
 
   let rowsProjectFilterOutArchived = projects;
   if (rowsProjectFilterOutArchived && isUserCreator) {
@@ -340,7 +341,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         variant="body2"
                         onClick={
                           draftCode != row.statusCode
-                            ? () => history(`/admin/projects/${row.projectId}`)
+                            ? () => history(`/admin/projects/${row.projectId}/details`)
                             : () => history(`/admin/projects/create?draftId=${row.projectId}`)
                         }>
                         {row.projectName}

@@ -15,7 +15,7 @@ afterEach(() => {
 
 it("should login and logout", function () {
   cy.wait(5000);
-  cy.get('button[data-testid="login"]').should("exist");
+  cy.get('a[data-testid="menu_log_in"]').should("exist");
 //   cy.get('button[data-testid="login"]').click();
 
 //   cy.contains("Basic BCeID").should("exist");

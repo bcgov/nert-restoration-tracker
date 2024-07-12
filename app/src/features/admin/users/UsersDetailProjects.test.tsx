@@ -5,12 +5,12 @@ import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
-import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
+import { useNertApi } from '../../../hooks/useNertApi';
 import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import UsersDetailProjects from './UsersDetailProjects';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 
 const mockUseApi = {
   project: {

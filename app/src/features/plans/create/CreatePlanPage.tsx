@@ -31,7 +31,7 @@ import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -91,7 +91,7 @@ export const PlanFormYupSchema = yup
  */
 const CreatePlanPage: React.FC = () => {
   const { keycloakWrapper } = useContext(AuthStateContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
   const codes = useCodes();
   const dialogContext = useContext(DialogContext);

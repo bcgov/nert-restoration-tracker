@@ -1,5 +1,5 @@
 import SQL from 'sql-template-strings';
-import { getKnexQueryBuilder } from '../database/db';
+import { getKnex } from '../database/db';
 import { DBService } from './service';
 
 export type ProjectSearchCriteria = {
@@ -24,9 +24,7 @@ export class SearchService extends DBService {
     // track which tables we have joined with already
     const joins: string[] = [];
 
-    const queryBuilder = getKnexQueryBuilder<any, { project_id: number }>()
-      .select('project.project_id')
-      .from('project');
+    const queryBuilder = getKnex<any, { project_id: number }>().select('project.project_id').from('project');
 
     if (criteria.keyword) {
       !joins.includes('project_funding_source') &&

@@ -15,7 +15,7 @@ import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -65,7 +65,7 @@ export const PlanEditFormYupSchema = yup
 const EditPlanPage: React.FC = () => {
   const history = useNavigate();
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
@@ -119,7 +119,7 @@ const EditPlanPage: React.FC = () => {
         return;
       }
 
-      history(`/admin/plans/${response.project_id}`);
+      history(`/admin/plans/${urlParams['id']}/details`);
     } catch (error) {
       showEditErrorDialog({
         dialogTitle: 'Error Editing Project',
@@ -154,7 +154,7 @@ const EditPlanPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history(`/admin/projects/${projectId}`);
+      history(`/admin/plans/${urlParams['id']}/details`);
     }
   };
 

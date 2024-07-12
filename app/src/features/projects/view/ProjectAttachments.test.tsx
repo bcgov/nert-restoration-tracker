@@ -7,12 +7,12 @@ import {
   waitFor
 } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import ProjectAttachments from './ProjectAttachments';
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 const mockUseApi = {
   project: {
     getProjectAttachments: jest.fn(),
