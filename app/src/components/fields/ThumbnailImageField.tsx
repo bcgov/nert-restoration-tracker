@@ -72,7 +72,6 @@ const ThumbnailImageField: React.FC = () => {
         const thumbnailFile = new File([blob as Blob], file.name, { type: file.type });
         setFieldValue('project.project_image', thumbnailFile);
       });
-
     };
   };
 

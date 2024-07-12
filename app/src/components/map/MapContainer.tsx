@@ -577,7 +577,6 @@ const initializeMap = (
         });
     });
 
-
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', async (e: any) => {
       const prop = e.features![0].properties;
@@ -587,7 +586,6 @@ const initializeMap = (
       const numberSites = prop.number_sites;
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
-
 
       let thumbnail = '';
       try {
@@ -611,7 +609,6 @@ const initializeMap = (
           thumbnail={thumbnail}
         />
       );
-
 
       // @ts-ignore
       new Popup({ offset: { bottom: [0, -14] } })
@@ -648,7 +645,10 @@ const initializeMap = (
       );
 
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(mapPopupHtml).addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(mapPopupHtml)
+        .addTo(map);
     });
 
     let hoverStatePlans: any = false;
@@ -960,7 +960,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkFeatureState(activeFeatureState);
   }, [activeFeatureState]);
-
 
   return (
     <div id={mapId} style={pageStyle}>

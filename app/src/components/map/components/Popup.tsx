@@ -41,7 +41,7 @@ const MapPopup = (props: any) => {
         backgroundPosition: 'center',
         width: '100%',
         objectFit: 'cover' as React.CSSProperties['objectFit'],
-        borderRadius: '10px',
+        borderRadius: '10px'
       }
     },
     button: {
