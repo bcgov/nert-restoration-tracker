@@ -1,11 +1,5 @@
 import React from 'react';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { S3FileType } from 'constants/attachments';
-import { create } from 'domain';
-import { text } from 'stream/consumers';
-import { get } from 'http';
-import { borderRadius, margin } from '@mui/system';
 
 const MapPopup = (props: any) => {
   const id = props.id;
@@ -14,6 +8,7 @@ const MapPopup = (props: any) => {
   const numberSites = props.number_sites;
   const sizeHa = props.size_ha;
   const stateCode = props.state_code;
+  const thumbnail = props.thumbnail;
 
   const originalChipStyle = getStatusStyle(stateCode) || {};
 
@@ -36,6 +31,19 @@ const MapPopup = (props: any) => {
       padding: '0 0.5rem 0 0.5rem',
       borderRadius: '5px'
     },
+    thumbnail: {
+      position: 'relative' as React.CSSProperties['position'],
+      img: {
+        maxWidth: '360px',
+        maxHeight: '300px',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        width: '100%',
+        objectFit: 'cover' as React.CSSProperties['objectFit'],
+        borderRadius: '10px',
+      }
+    },
     button: {
       marginTop: '1rem',
       fontSize: '1.2em',
@@ -54,6 +62,11 @@ const MapPopup = (props: any) => {
   };
   return (
     <div style={style.popup}>
+      {thumbnail && (
+        <div style={style.thumbnail}>
+          <img src={thumbnail} alt="thumbnail" style={style.thumbnail.img} />
+        </div>
+      )}
       <div style={style.description}>
         <div>{isProject ? 'Project' : 'Plan'} Name:</div>
         <div style={style.value}>{name}</div>

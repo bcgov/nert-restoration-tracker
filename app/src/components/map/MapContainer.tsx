@@ -8,9 +8,8 @@ import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer.css'; // Custom styling
 import MapPopup from './components/Popup';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { S3FileType } from 'constants/attachments';
-import { rest } from 'lodash-es';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -311,7 +310,7 @@ const initializeMap = (
   markerState?: any,
   bounds?: any,
   autoFocus?: boolean,
-  restorationTrackerApi?: any
+  nertApi?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -589,12 +588,17 @@ const initializeMap = (
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
 
-      const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
-        id,
-        S3FileType.THUMBNAIL
-      );
 
-      console.log('thumbnailResponse', thumbnailResponse);
+      let thumbnail = '';
+      try {
+        const thumbnailResponse = await nertApi.project.getProjectAttachments(
+          id,
+          S3FileType.THUMBNAIL
+        );
+        thumbnail = thumbnailResponse.attachmentsList[0].url;
+      } catch (error) {
+        console.log('Error getting thumbnail');
+      }
 
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
@@ -604,6 +608,7 @@ const initializeMap = (
           number_sites={numberSites}
           size_ha={sizeHa}
           state_code={stateCode}
+          thumbnail={thumbnail}
         />
       );
 
@@ -917,7 +922,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setPlanMarker
   };
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const nertApi = useNertApi();
 
   // Update the map if the features change
   useEffect(() => {
@@ -933,7 +938,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       markerState,
       bounds,
       autoFocus,
-      restorationTrackerApi
+      nertApi
     );
   }, [features]);
 

@@ -12,6 +12,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import ne_boundary from 'components/map/layers/north_east_boundary.json';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 
+// This may or may not be used
 const projectBoundary = turf.bbox(ne_boundary);
 
 /**
