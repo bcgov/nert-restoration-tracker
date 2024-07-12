@@ -683,7 +683,7 @@ CREATE TABLE project_attachment(
     project_attachment_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     project_id               integer           NOT NULL,
     file_name                varchar(300)      NOT NULL,
-    file_type                varchar(300),
+    file_type                varchar(100)      NOT NULL,
     title                    varchar(300)      NOT NULL,
     description              varchar(3000),
     key                      varchar(1000)     NOT NULL,
@@ -1619,7 +1619,7 @@ CREATE INDEX "Ref1339" ON permit(project_id)
 -- INDEX: project_attachment_uk1 
 --
 
-CREATE UNIQUE INDEX project_attachment_uk1 ON project_attachment(project_id, file_name)
+CREATE UNIQUE INDEX project_attachment_uk1 ON project_attachment(project_id, file_name, file_type)
 ;
 -- 
 -- INDEX: "Ref1313" 

@@ -68,19 +68,22 @@ describe('AttachmentService', () => {
       sinon.restore();
     });
 
-    it('should return true when file with the same name already exist', async () => {
+    it('should return true when file with the same name and type already exist', async () => {
       const mockRowObj = [{ project_attachment_id: 123 }];
 
       const mockDBConnection = getMockDBConnection({});
 
-      sinon.stub(AttachmentRepository.prototype, 'getProjectAttachmentByFileName').resolves(mockRowObj[0] as any);
+      sinon
+        .stub(AttachmentRepository.prototype, 'getProjectAttachmentByFileNameAndType')
+        .resolves(mockRowObj[0] as any);
 
       const projectId = 1;
       const file = { originalname: 'file', size: 1 } as Express.Multer.File;
+      const type = 'attachments';
 
       const attachmentService = new AttachmentService(mockDBConnection);
 
-      const result = await attachmentService.fileWithSameNameExist(projectId, file);
+      const result = await attachmentService.fileWithSameNameAndTypeExist(projectId, file, type);
 
       expect(result).to.equal(true);
     });
@@ -88,14 +91,15 @@ describe('AttachmentService', () => {
     it('should return false when file with the same name does not exist', async () => {
       const mockDBConnection = getMockDBConnection({});
 
-      sinon.stub(AttachmentRepository.prototype, 'getProjectAttachmentByFileName').resolves({ id: 1 } as any);
+      sinon.stub(AttachmentRepository.prototype, 'getProjectAttachmentByFileNameAndType').resolves({ id: 1 } as any);
 
       const projectId = 1;
       const file = { originalname: 'file', size: 1 } as Express.Multer.File;
+      const type = 'attachments';
 
       const attachmentService = new AttachmentService(mockDBConnection);
 
-      const result = await attachmentService.fileWithSameNameExist(projectId, file);
+      const result = await attachmentService.fileWithSameNameAndTypeExist(projectId, file, type);
 
       expect(result).to.equal(false);
     });
@@ -109,7 +113,7 @@ describe('AttachmentService', () => {
     it('should return id on successful upload, when file with same name does not exist', async () => {
       const mockDBConnection = getMockDBConnection();
 
-      sinon.stub(AttachmentService.prototype, 'fileWithSameNameExist').resolves(false);
+      sinon.stub(AttachmentService.prototype, 'fileWithSameNameAndTypeExist').resolves(false);
       sinon.stub(file_utils, 'uploadFileToS3').resolves({ Key: '1/1/test.txt' } as any);
       sinon.stub(AttachmentService.prototype, 'insertProjectAttachment').resolves({ id: 1, revision_count: 0 });
 
@@ -129,7 +133,7 @@ describe('AttachmentService', () => {
     it('should return id on successful upload, when file with same name exist', async () => {
       const mockDBConnection = getMockDBConnection();
 
-      sinon.stub(AttachmentService.prototype, 'fileWithSameNameExist').resolves(true);
+      sinon.stub(AttachmentService.prototype, 'fileWithSameNameAndTypeExist').resolves(true);
       sinon.stub(file_utils, 'uploadFileToS3').resolves({ Key: '1/1/test.txt' } as any);
       sinon.stub(AttachmentService.prototype, 'updateProjectAttachment').resolves({ id: 1, revision_count: 1 });
 

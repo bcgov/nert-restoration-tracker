@@ -66,8 +66,12 @@ export class AttachmentService extends DBService {
    * @return {*}  {Promise<boolean>}
    * @memberof AttachmentService
    */
-  async fileWithSameNameExist(projectId: number, file: Express.Multer.File): Promise<boolean> {
-    const response = await this.attachmentRepository.getProjectAttachmentByFileName(projectId, file.originalname);
+  async fileWithSameNameAndTypeExist(projectId: number, file: Express.Multer.File, type: S3FileType): Promise<boolean> {
+    const response = await this.attachmentRepository.getProjectAttachmentByFileNameAndType(
+      projectId,
+      file.originalname,
+      type
+    );
 
     return response && !!response.project_attachment_id;
   }
@@ -79,7 +83,7 @@ export class AttachmentService extends DBService {
     attachmentType: S3FileType,
     metadata: Metadata = {}
   ): Promise<{ id: number; revision_count: number }> {
-    const response = (await this.fileWithSameNameExist(projectId, file))
+    const response = (await this.fileWithSameNameAndTypeExist(projectId, file, attachmentType))
       ? this.updateProjectAttachment(projectId, file)
       : this.insertProjectAttachment(projectId, s3Key, file.originalname, file.size, attachmentType);
 
