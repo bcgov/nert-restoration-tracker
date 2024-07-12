@@ -8,6 +8,9 @@ import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer.css'; // Custom styling
 import MapPopup from './components/Popup';
+import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { S3FileType } from 'constants/attachments';
+import { rest } from 'lodash-es';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -307,7 +310,8 @@ const initializeMap = (
   activeFeatureState?: any,
   markerState?: any,
   bounds?: any,
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  restorationTrackerApi?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -574,68 +578,6 @@ const initializeMap = (
         });
     });
 
-    /**
-     * Create a React Dom for the popup content
-     */
-    // const MapPopup = (props: any) => {
-    //   const id = props.id;
-    //   const name = props.name;
-    //   const isProject = props.is_project;
-    //   const numberSites = props.number_sites;
-    //   const sizeHa = props.size_ha;
-    //   const stateCode = props.state_code;
-
-    //   const style = {
-    //     popup: {
-    //       textAlign: 'center' as React.CSSProperties['textAlign']
-    //     },
-    //     description: {
-    //       textAlign: 'left' as React.CSSProperties['textAlign'],
-    //       display: 'grid',
-    //       gridTemplateColumns: '1fr 1fr',
-    //       gridColumnGap: '1rem'
-    //     },
-    //     value: {
-    //       fontWeight: 'bold' as React.CSSProperties['fontWeight']
-    //     },
-    //     button: {
-    //       marginTop: '1rem',
-    //       fontSize: '1.2em',
-    //       fontWeight: 'bold',
-    //       background: '#003366',
-    //       cursor: 'pointer',
-    //       borderRadius: '5px',
-    //       color: 'white',
-    //       padding: '7px 20px',
-    //       border: 'none',
-    //       textAlign: 'center',
-    //       textDecoration: 'none',
-    //       display: 'inline-block',
-    //       fontFamily: 'Arial, sans-serif'
-    //     } as React.CSSProperties
-    //   };
-    //   return (
-    //     <div style={style.popup}>
-    //       <div style={style.description}>
-    //         <div>{isProject? 'Project' : 'Plan'} Name:</div>
-    //         <div style={style.value}>{name}</div>
-    //         <div>{isProject? 'Project' : 'Plan'} Size (Ha):</div>
-    //         <div style={style.value}>{sizeHa}</div>
-    //         <div>{isProject? 'Project' : 'Plan'} Status:</div>
-    //         <div style={style.value}>{stateCode}</div> 
-    //         <div>Number of Sites:</div>
-    //         <div style={style.value}>{numberSites}</div>
-    //       </div>
-    //       <div>
-    //         <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
-    //           <button style={style.button}>
-    //             View {isProject ? 'Project' : 'Plan'} Details
-    //           </button>
-    //         </a>
-    //       </div>
-    //     </div>
-    //   );
-    // };
 
     /* Add popup for the points */
     map.on('click', 'markerProjects.points', async (e: any) => {
@@ -646,6 +588,13 @@ const initializeMap = (
       const numberSites = prop.number_sites;
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
+
+      const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
+        id,
+        S3FileType.THUMBNAIL
+      );
+
+      console.log('thumbnailResponse', thumbnailResponse);
 
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
@@ -658,12 +607,6 @@ const initializeMap = (
         />
       );
 
-      // const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
-      //   prop.id,
-      //   S3FileType.THUMBNAIL
-      // );
-
-      // console.log('thumbnailResponse', thumbnailResponse);
 
       // @ts-ignore
       new Popup({ offset: { bottom: [0, -14] } })
@@ -974,6 +917,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setPlanMarker
   };
 
+  const restorationTrackerApi = useRestorationTrackerApi();
+
   // Update the map if the features change
   useEffect(() => {
     initializeMap(
@@ -987,7 +932,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       activeFeatureState,
       markerState,
       bounds,
-      autoFocus
+      autoFocus,
+      restorationTrackerApi
     );
   }, [features]);
 
@@ -1009,6 +955,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkFeatureState(activeFeatureState);
   }, [activeFeatureState]);
+
 
   return (
     <div id={mapId} style={pageStyle}>
