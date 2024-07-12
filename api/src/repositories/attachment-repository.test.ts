@@ -45,7 +45,7 @@ describe('AttachmentRepository', () => {
     });
   });
 
-  describe('getProjectAttachmentByFileName', () => {
+  describe('getProjectAttachmentByFileNameAndType', () => {
     afterEach(() => {
       sinon.restore();
     });
@@ -60,7 +60,7 @@ describe('AttachmentRepository', () => {
 
       const attachmentRepository = new AttachmentRepository(mockDBConnection);
 
-      const response = await attachmentRepository.getProjectAttachmentByFileName(1, 'file');
+      const response = await attachmentRepository.getProjectAttachmentByFileNameAndType(1, 'file', 'attachments');
 
       expect(response).to.deep.equal({ id: 1 });
     });
@@ -75,7 +75,7 @@ describe('AttachmentRepository', () => {
       const attachmentRepository = new AttachmentRepository(mockDBConnection);
 
       try {
-        await attachmentRepository.getProjectAttachmentByFileName(1, 'file');
+        await attachmentRepository.getProjectAttachmentByFileNameAndType(1, 'file', 'attachments');
       } catch (error: any) {
         expect(error.message).to.equal('Failed to get project attachment by filename');
       }

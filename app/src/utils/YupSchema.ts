@@ -17,6 +17,7 @@ yup.addMethod(
       if (this.parent.authorization_type) {
         return this.parent.authorization_type == AuthType ? !!value : true;
       }
+      return true;
     });
   }
 );

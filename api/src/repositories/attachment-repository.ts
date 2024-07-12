@@ -83,8 +83,12 @@ export class AttachmentRepository extends BaseRepository {
    * @return {*}  {Promise<IProjectAttachment>}
    * @memberof AttachmentRepository
    */
-  async getProjectAttachmentByFileName(projectId: number, fileName: string): Promise<IProjectAttachment> {
-    defaultLog.debug({ label: 'getProjectAttachmentByFileName', message: 'params', projectId, fileName });
+  async getProjectAttachmentByFileNameAndType(
+    projectId: number,
+    fileName: string,
+    type: S3FileType
+  ): Promise<IProjectAttachment> {
+    defaultLog.debug({ label: 'getProjectAttachmentByFileNameAndType', message: 'params', projectId, fileName, type });
 
     try {
       const sqlStatement = SQL`
@@ -99,14 +103,16 @@ export class AttachmentRepository extends BaseRepository {
         where
           project_id = ${projectId}
         and
-          file_name = ${fileName};
+          file_name = ${fileName}
+        and
+          file_type = ${type};
       `;
 
       const response = await this.connection.sql(sqlStatement);
 
       return response && response.rows && response.rows[0];
     } catch (error) {
-      defaultLog.debug({ label: 'getProjectAttachmentByFileName', message: 'error', error });
+      defaultLog.debug({ label: 'getProjectAttachmentByFileNameAndType', message: 'error', error });
       throw error;
     }
   }
