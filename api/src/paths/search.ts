@@ -6,6 +6,7 @@ import { authorizeRequestHandler } from '../request-handlers/security/authorizat
 import { AuthorizationService } from '../services/authorization-service';
 import { ProjectService } from '../services/project-service';
 import { getLogger } from '../utils/logger';
+import * as turf from '@turf/turf';
 
 const defaultLog = getLogger('paths/search');
 
@@ -99,6 +100,37 @@ export function getSearchResults(): RequestHandler {
   };
 }
 
+const _maskGateKeeper = (originalFeatureArray: string ,originalGeoJSON: string) => {
+  try {
+    const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
+    const geojson = originalGeoJSON && JSON.parse(originalGeoJSON);
+
+    console.log('featureArray', featureArray);
+    console.log('geojson', geojson);
+    console.log('turf', turf);
+
+    // If there is a mask and maskedLocation, return the mask instead of the geometry
+    const maskArray = featureArray.map((feature) => {
+      if (feature.maskedLocation && feature.mask) {
+        console.log('feature in map', feature);
+        return {
+          // return the mask instead of the geometry
+          type: 'Feature',
+          geometry: feature.mask, // Add the mask as the geometry
+          properties: feature.properties
+        };
+      } else {
+        return feature;
+      }
+    });
+    console.log('maskArray', maskArray);
+  } catch (error) {
+    console.log('error', error);
+  }
+
+  return 'testing';
+};
+
 /**
  * Extract an array of search result data from DB query.
  *
@@ -114,6 +146,9 @@ export function _extractResults(rows: any[]): any[] {
   const searchResults: any[] = [];
 
   rows.forEach((row) => {
+    const feature = _maskGateKeeper(row.geometry, row.geojson);
+    console.log('feature from _extractResults', feature);
+
     const result: any = {
       id: row.id,
       name: row.name,

@@ -51,6 +51,7 @@ export function getSearchResults(): RequestHandler {
     const connection = getAPIUserDBConnection();
 
     try {
+      // TODO: Include maskedLocation and mask objects in query
       const sqlStatement = SQL`
         SELECT
           p.project_id as id,
@@ -59,7 +60,8 @@ export function getSearchResults(): RequestHandler {
           p.state_code,
           psc.number_sites,
           psc.size_ha,
-          public.ST_asGeoJSON(psc.geography) as geometry
+          public.ST_asGeoJSON(psc.geography) as geometry,
+          psc.geojson#>>'{}' as geojson
         FROM
           project p
         LEFT JOIN
@@ -87,7 +89,6 @@ export function getSearchResults(): RequestHandler {
       }
 
       const result: any[] = _extractResults(response.rows);
-      console.log('result', result);
 
       return res.status(200).json(result);
     } catch (error) {
