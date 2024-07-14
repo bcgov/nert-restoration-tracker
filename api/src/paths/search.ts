@@ -1,3 +1,4 @@
+import * as turf from '@turf/turf';
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../constants/roles';
@@ -6,7 +7,6 @@ import { authorizeRequestHandler } from '../request-handlers/security/authorizat
 import { AuthorizationService } from '../services/authorization-service';
 import { ProjectService } from '../services/project-service';
 import { getLogger } from '../utils/logger';
-import * as turf from '@turf/turf';
 
 const defaultLog = getLogger('paths/search');
 
@@ -100,30 +100,26 @@ export function getSearchResults(): RequestHandler {
   };
 }
 
-const _maskGateKeeper = (originalFeatureArray: string ,originalGeoJSON: string) => {
+const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
   try {
     const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
     const geojson = originalGeoJSON && JSON.parse(originalGeoJSON);
 
     console.log('featureArray', featureArray);
     console.log('geojson', geojson);
-    console.log('turf', turf);
+    console.log('turf', turf.circle([0, 0], 1, { steps: 64 }));
 
     // If there is a mask and maskedLocation, return the mask instead of the geometry
-    const maskArray = featureArray.map((feature) => {
-      if (feature.maskedLocation && feature.mask) {
-        console.log('feature in map', feature);
-        return {
-          // return the mask instead of the geometry
-          type: 'Feature',
-          geometry: feature.mask, // Add the mask as the geometry
-          properties: feature.properties
-        };
+    geojson.forEach((feature, index) => {
+      console.log('feature', feature);
+      if (feature.properties.maskedLocation && feature.properties.mask) {
+          // TODO: Replace the geometry with the mask
+          console.log('feature.properties.mask', feature.properties.mask);
+          console.log('should replace this', featureArray.coordinates[index]);
       } else {
-        return feature;
+        console.log('no mask');
       }
     });
-    console.log('maskArray', maskArray);
   } catch (error) {
     console.log('error', error);
   }
