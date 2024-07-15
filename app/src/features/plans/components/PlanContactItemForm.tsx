@@ -100,7 +100,13 @@ const PlanContactItemForm: React.FC = () => {
             <CustomTextField name="phone_number" label="Phone Number" />
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomTextField name="organization" label="Organization" />
+            <CustomTextField
+              name="organization"
+              label="Organization"
+              other={{
+                required: true
+              }}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <FormControlLabel

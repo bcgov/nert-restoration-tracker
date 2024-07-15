@@ -150,7 +150,7 @@ const CreateProjectPage: React.FC = () => {
   const defaultCancelDialogProps = {
     dialogTitle: CreateProjectI18N.cancelTitle,
     dialogText: CreateProjectI18N.cancelText,
-    open: false,
+    open: true,
     onClose: () => {
       dialogContext.setYesNoDialog({ open: false });
     },
@@ -211,7 +211,6 @@ const CreateProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history('/admin/user/projects');
   };
 
   const handleCancelConfirmation = () => {
@@ -369,21 +368,22 @@ const CreateProjectPage: React.FC = () => {
     });
   };
 
+  // Commented for now, we will revisit later
   //useEffect to catch and display formik errors
-  useEffect(() => {
-    if (formikRef.current?.errors) {
-      const errorsText = Object.keys(formikRef.current.errors).map((key) => {
-        return `${key}: ${JSON.stringify(formikRef.current?.errors[key])}`;
-      });
+  // useEffect(() => {
+  //   if (formikRef.current?.errors) {
+  //     const errorsText = Object.keys(formikRef.current.errors).map((key) => {
+  //       return `${key}: ${JSON.stringify(formikRef.current?.errors[key])}`;
+  //     });
 
-      dialogContext.setErrorDialog({
-        dialogTitle: 'Please correct the errors in the form before submitting.',
-        dialogText: errorsText.join('\n'),
-        ...defaultErrorDialogProps,
-        open: true
-      });
-    }
-  }, [formikRef.current?.errors]);
+  //     dialogContext.setErrorDialog({
+  //       dialogTitle: 'Please correct the errors in the form before submitting.',
+  //       dialogText: errorsText.join('\n'),
+  //       ...defaultErrorDialogProps,
+  //       open: true
+  //     });
+  //   }
+  // }, [formikRef.current?.errors]);
 
   if (!codes.codes) {
     return <CircularProgress className="pageProgress" size={40} />;

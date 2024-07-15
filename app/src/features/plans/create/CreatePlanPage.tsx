@@ -21,7 +21,6 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreatePlanDraftI18N, CreatePlanI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import PlanLocationForm, {
   PlanLocationFormInitialValues,
@@ -90,7 +89,6 @@ export const PlanFormYupSchema = yup
  * @return {*}
  */
 const CreatePlanPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
   const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
   const codes = useCodes();
@@ -106,7 +104,7 @@ const CreatePlanPage: React.FC = () => {
   const defaultCancelDialogProps = {
     dialogTitle: CreatePlanI18N.cancelTitle,
     dialogText: CreatePlanI18N.cancelText,
-    open: false,
+    open: true,
     onClose: () => {
       dialogContext.setYesNoDialog({ open: false });
     },
@@ -115,7 +113,7 @@ const CreatePlanPage: React.FC = () => {
     },
     onYes: () => {
       dialogContext.setYesNoDialog({ open: false });
-      history('/admin/user/Plans');
+      history('/admin/user/projects');
     }
   };
 
@@ -160,7 +158,7 @@ const CreatePlanPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history('/admin/user/projects');
+    // history('/admin/user/projects');
   };
 
   const handleCancelConfirmation = () => {
@@ -243,7 +241,6 @@ const CreatePlanPage: React.FC = () => {
       await deleteDraft();
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
       history(`/admin/Plans/${response.project_id}`);
     } catch (error) {
       showCreateErrorDialog({
