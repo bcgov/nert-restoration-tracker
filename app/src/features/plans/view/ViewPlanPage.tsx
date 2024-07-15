@@ -1,4 +1,4 @@
-import { mdiAccountMultipleOutline, mdiPencilOutline, mdiTrashCanOutline } from '@mdi/js';
+import { mdiAccountMultipleOutline, mdiPencilOutline, mdiFilePdfBox, } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -9,19 +9,15 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import { DialogContext } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
 import MapContainer from 'components/map/MapContainer';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { DeletePlanI18N } from 'constants/i18n';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { Card, Chip, Tooltip } from '@mui/material';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import InfoIcon from '@mui/icons-material/Info';
@@ -70,8 +66,6 @@ const ViewPlanPage: React.FC = () => {
   }
 
   const planId = Number(urlParams['id']);
-
-  const dialogContext = useContext(DialogContext);
 
   // const [openFullScreen, setOpenFullScreen] = React.useState(false);
 
@@ -122,70 +116,7 @@ const ViewPlanPage: React.FC = () => {
     }
   }, [isLoadingPlan, planWithDetails, getPlan, getAttachments]);
 
-  const defaultYesNoDialogProps = {
-    dialogTitle: DeletePlanI18N.deleteTitle,
-    dialogText: DeletePlanI18N.deleteText,
-
-    open: false,
-    onClose: () => dialogContext.setYesNoDialog({ open: false }),
-    onNo: () => dialogContext.setYesNoDialog({ open: false }),
-    onYes: () => dialogContext.setYesNoDialog({ open: false })
-  };
-
-  const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-    dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
-  };
-
   const bounds = calculateUpdatedMapBounds(planWithDetails?.location.geometry || [], true) || null;
-
-  const deleteErrorDialogProps = {
-    dialogTitle: DeletePlanI18N.deleteErrorTitle,
-    dialogText: DeletePlanI18N.deleteErrorText,
-    open: false,
-    onClose: () => {
-      dialogContext.setErrorDialog({ open: false });
-    },
-    onOk: () => {
-      dialogContext.setErrorDialog({ open: false });
-    }
-  };
-
-  const showDeletePlanDialog = () => {
-    dialogContext.setYesNoDialog({
-      ...defaultYesNoDialogProps,
-      open: true,
-      yesButtonLabel: 'Delete',
-      yesButtonProps: { color: 'secondary' },
-      noButtonLabel: 'Cancel',
-      onYes: () => {
-        deletePlan();
-        dialogContext.setYesNoDialog({ open: false });
-      }
-    });
-  };
-
-  const deletePlan = async () => {
-    if (!planWithDetails) {
-      return;
-    }
-
-    try {
-      const response = await restorationTrackerApi.plan.deletePlan(
-        planWithDetails.project.project_id
-      );
-
-      if (!response) {
-        showDeleteErrorDialog({ open: true });
-        return;
-      }
-
-      history('/admin/user/projects');
-    } catch (error) {
-      const apiError = error as APIError;
-      showDeleteErrorDialog({ dialogText: apiError.message, open: true });
-      return error;
-    }
-  };
 
   // const closeMapDialog = () => {
   //   setOpenFullScreen(false);
@@ -296,13 +227,14 @@ const ViewPlanPage: React.FC = () => {
                   validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
                   validProjectPermissions={[]}>
                   <Button
-                    aria-label="delete plan"
+                    aria-label="print plan"
                     variant="outlined"
                     color="primary"
-                    startIcon={<Icon path={mdiTrashCanOutline} size={1} />}
-                    onClick={showDeletePlanDialog}>
-                    Delete
-                  </Button>
+                    startIcon={<Icon path={mdiFilePdfBox} size={1} />}
+                    // onClick={showPrintPlanDialog}
+                >
+                  Print
+                </Button>
                 </ProjectRoleGuard>
               </Box>
             </ProjectRoleGuard>
