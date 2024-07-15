@@ -1,4 +1,4 @@
-import { mdiAccountMultipleOutline, mdiPencilOutline, mdiFilePdfBox, } from '@mdi/js';
+import { mdiAccountMultipleOutline, mdiPencilOutline, mdiFilePdfBox } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -232,9 +232,9 @@ const ViewPlanPage: React.FC = () => {
                     color="primary"
                     startIcon={<Icon path={mdiFilePdfBox} size={1} />}
                     // onClick={showPrintPlanDialog}
-                >
-                  Print
-                </Button>
+                  >
+                    Print
+                  </Button>
                 </ProjectRoleGuard>
               </Box>
             </ProjectRoleGuard>
