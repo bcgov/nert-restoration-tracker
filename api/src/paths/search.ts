@@ -100,31 +100,32 @@ export function getSearchResults(): RequestHandler {
   };
 }
 
+/**
+ * Cycle through a feature array and apply a mask if the feature has a mask.
+ * @param originalFeatureArray 
+ * @param originalGeoJSON 
+ * @returns new feature array with mask applied
+ */
 const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
+  const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
   try {
-    const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
     const geojson = originalGeoJSON && JSON.parse(originalGeoJSON);
-
-    console.log('featureArray', featureArray);
-    console.log('geojson', geojson);
-    console.log('turf', turf.circle([0, 0], 1, { steps: 64 }));
 
     // If there is a mask and maskedLocation, return the mask instead of the geometry
     geojson.forEach((feature, index) => {
-      console.log('feature', feature);
       if (feature.properties.maskedLocation && feature.properties.mask) {
-          // TODO: Replace the geometry with the mask
-          console.log('feature.properties.mask', feature.properties.mask);
-          console.log('should replace this', featureArray.coordinates[index]);
-      } else {
-        console.log('no mask');
+        const mask = turf.circle(
+          feature.properties.mask.centroid,
+          feature.properties.mask.radius,
+          { steps: 64, units: 'meters', properties: feature.properties });
+        featureArray.coordinates[index] = mask.geometry.coordinates;
       }
     });
   } catch (error) {
     console.log('error', error);
   }
 
-  return 'testing';
+  return featureArray;
 };
 
 /**
@@ -142,8 +143,8 @@ export function _extractResults(rows: any[]): any[] {
   const searchResults: any[] = [];
 
   rows.forEach((row) => {
-    const feature = _maskGateKeeper(row.geometry, row.geojson);
-    console.log('feature from _extractResults', feature);
+    // Protected shapes must have their geometry masked here
+    const features = _maskGateKeeper(row.geometry, row.geojson);
 
     const result: any = {
       id: row.id,
@@ -152,7 +153,7 @@ export function _extractResults(rows: any[]): any[] {
       state_code: row.state_code,
       number_sites: row.number_sites,
       size_ha: row.size_ha,
-      geometry: row.geometry && [JSON.parse(row.geometry)]
+      geometry: [features]
     };
 
     searchResults.push(result);
