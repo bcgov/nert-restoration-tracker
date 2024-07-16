@@ -102,8 +102,8 @@ export function getSearchResults(): RequestHandler {
 
 /**
  * Cycle through a feature array and apply a mask if the feature has a mask.
- * @param originalFeatureArray 
- * @param originalGeoJSON 
+ * @param originalFeatureArray
+ * @param originalGeoJSON
  * @returns new feature array with mask applied
  */
 const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
@@ -114,10 +114,11 @@ const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) 
     // If there is a mask and maskedLocation, return the mask instead of the geometry
     geojson.forEach((feature, index) => {
       if (feature.properties.maskedLocation && feature.properties.mask) {
-        const mask = turf.circle(
-          feature.properties.mask.centroid,
-          feature.properties.mask.radius,
-          { steps: 64, units: 'meters', properties: feature.properties });
+        const mask = turf.circle(feature.properties.mask.centroid, feature.properties.mask.radius, {
+          steps: 64,
+          units: 'meters',
+          properties: feature.properties
+        });
         featureArray.coordinates[index] = mask.geometry.coordinates;
       }
     });
