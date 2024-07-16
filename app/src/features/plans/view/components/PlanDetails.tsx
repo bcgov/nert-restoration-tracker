@@ -74,7 +74,6 @@ const PlanDetails: React.FC<IPlanDetails> = (props) => {
               {plan.location.number_sites}
             </Typography>
           </Box>
-
         </Box>
       </Grid>
     </Grid>
