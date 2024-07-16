@@ -263,14 +263,14 @@ const EditPlanPage: React.FC = () => {
                   size="large"
                   type="submit"
                   onClick={() => formikRef.current?.submitForm()}
-                  data-testid="project-save-button">
-                  Save Project
+                  data-testid="plan-save-button">
+                  Save Plan
                 </Button>
                 <Button
                   variant="text"
                   color="primary"
                   size="large"
-                  data-testid="project-cancel-buttton"
+                  data-testid="plan-cancel-buttton"
                   onClick={handleCancel}>
                   Cancel
                 </Button>
