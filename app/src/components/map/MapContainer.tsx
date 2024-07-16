@@ -598,6 +598,12 @@ const initializeMap = (
         console.log('Error getting thumbnail');
       }
 
+      /**
+       * Maplibre only accepts a string for the popup content.
+       * Convert the Popup component to a string here.
+       * MUI front end library was not able to inline styles within the HTML string.
+       * Custom styling was used instead.
+       */
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
           name={name}
