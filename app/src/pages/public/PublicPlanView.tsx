@@ -9,7 +9,7 @@ import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/State
 import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import MapContainer from 'components/map/MapContainer';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
@@ -18,6 +18,9 @@ import InfoIcon from '@mui/icons-material/Info';
 import { focus, ICONS } from 'constants/misc';
 import PlanDetails from 'features/plans/view/components/PlanDetails';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
+import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
+import { S3FileType } from 'constants/attachments';
+import { useNertApi } from 'hooks/useNertApi';
 
 const pageStyles = {
   layerSwitcherContainer: {
@@ -60,6 +63,38 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
     indigenous,
     baselayer
   };
+
+  const [isLoadingThumbnailImage, setIsLoadingThumbnailImage] = useState(false);
+  const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
+
+  const restorationTrackerApi = useNertApi();
+
+  const getThumbnailImage = useCallback(
+    async (forceFetch: boolean) => {
+      if (thumbnailImage.length && !forceFetch) return;
+
+      try {
+        const thumbnailResponse = await restorationTrackerApi.public.project.getProjectAttachments(
+          Number(plan.project.project_id),
+          S3FileType.THUMBNAIL
+        );
+
+        if (thumbnailResponse?.attachmentsList) {
+          setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
+      } catch (error) {
+        return error;
+      }
+    },
+    [restorationTrackerApi.public.project, plan.project.project_id, thumbnailImage.length]
+  );
+
+  useEffect(() => {
+    if (!isLoadingThumbnailImage) {
+      getThumbnailImage(false);
+      setIsLoadingThumbnailImage(true);
+    }
+  }, [isLoadingThumbnailImage, getThumbnailImage]);
 
   return (
     <>
@@ -124,7 +159,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                 <Box mb={1}>
                   <Paper elevation={2}>
                     <Box p={1}>
-                      <PlanDetails plan={plan} thumbnailImageUrl={''} />
+                      <PlanDetails plan={plan} thumbnailImageUrl={thumbnailImage[0]?.url} />
                     </Box>
                   </Paper>
                 </Box>

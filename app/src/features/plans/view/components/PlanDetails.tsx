@@ -34,14 +34,6 @@ export interface IPlanDetails {
 const PlanDetails: React.FC<IPlanDetails> = (props) => {
   const { plan, thumbnailImageUrl } = props;
 
-  const conservationAreaStyled = (conservationArea: string) => {
-    return (
-      <Typography sx={pageStyles.conservAreaLabel} aria-label={`${conservationArea}`}>
-        {conservationArea}
-      </Typography>
-    );
-  };
-
   return (
     <Grid container spacing={2}>
       {
@@ -83,62 +75,6 @@ const PlanDetails: React.FC<IPlanDetails> = (props) => {
             </Typography>
           </Box>
 
-          <Box mt={-0.6}>
-            <Typography variant="subtitle2" component="span" color="textSecondary">
-              Plan within or overlapping known area of cultural or conservation priority:
-            </Typography>
-            <Typography
-              ml={1}
-              sx={{ fontWeight: 'bold' }}
-              variant="subtitle2"
-              component="span"
-              color="textPrimary">
-              {plan.location.is_within_overlapping === 'D'
-                ? "Don't know"
-                : plan.location.is_within_overlapping === 'Y'
-                  ? 'Yes'
-                  : 'No'}
-            </Typography>
-            {plan.location.is_within_overlapping === 'Y' && (
-              <Box ml={1}>
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 1. String with 100 characters conservation area name1 conservation area name1'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 2. String with 100 characters conservation area name2 conservation area name2'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 3. String with 100 characters conservation area name3 conservation area name3'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 4. String with 100 characters conservation area name4 conservation area name4'
-                  )}
-                />
-                <Chip
-                  size="small"
-                  sx={pageStyles.conservationAreChip}
-                  label={conservationAreaStyled(
-                    'Conservation area name 5. String with 100 characters conservation area name5 conservation area name5'
-                  )}
-                />
-              </Box>
-            )}
-          </Box>
         </Box>
       </Grid>
     </Grid>
