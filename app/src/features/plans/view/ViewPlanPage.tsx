@@ -150,7 +150,7 @@ const ViewPlanPage: React.FC = () => {
   return (
     <>
       <Container maxWidth="xl" data-testid="view_plan_page_component">
-        <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
+        <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
           <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
             <Box>
               <Typography variant="h1">
