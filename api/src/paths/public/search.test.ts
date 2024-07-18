@@ -5,7 +5,6 @@ import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
 import * as search from './search';
-import { size } from 'lodash';
 
 chai.use(sinonChai);
 
