@@ -5,6 +5,7 @@ import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../../__mocks__/db';
 import * as db from '../../database/db';
 import * as search from './search';
+import { size } from 'lodash';
 
 chai.use(sinonChai);
 
@@ -78,6 +79,8 @@ describe('search', () => {
           id: 1,
           name: 'name',
           is_project: false,
+          number_sites: 1,
+          size_ha: 100,
           geometry: '{"type":"Point","coordinates":[50.7,60.9]}'
         }
       ];
@@ -103,6 +106,8 @@ describe('search', () => {
           id: searchList[0].id,
           is_project: false,
           name: searchList[0].name,
+          number_sites: searchList[0].number_sites,
+          size_ha: searchList[0].size_ha,
           geometry: [
             {
               type: 'Point',
