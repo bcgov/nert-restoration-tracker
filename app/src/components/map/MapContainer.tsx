@@ -650,7 +650,6 @@ const initializeMap = (
         console.log('Error getting thumbnail');
       }
 
-
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
           name={name}
