@@ -1,3 +1,4 @@
+import * as turf from '@turf/turf';
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../constants/roles';
@@ -100,6 +101,35 @@ export function getSearchResults(): RequestHandler {
 }
 
 /**
+ * Cycle through a feature array and apply a mask if the feature has a mask.
+ * @param originalFeatureArray
+ * @param originalGeoJSON
+ * @returns new feature array with mask applied
+ */
+const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
+  const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
+  try {
+    const geojson = originalGeoJSON && JSON.parse(originalGeoJSON);
+
+    // If there is a mask and maskedLocation, return the mask instead of the geometry
+    geojson.forEach((feature, index) => {
+      if (feature.properties.maskedLocation && feature.properties.mask) {
+        const mask = turf.circle(feature.properties.mask.centroid, feature.properties.mask.radius, {
+          steps: 64,
+          units: 'meters',
+          properties: feature.properties
+        });
+        featureArray.coordinates[index] = mask.geometry.coordinates;
+      }
+    });
+  } catch (error) {
+    console.log('error', error);
+  }
+
+  return featureArray;
+};
+
+/**
  * Extract an array of search result data from DB query.
  *
  * @export
@@ -114,11 +144,17 @@ export function _extractResults(rows: any[]): any[] {
   const searchResults: any[] = [];
 
   rows.forEach((row) => {
+    // Protected shapes must have their geometry masked here
+    const features = _maskGateKeeper(row.geometry, row.geojson);
+
     const result: any = {
       id: row.id,
       name: row.name,
       is_project: row.is_project,
-      geometry: row.geometry && [JSON.parse(row.geometry)]
+      state_code: row.state_code,
+      number_sites: row.number_sites,
+      size_ha: row.size_ha,
+      geometry: [features]
     };
 
     searchResults.push(result);

@@ -2,10 +2,14 @@ import * as turf from '@turf/turf';
 import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import ReactDomServer from 'react-dom/server';
 import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
 import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer.css'; // Custom styling
+import MapPopup from './components/Popup';
+import { useNertApi } from 'hooks/useNertApi';
+import { S3FileType } from 'constants/attachments';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -25,6 +29,7 @@ export interface IMapContainerProps {
   mask?: null | number; // Store what mask just changed
   maskState?: boolean[]; // Store which features are masked
   activeFeatureState?: any; // Store which feature is active
+  autoFocus?: boolean;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -156,7 +161,10 @@ const convertToCentroidGeoJSON = (features: any) => {
         properties: {
           id: f.id,
           name: f.name,
-          is_project: f.is_project
+          is_project: f.is_project,
+          state_code: f.state_code,
+          number_sites: f.number_sites,
+          size_ha: f.size_ha
         }
       };
     })
@@ -292,15 +300,17 @@ const checkFeatureState = (featureState: any) => {
 
 const initializeMap = (
   mapId: string,
-  center: any = [-124, 57],
-  zoom = 6,
+  center: any = [-124, 55],
+  zoom = 5,
   features?: any, // There's no features when first creating a record
   layerVisibility?: any,
   centroids = false,
   tooltipState?: any,
   activeFeatureState?: any,
   markerState?: any,
-  bounds?: any
+  bounds?: any,
+  autoFocus?: boolean,
+  nertApi?: any
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -315,7 +325,7 @@ const initializeMap = (
     style: '/styles/hybrid.json',
     center: center,
     zoom: zoom,
-    maxPitch: 80,
+    maxPitch: 65,
     hash: 'loc',
     attributionControl: {
       compact: true,
@@ -567,37 +577,50 @@ const initializeMap = (
         });
     });
 
-    /**
-     * # makePopup
-     * Try and standardize the popup for the projects and plans
-     * @param name
-     * @param id
-     * @param isProject
-     * @returns HTML string
-     */
-    const makePopup = (name: string, id: string, isProject: boolean) => {
-      const divStyle = '"text-align: center;"';
-      const buttonStyle =
-        '"margin-top: 1rem; font-size: 1.2em; font-weight: bold; background: #003366; cursor: pointer; border-radius: 5px; color: white; padding: 7px 20px; border: none; text-align: center; text-decoration: none; display: inline-block; font-family: Arial, sans-serif;"';
-      return `
-        <div style=${divStyle}>
-          <div>${isProject ? 'Project' : 'Plan'} Name: <b>${name}</b></div>
-          <div class="view-btn">
-            <a href="/${isProject ? 'projects' : 'plans'}/${id}" >
-              <button style=${buttonStyle} title="Take me to the details page">View Project Details</button>
-            </a>
-          </div>
-        </div>`;
-    };
-
     /* Add popup for the points */
-    map.on('click', 'markerProjects.points', (e: any) => {
+    map.on('click', 'markerProjects.points', async (e: any) => {
       const prop = e.features![0].properties;
+      const id = prop.id;
+      const name = prop.name;
+      const isProject = prop.is_project;
+      const numberSites = prop.number_sites;
+      const sizeHa = prop.size_ha;
+      const stateCode = prop.state_code;
 
-      const html = makePopup(prop.name, prop.id, true);
+      let thumbnail = '';
+      try {
+        const thumbnailResponse = await nertApi.project.getProjectAttachments(
+          id,
+          S3FileType.THUMBNAIL
+        );
+        thumbnail = thumbnailResponse.attachmentsList[0].url;
+      } catch (error) {
+        console.log('Error getting thumbnail');
+      }
+
+      /**
+       * Maplibre only accepts a string for the popup content.
+       * Convert the Popup component to a string here.
+       * MUI front end library was not able to inline styles within the HTML string.
+       * Custom styling was used instead.
+       */
+      const mapPopupHtml = ReactDomServer.renderToString(
+        <MapPopup
+          name={name}
+          id={id}
+          is_project={isProject}
+          number_sites={numberSites}
+          size_ha={sizeHa}
+          state_code={stateCode}
+          thumbnail={thumbnail}
+        />
+      );
 
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(mapPopupHtml)
+        .addTo(map);
     });
     map.on('mousemove', 'markerProjects.points', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -609,13 +632,29 @@ const initializeMap = (
     /* Add popup for the points */
     map.on('click', 'markerPlans.points', (e: any) => {
       const prop = e.features![0].properties;
+      const id = prop.id;
+      const name = prop.name;
+      const isProject = prop.is_project;
+      const numberSites = prop.number_sites;
+      const sizeHa = prop.size_ha;
+      const stateCode = prop.state_code;
 
-      // TBD: Currently the /plans route is not available
-      // const html = makePopup(prop.name, prop.id, false);
-      const html = makePopup(prop.name, prop.id, false);
+      const mapPopupHtml = ReactDomServer.renderToString(
+        <MapPopup
+          name={name}
+          id={id}
+          is_project={isProject}
+          number_sites={numberSites}
+          size_ha={sizeHa}
+          state_code={stateCode}
+        />
+      );
 
       // @ts-ignore
-      new Popup({ offset: { bottom: [0, -14] } }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(mapPopupHtml)
+        .addTo(map);
     });
 
     let hoverStatePlans: any = false;
@@ -717,6 +756,12 @@ const initializeMap = (
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {
       map.fitBounds(bounds, { padding: 50 });
+    } else if (autoFocus && features.length > 0) {
+      const featureCollection = turf.featureCollection(features);
+      const newBounds = turf.bbox(featureCollection);
+
+      // @ts-ignore - turf types are incorrect here
+      map.fitBounds(newBounds, { padding: 150 });
     }
   });
 };
@@ -847,6 +892,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
 
+  const autoFocus = props.autoFocus || false;
+
   const { bounds } = props || null;
 
   // Tooltip variables
@@ -881,6 +928,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
     setPlanMarker
   };
 
+  const nertApi = useNertApi();
+
   // Update the map if the features change
   useEffect(() => {
     initializeMap(
@@ -893,7 +942,9 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       tooltipState,
       activeFeatureState,
       markerState,
-      bounds
+      bounds,
+      autoFocus,
+      nertApi
     );
   }, [features]);
 

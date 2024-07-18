@@ -41,7 +41,7 @@ const ThumbnailImageField: React.FC = () => {
     setImage('');
   };
 
-  const processImage = (image: string) => {
+  const processImage = (image: string, file: File) => {
     const img = new Image();
     img.src = image;
 
@@ -52,17 +52,26 @@ const ThumbnailImageField: React.FC = () => {
       const height = img.height;
       const aspectRatio = width / height;
 
-      const res = 256; // The largest we want the thumbnail to be is 256 x 256
+      const res = 512; // The largest we want the thumbnail to be is 256 x 256
       const newWidth = Math.sqrt(res * res * aspectRatio);
       const newHeight = Math.sqrt((res * res) / aspectRatio);
       canvas.width = newWidth;
       canvas.height = newHeight;
 
+      if (ctx && ctx.imageSmoothingEnabled) ctx.imageSmoothingEnabled = true;
+      if (ctx && ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = 'high';
+
       ctx?.drawImage(img, 0, 0, newWidth, newHeight);
 
+      // Add the image to the form
       const dataUrl = canvas.toDataURL();
-
       setImage(dataUrl);
+
+      // Convert back to a file object and store in formick
+      canvas.toBlob((blob) => {
+        const thumbnailFile = new File([blob as Blob], file.name, { type: file.type });
+        setFieldValue('project.project_image', thumbnailFile);
+      });
     };
   };
 
@@ -73,7 +82,7 @@ const ThumbnailImageField: React.FC = () => {
         return Promise.reject('Failed to read image');
       }
 
-      processImage(reader.result);
+      processImage(reader.result, file);
     };
     reader.readAsDataURL(file);
     return Promise.resolve();
@@ -81,7 +90,6 @@ const ThumbnailImageField: React.FC = () => {
 
   const uploadImage = (): IUploadHandler => {
     return async (file: File) => {
-      setFieldValue('project.project_image', file);
       handleLoadImage(file);
     };
   };
