@@ -9,7 +9,9 @@ const positionAbsolute = 'absolute' as const;
 
 const uploadImageStyles = {
   thumbnail: {
-    borderRadius: '25px'
+    borderRadius: '25px',
+    maxHeight: '256px',
+    height: 'auto'
   },
   thumbnailAction: {
     position: positionAbsolute,
@@ -34,7 +36,7 @@ const ThumbnailImageCard: React.FC<IThumbnailImageCard> = (props) => {
 
   return (
     <Card sx={uploadImageStyles.thumbnail}>
-      <CardMedia component="img" height="200" image={image} alt="Thumbnail Image" />
+      <CardMedia component="img" image={image} alt="Thumbnail Image" />
       <CardActions sx={uploadImageStyles.thumbnailAction}>
         {
           // Delete Image Button

@@ -150,7 +150,7 @@ const ViewPlanPage: React.FC = () => {
   return (
     <>
       <Container maxWidth="xl" data-testid="view_plan_page_component">
-        <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
+        <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
           <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
             <Box>
               <Typography variant="h1">
@@ -206,21 +206,27 @@ const ViewPlanPage: React.FC = () => {
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
               validProjectPermissions={[]}>
-              <Box p={2} sx={pageStyles.titleContainerActions}>
+              <Box
+                mr={1}
+                mt={1}
+                sx={pageStyles.titleContainerActions}
+                display="flex"
+                flexDirection={'row'}
+                alignItems="flex-start">
                 <Button
                   aria-label="manage plan team"
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
                   onClick={() => history(`/admin/plans/${urlParams['id']}/users`)}>
-                  Plan Team
+                  Team
                 </Button>
                 <Button
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiPencilOutline} size={1} />}
                   onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}>
-                  Edit Plan
+                  Edit
                 </Button>
                 <ProjectRoleGuard
                   validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}

@@ -184,14 +184,20 @@ const ViewProjectPage: React.FC = () => {
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
               validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
               validProjectPermissions={[]}>
-              <Box mr={1} mt={1} sx={pageStyles.titleContainerActions}>
+              <Box
+                mr={1}
+                mt={1}
+                sx={pageStyles.titleContainerActions}
+                display="flex"
+                flexDirection={'row'}
+                alignItems="flex-start">
                 <Button
                   aria-label="manage project team"
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
                   onClick={() => history(`/admin/projects/${urlParams['id']}/users`)}>
-                  Project Team
+                  Team
                 </Button>
                 <Button
                   aria-label="edit project"
@@ -199,7 +205,7 @@ const ViewProjectPage: React.FC = () => {
                   color="primary"
                   startIcon={<Icon path={mdiPencilOutline} size={1} />}
                   onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
-                  Edit Project
+                  Edit
                 </Button>
                 <Button
                   aria-label="print project"
