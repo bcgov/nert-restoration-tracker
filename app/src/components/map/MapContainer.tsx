@@ -630,7 +630,7 @@ const initializeMap = (
     });
 
     /* Add popup for the points */
-    map.on('click', 'markerPlans.points', (e: any) => {
+    map.on('click', 'markerPlans.points', async (e: any) => {
       const prop = e.features![0].properties;
       const id = prop.id;
       const name = prop.name;
@@ -638,6 +638,18 @@ const initializeMap = (
       const numberSites = prop.number_sites;
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
+
+      let thumbnail = '';
+      try {
+        const thumbnailResponse = await nertApi.project.getProjectAttachments(
+          id,
+          S3FileType.THUMBNAIL
+        );
+        thumbnail = thumbnailResponse.attachmentsList[0].url;
+      } catch (error) {
+        console.log('Error getting thumbnail');
+      }
+
 
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
@@ -647,6 +659,7 @@ const initializeMap = (
           number_sites={numberSites}
           size_ha={sizeHa}
           state_code={stateCode}
+          thumbnail={thumbnail}
         />
       );
 
