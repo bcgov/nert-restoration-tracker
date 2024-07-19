@@ -16,10 +16,6 @@ export enum ProjectStatusType {
   DRAFT = 'Draft'
 }
 
-//url for public reference of iucn conservation classification file.
-export const ICUN_CONSERVATION_CLASSIFICATION_REFERENCE_URL =
-  'https://nrs.objectstore.gov.bc.ca/gblhvt/restoration-tracker/public/CMP%20Conservation%20Actions%20Calssification%20v2.0.xlsx';
-
 // Project or Plan focus options
 export const focus = {
   HEALING_THE_LAND: 'Healing the Land',

@@ -154,20 +154,6 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         <Partnerships projectForViewData={projectForViewData} refresh={refresh} />
       </Box>
       <Divider />
-      <Box mt={2}>
-        <Chip
-          sx={pageStyles.secTitle}
-          label="IUCN Conservation Actions Classifications"
-          size="medium"
-          data-testid="IUCNTitle"
-        />
-        <IUCNClassification
-          projectForViewData={projectForViewData}
-          codes={codes}
-          refresh={refresh}
-        />
-      </Box>
-      <Divider />
     </Box>
   );
 };

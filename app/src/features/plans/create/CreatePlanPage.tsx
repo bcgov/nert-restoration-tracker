@@ -334,121 +334,119 @@ const CreatePlanPage: React.FC = () => {
         }}
       />
 
-      <Container maxWidth="xl">
-        <Box mb={1} ml={3}>
-          <Breadcrumbs>
-            <Link
-              color="primary"
-              onClick={handleCancel}
-              aria-current="page"
-              sx={pageStyles.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
-              <Typography variant="body2">Cancel and Exit</Typography>
-            </Link>
-          </Breadcrumbs>
-        </Box>
+      <Box mb={1} ml={3}>
+        <Breadcrumbs>
+          <Link
+            color="primary"
+            onClick={handleCancel}
+            aria-current="page"
+            sx={pageStyles.breadCrumbLink}>
+            <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
+            <Typography variant="body2">Cancel and Exit</Typography>
+          </Link>
+        </Breadcrumbs>
+      </Box>
 
-        <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem', marginX: 3 }}>
-          <Box mb={3} ml={1}>
-            <Box mb={0.5} mt={0.9}>
-              <Typography variant="h1">
-                <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> Create Restoration
-                Plan
-              </Typography>
-            </Box>
-            <Typography variant="body1" color="textSecondary">
-              Configure and submit a new restoration Plan
+      <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem', marginX: 3 }}>
+        <Box mb={3} ml={1}>
+          <Box mb={0.5} mt={0.9}>
+            <Typography variant="h1">
+              <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> Create Restoration
+              Plan
             </Typography>
           </Box>
+          <Typography variant="body1" color="textSecondary">
+            Configure and submit a new restoration Plan
+          </Typography>
+        </Box>
 
-          <Box component={Paper} mx={1}>
-            <Formik<ICreatePlanRequest>
-              innerRef={formikRef}
-              enableReinitialize={true}
-              initialValues={initialPlanFormData}
-              validationSchema={PlanFormYupSchema}
-              onSubmit={handlePlanCreation}>
-              <>
-                <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">General Information</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <PlanGeneralInformationForm />
-                      <Box mt={2}>
-                        <PlanFocusForm />
-                      </Box>
-                    </Grid>
+        <Box component={Paper} mx={1}>
+          <Formik<ICreatePlanRequest>
+            innerRef={formikRef}
+            enableReinitialize={true}
+            initialValues={initialPlanFormData}
+            validationSchema={PlanFormYupSchema}
+            onSubmit={handlePlanCreation}>
+            <>
+              <Box ml={1} my={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">General Information</Typography>
                   </Grid>
-                </Box>
 
-                <Divider />
-
-                <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Contacts</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <PlanContactForm />
-                    </Grid>
+                  <Grid item xs={12} md={9}>
+                    <PlanGeneralInformationForm />
+                    <Box mt={2}>
+                      <PlanFocusForm />
+                    </Box>
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider />
+              <Divider />
 
-                <Box ml={1} my={3}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Location</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <PlanLocationForm
-                        regions={codes.codes.regions.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
-                      />
-                    </Grid>
+              <Box ml={1} my={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Contacts</Typography>
                   </Grid>
-                </Box>
 
-                <Divider />
+                  <Grid item xs={12} md={8.57}>
+                    <PlanContactForm />
+                  </Grid>
+                </Grid>
+              </Box>
 
-                <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    onClick={() => setOpenDraftDialog(true)}
-                    data-testid="Plan-save-draft-button">
-                    Save Draft
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => setOpenYesNoDialog(true)}
-                    data-testid="Plan-create-button">
-                    <span>Create Plan</span>
-                  </Button>
-                  <Button
-                    variant="text"
-                    color="primary"
-                    size="large"
-                    data-testid="Plan-cancel-buttton"
-                    onClick={handleCancel}>
-                    Cancel
-                  </Button>
-                </Box>
-              </>
-            </Formik>
-          </Box>
-        </Card>
-      </Container>
+              <Divider />
+
+              <Box ml={1} my={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Location</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <PlanLocationForm
+                      regions={codes.codes.regions.map((item) => {
+                        return { value: item.id, label: item.name };
+                      })}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider />
+
+              <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  onClick={() => setOpenDraftDialog(true)}
+                  data-testid="Plan-save-draft-button">
+                  Save Draft
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => setOpenYesNoDialog(true)}
+                  data-testid="Plan-create-button">
+                  <span>Create Plan</span>
+                </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  size="large"
+                  data-testid="Plan-cancel-buttton"
+                  onClick={handleCancel}>
+                  Cancel
+                </Button>
+              </Box>
+            </>
+          </Formik>
+        </Box>
+      </Card>
     </>
   );
 };
