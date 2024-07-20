@@ -853,16 +853,11 @@ const checkLayerVisibility = (layers: any, features: any) => {
     // Changing a base layer operates a little differently
     if (layer === 'baselayer' && map.getStyle()) {
       const currentStyle = map.getStyle();
-      const rasterSource = currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource;
-      const currentBase = rasterSource.tiles[0];
-
-      if (!Object.hasOwn(baseLayerUrls, layers.baselayer[0])) return;
       const newBase: string = baseLayerUrls[layers.baselayer[0]];
 
-      if (currentBase !== newBase) {
-        currentStyle.sources['raster-tiles'] = [] as any;
-        map.setStyle(currentStyle);
-      }
+      (currentStyle.sources['raster-tiles'] as maplibre.RasterTileSource).tiles = [newBase];
+      map.setStyle(currentStyle);
+
     }
   });
 
