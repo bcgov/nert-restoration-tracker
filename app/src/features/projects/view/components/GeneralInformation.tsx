@@ -19,7 +19,7 @@ export interface IProjectGeneralInformationProps {
  */
 const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) => {
   const {
-    projectForViewData: { project, species, location }
+    projectForViewData: { project, location }
   } = props;
 
   const getRegionName = (regionNumber: number) => {
@@ -80,23 +80,6 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
           ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.actual_end_date)
           : '---'}
       </Typography>
-
-      <Typography variant="body2" component="dt" color="textSecondary">
-        Focal Species:
-      </Typography>
-      <Box component="dd">
-        {species.focal_species_names?.length ? (
-          species.focal_species_names.map((item: any, index: number) => {
-            return (
-              <Typography variant="body2" key={index} data-testid="focal_species_data">
-                {item}
-              </Typography>
-            );
-          })
-        ) : (
-          <Typography variant="body2">No Focal Species</Typography>
-        )}
-      </Box>
     </Box>
   );
 };

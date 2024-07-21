@@ -62,10 +62,9 @@ import ProjectRestorationPlanForm, {
   ProjectRestorationPlanFormInitialValues,
   ProjectRestorationPlanFormYupSchema
 } from 'features/projects/components/ProjectRestorationPlanForm';
-import ProjectWildlifeForm, {
-  ProjectIUCNFormYupSchema,
-  ProjectWildlifeFormInitialValues
-} from 'features/projects/components/ProjectWildlifeForm';
+import ProjectFocalSpeciesForm, {
+  ProjectFocalSpeciesFormInitialValues
+} from 'features/projects/components/ProjectFocalSpeciesForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
@@ -104,7 +103,7 @@ export const ProjectFormInitialValues = {
   ...ProjectObjectiveFormInitialValues,
   ...ProjectFocusFormInitialValues,
   ...ProjectContactInitialValues,
-  ...ProjectWildlifeFormInitialValues,
+  ...ProjectFocalSpeciesFormInitialValues,
   ...ProjectAuthorizationFormInitialValues,
   ...ProjectFundingFormInitialValues,
   ...ProjectPartnershipFormInitialValues,
@@ -118,7 +117,6 @@ export const ProjectFormYupSchema = yup
   .concat(ProjectObjectiveFormYupSchema)
   .concat(ProjectFocusFormYupSchema)
   .concat(ProjectContactYupSchema)
-  .concat(ProjectIUCNFormYupSchema)
   .concat(ProjectAuthorizationFormYupSchema)
   .concat(ProjectFundingFormYupSchema)
   .concat(ProjectPartnershipFormYupSchema)
@@ -465,9 +463,10 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectGeneralInformationForm />
-                      <Box component="fieldset" my={2} mx={0}>
+                      <Box component="fieldset" mt={2} mb={3} mx={0}>
                         <ProjectObjectivesForm />
                       </Box>
+                      <ProjectFocalSpeciesForm />
                       <ProjectFocusForm />
                     </Grid>
                   </Grid>
@@ -481,56 +480,8 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Contacts</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={8.34}>
                       <ProjectContactForm />
-                    </Grid>
-                  </Grid>
-                </Box>
-
-                <Divider />
-
-                <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">
-                        Actions Beneficial to Wildlife and/or Fish
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <Box component="fieldset" mx={0}>
-                        <ProjectWildlifeForm
-                          classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map(
-                              (item) => {
-                                return { value: item.id, label: item.name };
-                              }
-                            ) || []
-                          }
-                          subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn1_id: item.iucn1_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                          subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn2_id: item.iucn2_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                        />
-                      </Box>
                     </Grid>
                   </Grid>
                 </Box>
@@ -543,12 +494,11 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Funding and Partnerships</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={8.34}>
                       <Box component="fieldset" mx={0}>
                         <ProjectFundingForm />
                       </Box>
-
-                      <Box component="fieldset" mt={4} mx={0}>
+                      <Box component="fieldset" mt={4}>
                         <ProjectPartnershipsForm />
                       </Box>
                     </Grid>

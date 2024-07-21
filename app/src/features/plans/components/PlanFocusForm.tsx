@@ -36,7 +36,7 @@ const PlanFocusForm: React.FC = () => {
     <>
       <Typography component="legend">Healing the Land and/or People</Typography>
       <Grid container spacing={3} mb={2}>
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12} md={11.46}>
           <Grid container spacing={3} direction="column">
             <Grid item xs={12}>
               <MultiAutocompleteFieldVariableSize

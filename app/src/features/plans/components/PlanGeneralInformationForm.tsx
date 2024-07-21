@@ -40,8 +40,7 @@ export const PlanGeneralInformationFormInitialValues: IPlanGeneralInformationFor
     is_cultural_initiative: false,
     project_image: null,
     image_url: '',
-    image_key: '',
-    attachment_id: undefined
+    image_key: ''
   }
 };
 
@@ -73,7 +72,7 @@ const PlanGeneralInformationForm: React.FC = () => {
   return (
     <Grid container spacing={3}>
       <ThumbnailImageField />
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12} md={9}>
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>
             <CustomTextField

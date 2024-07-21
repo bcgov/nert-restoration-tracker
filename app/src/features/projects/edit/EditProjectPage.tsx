@@ -33,7 +33,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProjectObjectivesForm from '../components/ProjectObjectivesForm';
 import ProjectFocusForm from '../components/ProjectFocusForm';
-import ProjectWildlifeForm from '../components/ProjectWildlifeForm';
+import ProjectFocalSpeciesForm from '../components/ProjectFocalSpeciesForm';
 import { handleFocusFormValues } from 'utils/Utils';
 import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
 
@@ -204,213 +204,164 @@ const EditProjectPage: React.FC = () => {
 
   return (
     <>
-      <Container maxWidth="xl">
-        <Box mb={1} ml={3}>
-          <Breadcrumbs>
-            <Link
-              color="primary"
-              onClick={handleCancel}
-              aria-current="page"
-              sx={pageStyles.breadCrumbLink}>
-              <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
-              <Typography variant="body2">Cancel and Exit</Typography>
-            </Link>
-          </Breadcrumbs>
-        </Box>
+      <Box mb={1} ml={3}>
+        <Breadcrumbs>
+          <Link
+            color="primary"
+            onClick={handleCancel}
+            aria-current="page"
+            sx={pageStyles.breadCrumbLink}>
+            <ArrowBack color="primary" fontSize="small" sx={pageStyles.breadCrumbLinkIcon} />
+            <Typography variant="body2">Cancel and Exit</Typography>
+          </Link>
+        </Breadcrumbs>
+      </Box>
 
-        <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
-          <Box mb={3} ml={1}>
-            <Box mb={0.5} mt={0.9}>
-              <Typography variant="h1">
-                <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Plan" /> Edit Restoration
-                Project
-              </Typography>
-            </Box>
-            <Typography variant="body1" color="textSecondary">
-              Configure and submit updated restoration project
+      <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
+        <Box mb={3} ml={1}>
+          <Box mb={0.5} mt={0.9}>
+            <Typography variant="h1">
+              <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Plan" /> Edit Restoration
+              Project
             </Typography>
           </Box>
+          <Typography variant="body1" color="textSecondary">
+            Configure and submit updated restoration project
+          </Typography>
+        </Box>
 
-          <Box component={Paper} mx={1}>
-            <Formik<IEditProjectRequest>
-              innerRef={formikRef}
-              enableReinitialize={true}
-              initialValues={initialProjectFormData}
-              validationSchema={ProjectFormYupSchema}
-              validateOnBlur={false}
-              validateOnChange={false}
-              onSubmit={handleProjectEdits}>
-              <>
-                <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">General Information</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectGeneralInformationForm />
-                      <Box component="fieldset" my={2} mx={0}>
-                        <ProjectObjectivesForm />
-                      </Box>
-                      <ProjectFocusForm />
-                    </Grid>
+        <Box component={Paper} mx={1}>
+          <Formik<IEditProjectRequest>
+            innerRef={formikRef}
+            enableReinitialize={true}
+            initialValues={initialProjectFormData}
+            validationSchema={ProjectFormYupSchema}
+            validateOnBlur={false}
+            validateOnChange={false}
+            onSubmit={handleProjectEdits}>
+            <>
+              <Box ml={1} my={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">General Information</Typography>
                   </Grid>
-                </Box>
 
-                <Divider />
-
-                <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Contacts</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectContactForm />
-                    </Grid>
+                  <Grid item xs={12} md={9}>
+                    <ProjectGeneralInformationForm />
+                    <Box component="fieldset" mt={2} mb={3} mx={0}>
+                      <ProjectObjectivesForm />
+                    </Box>
+                    <ProjectFocalSpeciesForm />
+                    <ProjectFocusForm />
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider />
+              <Divider />
 
-                <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">
-                        Actions Beneficial to Wildlife and/or Fish
-                      </Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <Box component="fieldset" mx={0}>
-                        <ProjectWildlifeForm
-                          classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map(
-                              (item) => {
-                                return { value: item.id, label: item.name };
-                              }
-                            ) || []
-                          }
-                          subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn1_id: item.iucn1_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                          subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn2_id: item.iucn2_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                        />
-                      </Box>
-                    </Grid>
+              <Box ml={1} my={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Contacts</Typography>
                   </Grid>
-                </Box>
 
-                <Divider />
-
-                <Box ml={1} my={3}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Funding and Partnerships</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <Box component="fieldset" mx={0}>
-                        <ProjectFundingForm />
-                      </Box>
-
-                      <Box component="fieldset" mt={4} mx={0}>
-                        <ProjectPartnershipsForm />
-                      </Box>
-                    </Grid>
+                  <Grid item xs={12} md={8.34}>
+                    <ProjectContactForm />
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider />
+              <Divider />
 
-                <Box ml={1} my={3}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Authorizations</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectAuthorizationForm />
-                    </Grid>
+              <Box ml={1} my={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Funding and Partnerships</Typography>
                   </Grid>
-                </Box>
 
-                <Divider />
+                  <Grid item xs={12} md={8.34}>
+                    <Box component="fieldset" mx={0}>
+                      <ProjectFundingForm />
+                    </Box>
 
-                <Box ml={1} my={3}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Location</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectLocationForm
-                        regions={codes.codes.regions.map((item) => {
-                          return { value: item.id, label: item.name };
-                        })}
-                      />
-                    </Grid>
+                    <Box component="fieldset" mt={4} mx={0}>
+                      <ProjectPartnershipsForm />
+                    </Box>
                   </Grid>
-                </Box>
+                </Grid>
+              </Box>
 
-                <Divider />
+              <Divider />
 
-                <Box ml={1} mt={3}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                      <Typography variant="h2">Restoration Plan</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <ProjectRestorationPlanForm />
-                    </Grid>
+              <Box ml={1} my={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Authorizations</Typography>
                   </Grid>
-                </Box>
 
-                <Divider />
+                  <Grid item xs={12} md={9}>
+                    <ProjectAuthorizationForm />
+                  </Grid>
+                </Grid>
+              </Box>
 
-                <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    type="submit"
-                    onClick={() => formikRef.current?.submitForm()}
-                    data-testid="project-save-button">
-                    Save Project
-                  </Button>
-                  <Button
-                    variant="text"
-                    color="primary"
-                    size="large"
-                    data-testid="project-cancel-buttton"
-                    onClick={handleCancel}>
-                    Cancel
-                  </Button>
-                </Box>
-              </>
-            </Formik>
-          </Box>
-        </Card>
-      </Container>
+              <Divider />
+
+              <Box ml={1} my={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={2.5}>
+                    <Typography variant="h2">Location</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <ProjectLocationForm
+                      regions={codes.codes.regions.map((item) => {
+                        return { value: item.id, label: item.name };
+                      })}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider />
+
+              <Box ml={1} mt={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="h2">Restoration Plan</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} md={9}>
+                    <ProjectRestorationPlanForm />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider />
+
+              <Box my={2} sx={pageStyles.formButtons} display="flex" justifyContent="flex-end">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  type="submit"
+                  onClick={() => formikRef.current?.submitForm()}
+                  data-testid="project-save-button">
+                  Save Project
+                </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  size="large"
+                  data-testid="project-cancel-buttton"
+                  onClick={handleCancel}>
+                  Cancel
+                </Button>
+              </Box>
+            </>
+          </Formik>
+        </Box>
+      </Card>
     </>
   );
 };

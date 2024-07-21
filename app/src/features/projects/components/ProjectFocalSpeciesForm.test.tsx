@@ -8,7 +8,7 @@ import ProjectIUCNForm, {
   IProjectWildlifeForm,
   ProjectIUCNFormYupSchema,
   ProjectWildlifeFormInitialValues
-} from './ProjectWildlifeForm';
+} from './ProjectFocalSpeciesForm';
 
 const classifications: IMultiAutocompleteFieldOption[] = [
   {
