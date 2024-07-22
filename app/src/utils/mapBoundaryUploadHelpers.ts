@@ -24,7 +24,7 @@ export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
     const p = feature.properties || {};
 
     p.siteName = p.siteName || p.Site_Name || '';
-    p.areaHa = p.areaHa || p.Area_Ha || Math.round(area / 100) / 100;
+    p.areaHa = Math.round(area / 100) / 100;
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
     feature.properties = p;

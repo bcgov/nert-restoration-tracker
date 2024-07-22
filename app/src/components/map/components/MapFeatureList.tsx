@@ -109,9 +109,9 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         onMouseEnter={() => mouseEnterListItem(item.index)}
         onMouseLeave={() => mouseLeaveListItem()}>
         <Box className="feature-name">
-          {feature.properties?.siteName || `Area ${item.index + 1}`}
+          {feature.properties?.siteName || ``}
         </Box>
-        <Box className="feature-size">{feature.properties?.areaHa || 0} Ha</Box>
+        <Box className="feature-size">{feature.properties?.areaHa || 0} Hectares</Box>
         <FormGroup>
           <FormControlLabel
             control={
