@@ -78,7 +78,6 @@ export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feat
  * 2. Check if the projection is correct
  * 3. Check that there is at least one polygon or multipolygon feature
  * 4. Inforse a reasonable limit on the number of features
- * 5. Check that the minimal required properties are present
  * @param file File object to upload
  * @param name Name of the formik field that the parsed geometry will be saved to
  * @param formikProps The formik props
@@ -124,14 +123,6 @@ export const handleGeoJSONUpload = async <T>(
     return;
   }
 
-  // 5. Check that the minimal required properties are present
-  if (!fileAsString?.match(/"site_?name"/gi) || !fileAsString?.match(/"area_?ha"/gi)) {
-    setFieldError(
-      name,
-      'Please ensure that the GeoJSON file contains both siteName and areaHa properties.'
-    );
-    return;
-  }
 
   try {
     const geojson = JSON.parse(fileAsString);
