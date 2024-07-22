@@ -81,11 +81,11 @@ const ProjectPartnershipsForm: React.FC = () => {
                 return (
                   /* partnerships List */
                   <Grid container spacing={3} key={index}>
-                    <Grid item xs={12} md={10.5}>
+                    <Grid item xs={12} md={12}>
                       <List>
                         <ListItem sx={pageStyles.customListItem}>
                           <Grid container spacing={3}>
-                            <Grid item xs={12} md={10.5}>
+                            <Grid item xs={12} md={12}>
                               <CustomTextField
                                 name={`partnership.partnerships.[${index}].partnership`}
                                 label="Partnership"

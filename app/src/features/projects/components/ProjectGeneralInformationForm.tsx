@@ -87,7 +87,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
   return (
     <Grid container spacing={3}>
       <ThumbnailImageField />
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12} md={9}>
         <Grid container spacing={3} direction="column">
           <Grid item xs={12}>
             <CustomTextField

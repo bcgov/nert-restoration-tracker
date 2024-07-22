@@ -79,11 +79,11 @@ const ProjectObjectivesForm: React.FC = () => {
               return (
                 /* Objectives List */
                 <Grid container spacing={3} key={index}>
-                  <Grid item xs={12} md={10.5}>
+                  <Grid item xs={12} md={12}>
                     <List>
                       <ListItem sx={pageStyles.customListItem}>
                         <Grid container spacing={3}>
-                          <Grid item xs={12} md={10.5}>
+                          <Grid item xs={12} md={11.88}>
                             <CustomTextField
                               name={`objective.objectives.[${index}].objective`}
                               label="Objective"

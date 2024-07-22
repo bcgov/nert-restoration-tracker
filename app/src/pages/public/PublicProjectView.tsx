@@ -21,6 +21,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PublicProjectAttachments from './components/PublicProjectAttachments';
 import { S3FileType } from 'constants/attachments';
 import ProjectDetails from 'features/projects/view/components//ProjectDetails';
+import ProjectFocalSpecies from 'features/projects/view/components/ProjectFocalSpecies';
 
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
@@ -142,6 +143,7 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                       />
 
                       <ProjectObjectives projectViewData={project} />
+                      <ProjectFocalSpecies projectViewData={project} />
                     </Box>
                   </Paper>
                 </Box>

@@ -28,6 +28,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { S3FileType } from 'constants/attachments';
 import ProjectDetails from './components/ProjectDetails';
 import { ProjectRoleGuard } from 'components/security/Guards';
+import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 
 const pageStyles = {
   conservationAreChip: {
@@ -130,138 +131,136 @@ const ViewProjectPage: React.FC = () => {
 
   return (
     <>
-      <Container maxWidth="xl" data-testid="view_project_page_component">
-        <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
-          <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
-            <Box>
-              <Typography variant="h1">
-                <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />{' '}
-                {project.project.project_name}
+      <Card
+        sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}
+        data-testid="view_project_page_component">
+        <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
+          <Box>
+            <Typography variant="h1">
+              <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />{' '}
+              {project.project.project_name}
+            </Typography>
+            <Box mt={0.3} display="flex" flexDirection={'row'} alignItems="center">
+              <Typography variant="subtitle2" component="span" color="textSecondary">
+                Project Status:
               </Typography>
-              <Box mt={0.3} display="flex" flexDirection={'row'} alignItems="center">
-                <Typography variant="subtitle2" component="span" color="textSecondary">
-                  Project Status:
-                </Typography>
-                <Box ml={1}>
-                  <Chip
-                    size="small"
-                    sx={getStatusStyle(project.project.state_code)}
-                    label={getStateLabelFromCode(project.project.state_code)}
-                  />
-                  <InfoDialog isProject={true} infoContent={'workflow'} />
-                </Box>
-              </Box>
-              <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
-                <Typography variant="subtitle2" component="span" color="textSecondary">
-                  Project Focus:
-                </Typography>
-                <Box ml={1}>
-                  {project.project.is_healing_land && (
-                    <Chip size="small" color={'default'} label={focus.HEALING_THE_LAND} />
-                  )}
-                  {project.project.is_healing_people && (
-                    <Chip size="small" color={'default'} label={focus.HEALING_THE_PEOPLE} />
-                  )}
-                  {project.project.is_land_initiative && (
-                    <Chip
-                      size="small"
-                      color={'default'}
-                      label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
-                    />
-                  )}
-                  {project.project.is_cultural_initiative && (
-                    <Chip
-                      size="small"
-                      color={'default'}
-                      label={focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE}
-                    />
-                  )}
-                </Box>
+              <Box ml={1}>
+                <Chip
+                  size="small"
+                  sx={getStatusStyle(project.project.state_code)}
+                  label={getStateLabelFromCode(project.project.state_code)}
+                />
+                <InfoDialog isProject={true} infoContent={'workflow'} />
               </Box>
             </Box>
-
-            <ProjectRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              validProjectPermissions={[]}>
-              <Box
-                mr={1}
-                mt={1}
-                sx={pageStyles.titleContainerActions}
-                display="flex"
-                flexDirection={'row'}
-                alignItems="flex-start">
-                <Button
-                  aria-label="manage project team"
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                  onClick={() => history(`/admin/projects/${urlParams['id']}/users`)}>
-                  Team
-                </Button>
-                <Button
-                  aria-label="edit project"
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                  onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
-                  Edit
-                </Button>
-                <Button
-                  aria-label="print project"
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                  // onClick={showPrintProjectDialog}
-                >
-                  Print
-                </Button>
-              </Box>
-            </ProjectRoleGuard>
-          </Box>
-
-          <Box mx={1} mb={1}>
-            <Grid container spacing={1}>
-              <Grid item md={8}>
-                <Box mb={1}>
-                  <Paper elevation={2}>
-                    <Box p={1}>
-                      <ProjectDetails
-                        project={project}
-                        thumbnailImageUrl={thumbnailImage[0]?.url}
-                      />
-
-                      <ProjectObjectives projectViewData={project} />
-                    </Box>
-                  </Paper>
-                </Box>
-
-                <Box mb={1.2}>
-                  <Paper elevation={2}>
-                    <Box height="500px" position="relative">
-                      <LocationBoundary locationData={project.location} />
-                    </Box>
-                  </Paper>
-                </Box>
-
-                {/* Documents */}
-                <Paper elevation={2}>
-                  <ProjectAttachments
-                    attachmentsList={attachmentsList}
-                    getAttachments={getAttachments}
+            <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
+              <Typography variant="subtitle2" component="span" color="textSecondary">
+                Project Focus:
+              </Typography>
+              <Box ml={1}>
+                {project.project.is_healing_land && (
+                  <Chip size="small" color={'default'} label={focus.HEALING_THE_LAND} />
+                )}
+                {project.project.is_healing_people && (
+                  <Chip size="small" color={'default'} label={focus.HEALING_THE_PEOPLE} />
+                )}
+                {project.project.is_land_initiative && (
+                  <Chip
+                    size="small"
+                    color={'default'}
+                    label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
                   />
-                </Paper>
-              </Grid>
-
-              <Grid item md={4}>
-                <Paper elevation={2}>
-                  <ProjectDetailsPage projectForViewData={project} codes={codes.codes} />
-                </Paper>
-              </Grid>
-            </Grid>
+                )}
+                {project.project.is_cultural_initiative && (
+                  <Chip
+                    size="small"
+                    color={'default'}
+                    label={focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE}
+                  />
+                )}
+              </Box>
+            </Box>
           </Box>
-        </Card>
-      </Container>
+
+          <ProjectRoleGuard
+            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+            validProjectPermissions={[]}>
+            <Box
+              mr={1}
+              mt={1}
+              sx={pageStyles.titleContainerActions}
+              display="flex"
+              flexDirection={'row'}
+              alignItems="flex-start">
+              <Button
+                aria-label="manage project team"
+                variant="outlined"
+                color="primary"
+                startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
+                onClick={() => history(`/admin/projects/${urlParams['id']}/users`)}>
+                Team
+              </Button>
+              <Button
+                aria-label="edit project"
+                variant="outlined"
+                color="primary"
+                startIcon={<Icon path={mdiPencilOutline} size={1} />}
+                onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
+                Edit
+              </Button>
+              <Button
+                aria-label="print project"
+                variant="outlined"
+                color="primary"
+                startIcon={<Icon path={mdiFilePdfBox} size={1} />}
+                // onClick={showPrintProjectDialog}
+              >
+                Print
+              </Button>
+            </Box>
+          </ProjectRoleGuard>
+        </Box>
+
+        <Box mx={1} mb={1}>
+          <Grid container spacing={1}>
+            <Grid item md={8}>
+              <Box mb={1}>
+                <Paper elevation={2}>
+                  <Box p={1}>
+                    <ProjectDetails project={project} thumbnailImageUrl={thumbnailImage[0]?.url} />
+
+                    <ProjectObjectives projectViewData={project} />
+                    <ProjectFocalSpecies projectViewData={project} />
+                  </Box>
+                </Paper>
+              </Box>
+
+              <Box mb={1.2}>
+                <Paper elevation={2}>
+                  <Box height="500px" position="relative">
+                    <LocationBoundary locationData={project.location} />
+                  </Box>
+                </Paper>
+              </Box>
+
+              {/* Documents */}
+              <Paper elevation={2}>
+                <ProjectAttachments
+                  attachmentsList={attachmentsList}
+                  getAttachments={getAttachments}
+                />
+              </Paper>
+            </Grid>
+
+            <Grid item md={4}>
+              <Paper elevation={2}>
+                <ProjectDetailsPage projectForViewData={project} codes={codes.codes} />
+              </Paper>
+            </Grid>
+          </Grid>
+        </Box>
+      </Card>
     </>
   );
 };

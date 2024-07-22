@@ -8,7 +8,7 @@ import { IProjectLocationForm } from 'features/projects/components/ProjectLocati
 import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
 import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';
-import { IProjectWildlifeForm } from 'features/projects/components/ProjectWildlifeForm';
+import { IProjectWildlifeForm } from 'features/projects/components/ProjectFocalSpeciesForm';
 import { Feature } from 'geojson';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
