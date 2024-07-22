@@ -3,7 +3,6 @@ import { Feature } from 'geojson';
 export type ProjectObject = {
   project: GetProjectData;
   species: GetSpeciesData;
-  iucn: GetIUCNClassificationData;
   contact: GetContactData;
   authorization: GetAuthorizationData;
   partnership: GetPartnershipsData;
@@ -166,29 +165,6 @@ export class GetLocationData {
       (locationData && locationData?.length && locationData[0]?.number_sites) || ('' as unknown as number);
     this.size_ha = (locationData && locationData?.length && locationData[0]?.size_ha) || ('' as unknown as number);
     this.conservationAreas = (conservationAreaData && conservationAreaData?.length && conservationAreaData) || [];
-  }
-}
-
-interface IGetIUCN {
-  classification: string;
-  subClassification1: string;
-  subClassification2: string;
-}
-
-export class GetIUCNClassificationData {
-  classificationDetails: IGetIUCN[];
-
-  constructor(iucnClassificationData?: any[]) {
-    this.classificationDetails =
-      (iucnClassificationData &&
-        iucnClassificationData.map((item: any) => {
-          return {
-            classification: item.classification,
-            subClassification1: item.subclassification1,
-            subClassification2: item.subclassification2
-          };
-        })) ||
-      [];
   }
 }
 

@@ -12,7 +12,6 @@ export const projectCreatePostRequestObject = {
     'focus',
     'contact',
     'species',
-    'iucn',
     'authorization',
     'funding',
     'partnership',
@@ -128,36 +127,6 @@ export const projectCreatePostRequestObject = {
           type: 'array',
           items: {
             type: 'number'
-          }
-        }
-      }
-    },
-    iucn: {
-      title: 'Project IUCN classifications',
-      type: 'object',
-      required: ['classificationDetails'],
-      additionalProperties: false,
-      properties: {
-        classificationDetails: {
-          type: 'array',
-          items: {
-            title: 'IUCN classification',
-            type: 'object',
-            required: ['classification', 'subClassification1', 'subClassification2'],
-            properties: {
-              classification: {
-                type: 'number',
-                nullable: true
-              },
-              subClassification1: {
-                type: 'number',
-                nullable: true
-              },
-              subClassification2: {
-                type: 'number',
-                nullable: true
-              }
-            }
           }
         }
       }
@@ -361,29 +330,6 @@ const projectUpdateProperties = {
   project: { type: 'object', properties: {} },
   objectives: { type: 'object', properties: {} },
   location: { type: 'object', properties: {} },
-  iucn: {
-    type: 'object',
-    properties: {
-      classificationDetails: {
-        type: 'array',
-        items: {
-          title: 'IUCN classification',
-          type: 'object',
-          properties: {
-            classification: {
-              type: 'number'
-            },
-            subClassification1: {
-              type: 'number'
-            },
-            subClassification2: {
-              type: 'number'
-            }
-          }
-        }
-      }
-    }
-  },
   funding: { type: 'object', properties: {} },
   partnership: { type: 'object', properties: {} },
   objective: { type: 'object', properties: {} }

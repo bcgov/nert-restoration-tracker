@@ -45,7 +45,6 @@ POST.apiDoc = {
             'focus',
             'contact',
             'species',
-            'iucn',
             'authorization',
             'funding',
             'partnership',
@@ -161,36 +160,6 @@ POST.apiDoc = {
                   type: 'array',
                   items: {
                     type: 'number'
-                  }
-                }
-              }
-            },
-            iucn: {
-              title: 'Project IUCN classifications',
-              type: 'object',
-              required: ['classificationDetails'],
-              additionalProperties: false,
-              properties: {
-                classificationDetails: {
-                  type: 'array',
-                  items: {
-                    title: 'IUCN classification',
-                    type: 'object',
-                    required: ['classification', 'subClassification1', 'subClassification2'],
-                    properties: {
-                      classification: {
-                        type: 'number',
-                        nullable: true
-                      },
-                      subClassification1: {
-                        type: 'number',
-                        nullable: true
-                      },
-                      subClassification2: {
-                        type: 'number',
-                        nullable: true
-                      }
-                    }
                   }
                 }
               }

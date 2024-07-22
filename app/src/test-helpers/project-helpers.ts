@@ -54,25 +54,16 @@ export const getProjectForViewResponse: IGetProjectForViewResponse = {
       }
     ]
   },
-  iucn: {
-    classificationDetails: [
-      {
-        classification: 1,
-        subClassification1: 1,
-        subClassification2: 1
-      }
-    ]
-  },
   funding: {
     fundingSources: [
       {
-        agency_id: 1,
-        agency_project_id: 'ABC123',
+        organization_name: 'name',
         investment_action_category: 1,
-        funding_amount: 333,
-        start_date: '2000-04-14',
-        end_date: '2021-04-13',
-        description: '',
+        description: 'description',
+        funding_project_id: 'Agency123',
+        start_date: '01/01/2020',
+        end_date: '01/01/2021',
+        funding_amount: 123,
         is_public: 'true'
       }
     ]

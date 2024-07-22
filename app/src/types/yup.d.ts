@@ -169,17 +169,6 @@ declare module 'yup' {
     ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
 
     /**
-     * Determine if the array of classification details has duplicates
-     *
-     * @param {string} message='IUCN Classifications must be unique' - error message if this check fails
-     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
-     * @memberof ArraySchema
-     */
-    isUniqueIUCNClassificationDetail(
-      message: string
-    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
-
-    /**
      * Determine if the object of focal and ancillary species has duplicates
      *
      * @param {string} message='Focal and Ancillary species must be unique' - error message if this check fails

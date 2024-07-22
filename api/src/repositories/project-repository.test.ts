@@ -8,7 +8,6 @@ import {
   GetAuthorizationData,
   GetContactData,
   GetFundingData,
-  GetIUCNClassificationData,
   GetPartnershipsData,
   GetProjectData
 } from '../models/project-view';
@@ -105,43 +104,6 @@ describe('ProjectRepository', () => {
 
       try {
         await projectRepository.getProjectSpecies(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
-  describe('getIUCNClassificationData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-    it('should return array in rows', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        query: async () => {
-          return mockQueryResponse;
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.getIUCNClassificationData(1);
-
-      expect(response).to.deep.equal(new GetIUCNClassificationData([]));
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        query: async () => {
-          throw new Error('error');
-        }
-      });
-
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.getIUCNClassificationData(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1049,61 +1011,6 @@ describe('ProjectRepository', () => {
     });
   });
 
-  describe('insertClassificationDetail', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should insert classification detail and return id on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [{ classification_detail_id: 1 }] } as any as Promise<
-        QueryResult<any>
-      >;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      const response = await projectRepository.insertClassificationDetail(1, 1);
-
-      expect(response).to.eql({ classification_detail_id: 1 });
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.insertClassificationDetail(1, 1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to insert classification detail');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-
-      try {
-        await projectRepository.insertClassificationDetail(1, 1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
   describe('insertSpecies', () => {
     afterEach(() => {
       sinon.restore();
@@ -1673,54 +1580,6 @@ describe('ProjectRepository', () => {
 
       try {
         await projectRepository.deleteProjectObjectives(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('error');
-      }
-    });
-  });
-
-  describe('deleteProjectIUCN', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should delete project IUCN and return true on success', async () => {
-      const mockQueryResponse = { rowCount: 1, rows: [true] } as any as Promise<QueryResult<any>>;
-
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-      const response = await projectRepository.deleteProjectIUCN(1);
-      expect(response).to.eql(undefined);
-    });
-
-    it('throws error if no data is found', async () => {
-      const mockQueryResponse = null as any as Promise<QueryResult<any>>;
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return mockQueryResponse;
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-      try {
-        await projectRepository.deleteProjectIUCN(1);
-      } catch (error: any) {
-        expect(error.message).to.equal('Failed to delete Project IUCN');
-      }
-    });
-
-    it('catches errors and throws', async () => {
-      const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          throw new Error('error');
-        }
-      });
-      const projectRepository = new ProjectRepository(mockDBConnection);
-      try {
-        await projectRepository.deleteProjectIUCN(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
