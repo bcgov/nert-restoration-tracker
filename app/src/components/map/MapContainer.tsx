@@ -924,7 +924,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const nertApi = useNertApi();
 
-  // Update the map if the features change
+  // Create the map on initial load 
   useEffect(() => {
     initializeMap(
       mapId,
@@ -940,7 +940,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       autoFocus,
       nertApi
     );
-  }, [features]);
+  }, []);
 
   // Listen to layer changes
   useEffect(() => {

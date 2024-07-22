@@ -2,7 +2,8 @@ import { Feature } from 'geojson';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import React, { useEffect } from 'react';
+import CustomTextField from 'components/fields/CustomTextField';
+import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
@@ -20,6 +21,7 @@ export interface MapFeatureListProps {
 }
 
 const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
+
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
@@ -105,13 +107,18 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         className={
           activeFeatureState[0] === feature.properties?.id ? 'feature-item active' : 'feature-item'
         }
-        key={item.index}
         onMouseEnter={() => mouseEnterListItem(item.index)}
         onMouseLeave={() => mouseLeaveListItem()}>
         <Box className="feature-name">
-          {feature.properties?.siteName || ``}
+          <CustomTextField
+            name={`location.geometry[${item.index}].properties.siteName`}
+            label=''
+            other={{ size: 'small', variant: 'standard',value: feature.properties?.siteName || '' }}
+          />
         </Box>
-        <Box className="feature-size">{feature.properties?.areaHa || 0} Hectares</Box>
+        <Box className="feature-size">
+          {feature.properties?.areaHa.toLocaleString({ useGrouping: true }) || 0} Hectares
+        </Box>
         <FormGroup>
           <FormControlLabel
             control={
