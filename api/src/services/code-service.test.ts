@@ -18,15 +18,6 @@ describe('CodeService', () => {
       const mockDBConnection = getMockDBConnection();
 
       sinon.stub(CodeRepository.prototype, 'getFirstNations').resolves([{ id: 1, name: 'codeName' }]);
-      sinon
-        .stub(CodeRepository.prototype, 'getIUCNConservationActionLevel1Classification')
-        .resolves([{ id: 1, name: 'codeName' }]);
-      sinon
-        .stub(CodeRepository.prototype, 'getIUCNConservationActionLevel2Subclassification')
-        .resolves([{ id: 1, name: 'codeName' }]);
-      sinon
-        .stub(CodeRepository.prototype, 'getIUCNConservationActionLevel3Subclassification')
-        .resolves([{ id: 1, name: 'codeName' }]);
       sinon.stub(CodeRepository.prototype, 'getSystemRoles').resolves([{ id: 1, name: 'codeName' }]);
       sinon.stub(CodeRepository.prototype, 'getProjectRoles').resolves([{ id: 1, name: 'codeName' }]);
       sinon
@@ -39,9 +30,6 @@ describe('CodeService', () => {
 
       expect(response).to.have.all.keys(
         'first_nations',
-        'iucn_conservation_action_level_1_classification',
-        'iucn_conservation_action_level_2_subclassification',
-        'iucn_conservation_action_level_3_subclassification',
         'system_roles',
         'project_roles',
         'administrative_activity_status_type',
@@ -51,9 +39,6 @@ describe('CodeService', () => {
       const queryReturn = [{ id: 1, name: 'codeName' }];
 
       expect(response.first_nations).to.eql(queryReturn);
-      expect(response.iucn_conservation_action_level_1_classification).to.eql(queryReturn);
-      expect(response.iucn_conservation_action_level_2_subclassification).to.eql(queryReturn);
-      expect(response.iucn_conservation_action_level_3_subclassification).to.eql(queryReturn);
       expect(response.system_roles).to.eql(queryReturn);
       expect(response.project_roles).to.eql(queryReturn);
       expect(response.administrative_activity_status_type).to.eql(queryReturn);
@@ -66,9 +51,6 @@ describe('CodeService', () => {
       const mockDBConnection = getMockDBConnection({ query: mockQuery });
 
       sinon.stub(CodeRepository.prototype, 'getFirstNations').resolves([]);
-      sinon.stub(CodeRepository.prototype, 'getIUCNConservationActionLevel1Classification').resolves([]);
-      sinon.stub(CodeRepository.prototype, 'getIUCNConservationActionLevel2Subclassification').resolves([]);
-      sinon.stub(CodeRepository.prototype, 'getIUCNConservationActionLevel3Subclassification').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getSystemRoles').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getProjectRoles').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getAdministrativeActivityStatusType').resolves([]);
@@ -79,18 +61,12 @@ describe('CodeService', () => {
 
       expect(response).to.have.all.keys(
         'first_nations',
-        'iucn_conservation_action_level_1_classification',
-        'iucn_conservation_action_level_2_subclassification',
-        'iucn_conservation_action_level_3_subclassification',
         'system_roles',
         'project_roles',
         'administrative_activity_status_type',
         'regions'
       );
       expect(response.first_nations).to.eql([]);
-      expect(response.iucn_conservation_action_level_1_classification).to.eql([]);
-      expect(response.iucn_conservation_action_level_2_subclassification).to.eql([]);
-      expect(response.iucn_conservation_action_level_3_subclassification).to.eql([]);
       expect(response.system_roles).to.eql([]);
       expect(response.project_roles).to.eql([]);
       expect(response.administrative_activity_status_type).to.eql([]);

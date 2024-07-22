@@ -4,7 +4,6 @@ import {
   PostContactData,
   PostFundingData,
   PostFundingSource,
-  PostIUCNData,
   PostLocationData,
   PostObjectivesData,
   PostPartnershipsData,
@@ -30,10 +29,6 @@ describe('PostProjectObject', () => {
 
     it('sets location', function () {
       expect(projectPostObject.location).to.equal(null);
-    });
-
-    it('sets iucn', function () {
-      expect(projectPostObject.iucn).to.equal(null);
     });
 
     it('sets funding', function () {
@@ -115,15 +110,6 @@ describe('PostProjectObject', () => {
             funding_amount: 12,
             start_date: '2020/04/03',
             end_date: '2020/05/05'
-          }
-        ]
-      },
-      iucn: {
-        classificationDetails: [
-          {
-            classification: 1,
-            subClassification1: 2,
-            subClassification2: 3
           }
         ]
       },
@@ -388,42 +374,6 @@ describe('PostFundingSource', () => {
 
     it('sets end_date', () => {
       expect(projectFundingData.end_date).to.equal(obj.end_date);
-    });
-  });
-});
-
-describe('PostIUCNData', () => {
-  describe('No values provided', () => {
-    let projectIUCNData: PostIUCNData;
-
-    before(() => {
-      projectIUCNData = new PostIUCNData(null);
-    });
-
-    it('sets classification details', function () {
-      expect(projectIUCNData.classificationDetails).to.eql([]);
-    });
-  });
-
-  describe('All values provided', () => {
-    let projectIUCNData: PostIUCNData;
-
-    const obj = {
-      classificationDetails: [
-        {
-          classification: 1,
-          subClassification1: 2,
-          subClassification2: 3
-        }
-      ]
-    };
-
-    before(() => {
-      projectIUCNData = new PostIUCNData(obj);
-    });
-
-    it('sets classification details', function () {
-      expect(projectIUCNData.classificationDetails).to.eql(obj.classificationDetails);
     });
   });
 });

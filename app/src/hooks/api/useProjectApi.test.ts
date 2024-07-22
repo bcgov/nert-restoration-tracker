@@ -6,7 +6,6 @@ import {
   IGetProjectForViewResponseContact,
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseFundingData,
-  IGetProjectForViewResponseIUCN,
   IGetProjectForViewResponseLocation,
   IGetProjectForViewResponseObjectives,
   IGetProjectForViewResponsePartnerships,
@@ -206,7 +205,6 @@ describe('useProjectApi', () => {
       permit: {} as IGetProjectForViewResponsePermit,
       location: {} as IGetProjectForViewResponseLocation,
       contact: {} as IGetProjectForViewResponseContact,
-      iucn: {} as IGetProjectForViewResponseIUCN,
       funding: {} as IGetProjectForViewResponseFundingData,
       partnerships: {} as IGetProjectForViewResponsePartnerships,
       objectives: {} as IGetProjectForViewResponseObjectives

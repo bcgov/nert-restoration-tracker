@@ -5,7 +5,6 @@ import {
   IPostAuthorization,
   IPostConservationArea,
   IPostContact,
-  IPostIUCN,
   IPostObjective,
   IPostPartnership,
   PostAuthorizationData,
@@ -13,7 +12,6 @@ import {
   PostFocusData,
   PostFundingData,
   PostFundingSource,
-  PostIUCNData,
   PostLocationData,
   PostObjectivesData,
   PostPartnershipsData,
@@ -27,7 +25,6 @@ import {
   GetAuthorizationData,
   GetContactData,
   GetFundingData,
-  GetIUCNClassificationData,
   GetLocationData,
   GetObjectivesData,
   GetPartnershipsData,
@@ -165,7 +162,6 @@ export class ProjectService extends DBService {
     const [
       projectData,
       speciesData,
-      iucnData,
       contactData,
       authorizationData,
       partnershipsData,
@@ -175,7 +171,6 @@ export class ProjectService extends DBService {
     ] = await Promise.all([
       this.getProjectData(projectId),
       this.getSpeciesData(projectId),
-      this.getIUCNClassificationData(projectId),
       this.getContactData(projectId, isPublic),
       this.getAuthorizationData(projectId, isPublic),
       this.getPartnershipsData(projectId),
@@ -187,7 +182,6 @@ export class ProjectService extends DBService {
     return {
       project: projectData,
       species: speciesData,
-      iucn: iucnData,
       contact: contactData,
       authorization: authorizationData,
       partnership: partnershipsData,
@@ -208,7 +202,6 @@ export class ProjectService extends DBService {
     const [
       projectData,
       speciesData,
-      iucnData,
       contactData,
       partnershipsData,
       objectivesData,
@@ -219,7 +212,6 @@ export class ProjectService extends DBService {
     ] = await Promise.all([
       this.getProjectData(projectId),
       this.getSpeciesData(projectId),
-      this.getIUCNClassificationData(projectId),
       this.getContactData(projectId, false),
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
@@ -233,7 +225,6 @@ export class ProjectService extends DBService {
       return {
         project: projectData,
         species: speciesData,
-        iucn: iucnData,
         contact: contactData,
         partnership: partnershipsData,
         objective: objectivesData,
@@ -252,7 +243,6 @@ export class ProjectService extends DBService {
     return {
       project: newProjectData,
       species: speciesData,
-      iucn: iucnData,
       contact: contactData,
       partnership: partnershipsData,
       objective: objectivesData,
@@ -288,17 +278,6 @@ export class ProjectService extends DBService {
     const species = await taxonomyService.getSpeciesFromIds(response);
 
     return new GetSpeciesData(species);
-  }
-
-  /**
-   * Get IUCN classification data by project id.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<GetIUCNClassificationData>}
-   * @memberof ProjectService
-   */
-  async getIUCNClassificationData(projectId: number): Promise<GetIUCNClassificationData> {
-    return this.projectRepository.getIUCNClassificationData(projectId);
   }
 
   /**
@@ -429,21 +408,6 @@ export class ProjectService extends DBService {
         postProjectData.funding.funding_sources.map((fundingSource: PostFundingSource) =>
           this.insertFundingSource(fundingSource, projectId)
         )
-      )
-    );
-
-    //Handle classifications
-    promises.push(
-      Promise.all(
-        postProjectData.iucn.classificationDetails?.map((iucnClassification: IPostIUCN) => {
-          if (
-            iucnClassification.classification &&
-            iucnClassification.subClassification1 &&
-            iucnClassification.subClassification2
-          )
-            return this.insertClassificationDetail(iucnClassification.subClassification2, projectId);
-          else return [];
-        }) || []
       )
     );
 
@@ -666,20 +630,6 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Insert a new project classification detail.
-   *
-   * @param {(number | null)} iucn3_id
-   * @param {number} projectId
-   * @return {*}  {Promise<number>}
-   * @memberof ProjectService
-   */
-  async insertClassificationDetail(iucn3_id: number | null, projectId: number): Promise<number> {
-    const response = await this.projectRepository.insertClassificationDetail(iucn3_id, projectId);
-
-    return response.project_iucn_action_classification_id;
-  }
-
-  /**
    * Insert a new project participant role.
    *
    * @param {number} projectId
@@ -745,10 +695,6 @@ export class ProjectService extends DBService {
       promises.push(this.updateProjectObjectivesData(projectId, entities.objective));
     }
 
-    if (entities?.iucn) {
-      promises.push(this.updateProjectIUCNData(projectId, entities.iucn));
-    }
-
     if (entities?.funding) {
       promises.push(this.updateProjectFundingData(projectId, entities.funding));
     }
@@ -802,30 +748,6 @@ export class ProjectService extends DBService {
       }) || [];
 
     await Promise.all([insertContactPromises]);
-  }
-
-  /**
-   * Update project IUCN data.
-   *
-   * @param {number} projectId
-   * @param {PostIUCNData} entities
-   * @return {*}  {Promise<void>}
-   * @memberof ProjectService
-   */
-  async updateProjectIUCNData(projectId: number, putIUCNData: PostIUCNData): Promise<void> {
-    await this.projectRepository.deleteProjectIUCN(projectId);
-
-    const insertIUCNPromises = putIUCNData?.classificationDetails?.map((iucnClassification: IPostIUCN) => {
-      if (
-        iucnClassification.classification &&
-        iucnClassification.subClassification1 &&
-        iucnClassification.subClassification2
-      )
-        return this.insertClassificationDetail(iucnClassification.subClassification2, projectId);
-      else return [];
-    });
-
-    await Promise.all(insertIUCNPromises);
   }
 
   /**
@@ -983,7 +905,6 @@ export class ProjectService extends DBService {
    *     {
    *       project: GetProjectData;
    *       species: GetSpeciesData;
-   *       iucn: GetIUCNClassificationData;
    *       contact: GetContactData;
    *       authorization: GetAuthorizationData;
    *       partnerships: GetPartnershipsData;
@@ -1001,7 +922,6 @@ export class ProjectService extends DBService {
     {
       project: GetProjectData;
       species: GetSpeciesData;
-      iucn: GetIUCNClassificationData;
       contact: GetContactData;
       authorization: GetAuthorizationData;
       partnership: GetPartnershipsData;

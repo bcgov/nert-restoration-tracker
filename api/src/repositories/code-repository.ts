@@ -20,9 +20,6 @@ export type CodeSet<T extends ICode = ICode> = T[];
 export interface IAllCodeSets {
   first_nations: CodeSet;
   regions: CodeSet;
-  iucn_conservation_action_level_1_classification: CodeSet;
-  iucn_conservation_action_level_2_subclassification: CodeSet<{ id: number; iucn1_id: number; name: string }>;
-  iucn_conservation_action_level_3_subclassification: CodeSet<{ id: number; iucn2_id: number; name: string }>;
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
@@ -86,68 +83,6 @@ export class CodeRepository extends BaseRepository {
         investment_action_category 
       ORDER BY name ASC
       ;
-    `;
-
-    const response = await this.connection.sql(sqlStatement);
-
-    return response.rows;
-  }
-
-  /**
-   * Fetch IUCN conservation action level 1 classification codes.
-   *
-   * @return {*}
-   * @memberof CodeRepository
-   */
-  async getIUCNConservationActionLevel1Classification() {
-    const sqlStatement = SQL`
-      SELECT
-        iucn_conservation_action_level_1_classification_id as id,
-        name
-      FROM iucn_conservation_action_level_1_classification
-      WHERE record_end_date is null;
-    `;
-
-    const response = await this.connection.sql(sqlStatement);
-
-    return response.rows;
-  }
-
-  /**
-   * Fetch IUCN conservation action level 2 sub-classification codes.
-   *
-   * @return {*}
-   * @memberof CodeRepository
-   */
-  async getIUCNConservationActionLevel2Subclassification() {
-    const sqlStatement = SQL`
-      SELECT
-        iucn_conservation_action_level_2_subclassification_id as id,
-        iucn_conservation_action_level_1_classification_id as iucn1_id,
-        name
-      FROM iucn_conservation_action_level_2_subclassification
-      WHERE record_end_date is null;
-    `;
-
-    const response = await this.connection.sql(sqlStatement);
-
-    return response.rows;
-  }
-
-  /**
-   * Fetch IUCN conservation action level 3 sub-classification codes.
-   *
-   * @return {*}
-   * @memberof CodeRepository
-   */
-  async getIUCNConservationActionLevel3Subclassification() {
-    const sqlStatement = SQL`
-      SELECT
-        iucn_conservation_action_level_3_subclassification_id as id,
-        iucn_conservation_action_level_2_subclassification_id as iucn2_id,
-        name
-      FROM iucn_conservation_action_level_3_subclassification
-      WHERE record_end_date is null;
     `;
 
     const response = await this.connection.sql(sqlStatement);

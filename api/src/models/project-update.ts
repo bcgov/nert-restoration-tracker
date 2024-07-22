@@ -3,7 +3,6 @@ import {
   PostContactData,
   PostFocusData,
   PostFundingData,
-  PostIUCNData,
   PostLocationData,
   PostObjectivesData,
   PostPartnershipsData,
@@ -15,7 +14,6 @@ import {
   GetAuthorizationData,
   GetContactData,
   GetFundingData,
-  GetIUCNClassificationData,
   GetLocationData,
   GetObjectivesData,
   GetPartnershipsData,
@@ -26,7 +24,6 @@ import {
 export type ProjectUpdateObject = {
   project: GetProjectData;
   species: GetSpeciesData;
-  iucn: GetIUCNClassificationData;
   contact: GetContactData;
   authorization: GetAuthorizationData;
   partnership: GetPartnershipsData;
@@ -41,7 +38,6 @@ export class PutProjectObject {
   authorization: PostAuthorizationData;
   project: PostProjectData;
   location: PostLocationData;
-  iucn: PostIUCNData;
   funding: PostFundingData;
   partnership: PostPartnershipsData;
   objective: PostObjectivesData;
@@ -55,7 +51,6 @@ export class PutProjectObject {
     this.project = (obj?.project && new PostProjectData(obj.project)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
     this.funding = (obj?.funding && new PostFundingData(obj.funding)) || null;
-    this.iucn = (obj?.iucn && new PostIUCNData(obj.iucn)) || null;
     this.partnership = (obj?.partnership && new PostPartnershipsData(obj.partnership)) || [];
     this.objective = (obj?.objective && new PostObjectivesData(obj.objective)) || [];
     this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];

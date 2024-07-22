@@ -20,7 +20,6 @@ const entitiesInitValue = {
   authorization: null,
   partnership: null,
   objective: null,
-  iucn: null,
   funding: null,
   location: null,
   species: null
@@ -175,26 +174,6 @@ describe.skip('ProjectService', () => {
       const projectService = new ProjectService(mockDBConnection);
 
       const result = await projectService.getProjectData(projectId);
-
-      expect(result).to.eql({ id: 1 });
-    });
-  });
-
-  describe('getIUCNClassificationData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('returns row on success', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      sinon.stub(ProjectRepository.prototype, 'getIUCNClassificationData').resolves({ id: 1 } as any);
-
-      const projectId = 1;
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.getIUCNClassificationData(projectId);
 
       expect(result).to.eql({ id: 1 });
     });
@@ -596,26 +575,6 @@ describe.skip('ProjectService', () => {
     });
   });
 
-  describe('insertClassificationDetail', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('returns id on success', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      sinon
-        .stub(ProjectRepository.prototype, 'insertClassificationDetail')
-        .resolves({ project_iucn_action_classification_id: 1 } as any);
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.insertClassificationDetail(1, 1);
-
-      expect(result).equals(1);
-    });
-  });
-
   describe('insertSpecies', () => {
     afterEach(() => {
       sinon.restore();
@@ -672,7 +631,6 @@ describe.skip('ProjectService', () => {
       await projectService.updateProject(projectId, entities);
       expect(projectServiceSpy.updateProjectData).not.to.have.been.called;
       expect(projectServiceSpy.updateContactData).not.to.have.been.called;
-      expect(projectServiceSpy.updateProjectIUCNData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectPartnershipsData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectObjectivesData).not.to.have.been.called;
       expect(projectServiceSpy.updateProjectFundingData).not.to.have.been.called;
@@ -691,7 +649,6 @@ describe.skip('ProjectService', () => {
         authorization: new projectCreateModels.PostAuthorizationData(),
         partnership: new projectCreateModels.PostPartnershipsData(),
         objective: new projectCreateModels.PostObjectivesData(),
-        iucn: new projectCreateModels.PostIUCNData(),
         funding: new projectCreateModels.PostFundingData(),
         location: new projectCreateModels.PostLocationData(),
         species: new projectCreateModels.PostSpeciesData(),
@@ -708,7 +665,6 @@ describe.skip('ProjectService', () => {
       } catch (actualError) {
         expect(projectServiceSpy.updateProjectData).to.have.been.called;
         expect(projectServiceSpy.updateContactData).to.have.been.called;
-        expect(projectServiceSpy.updateProjectIUCNData).to.have.been.called;
         expect(projectServiceSpy.updateProjectPartnershipsData).to.have.been.called;
         expect(projectServiceSpy.updateProjectObjectivesData).to.have.been.called;
         expect(projectServiceSpy.updateProjectFundingData).to.have.been.called;
@@ -763,42 +719,6 @@ describe.skip('ProjectService', () => {
       await projectService.updateContactData(projectId, entities.contact);
 
       expect(insertContactStub).to.have.been.calledOnce;
-    });
-  });
-
-  describe('updateProjectIUCNData', () => {
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it('should insert the new iucn information', async () => {
-      const mockQuery = sinon.stub().onCall(0).returns(Promise.resolve([]));
-
-      const mockDBConnection = getMockDBConnection({
-        query: mockQuery
-      });
-
-      const projectId = 1;
-      const entities: projectUpdateModels.PutProjectObject = {
-        ...entitiesInitValue,
-        iucn: {
-          classificationDetails: [
-            {
-              classification: 1,
-              subClassification1: 1,
-              subClassification2: 1
-            }
-          ]
-        }
-      } as any;
-
-      const insertIUCNStub = sinon.stub(ProjectService.prototype, 'insertClassificationDetail').resolves(1);
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      await projectService.updateProjectIUCNData(projectId, entities.iucn);
-
-      expect(insertIUCNStub).to.have.been.calledOnce;
     });
   });
 
