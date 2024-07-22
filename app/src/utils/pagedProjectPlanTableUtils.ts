@@ -5,7 +5,7 @@ export interface ProjectData {
   id: number;
   projectId: number;
   projectName: string;
-  authRef: string;
+  authType: string;
   org: string;
   plannedStartDate: string;
   plannedEndDate: string;
@@ -40,10 +40,10 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     label: ProjectTableI18N.projectName
   },
   {
-    id: 'authRef',
+    id: 'authType',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.authorizationRef
+    label: ProjectTableI18N.authorizationType
   },
   {
     id: 'org',

@@ -50,10 +50,8 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         id: index,
         projectId: row.project.project_id,
         projectName: row.project.project_name,
-        authRef: row.authorization.authorizations
-          .map((item: { authorization_ref: string; authorization_type: string }) =>
-            item.authorization_ref ? item.authorization_ref : 'Pending'
-          )
+        authType: row.authorization.authorizations
+          .map((item: { authorization_type: string }) => item.authorization_type)
           .join(', '),
         org: row.contact.contacts.map((item) => item.organization).join(', '),
         plannedStartDate: row.project.start_date,
@@ -276,7 +274,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         {row.projectName}
                       </Link>
                     </TableCell>
-                    <TableCell align="left">{row.authRef}</TableCell>
+                    <TableCell align="left">{row.authType}</TableCell>
                     <TableCell align="left">{row.org}</TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
