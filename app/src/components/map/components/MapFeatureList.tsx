@@ -18,8 +18,8 @@ const calculateTotalArea = (features: any) => {
   const featureCollection = turf.featureCollection(features);
   console.log('features', features);
   console.log('featureCollection', featureCollection);
-  
-  // TODO: 
+
+  // TODO:
   // @ts-ignore
   // const overlap = turf.union(featureCollection);
   // console.log('overlap', overlap);
@@ -27,7 +27,7 @@ const calculateTotalArea = (features: any) => {
   //   return acc + feature.properties.areaHa;
   // }, 0);
   // console.log('total', total);
-}
+};
 
 export interface MapFeatureListProps {
   features?: any;
@@ -177,7 +177,9 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   return (
     <>
-      <Box>{numberOfFeatures} areas amounting to {totalArea} Hectares, excluding overlap.</Box>
+      <Box>
+        {numberOfFeatures} areas amounting to {totalArea} Hectares, excluding overlap.
+      </Box>
       <FieldArray
         name="features"
         render={(arrayHelpers: any) => (
