@@ -31,7 +31,7 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
@@ -51,8 +51,11 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         projectId: row.project.project_id,
         projectName: row.project.project_name,
         authType: row.authorization.authorizations
-          .map((item: { authorization_type: string }) => item.authorization_type)
-          .join(', '),
+          .map(
+            (item: { authorization_ref: string; authorization_type: string }) =>
+              item.authorization_type + '\n' + item.authorization_ref
+          )
+          .join('\r'),
         org: row.contact.contacts.map((item) => item.organization).join(', '),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
@@ -231,6 +234,16 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const authTooltip = (auth: string[]) => {
+      return (
+        <Tooltip title={auth[1] ? auth[1] : 'Pending'} placement="left">
+          <Typography sx={utils.authStyles.authLabel} aria-label={`${auth[0]}`}>
+            {auth[0]}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <ProjectsTableToolbar numSelected={selected.length} />
@@ -274,7 +287,41 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         {row.projectName}
                       </Link>
                     </TableCell>
-                    <TableCell align="left">{row.authType}</TableCell>
+                    <TableCell align="left">
+                      {row.authType &&
+                        row.authType.split('\r').map((auth: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              {auth.split('\n')[1] == '' && (
+                                <Chip
+                                  key={index}
+                                  data-testid="authorization_item"
+                                  size="small"
+                                  sx={utils.authStyles.pendingAuthChip}
+                                  label={authTooltip(auth.split('\n'))}
+                                />
+                              )}
+                              {auth.split('\n')[1] != '' && (
+                                <Chip
+                                  key={index}
+                                  data-testid="authorization_item"
+                                  size="small"
+                                  sx={utils.authStyles.authChip}
+                                  label={authTooltip(auth.split('\n'))}
+                                />
+                              )}
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.authType && (
+                        <Chip
+                          label="No Authorizations"
+                          sx={utils.authStyles.noAuthChip}
+                          data-testid="no_authorizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">{row.org}</TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
