@@ -123,7 +123,6 @@ export const handleGeoJSONUpload = async <T>(
     return;
   }
 
-
   try {
     const geojson = JSON.parse(fileAsString);
 

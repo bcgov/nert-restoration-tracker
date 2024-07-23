@@ -21,7 +21,6 @@ export interface MapFeatureListProps {
 }
 
 const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
-
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
   const activeFeatureState = props.activeFeatureState || [];
@@ -112,8 +111,12 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         <Box className="feature-name">
           <CustomTextField
             name={`location.geometry[${item.index}].properties.siteName`}
-            label=''
-            other={{ size: 'small', variant: 'standard',value: feature.properties?.siteName || '' }}
+            label=""
+            other={{
+              size: 'small',
+              variant: 'standard',
+              value: feature.properties?.siteName || ''
+            }}
           />
         </Box>
         <Box className="feature-size">

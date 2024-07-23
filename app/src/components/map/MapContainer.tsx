@@ -924,7 +924,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const nertApi = useNertApi();
 
-  // Create the map on initial load 
+  // Create the map on initial load
   useEffect(() => {
     initializeMap(
       mapId,
