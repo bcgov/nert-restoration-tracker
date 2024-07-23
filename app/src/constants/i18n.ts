@@ -244,7 +244,7 @@ export const ProjectTableI18N = {
   exportAllProjects: 'Export all projects',
   selectAllProjectsForExport: 'select all projects for export',
   projectName: 'Project Name',
-  authorizationRef: 'Authorization Ref.',
+  authorizationType: 'Authorization Type',
   plannedStartDate: 'Planned Start Date',
   plannedEndDate: 'Planned End Date',
   actualStartDate: 'Actual Start Date',
