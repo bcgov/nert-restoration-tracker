@@ -4,6 +4,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CustomTextField from 'components/fields/CustomTextField';
 import React from 'react';
+import * as turf from '@turf/turf';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
@@ -12,6 +13,21 @@ import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
 import { useFormikContext, FieldArray } from 'formik';
 
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
+
+const calculateTotalArea = (features: any) => {
+  const featureCollection = turf.featureCollection(features);
+  console.log('features', features);
+  console.log('featureCollection', featureCollection);
+  
+  // TODO: 
+  // @ts-ignore
+  // const overlap = turf.union(featureCollection);
+  // console.log('overlap', overlap);
+  // const total = features.reduce((acc: number, feature: any) => {
+  //   return acc + feature.properties.areaHa;
+  // }, 0);
+  // console.log('total', total);
+}
 
 export interface MapFeatureListProps {
   features?: any;
@@ -37,6 +53,13 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
       cursor: 'pointer'
     }
   };
+
+  console.log('features', features);
+
+  const totalArea = 0;
+  const numberOfFeatures = features.length;
+
+  calculateTotalArea(features);
 
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the feature object
@@ -154,6 +177,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   return (
     <>
+      <Box>{numberOfFeatures} areas amounting to {totalArea} Hectares, excluding overlap.</Box>
       <FieldArray
         name="features"
         render={(arrayHelpers: any) => (
