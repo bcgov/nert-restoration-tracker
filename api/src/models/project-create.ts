@@ -15,7 +15,6 @@ export class PostProjectObject {
   authorization: PostAuthorizationData;
   project: PostProjectData;
   location: PostLocationData;
-  iucn: PostIUCNData;
   funding: PostFundingData;
   partnership: PostPartnershipsData;
   objective: PostObjectivesData;
@@ -31,7 +30,6 @@ export class PostProjectObject {
     this.project = (obj?.project && new PostProjectData(obj.project)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
     this.funding = (obj?.funding && new PostFundingData(obj.funding)) || null;
-    this.iucn = (obj?.iucn && new PostIUCNData(obj.iucn)) || null;
     this.partnership = (obj?.partnership && new PostPartnershipsData(obj.partnership)) || [];
     this.objective = (obj?.objective && new PostObjectivesData(obj.objective)) || [];
     this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
@@ -343,37 +341,6 @@ export class PostLocationData {
         obj.conservationAreas.map((item: any) => {
           return {
             conservationArea: item.conservationArea
-          };
-        })) ||
-      [];
-  }
-}
-
-export interface IPostIUCN {
-  classification: number | null;
-  subClassification1: number | null;
-  subClassification2: number | null;
-}
-
-/**
- * Processes POST /project IUCN data
- *
- * @export
- * @class PostIUCNData
- */
-export class PostIUCNData {
-  classificationDetails: IPostIUCN[];
-
-  constructor(obj?: any) {
-    defaultLog.debug({ label: 'PostIUCNData', message: 'params', obj });
-
-    this.classificationDetails =
-      (obj?.classificationDetails?.length &&
-        obj.classificationDetails.map((item: any) => {
-          return {
-            classification: item.classification,
-            subClassification1: item.subClassification1,
-            subClassification2: item.subClassification2
           };
         })) ||
       [];

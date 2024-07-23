@@ -4,7 +4,6 @@ import {
   GetAuthorizationData,
   GetContactData,
   GetFundingData,
-  GetIUCNClassificationData,
   GetLocationData,
   GetObjectivesData,
   GetPartnershipsData,
@@ -116,46 +115,6 @@ describe('GetObjectivesData', () => {
 
     it('sets objectives', function () {
       expect(data.objectives).to.eql([{ objective: 'objective 3' }, { objective: 'objective 4' }]);
-    });
-  });
-});
-
-describe('GetIUCNClassificationData', () => {
-  describe('No values provided', () => {
-    it('sets classification details', function () {
-      const iucnClassificationData = new GetIUCNClassificationData(null as unknown as any[]);
-
-      expect(iucnClassificationData.classificationDetails).to.eql([]);
-    });
-  });
-
-  describe('Empty array as values provided', () => {
-    it('sets classification details', function () {
-      const iucnClassificationData = new GetIUCNClassificationData([]);
-
-      expect(iucnClassificationData.classificationDetails).to.eql([]);
-    });
-  });
-
-  describe('All values provided', () => {
-    it('sets classification details', function () {
-      const iucnClassificationDataObj = [
-        {
-          classification: 'class',
-          subclassification1: 'subclass1',
-          subclassification2: 'subclass2'
-        }
-      ];
-
-      const iucnClassificationData = new GetIUCNClassificationData(iucnClassificationDataObj);
-
-      expect(iucnClassificationData.classificationDetails).to.eql([
-        {
-          classification: 'class',
-          subClassification1: 'subclass1',
-          subClassification2: 'subclass2'
-        }
-      ]);
     });
   });
 });

@@ -79,8 +79,6 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
         })
       )
       .nullable()
-
-    // .isUniquePermitNumber('Authorization reference must be unique')
   })
 });
 
@@ -93,15 +91,20 @@ const ProjectAuthorizationForm: React.FC = () => {
   const { values, handleChange, getFieldMeta, errors } =
     useFormikContext<IProjectAuthorizationForm>();
 
+  // [OI] this array needs to go into the database (codes)
   const authorizationTypes = [
-    'Forestry License to Cut',
+    'Alteration Permit',
+    'Authorized Change',
+    'Forest Licence to Cut',
+    'Government Actions Regulation Exemption',
     'Heritage Inspection Permit',
-    'License of Occupation',
-    'Occupant License to Cut under the Forest Act',
-    'Park Use Permit',
+    'Licence of Occupation',
+    'Motorized Vehicle Exemption',
+    'Occupant Licence to Cut',
     'Road Use Permit',
+    'Short Term Use Approval',
     'Special Use Permit',
-    'Other'
+    'Other - please specify'
   ];
 
   return (

@@ -56,24 +56,6 @@ yup.addMethod(yup.array, 'isUniquePermitNumber', function (message: string) {
   });
 });
 
-yup.addMethod(yup.array, 'isUniqueIUCNClassificationDetail', function (message: string) {
-  return this.test('is-unique-iucn-classification-detail', message, (values) => {
-    if (!values || !values.length) {
-      return true;
-    }
-
-    const hasDuplicates = values
-      .map((iucn: any) => {
-        return iucn.classification + iucn.subClassification1 + iucn.subClassification2;
-      })
-      .some((iucn, _, array) => {
-        return array.indexOf(iucn) !== array.lastIndexOf(iucn);
-      });
-
-    return !hasDuplicates;
-  });
-});
-
 yup.addMethod(yup.array, 'isUniqueFocalAncillarySpecies', function (message: string) {
   return this.test('is-unique-focal-ancillary-species', message, function (values) {
     if (!values || !values.length) {

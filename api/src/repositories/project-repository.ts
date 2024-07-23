@@ -13,7 +13,6 @@ import {
   GetAuthorizationData,
   GetContactData,
   GetFundingData,
-  GetIUCNClassificationData,
   GetPartnershipsData,
   GetProjectData,
   IGetConservationArea
@@ -93,53 +92,6 @@ export class ProjectRepository extends BaseRepository {
       return response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getProjectSpecies', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Get IUCN Classification Data
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<GetIUCNClassificationData>}
-   * @memberof ProjectRepository
-   */
-  async getIUCNClassificationData(projectId: number): Promise<GetIUCNClassificationData> {
-    try {
-      const sqlStatement = SQL`
-        SELECT
-          ical1c.iucn_conservation_action_level_1_classification_id as classification,
-          ical2s.iucn_conservation_action_level_2_subclassification_id as subClassification1,
-          ical3s.iucn_conservation_action_level_3_subclassification_id as subClassification2
-        FROM
-          project_iucn_action_classification as piac
-        LEFT OUTER JOIN
-          iucn_conservation_action_level_3_subclassification as ical3s
-        ON
-          piac.iucn_conservation_action_level_3_subclassification_id = ical3s.iucn_conservation_action_level_3_subclassification_id
-        LEFT OUTER JOIN
-          iucn_conservation_action_level_2_subclassification as ical2s
-        ON
-          ical3s.iucn_conservation_action_level_2_subclassification_id = ical2s.iucn_conservation_action_level_2_subclassification_id
-        LEFT OUTER JOIN
-          iucn_conservation_action_level_1_classification as ical1c
-        ON
-          ical2s.iucn_conservation_action_level_1_classification_id = ical1c.iucn_conservation_action_level_1_classification_id
-        WHERE
-          piac.project_id = ${projectId}
-        GROUP BY
-          ical1c.iucn_conservation_action_level_1_classification_id,
-          ical2s.iucn_conservation_action_level_2_subclassification_id,
-          ical3s.iucn_conservation_action_level_3_subclassification_id;
-      `;
-
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
-
-      const result = (response && response.rows) || null;
-
-      return new GetIUCNClassificationData(result);
-    } catch (error) {
-      defaultLog.debug({ label: 'getIUCNClassificationData', message: 'error', error });
       throw error;
     }
   }
@@ -936,49 +888,6 @@ export class ProjectRepository extends BaseRepository {
   }
 
   /**
-   * Insert a project Classification Details.
-   *
-   * @param {(number | null)} iucn3_id
-   * @param {number} project_id
-   * @return {*}
-   * @memberof ProjectRepository
-   */
-  async insertClassificationDetail(
-    iucn3_id: number | null,
-    project_id: number
-  ): Promise<{ project_iucn_action_classification_id: number }> {
-    defaultLog.debug({ label: 'insertClassificationDetail', message: 'params', iucn3_id, project_id });
-
-    try {
-      const sqlStatement = SQL`
-      INSERT INTO project_iucn_action_classification (
-        iucn_conservation_action_level_3_subclassification_id,
-        project_id
-      ) VALUES (
-        ${iucn3_id},
-        ${project_id}
-      )
-      RETURNING
-        project_iucn_action_classification_id;
-    `;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to insert classification detail', [
-          'ProjectRepository->insertClassificationDetail',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      return response.rows[0];
-    } catch (error) {
-      defaultLog.debug({ label: 'insertClassificationDetail', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
    * Insert a project species.
    *
    * @param {number} speciesId
@@ -1430,30 +1339,6 @@ export class ProjectRepository extends BaseRepository {
       await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Delete a project IUCN.
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteProjectIUCN(projectId: number) {
-    defaultLog.debug({ label: 'deleteProjectIUCN', message: 'params', projectId });
-
-    try {
-      const sqlStatement = SQL`
-        DELETE
-          from project_iucn_action_classification
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      await this.connection.sql(sqlStatement);
-    } catch (error) {
-      defaultLog.debug({ label: 'deleteProjectIUCN', message: 'error', error });
       throw error;
     }
   }

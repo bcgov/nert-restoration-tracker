@@ -64,7 +64,7 @@ PUT.apiDoc = {
         schema: {
           title: 'Project post request object',
           type: 'object',
-          required: ['project', 'focus', 'contact', 'species', 'iucn', 'funding', 'location', 'restoration_plan'],
+          required: ['project', 'focus', 'contact', 'species', 'funding', 'location', 'restoration_plan'],
           properties: {
             project: {
               title: 'Project general information',
@@ -175,35 +175,6 @@ PUT.apiDoc = {
                   type: 'array',
                   items: {
                     type: 'number'
-                  }
-                }
-              }
-            },
-            iucn: {
-              title: 'Project IUCN classifications',
-              type: 'object',
-              required: ['classificationDetails'],
-              properties: {
-                classificationDetails: {
-                  type: 'array',
-                  items: {
-                    title: 'IUCN classification',
-                    type: 'object',
-                    required: ['classification', 'subClassification1', 'subClassification2'],
-                    properties: {
-                      classification: {
-                        type: 'number',
-                        nullable: true
-                      },
-                      subClassification1: {
-                        type: 'number',
-                        nullable: true
-                      },
-                      subClassification2: {
-                        type: 'number',
-                        nullable: true
-                      }
-                    }
                   }
                 }
               }
@@ -474,7 +445,7 @@ GET.apiDoc = {
           schema: {
             title: 'Project get response object, for edit purposes',
             type: 'object',
-            required: ['project', 'species', 'authorization', 'contact', 'location', 'iucn', 'funding'],
+            required: ['project', 'species', 'authorization', 'contact', 'location', 'funding'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -532,30 +503,6 @@ GET.apiDoc = {
                     type: 'array',
                     items: {
                       type: 'string'
-                    }
-                  }
-                }
-              },
-              iucn: {
-                description: 'The International Union for Conservation of Nature number',
-                type: 'object',
-                required: ['classificationDetails'],
-                properties: {
-                  classificationDetails: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        classification: {
-                          type: 'number'
-                        },
-                        subClassification1: {
-                          type: 'number'
-                        },
-                        subClassification2: {
-                          type: 'number'
-                        }
-                      }
                     }
                   }
                 }

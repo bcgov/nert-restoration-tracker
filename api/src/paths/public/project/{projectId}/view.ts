@@ -30,7 +30,7 @@ GET.apiDoc = {
           schema: {
             title: 'Project get response object, for view purposes',
             type: 'object',
-            required: ['project', 'authorization', 'contact', 'location', 'iucn', 'funding'],
+            required: ['project', 'authorization', 'contact', 'location', 'funding'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -64,30 +64,6 @@ GET.apiDoc = {
                   },
                   revision_count: {
                     type: 'number'
-                  }
-                }
-              },
-              iucn: {
-                description: 'The International Union for Conservation of Nature number',
-                type: 'object',
-                required: ['classificationDetails'],
-                properties: {
-                  classificationDetails: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        classification: {
-                          type: 'number'
-                        },
-                        subClassification1: {
-                          type: 'number'
-                        },
-                        subClassification2: {
-                          type: 'number'
-                        }
-                      }
-                    }
                   }
                 }
               },

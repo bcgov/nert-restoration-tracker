@@ -17,35 +17,19 @@ export class CodeService extends DBService {
    * @memberof CodeService
    */
   async getAllCodeSets(): Promise<IAllCodeSets> {
-    const [
-      [
-        first_nations,
-        iucn_conservation_action_level_1_classification,
-        iucn_conservation_action_level_2_subclassification,
-        iucn_conservation_action_level_3_subclassification,
-        system_roles,
-        project_roles,
-        administrative_activity_status_type
-      ],
-      regions
-    ] = await Promise.all([
-      Promise.all([
-        this.codeRepository.getFirstNations(),
-        this.codeRepository.getIUCNConservationActionLevel1Classification(),
-        this.codeRepository.getIUCNConservationActionLevel2Subclassification(),
-        this.codeRepository.getIUCNConservationActionLevel3Subclassification(),
-        this.codeRepository.getSystemRoles(),
-        this.codeRepository.getProjectRoles(),
-        this.codeRepository.getAdministrativeActivityStatusType()
-      ]),
-      getNRMRegions()
-    ]);
+    const [[first_nations, system_roles, project_roles, administrative_activity_status_type], regions] =
+      await Promise.all([
+        Promise.all([
+          this.codeRepository.getFirstNations(),
+          this.codeRepository.getSystemRoles(),
+          this.codeRepository.getProjectRoles(),
+          this.codeRepository.getAdministrativeActivityStatusType()
+        ]),
+        getNRMRegions()
+      ]);
 
     return {
       first_nations,
-      iucn_conservation_action_level_1_classification,
-      iucn_conservation_action_level_2_subclassification,
-      iucn_conservation_action_level_3_subclassification,
       system_roles,
       project_roles,
       administrative_activity_status_type,

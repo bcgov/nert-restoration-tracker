@@ -27,7 +27,6 @@ begin
   delete from partnership where project_id = p_project_id;
   delete from project_first_nation where project_id = p_project_id;
   delete from objective where project_id = p_project_id;
-  delete from project_iucn_action_classification where project_id = p_project_id;
   delete from project_funding_source where project_id = p_project_id;
   delete from permit where project_id = p_project_id;
   delete from project_participation where project_id = p_project_id;

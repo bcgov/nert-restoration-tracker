@@ -77,7 +77,6 @@ describe('update', () => {
           publish_date: '2022-02-02',
           revision_count: 0
         },
-        iucn: {},
         contact: {},
         authorization: {},
         funding: {},

@@ -8,7 +8,7 @@ import { IProjectLocationForm } from 'features/projects/components/ProjectLocati
 import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
 import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';
-import { IProjectWildlifeForm } from 'features/projects/components/ProjectFocalSpeciesForm';
+import { IProjectFocalSpeciesForm } from 'features/projects/components/ProjectFocalSpeciesForm';
 import { Feature } from 'geojson';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
@@ -91,7 +91,7 @@ export interface ICreateProjectRequest
     IProjectObjectivesForm,
     IProjectFocusForm,
     IProjectContactForm,
-    IProjectWildlifeForm,
+    IProjectFocalSpeciesForm,
     IProjectAuthorizationForm,
     IProjectFundingForm,
     IProjectPartnershipsForm,
@@ -106,7 +106,7 @@ export interface IEditProjectRequest
     IProjectFocusForm,
     IProjectAuthorizationForm,
     IProjectContactForm,
-    IProjectWildlifeForm,
+    IProjectFocalSpeciesForm,
     IProjectAuthorizationForm,
     IProjectFundingForm,
     IProjectPartnershipsForm,
@@ -131,7 +131,6 @@ export interface IGetProjectForViewResponse {
   authorization: IGetProjectForViewResponseAuthorization;
   location: IGetProjectForViewResponseLocation;
   contact: IGetProjectForViewResponseContact;
-  iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
   partnership: IGetProjectForViewResponsePartnerships;
   objective: IGetProjectForViewResponseObjectives;
@@ -145,7 +144,6 @@ export interface IGetProjectForEditResponse {
   species: IGetProjectForViewResponseSpecies;
   location: IGetProjectForViewResponseLocation;
   authorization: IGetProjectForViewResponseAuthorization;
-  iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
   partnership: IGetProjectForViewResponsePartnerships;
   restoration_plan: { is_project_part_public_plan: boolean };
@@ -233,16 +231,6 @@ export interface IGetProjectForViewResponseContactArrayItem {
 
 export interface IGetProjectForViewResponseContact {
   contacts: IGetProjectForViewResponseContactArrayItem[];
-}
-
-interface IGetProjectForViewResponseIUCNArrayItem {
-  classification: number;
-  subClassification1: number;
-  subClassification2: number;
-}
-
-export interface IGetProjectForViewResponseIUCN {
-  classificationDetails: IGetProjectForViewResponseIUCNArrayItem[];
 }
 
 export interface IGetProjectForViewResponseFundingSource {

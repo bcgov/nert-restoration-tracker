@@ -5,7 +5,7 @@ export interface ProjectData {
   id: number;
   projectId: number;
   projectName: string;
-  authRef: string;
+  authType: string;
   org: string;
   plannedStartDate: string;
   plannedEndDate: string;
@@ -40,10 +40,10 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     label: ProjectTableI18N.projectName
   },
   {
-    id: 'authRef',
+    id: 'authType',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.authorizationRef
+    label: ProjectTableI18N.authorizationType
   },
   {
     id: 'org',
@@ -208,3 +208,30 @@ export function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => n
   });
   return stabilizedThis.map((el) => el[0]);
 }
+
+export const authStyles = {
+  authChip: {
+    backgroundColor: '#E7FFE7',
+    marginBottom: '1px',
+    justifyContent: 'left'
+  },
+  pendingAuthChip: {
+    backgroundColor: '#FFFFDD',
+    marginBottom: '1px',
+    justifyContent: 'left'
+  },
+  noAuthChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  authLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};

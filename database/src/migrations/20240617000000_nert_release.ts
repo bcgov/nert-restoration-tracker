@@ -50,9 +50,7 @@ export async function up(knex: Knex): Promise<void> {
 
   const populate_system_constants = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_constant.sql'));
   const populate_first_nations = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_first_nations.sql'));
-  const populate_iucn_classifications = fs.readFileSync(
-    path.join(__dirname, DB_RELEASE, 'populate_iucn_classifications.sql')
-  );
+
   const populate_project_role = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_project_role.sql'));
   const populate_system_role = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_role.sql'));
   const populate_administrative_activity_type = fs.readFileSync(
@@ -122,7 +120,6 @@ export async function up(knex: Knex): Promise<void> {
     set search_path = restoration, public;
     ${populate_system_constants}
     ${populate_first_nations}
-    ${populate_iucn_classifications}
     ${populate_project_role}
     ${populate_system_role}
     ${populate_administrative_activity_type}

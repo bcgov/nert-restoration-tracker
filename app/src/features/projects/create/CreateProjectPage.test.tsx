@@ -298,15 +298,6 @@ describe.skip('CreateProjectPage', () => {
             project_name: 'draft project name'
           },
           location: { geometry: [], priority: 'false', region: '' },
-          iucn: {
-            classificationDetails: [
-              {
-                classification: '',
-                subClassification1: '',
-                subClassification2: ''
-              }
-            ]
-          },
           funding: { fundingSources: [] },
           partnership: { partnerships: [] },
           species: { focal_species: [] }

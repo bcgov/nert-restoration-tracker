@@ -3,9 +3,6 @@
  create or replace view administrative_activity_type as select * from restoration.administrative_activity_type;
  create or replace view contact_type as select * from restoration.contact_type;
  create or replace view first_nations as select * from restoration.first_nations;
- create or replace view iucn_conservation_action_level_1_classification as select * from restoration.iucn_conservation_action_level_1_classification;
- create or replace view iucn_conservation_action_level_2_subclassification as select * from restoration.iucn_conservation_action_level_2_subclassification;
- create or replace view iucn_conservation_action_level_3_subclassification as select * from restoration.iucn_conservation_action_level_3_subclassification;
  create or replace view nrm_region as select * from restoration.nrm_region;
  create or replace view permit as select * from restoration.permit;
  create or replace view objective as select * from restoration.objective;
@@ -15,7 +12,6 @@
  create or replace view project_contact as select * from restoration.project_contact;
  create or replace view project_first_nation as select * from restoration.project_first_nation;
  create or replace view project_funding_source as select * from restoration.project_funding_source;
- create or replace view project_iucn_action_classification as select * from restoration.project_iucn_action_classification;
  create or replace view project_participation as select * from restoration.project_participation;
  create or replace view project_role as select * from restoration.project_role;
  create or replace view project_spatial_component as select * from restoration.project_spatial_component;
