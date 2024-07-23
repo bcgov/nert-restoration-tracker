@@ -27,7 +27,7 @@ import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -153,6 +153,17 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const openGeoJSONDescription = () => {
     setGeoJSONDescriptionOpen(true);
   };
+
+  console.log('parent component rendering')
+  useEffect(() => {
+    console.log('maskState', maskState);
+  },[maskState]);
+  useEffect(() => {
+    console.log('mask', mask);
+  },[mask]);
+  useEffect(() => {
+    console.log('activeFeature', activeFeature);
+  },[activeFeature]);
 
   /**
    * GeoJSON description dialog content
@@ -333,7 +344,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           <MapContainer
             mapId={'project_location_map'}
             layerVisibility={layerVisibility}
-            features={values.location.geometry}
             mask={mask}
             maskState={maskState}
             activeFeatureState={[activeFeature, setActiveFeature]}
