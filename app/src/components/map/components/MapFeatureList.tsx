@@ -55,6 +55,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
   };
 
   console.log('features', features);
+  console.log('maskState', maskState);
 
   const totalArea = 0;
   const numberOfFeatures = features.length;
@@ -184,9 +185,9 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
         name="features"
         render={(arrayHelpers: any) => (
           <>
-            {features.map((feature: Feature, index: number) => {
+            {maskState.map((mask: boolean, index: number) => {
               return (
-                <FeatureItem feature={feature} index={index} key={index} helper={arrayHelpers} />
+                <FeatureItem feature={features[index]} index={index} key={index} helper={arrayHelpers} />
               );
             })}
           </>
