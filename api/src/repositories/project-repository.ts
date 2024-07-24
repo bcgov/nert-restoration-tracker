@@ -1072,7 +1072,8 @@ export class ProjectRepository extends BaseRepository {
           end_date = ${project.end_date},
           actual_start_date = ${project.actual_start_date},
           actual_end_date = ${project.actual_end_date},
-          people_involved = ${project.people_involved}
+          people_involved = ${project.people_involved},
+          is_project_part_public_plan = ${project.is_project_part_public_plan}
         WHERE
           project_id = ${projectId}
         RETURNING
