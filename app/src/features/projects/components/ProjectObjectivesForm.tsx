@@ -50,12 +50,14 @@ export const ProjectObjectiveFormYupSchema = yup.object().shape({
         yup.object().shape({
           objective: yup
             .string()
-            .max(300, 'Cannot exceed 500 characters')
             .trim()
-            .required('Please enter an objective')
+            .nullable()
+            .transform((value, orig) => (orig.trim() === '' ? null : value))
+            .max(300, 'Objective cannot exceed 500 characters.')
+            .required('Project objective is required.')
         })
       )
-      .isUniqueObjective('Objective entries must be unique')
+      .isUniqueObjective('Objective entries must be unique.')
   })
 });
 
@@ -89,7 +91,7 @@ const ProjectObjectivesForm: React.FC = () => {
                               label="Objective"
                               maxLength={200}
                               other={{
-                                required: !index ? true : false,
+                                required: true,
                                 value: objective.objective,
                                 error: objectiveMeta.touched && Boolean(objectiveMeta.error),
                                 helperText: objectiveMeta.touched && objectiveMeta.error

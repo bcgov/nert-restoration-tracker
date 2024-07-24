@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
@@ -139,6 +138,11 @@ const EditProjectPage: React.FC = () => {
     // Remove empty Authorizations
     values.authorization.authorizations = values.authorization.authorizations.filter(
       (authorization) => authorization.authorization_type.trim()
+    );
+
+    // Remove empty Conservation Areas
+    values.location.conservationAreas = values.location.conservationAreas.filter((area) =>
+      area.conservationArea.trim()
     );
 
     // Set size_ha to 0 if it is not set
