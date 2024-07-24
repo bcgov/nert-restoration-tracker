@@ -4,7 +4,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CustomTextField from 'components/fields/CustomTextField';
 import React from 'react';
-import * as turf from '@turf/turf';
+// import * as turf from '@turf/turf';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
@@ -14,8 +14,9 @@ import { useFormikContext, FieldArray } from 'formik';
 
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
 
-const calculateTotalArea = (features: any) => {
-  const featureCollection = turf.featureCollection(features);
+// const calculateTotalArea = (features: any) => {
+//   const featureCollection = turf.featureCollection(features);
+//   console.log('featureCollection', featureCollection);
 
   // TODO:
   // @ts-ignore
@@ -25,42 +26,38 @@ const calculateTotalArea = (features: any) => {
   //   return acc + feature.properties.areaHa;
   // }, 0);
   // console.log('total', total);
-};
+// };
 
-export interface MapFeatureListProps {
-  features?: any;
-  mask?: any; // Store what mask just changed
-  maskState?: any; // Store which features are masked
-  activeFeatureState?: any; // Store which feature is active
+interface FeatureItemProps {
+  properties?: any;
+  feature: Feature;
+  index: number;
+  helper: any;
+  maskState: any;
+  mask: any;
+  activeFeatureState: any;
+  setFieldValue: any;
+  values: any;
 }
 
-const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
-  const maskState = props.maskState || [];
-  const mask = props.mask || 0;
-  const activeFeatureState = props.activeFeatureState || [];
-
-  const formikProps = useFormikContext<IProjectLocationForm>();
-  const { values, setFieldValue } = formikProps;
-
-  const features = values.location.geometry || [];
-
-  const featureStyle = {
-    parent: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr 10rem 2rem',
-      cursor: 'pointer'
-    }
-  };
-
-
-  const totalArea = 0;
-  const numberOfFeatures = features.length;
-
-  calculateTotalArea(features);
+/**
+ * FeatureItem
+ * @param feature
+ * @returns React component for a single feature item
+ */
+const FeatureItem: React.FC<FeatureItemProps> = (props) => {
+  const feature = props.feature;
+  const maskState = props.maskState;
+  const mask = props.mask;
+  const activeFeatureState = props.activeFeatureState;
+  const setFieldValue = props.setFieldValue;
+  const values = props.values;
 
   const maskChanged = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
     // Update the feature object
     // @ts-ignore - Couldn't make typescript happy here, Event with null checks :(
+    const features = values.location.geometry || [];
+
     features[index].properties.maskedLocation = event.target.checked;
 
     // Update the local state
@@ -106,129 +103,106 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     });
   };
 
-  interface FeatureItemProps {
-    index: number;
-    helper: any;
-  }
-
-  /**
-   * FeatureItem
-   * @param feature
-   * @returns React component for a single feature item
-   */
-  const FeatureItem: React.FC<FeatureItemProps> = (item) => {
-    const feature = features[item.index];
-    return (
-      // If there is a feature, render the following
-      feature && (
-        <Box
-          style={featureStyle.parent}
-          key={item.index}
-          className={
-            activeFeatureState[0] === feature.properties?.id
-              ? 'feature-item active'
-              : 'feature-item'
-          }
-          onMouseEnter={() => mouseEnterListItem(item.index)}
-          onMouseLeave={() => mouseLeaveListItem()}>
-          <Box className="feature-name">
-            <CustomTextField
-              name={`location.geometry[${item.index}].properties.siteName`}
-              label=""
-              other={{
-                size: 'small',
-                variant: 'standard',
-                value: feature.properties?.siteName || ''
-              }}
-            />
-          </Box>
-          <Box className="feature-size">
-            {feature.properties?.areaHa.toLocaleString({ useGrouping: true }) || 0} Hectares
-          </Box>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={feature.properties?.maskedLocation || false}
-                  onChange={(event) => maskChanged(event, item.index)}
-                />
-              }
-              label="Mask"
-            />
-          </FormGroup>
-          <IconButton
-            title="Delete Feature"
-            onClick={() => {
-              deleteListItem(item.index, item.helper);
-            }}>
-            <DeleteForeverOutlinedIcon />
-          </IconButton>
-        </Box>
-      )
-    );
+  const featureStyle = {
+    parent: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr 10rem 2rem',
+      cursor: 'pointer'
+    }
   };
-    //   <Box
-    //     style={featureStyle.parent}
-    //     className={
-    //       activeFeatureState[0] === feature.properties?.id ? 'feature-item active' : 'feature-item'
-    //     }
-    //     onMouseEnter={() => mouseEnterListItem(item.index)}
-    //     onMouseLeave={() => mouseLeaveListItem()}>
-    //     <Box className="feature-name">
-    //       <CustomTextField
-    //         name={`location.geometry[${item.index}].properties.siteName`}
-    //         label=""
-    //         other={{
-    //           size: 'small',
-    //           variant: 'standard',
-    //           value: feature.properties?.siteName || ''
-    //         }}
-    //       />
-    //     </Box>
-    //     <Box className="feature-size">
-    //       {feature.properties?.areaHa.toLocaleString({ useGrouping: true }) || 0} Hectares
-    //     </Box>
-    //     <FormGroup>
-    //       <FormControlLabel
-    //         control={
-    //           <Checkbox
-    //             checked={feature.properties?.maskedLocation || false}
-    //             onChange={(event) => maskChanged(event, item.index)}
-    //           />
-    //         }
-    //         label="Mask"
-    //       />
-    //     </FormGroup>
-    //     <IconButton
-    //       title="Delete Feature"
-    //       onClick={() => {
-    //         deleteListItem(item.index, item.helper);
-    //       }}>
-    //       <DeleteForeverOutlinedIcon />
-    //     </IconButton>
-    //   </Box>
-    // );
 
-  // return (
-  //   <Box>
-  //     {features.map((feature: Feature, index: number) => (
-  //       <FeatureItem feature={feature} index={index} key={index} />
-  //     ))}
-  //   </Box>
-  // );
+  return (
+    // If there is a feature, render the following
+    feature && (
+      <Box
+        style={featureStyle.parent}
+        key={props.index}
+        className={
+          activeFeatureState[0] === feature.properties?.id ? 'feature-item active' : 'feature-item'
+        }
+        onMouseEnter={() => mouseEnterListItem(props.index)}
+        onMouseLeave={() => mouseLeaveListItem()}>
+        <Box className="feature-name">
+          <CustomTextField
+            name={`location.geometry[${props.index}].properties.siteName`}
+            label=""
+            other={{
+              size: 'small',
+              variant: 'standard',
+              value: feature.properties?.siteName || ''
+            }}
+          />
+        </Box>
+        <Box className="feature-size">
+          {feature.properties?.areaHa.toLocaleString({ useGrouping: true }) || 0} Hectares
+        </Box>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={feature.properties?.maskedLocation || false}
+                onChange={(event) => maskChanged(event, props.index)}
+              />
+            }
+            label="Mask"
+          />
+        </FormGroup>
+        <IconButton
+          title="Delete Feature"
+          onClick={() => {
+            deleteListItem(props.index, props.helper);
+          }}>
+          <DeleteForeverOutlinedIcon />
+        </IconButton>
+      </Box>
+    )
+  );
+};
+
+export interface MapFeatureListProps {
+  // features?: any;
+  mask?: any; // Store what mask just changed
+  maskState?: any; // Store which features are masked
+  activeFeatureState?: any; // Store which feature is active
+}
+
+const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
+  const maskState = props.maskState || [];
+  const mask = props.mask || 0;
+  const activeFeatureState = props.activeFeatureState || [];
+
+  const formikProps = useFormikContext<IProjectLocationForm>();
+  const { values, setFieldValue } = formikProps;
+
+  const features = values.location.geometry || [];
+
+  // const totalArea = 0;
+  // const numberOfFeatures = features.length;
+
+  // calculateTotalArea(features);
 
   return (
     <>
-      <Box>
+      {/* <Box>
         {numberOfFeatures} areas amounting to {totalArea} Hectares, excluding overlap.
-      </Box>
+      </Box> */}
       <FieldArray
         name="features"
         render={(arrayHelpers: any) => (
           <>
-            {maskState.map((mask: boolean, index: number) => {
+            {features.map((feature: Feature, index: number) => {
               return (
-                <FeatureItem index={index} key={index} helper={arrayHelpers} />
+                <FeatureItem
+                  feature={feature}
+                  index={index}
+                  key={index}
+                  helper={arrayHelpers}
+                  maskState={maskState}
+                  mask={mask}
+                  activeFeatureState={activeFeatureState}
+                  setFieldValue={setFieldValue}
+                  values={values}
+                />
               );
             })}
           </>

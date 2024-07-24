@@ -10,8 +10,6 @@ import './mapContainer.css'; // Custom styling
 import MapPopup from './components/Popup';
 import { useNertApi } from 'hooks/useNertApi';
 import { S3FileType } from 'constants/attachments';
-import { useFormikContext } from 'formik';
-import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -25,6 +23,7 @@ export interface IMapContainerProps {
   center?: any;
   zoom?: any;
   bounds?: any;
+  features?: any;
   layerVisibility?: any;
   centroids?: boolean;
   mask?: null | number; // Store what mask just changed
@@ -303,7 +302,7 @@ const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
   zoom = 5,
-  features: any,
+  features?: any,
   layerVisibility?: any,
   centroids = false,
   tooltipState?: any,
@@ -589,6 +588,7 @@ const initializeMap = (
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
 
+      // XXX: This is currently broken for public users. Most likely due to S3 permissions.
       let thumbnail = '';
       try {
         const thumbnailResponse = await nertApi.project.getProjectAttachments(
@@ -882,7 +882,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, centroids, layerVisibility } = props;
+  const { mapId, center, zoom, features, centroids, layerVisibility } = props;
 
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
@@ -926,10 +926,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const nertApi = useNertApi();
 
-  const formikProps = useFormikContext<IProjectLocationForm>();
-  const { values } = formikProps;
-
-  const features = values.location.geometry || [];
 
   // Create the map on initial load
   useEffect(() => {
