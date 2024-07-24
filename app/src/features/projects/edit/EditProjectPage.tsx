@@ -102,7 +102,12 @@ const EditProjectPage: React.FC = () => {
         },
         location: {
           ...response.location,
-          is_within_overlapping: response.location.is_within_overlapping === 'Y' ? 'true' : 'false'
+          is_within_overlapping:
+            response.location.is_within_overlapping === 'D'
+              ? 'dont_know'
+              : response.location.is_within_overlapping === 'Y'
+                ? 'true'
+                : 'false'
         }
       };
 
@@ -138,6 +143,10 @@ const EditProjectPage: React.FC = () => {
 
     // Set size_ha to 0 if it is not set
     values.location.size_ha = values.location.size_ha ? values.location.size_ha : 0;
+
+    // Set restoration_plan in project object to be saved
+    values.project.is_project_part_public_plan =
+      values.restoration_plan.is_project_part_public_plan;
 
     try {
       const response = await restorationTrackerApi.project.updateProject(projectId, values);

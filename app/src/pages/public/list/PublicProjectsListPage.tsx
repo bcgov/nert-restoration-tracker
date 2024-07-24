@@ -1,9 +1,10 @@
-import { mdiExport } from '@mdi/js';
+import { mdiExport, mdiAlphaPCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
+import DoneIcon from '@mui/icons-material/Done';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
@@ -294,7 +295,8 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                             <Box>
                               {auth.split('\n')[1] == '' && (
                                 <Chip
-                                  key={index}
+                                  deleteIcon={<Icon path={mdiAlphaPCircleOutline} size={0.8} />}
+                                  onDelete={() => {}}
                                   data-testid="authorization_item"
                                   size="small"
                                   sx={utils.authStyles.pendingAuthChip}
@@ -303,7 +305,8 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                               )}
                               {auth.split('\n')[1] != '' && (
                                 <Chip
-                                  key={index}
+                                  deleteIcon={<DoneIcon />}
+                                  onDelete={() => {}}
                                   data-testid="authorization_item"
                                   size="small"
                                   sx={utils.authStyles.authChip}
