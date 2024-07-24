@@ -27,7 +27,7 @@ import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';

@@ -24,7 +24,7 @@ export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
     const p = feature.properties || {};
 
     p.siteName = p.siteName || p.Site_Name || '';
-    p.areaHa = p.areaHa || p.Area_Ha || Math.round(area / 100) / 100;
+    p.areaHa = Math.round(area / 100) / 100;
     p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
     feature.properties = p;
@@ -78,7 +78,6 @@ export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feat
  * 2. Check if the projection is correct
  * 3. Check that there is at least one polygon or multipolygon feature
  * 4. Inforse a reasonable limit on the number of features
- * 5. Check that the minimal required properties are present
  * @param file File object to upload
  * @param name Name of the formik field that the parsed geometry will be saved to
  * @param formikProps The formik props
@@ -121,15 +120,6 @@ export const handleGeoJSONUpload = async <T>(
   const maxFeatures = parseInt(process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100', 10);
   if (featureCount && featureCount > maxFeatures) {
     setFieldError(name, `A maximum of ${maxFeatures} features are supported.`);
-    return;
-  }
-
-  // 5. Check that the minimal required properties are present
-  if (!fileAsString?.match(/"site_?name"/gi) || !fileAsString?.match(/"area_?ha"/gi)) {
-    setFieldError(
-      name,
-      'Please ensure that the GeoJSON file contains both siteName and areaHa properties.'
-    );
     return;
   }
 

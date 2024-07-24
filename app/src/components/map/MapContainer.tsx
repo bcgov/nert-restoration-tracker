@@ -302,7 +302,7 @@ const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
   zoom = 5,
-  features?: any, // There's no features when first creating a record
+  features?: any,
   layerVisibility?: any,
   centroids = false,
   tooltipState?: any,
@@ -587,6 +587,7 @@ const initializeMap = (
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
 
+      // XXX: This is currently broken for public users. Most likely due to S3 permissions.
       let thumbnail = '';
       try {
         const thumbnailResponse = await nertApi.project.getProjectAttachments(
@@ -924,7 +925,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const nertApi = useNertApi();
 
-  // Update the map if the features change
+  // Create the map on initial load
   useEffect(() => {
     initializeMap(
       mapId,
@@ -940,7 +941,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       autoFocus,
       nertApi
     );
-  }, [features]);
+  }, []);
 
   // Listen to layer changes
   useEffect(() => {
