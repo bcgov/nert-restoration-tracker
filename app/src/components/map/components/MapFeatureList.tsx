@@ -18,14 +18,14 @@ import { IProjectLocationForm } from 'features/projects/components/ProjectLocati
 //   const featureCollection = turf.featureCollection(features);
 //   console.log('featureCollection', featureCollection);
 
-  // TODO:
-  // @ts-ignore
-  // const overlap = turf.union(featureCollection);
-  // console.log('overlap', overlap);
-  // const total = features.reduce((acc: number, feature: any) => {
-  //   return acc + feature.properties.areaHa;
-  // }, 0);
-  // console.log('total', total);
+// TODO:
+// @ts-ignore
+// const overlap = turf.union(featureCollection);
+// console.log('overlap', overlap);
+// const total = features.reduce((acc: number, feature: any) => {
+//   return acc + feature.properties.areaHa;
+// }, 0);
+// console.log('total', total);
 // };
 
 interface FeatureItemProps {

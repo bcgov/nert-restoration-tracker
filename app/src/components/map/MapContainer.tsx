@@ -320,7 +320,6 @@ const initializeMap = (
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
-
   map = new Map({
     container: mapId,
     style: '/styles/hybrid.json',
@@ -925,7 +924,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   };
 
   const nertApi = useNertApi();
-
 
   // Create the map on initial load
   useEffect(() => {
