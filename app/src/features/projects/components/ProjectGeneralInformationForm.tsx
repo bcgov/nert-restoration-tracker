@@ -28,6 +28,7 @@ export interface IProjectGeneralInformationForm {
     is_healing_people: boolean;
     is_land_initiative: boolean;
     is_cultural_initiative: boolean;
+    is_project_part_public_plan: boolean;
     people_involved: number | null;
     project_image?: File | null;
     image_url?: string;
@@ -49,6 +50,7 @@ export const ProjectGeneralInformationFormInitialValues: IProjectGeneralInformat
     is_healing_people: false,
     is_land_initiative: false,
     is_cultural_initiative: false,
+    is_project_part_public_plan: false,
     people_involved: null,
     project_image: null,
     image_url: '',

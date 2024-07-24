@@ -119,7 +119,12 @@ const ProjectPartnershipsForm: React.FC = () => {
               })}
             <Box pt={0.5}>
               <Button
-                disabled={values.partnership && values.partnership.partnerships.length >= 5}
+                disabled={
+                  !!values.partnership.partnerships.length &&
+                  (!values.partnership.partnerships[values.partnership.partnerships.length - 1]
+                    .partnership ||
+                    values.partnership.partnerships.length >= 5)
+                }
                 type="button"
                 variant="outlined"
                 color="primary"

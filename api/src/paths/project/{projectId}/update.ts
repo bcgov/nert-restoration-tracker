@@ -724,7 +724,6 @@ export function updateProject(): RequestHandler {
       }
 
       const entities = new PutProjectObject(req.body);
-
       if (!entities) {
         throw new HTTP400('Missing required request body');
       }
