@@ -1,3 +1,6 @@
+import { mdiExport } from '@mdi/js';
+import Icon from '@mdi/react';
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
@@ -22,6 +25,7 @@ import PublicProjectAttachments from './components/PublicProjectAttachments';
 import { S3FileType } from 'constants/attachments';
 import ProjectDetails from 'features/projects/view/components//ProjectDetails';
 import ProjectFocalSpecies from 'features/projects/view/components/ProjectFocalSpecies';
+import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
@@ -150,9 +154,25 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
 
                 <Box mb={1.2}>
                   <Paper elevation={2}>
-                    <Box p={2}>
+                    <Box
+                      px={1}
+                      py={1}
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center">
                       <Typography variant="h2">Restoration Project Area</Typography>
+                      <Button
+                        sx={{ height: '2.8rem', width: '11rem', fontWeight: 700 }}
+                        color="primary"
+                        variant="outlined"
+                        disableElevation
+                        data-testid="export-project-button"
+                        aria-label={ProjectTableI18N.exportProjectsData}
+                        startIcon={<Icon path={mdiExport} size={1} />}>
+                        {TableI18N.exportData}
+                      </Button>
                     </Box>
+
                     <Box height="500px" position="relative">
                       <LocationBoundary locationData={project.location} />
                     </Box>
