@@ -162,18 +162,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             </Grid>
           </Grid>
         </Box>
-
-        <Box>
-          <Grid container spacing={3}>
-            <Grid item xs={8}>
-              <IntegerSingleField
-                name={'location.number_sites'}
-                label={'Number of Sites'}
-                required={true}
-              />
-            </Grid>
-          </Grid>
-        </Box>
       </Box>
       <Box component="fieldset">
         <Typography component="legend">Plan Areas *</Typography>
