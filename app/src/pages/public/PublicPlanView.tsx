@@ -165,9 +165,9 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                 </Box>
                 <Paper elevation={2}>
                   <Box p={2}>
-                    <Typography variant="h2">Location</Typography>
+                    <Typography variant="h2">Restoration Plan Area</Typography>
                   </Box>
-                  <Box height={500}>
+                  <Box height={500} position="relative">
                     <MapContainer
                       mapId={'plan_location_map'}
                       layerVisibility={layerVisibility}
