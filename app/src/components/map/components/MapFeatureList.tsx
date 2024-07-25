@@ -12,8 +12,6 @@ import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
 import { useFormikContext, FieldArray } from 'formik';
 
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
-import { text } from 'stream/consumers';
-import { color } from '@mui/system';
 
 interface FeatureItemProps {
   properties?: any;

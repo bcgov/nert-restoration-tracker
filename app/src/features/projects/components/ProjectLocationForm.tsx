@@ -87,14 +87,19 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
 export interface IProjectLocationFormProps {
   regions: IAutocompleteFieldOption<number>[];
 }
+console.log('yo')
 
 const calculateTotalArea = (features: any) => {
-  const featureCollection = turf.featureCollection(features);
-  console.log('featureCollection', featureCollection);
+  // This is working event though the docs say it should be a FeatureCollection.
+  // @ts-ignore
+  const overlap = turf.union(features[0], features[1]);
+
+  console.log('overlap', overlap);
+
+  return '0';
 
   // TODO:
   // @ts-ignore
-  // const overlap = turf.union(featureCollection);
   // console.log('overlap', overlap);
   // const total = features.reduce((acc: number, feature: any) => {
   //   return acc + feature.properties.areaHa;
@@ -124,6 +129,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   useEffect(() => {
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
+
+      const totalArea = calculateTotalArea(values.location.geometry);
+      console.log('totalArea', totalArea);
     }
   }, [values.location.geometry.length]);
 
