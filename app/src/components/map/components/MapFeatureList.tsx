@@ -4,7 +4,6 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CustomTextField from 'components/fields/CustomTextField';
 import React from 'react';
-// import * as turf from '@turf/turf';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Box from '@mui/material/Box';
@@ -13,20 +12,8 @@ import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
 import { useFormikContext, FieldArray } from 'formik';
 
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
-
-// const calculateTotalArea = (features: any) => {
-//   const featureCollection = turf.featureCollection(features);
-//   console.log('featureCollection', featureCollection);
-
-// TODO:
-// @ts-ignore
-// const overlap = turf.union(featureCollection);
-// console.log('overlap', overlap);
-// const total = features.reduce((acc: number, feature: any) => {
-//   return acc + feature.properties.areaHa;
-// }, 0);
-// console.log('total', total);
-// };
+import { text } from 'stream/consumers';
+import { color } from '@mui/system';
 
 interface FeatureItemProps {
   properties?: any;
@@ -176,16 +163,21 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   const features = values.location.geometry || [];
 
-  // const totalArea = 0;
-  // const numberOfFeatures = features.length;
+  // To be changed to calculate the total area of the features
+  const totalArea = 0;
 
-  // calculateTotalArea(features);
+  const areaStatsStyle = {
+    textAlign: 'right',
+    fontWeight: 200,
+    color: 'rgba(0, 0, 0, 0.54)',
+    marginBottom: '0.5rem'
+  }
 
   return (
     <>
-      {/* <Box>
-        {numberOfFeatures} areas amounting to {totalArea} Hectares, excluding overlap.
-      </Box> */}
+      <Box sx={areaStatsStyle}>
+        {values.location.number_sites} areas amounting to {totalArea} Hectares, excluding overlap.
+      </Box>
       <FieldArray
         name="features"
         render={(arrayHelpers: any) => (

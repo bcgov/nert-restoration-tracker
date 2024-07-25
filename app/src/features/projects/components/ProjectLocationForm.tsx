@@ -16,6 +16,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import * as turf from '@turf/turf';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import FileUpload from 'components/attachments/FileUpload';
@@ -27,7 +28,7 @@ import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -87,6 +88,20 @@ export interface IProjectLocationFormProps {
   regions: IAutocompleteFieldOption<number>[];
 }
 
+const calculateTotalArea = (features: any) => {
+  const featureCollection = turf.featureCollection(features);
+  console.log('featureCollection', featureCollection);
+
+// TODO:
+// @ts-ignore
+// const overlap = turf.union(featureCollection);
+// console.log('overlap', overlap);
+// const total = features.reduce((acc: number, feature: any) => {
+//   return acc + feature.properties.areaHa;
+// }, 0);
+// console.log('total', total);
+};
+
 /**
  * Create project - Location section
  *
@@ -95,13 +110,22 @@ export interface IProjectLocationFormProps {
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
 
-  const { errors, touched, values, handleChange } = formikProps;
+  const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
+
+  /**
+   * Listen for a change in the number of sites and update the form
+   */
+  useEffect(() => {
+    if (values.location.number_sites !== values.location.geometry.length) {
+      setFieldValue('location.number_sites', values.location.geometry.length);
+    }
+  }, [values.location.geometry.length]);
 
   /**
    * Mask change indicator
@@ -153,6 +177,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const openGeoJSONDescription = () => {
     setGeoJSONDescriptionOpen(true);
   };
+
+
 
   /**
    * GeoJSON description dialog content
