@@ -171,7 +171,7 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     fontWeight: 200,
     color: 'rgba(0, 0, 0, 0.54)',
     marginBottom: '0.5rem'
-  }
+  };
 
   return (
     <>

@@ -92,14 +92,14 @@ const calculateTotalArea = (features: any) => {
   const featureCollection = turf.featureCollection(features);
   console.log('featureCollection', featureCollection);
 
-// TODO:
-// @ts-ignore
-// const overlap = turf.union(featureCollection);
-// console.log('overlap', overlap);
-// const total = features.reduce((acc: number, feature: any) => {
-//   return acc + feature.properties.areaHa;
-// }, 0);
-// console.log('total', total);
+  // TODO:
+  // @ts-ignore
+  // const overlap = turf.union(featureCollection);
+  // console.log('overlap', overlap);
+  // const total = features.reduce((acc: number, feature: any) => {
+  //   return acc + feature.properties.areaHa;
+  // }, 0);
+  // console.log('total', total);
 };
 
 /**
@@ -177,8 +177,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const openGeoJSONDescription = () => {
     setGeoJSONDescriptionOpen(true);
   };
-
-
 
   /**
    * GeoJSON description dialog content
@@ -308,7 +306,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             </Grid>
           </Grid>
         </Box>
-
       </Box>
       <Box component="fieldset">
         <Typography component="legend">Project Areas *</Typography>
