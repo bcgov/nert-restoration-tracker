@@ -1,4 +1,10 @@
-import { mdiAccountMultipleOutline, mdiPencilOutline, mdiFilePdfBox } from '@mdi/js';
+import {
+  mdiAccountMultipleOutline,
+  mdiPencilOutline,
+  mdiFilePdfBox,
+  mdiExport,
+  mdiImport
+} from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -26,11 +32,12 @@ import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { ProjectRoleGuard } from 'components/security/Guards';
+import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
 
 const pageStyles = {
   titleContainerActions: {
     '& button + button': {
-      marginLeft: '1rem'
+      marginLeft: 1
     }
   },
   layerSwitcherContainer: {
@@ -228,20 +235,15 @@ const ViewPlanPage: React.FC = () => {
                   onClick={() => history(`/admin/plans/${urlParams['id']}/edit`)}>
                   Edit
                 </Button>
-                <ProjectRoleGuard
-                  validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                  validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}
-                  validProjectPermissions={[]}>
-                  <Button
-                    aria-label="print plan"
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                    // onClick={showPrintPlanDialog}
-                  >
-                    Print
-                  </Button>
-                </ProjectRoleGuard>
+                <Button
+                  aria-label="print plan"
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<Icon path={mdiFilePdfBox} size={1} />}
+                  // onClick={showPrintPlanDialog}
+                >
+                  Print
+                </Button>
               </Box>
             </ProjectRoleGuard>
           </Box>
@@ -260,8 +262,43 @@ const ViewPlanPage: React.FC = () => {
                   </Paper>
                 </Box>
                 <Paper elevation={2}>
-                  <Box p={2}>
+                  <Box
+                    px={1}
+                    py={1}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center">
                     <Typography variant="h2">Restoration Plan Area</Typography>
+                    <Box>
+                      <Button
+                        sx={{ height: '2.8rem', width: '10rem' }}
+                        color="primary"
+                        variant="outlined"
+                        disableElevation
+                        data-testid="export-project-button"
+                        aria-label={ProjectTableI18N.exportProjectsData}
+                        startIcon={<Icon path={mdiExport} size={1} />}>
+                        {TableI18N.exportData}
+                      </Button>
+                      <ProjectRoleGuard
+                        validSystemRoles={[
+                          SYSTEM_ROLE.SYSTEM_ADMIN,
+                          SYSTEM_ROLE.DATA_ADMINISTRATOR
+                        ]}
+                        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+                        validProjectPermissions={[]}>
+                        <Button
+                          sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
+                          color="primary"
+                          variant="outlined"
+                          disableElevation
+                          data-testid="import-plan-button"
+                          aria-label={PlanTableI18N.importPlanData}
+                          startIcon={<Icon path={mdiImport} size={1} />}>
+                          {TableI18N.importData}
+                        </Button>
+                      </ProjectRoleGuard>
+                    </Box>
                   </Box>
                   <Box height={500}>
                     <MapContainer

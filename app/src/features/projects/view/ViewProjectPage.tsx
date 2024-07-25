@@ -1,11 +1,16 @@
-import { mdiAccountMultipleOutline, mdiFilePdfBox, mdiPencilOutline } from '@mdi/js';
+import {
+  mdiAccountMultipleOutline,
+  mdiFilePdfBox,
+  mdiPencilOutline,
+  mdiExport,
+  mdiImport
+} from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -29,6 +34,7 @@ import { S3FileType } from 'constants/attachments';
 import ProjectDetails from './components/ProjectDetails';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
+import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
 
 const pageStyles = {
   conservationAreChip: {
@@ -37,7 +43,7 @@ const pageStyles = {
   },
   titleContainerActions: {
     '& button + button': {
-      marginLeft: '1rem'
+      marginLeft: 1
     }
   },
   fullScreenBtn: {
@@ -238,6 +244,45 @@ const ViewProjectPage: React.FC = () => {
 
               <Box mb={1.2}>
                 <Paper elevation={2}>
+                  <Box
+                    px={1}
+                    py={1}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center">
+                    <Typography variant="h2">Restoration Project Area</Typography>
+                    <Box>
+                      <Button
+                        sx={{ height: '2.8rem', width: '10rem' }}
+                        color="primary"
+                        variant="outlined"
+                        disableElevation
+                        data-testid="export-project-button"
+                        aria-label={ProjectTableI18N.exportProjectsData}
+                        startIcon={<Icon path={mdiExport} size={1} />}>
+                        {TableI18N.exportData}
+                      </Button>
+
+                      <ProjectRoleGuard
+                        validSystemRoles={[
+                          SYSTEM_ROLE.SYSTEM_ADMIN,
+                          SYSTEM_ROLE.DATA_ADMINISTRATOR
+                        ]}
+                        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+                        validProjectPermissions={[]}>
+                        <Button
+                          sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
+                          color="primary"
+                          variant="outlined"
+                          disableElevation
+                          data-testid="import-plan-button"
+                          aria-label={PlanTableI18N.importPlanData}
+                          startIcon={<Icon path={mdiImport} size={1} />}>
+                          {TableI18N.importData}
+                        </Button>
+                      </ProjectRoleGuard>
+                    </Box>
+                  </Box>
                   <Box height="500px" position="relative">
                     <LocationBoundary locationData={project.location} />
                   </Box>
