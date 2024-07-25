@@ -309,17 +309,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           </Grid>
         </Box>
 
-        <Box>
-          <Grid container spacing={3}>
-            <Grid item xs={5}>
-              <IntegerSingleField
-                name={'location.number_sites'}
-                label={'Number of Sites'}
-                required={true}
-              />
-            </Grid>
-          </Grid>
-        </Box>
       </Box>
       <Box component="fieldset">
         <Typography component="legend">Project Areas *</Typography>
