@@ -261,7 +261,7 @@ const ViewPlanPage: React.FC = () => {
                 </Box>
                 <Paper elevation={2}>
                   <Box p={2}>
-                    <Typography variant="h2">Location</Typography>
+                    <Typography variant="h2">Restoration Plan Area</Typography>
                   </Box>
                   <Box height={500}>
                     <MapContainer

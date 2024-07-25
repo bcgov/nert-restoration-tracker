@@ -12,7 +12,7 @@ export interface IProjectGeneralInformationProps {
 }
 
 /**
- * General information content for a project.
+ * General information content for a plan.
  *
  * @return {*}
  */
@@ -32,40 +32,35 @@ const PlanGeneralInformation: React.FC<IProjectGeneralInformationProps> = (props
 
   return (
     <Box component="dl" data-testid="general_info_component">
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Region:
-        </Typography>
-        {getRegionName(location.region)}
-      </div>
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Region:
+      </Typography>
+      {getRegionName(location.region)}
 
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Brief Description:
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {project.brief_desc}
-        </Typography>
-      </div>
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Brief Description:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.brief_desc}
+      </Typography>
 
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Start Date:
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          End Date:
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {project.end_date
-            ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
-            : '---'}
-        </Typography>
-      </div>
+      <Typography variant="body2" component="dt" color="textSecondary">
+        Start Date:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.start_date
+          ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)
+          : '---'}
+      </Typography>
+
+      <Typography variant="body2" component="dt" color="textSecondary">
+        End Date:
+      </Typography>
+      <Typography variant="body2" component="dd">
+        {project.end_date
+          ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
+          : '---'}
+      </Typography>
     </Box>
   );
 };
