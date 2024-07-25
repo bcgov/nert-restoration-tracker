@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
 import React from 'react';
-import { IProjectLocationForm } from './ProjectLocationForm';
+import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
 
 const pageStyles = {
   customListItem: {
@@ -65,8 +65,7 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                 maxLength={100}
                                 other={{
                                   disabled: values.location.is_within_overlapping !== 'true',
-                                  required:
-                                    values.location.is_within_overlapping === 'true' ? true : false,
+                                  required: !index ? true : false,
                                   value: conservationArea.conservationArea,
                                   error:
                                     conservationAreaMeta.touched &&
@@ -100,8 +99,12 @@ const ProjectLocationConservationAreas: React.FC = () => {
               <Box pt={0.5}>
                 <Button
                   disabled={
-                    values.location.conservationAreas.length >= 5 ||
-                    values.location.is_within_overlapping !== 'true'
+                    !!values.location.conservationAreas.length &&
+                    (!values.location.conservationAreas[
+                      values.location.conservationAreas.length - 1
+                    ].conservationArea.trim() ||
+                      values.location.conservationAreas.length >= 5 ||
+                      values.location.is_within_overlapping !== 'true')
                   }
                   type="button"
                   variant="outlined"

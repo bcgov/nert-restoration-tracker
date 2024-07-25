@@ -50,11 +50,12 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
         yup.object().shape({
           partnership: yup
             .string()
+            .nullable()
             .transform((value, orig) => (orig.trim() === '' ? null : value))
-            .max(300, 'Cannot exceed 300 characters')
+            .max(300, 'Cannot exceed 300 characters.')
         })
       )
-      .isUniquePartnership('Parnership entries must be unique')
+      .isUniquePartnership('Partnership entries must be unique.')
   })
 });
 

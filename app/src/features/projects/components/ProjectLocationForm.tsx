@@ -27,7 +27,7 @@ import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 import './styles/projectLocation.css';
@@ -72,13 +72,13 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
       .array()
       .of(
         yup.object().shape({
-          conservationArea: yup.string().max(100, 'Cannot exceed 100 characters').nullable()
+          conservationArea: yup.string().max(100, 'Cannot exceed 100 characters.').nullable()
         })
       )
-      .isUniqueConservationArea('Conservation area entries must be unique')
+      .isUniqueConservationArea('Conservation area entries must be unique.')
       .isConservationAreasRequired(
         'is_within_overlapping',
-        'Conservation areas are required when project is within or overlapping a known area of cultural or conservation'
+        'At least one conservation areas is required when project is within or overlapping a known area of cultural or conservation.'
       )
   })
 });
