@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import ProjectContact from 'features/projects/view/components/ProjectContact';
@@ -15,13 +17,14 @@ export interface IPlanDetailsProps {
 }
 
 const pageStyles = {
-  projectMetadata: {
-    '& section': {
-      marginBottom: '3rem'
-    },
-    '& section:last-child': {
-      marginBottom: 0
-    },
+  secTitle: {
+    fontSize: '14px',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    width: '100%',
+    justifyContent: 'left'
+  },
+  planMetadata: {
     '& dl, ul': {
       marginTop: '0.5rem',
       marginBottom: 0,
@@ -37,19 +40,13 @@ const pageStyles = {
       verticalAlign: 'top'
     },
     '& dt': {
-      width: '33.333%'
+      width: '30%'
     },
     '& dd': {
-      width: '66.666%'
+      width: '70%'
     },
     '& dd span': {
       display: 'inline'
-    },
-    '& h3': {
-      marginBottom: '0.5rem',
-      fontSize: '15px',
-      fontWeight: 700,
-      textTransform: 'uppercase'
     },
     '& ul': {
       listStyleType: 'none',
@@ -64,7 +61,7 @@ const pageStyles = {
 };
 
 /**
- * Project details content for a project.
+ * Additional plan details content.
  *
  * @return {*}
  */
@@ -73,22 +70,28 @@ const PlanDetailsPage: React.FC<IPlanDetailsProps> = (props) => {
   const refresh = () => {};
 
   return (
-    <Box sx={pageStyles.projectMetadata} p={3}>
-      <Box mb={3}>
-        <Typography variant="h2">Plan Details</Typography>
+    <Box sx={pageStyles.planMetadata} py={1} px={2}>
+      <Box mb={2}>
+        <Typography variant="h2">Additional Plan Details</Typography>
       </Box>
 
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="GeneralInfoTitle">
-          General Information
-        </Typography>
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="General Information"
+          size="medium"
+          data-testid="PlanGeneralInfoTitle"
+        />
         <PlanGeneralInformation planForViewData={planForViewData} codes={codes} />
       </Box>
-
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="ContactsTitle">
-          Plan Contacts
-        </Typography>
+      <Divider />
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Plan Contacts"
+          size="medium"
+          data-testid="PlanContactsTitle"
+        />
         <ProjectRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
           validProjectRoles={[

@@ -150,6 +150,9 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
 
                 <Box mb={1.2}>
                   <Paper elevation={2}>
+                    <Box p={2}>
+                      <Typography variant="h2">Restoration Project Area</Typography>
+                    </Box>
                     <Box height="500px" position="relative">
                       <LocationBoundary locationData={project.location} />
                     </Box>

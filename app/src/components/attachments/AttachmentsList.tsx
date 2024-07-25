@@ -158,7 +158,7 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
               {!props.attachmentsList.length && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
-                    No Attachments
+                    No Documents Attached
                   </TableCell>
                 </TableRow>
               )}
