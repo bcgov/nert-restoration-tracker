@@ -85,7 +85,7 @@ describe('ProjectAttachments', () => {
       <ProjectAttachments attachmentsList={[]} getAttachments={jest.fn()} />
     );
 
-    expect(getByText('No Attachments')).toBeInTheDocument();
+    expect(getByText('No Documents Attached')).toBeInTheDocument();
   });
 
   it('renders correctly with attachments', async () => {
