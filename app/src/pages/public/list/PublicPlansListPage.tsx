@@ -155,7 +155,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         )}
         {numSelected > 0 ? (
           <Button
-            sx={{ height: '2.8rem', width: '11rem', fontWeight: 700 }}
+            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
             disableElevation

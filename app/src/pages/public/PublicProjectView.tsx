@@ -162,7 +162,7 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                       alignItems="center">
                       <Typography variant="h2">Restoration Project Area</Typography>
                       <Button
-                        sx={{ height: '2.8rem', width: '11rem', fontWeight: 700 }}
+                        sx={{ height: '2.8rem', width: '10rem' }}
                         color="primary"
                         variant="outlined"
                         disableElevation
