@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import * as turf from '@turf/turf';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
@@ -20,7 +21,7 @@ import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup from 'utils/YupSchema';
 
@@ -59,14 +60,30 @@ export interface IPlanLocationFormProps {
 }
 
 /**
+ * Calculate the total area of an array of features.
+ * Represented in Hectares with 2 decimal places.
+ * Overlapping areas are merged into one.
+ * @param features
+ * @returns Hectares with 2 decimal places
+ */
+const calculateTotalArea = (features: any) => {
+  console.log('features', features);
+  // This is working event though the docs say it should be a FeatureCollection.
+  const merged = features.reduce((acc: any, feature: any) => {
+    return turf.union(acc, feature);
+  }, features[0]);
+
+  return Math.round(turf.area(merged) / 100) / 100;
+};
+
+/**
  * Create Plan - Location section
  *
  * @return {*}
  */
 const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
-  console.log('testing');
   const formikProps = useFormikContext<IPlanLocationForm>();
-  const { errors, touched, values, handleChange } = formikProps;
+  const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
   /**
    * Reactive state to share between the layer picker and the map
@@ -94,6 +111,23 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
+
+  /**
+   * Listen for a change in the number of sites and update the form
+   */
+  useEffect(() => {
+    if (values.location.number_sites !== values.location.geometry.length) {
+      setFieldValue('location.number_sites', values.location.geometry.length);
+    }
+
+    const totalArea =
+      values.location.geometry.length > 0 ? calculateTotalArea(values.location.geometry) : 0;
+
+    if (values.location.size_ha !== totalArea) {
+      setFieldValue('location.size_ha', totalArea);
+    }
+  }, [values.location.geometry.length]);
+
 
   // Mask change indicator
   const [mask, setMask] = useState<null | number>(null);
