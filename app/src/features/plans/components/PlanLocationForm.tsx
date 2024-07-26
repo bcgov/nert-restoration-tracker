@@ -67,7 +67,6 @@ export interface IPlanLocationFormProps {
  * @returns Hectares with 2 decimal places
  */
 const calculateTotalArea = (features: any) => {
-  console.log('features', features);
   // This is working event though the docs say it should be a FeatureCollection.
   const merged = features.reduce((acc: any, feature: any) => {
     return turf.union(acc, feature);
@@ -226,6 +225,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             mask={mask}
             maskState={maskState}
             activeFeatureState={[activeFeature, setActiveFeature]}
+            autoFocus={true}
           />
         </Box>
         {errors?.location?.geometry && (
