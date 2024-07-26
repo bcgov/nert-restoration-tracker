@@ -127,7 +127,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     }
   }, [values.location.geometry.length]);
 
-
   // Mask change indicator
   const [mask, setMask] = useState<null | number>(null);
 
