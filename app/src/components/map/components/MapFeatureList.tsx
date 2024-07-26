@@ -169,12 +169,13 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
   };
 
   // This adds commas to numbers for readability.
-  const numberFormatter = new Intl.NumberFormat(undefined, {useGrouping: true});
+  const numberFormatter = new Intl.NumberFormat(undefined, { useGrouping: true });
 
   return (
     <>
       <Box sx={areaStatsStyle}>
-        {values.location.number_sites} areas amounting to {numberFormatter.format(values.location.size_ha)}  Hectares, excluding overlap.
+        {values.location.number_sites} areas amounting to{' '}
+        {numberFormatter.format(values.location.size_ha)} Hectares, excluding overlap.
       </Box>
       <FieldArray
         name="features"

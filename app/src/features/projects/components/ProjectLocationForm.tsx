@@ -23,7 +23,6 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
@@ -88,7 +87,7 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
  * Calculate the total area of an array of features.
  * Represented in Hectares with 2 decimal places.
  * Overlapping areas are merged into one.
- * @param features 
+ * @param features
  * @returns Hectares with 2 decimal places
  */
 const calculateTotalArea = (features: any) => {
@@ -300,18 +299,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
         <Box component="fieldset" mb={4}>
           <ProjectLocationConservationAreas />
-        </Box>
-
-        <Box mb={4}>
-          <Grid container spacing={3}>
-            <Grid item xs={5}>
-              <IntegerSingleField
-                name={'location.size_ha'}
-                label={'Project Size in Hectares (total area including all sites)'}
-                adornment={'Ha'}
-              />
-            </Grid>
-          </Grid>
         </Box>
       </Box>
       <Box component="fieldset">

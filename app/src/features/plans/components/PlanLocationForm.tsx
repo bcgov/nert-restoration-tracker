@@ -16,7 +16,6 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
@@ -146,19 +145,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
                 </Select>
                 <FormHelperText>{errors?.location?.region}</FormHelperText>
               </FormControl>
-            </Grid>
-          </Grid>
-        </Box>
-
-        <Box mb={4}>
-          <Grid container spacing={3}>
-            <Grid item xs={8}>
-              <IntegerSingleField
-                name={'location.size_ha'}
-                label={'Approximate Plan size in Hectares (total area including all sites)'}
-                adornment={'Ha'}
-                required={true}
-              />
             </Grid>
           </Grid>
         </Box>
