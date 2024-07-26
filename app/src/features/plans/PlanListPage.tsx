@@ -222,14 +222,14 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
         )}
         {numSelected > 0 ? (
           <Button
-            sx={{ height: '3rem', width: '11rem' }}
+            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
             disableElevation
             data-testid="export-plan-button"
             aria-label={PlanTableI18N.exportPlansData}
             startIcon={<Icon path={mdiExport} size={1} />}>
-            <strong>{TableI18N.exportData}</strong>
+            {TableI18N.exportData}
           </Button>
         ) : (
           <InfoDialog isProject={false} infoContent={'paged table'} />

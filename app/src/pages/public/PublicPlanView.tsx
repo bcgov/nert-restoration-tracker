@@ -1,3 +1,6 @@
+import { mdiExport } from '@mdi/js';
+import Icon from '@mdi/react';
+import Button from '@mui/material/Button';
 import { Card } from '@mui/material';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -21,6 +24,7 @@ import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import { S3FileType } from 'constants/attachments';
 import { useNertApi } from 'hooks/useNertApi';
+import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 
 const pageStyles = {
   layerSwitcherContainer: {
@@ -164,9 +168,25 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                   </Paper>
                 </Box>
                 <Paper elevation={2}>
-                  <Box p={2}>
+                  <Box
+                    px={1}
+                    py={1}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center">
                     <Typography variant="h2">Restoration Plan Area</Typography>
+                    <Button
+                      sx={{ height: '2.8rem', width: '10rem' }}
+                      color="primary"
+                      variant="outlined"
+                      disableElevation
+                      data-testid="export-project-button"
+                      aria-label={ProjectTableI18N.exportProjectsData}
+                      startIcon={<Icon path={mdiExport} size={1} />}>
+                      {TableI18N.exportData}
+                    </Button>
                   </Box>
+
                   <Box height={500} position="relative">
                     <MapContainer
                       mapId={'plan_location_map'}
