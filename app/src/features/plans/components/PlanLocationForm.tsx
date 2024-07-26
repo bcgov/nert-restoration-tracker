@@ -64,6 +64,7 @@ export interface IPlanLocationFormProps {
  * @return {*}
  */
 const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
+  console.log('testing');
   const formikProps = useFormikContext<IPlanLocationForm>();
   const { errors, touched, values, handleChange } = formikProps;
 

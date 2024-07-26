@@ -91,6 +91,7 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
  * @returns Hectares with 2 decimal places
  */
 const calculateTotalArea = (features: any) => {
+  console.log('features', features);
   // This is working event though the docs say it should be a FeatureCollection.
   const merged = features.reduce((acc: any, feature: any) => {
     return turf.union(acc, feature);
@@ -127,7 +128,9 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       setFieldValue('location.number_sites', values.location.geometry.length);
     }
 
-    const totalArea = calculateTotalArea(values.location.geometry);
+    const totalArea =
+      values.location.geometry.length > 0 ? calculateTotalArea(values.location.geometry) : 0;
+
     if (values.location.size_ha !== totalArea) {
       setFieldValue('location.size_ha', totalArea);
     }
