@@ -84,28 +84,25 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
   })
 });
 
+/**
+ * Calculate the total area of an array of features.
+ * Represented in Hectares with 2 decimal places.
+ * Overlapping areas are merged into one.
+ * @param features 
+ * @returns Hectares with 2 decimal places
+ */
+const calculateTotalArea = (features: any) => {
+  // This is working event though the docs say it should be a FeatureCollection.
+  const merged = features.reduce((acc: any, feature: any) => {
+    return turf.union(acc, feature);
+  }, features[0]);
+
+  return Math.round(turf.area(merged) / 100) / 100;
+};
+
 export interface IProjectLocationFormProps {
   regions: IAutocompleteFieldOption<number>[];
 }
-console.log('yo')
-
-const calculateTotalArea = (features: any) => {
-  // This is working event though the docs say it should be a FeatureCollection.
-  // @ts-ignore
-  const overlap = turf.union(features[0], features[1]);
-
-  console.log('overlap', overlap);
-
-  return '0';
-
-  // TODO:
-  // @ts-ignore
-  // console.log('overlap', overlap);
-  // const total = features.reduce((acc: number, feature: any) => {
-  //   return acc + feature.properties.areaHa;
-  // }, 0);
-  // console.log('total', total);
-};
 
 /**
  * Create project - Location section
@@ -129,9 +126,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   useEffect(() => {
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
+    }
 
-      const totalArea = calculateTotalArea(values.location.geometry);
-      console.log('totalArea', totalArea);
+    const totalArea = calculateTotalArea(values.location.geometry);
+    if (values.location.size_ha !== totalArea) {
+      setFieldValue('location.size_ha', totalArea);
     }
   }, [values.location.geometry.length]);
 
