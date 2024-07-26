@@ -12,8 +12,6 @@ import { recalculateFeatureIds } from 'utils/mapBoundaryUploadHelpers';
 import { useFormikContext, FieldArray } from 'formik';
 
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
-import { text } from 'stream/consumers';
-import { color } from '@mui/system';
 
 interface FeatureItemProps {
   properties?: any;
@@ -163,9 +161,6 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
 
   const features = values.location.geometry || [];
 
-  // To be changed to calculate the total area of the features
-  const totalArea = 0;
-
   const areaStatsStyle = {
     textAlign: 'right',
     fontWeight: 200,
@@ -173,10 +168,14 @@ const MapFeatureList: React.FC<MapFeatureListProps> = (props) => {
     marginBottom: '0.5rem'
   };
 
+  // This adds commas to numbers for readability.
+  const numberFormatter = new Intl.NumberFormat(undefined, { useGrouping: true });
+
   return (
     <>
       <Box sx={areaStatsStyle}>
-        {values.location.number_sites} areas amounting to {totalArea} Hectares, excluding overlap.
+        {values.location.number_sites} areas amounting to{' '}
+        {numberFormatter.format(values.location.size_ha)} Hectares, excluding overlap.
       </Box>
       <FieldArray
         name="features"

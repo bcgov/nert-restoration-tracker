@@ -23,7 +23,6 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
-import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
@@ -84,23 +83,25 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
   })
 });
 
+/**
+ * Calculate the total area of an array of features.
+ * Represented in Hectares with 2 decimal places.
+ * Overlapping areas are merged into one.
+ * @param features
+ * @returns Hectares with 2 decimal places
+ */
+const calculateTotalArea = (features: any) => {
+  // This is working event though the docs say it should be a FeatureCollection.
+  const merged = features.reduce((acc: any, feature: any) => {
+    return turf.union(acc, feature);
+  }, features[0]);
+
+  return Math.round(turf.area(merged) / 100) / 100;
+};
+
 export interface IProjectLocationFormProps {
   regions: IAutocompleteFieldOption<number>[];
 }
-
-const calculateTotalArea = (features: any) => {
-  const featureCollection = turf.featureCollection(features);
-  console.log('featureCollection', featureCollection);
-
-  // TODO:
-  // @ts-ignore
-  // const overlap = turf.union(featureCollection);
-  // console.log('overlap', overlap);
-  // const total = features.reduce((acc: number, feature: any) => {
-  //   return acc + feature.properties.areaHa;
-  // }, 0);
-  // console.log('total', total);
-};
 
 /**
  * Create project - Location section
@@ -124,6 +125,13 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   useEffect(() => {
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
+    }
+
+    const totalArea =
+      values.location.geometry.length > 0 ? calculateTotalArea(values.location.geometry) : 0;
+
+    if (values.location.size_ha !== totalArea) {
+      setFieldValue('location.size_ha', totalArea);
     }
   }, [values.location.geometry.length]);
 
@@ -293,18 +301,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
         <Box component="fieldset" mb={4}>
           <ProjectLocationConservationAreas />
-        </Box>
-
-        <Box mb={4}>
-          <Grid container spacing={3}>
-            <Grid item xs={5}>
-              <IntegerSingleField
-                name={'location.size_ha'}
-                label={'Project Size in Hectares (total area including all sites)'}
-                adornment={'Ha'}
-              />
-            </Grid>
-          </Grid>
         </Box>
       </Box>
       <Box component="fieldset">
