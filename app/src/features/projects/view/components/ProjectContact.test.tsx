@@ -19,9 +19,11 @@ describe('ProjectContact', () => {
                 first_name: 'Amanda',
                 last_name: 'Christensen',
                 email_address: 'amanda@christensen.com',
-                agency: 'Amanda and associates',
+                organization: 'Amanda and associates',
+                phone_number: '010-123-1234',
                 is_public: 'true',
-                is_primary: 'true'
+                is_primary: 'true',
+                is_first_nation: true
               }
             ]
           }

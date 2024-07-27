@@ -50,7 +50,8 @@ export const getProjectForViewResponse: IGetProjectForViewResponse = {
         organization: 'Amanda and associates',
         is_public: 'true',
         is_primary: 'true',
-        phone_number: '123-456-7890'
+        phone_number: '123-456-7890',
+        is_first_nation: true
       }
     ]
   },

@@ -1,24 +1,16 @@
-import { mdiAccountCircleOutline, mdiDomain } from '@mdi/js';
-import Icon from '@mdi/react';
+import { mdiAccountCircleOutline } from '@mdi/js';
+import { Grid } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
-
-const pageStyles = {
-  projectContactList: {
-    marginBottom: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    padding: 0
-  },
-  contactIcon: {
-    color: '#575759'
-  }
-} as const;
 
 export interface IPublicProjectContactProps {
   projectForViewData: IGetProjectForViewResponse | IGetPlanForViewResponse;
@@ -37,74 +29,48 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
 
   return (
     <>
-      <ul style={pageStyles.projectContactList}>
-        {hasContacts &&
-          contact.contacts.map((contactDetails, index) => (
-            <Box
-              component="li"
-              display="flex"
-              flexDirection="row"
-              justifyContent="space-between"
-              key={index}
-              sx={
-                !contactDetails.is_public
-                  ? {
-                      alignItems: 'center',
-                      fontWeight: 700,
-                      '& .contactName, .contactEmail': {
-                        display: 'none'
-                      }
-                    }
-                  : {}
-              }>
-              <Box
-                display="flex"
-                pl={1}
-                sx={
-                  !contactDetails.is_public
-                    ? {
-                        alignItems: 'center',
-                        fontWeight: 700,
-                        '& .contactName, .contactEmail': {
-                          display: 'none'
-                        }
-                      }
-                    : {}
-                }>
-                <Icon
-                  color={pageStyles.contactIcon.color}
-                  path={JSON.parse(contactDetails.is_public) ? mdiAccountCircleOutline : mdiDomain}
-                  size={1}
-                />
-                <Box ml={2}>
-                  <div className="contactName">
-                    <strong data-testid="contact_name">
-                      {contactDetails.first_name} {contactDetails.last_name}
-                    </strong>
-                  </div>
-                  <div className="contactEmail">
-                    <Link href={'mailto:' + contactDetails.email_address}>
-                      {contactDetails.email_address}
-                    </Link>
-                  </div>
-                  <div>{contactDetails.organization}</div>
-                  <div>{contactDetails.phone_number}</div>
-                </Box>
-              </Box>
-              <Box>
-                {JSON.parse(contactDetails.is_primary) && <Chip size="small" label="PRIMARY" />}
-              </Box>
-            </Box>
-          ))}
+      {hasContacts &&
+        contact.contacts.map((contactDetails, index) => (
+          <Box my={1} key={index}>
+            <Card sx={{ borderRadius: '10px' }}>
+              <CardHeader
+                avatar={<Avatar src={mdiAccountCircleOutline} aria-label="contact" />}
+                title={`${contactDetails.first_name} ${contactDetails.last_name}`}
+                subheader={
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Link href={'mailto:' + contactDetails.email_address}>
+                        {contactDetails.email_address}
+                      </Link>
+                      <Box>{contactDetails.phone_number}</Box>
+                    </Grid>
+                    <Grid item xs={6} textAlign={'center'}>
+                      {contactDetails.is_primary === 'true' ? (
+                        <Box>
+                          <Chip size="small" label="PRIMARY" />
+                        </Box>
+                      ) : (
+                        <></>
+                      )}
+                    </Grid>
+                  </Grid>
+                }
+                data-testid="contact_name"
+              />
+              <CardContent sx={{ my: -2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  <b>Organization:</b> {contactDetails.organization}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+        ))}
 
-        {!hasContacts && (
-          <li>
-            <Typography variant="body2" color="textSecondary" data-testid="no_contacts">
-              No Contacts
-            </Typography>
-          </li>
-        )}
-      </ul>
+      {!hasContacts && (
+        <Typography variant="body2" color="textSecondary" data-testid="no_contacts">
+          No Contacts
+        </Typography>
+      )}
     </>
   );
 };

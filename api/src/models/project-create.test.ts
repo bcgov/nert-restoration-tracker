@@ -56,7 +56,8 @@ describe('PostProjectObject', () => {
             email_address: 'email@example.com',
             organization: 'organization',
             is_public: 'true',
-            is_primary: 'true'
+            is_primary: 'true',
+            is_first_nation: true
           }
         ]
       },
@@ -229,7 +230,8 @@ describe('PostContactData', () => {
           organization: 'organization',
           phone_number: '1234567890',
           is_public: 'true',
-          is_primary: 'true'
+          is_primary: 'true',
+          is_first_nation: true
         }
       ]
     };
@@ -247,7 +249,8 @@ describe('PostContactData', () => {
           organization: 'organization',
           phone_number: '1234567890',
           is_public: true,
-          is_primary: true
+          is_primary: true,
+          is_first_nation: true
         }
       ]);
     });

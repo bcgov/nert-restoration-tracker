@@ -17,7 +17,8 @@ const projectContactFilledValues = {
         email_address: 'quxu@mailinator.com',
         organization: 'Agency 3',
         is_public: 'true',
-        is_primary: 'true'
+        is_primary: 'true',
+        is_first_nation: true
       },
       {
         first_name: 'John',
@@ -25,7 +26,8 @@ const projectContactFilledValues = {
         email_address: 'jd@mailinator.com',
         organization: 'Agency 4',
         is_public: 'true',
-        is_primary: 'true'
+        is_primary: 'true',
+        is_first_nation: true
       }
     ]
   }

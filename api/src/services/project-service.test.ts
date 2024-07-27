@@ -706,6 +706,7 @@ describe.skip('ProjectService', () => {
               organization: 'Non ut ullamco incid',
               is_public: true,
               is_primary: true,
+              is_first_nation: true,
               phone_number: '123-456-7890'
             }
           ]

@@ -21,6 +21,7 @@ export interface IPlanContactItemForm {
   organization: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export const PlanContactItemInitialValues: IPlanContactItemForm = {
@@ -29,8 +30,9 @@ export const PlanContactItemInitialValues: IPlanContactItemForm = {
   email_address: '',
   phone_number: '',
   organization: '',
-  is_public: 'false',
-  is_primary: 'false'
+  is_public: 'true',
+  is_primary: 'false',
+  is_first_nation: false
 };
 
 export const PlanContactItemYupSchema = yup.object().shape({
@@ -58,10 +60,8 @@ export const PlanContactItemYupSchema = yup.object().shape({
  * @return {*}
  */
 const PlanContactItemForm: React.FC = () => {
-  const { values, touched, errors, handleChange } = useFormikContext<IPlanContactItemForm>();
-
-  const [checkPublic, setCheckPublic] = React.useState(false);
-
+  const { values, touched, errors, handleChange, setFieldValue } = useFormikContext<IPlanContactItemForm>();
+  
   return (
     <form data-testid="contact-item-form">
       <Box component="fieldset">
@@ -113,13 +113,19 @@ const PlanContactItemForm: React.FC = () => {
               control={
                 <Checkbox
                   color="primary"
-                  id="isPublicCheck"
-                  name="public_check"
+                  id="isFirstNation"
+                  name="is_first_nation"
                   aria-label="First Nation or Indigenous Governing Body"
-                  checked={checkPublic}
-                  value={String(!checkPublic)}
-                  onChange={() => {
-                    setCheckPublic(!checkPublic);
+                  checked={values.is_first_nation}
+                  value={values.is_first_nation}
+                  onChange={(value) => {
+                    if (value) {
+                      setFieldValue('is_public', 'true');
+                    }
+                    else {
+                      setFieldValue('is_public', 'false');
+                    }
+                    handleChange(value);
                   }}
                 />
               }
@@ -152,7 +158,7 @@ const PlanContactItemForm: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-      {checkPublic && (
+      {values.is_first_nation && (
         <Box mt={4}>
           <FormControl
             required={true}
@@ -172,12 +178,12 @@ const PlanContactItemForm: React.FC = () => {
                 <FormControlLabel
                   value="true"
                   control={<Radio color="primary" size="small" />}
-                  label="Yes"
+                  label="No"
                 />
                 <FormControlLabel
                   value="false"
                   control={<Radio color="primary" size="small" />}
-                  label="No"
+                  label="Yes"
                 />
                 <FormHelperText>{errors.is_public}</FormHelperText>
               </RadioGroup>

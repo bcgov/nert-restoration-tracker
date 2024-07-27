@@ -604,6 +604,7 @@ CREATE TABLE project_contact(
     phone_number          varchar(20),
     is_primary            character(1)      NOT NULL,
     is_public             character(1)      NOT NULL,
+    is_first_nation       boolean           DEFAULT false,
     create_date           timestamptz(6)    DEFAULT now() NOT NULL,
     create_user           integer           NOT NULL,
     update_date           timestamptz(6),
@@ -631,10 +632,11 @@ COMMENT ON COLUMN project_contact.phone_number IS 'The phone number of the conta
 ;
 COMMENT ON COLUMN project_contact.email_address IS 'The email address of the contact.'
 ;
-COMMENT ON COLUMN project_contact.is_primary IS 'A flag that determines whether contact is a primary contact. A value of "Y" provides that contact is a primary contact.
-'
+COMMENT ON COLUMN project_contact.is_primary IS 'A flag that determines whether contact is a primary contact. A value of "Y" provides that contact is a primary contact.'
 ;
 COMMENT ON COLUMN project_contact.is_public IS 'A flag that determines whether contact details are public. A value of "Y" provides that contact details are public.'
+;
+COMMENT ON COLUMN project_contact.is_first_nation IS 'Determines whether contact is a first nation or and idigenous governing body. A value of "Y" provides that contact details are public.'
 ;
 COMMENT ON COLUMN project_contact.create_date IS 'The datetime the record was created.'
 ;
