@@ -527,7 +527,7 @@ export class ProjectRepository extends BaseRepository {
           ${contact.phone_number},
           ${contact.is_public ? 'Y' : 'N'},
           ${contact.is_primary ? 'Y' : 'N'},
-          ${contact.is_first_nation }
+          ${contact.is_first_nation}
         )
         RETURNING
           project_contact_id;

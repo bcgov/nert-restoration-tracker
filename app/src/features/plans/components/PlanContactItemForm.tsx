@@ -60,8 +60,9 @@ export const PlanContactItemYupSchema = yup.object().shape({
  * @return {*}
  */
 const PlanContactItemForm: React.FC = () => {
-  const { values, touched, errors, handleChange, setFieldValue } = useFormikContext<IPlanContactItemForm>();
-  
+  const { values, touched, errors, handleChange, setFieldValue } =
+    useFormikContext<IPlanContactItemForm>();
+
   return (
     <form data-testid="contact-item-form">
       <Box component="fieldset">
@@ -121,8 +122,7 @@ const PlanContactItemForm: React.FC = () => {
                   onChange={(value) => {
                     if (value) {
                       setFieldValue('is_public', 'true');
-                    }
-                    else {
+                    } else {
                       setFieldValue('is_public', 'false');
                     }
                     handleChange(value);

@@ -118,8 +118,7 @@ const ProjectContactItemForm: React.FC = () => {
                   onChange={(value) => {
                     if (value) {
                       setFieldValue('is_public', 'true');
-                    }
-                    else {
+                    } else {
                       setFieldValue('is_public', 'false');
                     }
                     handleChange(value);
