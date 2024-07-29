@@ -21,15 +21,15 @@ const GeoJSONDescription = () => {
             At least one Polygon or MultiPolygon feature is required.
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
-            No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per
-            file.
+            No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per file.
           </ListItem>
           <Divider>Optional</Divider>
           <ListItem sx={{ display: 'list-item' }}>
             The property <b>Site_Name</b> could be provided to autopopulate the site name field.
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
-            You can automatically turn on the <i>Mask</i> of a feature by setting the boolean value of <b>Masked_Location</b> to <i>true</i>.
+            You can automatically turn on the <i>Mask</i> of a feature by setting the boolean value
+            of <b>Masked_Location</b> to <i>true</i>.
           </ListItem>
         </List>
       </Typography>
