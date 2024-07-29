@@ -61,6 +61,7 @@ interface IGetContact {
   phone_number: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export class GetContactData {
@@ -77,7 +78,8 @@ export class GetContactData {
             organization: item.organization || '',
             phone_number: item.phone_number || '',
             is_public: item.is_public === 'Y' ? 'true' : 'false',
-            is_primary: item.is_primary === 'Y' ? 'true' : 'false'
+            is_primary: item.is_primary === 'Y' ? 'true' : 'false',
+            is_first_nation: item.is_first_nation || false
           };
         })) ||
       [];

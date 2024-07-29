@@ -227,6 +227,7 @@ export interface IGetProjectForViewResponseContactArrayItem {
   phone_number: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export interface IGetProjectForViewResponseContact {

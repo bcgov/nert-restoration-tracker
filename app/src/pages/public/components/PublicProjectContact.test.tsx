@@ -17,7 +17,8 @@ describe('PublicProjectContact', () => {
             organization: 'some associates',
             phone_number: '123-456-7890',
             is_public: 'true',
-            is_primary: 'true'
+            is_primary: 'true',
+            is_first_nation: true
           }
         ]
       }

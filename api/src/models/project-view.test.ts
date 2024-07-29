@@ -142,6 +142,7 @@ describe('GetContactData', () => {
         email_address: 'email@example.com',
         is_public: 'Y',
         is_primary: 'Y',
+        is_first_nation: true,
         organization: 'organization',
         phone_number: '123-456-7890'
       }
@@ -159,6 +160,7 @@ describe('GetContactData', () => {
           email_address: 'email@example.com',
           is_public: 'true',
           is_primary: 'true',
+          is_first_nation: true,
           organization: 'organization',
           phone_number: '123-456-7890'
         }

@@ -220,7 +220,15 @@ GET.apiDoc = {
                       items: {
                         title: 'Project contact',
                         type: 'object',
-                        required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public'],
+                        required: [
+                          'first_name',
+                          'last_name',
+                          'email_address',
+                          'organization',
+                          'is_public',
+                          'is_primary',
+                          'is_first_nation'
+                        ],
                         properties: {
                           first_name: {
                             type: 'string'
@@ -242,7 +250,11 @@ GET.apiDoc = {
                             enum: ['true', 'false']
                           },
                           is_primary: {
-                            type: 'string'
+                            type: 'string',
+                            enum: ['true', 'false']
+                          },
+                          is_first_nation: {
+                            type: 'boolean'
                           }
                         }
                       }

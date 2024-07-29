@@ -516,7 +516,7 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
         INSERT INTO project_contact (
-          project_id, contact_type_id, first_name, last_name, organization, email_address, phone_number, is_public, is_primary
+          project_id, contact_type_id, first_name, last_name, organization, email_address, phone_number, is_public, is_primary, is_first_nation
         ) VALUES (
           ${projectId},
           (SELECT contact_type_id FROM contact_type WHERE name = 'Coordinator'),
@@ -526,7 +526,8 @@ export class ProjectRepository extends BaseRepository {
           ${contact.email_address},
           ${contact.phone_number},
           ${contact.is_public ? 'Y' : 'N'},
-          ${contact.is_primary ? 'Y' : 'N'}
+          ${contact.is_primary ? 'Y' : 'N'},
+          ${contact.is_first_nation}
         )
         RETURNING
           project_contact_id;

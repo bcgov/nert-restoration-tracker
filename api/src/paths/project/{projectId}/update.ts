@@ -189,7 +189,15 @@ PUT.apiDoc = {
                   items: {
                     title: 'contacts',
                     type: 'object',
-                    required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public', 'is_primary'],
+                    required: [
+                      'first_name',
+                      'last_name',
+                      'email_address',
+                      'organization',
+                      'is_public',
+                      'is_primary',
+                      'is_first_nation'
+                    ],
                     properties: {
                       first_name: {
                         type: 'string'
@@ -210,6 +218,9 @@ PUT.apiDoc = {
                       is_primary: {
                         type: 'string',
                         enum: ['true', 'false']
+                      },
+                      is_first_nation: {
+                        type: 'boolean'
                       },
                       phone_number: {
                         type: 'string',
@@ -517,7 +528,15 @@ GET.apiDoc = {
                     items: {
                       title: 'contacts',
                       type: 'object',
-                      required: ['first_name', 'last_name', 'email_address', 'organization', 'is_public', 'is_primary'],
+                      required: [
+                        'first_name',
+                        'last_name',
+                        'email_address',
+                        'organization',
+                        'is_public',
+                        'is_primary',
+                        'is_first_nation'
+                      ],
                       properties: {
                         first_name: {
                           type: 'string'
@@ -541,6 +560,9 @@ GET.apiDoc = {
                         is_primary: {
                           type: 'string',
                           enum: ['true', 'false']
+                        },
+                        is_first_nation: {
+                          type: 'boolean'
                         }
                       }
                     }

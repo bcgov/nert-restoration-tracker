@@ -17,6 +17,7 @@ export interface IProjectContactItemForm {
   organization: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export const ProjectContactItemInitialValues: IProjectContactItemForm = {
@@ -25,8 +26,9 @@ export const ProjectContactItemInitialValues: IProjectContactItemForm = {
   email_address: '',
   phone_number: '',
   organization: '',
-  is_public: 'false',
-  is_primary: 'false'
+  is_public: 'true',
+  is_primary: 'false',
+  is_first_nation: false
 };
 
 export const ProjectContactItemYupSchema = yup.object().shape({
@@ -56,8 +58,6 @@ export const ProjectContactItemYupSchema = yup.object().shape({
 const ProjectContactItemForm: React.FC = () => {
   const { values, touched, errors, setFieldValue, handleChange } =
     useFormikContext<IProjectContactItemForm>();
-
-  const [checkPublic, setCheckPublic] = React.useState(false);
 
   return (
     <form data-testid="contact-item-form">
@@ -110,13 +110,18 @@ const ProjectContactItemForm: React.FC = () => {
               control={
                 <Checkbox
                   color="primary"
-                  id="isPublicCheck"
-                  name="public_check"
+                  id="isFirstNation"
+                  name="is_first_nation"
                   aria-label="First Nation or Indigenous Governing Body"
-                  checked={checkPublic}
-                  value={String(!checkPublic)}
-                  onChange={() => {
-                    setCheckPublic(!checkPublic);
+                  checked={values.is_first_nation}
+                  value={values.is_first_nation}
+                  onChange={(value) => {
+                    if (value) {
+                      setFieldValue('is_public', 'true');
+                    } else {
+                      setFieldValue('is_public', 'false');
+                    }
+                    handleChange(value);
                   }}
                 />
               }
@@ -149,7 +154,7 @@ const ProjectContactItemForm: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-      {checkPublic && (
+      {values.is_first_nation && (
         <IsPublic
           touched={touched.is_public}
           errors={errors.is_public}
