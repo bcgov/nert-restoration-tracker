@@ -272,12 +272,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your project boundary.
-          </Typography>
           <Tooltip title="GeoJSON Properties Information" placement="right">
             <IconButton onClick={openGeoJSONDescription}>
               <InfoIcon color="info" />
             </IconButton>
           </Tooltip>
+          </Typography>
         </Box>
 
         <Box mb={5}>
