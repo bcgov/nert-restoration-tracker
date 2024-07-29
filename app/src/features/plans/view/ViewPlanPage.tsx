@@ -11,9 +11,9 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import InfoDialog from 'components/dialog/InfoDialog';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
@@ -24,9 +24,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
 import MapContainer from 'components/map/MapContainer';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { Card, Chip, Tooltip } from '@mui/material';
+import { Card, Chip } from '@mui/material';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
-import InfoIcon from '@mui/icons-material/Info';
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
@@ -174,11 +173,7 @@ const ViewPlanPage: React.FC = () => {
                     sx={getStatusStyle(planWithDetails.project.state_code)}
                     label={getStateLabelFromCode(planWithDetails.project.state_code)}
                   />
-                  <Tooltip title={'Plan workflow information'} placement="right">
-                    <IconButton color={'info'}>
-                      <InfoIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <InfoDialog isProject={false} infoContent={'workflow'} />
                 </Box>
               </Box>
               <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">

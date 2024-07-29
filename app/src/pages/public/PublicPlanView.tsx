@@ -8,16 +8,14 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import InfoDialog from 'components/dialog/InfoDialog';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import React, { useState, useCallback, useEffect } from 'react';
-import IconButton from '@mui/material/IconButton';
 import MapContainer from 'components/map/MapContainer';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { Tooltip } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
 import { focus, ICONS } from 'constants/misc';
 import PlanDetails from 'features/plans/view/components/PlanDetails';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
@@ -120,11 +118,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                     sx={getStatusStyle(plan.project.state_code)}
                     label={getStateLabelFromCode(plan.project.state_code)}
                   />
-                  <Tooltip title={'Plan workflow information'} placement="right">
-                    <IconButton color={'info'}>
-                      <InfoIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <InfoDialog isProject={false} infoContent={'workflow'} />
                 </Box>
               </Box>
               <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
