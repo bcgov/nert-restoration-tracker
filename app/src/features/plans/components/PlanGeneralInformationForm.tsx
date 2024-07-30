@@ -7,6 +7,7 @@ import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workfl
 import { useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
+import InfoDialog from 'components/dialog/InfoDialog';
 
 export interface IPlanGeneralInformationForm {
   project: {
@@ -96,7 +97,8 @@ const PlanGeneralInformationForm: React.FC = () => {
                       sx={getStatusStyle(getStateCodeFromLabel(states.DRAFT))}
                       label={states.DRAFT}
                     />
-                  )
+                  ),
+                  endAdornment: <InfoDialog isProject={false} infoContent={'workflow'} />
                 }
               }}
             />
