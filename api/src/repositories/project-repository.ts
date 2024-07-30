@@ -138,7 +138,14 @@ export class ProjectRepository extends BaseRepository {
         this.connection.query(sqlStatementJustAgencies.text, sqlStatementJustAgencies.values)
       ]);
 
-      const result = [...response[0].rows, ...response[1].rows];
+      const result = [
+        ...response[0].rows,
+        ...response[1].rows.map(() => {
+          return {
+            organization: 'First Nation'
+          };
+        })
+      ];
 
       return new GetContactData(result);
     } catch (error) {

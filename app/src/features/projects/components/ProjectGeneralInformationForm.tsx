@@ -13,6 +13,7 @@ import React from 'react';
 import yup from 'utils/YupSchema';
 import './styles/projectImage.css';
 import ThumbnailImageField from 'components/fields/ThumbnailImageField';
+import InfoDialog from 'components/dialog/InfoDialog';
 
 export interface IProjectGeneralInformationForm {
   project: {
@@ -77,7 +78,7 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
 });
 
 /**
- * Create project - General information section
+ * Create/Edit project - General information section
  *
  * @return {*}
  */
@@ -113,7 +114,8 @@ const ProjectGeneralInformationForm: React.FC = () => {
                       sx={getStatusStyle(getStateCodeFromLabel(state || states.DRAFT))}
                       label={state || states.DRAFT}
                     />
-                  )
+                  ),
+                  endAdornment: <InfoDialog isProject={true} infoContent={'workflow'} />
                 }
               }}
             />
