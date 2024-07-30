@@ -23,7 +23,7 @@ describe('ProjectPermits', () => {
   });
 
   it('renders authorizations data correctly', async () => {
-    const { getByTestId, getByText, findByText } = render(
+    const { getByTestId, getByText } = render(
       <ProjectAuthorizations
         projectForViewData={{
           ...getProjectForViewResponse,
