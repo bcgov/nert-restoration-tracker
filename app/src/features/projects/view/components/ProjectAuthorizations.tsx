@@ -1,7 +1,12 @@
+import Icon from '@mdi/react';
+import { mdiAlphaPCircleOutline, mdiCheck } from '@mdi/js';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
 
 export interface IProjectAuthorizationsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -20,6 +25,16 @@ const ProjectAuthorizations: React.FC<IProjectAuthorizationsProps> = (props) => 
 
   const hasAuthorizations = authorization.authorizations && authorization.authorizations.length > 0;
 
+  const authTooltip = (authDesc: string, authType: string) => {
+    return (
+      <Tooltip title={authDesc} placement="left">
+        <Typography sx={utils.authStyles.authLabel} aria-label={`${authType}`}>
+          {authType}
+        </Typography>
+      </Tooltip>
+    );
+  };
+
   return (
     <>
       {hasAuthorizations &&
@@ -32,16 +47,33 @@ const ProjectAuthorizations: React.FC<IProjectAuthorizationsProps> = (props) => 
             },
             index
           ) => (
-            <Box key={index} data-testid="authorization_item">
-              <Typography variant="body2" component="dt" color="textSecondary">
-                {item.authorization_ref ? item.authorization_ref : 'Pending'}
-              </Typography>
-              <Typography variant="body2" component="dd">
-                {item.authorization_type}
-              </Typography>
-              <Typography variant="body2" component="dd" mt={-1}>
-                {item.authorization_desc}
-              </Typography>
+            <Box key={index}>
+              <Chip
+                deleteIcon={
+                  <>
+                    <Tooltip
+                      title={
+                        item.authorization_ref ? 'Authorized: ' + item.authorization_ref : 'Pending'
+                      }
+                      placement="top">
+                      <Icon
+                        path={item.authorization_ref ? mdiCheck : mdiAlphaPCircleOutline}
+                        color="lightgray"
+                        size={0.8}
+                      />
+                    </Tooltip>
+                  </>
+                }
+                onDelete={() => {}}
+                data-testid="authorization_item"
+                size="small"
+                sx={
+                  item.authorization_ref
+                    ? utils.authStyles.authChip
+                    : utils.authStyles.pendingAuthChip
+                }
+                label={authTooltip(item.authorization_desc, item.authorization_type)}
+              />
             </Box>
           )
         )}

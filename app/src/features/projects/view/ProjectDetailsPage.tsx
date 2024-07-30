@@ -114,24 +114,15 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
         </ProjectRoleGuard>
       </Box>
       <Divider />
-      <ProjectRoleGuard
-        validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-        validProjectRoles={[
-          PROJECT_ROLE.PROJECT_LEAD,
-          PROJECT_ROLE.PROJECT_EDITOR,
-          PROJECT_ROLE.PROJECT_VIEWER
-        ]}
-        validProjectPermissions={[]}>
-        <Box mt={2}>
-          <Chip
-            sx={pageStyles.secTitle}
-            label="Authorizations"
-            size="medium"
-            data-testid="AuthorizationsTitle"
-          />
-          <ProjectAuthorizations projectForViewData={projectForViewData} refresh={refresh} />
-        </Box>
-      </ProjectRoleGuard>
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Authorizations"
+          size="medium"
+          data-testid="AuthorizationsTitle"
+        />
+        <ProjectAuthorizations projectForViewData={projectForViewData} refresh={refresh} />
+      </Box>
       <Divider />
       <Box mt={2}>
         <Chip

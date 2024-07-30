@@ -227,23 +227,9 @@ describe.skip('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.getAuthorizationData(projectId, false);
+      const result = await projectService.getAuthorizationData(projectId);
 
       expect(result).to.eql(undefined);
-    });
-
-    it('returns empty permit data when isPublic is true', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      sinon.stub(ProjectRepository.prototype, 'getAuthorizationData').resolves({ id: 1 } as any);
-
-      const projectId = 1;
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.getAuthorizationData(projectId, true);
-
-      expect(result).to.eql({ id: 1 });
     });
   });
 
