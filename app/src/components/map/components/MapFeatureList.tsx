@@ -114,7 +114,9 @@ const FeatureItem: React.FC<FeatureItemProps> = (props) => {
             other={{
               size: 'small',
               variant: 'standard',
-              value: feature.properties?.siteName || ''
+              placeholder: 'Site Name',
+              value: feature.properties?.siteName || '',
+              required: true
             }}
           />
         </Box>

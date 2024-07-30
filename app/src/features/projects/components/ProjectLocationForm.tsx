@@ -63,7 +63,17 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
     geometry: yup
       .array()
       .min(1, 'You must specify a project boundary')
-      .required('You must specify a project boundary'),
+      .required('You must specify a project boundary')
+      .test('siteName-not-blank', 'Site names cannot be blank', (value) => {
+        const returnValue = value.every((feature: Feature) => {
+          if (feature.properties?.siteName) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        return returnValue;
+    }),
     is_within_overlapping: yup.string().notRequired(),
     size_ha: yup.number().nullable(),
     number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
@@ -111,6 +121,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
 
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
+
+  // console.log('values', values);
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
