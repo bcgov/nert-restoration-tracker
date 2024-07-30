@@ -247,9 +247,14 @@ export const ProjectTableI18N = {
   projectName: 'Project Name',
   authorizationType: 'Authorization Type',
   plannedStartDate: 'Planned Start Date',
+  plannedStartDateTooltip: 'Aproximate project start date.',
   plannedEndDate: 'Planned End Date',
+  plannedEndDateTooltip: 'Aproximate planned project end date.',
   actualStartDate: 'Actual Start Date',
-  actualEndDate: 'Actual End Date'
+  actualStartDateTooltip: 'The date the project started.',
+  actualEndDate: 'Actual End Date',
+  actualEndDateTooltip: 'The date the project ended. Project is moved to "Completed" status.',
+  statusTooltip: 'Current status, according to project workflow.'
 };
 
 export const PlanTableI18N = {
@@ -262,7 +267,10 @@ export const PlanTableI18N = {
   planName: 'Plan Name',
   term: 'Term',
   startDate: 'Start Date',
+  startDateTooltip: 'Aproximate plan start date.',
   endDate: 'End Date',
+  endDateTooltip: 'The date the plan ended. Plan is moved to "Completed" status.',
   multiYear: 'Multi-Year',
-  annual: 'Annual'
+  annual: 'Annual',
+  statusTooltip: 'Current status, according to plan workflow.'
 };

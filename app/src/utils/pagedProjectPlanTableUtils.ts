@@ -29,6 +29,7 @@ export interface ProjectHeadCell {
   disablePadding: boolean;
   id: keyof ProjectData;
   label: string;
+  tooltipLabel?: string;
   numeric: boolean;
 }
 
@@ -55,31 +56,36 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     id: 'plannedStartDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.plannedStartDate
+    label: ProjectTableI18N.plannedStartDate,
+    tooltipLabel: ProjectTableI18N.plannedStartDateTooltip
   },
   {
     id: 'actualStartDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.actualStartDate
+    label: ProjectTableI18N.actualStartDate,
+    tooltipLabel: ProjectTableI18N.actualStartDateTooltip
   },
   {
     id: 'plannedEndDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.plannedEndDate
+    label: ProjectTableI18N.plannedEndDate,
+    tooltipLabel: ProjectTableI18N.plannedEndDateTooltip
   },
   {
     id: 'actualEndDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.actualEndDate
+    label: ProjectTableI18N.actualEndDate,
+    tooltipLabel: ProjectTableI18N.actualEndDateTooltip
   },
   {
     id: 'statusLabel',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.status
+    label: TableI18N.status,
+    tooltipLabel: ProjectTableI18N.statusTooltip
   },
   {
     id: 'archive',
@@ -117,6 +123,7 @@ export interface PlanHeadCell {
   disablePadding: boolean;
   id: keyof PlanData;
   label: string;
+  tooltipLabel?: string;
   numeric: boolean;
 }
 
@@ -143,19 +150,22 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     id: 'startDate',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.startDate
+    label: PlanTableI18N.startDate,
+    tooltipLabel: PlanTableI18N.startDateTooltip
   },
   {
     id: 'endDate',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.endDate
+    label: PlanTableI18N.endDate,
+    tooltipLabel: PlanTableI18N.endDateTooltip
   },
   {
     id: 'statusLabel',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.status
+    label: TableI18N.status,
+    tooltipLabel: PlanTableI18N.statusTooltip
   },
   {
     id: 'archive',
