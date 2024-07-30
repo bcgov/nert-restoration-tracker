@@ -1,4 +1,3 @@
-import { mdiAccountCircleOutline } from '@mdi/js';
 import { Grid } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -34,7 +33,13 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
           <Box my={1} key={index}>
             <Card sx={{ borderRadius: '10px' }}>
               <CardHeader
-                avatar={<Avatar src={mdiAccountCircleOutline} aria-label="contact" />}
+                avatar={
+                  <Avatar aria-label="contact">
+                    {contactDetails.first_name
+                      ? contactDetails.first_name[0] + contactDetails.last_name[0]
+                      : 'Org'}
+                  </Avatar>
+                }
                 title={`${contactDetails.first_name} ${contactDetails.last_name}`}
                 subheader={
                   <Grid container>
