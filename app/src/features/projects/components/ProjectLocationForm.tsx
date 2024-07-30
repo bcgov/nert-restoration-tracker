@@ -73,7 +73,7 @@ export const ProjectLocationFormYupSchema = yup.object().shape({
           }
         });
         return returnValue;
-    }),
+      }),
     is_within_overlapping: yup.string().notRequired(),
     size_ha: yup.number().nullable(),
     number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
