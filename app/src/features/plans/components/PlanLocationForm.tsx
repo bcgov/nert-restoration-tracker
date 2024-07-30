@@ -53,6 +53,16 @@ export const PlanLocationFormYupSchema = yup.object().shape({
       .array()
       .min(1, 'You must specify a Plan boundary')
       .required('You must specify a Plan boundary')
+      .test('siteName-not-blank', 'Site names cannot be blank', (value) => {
+        const returnValue = value.every((feature: Feature) => {
+          if (feature.properties?.siteName) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        return returnValue;
+      }),
   })
 });
 
