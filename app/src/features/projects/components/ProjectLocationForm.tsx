@@ -17,14 +17,13 @@ import Select from '@mui/material/Select';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import * as turf from '@turf/turf';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
+import GeoJSONDescription from 'components/map/components/UploadInstructions';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useEffect, useState } from 'react';
@@ -186,41 +185,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     setGeoJSONDescriptionOpen(true);
   };
 
-  /**
-   * GeoJSON description dialog content
-   */
-  const GeoJSONDescription = () => {
-    return (
-      <Box>
-        <Typography variant="body1">
-          <List dense={true} sx={{ listStyleType: 'disc', listStylePosition: 'inside' }}>
-            <ListItem sx={{ display: 'list-item' }}>
-              All coordinates should be in the Geographic projection (EPSG:4326).
-            </ListItem>
-            <ListItem sx={{ display: 'list-item' }}>
-              At least one Polygon or MultiPolygon feature is required.
-            </ListItem>
-            <ListItem sx={{ display: 'list-item' }}>
-              No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per
-              file.
-            </ListItem>
-            <ListItem sx={{ display: 'list-item' }}>
-              The property <b>siteName</b> must be present, containing the site name.
-            </ListItem>
-            <ListItem sx={{ display: 'list-item' }}>
-              The property <b>areaHa</b> must be present, containing the area of the site in
-              Hectares.
-            </ListItem>
-            <ListItem sx={{ display: 'list-item' }}>
-              Optional - Set the boolean value of <i>Masked_Location</i> to <i>true</i> if you want
-              the feature to be obscured by a mask.
-            </ListItem>
-          </List>
-        </Typography>
-      </Box>
-    );
-  };
-
   return (
     <>
       <Box mb={5} mt={0}>
@@ -308,12 +272,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your project boundary.
+            <Tooltip title="GeoJSON Properties Information" placement="right">
+              <IconButton onClick={openGeoJSONDescription}>
+                <InfoIcon color="info" />
+              </IconButton>
+            </Tooltip>
           </Typography>
-          <Tooltip title="GeoJSON Properties Information" placement="right">
-            <IconButton onClick={openGeoJSONDescription}>
-              <InfoIcon color="info" />
-            </IconButton>
-          </Tooltip>
         </Box>
 
         <Box mb={5}>
