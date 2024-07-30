@@ -37,7 +37,7 @@ const PublicProjectContact: React.FC<IPublicProjectContactProps> = ({ projectFor
                   <Avatar aria-label="contact">
                     {contactDetails.first_name
                       ? contactDetails.first_name[0] + contactDetails.last_name[0]
-                      : 'Org'}
+                      : 'FN'}
                   </Avatar>
                 }
                 title={`${contactDetails.first_name} ${contactDetails.last_name}`}
