@@ -19,6 +19,7 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
+import GeoJSONDescription from 'components/map/components/UploadInstructions';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState, useEffect } from 'react';
@@ -83,6 +84,12 @@ const calculateTotalArea = (features: any) => {
 const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IPlanLocationForm>();
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
+
+  const [geoJSONDescriptionOpen, setGeoJSONDescriptionOpen] = useState(false);
+
+  const openGeoJSONDescription = () => {
+    setGeoJSONDescriptionOpen(true);
+  };
 
   /**
    * Reactive state to share between the layer picker and the map
@@ -187,12 +194,12 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your Plan boundary.
+            <Tooltip title="GeoJSON Properties Information" placement="right">
+              <IconButton onClick={openGeoJSONDescription}>
+                <InfoIcon color="info" />
+              </IconButton>
+            </Tooltip>
           </Typography>
-          <Tooltip title="GeoJSON Properties Information" placement="right">
-            <IconButton>
-              <InfoIcon color="info" />
-            </IconButton>
-          </Tooltip>
         </Box>
 
         <Box mb={5}>
@@ -248,6 +255,13 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             }
           }}
         />
+      </ComponentDialog>
+
+      <ComponentDialog
+        open={geoJSONDescriptionOpen}
+        dialogTitle="The GeoJSON file should align with the following criteria:"
+        onClose={() => setGeoJSONDescriptionOpen(false)}>
+        <GeoJSONDescription />
       </ComponentDialog>
     </>
   );
