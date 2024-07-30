@@ -160,5 +160,5 @@ The simplest solution for now is to keep typescript at the latest `3.x` version.
   https://stackoverflow.com/questions/62079477/line-0-parsing-error-cannot-read-property-map-of-undefined/63660413
 
 ```
-0:0 error Parsing error: Cannot read property 'map' of undefined
+0:0 error Parsing error: Cannot read property 'map' of undefined 
 ```
