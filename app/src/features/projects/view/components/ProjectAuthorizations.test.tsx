@@ -23,7 +23,7 @@ describe('ProjectPermits', () => {
   });
 
   it('renders authorizations data correctly', async () => {
-    const { getByTestId, getByText } = render(
+    const { getByTestId, getByText, findByText } = render(
       <ProjectAuthorizations
         projectForViewData={{
           ...getProjectForViewResponse,
@@ -31,7 +31,8 @@ describe('ProjectPermits', () => {
             authorizations: [
               {
                 authorization_ref: '123',
-                authorization_type: 'Test Permit Type'
+                authorization_type: 'Test Permit Type',
+                authorization_desc: 'Description'
               }
             ]
           }
@@ -42,7 +43,10 @@ describe('ProjectPermits', () => {
 
     expect(getByTestId('authorization_item')).toBeInTheDocument();
 
-    expect(getByText('123', { exact: false })).toBeVisible();
+    // [OI] commented the following 2 lines as these values are now in a tooltip element
+    // expect(getByText('123', { exact: false })).toBeInTheDocument();
+    // expect(getByText('Description', { exact: false })).toBeInTheDocument();
+
     expect(getByText('Test Permit Type', { exact: false })).toBeVisible();
   });
 });

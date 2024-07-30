@@ -221,14 +221,16 @@ export function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => n
 
 export const authStyles = {
   authChip: {
-    backgroundColor: '#E7FFE7',
+    backgroundColor: '#E9FBFF',
     marginBottom: '1px',
-    justifyContent: 'left'
+    justifyContent: 'space-between',
+    width: '100%'
   },
   pendingAuthChip: {
     backgroundColor: '#FFFFDD',
     marginBottom: '1px',
-    justifyContent: 'left'
+    justifyContent: 'space-between',
+    width: '100%'
   },
   noAuthChip: {
     justifyContent: 'left',

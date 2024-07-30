@@ -172,7 +172,7 @@ export class ProjectService extends DBService {
       this.getProjectData(projectId),
       this.getSpeciesData(projectId),
       this.getContactData(projectId, isPublic),
-      this.getAuthorizationData(projectId, isPublic),
+      this.getAuthorizationData(projectId),
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
       this.getFundingData(projectId, isPublic),
@@ -217,7 +217,7 @@ export class ProjectService extends DBService {
       this.getObjectivesData(projectId),
       this.getFundingData(projectId, false),
       this.getLocationData(projectId),
-      this.getAuthorizationData(projectId, false),
+      this.getAuthorizationData(projectId),
       this.attachmentRepository.getProjectAttachmentsByType(projectId, 'thumbnail')
     ]);
 
@@ -296,14 +296,10 @@ export class ProjectService extends DBService {
    * Get authorization data by project id.
    *
    * @param {number} projectId
-   * @param {boolean} isPublic
    * @return {*}  {Promise<GetAuthorizationData>}
    * @memberof ProjectService
    */
-  async getAuthorizationData(projectId: number, isPublic: boolean): Promise<GetAuthorizationData> {
-    if (isPublic) {
-      return new GetAuthorizationData();
-    }
+  async getAuthorizationData(projectId: number): Promise<GetAuthorizationData> {
     return this.projectRepository.getAuthorizationData(projectId);
   }
 
