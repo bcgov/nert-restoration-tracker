@@ -62,7 +62,7 @@ export const PlanLocationFormYupSchema = yup.object().shape({
           }
         });
         return returnValue;
-      }),
+      })
   })
 });
 
