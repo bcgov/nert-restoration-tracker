@@ -121,7 +121,10 @@ const FeatureItem: React.FC<FeatureItemProps> = (props) => {
           />
         </Box>
         <Box className="feature-size">
-          {feature.properties?.areaHa.toLocaleString({ useGrouping: true }) || 0} Hectares
+          {(feature.properties?.areaHa &&
+            feature.properties?.areaHa.toLocaleString({ useGrouping: true })) ||
+            0}{' '}
+          Hectares
         </Box>
         <FormGroup>
           <FormControlLabel

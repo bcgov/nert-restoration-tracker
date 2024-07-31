@@ -13,12 +13,16 @@ import { ICONS } from 'constants/misc';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { EditProjectI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
-import ProjectAuthorizationForm from 'features/projects/components/ProjectAuthorizationForm';
+import ProjectAuthorizationForm, {
+  ProjectAuthorizationFormArrayItemInitialValues
+} from 'features/projects/components/ProjectAuthorizationForm';
 import ProjectContactForm from 'features/projects/components/ProjectContactForm';
 import ProjectFundingForm from 'features/projects/components/ProjectFundingForm';
 import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
-import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
+import ProjectPartnershipsForm, {
+  ProjectPartnershipsFormArrayItemInitialValues
+} from 'features/projects/components/ProjectPartnershipsForm';
 import {
   ProjectFormInitialValues,
   ProjectFormYupSchema
@@ -109,6 +113,14 @@ const EditProjectPage: React.FC = () => {
                 : 'false'
         }
       };
+
+      if (editProject.authorization.authorizations.length === 0) {
+        editProject.authorization.authorizations = [ProjectAuthorizationFormArrayItemInitialValues];
+      }
+
+      if (editProject.partnership.partnerships.length === 0) {
+        editProject.partnership.partnerships = [ProjectPartnershipsFormArrayItemInitialValues];
+      }
 
       setInitialProjectFormData(editProject);
 
