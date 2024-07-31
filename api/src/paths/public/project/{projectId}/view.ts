@@ -274,6 +274,8 @@ export function getPublicProjectForView(): RequestHandler {
 
       await connection.commit();
 
+      console.log('result from project/view', result.location.geometry);
+
       return res.status(200).json(result);
     } catch (error) {
       defaultLog.error({ label: 'viewProject', message: 'error', error });
