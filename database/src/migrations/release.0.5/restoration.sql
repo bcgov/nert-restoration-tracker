@@ -846,7 +846,7 @@ CREATE TABLE project_spatial_component(
     geometry                             geometry(geometry, 3005),
     is_within_overlapping                character(1)                DEFAULT 'N' NOT NULL,
     number_sites                         integer                     NOT NULL,
-    size_ha                              integer,      
+    size_ha                              numeric(12, 2)              NOT NULL,
     geography                            geography(geometry),
     geojson                              jsonb,
     create_date                          timestamptz(6)              DEFAULT now() NOT NULL,
@@ -876,7 +876,7 @@ COMMENT ON COLUMN project_spatial_component.is_within_overlapping IS 'Indicates 
 ;
 COMMENT ON COLUMN project_spatial_component.number_sites IS 'Total number of projects sites.'
 ;
-COMMENT ON COLUMN project_spatial_component.size_ha IS 'Total area in hectars of all project sites.'
+COMMENT ON COLUMN project_spatial_component.size_ha IS 'Total area in hectars of all project sites, excluding overlapping areas.'
 ;
 COMMENT ON COLUMN project_spatial_component.geography IS 'The containing geography of the record.'
 ;
