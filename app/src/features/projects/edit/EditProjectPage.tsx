@@ -20,7 +20,9 @@ import ProjectContactForm from 'features/projects/components/ProjectContactForm'
 import ProjectFundingForm from 'features/projects/components/ProjectFundingForm';
 import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
-import ProjectPartnershipsForm, { ProjectPartnershipsFormArrayItemInitialValues } from 'features/projects/components/ProjectPartnershipsForm';
+import ProjectPartnershipsForm, {
+  ProjectPartnershipsFormArrayItemInitialValues
+} from 'features/projects/components/ProjectPartnershipsForm';
 import {
   ProjectFormInitialValues,
   ProjectFormYupSchema
