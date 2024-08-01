@@ -1,6 +1,17 @@
 import React from 'react';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 
+export interface MapPopupProps {
+  id: string;
+  name: string;
+  is_project: boolean;
+  number_sites: number;
+  size_ha: number;
+  state_code: string;
+  thumbnail?: string;
+  mask?: boolean;
+}
+
 const MapPopup = (props: any) => {
   const id = props.id;
   const name = props.name;
@@ -9,6 +20,7 @@ const MapPopup = (props: any) => {
   const sizeHa = props.size_ha;
   const stateCode = props.state_code;
   const thumbnail = props.thumbnail;
+  const mask = props.mask || false;
 
   const originalChipStyle = getStatusStyle(stateCode) || {};
 
