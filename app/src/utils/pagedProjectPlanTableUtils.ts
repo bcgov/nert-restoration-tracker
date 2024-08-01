@@ -247,3 +247,34 @@ export const authStyles = {
     textOverflow: 'ellipsis'
   }
 };
+
+export const orgStyles = {
+  orgProjectChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '230px',
+    width: '100%'
+  },
+  orgPlanChip: {
+    backgroundColor: '#FFF4EB',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '230px',
+    width: '100%'
+  },
+  noOrgChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  orgLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};

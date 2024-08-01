@@ -36,7 +36,7 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import React, { useContext, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
@@ -73,7 +73,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
           getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
             ? PlanTableI18N.multiYear
             : PlanTableI18N.annual,
-        org: row.contact.contacts.map((item) => item.organization).join(', '),
+        org: row.contact.contacts.map((item) => item.organization).join('\r'),
         startDate: row.project.start_date,
         endDate: row.project.end_date,
         statusCode: row.project.state_code,
@@ -309,6 +309,16 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <PlansTableToolbar numSelected={selected.length} />
@@ -355,7 +365,29 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                       </Link>
                     </TableCell>
                     <TableCell align="left">{row.term}</TableCell>
-                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgPlanChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.startDate)}
                     </TableCell>
