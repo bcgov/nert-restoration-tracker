@@ -51,6 +51,12 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         id: index,
         planId: row.project.project_id,
         planName: row.project.project_name,
+        focus: utils.resolveProjectPlanFocus(
+          row.project.is_healing_land,
+          row.project.is_healing_people,
+          row.project.is_land_initiative,
+          row.project.is_cultural_initiative
+        ),
         term:
           getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
             ? PlanTableI18N.multiYear
@@ -246,6 +252,16 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const focusTooltip = (focus: string) => {
+      return (
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     const orgTooltip = (org: string) => {
       return (
         <Tooltip title={org} disableHoverListener={org.length < 35}>
@@ -296,6 +312,29 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                         onClick={() => history(`/plans/${row.planId}/details`)}>
                         {row.planName}
                       </Link>
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusPlanChip}
+                                label={focusTooltip(focus)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
                     </TableCell>
                     <TableCell align="left">{row.term}</TableCell>
                     <TableCell align="left">

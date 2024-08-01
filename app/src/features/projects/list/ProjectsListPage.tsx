@@ -72,12 +72,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         id: index,
         projectId: row.project.project_id,
         projectName: row.project.project_name,
-        authType: row.authorization.authorizations
-          .map(
-            (item: { authorization_ref: string; authorization_type: string }) =>
-              item.authorization_type + '\n' + item.authorization_ref
-          )
-          .join('\r'),
+        focus: utils.resolveProjectPlanFocus(
+          row.project.is_healing_land,
+          row.project.is_healing_people,
+          row.project.is_land_initiative,
+          row.project.is_cultural_initiative
+        ),
         org: row.contact.contacts.map((item) => item.organization).join('\r'),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
@@ -100,7 +100,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             id: index + rowsProject.length,
             projectId: row.id,
             projectName: row.name,
-            authType: '',
+            focus: '',
             org: '',
             plannedStartDate: '',
             plannedEndDate: '',
@@ -304,11 +304,11 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
-    const authTooltip = (auth: string[]) => {
+    const focusTooltip = (focus: string) => {
       return (
-        <Tooltip title={auth[1] ? auth[1] : 'Pending'} placement="left">
-          <Typography sx={utils.authStyles.authLabel} aria-label={`${auth[0]}`}>
-            {auth[0]}
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
           </Typography>
         </Tooltip>
       );
@@ -370,40 +370,27 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                       </Link>
                     </TableCell>
                     <TableCell align="left">
-                      {!row.authType && (
-                        <Chip
-                          label="No Authorizations"
-                          sx={utils.authStyles.noAuthChip}
-                          data-testid="no_authorizations_loaded"
-                        />
-                      )}
-                      {row.authType &&
-                        row.authType.split('\r').map((auth: string, key) => (
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
                           <Fragment key={key}>
                             <Box>
-                              {auth.split('\n')[1] === '' && (
-                                <Chip
-                                  deleteIcon={<Icon path={mdiAlphaPCircleOutline} size={0.8} />}
-                                  onDelete={() => {}}
-                                  data-testid="authorization_item"
-                                  size="small"
-                                  sx={utils.authStyles.pendingAuthChip}
-                                  label={authTooltip(auth.split('\n'))}
-                                />
-                              )}
-                              {auth.split('\n')[1] !== '' && (
-                                <Chip
-                                  deleteIcon={<DoneIcon />}
-                                  onDelete={() => {}}
-                                  data-testid="authorization_item"
-                                  size="small"
-                                  sx={utils.authStyles.authChip}
-                                  label={authTooltip(auth.split('\n'))}
-                                />
-                              )}
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusProjectChip}
+                                label={focusTooltip(focus)}
+                              />
                             </Box>
                           </Fragment>
                         ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
                     </TableCell>
                     <TableCell align="left">
                       {row.org &&
