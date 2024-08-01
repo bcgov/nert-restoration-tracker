@@ -3,6 +3,7 @@ import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
 import { focusOptions } from 'constants/misc';
 import { IConfig } from 'contexts/configContext';
 import dayjs from 'dayjs';
+import { FormikErrors } from 'formik';
 import { IGetProjectForViewResponseDetails } from 'interfaces/useProjectApi.interface';
 
 /**
@@ -283,4 +284,20 @@ export const handleFocusFormValues = (project: IGetProjectForViewResponseDetails
   }
 
   return newValues;
+};
+
+export const checkFormikErrors = (errors: FormikErrors<any> | undefined) => {
+  if (errors) {
+    const errorsText = Object.keys(errors).map((key) => {
+      if (typeof errors[key] === 'object') {
+        return `${key}: ${JSON.stringify(errors[key], null, 2)}`;
+      }
+
+      return `${key}: ${errors[key]}`;
+    });
+
+    return errorsText;
+  }
+
+  return [];
 };
