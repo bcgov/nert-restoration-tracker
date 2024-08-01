@@ -1,11 +1,12 @@
 import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
+import { focus } from 'constants/misc';
 
 /**  Project related objects **/
 export interface ProjectData {
   id: number;
   projectId: number;
   projectName: string;
-  authType: string;
+  focus: string;
   org: string;
   plannedStartDate: string;
   plannedEndDate: string;
@@ -41,10 +42,10 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     label: ProjectTableI18N.projectName
   },
   {
-    id: 'authType',
+    id: 'focus',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.authorizationType
+    label: ProjectTableI18N.focus
   },
   {
     id: 'org',
@@ -100,6 +101,7 @@ export interface PlanData {
   id: number;
   planId: number;
   planName: string;
+  focus: string;
   term: string;
   org: string;
   startDate: string;
@@ -133,6 +135,12 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     numeric: false,
     disablePadding: true,
     label: PlanTableI18N.planName
+  },
+  {
+    id: 'focus',
+    numeric: false,
+    disablePadding: false,
+    label: PlanTableI18N.focus
   },
   {
     id: 'term',
@@ -247,3 +255,87 @@ export const authStyles = {
     textOverflow: 'ellipsis'
   }
 };
+
+export const orgStyles = {
+  orgProjectChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '230px',
+    width: '100%'
+  },
+  orgPlanChip: {
+    backgroundColor: '#FFF4EB',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '230px',
+    width: '100%'
+  },
+  noOrgChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  orgLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
+export const focusStyles = {
+  focusProjectChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '210px',
+    width: '100%'
+  },
+  focusPlanChip: {
+    backgroundColor: '#FFF4EB',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '210px',
+    width: '100%'
+  },
+  noFocusChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  focusLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
+export function resolveProjectPlanFocus(
+  isHealingLand: boolean,
+  isHealingPeople: boolean,
+  isLandInitiative: boolean,
+  isCulturalInitiative: boolean
+) {
+  let resolvedFocusString = '';
+  if (isHealingLand) {
+    resolvedFocusString += focus.HEALING_THE_LAND;
+  }
+  if (isHealingPeople) {
+    resolvedFocusString += '\r' + focus.HEALING_THE_PEOPLE;
+  }
+  if (isLandInitiative) {
+    resolvedFocusString += '\r' + focus.LAND_BASED_RESTOTRATION_INITIATIVE;
+  }
+  if (isCulturalInitiative) {
+    resolvedFocusString += '\r' + focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE;
+  }
+  return resolvedFocusString.trim();
+}

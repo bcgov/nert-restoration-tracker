@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import * as turf from '@turf/turf';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
@@ -9,11 +8,7 @@ import { APIError } from 'hooks/api/useAxios';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import ne_boundary from 'components/map/layers/north_east_boundary.json';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
-
-// This may or may not be used
-const projectBoundary = turf.bbox(ne_boundary);
 
 /**
  * Page to search for and display a list of records spatially.

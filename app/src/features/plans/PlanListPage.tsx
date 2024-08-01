@@ -36,7 +36,7 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import React, { useContext, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
@@ -69,11 +69,17 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
         id: index,
         planId: row.project.project_id,
         planName: row.project.project_name,
+        focus: utils.resolveProjectPlanFocus(
+          row.project.is_healing_land,
+          row.project.is_healing_people,
+          row.project.is_land_initiative,
+          row.project.is_cultural_initiative
+        ),
         term:
           getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
             ? PlanTableI18N.multiYear
             : PlanTableI18N.annual,
-        org: row.contact.contacts.map((item) => item.organization).join(', '),
+        org: row.contact.contacts.map((item) => item.organization).join('\r'),
         startDate: row.project.start_date,
         endDate: row.project.end_date,
         statusCode: row.project.state_code,
@@ -100,6 +106,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             id: index + rowsPlan.length,
             planId: row.id,
             planName: row.name,
+            focus: '',
             term: '',
             org: '',
             startDate: '',
@@ -309,6 +316,26 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const focusTooltip = (focus: string) => {
+      return (
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <PlansTableToolbar numSelected={selected.length} />
@@ -354,8 +381,53 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         {row.planName}
                       </Link>
                     </TableCell>
+                    <TableCell align="left">
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusPlanChip}
+                                label={focusTooltip(focus)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">{row.term}</TableCell>
-                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgPlanChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.startDate)}
                     </TableCell>

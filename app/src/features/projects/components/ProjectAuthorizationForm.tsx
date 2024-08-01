@@ -73,7 +73,7 @@ export const ProjectAuthorizationFormYupSchema = yup.object().shape({
             .transform((value, orig) => (orig.trim() === '' ? null : value))
             .max(200, 'Cannot exceed 200 characters')
             .isAuthDescriptionRequired(
-              'Other',
+              'Other - please specify',
               'Authorization Description is required when Authorization Type is "Other"'
             )
         })
@@ -182,7 +182,9 @@ const ProjectAuthorizationForm: React.FC = () => {
                                 label="Authorization Description"
                                 other={{
                                   disabled: !authorization.authorization_type,
-                                  required: !(authorization.authorization_type != 'Other'),
+                                  required: !(
+                                    authorization.authorization_type != 'Other - please specify'
+                                  ),
                                   value: authorization.authorization_desc,
                                   error:
                                     authorizationDescMeta.touched &&

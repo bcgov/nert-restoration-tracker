@@ -591,11 +591,10 @@ const initializeMap = (
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
 
-      // XXX: This is currently broken for public users. Most likely due to S3 permissions.
       let thumbnail = '';
       try {
-        const thumbnailResponse = await nertApi.project.getProjectAttachments(
-          id,
+        const thumbnailResponse = await nertApi.public.project.getProjectAttachments(
+          Number(id),
           S3FileType.THUMBNAIL
         );
         thumbnail = thumbnailResponse.attachmentsList[0].url;
@@ -644,15 +643,16 @@ const initializeMap = (
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
 
-      // XXX: This is currently broken for public users. Most likely due to S3 permissions.
       let thumbnail = '';
       try {
-        const thumbnailResponse = await nertApi.project.getProjectAttachments(
-          id,
+        const thumbnailResponse = await nertApi.public.project.getProjectAttachments(
+          Number(id),
           S3FileType.THUMBNAIL
         );
+
         thumbnail = thumbnailResponse.attachmentsList[0].url;
       } catch (error) {
+        //TODO: Add error handling here, Console log is not enough
         console.log('Error getting thumbnail');
       }
 

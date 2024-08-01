@@ -75,6 +75,7 @@ import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
+import { checkFormikErrors } from 'utils/Utils';
 
 const pageStyles = {
   actionButton: {
@@ -366,23 +367,6 @@ const CreateProjectPage: React.FC = () => {
     });
   };
 
-  // Commented for now, we will revisit later
-  //useEffect to catch and display formik errors
-  // useEffect(() => {
-  //   if (formikRef.current?.errors) {
-  //     const errorsText = Object.keys(formikRef.current.errors).map((key) => {
-  //       return `${key}: ${JSON.stringify(formikRef.current?.errors[key])}`;
-  //     });
-
-  //     dialogContext.setErrorDialog({
-  //       dialogTitle: 'Please correct the errors in the form before submitting.',
-  //       dialogText: errorsText.join('\n'),
-  //       ...defaultErrorDialogProps,
-  //       open: true
-  //     });
-  //   }
-  // }, [formikRef.current?.errors]);
-
   if (!codes.codes) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
@@ -414,6 +398,21 @@ const CreateProjectPage: React.FC = () => {
         onNo={handleCancelConfirmation}
         onYes={() => {
           setOpenYesNoDialog(false);
+          formikRef.current?.validateForm().then((errors) => {
+            const errorsText: string[] = checkFormikErrors(errors);
+
+            if (errorsText.length) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Error Creating Project',
+                dialogText: 'Please correct the errors in the form before submitting.',
+                dialogError: 'The following errors were found:',
+                dialogErrorDetails: errorsText,
+                ...defaultErrorDialogProps,
+                open: true
+              });
+            }
+          });
+
           formikRef.current?.submitForm();
         }}
       />
@@ -452,7 +451,7 @@ const CreateProjectPage: React.FC = () => {
             validationSchema={ProjectFormYupSchema}
             validateOnBlur={false}
             validateOnChange={false}
-            onSubmit={handleProjectCreation}>
+            onSubmit={(values) => handleProjectCreation(values)}>
             <>
               <Form noValidate>
                 <Box ml={1}>
