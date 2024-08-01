@@ -322,6 +322,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             maskState={maskState}
             activeFeatureState={[activeFeature, setActiveFeature]}
             autoFocus={true}
+            editModeOn={true}
           />
         </Box>
         {errors?.location?.geometry && (

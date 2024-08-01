@@ -30,6 +30,7 @@ export interface IMapContainerProps {
   maskState?: boolean[]; // Store which features are masked
   activeFeatureState?: any; // Store which feature is active
   autoFocus?: boolean;
+  editModeOn?: boolean; // This activates things like mask drawing
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -310,7 +311,8 @@ const initializeMap = (
   markerState?: any,
   bounds?: any,
   autoFocus?: boolean,
-  nertApi?: any
+  nertApi?: any,
+  editModeOn?: boolean
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -373,34 +375,36 @@ const initializeMap = (
     /**
      * Draw the masked polygons
      */
-    const maskGeojson: FeatureCollection = {
-      type: 'FeatureCollection',
-      features: []
-    };
+    if (editModeOn) {
+      const maskGeojson: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: []
+      };
 
-    features
-      .filter((feature: any) => feature.properties?.maskedLocation)
-      .forEach((feature: any) => {
-        const specs: any = initializeMasks(feature);
-        const maskPolygon = createMask(specs, feature);
-        maskGeojson.features.push(maskPolygon);
+      features
+        .filter((feature: any) => feature.properties?.maskedLocation)
+        .forEach((feature: any) => {
+          const specs: any = initializeMasks(feature);
+          const maskPolygon = createMask(specs, feature);
+          maskGeojson.features.push(maskPolygon);
+        });
+
+      map.addSource('mask', {
+        type: 'geojson',
+        data: maskGeojson
       });
-
-    map.addSource('mask', {
-      type: 'geojson',
-      data: maskGeojson
-    });
-    map.addLayer({
-      id: 'mask',
-      type: 'line',
-      source: 'mask',
-      paint: {
-        'line-width': 4,
-        'line-color': 'orange',
-        'line-dasharray': [3, 2],
-        'line-blur': 2
-      }
-    });
+      map.addLayer({
+        id: 'mask',
+        type: 'line',
+        source: 'mask',
+        paint: {
+          'line-width': 4,
+          'line-color': 'orange',
+          'line-dasharray': [3, 2],
+          'line-blur': 2
+        }
+      });
+    }
 
     /**
      * Add the custom communities layer
@@ -904,6 +908,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const { bounds } = props || null;
 
+  const editModeOn = props.editModeOn || false;
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -952,7 +958,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       markerState,
       bounds,
       autoFocus,
-      nertApi
+      nertApi,
+      editModeOn
     );
   }, []);
 
