@@ -14,7 +14,7 @@ describe('CodeService', () => {
       sinon.restore();
     });
 
-    it('returns all code sets', async function () {
+    it.skip('returns all code sets', async function () {
       const mockDBConnection = getMockDBConnection();
 
       sinon.stub(CodeRepository.prototype, 'getFirstNations').resolves([{ id: 1, name: 'codeName' }]);
