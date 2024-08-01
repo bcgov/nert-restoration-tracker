@@ -639,7 +639,6 @@ const initializeMap = (
       const sizeHa = prop.size_ha;
       const stateCode = prop.state_code;
 
-      // XXX: This is currently broken for public users. Most likely due to S3 permissions.
       let thumbnail = '';
       try {
         const thumbnailResponse = await nertApi.public.project.getProjectAttachments(
