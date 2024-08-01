@@ -337,5 +337,5 @@ export function resolveProjectPlanFocus(
   if (isCulturalInitiative) {
     resolvedFocusString += '\r' + focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE;
   }
-  return resolvedFocusString;
+  return resolvedFocusString.trim();
 }
