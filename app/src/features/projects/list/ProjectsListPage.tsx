@@ -78,7 +78,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
               item.authorization_type + '\n' + item.authorization_ref
           )
           .join('\r'),
-        org: row.contact.contacts.map((item) => item.organization).join(', '),
+        org: row.contact.contacts.map((item) => item.organization).join('\r'),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
         actualStartDate: row.project.actual_start_date,
@@ -314,6 +314,16 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       );
     };
 
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <ProjectsTableToolbar numSelected={selected.length} />
@@ -395,7 +405,29 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                           </Fragment>
                         ))}
                     </TableCell>
-                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgProjectChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
                     </TableCell>

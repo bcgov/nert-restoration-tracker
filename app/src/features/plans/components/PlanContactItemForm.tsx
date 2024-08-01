@@ -40,12 +40,12 @@ export const PlanContactItemYupSchema = yup.object().shape({
   last_name: yup.string().max(50, 'Cannot exceed 50 characters').required('Required'),
   email_address: yup
     .string()
-    .max(500, 'Cannot exceed 500 characters')
+    .max(300, 'Cannot exceed 300 characters')
     .email('Must be a valid email address')
     .required('Required'),
   organization: yup
     .string()
-    .max(300, 'Cannot exceed 300 characters')
+    .max(100, 'Cannot exceed 100 characters')
     .required('Required')
     .nullable(),
   is_public: yup.string().required('Required'),

@@ -247,7 +247,7 @@ export function getPublicPlansList(): RequestHandler {
       const planService = new PlanService(connection);
 
       // Get all projects data for the projectIds
-      const projects = await planService.getPlansByIds(projectIds);
+      const projects = await planService.getPlansByIds(projectIds, true);
 
       await connection.commit();
 
