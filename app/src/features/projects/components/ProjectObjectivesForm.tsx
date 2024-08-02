@@ -1,11 +1,9 @@
 import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import { List, ListItem } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
@@ -70,7 +68,7 @@ const ProjectObjectivesForm: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectObjectivesForm>();
 
   return (
-    <>
+    <Box mt={6}>
       <FieldArray
         name="objective.objectives"
         render={(arrayHelpers) => (
@@ -80,42 +78,34 @@ const ProjectObjectivesForm: React.FC = () => {
 
               return (
                 /* Objectives List */
-                <Grid container spacing={3} key={index}>
-                  <Grid item xs={12} md={12}>
-                    <List>
-                      <ListItem sx={pageStyles.customListItem}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} md={11.88}>
-                            <CustomTextField
-                              name={`objective.objectives.[${index}].objective`}
-                              label="Objective"
-                              maxLength={200}
-                              other={{
-                                required: true,
-                                value: objective.objective,
-                                error: objectiveMeta.touched && Boolean(objectiveMeta.error),
-                                helperText: objectiveMeta.touched && objectiveMeta.error
-                              }}
-                            />
-                          </Grid>
-                        </Grid>
-                        {index >= 1 && (
-                          <ListItemSecondaryAction>
-                            <IconButton
-                              color="primary"
-                              data-testid="delete-icon"
-                              aria-label="remove objective"
-                              onClick={() => arrayHelpers.remove(index)}
-                              edge="end"
-                              size="large">
-                              <Icon path={mdiTrashCanOutline} size={1} />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        )}
-                      </ListItem>
-                    </List>
-                  </Grid>
-                </Grid>
+                <List key={index}>
+                  <ListItem sx={pageStyles.customListItem}>
+                    <CustomTextField
+                      name={`objective.objectives.[${index}].objective`}
+                      label="Objective"
+                      maxLength={200}
+                      other={{
+                        required: true,
+                        value: objective.objective,
+                        error: objectiveMeta.touched && Boolean(objectiveMeta.error),
+                        helperText: objectiveMeta.touched && objectiveMeta.error
+                      }}
+                    />
+                    {index >= 1 && (
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          color="primary"
+                          data-testid="delete-icon"
+                          aria-label="remove objective"
+                          onClick={() => arrayHelpers.remove(index)}
+                          edge="end"
+                          size="large">
+                          <Icon path={mdiTrashCanOutline} size={1} />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    )}
+                  </ListItem>
+                </List>
               );
             })}
             <Box pt={0.5}>
@@ -137,16 +127,14 @@ const ProjectObjectivesForm: React.FC = () => {
           </>
         )}
       />
-      <Box>
-        {errors.objective?.objectives && !Array.isArray(errors.objective?.objectives) && (
-          <Box pt={2}>
-            <Typography style={{ fontSize: '12px', color: '#f44336' }}>
-              {errors.objective.objectives}
-            </Typography>
-          </Box>
-        )}
-      </Box>
-    </>
+      {errors.objective?.objectives && !Array.isArray(errors.objective?.objectives) && (
+        <Box pt={2}>
+          <Typography style={{ fontSize: '12px', color: '#f44336' }}>
+            {errors.objective.objectives}
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 

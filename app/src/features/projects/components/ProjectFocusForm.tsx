@@ -1,5 +1,6 @@
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { Box } from '@mui/system';
 import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
@@ -47,40 +48,34 @@ const ProjectFocusForm: React.FC = () => {
   const { values } = formikProps;
 
   return (
-    <>
+    <Box mt={2}>
       <Typography component="legend">Healing the Land and/or People</Typography>
-      <Grid container spacing={3} mb={2}>
-        <Grid item xs={12} md={11.14}>
-          <Grid container spacing={3} direction="column">
-            <Grid item xs={12}>
-              <MultiAutocompleteFieldVariableSize
-                id="focus.focuses"
-                data-testid="focus"
-                label="Project Focus"
-                options={focusOptions}
-                required={true}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Grid item xs={12}>
-                <IntegerSingleField
-                  name="focus.people_involved"
-                  label="Number of People Involved"
-                  required={
-                    values.focus &&
-                    values.focus.focuses.some((values) => {
-                      return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
-                    })
-                      ? true
-                      : false
-                  }
-                />
-              </Grid>
-            </Grid>
-          </Grid>
+      <Grid container spacing={3} direction="column">
+        <Grid item xs={12}>
+          <MultiAutocompleteFieldVariableSize
+            id="focus.focuses"
+            data-testid="focus"
+            label="Project Focus"
+            options={focusOptions}
+            required={true}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <IntegerSingleField
+            name="focus.people_involved"
+            label="Number of People Involved"
+            required={
+              values.focus &&
+              values.focus.focuses.some((values) => {
+                return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
+              })
+                ? true
+                : false
+            }
+          />
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };
 

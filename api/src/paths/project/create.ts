@@ -159,7 +159,27 @@ POST.apiDoc = {
                 focal_species: {
                   type: 'array',
                   items: {
-                    type: 'number'
+                    type: 'object',
+                    properties: {
+                      tsn: {
+                        type: 'number'
+                      },
+                      commonNames: {
+                        type: 'array',
+                        items: {
+                          type: 'string'
+                        }
+                      },
+                      scientificName: {
+                        type: 'string'
+                      },
+                      rank: {
+                        type: 'string'
+                      },
+                      kingdom: {
+                        type: 'string'
+                      }
+                    }
                   }
                 }
               }

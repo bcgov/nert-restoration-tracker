@@ -42,7 +42,10 @@ const appDeploy = async (settings) => {
         REPLICAS: phases[phase].replicas,
         REPLICAS_MAX: phases[phase].replicasMax,
         REACT_APP_MAPTILER_SECRET: phases[phase].mapTiler.mapTilerSecret,
-        REACT_APP_MAPTILER_API_KEY: phases[phase].mapTiler.mapTilerSecretApiKey
+        REACT_APP_MAPTILER_API_KEY: phases[phase].mapTiler.mapTilerSecretApiKey,
+        REACT_APP_BACKBONE_PUBLIC_API_HOST: phases[phase].backbonePublicApiHost,
+        REACT_APP_BIOHUB_TAXON_PATH: phases[phase].biohubTaxonPath,
+        REACT_APP_BIOHUB_TAXON_TSN_PATH: phases[phase].biohubTaxonTsnPath
       }
     })
   );

@@ -88,7 +88,7 @@ const ProjectGeneralInformationForm: React.FC = () => {
   const state = getStateLabelFromCode(formikProps.values.project.state_code);
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} justifyContent={'space-between'}>
       <ThumbnailImageField />
       <Grid item xs={12} md={9}>
         <Grid container spacing={3} direction="column">
