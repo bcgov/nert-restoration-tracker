@@ -102,6 +102,7 @@ export function getSearchResults(): RequestHandler {
 
 /**
  * Cycle through a feature array and apply a mask if the feature has a mask.
+ * This function is unique to this end point and is not used elsewhere.
  * @param originalFeatureArray
  * @param originalGeoJSON
  * @returns new feature array with mask applied

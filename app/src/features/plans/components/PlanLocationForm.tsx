@@ -242,6 +242,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             maskState={maskState}
             activeFeatureState={[activeFeature, setActiveFeature]}
             autoFocus={true}
+            editModeOn={true}
           />
         </Box>
         {errors?.location?.geometry && (
