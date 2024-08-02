@@ -6,6 +6,7 @@ import { geoJsonFeature } from '../../../openapi/schemas/geoJson';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { PlanService } from '../../../services/plan-service';
 import { getLogger } from '../../../utils/logger';
+import { maskGateKeeper } from '../../../utils/spatial-utils';
 
 const defaultLog = getLogger('paths/plan/{projectId}/view');
 
@@ -203,6 +204,13 @@ export function viewPlan(): RequestHandler {
       const result = await planService.getPlanById(Number(req.params.planId));
 
       await connection.commit();
+
+      // Mask private geometries
+      const maskFilter = result.location.geometry?.map((feature) => {
+        return maskGateKeeper(feature);
+      });
+
+      result.location.geometry = maskFilter;
 
       return res.status(200).json(result);
     } catch (error) {

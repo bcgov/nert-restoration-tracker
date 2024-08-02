@@ -1,3 +1,4 @@
+import * as turf from '@turf/turf';
 import axios, { AxiosError } from 'axios';
 import { Feature } from 'geojson';
 import { SQL, SQLStatement } from 'sql-template-strings';
@@ -38,6 +39,27 @@ const SOUTH_UTM_ZONE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'
 
 const UTM_STRING_FORMAT = RegExp(/^[1-9]\d?[NPQRSTUVWXCDEFGHJKLM]? \d+ \d+$/i);
 const UTM_ZONE_WITH_LETTER_FORMAT = RegExp(/^[1-9]\d?[NPQRSTUVWXCDEFGHJKLM]$/i);
+
+/**
+ * Take in a feature and replace the geometry with a mask if it exists.
+ * @param {Feature} feature
+ * @return {Feature} original feature or feature with mask applied
+ */
+export const maskGateKeeper = (feature: Feature): Feature => {
+  const properties = feature.properties;
+
+  if (properties?.maskedLocation && properties?.mask) {
+    const mask = turf.circle(properties?.mask.centroid, properties?.mask.radius, {
+      steps: 64,
+      units: 'meters',
+      properties
+    });
+
+    return mask;
+  }
+
+  return feature;
+};
 
 /**
  * Parses a UTM string of the form: `9N 573674 6114170`

@@ -51,7 +51,6 @@ export function getSearchResults(): RequestHandler {
     const connection = getAPIUserDBConnection();
 
     try {
-      // TODO: Include maskedLocation and mask objects in query
       const sqlStatement = SQL`
         SELECT
           p.project_id as id,
@@ -81,8 +80,6 @@ export function getSearchResults(): RequestHandler {
       const response = await connection.query(sqlStatement.text, sqlStatement.values);
 
       await connection.commit();
-
-      // TODO: Switch all geometries with masks to use the mask instead of the geometry
 
       if (!response || !response.rows) {
         return res.status(200).json(null);

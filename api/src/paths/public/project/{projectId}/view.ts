@@ -4,6 +4,7 @@ import { getAPIUserDBConnection } from '../../../../database/db';
 import { geoJsonFeature } from '../../../../openapi/schemas/geoJson';
 import { ProjectService } from '../../../../services/project-service';
 import { getLogger } from '../../../../utils/logger';
+import { maskGateKeeper } from '../../../../utils/spatial-utils';
 
 const defaultLog = getLogger('paths/public/project/{projectId}/view');
 
@@ -273,6 +274,13 @@ export function getPublicProjectForView(): RequestHandler {
       const result = await projectService.getProjectById(Number(req.params.projectId), true);
 
       await connection.commit();
+
+      // Mask private geometries
+      const maskFilter = result.location.geometry?.map((feature) => {
+        return maskGateKeeper(feature);
+      });
+
+      result.location.geometry = maskFilter;
 
       return res.status(200).json(result);
     } catch (error) {
