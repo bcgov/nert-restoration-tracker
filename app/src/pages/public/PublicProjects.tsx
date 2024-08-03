@@ -22,6 +22,7 @@ import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ProjectTableI18N } from 'constants/i18n';
 
 export default function PublicProjects() {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
@@ -189,7 +190,7 @@ export default function PublicProjects() {
       </Box>
       <Box>
         <Typography ml={1} variant="body1" color="textSecondary">
-          BC restoration projects and related data.
+          {ProjectTableI18N.projectDefinition}
         </Typography>
       </Box>
 

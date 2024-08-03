@@ -22,6 +22,7 @@ import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { PlanTableI18N } from 'constants/i18n';
 
 export default function PublicPlans() {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
@@ -187,7 +188,7 @@ export default function PublicPlans() {
       </Box>
       <Box>
         <Typography ml={1} variant="body1" color="textSecondary">
-          BC restoration plans and related data.
+          {PlanTableI18N.planDefinition}
         </Typography>
       </Box>
 
