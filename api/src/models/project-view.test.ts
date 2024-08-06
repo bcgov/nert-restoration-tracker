@@ -182,10 +182,6 @@ describe('GetSpeciesData', () => {
     it('sets focal species', function () {
       expect(data.focal_species).to.eql([]);
     });
-
-    it('sets focal species names', function () {
-      expect(data.focal_species_names).to.eql([]);
-    });
   });
 
   describe('All values provided', () => {
@@ -193,12 +189,10 @@ describe('GetSpeciesData', () => {
 
     const obj = [
       {
-        id: 1,
-        label: 'english1'
+        itis_tsn: 1
       },
       {
-        id: 2,
-        label: 'english2'
+        itis_tsn: 2
       }
     ];
 
@@ -208,10 +202,6 @@ describe('GetSpeciesData', () => {
 
     it('sets focal species', function () {
       expect(data.focal_species).to.eql([1, 2]);
-    });
-
-    it('sets focal species names', function () {
-      expect(data.focal_species_names).to.eql(['english1', 'english2']);
     });
   });
 });
