@@ -6,7 +6,6 @@ import get from 'lodash-es/get';
 import React from 'react';
 import SpeciesAutocompleteField from './components/SpeciesAutocompleteField';
 import SelectedSpecies from './components/SelectedSpecies';
-import { Grid } from '@mui/material';
 
 export interface IProjectFocalSpeciesForm {
   species: {
@@ -52,7 +51,7 @@ const FocalSpeciesComponent = () => {
       <SpeciesAutocompleteField
         formikFieldName={'species.focal_species'}
         label={'Focal Species'}
-        required={true}
+        required={false}
         handleSpecies={handleAddSpecies}
         clearOnSelect={true}
       />

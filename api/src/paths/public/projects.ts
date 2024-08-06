@@ -196,18 +196,12 @@ GET.apiDoc = {
                 species: {
                   description: 'The project species',
                   type: 'object',
-                  required: ['focal_species', 'focal_species_names'],
+                  required: ['focal_species'],
                   properties: {
                     focal_species: {
                       type: 'array',
                       items: {
                         type: 'number'
-                      }
-                    },
-                    focal_species_names: {
-                      type: 'array',
-                      items: {
-                        type: 'string'
                       }
                     }
                   }
