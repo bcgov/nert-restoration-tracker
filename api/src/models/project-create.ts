@@ -308,7 +308,7 @@ export class PostSpeciesData {
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostSpeciesData', message: 'params', obj });
 
-    this.focal_species = (obj?.focal_species.length && obj.focal_species) || [];
+    this.focal_species = (obj?.focal_species.length && obj.focal_species.map((value) => value.tsn)) || [];
   }
 }
 

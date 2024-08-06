@@ -88,15 +88,12 @@ export class GetContactData {
 
 export class GetSpeciesData {
   focal_species: number[];
-  focal_species_names: string[];
 
   constructor(input?: any[]) {
     this.focal_species = [];
-    this.focal_species_names = [];
     input?.length &&
       input.forEach((item: any) => {
-        this.focal_species.push(Number(item.id));
-        this.focal_species_names.push(item.label);
+        this.focal_species.push(Number(item.itis_tsn));
       });
   }
 }

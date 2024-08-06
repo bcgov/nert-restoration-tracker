@@ -26,7 +26,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 1, rows: [mockObject] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -42,7 +42,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -58,7 +58,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -81,7 +81,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -95,7 +95,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -119,7 +119,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -135,7 +135,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -149,7 +149,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -172,7 +172,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -186,7 +186,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -209,7 +209,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -223,7 +223,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -247,7 +247,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -261,7 +261,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -285,7 +285,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -299,7 +299,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -323,7 +323,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 1, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -339,7 +339,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -355,7 +355,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -379,7 +379,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -393,7 +393,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });
@@ -417,7 +417,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 1, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -433,7 +433,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 1, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -449,7 +449,7 @@ describe('ProjectRepository', () => {
       const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           return mockQueryResponse;
         }
       });
@@ -465,7 +465,7 @@ describe('ProjectRepository', () => {
 
     it('catches errors and throws', async () => {
       const mockDBConnection = getMockDBConnection({
-        query: async () => {
+        sql: async () => {
           throw new Error('error');
         }
       });

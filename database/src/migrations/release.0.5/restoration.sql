@@ -945,7 +945,7 @@ COMMENT ON TABLE project_spatial_component_type IS 'A list of spatial component 
 
 CREATE TABLE project_species(
     project_species_id       integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    wldtaxonomic_units_id    integer           NOT NULL,
+    itis_tsn                 integer           NOT NULL,
     project_id               integer           NOT NULL,
     create_date              timestamptz(6)    DEFAULT now() NOT NULL,
     create_user              integer           NOT NULL,
@@ -960,7 +960,7 @@ CREATE TABLE project_species(
 
 COMMENT ON COLUMN project_species.project_species_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_species.wldtaxonomic_units_id IS 'Foreign key to taxonomy service describing the taxonomic unit of the record.'
+COMMENT ON COLUMN project_species.itis_tsn IS 'Foreign key to taxonomy service describing the taxonomic unit of the record.'
 ;
 COMMENT ON COLUMN project_species.project_id IS 'System generated surrogate primary key identifier.'
 ;
@@ -1523,7 +1523,7 @@ CREATE UNIQUE INDEX project_spatial_component_type_uk1 ON project_spatial_compon
 -- INDEX: project_species_uk1 
 --
 
-CREATE UNIQUE INDEX project_species_uk1 ON project_species(project_id, wldtaxonomic_units_id)
+CREATE UNIQUE INDEX project_species_uk1 ON project_species(project_id, itis_tsn)
 ;
 -- 
 -- INDEX: "Ref1344" 

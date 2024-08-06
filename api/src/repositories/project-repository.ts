@@ -51,7 +51,7 @@ export class ProjectRepository extends BaseRepository {
         project.project_id = ${projectId};
     `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (response.rowCount !== 1) {
         throw new ApiExecuteSQLError('Failed to get project', [
@@ -80,14 +80,14 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
         SELECT
-          wldtaxonomic_units_id
+          itis_tsn
         from
           project_species
         where
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       return response.rows;
     } catch (error) {
@@ -134,8 +134,8 @@ export class ProjectRepository extends BaseRepository {
       }
 
       const response = await Promise.all([
-        this.connection.query(sqlStatementAllColumns.text, sqlStatementAllColumns.values),
-        this.connection.query(sqlStatementJustAgencies.text, sqlStatementJustAgencies.values)
+        this.connection.sql(sqlStatementAllColumns),
+        this.connection.sql(sqlStatementJustAgencies)
       ]);
 
       const result = [
@@ -172,7 +172,7 @@ export class ProjectRepository extends BaseRepository {
         project_id = ${projectId};
     `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       return new GetAuthorizationData(response.rows);
     } catch (error) {
@@ -199,7 +199,7 @@ export class ProjectRepository extends BaseRepository {
         project_id = ${projectId};
     `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       return new GetPartnershipsData(response.rows);
     } catch (error) {
@@ -226,7 +226,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       return response.rows;
     } catch (error) {
@@ -253,7 +253,7 @@ export class ProjectRepository extends BaseRepository {
           project_id = ${projectId};
       `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       const conservationAreas = response.rows.map((row: { conservation_area: string }) => {
         return { conservationArea: row.conservation_area };
@@ -315,7 +315,7 @@ export class ProjectRepository extends BaseRepository {
         `);
       }
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       const result = (response && response.rows) || null;
 
@@ -350,7 +350,7 @@ export class ProjectRepository extends BaseRepository {
         psct.name = 'Boundary';
     `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (!response.rowCount) {
         throw new ApiExecuteSQLError('Failed to get Geometry', [
@@ -384,13 +384,39 @@ export class ProjectRepository extends BaseRepository {
         project_id = ${projectId};
     `;
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       return (response && response.rows) || null;
     } catch (error) {
       defaultLog.debug({ label: 'getRegionData', message: 'error', error });
       throw error;
     }
+  }
+
+  /**
+   * get project species.
+   *
+   * @param {number} speciesId
+   * @param {number} projectId
+   * @return {*}  {Promise<{ project_species_id: number }>}
+   * @memberof ProjectRepository
+   */
+  async getSpecies(projectId: number): Promise<[{ itis_tsn: number }]> {
+    defaultLog.debug({ label: 'getSpecies', message: 'params', projectId });
+
+    const sqlStatement = SQL`
+        SELECT 
+          itis_tsn
+        FROM
+          project_species
+        WHERE
+          project_id = ${projectId};
+          `;
+
+    const response = await this.connection.sql(sqlStatement);
+    console.log('response', response);
+
+    return response.rows as [{ itis_tsn: number }];
   }
 
   /**
@@ -432,7 +458,7 @@ export class ProjectRepository extends BaseRepository {
         sqlStatement.append(SQL`;`);
       }
 
-      const response = await this.connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await this.connection.sql(sqlStatement);
 
       if (!response.rowCount) {
         throw new ApiExecuteSQLError('Failed to get spatial search results', [
@@ -909,7 +935,7 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
       INSERT INTO project_species (
-        wldtaxonomic_units_id,
+        itis_tsn,
         project_id
       ) VALUES (
         ${speciesId},

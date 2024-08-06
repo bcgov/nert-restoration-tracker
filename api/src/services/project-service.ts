@@ -42,7 +42,6 @@ import { UserObject } from '../repositories/user-repository';
 import { getS3SignedURL } from '../utils/file-utils';
 import { doAllProjectsHaveAProjectLeadIfUserIsRemoved } from '../utils/user-utils';
 import { DBService } from './service';
-import { TaxonomyService } from './taxonomy-service';
 
 export class ProjectService extends DBService {
   projectRepository: ProjectRepository;
@@ -271,11 +270,7 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async getSpeciesData(projectId: number): Promise<GetSpeciesData> {
-    const response = await this.projectRepository.getProjectSpecies(projectId);
-
-    const taxonomyService = new TaxonomyService();
-
-    const species = await taxonomyService.getSpeciesFromIds(response);
+    const species = await this.projectRepository.getProjectSpecies(projectId);
 
     return new GetSpeciesData(species);
   }
