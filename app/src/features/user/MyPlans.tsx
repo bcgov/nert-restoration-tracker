@@ -13,6 +13,7 @@ import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import React from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useNavigate } from 'react-router-dom';
+import { PlanTableI18N } from 'constants/i18n';
 
 export interface IPlansListProps {
   plans: IGetPlanForViewResponse[];
@@ -69,7 +70,7 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
       </Box>
       <Box>
         <Typography ml={1} variant="body1" color="textSecondary">
-          My BC restoration plans and related data.
+          {PlanTableI18N.planDefinition}
         </Typography>
       </Box>
 
