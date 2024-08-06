@@ -560,13 +560,13 @@ const initializeMap = (
 
     // Clicking polygons show the thumbnail
     map.on('click', 'markerPolygon', async (e: any) => {
-      console.log('e', e.features[0]);
+      console.log('e.features[0]', e.features[0]);
+      console.log('e', e);
       const prop = e.features[0].properties;
       const id = prop.id;
       const name = prop.siteName || '';
       const isProject = prop.is_project;
       const areaHa = prop.areaHa;
-      const stateCode = prop.state_code;
 
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
@@ -574,7 +574,7 @@ const initializeMap = (
           id={id}
           is_project={isProject}
           size_ha={areaHa}
-          state_code={stateCode}
+          hideButton={true}
         />
       );
 

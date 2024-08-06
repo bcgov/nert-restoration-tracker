@@ -4,12 +4,13 @@ import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/State
 export interface MapPopupProps {
   id: string;
   name: string;
-  is_project: boolean;
-  number_sites: number;
   size_ha: number;
-  state_code: string;
+  is_project?: boolean;
+  number_sites?: number;
+  state_code?: string;
   thumbnail?: string;
   mask?: boolean;
+  hideButton?: boolean;
 }
 
 const MapPopup = (props: any) => {
@@ -21,6 +22,10 @@ const MapPopup = (props: any) => {
   const stateCode = props.state_code;
   const thumbnail = props.thumbnail;
   const mask = props.mask || false;
+  const hideButton = props.hideButton || false;
+
+  // Project if true, Plan if false, Site if undefined/null
+  const siteType = (isProject && 'Project') || (isProject === false && 'Plan') || 'Site';
 
   const originalChipStyle = getStatusStyle(stateCode) || {};
 
@@ -80,24 +85,28 @@ const MapPopup = (props: any) => {
         </div>
       )}
       <div style={style.description}>
-        <div>{isProject ? 'Project' : 'Plan'} Name:</div>
+        <div>{siteType} Name:</div>
         <div style={style.value}>{name}</div>
-        <div>{isProject ? 'Project' : 'Plan'} Size (Ha):</div>
+        <div>{siteType} Size (Ha):</div>
         <div style={style.value}>{sizeHa}</div>
 
-        <div>{isProject ? 'Project' : 'Plan'} Status:</div>
-        <div>
-          <div style={style.status}>{getStateLabelFromCode(stateCode)}</div>
-        </div>
+        {stateCode && <div>{siteType} Status:</div>}
+        {stateCode && (
+          <div>
+            <div style={style.status}>{getStateLabelFromCode(stateCode)}</div>
+          </div>
+        )}
 
-        <div>Number of Sites:</div>
-        <div style={style.value}>{numberSites}</div>
+        {numberSites && <div>Number of Sites:</div>}
+        {numberSites && <div style={style.value}>{numberSites}</div>}
       </div>
-      <div>
-        <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
-          <button style={style.button}>View {isProject ? 'Project' : 'Plan'} Details</button>
-        </a>
-      </div>
+      {!hideButton && (
+        <div>
+          <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
+            <button style={style.button}>View {isProject ? 'Project' : 'Plan'} Details</button>
+          </a>
+        </div>
+      )}
     </div>
   );
 };
