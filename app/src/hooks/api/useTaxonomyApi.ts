@@ -5,6 +5,7 @@ import { IPartialTaxonomy, ITaxonomy } from 'interfaces/useTaxonomyApi.interface
 
 const useTaxonomyApi = () => {
   const config = useConfigContext();
+  console.log('config', config);
   const apiAxios = useAxios(config.BACKBONE_PUBLIC_API_HOST);
 
   /**
