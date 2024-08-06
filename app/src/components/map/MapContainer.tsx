@@ -344,11 +344,6 @@ const initializeMap = (
   );
 
   /**
-   *  XXX: This is breaking the map by drawing the unwanted basemap over top of the map
-   *  There also appears to be a race condition so seeing this issue is random.
-   */
-
-  /**
    * # loadLayers
    * Load all custom layers here
    */
@@ -563,6 +558,33 @@ const initializeMap = (
         if (activeFeatureState[1]) activeFeatureState[1](null);
       });
 
+    // Clicking polygons show the thumbnail
+    map.on('click', 'markerPolygon', async (e: any) => {
+      console.log('e', e.features[0]);
+      const prop = e.features[0].properties;
+      const id = prop.id;
+      const name = prop.siteName || '';
+      const isProject = prop.is_project;
+      const areaHa = prop.areaHa;
+      const stateCode = prop.state_code;
+
+      const mapPopupHtml = ReactDomServer.renderToString(
+        <MapPopup
+          name={name}
+          id={id}
+          is_project={isProject}
+          size_ha={areaHa}
+          state_code={stateCode}
+        />
+      );
+
+      // @ts-ignore
+      new Popup({ offset: { bottom: [0, -14] } })
+        .setLngLat(e.lngLat)
+        .setHTML(mapPopupHtml)
+        .addTo(map);
+    });
+
     // Zoom in until cluster breaks apart.
     map.on('click', 'markerClusters.points', (e: any) => {
       const coordinates = e.features[0].geometry.coordinates.slice();
@@ -652,7 +674,6 @@ const initializeMap = (
 
         thumbnail = thumbnailResponse.attachmentsList[0].url;
       } catch (error) {
-        //TODO: Add error handling here, Console log is not enough
         console.log('Error getting thumbnail');
       }
 
