@@ -45,13 +45,15 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     id: 'focus',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.focus
+    label: ProjectTableI18N.focus,
+    tooltipLabel: ProjectTableI18N.focusTooltip
   },
   {
     id: 'org',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.organizations
+    label: TableI18N.organizations,
+    tooltipLabel: ProjectTableI18N.orgTooltip
   },
   {
     id: 'plannedStartDate',
@@ -140,19 +142,22 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     id: 'focus',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.focus
+    label: PlanTableI18N.focus,
+    tooltipLabel: PlanTableI18N.focusTooltip
   },
   {
     id: 'term',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.term
+    label: PlanTableI18N.term,
+    tooltipLabel: PlanTableI18N.termTooltip
   },
   {
     id: 'org',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.organizations
+    label: TableI18N.organizations,
+    tooltipLabel: PlanTableI18N.orgTooltip
   },
   {
     id: 'startDate',
