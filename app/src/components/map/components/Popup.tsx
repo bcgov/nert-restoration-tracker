@@ -9,7 +9,7 @@ export interface MapPopupProps {
   number_sites?: number;
   state_code?: string;
   thumbnail?: string;
-  mask?: boolean;
+  maskedLocation?: boolean;
   hideButton?: boolean;
 }
 
@@ -21,7 +21,7 @@ const MapPopup = (props: any) => {
   const sizeHa = props.size_ha;
   const stateCode = props.state_code;
   const thumbnail = props.thumbnail;
-  const mask = props.mask || false;
+  const maskedLocation = props.maskedLocation || false;
   const hideButton = props.hideButton || false;
 
   // Project if true, Plan if false, Site if undefined/null
@@ -41,6 +41,12 @@ const MapPopup = (props: any) => {
     },
     value: {
       fontWeight: 'bold' as React.CSSProperties['fontWeight']
+    },
+    attention: {
+      fontWeight: 'bold' as React.CSSProperties['fontWeight'],
+      color: 'orange',
+      maxWidth: '220px',
+      marginTop: '0.5rem'
     },
     status: {
       ...originalChipStyle,
@@ -89,17 +95,17 @@ const MapPopup = (props: any) => {
         <div style={style.value}>{name}</div>
         <div>{siteType} Size (Ha):</div>
         <div style={style.value}>{sizeHa}</div>
-
         {stateCode && <div>{siteType} Status:</div>}
         {stateCode && (
           <div>
             <div style={style.status}>{getStateLabelFromCode(stateCode)}</div>
           </div>
         )}
-
         {numberSites && <div>Number of Sites:</div>}
         {numberSites && <div style={style.value}>{numberSites}</div>}
+        <div>Masked location:</div> <div style={style.value}>{maskedLocation ? 'Yes' : 'No'}</div>
       </div>
+      {maskedLocation && <div style={style.attention}>Location sensitive site - see FOIPPA 16, 17, 18 & 18.1.</div>}  
       {!hideButton && (
         <div>
           <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>

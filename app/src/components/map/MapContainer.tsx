@@ -567,6 +567,7 @@ const initializeMap = (
       const name = prop.siteName || '';
       const isProject = prop.is_project;
       const areaHa = prop.areaHa;
+      const maskedLocation = prop.maskedLocation;
 
       const mapPopupHtml = ReactDomServer.renderToString(
         <MapPopup
@@ -575,6 +576,7 @@ const initializeMap = (
           is_project={isProject}
           size_ha={areaHa}
           hideButton={true}
+          maskedLocation={maskedLocation}
         />
       );
 
