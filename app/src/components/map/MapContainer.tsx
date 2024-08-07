@@ -623,7 +623,7 @@ const initializeMap = (
         );
         thumbnail = thumbnailResponse.attachmentsList[0].url;
       } catch (error) {
-        console.log('Error getting thumbnail');
+        console.error('Error getting thumbnail');
       }
 
       /**
@@ -676,7 +676,7 @@ const initializeMap = (
 
         thumbnail = thumbnailResponse.attachmentsList[0].url;
       } catch (error) {
-        console.log('Error getting thumbnail');
+        console.error('Error getting thumbnail');
       }
 
       const mapPopupHtml = ReactDomServer.renderToString(
