@@ -62,9 +62,6 @@ import ProjectRestorationPlanForm, {
   ProjectRestorationPlanFormInitialValues,
   ProjectRestorationPlanFormYupSchema
 } from 'features/projects/components/ProjectRestorationPlanForm';
-import ProjectFocalSpeciesForm, {
-  ProjectFocalSpeciesFormInitialValues
-} from 'features/projects/components/ProjectFocalSpeciesForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
 import useCodes from 'hooks/useCodes';
@@ -76,6 +73,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import yup from 'utils/YupSchema';
 import { checkFormikErrors } from 'utils/Utils';
+import FocalSpeciesComponent, {
+  ProjectFocalSpeciesFormInitialValues
+} from 'components/species/FocalSpeciesComponent';
 
 const pageStyles = {
   actionButton: {
@@ -462,11 +462,12 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectGeneralInformationForm />
-                      <Box component="fieldset" mt={2} mb={3} mx={0}>
+
+                      <Grid container spacing={3} direction="column" mb={4}>
                         <ProjectObjectivesForm />
-                      </Box>
-                      <ProjectFocalSpeciesForm />
-                      <ProjectFocusForm />
+                        <FocalSpeciesComponent />
+                        <ProjectFocusForm />
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Box>

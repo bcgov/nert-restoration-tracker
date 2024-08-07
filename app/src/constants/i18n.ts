@@ -231,7 +231,7 @@ export const TableI18N = {
   archive: 'Archive',
   unarchive: 'Unarchive',
   delete: 'Delete',
-  organizations: 'Organizations',
+  organizations: 'Organization(s)',
   status: 'Status',
   export: 'Export',
   densePadding: 'Dense padding',
@@ -241,37 +241,49 @@ export const TableI18N = {
 export const ProjectTableI18N = {
   project: 'project',
   projects: 'projects',
+  projectDefinition:
+    'Restoration Projects are specific activities planned, budgeted and executed with clear objectives in mind.',
   exportProjectsData: 'export projects data',
   exportAllProjects: 'Export all projects',
   selectAllProjectsForExport: 'select all projects for export',
   projectName: 'Project Name',
   focus: 'Project Focus',
+  focusTooltip: 'Focus of the project.',
+  plannedStartDateTooltip:
+    'Earliest projected start date once project is approved by its decision-maker(s) to proceed, inclusive of procurement activities.',
   plannedStartDate: 'Planned Start Date',
-  plannedStartDateTooltip: 'Aproximate project start date.',
+  orgTooltip: 'Entity responsible for project design and implementation.',
   plannedEndDate: 'Planned End Date',
-  plannedEndDateTooltip: 'Aproximate planned project end date.',
+  plannedEndDateTooltip:
+    'Earliest projected completion date for all project activities, including any on-the-ground site monitoring.',
   actualStartDate: 'Actual Start Date',
-  actualStartDateTooltip: 'The date the project started.',
+  actualStartDateTooltip: 'When project activities actually begin.',
   actualEndDate: 'Actual End Date',
-  actualEndDateTooltip: 'The date the project ended. Project is moved to "Completed" status.',
+  actualEndDateTooltip:
+    'When project activities end, inclusive of any site monitoring and initial reporting.',
   statusTooltip: 'Current status, according to project workflow.'
 };
 
 export const PlanTableI18N = {
   plan: 'plan',
   plans: 'plans',
+  planDefinition:
+    'Restoration Plans are an aggregation of one or more restoration project ideas over a period of one or more years, which are proposed but require more specific planning and approvals. Restoration Plans are intended to precede Restoration Projects.',
   exportPlansData: 'export plans data',
   importPlanData: 'import plans data',
   exportAllPlans: 'Export all plans',
   selectAllPlansForExport: 'select all plans for export',
   planName: 'Plan Name',
   focus: 'Plan Focus',
+  focusTooltip: 'Focus of the plan.',
+  orgTooltip: 'Entity responsible for project scoping and proposals.',
   term: 'Term',
+  termTooltip: 'Number of calendar year(s) which restoration plan covers.',
   startDate: 'Start Date',
-  startDateTooltip: 'Aproximate plan start date.',
+  startDateTooltip: 'Calendar year which restoration plan starts.',
   endDate: 'End Date',
-  endDateTooltip: 'The date the plan ended. Plan is moved to "Completed" status.',
+  endDateTooltip: 'Calendar year which restoration plan ends.',
   multiYear: 'Multi-Year',
   annual: 'Annual',
-  statusTooltip: 'Current status, according to plan workflow.'
+  statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".'
 };

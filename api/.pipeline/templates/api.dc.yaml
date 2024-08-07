@@ -32,14 +32,6 @@ parameters:
     description: Application Environment type variable
     required: true
     value: 'dev'
-  - name: ELASTICSEARCH_URL
-    description: Platform Elasticsearch URL
-    required: true
-    value: 'http://es01.a0ec71-prod:9200'
-  - name: ELASTICSEARCH_TAXONOMY_INDEX
-    description: Platform Elasticsearch Taxonomy Index
-    required: true
-    value: 'taxonomy_3.0.0'
   - name: S3_KEY_PREFIX
     description: S3 key optional prefix
     required: false
@@ -91,9 +83,9 @@ parameters:
   - name: MEMORY_LIMIT
     value: '2Gi'
   - name: REPLICAS
-    value: '1'
+    value: '2'
   - name: REPLICAS_MAX
-    value: '1'
+    value: '2'
   - name: NAMELINK
     value: restoration-tracker-db-postgresql
 objects:
@@ -202,10 +194,6 @@ objects:
                   value: ${CHANGE_ID}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
-                - name: ELASTICSEARCH_URL
-                  value: ${ELASTICSEARCH_URL}
-                - name: ELASTICSEARCH_TAXONOMY_INDEX
-                  value: ${ELASTICSEARCH_TAXONOMY_INDEX}
                 - name: S3_KEY_PREFIX
                   value: ${S3_KEY_PREFIX}
                 - name: TZ
@@ -350,24 +338,3 @@ objects:
       wildcardPolicy: None
     status:
       ingress: null
-  - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v2
-    metadata:
-      annotations: {}
-      creationTimestamp: null
-      labels: {}
-      name: ${NAME}${SUFFIX}
-    spec:
-      minReplicas: ${{REPLICAS}}
-      maxReplicas: ${{REPLICAS_MAX}}
-      scaleTargetRef:
-        apiVersion: apps.openshift.io/v1
-        kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
-      metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 80

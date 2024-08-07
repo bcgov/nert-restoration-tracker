@@ -1,9 +1,10 @@
 import Chip from '@mui/material/Chip';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
+import { useNertApi } from 'hooks/useNertApi';
+import SpeciesSelectedCard from 'components/species/components/SpeciesSelectedCard';
 
 const pageStyles = {
   itemChip: {
@@ -25,16 +26,6 @@ export interface IProjectFocusSpeciesProps {
   projectViewData: IGetProjectForViewResponse;
 }
 
-const focalSpeciesStyled = (item: string) => {
-  return (
-    <Tooltip title={item} disableHoverListener={item.length < 130}>
-      <Typography sx={pageStyles.itemLabel} aria-label={`${item}`}>
-        &#x2022; {item}
-      </Typography>
-    </Tooltip>
-  );
-};
-
 /**
  * Focal Species content for a project.
  *
@@ -45,21 +36,35 @@ const ProjectFocalSpecies: React.FC<IProjectFocusSpeciesProps> = (props) => {
     projectViewData: { species }
   } = props;
 
+  const nertApi = useNertApi();
+
+  const [speciesData, setSpeciesData] = React.useState<any>([]);
+
+  const getSpecies = async (tsns: number[]) => {
+    const speciesData = await nertApi.taxonomy.getSpeciesFromIds(tsns);
+    setSpeciesData(speciesData);
+  };
+
+  useEffect(() => {
+    if (species.focal_species?.length) {
+      getSpecies(species.focal_species);
+    }
+  }, [species.focal_species]);
+
   return (
     <Box mt={1}>
       <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
         Project Focal Species:
       </Typography>
       <Box display="flex" flexDirection={'column'} alignItems="left">
-        {species.focal_species_names?.length ? (
-          species.focal_species_names.map((item: any, index: number) => {
+        {speciesData && speciesData?.length ? (
+          speciesData.map((item: any, index: number) => {
             return (
-              <Chip
+              <SpeciesSelectedCard
                 key={index}
-                data-testid="focal_species_data"
-                size="small"
+                species={item}
+                index={index}
                 sx={pageStyles.itemChip}
-                label={focalSpeciesStyled(item)}
               />
             );
           })

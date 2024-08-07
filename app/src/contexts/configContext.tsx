@@ -18,6 +18,9 @@ export interface IConfig {
   MAX_IMAGE_UPLOAD_SIZE: number;
   MAX_IMAGE_NUM_FILES: number;
   ALLOW_MULTIPLE_IMAGE_UPLOADS: boolean;
+  BACKBONE_PUBLIC_API_HOST: string;
+  BIOHUB_TAXON_PATH: string;
+  BIOHUB_TAXON_TSN_PATH: string;
 }
 
 export const ConfigContext = React.createContext<IConfig | undefined>({
@@ -38,7 +41,10 @@ export const ConfigContext = React.createContext<IConfig | undefined>({
   MAX_UPLOAD_FILE_SIZE: 52428800,
   MAX_IMAGE_UPLOAD_SIZE: 10485760,
   MAX_IMAGE_NUM_FILES: 1,
-  ALLOW_MULTIPLE_IMAGE_UPLOADS: false
+  ALLOW_MULTIPLE_IMAGE_UPLOADS: false,
+  BACKBONE_PUBLIC_API_HOST: '',
+  BIOHUB_TAXON_PATH: '',
+  BIOHUB_TAXON_TSN_PATH: ''
 });
 
 /**
@@ -71,7 +77,10 @@ const getLocalConfig = (): IConfig => {
     MAX_IMAGE_UPLOAD_SIZE: Number(process.env.REACT_APP_MAX_IMAGE_UPLOAD_SIZE) || 10485760,
     MAX_IMAGE_NUM_FILES: Number(process.env.REACT_APP_MAX_IMAGE_NUM_FILES) || 1,
     ALLOW_MULTIPLE_IMAGE_UPLOADS:
-      Boolean(process.env.REACT_APP_ALLOW_MULTIPLE_IMAGE_UPLOADS) || false
+      Boolean(process.env.REACT_APP_ALLOW_MULTIPLE_IMAGE_UPLOADS) || false,
+    BACKBONE_PUBLIC_API_HOST: process.env.REACT_APP_BACKBONE_PUBLIC_API_HOST || '',
+    BIOHUB_TAXON_PATH: process.env.REACT_APP_BIOHUB_TAXON_PATH || '',
+    BIOHUB_TAXON_TSN_PATH: process.env.REACT_APP_BIOHUB_TAXON_TSN_PATH || ''
   };
 };
 

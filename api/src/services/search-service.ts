@@ -63,7 +63,7 @@ export class SearchService extends DBService {
       queryBuilder.leftJoin('project_species', 'project.project_id', 'project_species.project_id');
 
       queryBuilder.and.whereIn(
-        'project_species.wldtaxonomic_units_id',
+        'project_species.itis_tsn',
         (Array.isArray(criteria.species) && criteria.species) || [criteria.species]
       );
     }

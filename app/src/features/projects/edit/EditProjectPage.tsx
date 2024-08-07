@@ -36,9 +36,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProjectObjectivesForm from '../components/ProjectObjectivesForm';
 import ProjectFocusForm from '../components/ProjectFocusForm';
-import ProjectFocalSpeciesForm from '../components/ProjectFocalSpeciesForm';
 import { handleFocusFormValues } from 'utils/Utils';
 import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
+import FocalSpeciesComponent from 'components/species/FocalSpeciesComponent';
 
 const pageStyles = {
   actionButton: {
@@ -87,11 +87,22 @@ const EditProjectPage: React.FC = () => {
     ProjectFormInitialValues as unknown as IEditProjectRequest
   );
 
+  const getSpecies = async (tsns: number[]) => {
+    if (!tsns || tsns.length === 0) {
+      return [];
+    }
+
+    const speciesData = await restorationTrackerApi.taxonomy.getSpeciesFromIds(tsns);
+    return speciesData;
+  };
+
   useEffect(() => {
     const getEditProjectFields = async () => {
       const response = await restorationTrackerApi.project.getProjectByIdForEdit(projectId);
 
       const focus = handleFocusFormValues(response.project);
+
+      const speciesData = await getSpecies(response.species.focal_species);
 
       // Merge the response with the initial form data
       const editProject = {
@@ -111,6 +122,9 @@ const EditProjectPage: React.FC = () => {
               : response.location.is_within_overlapping === 'Y'
                 ? 'true'
                 : 'false'
+        },
+        species: {
+          focal_species: speciesData
         }
       };
 
@@ -273,11 +287,12 @@ const EditProjectPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <ProjectGeneralInformationForm />
-                    <Box component="fieldset" mt={2} mb={3} mx={0}>
+
+                    <Grid container spacing={3} direction="column" mb={4}>
                       <ProjectObjectivesForm />
-                    </Box>
-                    <ProjectFocalSpeciesForm />
-                    <ProjectFocusForm />
+                      <FocalSpeciesComponent />
+                      <ProjectFocusForm />
+                    </Grid>
                   </Grid>
                 </Grid>
               </Box>

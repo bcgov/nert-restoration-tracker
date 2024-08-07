@@ -1,3 +1,4 @@
+import { IProjectFocalSpeciesForm } from 'components/species/FocalSpeciesComponent';
 import { PROJECT_PERMISSION, PROJECT_ROLE } from 'constants/roles';
 import { IProjectAuthorizationForm } from 'features/projects/components/ProjectAuthorizationForm';
 import { IProjectContactForm } from 'features/projects/components/ProjectContactForm';
@@ -8,7 +9,6 @@ import { IProjectLocationForm } from 'features/projects/components/ProjectLocati
 import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
 import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';
-import { IProjectFocalSpeciesForm } from 'features/projects/components/ProjectFocalSpeciesForm';
 import { Feature } from 'geojson';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
@@ -193,7 +193,6 @@ export interface IGetProjectForEditResponseDetails {
 
 export interface IGetProjectForViewResponseSpecies {
   focal_species: number[];
-  focal_species_names?: string[];
 }
 
 interface IGetProjectForViewResponsePermitArrayItem {
