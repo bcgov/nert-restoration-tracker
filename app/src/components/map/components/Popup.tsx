@@ -4,12 +4,13 @@ import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/State
 export interface MapPopupProps {
   id: string;
   name: string;
-  is_project: boolean;
-  number_sites: number;
   size_ha: number;
-  state_code: string;
+  is_project?: boolean;
+  number_sites?: number;
+  state_code?: string;
   thumbnail?: string;
-  mask?: boolean;
+  maskedLocation?: boolean;
+  hideButton?: boolean;
 }
 
 const MapPopup = (props: any) => {
@@ -20,7 +21,11 @@ const MapPopup = (props: any) => {
   const sizeHa = props.size_ha;
   const stateCode = props.state_code;
   const thumbnail = props.thumbnail;
-  const mask = props.mask || false;
+  const maskedLocation = props.maskedLocation || false;
+  const hideButton = props.hideButton || false;
+
+  // Project if true, Plan if false, Site if undefined/null
+  const siteType = (isProject && 'Project') || (isProject === false && 'Plan') || 'Site';
 
   const originalChipStyle = getStatusStyle(stateCode) || {};
 
@@ -36,6 +41,12 @@ const MapPopup = (props: any) => {
     },
     value: {
       fontWeight: 'bold' as React.CSSProperties['fontWeight']
+    },
+    attention: {
+      fontWeight: 'bold' as React.CSSProperties['fontWeight'],
+      color: 'orange',
+      maxWidth: '220px',
+      marginTop: '0.5rem'
     },
     status: {
       ...originalChipStyle,
@@ -80,24 +91,30 @@ const MapPopup = (props: any) => {
         </div>
       )}
       <div style={style.description}>
-        <div>{isProject ? 'Project' : 'Plan'} Name:</div>
+        <div>{siteType} Name:</div>
         <div style={style.value}>{name}</div>
-        <div>{isProject ? 'Project' : 'Plan'} Size (Ha):</div>
+        <div>{siteType} Size (Ha):</div>
         <div style={style.value}>{sizeHa}</div>
-
-        <div>{isProject ? 'Project' : 'Plan'} Status:</div>
+        {stateCode && <div>{siteType} Status:</div>}
+        {stateCode && (
+          <div>
+            <div style={style.status}>{getStateLabelFromCode(stateCode)}</div>
+          </div>
+        )}
+        {numberSites && <div>Number of Sites:</div>}
+        {numberSites && <div style={style.value}>{numberSites}</div>}
+        <div>Masked location:</div> <div style={style.value}>{maskedLocation ? 'Yes' : 'No'}</div>
+      </div>
+      {maskedLocation && (
+        <div style={style.attention}>Location sensitive site - see FOIPPA 16, 17, 18 & 18.1.</div>
+      )}
+      {!hideButton && (
         <div>
-          <div style={style.status}>{getStateLabelFromCode(stateCode)}</div>
+          <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
+            <button style={style.button}>View {isProject ? 'Project' : 'Plan'} Details</button>
+          </a>
         </div>
-
-        <div>Number of Sites:</div>
-        <div style={style.value}>{numberSites}</div>
-      </div>
-      <div>
-        <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
-          <button style={style.button}>View {isProject ? 'Project' : 'Plan'} Details</button>
-        </a>
-      </div>
+      )}
     </div>
   );
 };
