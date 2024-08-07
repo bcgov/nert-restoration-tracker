@@ -83,9 +83,9 @@ parameters:
   - name: MEMORY_LIMIT
     value: '2Gi'
   - name: REPLICAS
-    value: '1'
+    value: '2'
   - name: REPLICAS_MAX
-    value: '1'
+    value: '2'
   - name: NAMELINK
     value: restoration-tracker-db-postgresql
 objects:
@@ -338,24 +338,3 @@ objects:
       wildcardPolicy: None
     status:
       ingress: null
-  - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v2
-    metadata:
-      annotations: {}
-      creationTimestamp: null
-      labels: {}
-      name: ${NAME}${SUFFIX}
-    spec:
-      minReplicas: ${{REPLICAS}}
-      maxReplicas: ${{REPLICAS_MAX}}
-      scaleTargetRef:
-        apiVersion: apps.openshift.io/v1
-        kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
-      metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 80
