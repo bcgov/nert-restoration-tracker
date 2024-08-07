@@ -105,7 +105,9 @@ const MapPopup = (props: any) => {
         {numberSites && <div style={style.value}>{numberSites}</div>}
         <div>Masked location:</div> <div style={style.value}>{maskedLocation ? 'Yes' : 'No'}</div>
       </div>
-      {maskedLocation && <div style={style.attention}>Location sensitive site - see FOIPPA 16, 17, 18 & 18.1.</div>}  
+      {maskedLocation && (
+        <div style={style.attention}>Location sensitive site - see FOIPPA 16, 17, 18 & 18.1.</div>
+      )}
       {!hideButton && (
         <div>
           <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>
