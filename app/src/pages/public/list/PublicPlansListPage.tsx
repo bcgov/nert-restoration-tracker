@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
+import InfoIcon from '@mui/icons-material/Info';
+import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
@@ -35,6 +37,8 @@ import React, { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import PublicInfoContent from 'pages/public/components/PublicInfoContent';
 
 const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans } = props;
@@ -85,50 +89,72 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         onRequestSort(event, property);
       };
 
+    const [infoOpen, setInfoOpen] = useState(false);
+    const [infoTitle, setInfoTitle] = useState('');
+
+    const handleClickOpen = (headCell: utils.PlanHeadCell) => {
+      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
+      setInfoOpen(true);
+    };
+
     return (
-      <TableHead>
-        <TableRow>
-          {utils.planHeadCells.map((headCell) => {
-            if ('archive' !== headCell.id && 'export' !== headCell.id)
-              return (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <Tooltip
-                    title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
-                    placement="top">
-                    <TableSortLabel
-                      active={orderBy === headCell.id}
-                      direction={orderBy === headCell.id ? order : 'asc'}
-                      onClick={createSortHandler(headCell.id)}>
-                      {headCell.label}
-                      {orderBy === headCell.id ? (
-                        <Box component="span" sx={visuallyHidden}>
-                          {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                        </Box>
-                      ) : null}
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-              );
-          })}
-          <TableCell padding="checkbox">
-            <Tooltip title={PlanTableI18N.exportAllPlans} placement="top">
-              <Checkbox
-                color="primary"
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={rowCount > 0 && numSelected === rowCount}
-                onChange={onSelectAllClick}
-                inputProps={{
-                  'aria-label': PlanTableI18N.selectAllPlansForExport
-                }}
-              />
-            </Tooltip>
-          </TableCell>
-        </TableRow>
-      </TableHead>
+      <>
+        <InfoDialogDraggable
+          isProject={false}
+          open={infoOpen}
+          dialogTitle={infoTitle}
+          onClose={() => setInfoOpen(false)}>
+          <PublicInfoContent isProject={false} contentIndex={infoTitle} />
+        </InfoDialogDraggable>
+        <TableHead>
+          <TableRow>
+            {utils.planHeadCells.map((headCell) => {
+              if ('archive' !== headCell.id && 'export' !== headCell.id)
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <Tooltip
+                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
+                      placement="top">
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : 'asc'}
+                        onClick={createSortHandler(headCell.id)}>
+                        {headCell.label}
+                        {orderBy === headCell.id ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </Tooltip>
+                    {headCell.infoButton ? (
+                      <IconButton onClick={() => handleClickOpen(headCell)}>
+                        <InfoIcon color="info" />
+                      </IconButton>
+                    ) : null}
+                  </TableCell>
+                );
+            })}
+            <TableCell padding="checkbox">
+              <Tooltip title={PlanTableI18N.exportAllPlans} placement="top">
+                <Checkbox
+                  color="primary"
+                  indeterminate={numSelected > 0 && numSelected < rowCount}
+                  checked={rowCount > 0 && numSelected === rowCount}
+                  onChange={onSelectAllClick}
+                  inputProps={{
+                    'aria-label': PlanTableI18N.selectAllPlansForExport
+                  }}
+                />
+              </Tooltip>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+      </>
     );
   }
 
@@ -317,7 +343,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                       {row.focus &&
                         row.focus.split('\r').map((focus: string, key) => (
                           <Fragment key={key}>
-                            <Box>
+                            <Box ml={-3}>
                               <Chip
                                 data-testid="focus_item"
                                 size="small"
