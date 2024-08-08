@@ -25,7 +25,7 @@ import PlanListPage from 'features/plans/PlanListPage';
 import { PlanTableI18N } from 'constants/i18n';
 
 export default function Plans() {
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
   const history = useNavigate();
   const location = useLocation();
   const restorationTrackerApi = useNertApi();

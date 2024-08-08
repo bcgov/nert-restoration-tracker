@@ -249,6 +249,7 @@ export const ProjectTableI18N = {
   projectName: 'Project Name',
   focus: 'Project Focus',
   focusTooltip: 'Focus of the project.',
+  focusInfo: 'Focus',
   plannedStartDateTooltip:
     'Earliest projected start date once project is approved by its decision-maker(s) to proceed, inclusive of procurement activities.',
   plannedStartDate: 'Planned Start Date',
@@ -261,7 +262,8 @@ export const ProjectTableI18N = {
   actualEndDate: 'Actual End Date',
   actualEndDateTooltip:
     'When project activities end, inclusive of any site monitoring and initial reporting.',
-  statusTooltip: 'Current status, according to project workflow.'
+  statusTooltip: 'Current status, within project workflow.',
+  statusInfo: 'Status'
 };
 
 export const PlanTableI18N = {
@@ -276,6 +278,7 @@ export const PlanTableI18N = {
   planName: 'Plan Name',
   focus: 'Plan Focus',
   focusTooltip: 'Focus of the plan.',
+  focusInfo: 'Focus',
   orgTooltip: 'Entity responsible for project scoping and proposals.',
   term: 'Term',
   termTooltip: 'Number of calendar year(s) which restoration plan covers.',
