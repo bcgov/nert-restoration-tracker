@@ -11,8 +11,7 @@ The following outlines the deployment of a simple backup of three PostgreSQL dat
 Create the image.
 
 ```bash
-oc -n d83219-tools process -f ./templates/backup/backup-build.yaml \
-  -p NAME=nert-bkup OUTPUT_IMAGE_TAG=v1 | oc -n d83219-tools create -f -
+oc -n d83219-tools process -f ./templates/backup/backup-build.yaml | oc -n d83219-tools create -f -
 ```
 
 3. Configure (./config/backup.conf) (listing your database(s), and setting your cron schedule).
@@ -44,32 +43,53 @@ Note that underscores should be used in the environment variable names.
 
 5. Create your customized `./openshift/backup-deploy.overrides.param` parameter file, if required.
 
-6. Deploy the app; here the example namespace is `d83219-dev` and the app name is `nert-bkup`:
+6. Deploy the app; here the example namespace is `d83219-dev` and the app name is `backup-postgres`:
 
 ```bash
 oc -n d83219-dev create configmap backup-conf --from-file=./config/backup.conf
-oc -n d83219-dev label configmap backup-conf app=nert-bkup
+oc -n d83219-dev label configmap backup-conf app=backup-postgres
 
-oc -n d83219-dev process -f ./templates/backup/backup-deploy.yaml \
-  -p NAME=nert-bkup \
-  -p IMAGE_NAMESPACE=d83219-tools \
-  -p SOURCE_IMAGE_NAME=nert-bkup \
-  -p TAG_NAME=v1 \
-  -p BACKUP_VOLUME_NAME=nert-bkup-pvc -p BACKUP_VOLUME_SIZE=2Gi \
-  -p VERIFICATION_VOLUME_SIZE=1Gi \
-  -p ENVIRONMENT_NAME=dev \
-  -p ENVIRONMENT_FRIENDLY_NAME='NERT DB Backups' | oc -n d83219-dev create -f -
+oc -n d83219-dev process -f ./templates/backup/backup-deploy.yaml | oc -n d83219-dev create -f -
 ```
 
 To clean up the deployment
 
 ```bash
-oc -n d83219-dev delete pvc/nert-bkup-pvc pvc/backup-verification secret/nert-bkup secret/ftp-secret dc/nert-bkup networkpolicy/nert-bkup configmap/backup-conf
+oc -n d83219-dev delete pvc/backup-postgres-pvc pvc/backup-verification secret/backup-postgres secret/ftp-secret dc/backup-postgres networkpolicy/backup-postgres configmap/backup-conf
 ```
 
 To clean up the image stream and build configuration
 
 ```bash
-oc -n d83219-dev delete buildconfig/nert-bkup imagestream/nert-bkup 
+oc -n d83219-tools delete buildconfig/backup-postgres imagestream/backup-postgres 
 ```
 
+### NOTE: User Management Role Binding Required in tools env
+```
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: 'system:image-pullers'
+  namespace: d83219-tools
+  annotations:
+    openshift.io/description: >-
+      Allows all pods in this namespace to pull images from this namespace.  It
+      is auto-managed by a controller; remove subjects to disable.
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: 'system:serviceaccounts:d83219-tools'
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: 'system:serviceaccounts:d83219-dev'
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: 'system:serviceaccounts:d83219-test'
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: 'system:serviceaccounts:d83219-prod'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: 'system:image-puller'
+```

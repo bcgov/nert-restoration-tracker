@@ -174,34 +174,34 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: database-user
-                      name: '${DATABASE_SERVICE_NAME}'
+                      name: '${DATABASE_SECRET_REF}'
                 - name: PG_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-user-password
-                      name: '${DATABASE_SERVICE_NAME}'
+                      name: '${DATABASE_SECRET_REF}'
                 - name: PG_ROOT_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-admin-password
-                      name: '${DATABASE_SERVICE_NAME}'
+                      name: '${DATABASE_SECRET_REF}'
                 - name: PG_DATABASE
                   valueFrom:
                     secretKeyRef:
                       key: database-name
-                      name: '${DATABASE_SERVICE_NAME}'
+                      name: '${DATABASE_SECRET_REF}'
                 - name: PG_PRIMARY_PORT
                   value: '5432'
                 - name: PG_PRIMARY_USER
                   valueFrom:
                     secretKeyRef:
                       key: database-user
-                      name: '${DATABASE_SERVICE_NAME}'
+                      name: '${DATABASE_SECRET_REF}'
                 - name: PG_PRIMARY_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-user-password
-                      name: '${DATABASE_SERVICE_NAME}'
+                      name: '${DATABASE_SECRET_REF}'
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
@@ -267,27 +267,27 @@ parameters:
     displayName: Namespace Name
     description: The name of the namespace being deployed to..
     required: true
-    value: devex-von-image
+    value: d83219-dev
   - name: IMAGE_NAMESPACE
     displayName: Image Namespace
     description: The namespace of the OpenShift project containing the imagestream for the application.
     required: true
-    value:
+    value: d83219-tools
   - name: TAG_NAME
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true
-    value: dev
+    value: latest
   - name: DATABASE_SERVICE_NAME
     displayName: Database Service Name
     description: Used for backward compatibility only. Not needed when using the recommended 'backup.conf' configuration.  The name of the database service.
     required: false
-    value: ""
+    value: restoration-tracker-db-postgresql-dev-deploy
   - name: DATABASE_NAME
     displayName: Database Name
     description: Used for backward compatibility only. Not needed when using the recommended 'backup.conf' configuration.  The name of the database.
     required: false
-    value: ""
+    value: restoration-tracker
   - name: MONGODB_AUTHENTICATION_DATABASE
     displayName: MongoDB Authentication Database
     description: This is only required if you are backing up mongo database with a separate authentication database.
@@ -297,7 +297,7 @@ parameters:
     displayName: Database Deployment Name
     description: The name associated to the database deployment resources.  In particular, this is used to wire up the credentials associated to the database.
     required: true
-    value: postgresql
+    value: restoration-tracker-db-postgresql-dev-deploy
   - name: DATABASE_USER_KEY_NAME
     displayName: Database User Key Name
     description: The database user key name stored in database deployment resources specified by DATABASE_DEPLOYMENT_NAME.
@@ -316,7 +316,7 @@ parameters:
     displayName: Table Schema
     description: The table schema for your database.  Used for Postgres backups.
     required: true
-    value: public
+    value: restoration
   - name: BACKUP_STRATEGY
     displayName: Backup Strategy
     description: The strategy to use for backups; for example daily, or rolling.
@@ -361,12 +361,12 @@ parameters:
     displayName: Friendly Environment Name
     description: The human readable name of the environment.  This variable is used by the webhook integration to identify the environment in which the backup notifications originate.
     required: false
-    value: ""
+    value: NERT DB Backups
   - name: ENVIRONMENT_NAME
     displayName: Environment Name (Environment Id)
     description: The name or Id of the environment.  This variable is used by the webhook integration and by the NetworkSecurityPolicies to identify the environment in which the backup notifications originate.
     required: true
-    value: ""
+    value: dev
   - name: BACKUP_DIR
     displayName: The root backup directory
     description: The name of the root backup directory.  The backup volume will be mounted to this directory.
@@ -416,12 +416,12 @@ parameters:
     displayName: Backup Volume Name
     description: The name of the persistent volume used to store the backups.
     required: true
-    value: backup
+    value: backup-postgres-pvc
   - name: BACKUP_VOLUME_SIZE
     displayName: Backup Volume Size
     description: The size of the persistent volume used to store the backups, e.g. 512Mi, 1Gi, 2Gi.  Ensure this is sized correctly.  Refer to the container documentation for details.
     required: true
-    value: 5Gi
+    value: 4Gi
   - name: BACKUP_VOLUME_CLASS
     displayName: Backup Volume Class
     description: The class of the persistent volume used to store the backups; netapp-file-standard is the recommended default.
@@ -436,7 +436,7 @@ parameters:
     displayName: Backup Volume Size
     description: The size of the persistent volume used for restoring and verifying backups, e.g. 512Mi, 1Gi, 2Gi.  Ensure this is sized correctly.  It should be large enough to contain your largest database.
     required: true
-    value: 1Gi
+    value: 2Gi
   - name: VERIFICATION_VOLUME_CLASS
     displayName: Backup Volume Class
     description: The class of the persistent volume used for restoring and verifying backups; netapp-file-standard, netapp-block-standard.
@@ -467,8 +467,8 @@ parameters:
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
     value: 0Mi
-  - name: DATABASE_SERVICE_NAME
-    displayName: Database Service Name
+  - name: DATABASE_SECRET_REF
+    displayName: Database Secret Reference
+    description: The name of the secret containing the database credentials.
     required: true
-    value: 'postgresql'
-    description: Username for PostgreSQL user that will be used for accessing the database.
+    value: restoration-tracker-creds
