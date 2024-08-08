@@ -248,7 +248,7 @@ export const ProjectTableI18N = {
   selectAllProjectsForExport: 'select all projects for export',
   projectName: 'Project Name',
   focus: 'Project Focus',
-  focusTooltip: 'Focus of the project.',
+  focusTooltip: 'Project primary focus.',
   focusInfo: 'Focus',
   plannedStartDateTooltip:
     'Earliest projected start date once project is approved by its decision-maker(s) to proceed, inclusive of procurement activities.',
@@ -277,7 +277,7 @@ export const PlanTableI18N = {
   selectAllPlansForExport: 'select all plans for export',
   planName: 'Plan Name',
   focus: 'Plan Focus',
-  focusTooltip: 'Focus of the plan.',
+  focusTooltip: 'Plan primary focus.',
   focusInfo: 'Focus',
   orgTooltip: 'Entity responsible for project scoping and proposals.',
   term: 'Term',

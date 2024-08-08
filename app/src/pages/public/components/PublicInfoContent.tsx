@@ -30,6 +30,11 @@ const PublicInfoContent: React.FC<IPublicInfoContentProps> = (props) => {
         infoContent = (
           <Fragment>
             <Typography mb={1}>
+              For Indigenous led projects, the focus can be "Healing the Land", "Healing the People"
+              or both. For other projects, the focus can be "Land Based Restoration Initiative" or
+              "Cultural or Community Investment Initiative".
+            </Typography>
+            <Typography>
               A project requires at least 1 focus option selected and can have up to 4 options
               selected.
             </Typography>
@@ -265,6 +270,11 @@ const PublicInfoContent: React.FC<IPublicInfoContentProps> = (props) => {
         infoContent = (
           <Fragment>
             <Typography mb={1}>
+              For Indigenous led plans, the focus can be "Healing the Land", "Healing the People" or
+              both. For other plans, the focus can be "Land Based Restoration Initiative" or
+              "Cultural or Community Investment Initiative".
+            </Typography>
+            <Typography>
               A plan requires at least 1 focus option selected and can have up to 4 options
               selected.
             </Typography>
