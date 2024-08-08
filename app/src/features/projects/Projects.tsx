@@ -25,7 +25,7 @@ import ProjectsListPage from './list/ProjectsListPage';
 import { ProjectTableI18N } from 'constants/i18n';
 
 export default function Projects() {
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
   const history = useNavigate();
   const location = useLocation();
   const restorationTrackerApi = useNertApi();

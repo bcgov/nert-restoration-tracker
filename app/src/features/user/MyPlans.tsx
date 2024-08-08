@@ -23,7 +23,7 @@ export interface IPlansListProps {
 
 const MyPlans: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts } = props;
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
   const history = useNavigate();
 
   return (
