@@ -11,7 +11,7 @@ The following outlines the deployment of a simple backup of three PostgreSQL dat
 Create the image.
 
 ```bash
-oc -n d83219-tools process -f ./openshift/templates/backup/backup-build.yaml \
+oc -n d83219-tools process -f ./templates/backup/backup-build.yaml \
   -p NAME=nert-bkup OUTPUT_IMAGE_TAG=v1 | oc -n d83219-tools create -f -
 ```
 
