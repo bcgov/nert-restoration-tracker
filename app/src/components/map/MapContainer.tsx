@@ -444,7 +444,7 @@ const initializeMap = (
         visibility: boundary[0] ? 'visible' : 'none'
       },
       paint: {
-        'line-color': 'yellow',
+        'line-color': 'white',
         'line-width': 2
       }
     });
