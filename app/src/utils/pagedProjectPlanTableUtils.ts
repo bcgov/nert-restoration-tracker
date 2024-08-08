@@ -31,6 +31,7 @@ export interface ProjectHeadCell {
   id: keyof ProjectData;
   label: string;
   tooltipLabel?: string;
+  infoButton?: string;
   numeric: boolean;
 }
 
@@ -44,9 +45,10 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
   {
     id: 'focus',
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: ProjectTableI18N.focus,
-    tooltipLabel: ProjectTableI18N.focusTooltip
+    tooltipLabel: ProjectTableI18N.focusTooltip,
+    infoButton: ProjectTableI18N.focusInfo
   },
   {
     id: 'org',
@@ -86,9 +88,10 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
   {
     id: 'statusLabel',
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: TableI18N.status,
-    tooltipLabel: ProjectTableI18N.statusTooltip
+    tooltipLabel: ProjectTableI18N.statusTooltip,
+    infoButton: ProjectTableI18N.statusInfo
   },
   {
     id: 'archive',
@@ -128,6 +131,7 @@ export interface PlanHeadCell {
   id: keyof PlanData;
   label: string;
   tooltipLabel?: string;
+  infoButton?: string;
   numeric: boolean;
 }
 
@@ -141,9 +145,10 @@ export const planHeadCells: readonly PlanHeadCell[] = [
   {
     id: 'focus',
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: PlanTableI18N.focus,
-    tooltipLabel: PlanTableI18N.focusTooltip
+    tooltipLabel: PlanTableI18N.focusTooltip,
+    infoButton: PlanTableI18N.focusInfo
   },
   {
     id: 'term',
