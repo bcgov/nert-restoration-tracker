@@ -525,7 +525,25 @@ const initializeMap = (
           'case',
           ['boolean', ['feature-state', 'hover'], false],
           'rgba(3, 252, 252,0.4)',
-          'rgba(250,191,120,0.4)'
+          'rgba(250,250,0,0.4)'
+        ]
+      }
+    });
+    map.addLayer({
+      id: 'markerPolygonOutline',
+      type: 'line',
+      source: 'markers',
+      filter: ['all', ['==', '$type', 'Polygon']],
+      layout: {
+        visibility: 'visible'
+      },
+      paint: {
+        'line-width': 3,
+        'line-color': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          'rgba(3, 252, 252,1)',
+          'rgba(250,250,0,1)'
         ]
       }
     });
