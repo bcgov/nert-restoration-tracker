@@ -27,16 +27,45 @@ postgres=restoration-tracker-db-postgresql:5432/restoration-tracker
 4. Configure references to your DB credentials in [backup-deploy.yaml](./openshift/templates/backup/backup-deploy.yaml), replacing the boilerplate `DATABASE_USER` and `DATABASE_PASSWORD` environment variables.
 
 ```yaml
-- name: EAOFIDER_POSTGRESQL_USER
+- name: PG_USER
   valueFrom:
     secretKeyRef:
-      name: eaofider-postgresql
-      key: "${DATABASE_USER_KEY_NAME}"
-- name: EAOFIDER_POSTGRESQL_PASSWORD
+      key: database-user
+      name: '${DATABASE_SECRET_REF}'
+- name: PG_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: eaofider-postgresql
-      key: "${DATABASE_PASSWORD_KEY_NAME}"
+      key: database-user-password
+      name: '${DATABASE_SECRET_REF}'
+- name: PG_ROOT_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      key: database-admin-password
+      name: '${DATABASE_SECRET_REF}'
+- name: PG_DATABASE
+  valueFrom:
+    secretKeyRef:
+      key: database-name
+      name: '${DATABASE_SECRET_REF}'
+- name: PG_PRIMARY_PORT
+  value: '5432'
+- name: PG_PRIMARY_USER
+  valueFrom:
+    secretKeyRef:
+      key: database-user
+      name: '${DATABASE_SECRET_REF}'
+- name: PG_PRIMARY_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      key: database-user-password
+      name: '${DATABASE_SECRET_REF}'
+
+...
+- name: DATABASE_SECRET_REF
+  displayName: Database Secret Reference
+  description: The name of the secret containing the database credentials.
+  required: true
+  value: restoration-tracker-creds
 ```
 
 Note that underscores should be used in the environment variable names.
