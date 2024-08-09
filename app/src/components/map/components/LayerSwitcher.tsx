@@ -77,8 +77,6 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
     baselayer[1](event.target.value);
   };
 
-  console.log('hideProjects', props.hideProjects);
-
   return (
     <div>
       {!switcherOpen ? (
