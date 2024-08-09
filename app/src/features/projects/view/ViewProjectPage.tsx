@@ -35,6 +35,9 @@ import ProjectDetails from './components/ProjectDetails';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import * as turf from '@turf/turf';
+
+import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 
 const pageStyles = {
   conservationAreChip: {
@@ -58,6 +61,34 @@ const pageStyles = {
     }
   }
 };
+
+/**
+ * Export all the project data.
+ * This will eventually reside in a different place so all forms can use it.
+ */
+interface ExtendedFeatureCollection extends FeatureCollection<Geometry, GeoJsonProperties> {
+  metadata?: object;
+}
+
+const exportData = (project: any | null): void => {
+  // Because turf doesn't know about the metadata property.
+  const fc: ExtendedFeatureCollection = turf.featureCollection(project?.location.geometry || []);
+
+  // Add the bounding box to the feature collection.
+  const bbox = turf.bbox(fc);
+  fc.bbox = bbox;
+
+  // Add the metadata to the feature collection, excluding the location property.
+  fc.metadata = {
+    ...Object.fromEntries(Object.entries(project).filter(([key]) => key !== 'location'))
+  }
+
+  console.log('fc',fc);
+  console.log(project);
+  // TODO: Export the data so this function can be used with one or more projects at a time. (think multiselect)
+}
+
+
 
 /**
  * Page to display a single Project.
@@ -256,6 +287,7 @@ const ViewProjectPage: React.FC = () => {
                         sx={{ height: '2.8rem', width: '10rem' }}
                         color="primary"
                         variant="outlined"
+                        onClick={() => exportData(project)}
                         disableElevation
                         data-testid="export-project-button"
                         aria-label={ProjectTableI18N.exportProjectsData}
