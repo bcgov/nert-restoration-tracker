@@ -191,7 +191,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                     />
                   </Box>
                   <Box sx={pageStyles.layerSwitcherContainer}>
-                    <LayerSwitcher layerVisibility={layerVisibility} />
+                    <LayerSwitcher layerVisibility={layerVisibility}  hideProjects={true}/>
                   </Box>
                 </Paper>
                 <Box mt={2} />
