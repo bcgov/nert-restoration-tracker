@@ -174,7 +174,7 @@ const ViewProjectPage: React.FC = () => {
                   <Chip
                     size="small"
                     color={'default'}
-                    label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
+                    label={focus.LAND_BASED_RESTORATION_INITIATIVE}
                   />
                 )}
                 {project.project.is_cultural_initiative && (

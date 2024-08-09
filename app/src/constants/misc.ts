@@ -20,7 +20,7 @@ export enum ProjectStatusType {
 export const focus = {
   HEALING_THE_LAND: 'Healing the Land',
   HEALING_THE_PEOPLE: 'Healing the People',
-  LAND_BASED_RESTOTRATION_INITIATIVE: 'Land Based Restoration Initiative',
+  LAND_BASED_RESTORATION_INITIATIVE: 'Land Based Restoration Initiative',
   CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE: 'Cultural or Community Investment Initiative'
 };
 
@@ -29,7 +29,7 @@ export const getFocusLabelFromCode = (focusCode: number) => {
     {
       1: focus.HEALING_THE_LAND,
       2: focus.HEALING_THE_PEOPLE,
-      3: focus.LAND_BASED_RESTOTRATION_INITIATIVE,
+      3: focus.LAND_BASED_RESTORATION_INITIATIVE,
       4: focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE
     }[focusCode] ?? 'UNDEFINED'
   );
@@ -40,7 +40,7 @@ export const getFocusCodeFromLabel = (focusLabel: string): number => {
     {
       [focus.HEALING_THE_LAND]: 1,
       [focus.HEALING_THE_PEOPLE]: 2,
-      [focus.LAND_BASED_RESTOTRATION_INITIATIVE]: 3,
+      [focus.LAND_BASED_RESTORATION_INITIATIVE]: 3,
       [focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE]: 4
     }[focusLabel] ?? -1
   );
@@ -56,8 +56,8 @@ export const focusOptions = [
     label: focus.HEALING_THE_PEOPLE
   },
   {
-    value: getFocusCodeFromLabel(focus.LAND_BASED_RESTOTRATION_INITIATIVE),
-    label: focus.LAND_BASED_RESTOTRATION_INITIATIVE
+    value: getFocusCodeFromLabel(focus.LAND_BASED_RESTORATION_INITIATIVE),
+    label: focus.LAND_BASED_RESTORATION_INITIATIVE
   },
   {
     value: getFocusCodeFromLabel(focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE),

@@ -9,6 +9,18 @@ import { focus, getFocusCodeFromLabel } from 'constants/misc';
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 
+export const locationRequired = (focuses: number[] | IMultiAutocompleteFieldOption[]) => {
+  return focuses.some((values: number | IMultiAutocompleteFieldOption) => {
+    if (
+      values == getFocusCodeFromLabel(focus.HEALING_THE_LAND) ||
+      values == getFocusCodeFromLabel(focus.LAND_BASED_RESTORATION_INITIATIVE)
+    ) {
+      return true;
+    }
+    return false;
+  });
+};
+
 yup.addMethod(
   yup.string,
   'isAuthDescriptionRequired',
@@ -38,6 +50,33 @@ yup.addMethod(yup.number, 'isNumberOfPeopleInvolvedRequired', function (message:
       }
       return true;
     }
+  });
+});
+
+yup.addMethod(yup.number, 'isLocationRequired', function (message: string) {
+  return this.test('is-location-required', message, function (value) {
+    if (this.parent.focuses) {
+      return locationRequired(this.parent.focuses) ? !!value : true;
+    }
+    return true;
+  });
+});
+
+yup.addMethod(yup.string, 'isLocationRequired', function (message: string) {
+  return this.test('is-location-required', message, function (value) {
+    if (this.parent.focuses) {
+      return locationRequired(this.parent.focuses) ? !!value : true;
+    }
+    return true;
+  });
+});
+
+yup.addMethod(yup.array, 'isLocationRequired', function (message: string) {
+  return this.test('is-location-required', message, function (value) {
+    if (this.parent.focuses) {
+      return locationRequired(this.parent.focuses) ? !!value : true;
+    }
+    return true;
   });
 });
 

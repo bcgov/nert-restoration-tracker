@@ -28,12 +28,14 @@ import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useEffect, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
-import yup from 'utils/YupSchema';
+import yup, { locationRequired } from 'utils/YupSchema';
 import './styles/projectLocation.css';
 import ProjectLocationConservationAreas, {
   IProjectLocationConservationAreasArrayItem,
   ProjectLocationConservationAreasFormArrayItemInitialValues
 } from 'features/projects/components/ProjectLocationConservationAreasForm';
+import { ICreateProjectRequest, IEditProjectRequest } from 'interfaces/useProjectApi.interface';
+import { ICreatePlanRequest, IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 
 export interface IProjectLocationForm {
   location: {
@@ -59,24 +61,11 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    region: yup.string().required('Required'),
-    geometry: yup
-      .array()
-      .min(1, 'You must specify a project boundary')
-      .required('You must specify a project boundary')
-      .test('siteName-not-blank', 'Site names cannot be blank', (value) => {
-        const returnValue = value.every((feature: Feature) => {
-          if (feature.properties?.siteName) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        return returnValue;
-      }),
+    region: yup.string().isLocationRequired('Required'),
+    geometry: yup.array().isLocationRequired('You must specify a project boundary'), //TODO: add back sitename is required if geometry is present
     is_within_overlapping: yup.string().notRequired(),
     size_ha: yup.number().nullable(),
-    number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
+    number_sites: yup.number().isLocationRequired('Required'),
     conservationAreas: yup
       .array()
       .of(
@@ -119,6 +108,9 @@ export interface IProjectLocationFormProps {
  */
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
+  const parentFormikProps = useFormikContext<
+    ICreateProjectRequest | IEditProjectRequest | ICreatePlanRequest | IEditPlanRequest
+  >();
 
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
@@ -209,7 +201,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               <FormControl
                 component="fieldset"
                 size="small"
-                required={true}
+                required={locationRequired(
+                  parentFormikProps.values.focus.focuses
+                    ? parentFormikProps.values.focus.focuses
+                    : []
+                )}
                 fullWidth
                 variant="outlined">
                 <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
@@ -280,7 +276,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
       </Box>
       <Box component="fieldset">
-        <Typography component="legend">Project Areas *</Typography>
+        <Typography component="legend">
+          Project Areas{' '}
+          {locationRequired(
+            parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
+          ) && '*'}
+        </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your project boundary.
