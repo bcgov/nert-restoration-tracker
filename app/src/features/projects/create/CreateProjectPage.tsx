@@ -71,11 +71,11 @@ import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import yup from 'utils/YupSchema';
 import { checkFormikErrors } from 'utils/Utils';
 import FocalSpeciesComponent, {
   ProjectFocalSpeciesFormInitialValues
 } from 'components/species/FocalSpeciesComponent';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
 
 const pageStyles = {
   actionButton: {
@@ -275,6 +275,10 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, projectPostObject)) {
+        return;
+      }
+
       // Remove empty partnerships
       projectPostObject.partnership.partnerships =
         projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());

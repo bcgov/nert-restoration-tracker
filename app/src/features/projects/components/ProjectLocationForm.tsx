@@ -35,15 +35,14 @@ import ProjectLocationConservationAreas, {
   ProjectLocationConservationAreasFormArrayItemInitialValues
 } from 'features/projects/components/ProjectLocationConservationAreasForm';
 import { ICreateProjectRequest, IEditProjectRequest } from 'interfaces/useProjectApi.interface';
-import { ICreatePlanRequest, IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 
 export interface IProjectLocationForm {
   location: {
-    geometry: Feature[];
-    number_sites: number;
-    region: number;
-    is_within_overlapping: string;
-    size_ha: number;
+    geometry: Feature[] | null;
+    number_sites: number | null;
+    region: number | string | null;
+    is_within_overlapping: string | null;
+    size_ha: number | null;
     conservationAreas: IProjectLocationConservationAreasArrayItem[];
   };
 }
@@ -61,11 +60,11 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    region: yup.string().isLocationRequired('Required'),
-    geometry: yup.array().isLocationRequired('You must specify a project boundary'), //TODO: add back sitename is required if geometry is present
+    region: yup.string(),
+    geometry: yup.array(),
     is_within_overlapping: yup.string().notRequired(),
     size_ha: yup.number().nullable(),
-    number_sites: yup.number().isLocationRequired('Required'),
+    number_sites: yup.number(),
     conservationAreas: yup
       .array()
       .of(
@@ -108,15 +107,15 @@ export interface IProjectLocationFormProps {
  */
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
-  const parentFormikProps = useFormikContext<
-    ICreateProjectRequest | IEditProjectRequest | ICreatePlanRequest | IEditPlanRequest
-  >();
+  const parentFormikProps = useFormikContext<ICreateProjectRequest | IEditProjectRequest>();
 
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
-  // console.log('values', values);
-
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
+
+  if (!values.location || !values.location.geometry) {
+    return null;
+  }
 
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
@@ -126,6 +125,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    * Listen for a change in the number of sites and update the form
    */
   useEffect(() => {
+    if (!values.location.geometry) {
+      return;
+    }
+
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
     }

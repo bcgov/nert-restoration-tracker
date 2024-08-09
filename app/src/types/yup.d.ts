@@ -10,17 +10,6 @@ import yup from 'utils/YupSchema';
 declare module 'yup' {
   interface NumberSchema {
     /**
-     * Determine if the array of locations is required based on a boolean value.
-     *
-     * @param {string} [message]
-     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
-     * @memberof ArraySchema
-     */
-    isLocationRequired(
-      message?: string
-    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
-
-    /**
      * Determine if number of people involved is required based on a boolean value.
      *
      * @param {string} [message]
@@ -33,17 +22,6 @@ declare module 'yup' {
   }
 
   interface StringSchema {
-    /**
-     * Determine if the array of locations is required based on a boolean value.
-     *
-     * @param {string} [message]
-     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
-     * @memberof ArraySchema
-     */
-    isLocationRequired(
-      message?: string
-    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
-
     /**
      * Determine if Auth Description is required based on a boolean value.
      *
@@ -146,16 +124,6 @@ declare module 'yup' {
   }
 
   interface ArraySchema {
-    /**
-     * Determine if the array of locations is required based on a boolean value.
-     *
-     * @param {string} [message]
-     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
-     * @memberof ArraySchema
-     */
-    isLocationRequired(
-      message?: string
-    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
     /**
      * Determine if the array of permits has duplicate permit numbers
      *

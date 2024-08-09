@@ -3,7 +3,8 @@ import {
   mdiFilePdfBox,
   mdiPencilOutline,
   mdiExport,
-  mdiImport
+  mdiImport,
+  mdiArrowCollapseDown
 } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
@@ -35,6 +36,7 @@ import ProjectDetails from './components/ProjectDetails';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 
 const pageStyles = {
   conservationAreChip: {
@@ -244,48 +246,62 @@ const ViewProjectPage: React.FC = () => {
 
               <Box mb={1.2}>
                 <Paper elevation={2}>
-                  <Box
-                    px={1}
-                    py={1}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center">
-                    <Typography variant="h2">Restoration Project Area</Typography>
-                    <Box>
-                      <Button
-                        sx={{ height: '2.8rem', width: '10rem' }}
-                        color="primary"
-                        variant="outlined"
-                        disableElevation
-                        data-testid="export-project-button"
-                        aria-label={ProjectTableI18N.exportProjectsData}
-                        startIcon={<Icon path={mdiExport} size={1} />}>
-                        {TableI18N.exportData}
-                      </Button>
+                  <Accordion defaultExpanded={!!project.location.geometry?.length || false}>
+                    <AccordionSummary
+                      expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                      aria-controls="panel1-content"
+                      id="panel1-header">
+                      <Box
+                        px={2}
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        width={'100%'}>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="h2">Restoration Project Area</Typography>
+                        </Box>
+                        <Box>
+                          <Button
+                            sx={{ height: '2.8rem', width: '10rem' }}
+                            color="primary"
+                            variant="outlined"
+                            disableElevation
+                            data-testid="export-project-button"
+                            aria-label={ProjectTableI18N.exportProjectsData}
+                            startIcon={<Icon path={mdiExport} size={1} />}>
+                            {TableI18N.exportData}
+                          </Button>
 
-                      <ProjectRoleGuard
-                        validSystemRoles={[
-                          SYSTEM_ROLE.SYSTEM_ADMIN,
-                          SYSTEM_ROLE.DATA_ADMINISTRATOR
-                        ]}
-                        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-                        validProjectPermissions={[]}>
-                        <Button
-                          sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
-                          color="primary"
-                          variant="outlined"
-                          disableElevation
-                          data-testid="import-plan-button"
-                          aria-label={PlanTableI18N.importPlanData}
-                          startIcon={<Icon path={mdiImport} size={1} />}>
-                          {TableI18N.importData}
-                        </Button>
-                      </ProjectRoleGuard>
-                    </Box>
-                  </Box>
-                  <Box height="500px" position="relative">
-                    <LocationBoundary locationData={project.location} />
-                  </Box>
+                          <ProjectRoleGuard
+                            validSystemRoles={[
+                              SYSTEM_ROLE.SYSTEM_ADMIN,
+                              SYSTEM_ROLE.DATA_ADMINISTRATOR
+                            ]}
+                            validProjectRoles={[
+                              PROJECT_ROLE.PROJECT_LEAD,
+                              PROJECT_ROLE.PROJECT_EDITOR
+                            ]}
+                            validProjectPermissions={[]}>
+                            <Button
+                              sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
+                              color="primary"
+                              variant="outlined"
+                              disableElevation
+                              data-testid="import-plan-button"
+                              aria-label={PlanTableI18N.importPlanData}
+                              startIcon={<Icon path={mdiImport} size={1} />}>
+                              {TableI18N.importData}
+                            </Button>
+                          </ProjectRoleGuard>
+                        </Box>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box height="500px" position="relative">
+                        <LocationBoundary locationData={project.location} />
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
                 </Paper>
               </Box>
 

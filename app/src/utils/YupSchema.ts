@@ -7,6 +7,8 @@ import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocomple
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { focus, getFocusCodeFromLabel } from 'constants/misc';
 import dayjs from 'dayjs';
+import { FormikErrors } from 'formik';
+import { Feature } from 'maplibre-gl';
 import * as yup from 'yup';
 
 export const locationRequired = (focuses: number[] | IMultiAutocompleteFieldOption[]) => {
@@ -19,6 +21,44 @@ export const locationRequired = (focuses: number[] | IMultiAutocompleteFieldOpti
     }
     return false;
   });
+};
+
+export const setFieldErrors = (
+  errors: FormikErrors<any>,
+  setFieldError: (field: string, message: string | undefined) => void
+) => {
+  Object.keys(errors).forEach((field) => {
+    setFieldError(field, errors[field] as string);
+  });
+};
+
+export const checkForLocationErrors = (formikRef: any, values: any) => {
+  // Check if the location is required
+
+  let locationErrors = false;
+  if (locationRequired(values.focus.focuses)) {
+    if (!values.location.region) {
+      formikRef.current?.setFieldError('location.region', 'Region is required');
+      locationErrors = true;
+    }
+    if (!values.location.geometry || !values.location.geometry.length) {
+      formikRef.current?.setFieldError('location.geometry', 'Geometry is required');
+      locationErrors = true;
+    }
+    if (values.location.geometry && values.location.geometry.length > 0) {
+      values.location.geometry.forEach((feature: Feature) => {
+        if (!feature.properties.siteName) {
+          formikRef.current?.setFieldError(`location.geometry`, 'Site name is required');
+          locationErrors = true;
+        }
+      });
+    }
+    if (!values.location.number_sites) {
+      formikRef.current?.setFieldError('location.number_sites', 'Number of sites is required');
+      locationErrors = true;
+    }
+  }
+  return locationErrors;
 };
 
 yup.addMethod(
@@ -50,33 +90,6 @@ yup.addMethod(yup.number, 'isNumberOfPeopleInvolvedRequired', function (message:
       }
       return true;
     }
-  });
-});
-
-yup.addMethod(yup.number, 'isLocationRequired', function (message: string) {
-  return this.test('is-location-required', message, function (value) {
-    if (this.parent.focuses) {
-      return locationRequired(this.parent.focuses) ? !!value : true;
-    }
-    return true;
-  });
-});
-
-yup.addMethod(yup.string, 'isLocationRequired', function (message: string) {
-  return this.test('is-location-required', message, function (value) {
-    if (this.parent.focuses) {
-      return locationRequired(this.parent.focuses) ? !!value : true;
-    }
-    return true;
-  });
-});
-
-yup.addMethod(yup.array, 'isLocationRequired', function (message: string) {
-  return this.test('is-location-required', message, function (value) {
-    if (this.parent.focuses) {
-      return locationRequired(this.parent.focuses) ? !!value : true;
-    }
-    return true;
   });
 });
 

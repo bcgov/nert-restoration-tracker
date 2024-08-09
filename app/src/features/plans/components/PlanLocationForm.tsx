@@ -24,14 +24,15 @@ import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState, useEffect } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
-import yup from 'utils/YupSchema';
+import yup, { locationRequired } from 'utils/YupSchema';
+import { ICreatePlanRequest, IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 
 export interface IPlanLocationForm {
   location: {
-    region: number;
-    size_ha: number;
-    number_sites: number;
-    geometry: Feature[];
+    region: number | string | null;
+    size_ha: number | null;
+    number_sites: number | null;
+    geometry: Feature[] | null;
   };
 }
 
@@ -46,23 +47,10 @@ export const PlanLocationFormInitialValues: IPlanLocationForm = {
 
 export const PlanLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    region: yup.string().required('Required'),
-    size_ha: yup.number().required('Required'),
-    number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
-    geometry: yup
-      .array()
-      .min(1, 'You must specify a Plan boundary')
-      .required('You must specify a Plan boundary')
-      .test('siteName-not-blank', 'Site names cannot be blank', (value) => {
-        const returnValue = value.every((feature: Feature) => {
-          if (feature.properties?.siteName) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        return returnValue;
-      })
+    region: yup.string(),
+    geometry: yup.array(),
+    size_ha: yup.number().nullable(),
+    number_sites: yup.number()
   })
 });
 
@@ -93,6 +81,8 @@ const calculateTotalArea = (features: any) => {
  */
 const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IPlanLocationForm>();
+  const parentFormikProps = useFormikContext<ICreatePlanRequest | IEditPlanRequest>();
+
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
   const [geoJSONDescriptionOpen, setGeoJSONDescriptionOpen] = useState(false);
@@ -124,6 +114,10 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
+  if (!values.location || !values.location.geometry) {
+    return null;
+  }
+
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
@@ -132,6 +126,10 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    * Listen for a change in the number of sites and update the form
    */
   useEffect(() => {
+    if (!values.location.geometry) {
+      return;
+    }
+
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
     }
@@ -174,7 +172,11 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
               <FormControl
                 component="fieldset"
                 size="small"
-                required={true}
+                required={locationRequired(
+                  parentFormikProps.values.focus.focuses
+                    ? parentFormikProps.values.focus.focuses
+                    : []
+                )}
                 fullWidth
                 variant="outlined">
                 <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
@@ -200,7 +202,12 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         </Box>
       </Box>
       <Box component="fieldset">
-        <Typography component="legend">Plan Areas *</Typography>
+        <Typography component="legend">
+          Plan Areas{' '}
+          {locationRequired(
+            parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
+          ) && '*'}
+        </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your Plan boundary.
