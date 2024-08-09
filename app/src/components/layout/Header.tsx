@@ -1,6 +1,7 @@
 import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
 import Icon from '@mdi/react';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -20,7 +21,7 @@ import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { ConfigContext } from 'contexts/configContext';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
 
@@ -90,7 +91,7 @@ const pageStyles = {
   mainNavToolbar: {
     '& a': {
       display: 'block',
-      padding: '1rem',
+      paddingX: '0.5rem',
       color: 'inherit',
       fontSize: '1rem',
       textDecoration: 'none'
@@ -151,16 +152,6 @@ const Header: React.FC = () => {
           }}>
           Log Out
         </Button>
-        <Box pl={2}>
-          <Divider orientation="vertical" />
-        </Box>
-        <IconButton
-          aria-label="need help"
-          sx={pageStyles.govHeaderIconButton}
-          onClick={showSupportDialog}
-          size="large">
-          <Icon path={mdiHelpCircle} size={1.12} />
-        </IconButton>
       </Box>
     );
   };
@@ -212,35 +203,67 @@ const Header: React.FC = () => {
     );
   };
 
+  const [infoOpen, setInfoOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
+  const handleClickClose = () => {
+    setInfoOpen(false);
+  };
+
   return (
     <>
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
-        <Toolbar sx={pageStyles.govHeaderToolbar}>
-          <Box display="flex" justifyContent="space-between" width="100%" sx={pageStyles.brand}>
-            <Link
-              to="/"
-              style={pageStyles.brand}
-              aria-label="Go to Northeast Restoration Tracker Home">
-              <picture>
-                <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
-                <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
-                <img src={headerImageSmall} alt={'Government of British Columbia'} />
-              </picture>
-              <Box>
-                <Typography variant="h6">Northeast Restoration Tracker</Typography>
+        <Toolbar variant="dense">
+          <Box display="flex" justifyContent="space-between" width="100%">
+            <Box display="flex" justifyContent="left">
+              <Link
+                to="/"
+                style={pageStyles.brand}
+                aria-label="Go to Northeast Restoration Tracker Home">
+                <picture>
+                  <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
+                  <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
+                  <img src={headerImageSmall} alt={'Government of British Columbia'} />
+                </picture>
+              </Link>
+
+              <Box ml={2}>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  Northeast Restoration Tracker
+                </Typography>
                 <VersionEnvironmentLabel />
               </Box>
-            </Link>
+              <Box mt={-0.5}>
+                <IconButton aria-label="General Info" onClick={handleClickOpen} size="small">
+                  <InfoIcon color="info" />
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box display="flex" justifyContent="left" minWidth={100} sx={pageStyles.brand}>
             <UnAuthGuard>
               <PublicViewUser />
             </UnAuthGuard>
             <AuthGuard>
               <LoggedInUser />
             </AuthGuard>
+            {/* <Box pl={2}>
+              <Divider orientation="vertical" />
+            </Box> */}
+            <IconButton
+              aria-label="need help"
+              sx={pageStyles.govHeaderIconButton}
+              onClick={showSupportDialog}
+              size="large">
+              <Icon path={mdiHelpCircle} size={1.12} />
+            </IconButton>
           </Box>
         </Toolbar>
 
-        <Box sx={pageStyles.mainNav}>
+        <Box borderBottom={'1px solid'} sx={pageStyles.mainNav}>
           <Toolbar
             variant="dense"
             sx={pageStyles.mainNavToolbar}
@@ -285,6 +308,26 @@ const Header: React.FC = () => {
           </Toolbar>
         </Box>
       </AppBar>
+
+      <Dialog open={infoOpen}>
+        <DialogTitle>General Info: Northeast Restoration Tracker</DialogTitle>
+        <DialogContent>
+          <Typography>
+            The Restoration Tracker is a web application providing planned, active and completed
+            restoration project information in a simple, accessible format. Restoration information
+            can be used in many ways, such as for restoration project coordination, communication
+            and consultation purposes, for other planned activities, for land use planning, and for
+            viewing overall restoration activity and investment. Restoration information is entered
+            by restoration project planners, implementers, administrators or others involved in the
+            process. Find more information and training resources here.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="primary" onClick={handleClickClose}>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={open}>
         <DialogTitle>Need Help?</DialogTitle>
