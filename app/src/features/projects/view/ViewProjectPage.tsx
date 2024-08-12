@@ -36,6 +36,7 @@ import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
 import * as turf from '@turf/turf';
+import dayjs from 'dayjs';
 
 import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 
@@ -70,7 +71,32 @@ interface ExtendedFeatureCollection extends FeatureCollection<Geometry, GeoJsonP
   metadata?: object;
 }
 
-const exportData = (project: any | null): void => {
+/**
+ * Download the project data as a GeoJSON file using the project name plus the current date as the file name. 
+ * @param project 
+ */
+const exportData = (project: any | null) => {
+  const fc = packageData(project);
+
+  const geoJSONStr = JSON.stringify(fc);
+  const blob = new Blob([geoJSONStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  
+  // Replace all special characters and spaces with an underscore.
+  const project_name = project.project.project_name.replace(/[^a-zA-Z0-9]/g, '_');
+  const day = dayjs().format('DD-MM-YYYY');
+  const fileName = `${project_name}-${day}.geojson`;
+
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+const packageData = (project: any | null): ExtendedFeatureCollection => {
   // Because turf doesn't know about the metadata property.
   const fc: ExtendedFeatureCollection = turf.featureCollection(project?.location.geometry || []);
 
@@ -82,10 +108,7 @@ const exportData = (project: any | null): void => {
   fc.metadata = {
     ...Object.fromEntries(Object.entries(project).filter(([key]) => key !== 'location'))
   }
-
-  console.log('fc',fc);
-  console.log(project);
-  // TODO: Export the data so this function can be used with one or more projects at a time. (think multiselect)
+  return fc;
 }
 
 
