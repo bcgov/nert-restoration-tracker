@@ -216,7 +216,7 @@ describe('GetLocationData', () => {
 
     it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
-      expect(locationData.region).to.eql('');
+      expect(locationData.region).to.eql(null);
     });
   });
 
@@ -229,7 +229,7 @@ describe('GetLocationData', () => {
 
     it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
-      expect(locationData.region).to.eql('');
+      expect(locationData.region).to.eql(null);
     });
   });
 
