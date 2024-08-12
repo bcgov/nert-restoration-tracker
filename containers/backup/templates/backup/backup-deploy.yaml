@@ -170,12 +170,12 @@ objects:
                   value: ${MONGODB_AUTHENTICATION_DATABASE}
                 - name: TABLE_SCHEMA
                   value: ${TABLE_SCHEMA}
-                - name: PG_USER
+                - name: DATABASE_USER
                   valueFrom:
                     secretKeyRef:
                       key: database-user
                       name: '${DATABASE_SECRET_REF}'
-                - name: PG_PASSWORD
+                - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-user-password

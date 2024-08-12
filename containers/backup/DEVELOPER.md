@@ -27,38 +27,16 @@ postgres=restoration-tracker-db-postgresql:5432/restoration-tracker
 4. Configure references to your DB credentials in [backup-deploy.yaml](./openshift/templates/backup/backup-deploy.yaml), replacing the boilerplate `DATABASE_USER` and `DATABASE_PASSWORD` environment variables.
 
 ```yaml
-- name: PG_USER
-  valueFrom:
-    secretKeyRef:
-      key: database-user
-      name: '${DATABASE_SECRET_REF}'
-- name: PG_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      key: database-user-password
-      name: '${DATABASE_SECRET_REF}'
-- name: PG_ROOT_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      key: database-admin-password
-      name: '${DATABASE_SECRET_REF}'
-- name: PG_DATABASE
-  valueFrom:
-    secretKeyRef:
-      key: database-name
-      name: '${DATABASE_SECRET_REF}'
-- name: PG_PRIMARY_PORT
-  value: '5432'
-- name: PG_PRIMARY_USER
-  valueFrom:
-    secretKeyRef:
-      key: database-user
-      name: '${DATABASE_SECRET_REF}'
-- name: PG_PRIMARY_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      key: database-user-password
-      name: '${DATABASE_SECRET_REF}'
+  - name: DATABASE_USER
+    valueFrom:
+      secretKeyRef:
+        key: database-user
+        name: '${DATABASE_SECRET_REF}'
+  - name: DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: database-user-password
+        name: '${DATABASE_SECRET_REF}'
 
 ...
 - name: DATABASE_SECRET_REF
