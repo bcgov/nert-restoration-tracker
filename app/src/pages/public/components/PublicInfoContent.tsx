@@ -91,13 +91,13 @@ const PublicInfoContent: React.FC<IPublicInfoContentProps> = (props) => {
         infoContent = (
           <Fragment>
             <Typography mb={1}>
-              Project Status is the step in the restoration project lifecycle (workflow).
+              Project Status is the stage in the restoration project lifecycle (workflow).
             </Typography>
             <TableContainer sx={{ maxHeight: 270 }}>
               <Table stickyHeader aria-label="table with sticky header">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left">Lifecycle Steps</TableCell>
+                    <TableCell align="left">Lifecycle Stages</TableCell>
                     <TableCell align="left">Definitions</TableCell>
                   </TableRow>
                 </TableHead>

@@ -1,3 +1,5 @@
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
@@ -9,11 +11,14 @@ import {
   states
 } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 import './styles/projectImage.css';
 import ThumbnailImageField from 'components/fields/ThumbnailImageField';
 import InfoDialog from 'components/dialog/InfoDialog';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectGeneralInformationForm {
   project: {
@@ -86,64 +91,89 @@ const ProjectGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
   const state = getStateLabelFromCode(formikProps.values.project.state_code);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
 
   return (
-    <Grid container spacing={3} justifyContent={'space-between'}>
-      <ThumbnailImageField />
-      <Grid item xs={12} md={9}>
-        <Grid container spacing={3} direction="column">
-          <Grid item xs={12}>
-            <CustomTextField
-              name="project.project_name"
-              label="Project Name"
-              other={{
-                required: true
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomTextField
-              name="project.no_data"
-              label="Project Status"
-              other={{
-                InputProps: {
-                  readOnly: true, //TODO: STATUS will need to be updated based on the workflow
-                  startAdornment: (
-                    <Chip
-                      size="small"
-                      sx={getStatusStyle(getStateCodeFromLabel(state || states.DRAFT))}
-                      label={state || states.DRAFT}
-                    />
-                  ),
-                  endAdornment: <InfoDialog isProject={true} infoContent={'workflow'} />
-                }
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
+    <>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={CreateProjectI18N.briefDescription}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={CreateProjectI18N.briefDescription} />
+      </InfoDialogDraggable>
+
+      <Grid container spacing={3} justifyContent={'space-between'}>
+        <ThumbnailImageField />
+        <Grid item xs={12} md={9}>
+          <Grid container spacing={3} direction="column">
             <Grid item xs={12}>
               <CustomTextField
-                name="project.brief_desc"
-                label="Brief Description"
-                other={{ required: true, multiline: true, maxRows: 5 }}
-                maxLength={500}
+                name="project.project_name"
+                label="Project Name"
+                other={{
+                  required: true
+                }}
               />
             </Grid>
+            <Grid item xs={12}>
+              <CustomTextField
+                name="project.no_data"
+                label="Project Status"
+                other={{
+                  InputProps: {
+                    readOnly: true, //TODO: When editing STATUS will need to be updated based on the workflow
+                    startAdornment: (
+                      <Chip
+                        size="small"
+                        sx={getStatusStyle(getStateCodeFromLabel(state || states.DRAFT))}
+                        label={state || states.DRAFT}
+                      />
+                    ),
+                    endAdornment: <InfoDialog isProject={true} infoContent={'workflow'} />
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Grid item xs={12}>
+                <CustomTextField
+                  name="project.brief_desc"
+                  label={CreateProjectI18N.briefDescription}
+                  maxLength={500}
+                  other={{
+                    required: true,
+                    multiline: true,
+                    maxRows: 5,
+                    InputProps: {
+                      endAdornment: (
+                        <IconButton edge="end" onClick={handleClickOpen}>
+                          <InfoIcon color="info" />
+                        </IconButton>
+                      )
+                    }
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <ProjectStartEndDateFields
+              formikProps={formikProps}
+              plannedStartName={'project.start_date'}
+              plannedEndName={'project.end_date'}
+              plannedStartRequired={true}
+              plannedEndRequired={false}
+              actualStartName={'project.actual_start_date'}
+              actualEndName={'project.actual_end_date'}
+              actualStartRequired={false}
+              actualEndRequired={false}
+            />
           </Grid>
-          <ProjectStartEndDateFields
-            formikProps={formikProps}
-            plannedStartName={'project.start_date'}
-            plannedEndName={'project.end_date'}
-            plannedStartRequired={true}
-            plannedEndRequired={false}
-            actualStartName={'project.actual_start_date'}
-            actualEndName={'project.actual_end_date'}
-            actualStartRequired={false}
-            actualEndRequired={false}
-          />
         </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 

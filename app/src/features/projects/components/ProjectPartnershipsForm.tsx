@@ -1,17 +1,21 @@
 import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 const pageStyles = {
   customListItem: {
@@ -67,8 +71,28 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
 const ProjectPartnershipsForm: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectPartnershipsForm>();
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
+
   return (
-    <Box mt={2}>
+    <>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={CreateProjectI18N.partnership}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={CreateProjectI18N.partnership} />
+      </InfoDialogDraggable>
+
+      <Typography component="legend">
+        Partnerships
+        <IconButton edge="end" onClick={handleClickOpen}>
+          <InfoIcon color="info" />
+        </IconButton>
+      </Typography>
+
       <FieldArray
         name="partnership.partnerships"
         render={(arrayHelpers) => (
@@ -147,7 +171,7 @@ const ProjectPartnershipsForm: React.FC = () => {
           </Box>
         )}
       </Box>
-    </Box>
+    </>
   );
 };
 

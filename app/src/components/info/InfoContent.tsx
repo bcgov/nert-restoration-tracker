@@ -9,9 +9,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import Chip from '@mui/material/Chip';
+import { Divider } from '@mui/material';
 import React, { Fragment } from 'react';
-import { ProjectTableI18N, PlanTableI18N } from 'constants/i18n';
+import { ProjectTableI18N, PlanTableI18N, CreateProjectI18N, CreatePlanI18N } from 'constants/i18n';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { focus } from 'constants/misc';
 
@@ -26,6 +29,114 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
   let infoContent = null;
   if (isProject) {
     switch (contentIndex) {
+      case CreateProjectI18N.locationArea:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Identify the geographic sites within the project area, where activities are specifically
+            planned.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.locationGeoJSONProperties:
+        infoContent = (
+          <>
+            <Typography m={1} p={1} sx={{ fontWeight: 600 }}>
+              The GeoJSON file should align with the following criteria:
+            </Typography>
+            <List dense={true} sx={{ listStyleType: 'disc', listStylePosition: 'inside' }}>
+              <ListItem sx={{ display: 'list-item' }}>
+                All coordinates should be in the Geographic projection (EPSG:4326).
+              </ListItem>
+              <ListItem sx={{ display: 'list-item' }}>
+                At least one Polygon or MultiPolygon feature is required.
+              </ListItem>
+              <ListItem sx={{ display: 'list-item' }}>
+                No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per
+                file.
+              </ListItem>
+              <Divider>Optional</Divider>
+              <ListItem sx={{ display: 'list-item' }}>
+                The property <b>Site_Name</b> could be provided to autopopulate the site name field.
+              </ListItem>
+              <ListItem sx={{ display: 'list-item' }}>
+                You can automatically turn on the <i>Mask</i> of a feature by setting the boolean
+                value of <b>Masked_Location</b> to <i>true</i>.
+              </ListItem>
+            </List>
+          </>
+        );
+        break;
+      case CreateProjectI18N.locationConservationArea:
+        infoContent = (
+          <Typography m={2} p={2}>
+            A cultural or conservation area includes mapped geographic areas like provincial parks
+            and protected areas, and areas formally designed for conservation, such as in a
+            government-to-government agreement, but the designation process is not yet complete. It
+            could also include an area of cultural importance publicly identified by a First Nation.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.locationRegion:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Specify the region in BC where the project is located.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.partnership:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Recognize any project partners contributing to the project, directly with funding or
+            indirectly in other ways.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.fundingSource:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Specify the funder and the funding amount.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.authorization:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Identify the provincial authorizations acquired or being sought to complete the project.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.numberOfPeopleInvolved:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Estimate how many people will be directly involved or benefit from the project, if it is
+            "Healing the People" or a "Cultural or Community Investment Initiative".
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.focus:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Select “Healing the Land,” “Healing the People,” or both, if the project is Indigenous
+            led. Otherwise select “Land Based Investment Initiative”, "Cultural or Community
+            Investment Initiative” or both.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.objective:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Describe what the project is meant to achieve. There can be multiple objectives.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.briefDescription:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Describe the project activities in a way that speaks to its scope, scale, components and
+            considerations.
+          </Typography>
+        );
+        break;
       case ProjectTableI18N.focusInfo:
         infoContent = (
           <Fragment>
@@ -91,13 +202,13 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
         infoContent = (
           <Fragment>
             <Typography mb={1}>
-              Project Status is the step in the restoration project lifecycle (workflow).
+              Project Status is the stage in the restoration project lifecycle (workflow).
             </Typography>
             <TableContainer sx={{ maxHeight: 270 }}>
               <Table stickyHeader aria-label="table with sticky header">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left">Lifecycle Steps</TableCell>
+                    <TableCell align="left">Lifecycle Stages</TableCell>
                     <TableCell align="left">Definitions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -184,7 +295,7 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
                           label={states.DRAFT}
                         />
                         <Typography ml={0.5} variant="inherit" display="inline">
-                          status, initial project setup. In this state project is in the private
+                          status, initial project setup. In this stage the project is in the private
                           user sandbox and can be saved as many times as required before moving it
                           to the "Planning" status.
                         </Typography>
@@ -305,6 +416,67 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
   } // info for Plan
   else {
     switch (contentIndex) {
+      case CreatePlanI18N.locationArea:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Identify the geographic sites within the plan area, where activities are specifically
+            planned.
+          </Typography>
+        );
+        break;
+      case CreatePlanI18N.locationGeoJSONProperties:
+        infoContent = (
+          <>
+            <Typography m={1} p={1} sx={{ fontWeight: 600 }}>
+              The GeoJSON file should align with the following criteria:
+            </Typography>
+            <List dense={true} sx={{ listStyleType: 'disc', listStylePosition: 'inside' }}>
+              <ListItem sx={{ display: 'list-item' }}>
+                All coordinates should be in the Geographic projection (EPSG:4326).
+              </ListItem>
+              <ListItem sx={{ display: 'list-item' }}>
+                At least one Polygon or MultiPolygon feature is required.
+              </ListItem>
+              <ListItem sx={{ display: 'list-item' }}>
+                No more then {process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100'} features per
+                file.
+              </ListItem>
+              <Divider>Optional</Divider>
+              <ListItem sx={{ display: 'list-item' }}>
+                The property <b>Site_Name</b> could be provided to autopopulate the site name field.
+              </ListItem>
+              <ListItem sx={{ display: 'list-item' }}>
+                You can automatically turn on the <i>Mask</i> of a feature by setting the boolean
+                value of <b>Masked_Location</b> to <i>true</i>.
+              </ListItem>
+            </List>
+          </>
+        );
+        break;
+      case CreatePlanI18N.locationRegion:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Specify the region in BC where the plan is located.
+          </Typography>
+        );
+        break;
+      case CreatePlanI18N.focus:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Select “Healing the Land,” “Healing the People,” or both, if the plan is Indigenous led.
+            Otherwise select “Land Based Investment Initiative”, "Cultural or Community Investment
+            Initiative” or both.
+          </Typography>
+        );
+        break;
+      case CreatePlanI18N.briefDescription:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Describe the plan activities in a way that speaks to its scope, scale, components and
+            considerations.
+          </Typography>
+        );
+        break;
       case PlanTableI18N.focusInfo:
         infoContent = (
           <Fragment>

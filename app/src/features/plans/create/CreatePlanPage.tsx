@@ -359,7 +359,8 @@ const CreatePlanPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration Plan
+            Provide the information below and submit to create a new restoration plan. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 

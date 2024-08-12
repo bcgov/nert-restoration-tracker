@@ -23,7 +23,6 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
-import GeoJSONDescription from 'components/map/components/UploadInstructions';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useEffect, useState } from 'react';
@@ -35,6 +34,9 @@ import ProjectLocationConservationAreas, {
   ProjectLocationConservationAreasFormArrayItemInitialValues
 } from 'features/projects/components/ProjectLocationConservationAreasForm';
 import { ICreateProjectRequest, IEditProjectRequest } from 'interfaces/useProjectApi.interface';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectLocationForm {
   location: {
@@ -183,20 +185,34 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
-  /**
-   * State for the GeoJSON description dialog
-   */
-  const [geoJSONDescriptionOpen, setGeoJSONDescriptionOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState('');
 
-  const openGeoJSONDescription = () => {
-    setGeoJSONDescriptionOpen(true);
+  const handleClickOpen = (indexContent: string) => {
+    setInfoTitle(indexContent ? indexContent : '');
+    setInfoOpen(true);
   };
 
   return (
     <>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={infoTitle}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={infoTitle} />
+      </InfoDialogDraggable>
+
       <Box mb={5} mt={0}>
         <Box mb={2}>
-          <Typography component="legend">Area and Location Details</Typography>
+          <Typography component="legend">
+            Area and Location Details
+            <IconButton
+              edge="end"
+              onClick={() => handleClickOpen(CreateProjectI18N.locationRegion)}>
+              <InfoIcon color="info" />
+            </IconButton>
+          </Typography>
         </Box>
         <Box mb={3}>
           <Grid container spacing={3}>
@@ -211,12 +227,14 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
                 )}
                 fullWidth
                 variant="outlined">
-                <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
+                <InputLabel id="nrm-region-select-label">
+                  Natural Resource Management Region
+                </InputLabel>
                 <Select
                   id="nrm-region-select"
                   name="location.region"
                   labelId="nrm-region-select-label"
-                  label="NRM Region"
+                  label="Natural Resource Management Region"
                   value={values.location.region ?? ''}
                   onChange={handleChange}
                   error={touched?.location?.region && Boolean(errors?.location?.region)}
@@ -241,7 +259,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               Boolean(errors.location?.is_within_overlapping)
             }>
             <FormLabel component="legend">
-              Is the project within or overlapping a known area of cultural or conservation ?
+              Is the project within or overlapping a known area of cultural or conservation?
+              <IconButton
+                edge="end"
+                onClick={() => handleClickOpen(CreateProjectI18N.locationConservationArea)}>
+                <InfoIcon color="info" />
+              </IconButton>
             </FormLabel>
 
             <Box mt={1}>
@@ -280,16 +303,21 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       </Box>
       <Box component="fieldset">
         <Typography component="legend">
-          Project Areas{' '}
+          {CreateProjectI18N.locationArea}{' '}
           {locationRequired(
             parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
           ) && '*'}
+          <IconButton edge="end" onClick={() => handleClickOpen(CreateProjectI18N.locationArea)}>
+            <InfoIcon color="info" />
+          </IconButton>
         </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your project boundary.
-            <Tooltip title="GeoJSON Properties Information" placement="right">
-              <IconButton onClick={openGeoJSONDescription}>
+            <Tooltip title={CreateProjectI18N.locationGeoJSONProperties} placement="right">
+              <IconButton
+                edge="end"
+                onClick={() => handleClickOpen(CreateProjectI18N.locationGeoJSONProperties)}>
                 <InfoIcon color="info" />
               </IconButton>
             </Tooltip>
@@ -350,13 +378,6 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             }
           }}
         />
-      </ComponentDialog>
-
-      <ComponentDialog
-        open={geoJSONDescriptionOpen}
-        dialogTitle="The GeoJSON file should align with the following criteria:"
-        onClose={() => setGeoJSONDescriptionOpen(false)}>
-        <GeoJSONDescription />
       </ComponentDialog>
     </>
   );

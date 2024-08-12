@@ -1,4 +1,15 @@
 export const CreateProjectI18N = {
+  locationArea: 'Project Areas',
+  locationGeoJSONProperties: 'GeoJSON Properties Information',
+  locationConservationArea: 'Conservation Area',
+  locationRegion: 'Region',
+  partnership: 'Partnerships',
+  fundingSource: 'Funding Sources',
+  authorization: 'Authorizations',
+  numberOfPeopleInvolved: 'Number of People Involved',
+  focus: 'Focuses',
+  objective: 'Objective',
+  briefDescription: 'Brief Description',
   cancelTitle: 'Cancel Create Project',
   cancelText: 'Are you sure you want to cancel?',
   createErrorTitle: 'Error Creating Project',
@@ -7,6 +18,11 @@ export const CreateProjectI18N = {
 };
 
 export const CreatePlanI18N = {
+  locationArea: 'Plan Areas',
+  locationGeoJSONProperties: 'GeoJSON Properties Information',
+  locationRegion: 'Region',
+  focus: 'Focuses',
+  briefDescription: 'Brief Description',
   cancelTitle: 'Cancel Create Plan',
   cancelText: 'Are you sure you want to cancel?',
   createErrorTitle: 'Error Creating Plan',
