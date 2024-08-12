@@ -443,7 +443,8 @@ const CreateProjectPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration project
+            Provide the information below and submit to create a new restoration project. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 
@@ -517,7 +518,7 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={9} mt={-1}>
                       <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>

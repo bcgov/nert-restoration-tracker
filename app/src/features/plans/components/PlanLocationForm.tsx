@@ -19,13 +19,15 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
-import GeoJSONDescription from 'components/map/components/UploadInstructions';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState, useEffect } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
 import yup, { locationRequired } from 'utils/YupSchema';
 import { ICreatePlanRequest, IEditPlanRequest } from 'interfaces/usePlanApi.interface';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreatePlanI18N } from 'constants/i18n';
 
 export interface IPlanLocationForm {
   location: {
@@ -84,12 +86,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const parentFormikProps = useFormikContext<ICreatePlanRequest | IEditPlanRequest>();
 
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
-
-  const [geoJSONDescriptionOpen, setGeoJSONDescriptionOpen] = useState(false);
-
-  const openGeoJSONDescription = () => {
-    setGeoJSONDescriptionOpen(true);
-  };
 
   /**
    * Reactive state to share between the layer picker and the map
@@ -160,8 +156,24 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState('');
+
+  const handleClickOpen = (indexContent: string) => {
+    setInfoTitle(indexContent ? indexContent : '');
+    setInfoOpen(true);
+  };
+
   return (
     <>
+      <InfoDialogDraggable
+        isProject={false}
+        open={infoOpen}
+        dialogTitle={infoTitle}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={false} contentIndex={infoTitle} />
+      </InfoDialogDraggable>
+
       <Box mb={5} mt={0}>
         <Box mb={2}>
           <Typography component="legend">Area and Location Details</Typography>
@@ -203,16 +215,21 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
       </Box>
       <Box component="fieldset">
         <Typography component="legend">
-          Plan Areas{' '}
+          {CreatePlanI18N.locationArea}{' '}
           {locationRequired(
             parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
           ) && '*'}
+          <IconButton edge="end" onClick={() => handleClickOpen(CreatePlanI18N.locationArea)}>
+            <InfoIcon color="info" />
+          </IconButton>
         </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your Plan boundary.
-            <Tooltip title="GeoJSON Properties Information" placement="right">
-              <IconButton onClick={openGeoJSONDescription}>
+            <Tooltip title={CreatePlanI18N.locationGeoJSONProperties} placement="right">
+              <IconButton
+                edge="end"
+                onClick={() => handleClickOpen(CreatePlanI18N.locationGeoJSONProperties)}>
                 <InfoIcon color="info" />
               </IconButton>
             </Tooltip>
@@ -273,13 +290,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             }
           }}
         />
-      </ComponentDialog>
-
-      <ComponentDialog
-        open={geoJSONDescriptionOpen}
-        dialogTitle="The GeoJSON file should align with the following criteria:"
-        onClose={() => setGeoJSONDescriptionOpen(false)}>
-        <GeoJSONDescription />
       </ComponentDialog>
     </>
   );
