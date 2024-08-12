@@ -49,11 +49,7 @@ export const PlanGeneralInformationFormYupSchema = yup.object().shape({
   project: yup.object().shape({
     project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
     start_date: yup.string().isValidDateString().required('Required'),
-    end_date: yup
-      .string()
-      .isValidDateString()
-      .isEndDateAfterStartDate('start_date')
-      .required('Required'),
+    end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
     brief_desc: yup
       .string()
       .max(500, 'Cannot exceed 500 characters')
@@ -118,7 +114,7 @@ const PlanGeneralInformationForm: React.FC = () => {
             startName={'project.start_date'}
             endName={'project.end_date'}
             startRequired={true}
-            endRequired={true}
+            endRequired={false}
           />
         </Grid>
       </Grid>

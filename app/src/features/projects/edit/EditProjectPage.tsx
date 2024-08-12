@@ -39,6 +39,7 @@ import ProjectFocusForm from '../components/ProjectFocusForm';
 import { handleFocusFormValues } from 'utils/Utils';
 import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
 import FocalSpeciesComponent from 'components/species/FocalSpeciesComponent';
+import { checkForLocationErrors } from 'utils/YupSchema';
 
 const pageStyles = {
   actionButton: {
@@ -116,6 +117,7 @@ const EditProjectPage: React.FC = () => {
         },
         location: {
           ...response.location,
+          region: response.location.region || '',
           is_within_overlapping:
             response.location.is_within_overlapping === 'D'
               ? 'dont_know'
@@ -156,6 +158,9 @@ const EditProjectPage: React.FC = () => {
    * Handle project edits.
    */
   const handleProjectEdits = async (values: IEditProjectRequest) => {
+    if (checkForLocationErrors(formikRef, values)) {
+      return;
+    }
     // Remove empty partnerships
     values.partnership.partnerships = values.partnership.partnerships.filter((partner) =>
       partner.partnership.trim()

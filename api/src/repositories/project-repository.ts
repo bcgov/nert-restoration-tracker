@@ -352,13 +352,6 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (!response.rowCount) {
-        throw new ApiExecuteSQLError('Failed to get Geometry', [
-          'ProjectRepository->getGeometryData',
-          'rowCount was null or undefined, expected rowCount > 0'
-        ]);
-      }
-
       return response && response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getGeometryData', message: 'error', error });
@@ -1184,13 +1177,6 @@ export class ProjectRepository extends BaseRepository {
       `);
 
       const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to update Location', [
-          'ProjectRepository->updateProjectLocation',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
 
       const result = (response && response.rows && response.rows[0]) || null;
 

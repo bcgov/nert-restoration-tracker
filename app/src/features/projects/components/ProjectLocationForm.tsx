@@ -28,20 +28,21 @@ import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useEffect, useState } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
-import yup from 'utils/YupSchema';
+import yup, { locationRequired } from 'utils/YupSchema';
 import './styles/projectLocation.css';
 import ProjectLocationConservationAreas, {
   IProjectLocationConservationAreasArrayItem,
   ProjectLocationConservationAreasFormArrayItemInitialValues
 } from 'features/projects/components/ProjectLocationConservationAreasForm';
+import { ICreateProjectRequest, IEditProjectRequest } from 'interfaces/useProjectApi.interface';
 
 export interface IProjectLocationForm {
   location: {
-    geometry: Feature[];
-    number_sites: number;
-    region: number;
-    is_within_overlapping: string;
-    size_ha: number;
+    geometry: Feature[] | null;
+    number_sites: number | null;
+    region: number | string | null;
+    is_within_overlapping: string | null;
+    size_ha: number | null;
     conservationAreas: IProjectLocationConservationAreasArrayItem[];
   };
 }
@@ -59,24 +60,11 @@ export const ProjectLocationFormInitialValues: IProjectLocationForm = {
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    region: yup.string().required('Required'),
-    geometry: yup
-      .array()
-      .min(1, 'You must specify a project boundary')
-      .required('You must specify a project boundary')
-      .test('siteName-not-blank', 'Site names cannot be blank', (value) => {
-        const returnValue = value.every((feature: Feature) => {
-          if (feature.properties?.siteName) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        return returnValue;
-      }),
+    region: yup.string(),
+    geometry: yup.array(),
     is_within_overlapping: yup.string().notRequired(),
     size_ha: yup.number().nullable(),
-    number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
+    number_sites: yup.number(),
     conservationAreas: yup
       .array()
       .of(
@@ -119,12 +107,15 @@ export interface IProjectLocationFormProps {
  */
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
+  const parentFormikProps = useFormikContext<ICreateProjectRequest | IEditProjectRequest>();
 
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
-  // console.log('values', values);
-
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
+
+  if (!values.location || !values.location.geometry) {
+    return null;
+  }
 
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
@@ -134,6 +125,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
    * Listen for a change in the number of sites and update the form
    */
   useEffect(() => {
+    if (!values.location.geometry) {
+      return;
+    }
+
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
     }
@@ -209,7 +204,11 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               <FormControl
                 component="fieldset"
                 size="small"
-                required={true}
+                required={locationRequired(
+                  parentFormikProps.values.focus.focuses
+                    ? parentFormikProps.values.focus.focuses
+                    : []
+                )}
                 fullWidth
                 variant="outlined">
                 <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
@@ -280,7 +279,12 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         </Box>
       </Box>
       <Box component="fieldset">
-        <Typography component="legend">Project Areas *</Typography>
+        <Typography component="legend">
+          Project Areas{' '}
+          {locationRequired(
+            parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
+          ) && '*'}
+        </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your project boundary.
