@@ -40,8 +40,7 @@ GET.apiDoc = {
               'project_id',
               'system_user_id',
               'project_role_ids',
-              'project_role_names',
-              'project_role_permissions'
+              'project_role_names'
             ],
             properties: {
               project_participation_id: {
@@ -69,7 +68,8 @@ GET.apiDoc = {
                 type: 'array',
                 items: {
                   type: 'string'
-                }
+                },
+                nullable: true
               },
               user_identifier: {
                 description: 'The unique user identifier',

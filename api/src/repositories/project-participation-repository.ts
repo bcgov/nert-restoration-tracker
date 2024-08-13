@@ -138,16 +138,11 @@ export class ProjectParticipationRepository extends BaseRepository {
         pp.project_participation_id,
         pp.project_id,
         array_remove(array_agg(pr.project_role_id), NULL) AS project_role_ids,
-        array_remove(array_agg(pr.name), NULL) AS project_role_names,
-        array_remove(array_agg(pp2.name), NULL) as project_role_permissions
+        array_remove(array_agg(pr.name), NULL) AS project_role_names
       FROM
         project_participation pp
       LEFT JOIN project_role pr
         ON pp.project_role_id = pr.project_role_id
-      LEFT JOIN project_role_permission prp
-        ON pp.project_role_id = prp.project_role_id
-      LEFT JOIN project_permission pp2
-        ON pp2.project_permission_id = prp.project_permission_id
       LEFT JOIN system_user su
         ON pp.system_user_id = su.system_user_id
       LEFT JOIN
