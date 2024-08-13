@@ -49,6 +49,7 @@ export async function up(knex: Knex): Promise<void> {
   const api_delete_project = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'api_delete_project.sql'));
 
   const populate_system_constants = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_constant.sql'));
+  const populate_system_branding = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_branding.sql'));
   const populate_first_nations = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_first_nations.sql'));
 
   const populate_project_role = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_project_role.sql'));
@@ -119,6 +120,7 @@ export async function up(knex: Knex): Promise<void> {
     -- populate look up tables
     set search_path = restoration, public;
     ${populate_system_constants}
+    ${populate_system_branding}
     ${populate_first_nations}
     ${populate_project_role}
     ${populate_system_role}

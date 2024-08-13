@@ -1,6 +1,7 @@
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 
 export const codes: IGetAllCodeSetsResponse = {
+  branding: [{ id: 1, name: 'Branding name', value: 'Branding value' }],
   first_nations: [{ id: 1, name: 'First nations code' }],
   funding_source: [{ id: 1, name: 'Funding source code' }],
   investment_action_category: [{ id: 1, fs_id: 1, name: 'Investment action category' }],
