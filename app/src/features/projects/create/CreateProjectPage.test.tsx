@@ -14,7 +14,7 @@ import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 
-jest.mock('../../../hooks/useCodesContext');
+jest.mock('../../../hooks/useContext');
 const mockUseCodes = (useCodesContext as unknown as jest.Mock).mockReturnValue({ codes: codes });
 
 jest.mock('../../../hooks/useNertApi');
