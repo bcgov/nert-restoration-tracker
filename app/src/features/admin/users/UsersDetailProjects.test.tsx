@@ -1,6 +1,5 @@
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
-import useCodes from 'hooks/useCodes';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { codes } from 'test-helpers/code-helpers';
 import { useNertApi } from '../../../hooks/useNertApi';
 import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
 import UsersDetailProjects from './UsersDetailProjects';
+import { useCodesContext } from 'hooks/useContext';
 
 jest.mock('../../../hooks/useNertApi');
 const mockRestorationTrackerApi = useNertApi as jest.Mock;
@@ -20,8 +20,8 @@ const mockUseApi = {
   }
 };
 
-jest.mock('../../../hooks/useCodes');
-const mockUseCodes = useCodes as unknown as jest.MockedFunction<typeof useCodes>;
+jest.mock('../../../hooks/useCodesContext');
+const mockUseCodes = useCodesContext as unknown as jest.MockedFunction<typeof useCodesContext>;
 
 const mockUser = {
   id: 1,

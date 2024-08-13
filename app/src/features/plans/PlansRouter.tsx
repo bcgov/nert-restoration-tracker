@@ -9,6 +9,7 @@ import ViewPlanPage from './view/ViewPlanPage';
 import PlanParticipantsPage from './participants/PlanParticipantsPage';
 import ProjectsLayout from 'layouts/ProjectsLayout';
 import { RedirectURL } from 'utils/AppRoutesUtils';
+import { ProjectAuthStateContextProvider } from 'contexts/projectAuthStateContext';
 
 /**
  * Router for all `/admin/plans/*` pages.
@@ -26,41 +27,51 @@ const PlansRouter: React.FC = () => {
         <Route
           path=":id/edit"
           element={
-            <ProjectRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              validProjectPermissions={[]}
-              fallback={<Route path="" element={<Navigate replace to={`/plans`} />} />}>
-              <EditPlanPage />
-            </ProjectRoleGuard>
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+                validProjectPermissions={[]}
+                fallback={<Route path="" element={<Navigate replace to={`/plans`} />} />}>
+                <EditPlanPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
           }
         />
         <Route
           path=":id/details"
           element={
-            <ProjectRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[
-                PROJECT_ROLE.PROJECT_LEAD,
-                PROJECT_ROLE.PROJECT_EDITOR,
-                PROJECT_ROLE.PROJECT_VIEWER
-              ]}
-              validProjectPermissions={[]}
-              fallback={<Navigate replace to={`/plans`} />}>
-              <ViewPlanPage />
-            </ProjectRoleGuard>
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[
+                  SYSTEM_ROLE.SYSTEM_ADMIN,
+                  SYSTEM_ROLE.DATA_ADMINISTRATOR,
+                  SYSTEM_ROLE.PROJECT_CREATOR
+                ]}
+                validProjectRoles={[
+                  PROJECT_ROLE.PROJECT_LEAD,
+                  PROJECT_ROLE.PROJECT_EDITOR,
+                  PROJECT_ROLE.PROJECT_VIEWER
+                ]}
+                validProjectPermissions={[]}
+                fallback={<Navigate replace to={`/plans`} />}>
+                <ViewPlanPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
           }
         />
         <Route
           path=":id/users"
           element={
-            <ProjectRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-              validProjectPermissions={[]}
-              fallback={<Navigate replace to={`/plans`} />}>
-              <PlanParticipantsPage />
-            </ProjectRoleGuard>
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+                validProjectPermissions={[]}
+                fallback={<Navigate replace to={`/plans`} />}>
+                <PlanParticipantsPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
           }
         />
       </Route>

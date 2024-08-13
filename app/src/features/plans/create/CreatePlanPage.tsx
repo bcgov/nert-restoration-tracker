@@ -27,7 +27,6 @@ import PlanLocationForm, {
 } from 'features/plans/components/PlanLocationForm';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useNertApi } from 'hooks/useNertApi';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
@@ -51,6 +50,7 @@ import PlanGeneralInformationForm, {
   PlanGeneralInformationFormInitialValues,
   PlanGeneralInformationFormYupSchema
 } from '../components/PlanGeneralInformationForm';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   formButtons: {
@@ -90,7 +90,7 @@ export const PlanFormYupSchema = yup
 const CreatePlanPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
   const dialogContext = useContext(DialogContext);
   const history = useNavigate();
 
@@ -295,7 +295,7 @@ const CreatePlanPage: React.FC = () => {
     });
   };
 
-  if (!codes.codes) {
+  if (!codes.data) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -413,7 +413,7 @@ const CreatePlanPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <PlanLocationForm
-                      regions={codes.codes.regions.map((item) => {
+                      regions={codes.data.regions.map((item) => {
                         return { value: item.id, label: item.name };
                       })}
                     />

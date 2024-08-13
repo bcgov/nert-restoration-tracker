@@ -7,15 +7,15 @@ import {
   waitFor
 } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
+import { useCodesContext } from 'hooks/useContext';
 // import { ProjectLocationFormInitialValues } from 'features/projects/components/ProjectLocationForm';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 
-jest.mock('../../../hooks/useCodes');
-const mockUseCodes = (useCodes as unknown as jest.Mock).mockReturnValue({ codes: codes });
+jest.mock('../../../hooks/useCodesContext');
+const mockUseCodes = (useCodesContext as unknown as jest.Mock).mockReturnValue({ codes: codes });
 
 jest.mock('../../../hooks/useNertApi');
 const mockRestorationTrackerApi = useNertApi as jest.Mock;

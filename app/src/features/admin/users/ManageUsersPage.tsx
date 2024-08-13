@@ -4,12 +4,12 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { AdministrativeActivityStatusType, AdministrativeActivityType } from 'constants/misc';
 import AccessRequestList from 'features/admin/users/AccessRequestList';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
 import React, { useEffect, useState } from 'react';
 import ActiveUsersList from './ActiveUsersList';
 import { ISystemUser } from 'interfaces/useUserApi.interface';
+import { useCodesContext } from 'hooks/useContext';
 
 /**
  * Page to display user management data/functionality.
@@ -85,9 +85,9 @@ const ManageUsersPage: React.FC = () => {
     getActiveUsers();
   }, [restorationTrackerApi, isLoadingActiveUsers, hasLoadedActiveUsers]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
-  if (!hasLoadedAccessRequests || !hasLoadedActiveUsers || !codes.codes || !codes.isReady) {
+  if (!hasLoadedAccessRequests || !hasLoadedActiveUsers || !codes.data || !codes.isReady) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -105,7 +105,7 @@ const ManageUsersPage: React.FC = () => {
       <Box mb={5}>
         <AccessRequestList
           accessRequests={accessRequests}
-          codes={codes.codes}
+          codes={codes.data}
           refresh={() => {
             refreshAccessRequests();
             refreshActiveUsers();
@@ -113,7 +113,7 @@ const ManageUsersPage: React.FC = () => {
         />
       </Box>
 
-      <ActiveUsersList activeUsers={activeUsers} codes={codes.codes} refresh={refreshActiveUsers} />
+      <ActiveUsersList activeUsers={activeUsers} codes={codes.data} refresh={refreshActiveUsers} />
     </Container>
   );
 };

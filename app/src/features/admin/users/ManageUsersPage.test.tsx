@@ -1,10 +1,10 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import ManageUsersPage from './ManageUsersPage';
+import { useCodesContext } from 'hooks/useContext';
 
 const renderContainer = () => {
   const routes = [{ path: '/123', element: <ManageUsersPage /> }];
@@ -31,8 +31,8 @@ const mockUseApi = {
   }
 };
 
-jest.mock('../../../hooks/useCodes');
-const mockUseCodes = useCodes as unknown as jest.MockedFunction<typeof useCodes>;
+jest.mock('../../../hooks/useCodesContext');
+const mockUseCodes = useCodesContext as unknown as jest.MockedFunction<typeof useCodesContext>;
 
 describe('ManageUsersPage', () => {
   beforeEach(() => {

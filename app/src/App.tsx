@@ -2,6 +2,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { ThemeProvider } from '@mui/material/styles';
 import { AppRouter } from 'AppRouter';
 import { AuthStateContextProvider } from 'contexts/authStateContext';
+import { CodesContextProvider } from 'contexts/codesContext';
 import { ConfigContext } from 'contexts/configContext';
 import { DialogContextProvider } from 'contexts/dialogContext';
 import { MapStateContextProvider } from 'contexts/mapContext';
@@ -46,7 +47,9 @@ const App: React.FC = () => {
         <AuthStateContextProvider>
           <MapStateContextProvider>
             <DialogContextProvider>
-              <AppRouter />
+              <CodesContextProvider>
+                <AppRouter />
+              </CodesContextProvider>
             </DialogContextProvider>
           </MapStateContextProvider>
         </AuthStateContextProvider>

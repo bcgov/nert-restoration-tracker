@@ -1,5 +1,5 @@
 import CircularProgress from '@mui/material/CircularProgress';
-import useCodes from 'hooks/useCodes';
+import { useCodesContext } from 'hooks/useContext';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
@@ -23,7 +23,7 @@ export default function PublicProjectPlanView() {
     null
   );
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProjectPlan = useCallback(async () => {
     const projectPlanDetailsResponse =
@@ -44,7 +44,7 @@ export default function PublicProjectPlanView() {
     }
   }, [isLoadingProjectPlan, projectPlanDetails, getProjectPlan]);
 
-  if (!codes.codes || !projectPlanDetails) {
+  if (!codes.data || !projectPlanDetails) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -53,9 +53,9 @@ export default function PublicProjectPlanView() {
   return (
     <>
       {!isProject ? (
-        <PublicPlanView plan={projectPlanDetails as IGetPlanForViewResponse} codes={codes.codes} />
+        <PublicPlanView plan={projectPlanDetails as IGetPlanForViewResponse} codes={codes.data} />
       ) : (
-        <PublicProjectView project={projectPlanDetails} codes={codes.codes} />
+        <PublicProjectView project={projectPlanDetails} codes={codes.data} />
       )}
     </>
   );

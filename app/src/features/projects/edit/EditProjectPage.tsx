@@ -29,7 +29,6 @@ import {
 } from 'features/projects/create/CreateProjectPage';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IEditProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -40,6 +39,7 @@ import { handleFocusFormValues } from 'utils/Utils';
 import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
 import FocalSpeciesComponent from 'components/species/FocalSpeciesComponent';
 import { checkForLocationErrors } from 'utils/YupSchema';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -71,7 +71,7 @@ const pageStyles = {
 const EditProjectPage: React.FC = () => {
   const history = useNavigate();
   const dialogContext = useContext(DialogContext);
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const restorationTrackerApi = useNertApi();
 
@@ -242,7 +242,7 @@ const EditProjectPage: React.FC = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
   };
 
-  if (!codes.codes || !hasLoadedDraftData) {
+  if (!codes.data || !hasLoadedDraftData) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -360,7 +360,7 @@ const EditProjectPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <ProjectLocationForm
-                      regions={codes.codes.regions.map((item) => {
+                      regions={codes.data.regions.map((item) => {
                         return { value: item.id, label: item.name };
                       })}
                     />
