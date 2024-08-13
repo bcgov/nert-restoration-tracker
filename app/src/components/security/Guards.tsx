@@ -45,7 +45,7 @@ export interface IProjectRoleGuardProps extends IGuardProps {
    * @type {PROJECT_PERMISSION[]}
    * @memberof IProjectRoleGuardProps
    */
-  validProjectPermissions: PROJECT_PERMISSION[];
+  validProjectPermissions?: PROJECT_PERMISSION[];
 }
 
 /**
