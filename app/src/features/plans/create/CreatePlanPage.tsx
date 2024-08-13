@@ -9,7 +9,6 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { Container } from '@mui/system';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import YesNoDialog from 'components/dialog/YesNoDialog';
@@ -34,7 +33,7 @@ import { useNertApi } from 'hooks/useNertApi';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import yup from 'utils/YupSchema';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
 import PlanContactForm, {
   PlanContactInitialValues,
   PlanContactYupSchema
@@ -223,6 +222,10 @@ const CreatePlanPage: React.FC = () => {
    */
   const handlePlanCreation = async (planPostObject: ICreatePlanRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, planPostObject)) {
+        return;
+      }
+
       planPostObject.location.size_ha = planPostObject.location.size_ha
         ? planPostObject.location.size_ha
         : 0;
@@ -356,7 +359,8 @@ const CreatePlanPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration Plan
+            Provide the information below and submit to create a new restoration plan. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 
@@ -366,6 +370,8 @@ const CreatePlanPage: React.FC = () => {
             enableReinitialize={true}
             initialValues={initialPlanFormData}
             validationSchema={PlanFormYupSchema}
+            validateOnBlur={false}
+            validateOnChange={false}
             onSubmit={handlePlanCreation}>
             <>
               <Box ml={1} my={3}>

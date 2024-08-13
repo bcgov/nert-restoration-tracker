@@ -169,10 +169,6 @@ PUT.apiDoc = {
               type: 'object',
               required: ['geometry', 'region'],
               properties: {
-                priority: {
-                  type: 'string',
-                  enum: ['true', 'false']
-                },
                 geometry: {
                   type: 'array',
                   items: {
@@ -180,8 +176,14 @@ PUT.apiDoc = {
                   }
                 },
                 region: {
-                  type: 'number',
-                  nullable: true
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ]
                 }
               }
             }
@@ -352,7 +354,7 @@ GET.apiDoc = {
               location: {
                 description: 'The project location object',
                 type: 'object',
-                required: ['geometry', 'region'],
+                required: [],
                 properties: {
                   geometry: {
                     type: 'array',
@@ -366,7 +368,8 @@ GET.apiDoc = {
                     nullable: true
                   },
                   region: {
-                    type: 'number'
+                    type: 'number',
+                    nullable: true
                   }
                 }
               }

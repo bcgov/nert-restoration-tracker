@@ -65,7 +65,7 @@ const PublicInfoContent: React.FC<IPublicInfoContentProps> = (props) => {
                     </TableCell>
                   </TableRow>
                   <TableRow hover role="checkbox" tabIndex={-1}>
-                    <TableCell align="left">{focus.LAND_BASED_RESTOTRATION_INITIATIVE}</TableCell>
+                    <TableCell align="left">{focus.LAND_BASED_RESTORATION_INITIATIVE}</TableCell>
                     <TableCell align="left">
                       Projects or activities with a primary focus in repairing / rejuvenating /
                       restoring ecosystems, plant and animal communities and the physical
@@ -91,13 +91,13 @@ const PublicInfoContent: React.FC<IPublicInfoContentProps> = (props) => {
         infoContent = (
           <Fragment>
             <Typography mb={1}>
-              Project Status is the step in the restoration project lifecycle (workflow).
+              Project Status is the stage in the restoration project lifecycle (workflow).
             </Typography>
             <TableContainer sx={{ maxHeight: 270 }}>
               <Table stickyHeader aria-label="table with sticky header">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left">Lifecycle Steps</TableCell>
+                    <TableCell align="left">Lifecycle Stages</TableCell>
                     <TableCell align="left">Definitions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -305,7 +305,7 @@ const PublicInfoContent: React.FC<IPublicInfoContentProps> = (props) => {
                     </TableCell>
                   </TableRow>
                   <TableRow hover role="checkbox" tabIndex={-1}>
-                    <TableCell align="left">{focus.LAND_BASED_RESTOTRATION_INITIATIVE}</TableCell>
+                    <TableCell align="left">{focus.LAND_BASED_RESTORATION_INITIATIVE}</TableCell>
                     <TableCell align="left">
                       Plans or activities with a primary focus in repairing / rejuvenating /
                       restoring ecosystems, plant and animal communities and the physical

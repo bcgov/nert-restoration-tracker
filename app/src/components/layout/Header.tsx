@@ -13,6 +13,8 @@ import Divider from '@mui/material/Divider';
 import OtherLink from '@mui/material/Link';
 import { alpha } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
 import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
@@ -185,6 +187,7 @@ const Header: React.FC = () => {
   const [open, setOpen] = React.useState(false);
 
   const showSupportDialog = () => {
+    handleClose();
     setOpen(true);
   };
 
@@ -210,6 +213,14 @@ const Header: React.FC = () => {
   };
   const handleClickClose = () => {
     setInfoOpen(false);
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (e: any) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -254,12 +265,27 @@ const Header: React.FC = () => {
               <Divider orientation="vertical" />
             </Box> */}
             <IconButton
+              aria-controls="simple-menu"
+              aria-haspopup="true"
               aria-label="need help"
               sx={pageStyles.govHeaderIconButton}
-              onClick={showSupportDialog}
+              onClick={handleClick}
               size="large">
               <Icon path={mdiHelpCircle} size={1.12} />
             </IconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}>
+              <MenuItem onClick={handleClose} key={'Tracker FAQ'} value={'Tracker FAQ'}>
+                Tracker FAQ
+              </MenuItem>
+              <MenuItem onClick={showSupportDialog} key={'Need Help'} value={'Need Help'}>
+                Need Help
+              </MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
 

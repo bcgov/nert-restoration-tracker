@@ -19,19 +19,22 @@ import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
 import MapFeatureList from 'components/map/components/MapFeatureList';
-import GeoJSONDescription from 'components/map/components/UploadInstructions';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
 import React, { useState, useEffect } from 'react';
 import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
-import yup from 'utils/YupSchema';
+import yup, { locationRequired } from 'utils/YupSchema';
+import { ICreatePlanRequest, IEditPlanRequest } from 'interfaces/usePlanApi.interface';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreatePlanI18N } from 'constants/i18n';
 
 export interface IPlanLocationForm {
   location: {
-    region: number;
-    size_ha: number;
-    number_sites: number;
-    geometry: Feature[];
+    region: number | string | null;
+    size_ha: number | null;
+    number_sites: number | null;
+    geometry: Feature[] | null;
   };
 }
 
@@ -46,23 +49,10 @@ export const PlanLocationFormInitialValues: IPlanLocationForm = {
 
 export const PlanLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    region: yup.string().required('Required'),
-    size_ha: yup.number().required('Required'),
-    number_sites: yup.number().min(1, 'At least one site is required').required('Required'),
-    geometry: yup
-      .array()
-      .min(1, 'You must specify a Plan boundary')
-      .required('You must specify a Plan boundary')
-      .test('siteName-not-blank', 'Site names cannot be blank', (value) => {
-        const returnValue = value.every((feature: Feature) => {
-          if (feature.properties?.siteName) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        return returnValue;
-      })
+    region: yup.string(),
+    geometry: yup.array(),
+    size_ha: yup.number().nullable(),
+    number_sites: yup.number()
   })
 });
 
@@ -93,13 +83,9 @@ const calculateTotalArea = (features: any) => {
  */
 const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IPlanLocationForm>();
+  const parentFormikProps = useFormikContext<ICreatePlanRequest | IEditPlanRequest>();
+
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
-
-  const [geoJSONDescriptionOpen, setGeoJSONDescriptionOpen] = useState(false);
-
-  const openGeoJSONDescription = () => {
-    setGeoJSONDescriptionOpen(true);
-  };
 
   /**
    * Reactive state to share between the layer picker and the map
@@ -124,6 +110,10 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
+  if (!values.location || !values.location.geometry) {
+    return null;
+  }
+
   const [maskState, setMaskState] = useState<boolean[]>(
     values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
   );
@@ -132,6 +122,10 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    * Listen for a change in the number of sites and update the form
    */
   useEffect(() => {
+    if (!values.location.geometry) {
+      return;
+    }
+
     if (values.location.number_sites !== values.location.geometry.length) {
       setFieldValue('location.number_sites', values.location.geometry.length);
     }
@@ -162,8 +156,24 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    */
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState('');
+
+  const handleClickOpen = (indexContent: string) => {
+    setInfoTitle(indexContent ? indexContent : '');
+    setInfoOpen(true);
+  };
+
   return (
     <>
+      <InfoDialogDraggable
+        isProject={false}
+        open={infoOpen}
+        dialogTitle={infoTitle}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={false} contentIndex={infoTitle} />
+      </InfoDialogDraggable>
+
       <Box mb={5} mt={0}>
         <Box mb={2}>
           <Typography component="legend">Area and Location Details</Typography>
@@ -174,7 +184,11 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
               <FormControl
                 component="fieldset"
                 size="small"
-                required={true}
+                required={locationRequired(
+                  parentFormikProps.values.focus.focuses
+                    ? parentFormikProps.values.focus.focuses
+                    : []
+                )}
                 fullWidth
                 variant="outlined">
                 <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
@@ -200,12 +214,22 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         </Box>
       </Box>
       <Box component="fieldset">
-        <Typography component="legend">Plan Areas *</Typography>
+        <Typography component="legend">
+          {CreatePlanI18N.locationArea}{' '}
+          {locationRequired(
+            parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
+          ) && '*'}
+          <IconButton edge="end" onClick={() => handleClickOpen(CreatePlanI18N.locationArea)}>
+            <InfoIcon color="info" />
+          </IconButton>
+        </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
             Upload a GeoJSON file to define your Plan boundary.
-            <Tooltip title="GeoJSON Properties Information" placement="right">
-              <IconButton onClick={openGeoJSONDescription}>
+            <Tooltip title={CreatePlanI18N.locationGeoJSONProperties} placement="right">
+              <IconButton
+                edge="end"
+                onClick={() => handleClickOpen(CreatePlanI18N.locationGeoJSONProperties)}>
                 <InfoIcon color="info" />
               </IconButton>
             </Tooltip>
@@ -266,13 +290,6 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             }
           }}
         />
-      </ComponentDialog>
-
-      <ComponentDialog
-        open={geoJSONDescriptionOpen}
-        dialogTitle="The GeoJSON file should align with the following criteria:"
-        onClose={() => setGeoJSONDescriptionOpen(false)}>
-        <GeoJSONDescription />
       </ComponentDialog>
     </>
   );

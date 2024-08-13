@@ -71,11 +71,11 @@ import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import yup from 'utils/YupSchema';
 import { checkFormikErrors } from 'utils/Utils';
 import FocalSpeciesComponent, {
   ProjectFocalSpeciesFormInitialValues
 } from 'components/species/FocalSpeciesComponent';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
 
 const pageStyles = {
   actionButton: {
@@ -275,6 +275,10 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, projectPostObject)) {
+        return;
+      }
+
       // Remove empty partnerships
       projectPostObject.partnership.partnerships =
         projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
@@ -439,7 +443,8 @@ const CreateProjectPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration project
+            Provide the information below and submit to create a new restoration project. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 
@@ -513,7 +518,7 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={9} mt={-1}>
                       <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>

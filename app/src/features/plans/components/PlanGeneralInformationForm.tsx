@@ -1,3 +1,5 @@
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import CustomTextField from 'components/fields/CustomTextField';
@@ -5,9 +7,12 @@ import PlanStartEndDateFields from 'components/fields/PlanStartEndDateFields';
 import ThumbnailImageField from 'components/fields/ThumbnailImageField';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { useFormikContext } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 import InfoDialog from 'components/dialog/InfoDialog';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreatePlanI18N } from 'constants/i18n';
 
 export interface IPlanGeneralInformationForm {
   project: {
@@ -49,11 +54,7 @@ export const PlanGeneralInformationFormYupSchema = yup.object().shape({
   project: yup.object().shape({
     project_name: yup.string().max(300, 'Cannot exceed 300 characters').required('Required'),
     start_date: yup.string().isValidDateString().required('Required'),
-    end_date: yup
-      .string()
-      .isValidDateString()
-      .isEndDateAfterStartDate('start_date')
-      .required('Required'),
+    end_date: yup.string().nullable().isValidDateString().isEndDateAfterStartDate('start_date'),
     brief_desc: yup
       .string()
       .max(500, 'Cannot exceed 500 characters')
@@ -70,59 +71,83 @@ export const PlanGeneralInformationFormYupSchema = yup.object().shape({
 const PlanGeneralInformationForm: React.FC = () => {
   const formikProps = useFormikContext<IPlanGeneralInformationForm>();
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
   return (
-    <Grid container spacing={3}>
-      <ThumbnailImageField />
-      <Grid item xs={12} md={9}>
-        <Grid container spacing={3} direction="column">
-          <Grid item xs={12}>
-            <CustomTextField
-              name="project.project_name"
-              label="Plan Name"
-              other={{
-                required: true
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomTextField
-              name="project.no_data"
-              label="Plan Status"
-              other={{
-                InputProps: {
-                  readOnly: true,
-                  startAdornment: (
-                    <Chip
-                      size="small"
-                      sx={getStatusStyle(getStateCodeFromLabel(states.DRAFT))}
-                      label={states.DRAFT}
-                    />
-                  ),
-                  endAdornment: <InfoDialog isProject={false} infoContent={'workflow'} />
-                }
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
+    <>
+      <InfoDialogDraggable
+        isProject={false}
+        open={infoOpen}
+        dialogTitle={CreatePlanI18N.briefDescription}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={false} contentIndex={CreatePlanI18N.briefDescription} />
+      </InfoDialogDraggable>
+      <Grid container spacing={3}>
+        <ThumbnailImageField />
+        <Grid item xs={12} md={9}>
+          <Grid container spacing={3} direction="column">
             <Grid item xs={12}>
               <CustomTextField
-                name="project.brief_desc"
-                label="Brief Description"
-                other={{ required: true, multiline: true, maxRows: 5 }}
-                maxLength={500}
+                name="project.project_name"
+                label="Plan Name"
+                other={{
+                  required: true
+                }}
               />
             </Grid>
+            <Grid item xs={12}>
+              <CustomTextField
+                name="project.no_data"
+                label="Plan Status"
+                other={{
+                  InputProps: {
+                    readOnly: true,
+                    startAdornment: (
+                      <Chip
+                        size="small"
+                        sx={getStatusStyle(getStateCodeFromLabel(states.DRAFT))}
+                        label={states.DRAFT}
+                      />
+                    ),
+                    endAdornment: <InfoDialog isProject={false} infoContent={'workflow'} />
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Grid item xs={12}>
+                <CustomTextField
+                  name="project.brief_desc"
+                  label={CreatePlanI18N.briefDescription}
+                  maxLength={500}
+                  other={{
+                    required: true,
+                    multiline: true,
+                    maxRows: 5,
+                    InputProps: {
+                      endAdornment: (
+                        <IconButton edge="end" onClick={handleClickOpen}>
+                          <InfoIcon color="info" />
+                        </IconButton>
+                      )
+                    }
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <PlanStartEndDateFields
+              formikProps={formikProps}
+              startName={'project.start_date'}
+              endName={'project.end_date'}
+              startRequired={true}
+              endRequired={false}
+            />
           </Grid>
-          <PlanStartEndDateFields
-            formikProps={formikProps}
-            startName={'project.start_date'}
-            endName={'project.end_date'}
-            startRequired={true}
-            endRequired={true}
-          />
         </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 
