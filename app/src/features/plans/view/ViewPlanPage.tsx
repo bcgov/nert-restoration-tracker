@@ -32,6 +32,7 @@ import { focus, ICONS } from 'constants/misc';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
 
 const pageStyles = {
   titleContainerActions: {
@@ -269,6 +270,7 @@ const ViewPlanPage: React.FC = () => {
                         sx={{ height: '2.8rem', width: '10rem' }}
                         color="primary"
                         variant="outlined"
+                        onClick={() => exportData([planWithDetails])}
                         disableElevation
                         data-testid="export-project-button"
                         aria-label={ProjectTableI18N.exportProjectsData}
