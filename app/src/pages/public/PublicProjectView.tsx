@@ -26,6 +26,7 @@ import { S3FileType } from 'constants/attachments';
 import ProjectDetails from 'features/projects/view/components//ProjectDetails';
 import ProjectFocalSpecies from 'features/projects/view/components/ProjectFocalSpecies';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
 
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
@@ -165,6 +166,7 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
                         sx={{ height: '2.8rem', width: '10rem' }}
                         color="primary"
                         variant="outlined"
+                        onClick={() => exportData([project])}
                         disableElevation
                         data-testid="export-project-button"
                         aria-label={ProjectTableI18N.exportProjectsData}
