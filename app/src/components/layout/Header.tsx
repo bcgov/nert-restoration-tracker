@@ -26,6 +26,7 @@ import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   govHeaderToolbar: {
@@ -117,6 +118,13 @@ const pageStyles = {
 
 const Header: React.FC = () => {
   const config = useContext(ConfigContext);
+  const codes = useCodesContext().codesDataLoader;
+
+  const title =
+    codes.data?.branding.find((data) => data.name == 'title')?.value ||
+    'Northeast Restoration Tracker';
+
+  const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
   const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
   const nert_version = mmm ?? '0.0.0.NA';
@@ -242,7 +250,7 @@ const Header: React.FC = () => {
 
               <Box ml={2}>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  Northeast Restoration Tracker
+                  {title}
                 </Typography>
                 <VersionEnvironmentLabel />
               </Box>
@@ -361,9 +369,9 @@ const Header: React.FC = () => {
           <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
             For technical support or questions about this application, please email:&nbsp;
             <OtherLink
-              href="mailto:oinostro@gov.bc.ca?subject=Northeast Restoration Tracker - Support Request"
+              href={`mailto:${email}?subject=Northeast Restoration Tracker - Support Request`}
               underline="always">
-              oinostro@gov.bc.ca
+              {email}
             </OtherLink>
             .
           </Typography>

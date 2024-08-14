@@ -15,7 +15,6 @@ const useCodesApi = (axios: AxiosInstance) => {
    */
   const getAllCodeSets = async (): Promise<IGetAllCodeSetsResponse> => {
     const { data } = await axios.get('/api/codes/');
-    console.log('data', data);
 
     return data;
   };
