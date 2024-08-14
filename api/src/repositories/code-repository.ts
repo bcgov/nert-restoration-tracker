@@ -23,6 +23,11 @@ export interface IAllCodeSets {
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
+  branding: {
+    id: number;
+    name: string;
+    value: string;
+  }[];
 }
 
 export class CodeRepository extends BaseRepository {
@@ -142,6 +147,27 @@ export class CodeRepository extends BaseRepository {
         administrative_activity_status_type_id as id,
         name
       FROM administrative_activity_status_type
+      WHERE record_end_date is null;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows;
+  }
+
+  /**
+   * Fetch branding.
+   *
+   * @return {*}
+   * @memberof CodeRepository
+   */
+  async getBranding() {
+    const sqlStatement = SQL`
+      SELECT
+        branding_id as id,
+        name,
+        value
+      FROM branding
       WHERE record_end_date is null;
     `;
 

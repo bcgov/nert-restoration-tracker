@@ -6,6 +6,47 @@
 -- Target DBMS : PostgreSQL 10.x-12.x
 --
 
+--
+-- TABLE: branding
+--
+
+CREATE TABLE branding(
+    branding_id             integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    name                    varchar(50)       NOT NULL,
+    value                   varchar(50),
+    record_effective_date   date              NOT NULL,
+    record_end_date         date,
+    create_date             timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user             integer           NOT NULL,
+    update_date             timestamptz(6),
+    update_user             integer,
+    revision_count          integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT branding_pk PRIMARY KEY (branding_id)
+)
+;
+
+COMMENT ON COLUMN branding.branding_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN branding.name IS 'The name of the record.'
+;
+COMMENT ON COLUMN branding.value IS 'The value of the record.'
+;
+COMMENT ON COLUMN branding.record_effective_date IS 'Record level effective date.'
+;
+COMMENT ON COLUMN branding.record_end_date IS 'Record level end date.'
+;
+COMMENT ON COLUMN branding.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN branding.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN branding.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN branding.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN branding.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE branding IS 'Branding is a list of branding elements that are used to customize the application.'
+;
 -- 
 -- TABLE: administrative_activity 
 --
@@ -1380,7 +1421,12 @@ CREATE UNIQUE INDEX administrative_activity_type_nuk1 ON administrative_activity
 
 CREATE UNIQUE INDEX first_nations_nuk1 ON first_nations(name, (record_end_date is NULL)) where record_end_date is null
 ;
+-- 
+-- INDEX: branding_nuk1 
+--
 
+CREATE UNIQUE INDEX branding_nuk1 ON branding(name, (record_end_date is NULL)) where record_end_date is null
+;
 -- 
 -- INDEX: nrm_region_uk1 
 --
