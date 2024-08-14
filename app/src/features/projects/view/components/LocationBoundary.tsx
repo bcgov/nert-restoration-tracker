@@ -89,7 +89,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
         layerVisibility={layerVisibility}
       />
       <Box sx={pageStyles.layerSwitcherContainer}>
-        <LayerSwitcher layerVisibility={layerVisibility} open={false} hideProjects={true}/>
+        <LayerSwitcher layerVisibility={layerVisibility} open={false} hideProjects={true} />
       </Box>
     </Box>
   );

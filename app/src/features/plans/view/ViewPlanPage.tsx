@@ -307,7 +307,7 @@ const ViewPlanPage: React.FC = () => {
                     />
                   </Box>
                   <Box sx={pageStyles.layerSwitcherContainer}>
-                    <LayerSwitcher layerVisibility={layerVisibility} hideProjects={true}/>
+                    <LayerSwitcher layerVisibility={layerVisibility} hideProjects={true} />
                   </Box>
                 </Paper>
                 <Box mt={2} />

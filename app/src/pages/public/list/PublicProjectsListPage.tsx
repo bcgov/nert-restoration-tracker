@@ -39,25 +39,34 @@ import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import PublicInfoContent from 'pages/public/components/PublicInfoContent';
-// import { exportData } from 'utils/dataTransfer';
+import { exportData } from 'utils/dataTransfer';
 
-const exportData = async (projects: [any] | null) => {
-  console.log('Exporting data',projects);
+
+/**
+ * TODO: Write an interface for this function
+ * TODO: Bring this into the utils/dataTransfer.ts file.
+ * @param selected rows
+ * @param rows filtered by the page
+ * @param allProjects 
+ * @returns selected projects
+ */
+const calculateSelectedProjectsPlans = (
+  selected: readonly number[],
+  rows: utils.ProjectData[],
+  allProjects: any
+) => {
+  const projectIds = selected.map((id) => rows[id].projectId);
+  return allProjects.filter((proj: { project: { project_id: number } }) =>
+    projectIds.includes(proj.project.project_id)
+  );
 };
-
-const calculateSelectedProjects = (selected: readonly number[], rows: utils.ProjectData[], allProjects: any) => {
-  console.log('selected', selected);
-  console.log('selected rows', rows);
-  console.log('all projects', allProjects); 
-  return rows.filter((row) => selected.includes(row.id));
-  // return selected.map((id) => rows[id].projectId);
-}
 
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
   const history = useNavigate();
 
   const [selectedProjects, setSelectedProjects] = useState<readonly number[]>([]);
+
   const [selected, setSelected] = useState<readonly number[]>([]);
 
 
@@ -88,6 +97,13 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         archive: ''
       } as utils.ProjectData;
     });
+
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
+
 
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -199,7 +215,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
-            onClick={() => exportData([])}
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
@@ -220,10 +236,6 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    useEffect(() => {
-      const s = calculateSelectedProjects(selected, rows, projects);
-      console.log('selectedRows', s);
-    }, [selected]);
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,

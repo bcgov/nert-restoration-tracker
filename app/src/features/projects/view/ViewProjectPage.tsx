@@ -49,7 +49,6 @@ const pageStyles = {
   }
 };
 
-
 /**
  * Page to display a single Project.
  *
