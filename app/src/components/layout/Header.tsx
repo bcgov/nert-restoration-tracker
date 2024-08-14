@@ -120,9 +120,7 @@ const Header: React.FC = () => {
   const config = useContext(ConfigContext);
   const codes = useCodesContext().codesDataLoader;
 
-  const title =
-    codes.data?.branding.find((data) => data.name == 'title')?.value ||
-    '{title}';
+  const title = codes.data?.branding.find((data) => data.name == 'title')?.value || '{title}';
 
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
@@ -237,10 +235,7 @@ const Header: React.FC = () => {
         <Toolbar variant="dense">
           <Box display="flex" justifyContent="space-between" width="100%">
             <Box display="flex" justifyContent="left">
-              <Link
-                to="/"
-                style={pageStyles.brand}
-                aria-label="Go to {title} Home">
+              <Link to="/" style={pageStyles.brand} aria-label="Go to {title} Home">
                 <picture>
                   <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                   <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
