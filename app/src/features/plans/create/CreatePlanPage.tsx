@@ -172,7 +172,7 @@ const CreatePlanPage: React.FC = () => {
       if (draftId) {
         if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
-            StateMachine(true, states.DRAFT, events.saving)
+            StateMachine(false, states.DRAFT, events.saving)
           );
         }
         response = await restorationTrackerApi.draft.updateDraft(
@@ -183,7 +183,7 @@ const CreatePlanPage: React.FC = () => {
       } else {
         if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
-            StateMachine(true, states.DRAFT, events.creating)
+            StateMachine(false, states.DRAFT, events.creating)
           );
         }
 
