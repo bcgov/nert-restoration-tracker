@@ -23,7 +23,6 @@ import LocationBoundary from 'features/projects/view/components/LocationBoundary
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
 import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
@@ -37,6 +36,7 @@ import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   conservationAreChip: {
@@ -83,7 +83,7 @@ const ViewProjectPage: React.FC = () => {
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProject = useCallback(async () => {
     const projectWithDetailsResponse =
@@ -133,7 +133,7 @@ const ViewProjectPage: React.FC = () => {
       setIsLoadingProject(true);
     }
   }, [isLoadingProject, project, getProject, getAttachments]);
-  if (!codes.isReady || !codes.codes || !project) {
+  if (!codes.isReady || !codes.data || !project) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -316,7 +316,7 @@ const ViewProjectPage: React.FC = () => {
 
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={project} codes={codes.codes} />
+                <ProjectDetailsPage projectForViewData={project} codes={codes.data} />
               </Paper>
             </Grid>
           </Grid>
