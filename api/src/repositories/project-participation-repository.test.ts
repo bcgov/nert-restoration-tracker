@@ -98,6 +98,43 @@ describe('ProjectParticipationRepository', () => {
     });
   });
 
+  describe('getProjectParticipant', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return object', async () => {
+      const mockQueryResponse = { rowCount: 1, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectParticipationRepository = new ProjectParticipationRepository(mockDBConnection);
+
+      const response = await projectParticipationRepository.getProjectParticipant(1, 1);
+
+      expect(response).to.deep.equal({ id: 1 });
+    });
+
+    it('should return null when array is empty', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectParticipationRepository = new ProjectParticipationRepository(mockDBConnection);
+
+      const response = await projectParticipationRepository.getProjectParticipant(1, 1);
+
+      expect(response).to.deep.equal(null);
+    });
+  });
+
   describe('getAllUserProjects', () => {
     afterEach(() => {
       sinon.restore();

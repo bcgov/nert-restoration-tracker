@@ -59,6 +59,22 @@ describe('UserRepository', () => {
 
       expect(response).to.equal(mockResponse[0]);
     });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to get user by identifier');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.getUserByUserIdentifier('user', 'source');
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to get user by identifier');
+      }
+    });
   });
 
   describe('getUserById', () => {
@@ -112,6 +128,22 @@ describe('UserRepository', () => {
       const response = await userRepository.getUserById(1);
 
       expect(response).to.equal(mockResponse[0]);
+    });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to get user by id');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.getUserById(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to get user by id');
+      }
     });
   });
 
@@ -167,6 +199,22 @@ describe('UserRepository', () => {
 
       expect(response).to.equal(mockResponse[0]);
     });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to get user by guid');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.getUserByGuid('aaaa');
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to get user by guid');
+      }
+    });
   });
 
   describe('getUserList', () => {
@@ -202,6 +250,22 @@ describe('UserRepository', () => {
       const response = await userRepository.getUserList();
 
       expect(response).to.equal(mockResponse);
+    });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to get user list');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.getUserList();
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to get user list');
+      }
     });
   });
 
@@ -257,6 +321,22 @@ describe('UserRepository', () => {
 
       expect(response).to.equal(mockResponse[0]);
     });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to insert new user');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.addSystemUser('username', 'aaaa', 'idir');
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to insert new user');
+      }
+    });
   });
 
   describe('deactivateSystemUser', () => {
@@ -310,6 +390,22 @@ describe('UserRepository', () => {
       const response = await userRepository.deactivateSystemUser(1);
 
       expect(response).to.equal(undefined);
+    });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to deactivate system user');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.deactivateSystemUser(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to deactivate system user');
+      }
     });
   });
 
@@ -365,6 +461,22 @@ describe('UserRepository', () => {
 
       expect(response).to.equal(undefined);
     });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to activate system user');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.activateSystemUser(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to activate system user');
+      }
+    });
   });
 
   describe('postSystemRoles', () => {
@@ -398,7 +510,7 @@ describe('UserRepository', () => {
           user_guid: 'aaaa',
           identity_source: 'idir',
           record_end_date: 'data',
-          role_ids: [1],
+          role_ids: [1, 2],
           role_names: ['admin'],
           email: 'email',
           display_name: 'test name',
@@ -415,9 +527,25 @@ describe('UserRepository', () => {
 
       const userRepository = new UserRepository(mockDBConnection);
 
-      const response = await userRepository.postSystemRoles(1, [1]);
+      const response = await userRepository.postSystemRoles(1, [1, 2]);
 
       expect(response).to.equal(undefined);
+    });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to insert user system roles');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.postSystemRoles(1, [1]);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to insert user system roles');
+      }
     });
   });
 
@@ -455,6 +583,22 @@ describe('UserRepository', () => {
 
       expect(response).to.equal(undefined);
     });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to delete user system roles');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.deleteUserSystemRoles(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to delete user system roles');
+      }
+    });
   });
 
   describe('deleteAllProjectRoles', () => {
@@ -490,6 +634,22 @@ describe('UserRepository', () => {
       const response = await userRepository.deleteAllProjectRoles(1);
 
       expect(response).to.equal(undefined);
+    });
+
+    it('should catch and rethrow error', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('Failed to delete project roles');
+        }
+      });
+
+      const userRepository = new UserRepository(mockDBConnection);
+
+      try {
+        await userRepository.deleteAllProjectRoles(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to delete project roles');
+      }
     });
   });
 });

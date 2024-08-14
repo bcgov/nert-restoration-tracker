@@ -120,7 +120,8 @@ const Header: React.FC = () => {
   const config = useContext(ConfigContext);
   const codes = useCodesContext().codesDataLoader;
 
-  const title = codes.data?.branding.find((data) => data.name == 'title')?.value || '{title}';
+  const title =
+    codes.data?.branding.find((data) => data.name == 'title')?.value || 'NERT Restoration Tracker';
 
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
