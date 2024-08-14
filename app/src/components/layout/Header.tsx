@@ -122,7 +122,7 @@ const Header: React.FC = () => {
 
   const title =
     codes.data?.branding.find((data) => data.name == 'title')?.value ||
-    'Northeast Restoration Tracker';
+    '{title}';
 
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
@@ -240,7 +240,7 @@ const Header: React.FC = () => {
               <Link
                 to="/"
                 style={pageStyles.brand}
-                aria-label="Go to Northeast Restoration Tracker Home">
+                aria-label="Go to {title} Home">
                 <picture>
                   <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                   <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
@@ -344,7 +344,7 @@ const Header: React.FC = () => {
       </AppBar>
 
       <Dialog open={infoOpen}>
-        <DialogTitle>General Info: Northeast Restoration Tracker</DialogTitle>
+        <DialogTitle>General Info: {title}</DialogTitle>
         <DialogContent>
           <Typography>
             The Restoration Tracker is a web application providing planned, active and completed
@@ -369,13 +369,13 @@ const Header: React.FC = () => {
           <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
             For technical support or questions about this application, please email:&nbsp;
             <OtherLink
-              href={`mailto:${email}?subject=Northeast Restoration Tracker - Support Request`}
+              href={`mailto:${email}?subject=${title} - Support Request`}
               underline="always">
               {email}
             </OtherLink>
             .
           </Typography>
-          <Typography variant="body2">Northeast Restoration Tracker</Typography>
+          <Typography variant="body2">{title}</Typography>
           <Typography variant="subtitle2" color="textSecondary">
             Version: {nert_version} Environment: {nert_environment}
           </Typography>
