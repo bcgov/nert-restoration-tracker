@@ -105,10 +105,12 @@ GET.apiDoc = {
                 }
               },
               email: {
-                type: 'string'
+                type: 'string',
+                nullable: true
               },
               display_name: {
-                type: 'string'
+                type: 'string',
+                nullable: true
               },
               given_name: {
                 type: 'string',
