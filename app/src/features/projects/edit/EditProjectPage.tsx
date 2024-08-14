@@ -291,7 +291,9 @@ const EditProjectPage: React.FC = () => {
                   </Grid>
 
                   <Grid item xs={12} md={9}>
-                    <ProjectGeneralInformationForm />
+                    <ProjectGeneralInformationForm
+                      currentStateCode={initialProjectFormData.project.state_code}
+                    />
 
                     <Grid container spacing={3} direction="column" mb={4}>
                       <ProjectObjectivesForm />

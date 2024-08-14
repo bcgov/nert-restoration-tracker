@@ -2,6 +2,7 @@ import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import CustomTextField from 'components/fields/CustomTextField';
 import ProjectStartEndDateFields from 'components/fields/ProjectStartEndDateFields';
 import {
@@ -10,6 +11,7 @@ import {
   getStatusStyle,
   states
 } from 'components/workflow/StateMachine';
+import ChipSelect from 'components/workflow/ChipSelect';
 import { useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
@@ -19,6 +21,10 @@ import InfoDialog from 'components/dialog/InfoDialog';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import InfoContent from 'components/info/InfoContent';
 import { CreateProjectI18N } from 'constants/i18n';
+
+interface ICurrentProjectStateProps {
+  currentStateCode?: number;
+}
 
 export interface IProjectGeneralInformationForm {
   project: {
@@ -87,9 +93,12 @@ export const ProjectGeneralInformationFormYupSchema = yup.object().shape({
  *
  * @return {*}
  */
-const ProjectGeneralInformationForm: React.FC = () => {
+const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (props) => {
   const formikProps = useFormikContext<IProjectGeneralInformationForm>();
 
+  const currentState = props.currentStateCode
+    ? getStateLabelFromCode(props.currentStateCode)
+    : states.DRAFT;
   const state = getStateLabelFromCode(formikProps.values.project.state_code);
   const [infoOpen, setInfoOpen] = useState(false);
   const handleClickOpen = () => {
@@ -125,15 +134,28 @@ const ProjectGeneralInformationForm: React.FC = () => {
                 label="Project Status"
                 other={{
                   InputProps: {
-                    readOnly: true, //TODO: When editing STATUS will need to be updated based on the workflow
+                    readOnly: true,
                     startAdornment: (
                       <Chip
                         size="small"
-                        sx={getStatusStyle(getStateCodeFromLabel(state || states.DRAFT))}
-                        label={state || states.DRAFT}
+                        sx={getStatusStyle(getStateCodeFromLabel(currentState || states.DRAFT))}
+                        label={currentState || states.DRAFT}
                       />
                     ),
-                    endAdornment: <InfoDialog isProject={true} infoContent={'workflow'} />
+                    endAdornment: (
+                      <>
+                        {state != states.DRAFT && (
+                          <Box>
+                            <ChipSelect
+                              isProject={true}
+                              currentStatus={currentState}
+                              formikProps={formikProps}
+                            />
+                          </Box>
+                        )}
+                        <InfoDialog isProject={true} infoContent={'workflow'} />
+                      </>
+                    )
                   }
                 }}
               />
