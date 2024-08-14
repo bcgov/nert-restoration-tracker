@@ -16,7 +16,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
@@ -28,10 +27,10 @@ import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/State
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
-import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
+import { useCodesContext } from '../../../hooks/useContext';
 
 const pageStyles = {
   titleContainerActions: {
@@ -81,7 +80,7 @@ const ViewPlanPage: React.FC = () => {
   const [planWithDetails, setPlanWithDetails] = useState<IGetPlanForViewResponse | null>(null);
   const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getPlan = useCallback(async () => {
     const planWithDetailsResponse = await restorationTrackerApi.plan.getPlanById(planId);
@@ -122,34 +121,7 @@ const ViewPlanPage: React.FC = () => {
     }
   }, [isLoadingPlan, planWithDetails, getPlan, getAttachments]);
 
-  const bounds = calculateUpdatedMapBounds(planWithDetails?.location.geometry || [], true) || null;
-
-  // const closeMapDialog = () => {
-  //   setOpenFullScreen(false);
-  // };
-
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
-  };
-
-  if (!codes.isReady || !codes.codes || !planWithDetails) {
+  if (!codes.isReady || !codes.data || !planWithDetails) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -321,7 +293,7 @@ const ViewPlanPage: React.FC = () => {
               </Grid>
               <Grid item md={4}>
                 <Paper elevation={2}>
-                  <PlanDetailsPage planForViewData={planWithDetails} codes={codes.codes} />
+                  <PlanDetailsPage planForViewData={planWithDetails} codes={codes.data} />
                 </Paper>
               </Grid>
             </Grid>

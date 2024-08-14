@@ -18,7 +18,6 @@ import { CustomMenuButton } from 'components/toolbar/ActionToolbars';
 import { ProjectParticipantsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { CodeSet, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -26,6 +25,7 @@ import { useParams } from 'react-router';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import PlanParticipantsHeader from './PlanParticipantsHeader';
 import { IGetProjectParticipantsResponseArrayItem } from 'interfaces/useProjectApi.interface';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -106,7 +106,7 @@ const PlanParticipantsPage: React.FC = () => {
     }
   }, [isLoadingPlan, planWithDetails, getPlan]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getPlanParticipants = useCallback(async () => {
     try {
@@ -240,7 +240,7 @@ const PlanParticipantsPage: React.FC = () => {
     );
   };
 
-  if (!codes.isReady || !codes.codes || !planParticipants || !planWithDetails) {
+  if (!codes.isReady || !codes.data || !planParticipants || !planWithDetails) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -248,7 +248,7 @@ const PlanParticipantsPage: React.FC = () => {
     <>
       <PlanParticipantsHeader
         planWithDetails={planWithDetails}
-        codes={codes.codes}
+        codes={codes.data}
         refresh={getPlanParticipants}
       />
 
@@ -272,7 +272,7 @@ const PlanParticipantsPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRows planParticipants={planParticipants} codes={codes.codes} />
+                <TableRows planParticipants={planParticipants} codes={codes.data} />
               </TableBody>
             </Table>
           </Paper>

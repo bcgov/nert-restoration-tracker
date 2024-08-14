@@ -2,10 +2,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { ThemeProvider } from '@mui/material/styles';
 import { AppRouter } from 'AppRouter';
 import { AuthStateContextProvider } from 'contexts/authStateContext';
+import { CodesContextProvider } from 'contexts/codesContext';
 import { ConfigContext } from 'contexts/configContext';
 import { DialogContextProvider } from 'contexts/dialogContext';
 import { MapStateContextProvider } from 'contexts/mapContext';
-import { ProjectAuthStateContextProvider } from 'contexts/projectAuthStateContext';
 import { WebStorageStateStore } from 'oidc-client-ts';
 import React, { useContext } from 'react';
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
@@ -45,13 +45,13 @@ const App: React.FC = () => {
     <AuthProvider {...authConfig}>
       <ThemeProvider theme={appTheme}>
         <AuthStateContextProvider>
-          <ProjectAuthStateContextProvider>
-            <MapStateContextProvider>
-              <DialogContextProvider>
+          <MapStateContextProvider>
+            <DialogContextProvider>
+              <CodesContextProvider>
                 <AppRouter />
-              </DialogContextProvider>
-            </MapStateContextProvider>
-          </ProjectAuthStateContextProvider>
+              </CodesContextProvider>
+            </DialogContextProvider>
+          </MapStateContextProvider>
         </AuthStateContextProvider>
       </ThemeProvider>
     </AuthProvider>

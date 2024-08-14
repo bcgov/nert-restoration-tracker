@@ -14,7 +14,6 @@ import { focusOptions, ICONS, projectStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicProjectsListPage from 'pages/public/list/PublicProjectsListPage';
@@ -23,6 +22,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ProjectTableI18N } from 'constants/i18n';
+import { useCodesContext } from 'hooks/useContext';
 
 export default function PublicProjects() {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
@@ -130,7 +130,7 @@ export default function PublicProjects() {
     });
   };
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   //projects
   useEffect(() => {
@@ -160,7 +160,7 @@ export default function PublicProjects() {
     }
   }, [isLoading, location.search, formikValues, collectFilterParams]);
 
-  if (!codes.isReady || !codes.codes) {
+  if (!codes.isReady || !codes.data) {
     return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
   }
 
@@ -204,7 +204,7 @@ export default function PublicProjects() {
             enableReinitialize={true}>
             <ProjectFilter
               region={
-                codes.codes.regions.map((item: { id: any; name: any }) => {
+                codes.data.regions.map((item: { id: any; name: any }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }

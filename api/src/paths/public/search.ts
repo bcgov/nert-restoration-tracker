@@ -77,7 +77,7 @@ export function getSearchResults(): RequestHandler {
 
       await connection.open();
 
-      const response = await connection.query(sqlStatement.text, sqlStatement.values);
+      const response = await connection.sql(sqlStatement);
 
       await connection.commit();
 

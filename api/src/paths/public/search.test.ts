@@ -42,7 +42,7 @@ describe('search', () => {
         systemUserId: () => {
           return 20;
         },
-        query: mockQuery
+        sql: mockQuery
       });
 
       const result = search.getSearchResults();
@@ -62,7 +62,7 @@ describe('search', () => {
         systemUserId: () => {
           return 20;
         },
-        query: mockQuery
+        sql: mockQuery
       });
 
       const result = search.getSearchResults();
@@ -94,7 +94,7 @@ describe('search', () => {
         systemUserId: () => {
           return 20;
         },
-        query: mockQuery
+        sql: mockQuery
       });
 
       const result = search.getSearchResults();
