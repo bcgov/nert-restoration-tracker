@@ -96,7 +96,6 @@ export const getStatusStyle = (statusCode: number) => {
 };
 
 const planDefinition = {
-  initialState: '',
   [states.DRAFT]: {
     transitions: {
       [events.saving]: {
@@ -134,7 +133,6 @@ const planDefinition = {
 };
 
 const projectDefinition = {
-  initialState: '',
   [states.DRAFT]: {
     transitions: {
       [events.saving]: {
@@ -150,6 +148,16 @@ const projectDefinition = {
       [events.authorizing]: {
         target: states.AUTHORIZATION
       },
+      [events.activating]: {
+        target: states.ACTIVE
+      },
+      [events.archiving]: {
+        target: states.ARCHIVED
+      }
+    }
+  },
+  [states.AUTHORIZATION]: {
+    transitions: {
       [events.activating]: {
         target: states.ACTIVE
       },
@@ -217,9 +225,9 @@ const projectDefinition = {
   }
 };
 
-function createMachine(stateMachineDefinition: any) {
+function createMachine(stateMachineDefinition: any, initialState: string) {
   const finiteStateMachine = {
-    state: stateMachineDefinition.initialState,
+    state: initialState,
     transition(currentState: string | number, event: string | number) {
       const fromStateDefinition = stateMachineDefinition[currentState];
       const toTransition = fromStateDefinition.transitions[event];
@@ -230,6 +238,47 @@ function createMachine(stateMachineDefinition: any) {
     }
   };
   return finiteStateMachine;
+}
+
+function parseStatuses(obj: { [x: string]: any; target?: string }): string[] {
+  function parseStatus(obj: any): string {
+    let status = '';
+    for (const key in obj) status = obj[key];
+    return status;
+  }
+
+  const list: string[] = [];
+  for (const key in obj) {
+    if (obj[key] instanceof Object) {
+      const status = parseStatus(obj[key]);
+      if (states.ARCHIVED != status) list.push(status);
+    }
+  }
+  return list;
+}
+
+export function getNextStates(isProject: boolean, currentState: string, role: string): string[] {
+  if (isProject) {
+    if ('admin' != role) return parseStatuses(projectDefinition[currentState].transitions);
+    else {
+      const allStatuses = Object.values(states);
+      allStatuses.pop();
+      allStatuses.pop();
+      return allStatuses.filter(function (state) {
+        return currentState !== state;
+      });
+    }
+  } else {
+    if ('admin' != role) return parseStatuses(planDefinition[currentState].transitions);
+    else {
+      const allStatuses = Object.values(statesPlan);
+      allStatuses.pop();
+      allStatuses.pop();
+      return allStatuses.filter(function (state) {
+        return currentState !== state;
+      });
+    }
+  }
 }
 
 /**
@@ -255,8 +304,7 @@ export const StateMachine = (type: boolean, currentState: string, event: string)
 
   if (type) {
     // project
-    projectDefinition.initialState = currentState;
-    const projectMachine = createMachine(projectDefinition);
+    const projectMachine = createMachine(projectDefinition, currentState);
     const state = projectMachine.state;
     return projectMachine.transition(state, event) as string;
   } else {
@@ -271,8 +319,7 @@ export const StateMachine = (type: boolean, currentState: string, event: string)
       return 'INVALID_PLAN_EVENT:' + event;
     }
 
-    planDefinition.initialState = currentState;
-    const planMachine = createMachine(planDefinition);
+    const planMachine = createMachine(planDefinition, currentState);
     const state = planMachine.state;
     return planMachine.transition(state, event) as string;
   }

@@ -228,7 +228,9 @@ const EditPlanPage: React.FC = () => {
                   </Grid>
 
                   <Grid item xs={12} md={9}>
-                    <PlanGeneralInformationForm />
+                    <PlanGeneralInformationForm
+                      currentStateCode={initialPlanFormData.project.state_code}
+                    />
                     <Box mt={2}>
                       <PlanFocusForm />
                     </Box>
