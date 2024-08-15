@@ -41,7 +41,6 @@ import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import PublicInfoContent from 'pages/public/components/PublicInfoContent';
 import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 
-
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
   const history = useNavigate();
@@ -49,7 +48,6 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
 
   const [selected, setSelected] = useState<readonly number[]>([]);
-
 
   const rows = projects
     ?.filter(
@@ -84,7 +82,6 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const s = calculateSelectedProjectsPlans(selected, rows, projects);
     setSelectedProjects(s);
   }, [selected]);
-
 
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -216,7 +213,6 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
