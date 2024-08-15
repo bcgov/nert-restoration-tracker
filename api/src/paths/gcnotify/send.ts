@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../../constants/roles';
-import { IgcNotifyPostReturn } from '../../models/gcnotify';
+import { IgcNotifyPostReturn } from '../../interfaces/gcnotify';
 import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
 import { GCNotifyService } from '../../services/gcnotify-service';
 import { getLogger } from '../../utils/logger';
@@ -146,10 +146,6 @@ export function sendNotification(): RequestHandler {
 
       if (recipient.phoneNumber) {
         response = await gcnotifyService.sendPhoneNumberGCNotification(recipient.phoneNumber, message);
-      }
-
-      if (recipient.userId) {
-        defaultLog.error({ label: 'send gcnotify', message: 'email and sms from Id not implemented yet' });
       }
 
       return res.status(200).json(response);

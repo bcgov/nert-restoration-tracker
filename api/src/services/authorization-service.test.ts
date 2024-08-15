@@ -136,6 +136,49 @@ describe('executeAuthorizeConfig', function () {
   });
 });
 
+describe('authorizeSystemAdministrator', function () {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('returns false if `systemUserObject` is null', async function () {
+    const mockDBConnection = getMockDBConnection();
+
+    const mockGetSystemUsersObjectResponse = null as unknown as UserObject;
+    sinon.stub(AuthorizationService.prototype, 'getSystemUserObject').resolves(mockGetSystemUsersObjectResponse);
+
+    const authorizationService = new AuthorizationService(mockDBConnection);
+
+    const isAuthorizedBySystemRole = await authorizationService.authorizeSystemAdministrator();
+
+    expect(isAuthorizedBySystemRole).to.equal(false);
+  });
+
+  it('returns false if the user is not a system administrator', async function () {
+    const mockDBConnection = getMockDBConnection();
+
+    const authorizationService = new AuthorizationService(mockDBConnection, {
+      systemUser: { role_names: [] } as unknown as UserObject
+    });
+
+    const isAuthorizedBySystemRole = await authorizationService.authorizeSystemAdministrator();
+
+    expect(isAuthorizedBySystemRole).to.equal(false);
+  });
+
+  it('returns true if the user is a system administrator', async function () {
+    const mockDBConnection = getMockDBConnection();
+
+    const authorizationService = new AuthorizationService(mockDBConnection, {
+      systemUser: { role_names: [SYSTEM_ROLE.SYSTEM_ADMIN] } as unknown as UserObject
+    });
+
+    const isAuthorizedBySystemRole = await authorizationService.authorizeSystemAdministrator();
+
+    expect(isAuthorizedBySystemRole).to.equal(true);
+  });
+});
+
 describe('authorizeBySystemRole', function () {
   afterEach(() => {
     sinon.restore();
@@ -194,6 +237,22 @@ describe('authorizeBySystemRole', function () {
 
     const authorizationService = new AuthorizationService(mockDBConnection, {
       systemUser: { role_names: [] } as unknown as UserObject
+    });
+
+    const isAuthorizedBySystemRole = await authorizationService.authorizeBySystemRole(mockAuthorizeSystemRoles);
+
+    expect(isAuthorizedBySystemRole).to.equal(false);
+  });
+
+  it('returns false if the user does has a record_end_data', async function () {
+    const mockAuthorizeSystemRoles: AuthorizeBySystemRoles = {
+      validSystemRoles: [SYSTEM_ROLE.PROJECT_CREATOR],
+      discriminator: 'SystemRole'
+    };
+    const mockDBConnection = getMockDBConnection();
+
+    const authorizationService = new AuthorizationService(mockDBConnection, {
+      systemUser: { role_names: [], record_end_date: 'string' } as unknown as UserObject
     });
 
     const isAuthorizedBySystemRole = await authorizationService.authorizeBySystemRole(mockAuthorizeSystemRoles);

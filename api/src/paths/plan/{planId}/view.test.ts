@@ -1,56 +1,80 @@
-// import Ajv from 'ajv';
-import chai from 'chai';
-// import chai, { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { describe } from 'mocha';
-// import sinon from 'sinon';
+import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-// import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
-// import * as db from '../../../database/db';
-// import { HTTPError } from '../../../errors/custom-error';
-// import { PlanService } from '../../../services/plan-service';
-// import { GET, viewPlan } from './view';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
+import * as db from '../../../database/db';
+import { PlanService } from '../../../services/plan-service';
+import { viewPlan } from './view';
 
 chai.use(sinonChai);
 
-describe('plan/{planId}/view', () => {
-  // describe('openapi schema', () => {
-  //   const ajv = new Ajv();
-  //   it('is valid openapi v3 schema', () => {
-  //     expect(ajv.validateSchema(GET.apiDoc as unknown as object)).to.be.true;
-  //   });
-  // });
-  // describe('viewPlan', () => {
-  //   afterEach(() => {
-  //     sinon.restore();
-  //   });
-  //   it('fetches a project', async () => {
-  //     const dbConnectionObj = getMockDBConnection();
-  //     sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
-  //     const viewPlanResult = { id: 1 };
-  //     sinon.stub(PlanService.prototype, 'getPlanById').resolves(viewPlanResult as any);
-  //     const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-  //     try {
-  //       const requestHandler = viewPlan();
-  //       await requestHandler(mockReq, mockRes, mockNext);
-  //     } catch (actualError) {
-  //       expect.fail();
-  //     }
-  //     expect(mockRes.statusValue).to.equal(200);
-  //     expect(mockRes.jsonValue).to.eql(viewPlanResult);
-  //   });
-  //   it('catches and re-throws error', async () => {
-  //     const dbConnectionObj = getMockDBConnection({ release: sinon.stub() });
-  //     sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
-  //     sinon.stub(PlanService.prototype, 'getPlanById').rejects(new Error('a test error'));
-  //     const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-  //     try {
-  //       const requestHandler = viewPlan();
-  //       await requestHandler(mockReq, mockRes, mockNext);
-  //       expect.fail();
-  //     } catch (actualError) {
-  //       expect(dbConnectionObj.release).to.have.been.called;
-  //       expect((actualError as HTTPError).message).to.equal('a test error');
-  //     }
-  //   });
-  // });
+describe('viewPlan', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('should return a plan for view', async () => {
+    const dbConnectionObj = getMockDBConnection();
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+    const plan = {
+      id: 1,
+      name: 'test plan',
+      project: {
+        id: 1,
+        name: 'test project',
+        is_first_nation: true
+      },
+      location: {
+        geometry: [
+          {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'Point',
+              coordinates: [0, 0]
+            }
+          }
+        ],
+        priority: 'true',
+        region: 1
+      }
+    };
+
+    mockReq.params = {
+      planId: '1'
+    };
+
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+    sinon.stub(PlanService.prototype, 'getPlanById').resolves(plan as any);
+
+    const requestHandler = viewPlan();
+
+    await requestHandler(mockReq, mockRes, mockNext);
+
+    expect(mockRes.status).to.have.been.calledWith(200);
+    expect(mockRes.json).to.have.been.calledWith(plan);
+  });
+
+  it('should catch and re-throw an error', async () => {
+    const dbConnectionObj = getMockDBConnection();
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+    mockReq.params = {
+      planId: '1',
+      keycloak_token: 'token'
+    };
+
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+    sinon.stub(PlanService.prototype, 'getPlanById').rejects(new Error('a test error'));
+
+    const requestHandler = viewPlan();
+
+    try {
+      await requestHandler(mockReq, mockRes, mockNext);
+    } catch (err: any) {
+      expect(err.message).to.equal('a test error');
+    }
+  });
 });

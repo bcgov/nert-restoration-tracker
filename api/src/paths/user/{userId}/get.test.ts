@@ -38,6 +38,29 @@ describe('user', () => {
       }
     });
 
+    it('throws 400 error when user not found', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        userId: '1'
+      };
+
+      sinon.stub(UserService.prototype, 'getUserById').resolves(undefined);
+
+      try {
+        const requestHandler = user.getUserById();
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).status).to.equal(400);
+        expect((actualError as HTTPError).message).to.equal('Failed to get system user');
+      }
+    });
+
     it('finds user by Id and returns 200 and requestHandler on success', async () => {
       const dbConnectionObj = getMockDBConnection();
 
@@ -72,6 +95,31 @@ describe('user', () => {
         role_ids: [],
         role_names: []
       });
+    });
+
+    it('catches and rethrows error', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        userId: '1'
+      };
+
+      const mockError = new Error('mock error');
+
+      sinon.stub(UserService.prototype, 'getUserById').throws(mockError);
+
+      const requestHandler = user.getUserById();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (err) {
+        expect(err).to.eql(mockError);
+      }
     });
   });
 });

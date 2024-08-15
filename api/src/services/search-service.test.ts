@@ -44,4 +44,22 @@ describe('SearchService', () => {
       expect(response).to.eql([{ project_id: 1 }]);
     });
   });
+
+  describe('findProjectIdsByPlanParticipation', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('fetches project ids', async () => {
+      const mockDBConnection = registerMockDBConnection({
+        sql: sinon.stub().resolves({ rows: [{ project_id: 1 }] })
+      });
+
+      const searchService = new SearchService(mockDBConnection);
+
+      const response = await searchService.findProjectIdsByPlanParticipation(20);
+
+      expect(response).to.eql([{ project_id: 1 }]);
+    });
+  });
 });

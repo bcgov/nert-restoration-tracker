@@ -141,5 +141,32 @@ describe('user', () => {
       expect(ensureSystemUserStub).to.have.been.calledOnce;
       expect(adduserSystemRolesStub).to.have.been.calledOnce;
     });
+
+    it('catches errors and rethrows error', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.body = {
+        userIdentifier: 'username',
+        identitySource: SYSTEM_IDENTITY_SOURCE.IDIR,
+        roleId: 1
+      };
+
+      const mockError = new Error('mock error');
+
+      sinon.stub(UserService.prototype, 'ensureSystemUser').throws(mockError);
+
+      const requestHandler = user.addSystemRoleUser();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect(actualError).to.equal(mockError);
+      }
+    });
   });
 });

@@ -1,4 +1,4 @@
-import * as gcnotify from './gcnotify';
+import * as gcnotify from '../interfaces/gcnotify';
 import * as project_attachments from './project-attachments';
 import * as project_create from './project-create';
 import * as project_update from './project-update';

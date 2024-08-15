@@ -37,6 +37,7 @@ describe('AdministrativeActivityRepository', () => {
     afterEach(() => {
       sinon.restore();
     });
+
     it('should return a new pending access request', async () => {
       const mockQueryResponse = { rowCount: 1, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
 
@@ -65,7 +66,7 @@ describe('AdministrativeActivityRepository', () => {
       const administrativeActivityRepository = new AdministrativeActivityRepository(mockDBConnection);
 
       try {
-        await administrativeActivityRepository.getAdministrativeActivities();
+        await administrativeActivityRepository.createPendingAccessRequest(1, 'string');
       } catch (error: any) {
         expect(error.message).to.equal('Failed to create administrative activity record');
       }
@@ -90,6 +91,43 @@ describe('AdministrativeActivityRepository', () => {
       const response = await administrativeActivityRepository.countPendingAdministrativeActivities('guid');
 
       expect(response).to.deep.equal(0);
+    });
+  });
+
+  describe('getAdministrativeActivityStanding', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return empty array in rows', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const administrativeActivityRepository = new AdministrativeActivityRepository(mockDBConnection);
+
+      const response = await administrativeActivityRepository.getAdministrativeActivityStanding('guid');
+
+      expect(response).to.deep.equal(undefined);
+    });
+
+    it('should return a new pending access request', async () => {
+      const mockQueryResponse = { rowCount: 1, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const administrativeActivityRepository = new AdministrativeActivityRepository(mockDBConnection);
+
+      const response = await administrativeActivityRepository.getAdministrativeActivityStanding('guid');
+
+      expect(response).to.deep.equal({ id: 1 });
     });
   });
 

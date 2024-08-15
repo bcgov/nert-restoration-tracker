@@ -426,6 +426,7 @@ export class PostRestPlanData {
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostRestPlanData', message: 'params', obj });
 
-    this.is_project_part_public_plan = obj?.is_project_part_public_plan || null;
+    this.is_project_part_public_plan =
+      typeof obj?.is_project_part_public_plan === 'boolean' ? obj?.is_project_part_public_plan : null;
   }
 }

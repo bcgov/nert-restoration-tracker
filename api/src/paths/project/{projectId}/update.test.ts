@@ -96,4 +96,59 @@ describe('update', () => {
       expect(mockRes.statusValue).to.equal(200);
     });
   });
+
+  describe('viewProjectForEdit', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should return a project for edit', async () => {
+      const dbConnectionObj = getMockDBConnection();
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      const project = {
+        id: 1,
+        project_name: 'test project',
+        start_date: '2022-02-02',
+        end_date: '2022-02-30',
+        objectives: 'my objectives',
+        publish_date: '2022-02-02',
+        revision_count: 0
+      };
+
+      mockReq.params = {
+        projectId: '1'
+      };
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+      sinon.stub(ProjectService.prototype, 'getProjectByIdForEdit').resolves(project as any);
+
+      const requestHandler = update.viewProjectForEdit();
+
+      await requestHandler(mockReq, mockRes, mockNext);
+
+      expect(mockRes.status).to.have.been.calledWith(200);
+      expect(mockRes.json).to.have.been.calledWith(project);
+    });
+
+    it('should catch and re-throw an error', async () => {
+      const dbConnectionObj = getMockDBConnection();
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        projectId: '1'
+      };
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+      sinon.stub(ProjectService.prototype, 'getProjectByIdForEdit').rejects(new Error('a test error'));
+
+      const requestHandler = update.viewProjectForEdit();
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('a test error');
+      }
+    });
+  });
 });
