@@ -42,15 +42,19 @@ import PublicInfoContent from 'pages/public/components/PublicInfoContent';
 import { exportData } from 'utils/dataTransfer';
 
 
+// The interface for the calculateSelectedProjectsPlans function.
+interface CalculateSelectedProjectsPlans {
+  (selected: readonly number[], rows: utils.ProjectData[], allProjects: any): any;
+} 
+
 /**
- * TODO: Write an interface for this function
  * TODO: Bring this into the utils/dataTransfer.ts file.
  * @param selected rows
  * @param rows filtered by the page
  * @param allProjects 
  * @returns selected projects
  */
-const calculateSelectedProjectsPlans = (
+const calculateSelectedProjectsPlans: CalculateSelectedProjectsPlans = (
   selected: readonly number[],
   rows: utils.ProjectData[],
   allProjects: any
