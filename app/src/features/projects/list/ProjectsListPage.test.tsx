@@ -47,15 +47,12 @@ describe.skip('ProjectsListPage', () => {
     // const routes = [
     //   { path: '/admin/projects', element: <ProjectsListPage projects={projectArray} drafts={[]} /> }
     // ];
-
     // const router = createMemoryRouter(routes, { initialEntries: ['/admin/projects'] });
-
     // const { getByText, getByTestId } = render(
     //   <RouterProvider router={router}>
     //     <ProjectsListPage projects={projectArray} drafts={[]} />
     //   </RouterProvider>
     // );
-
     // await waitFor(() => {
     //   expect(getByTestId('project-table')).toBeInTheDocument();
     //   expect(getByText('Project 1')).toBeInTheDocument();

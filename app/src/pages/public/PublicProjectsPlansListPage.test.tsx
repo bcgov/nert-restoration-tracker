@@ -26,8 +26,7 @@ describe('PublicProjectsListPage', () => {
   //   cleanup();
   // });
 
-  test('renders without crashing', async () => {
-  });
+  test('renders without crashing', async () => {});
 
   // test.skip('renders with a proper list of projects when completed', async () => {
   //   mockRestorationTrackerApi().public.project.getProjectsList.mockResolvedValue([
