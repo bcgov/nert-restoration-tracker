@@ -142,7 +142,7 @@ PUT.apiDoc = {
       content: {
         'application/json': {
           schema: {
-            title: 'Project  postresponse object, for a given draft',
+            title: 'Project postresponse object, for a given draft',
             type: 'object',
             properties: {
               id: {
@@ -150,8 +150,8 @@ PUT.apiDoc = {
                 type: 'number'
               },
               date: {
-                type: 'object',
-                description: 'ISO 8601 date string for the project start date'
+                oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                description: 'The date this draft was last updated'
               }
             }
           }
@@ -370,7 +370,7 @@ export function updateDraft(): RequestHandler {
 
       return res.status(200).json({ id: draftResult.id, date: draftResult.update_date || draftResult.create_date });
     } catch (error) {
-      defaultLog.error({ label: 'createProject', message: 'error', error });
+      defaultLog.error({ label: 'updateProject', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {
