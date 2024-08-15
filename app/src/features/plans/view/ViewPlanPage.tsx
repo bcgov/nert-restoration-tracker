@@ -292,7 +292,6 @@ const ViewPlanPage: React.FC = () => {
                     </Accordion>
                   </Paper>
                 </Box>
-
               </Grid>
               <Grid item md={4}>
                 <Paper elevation={2}>
