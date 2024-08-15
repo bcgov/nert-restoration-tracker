@@ -1,24 +1,24 @@
 import {
   cleanup,
-  fireEvent,
   findByText as rawFindByText,
+  fireEvent,
   getByText as rawGetByText,
   render,
   waitFor
 } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
+import { useCodesContext } from 'hooks/useContext';
 // import { ProjectLocationFormInitialValues } from 'features/projects/components/ProjectLocationForm';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 
-jest.mock('../../../hooks/useCodes');
-const mockUseCodes = (useCodes as unknown as jest.Mock).mockReturnValue({ codes: codes });
+jest.mock('../../../hooks/useContext');
+const mockUseCodes = (useCodesContext as unknown as jest.Mock).mockReturnValue({ codes: codes });
 
-jest.mock('../../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 
 const mockUseApi = {
   taxonomy: {
@@ -297,18 +297,9 @@ describe.skip('CreateProjectPage', () => {
             objectives: '',
             project_name: 'draft project name'
           },
-          location: { geometry: [], priority: 'false', range: undefined, region: '' },
-          iucn: {
-            classificationDetails: [
-              {
-                classification: '',
-                subClassification1: '',
-                subClassification2: ''
-              }
-            ]
-          },
+          location: { geometry: [], priority: 'false', region: '' },
           funding: { fundingSources: [] },
-          partnerships: { indigenous_partnerships: [], stakeholder_partnerships: [] },
+          partnership: { partnerships: [] },
           species: { focal_species: [] }
         });
 

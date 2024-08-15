@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
+import InfoIcon from '@mui/icons-material/Info';
+import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
@@ -21,7 +23,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
-import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
+import InfoDialog from 'components/dialog/InfoDialog';
 import {
   getStateCodeFromLabel,
   getStateLabelFromCode,
@@ -30,15 +32,22 @@ import {
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
-import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
-import React, { useState } from 'react';
+import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import PublicInfoContent from 'pages/public/components/PublicInfoContent';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
   const history = useNavigate();
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+
+  const [selected, setSelected] = useState<readonly number[]>([]);
 
   const rows = projects
     ?.filter(
@@ -50,10 +59,13 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         id: index,
         projectId: row.project.project_id,
         projectName: row.project.project_name,
-        authRef: row.permit.permits
-          .map((item: { permit_number: any }) => item.permit_number)
-          .join(', '),
-        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        focus: utils.resolveProjectPlanFocus(
+          row.project.is_healing_land,
+          row.project.is_healing_people,
+          row.project.is_land_initiative,
+          row.project.is_cultural_initiative
+        ),
+        org: row.contact.contacts.map((item) => item.organization).join('\r'),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
         actualStartDate: row.project.actual_start_date,
@@ -65,6 +77,12 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       } as utils.ProjectData;
     });
 
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
+
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler =
@@ -72,46 +90,74 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         onRequestSort(event, property);
       };
 
+    const [infoOpen, setInfoOpen] = useState(false);
+    const [infoTitle, setInfoTitle] = useState('');
+
+    const handleClickOpen = (headCell: utils.ProjectHeadCell) => {
+      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
+      setInfoOpen(true);
+    };
+
     return (
-      <TableHead>
-        <TableRow>
-          {utils.projectHeadCells.map((headCell) => {
-            if ('archive' !== headCell.id)
-              return (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                      </Box>
+      <>
+        <InfoDialogDraggable
+          isProject={true}
+          open={infoOpen}
+          dialogTitle={infoTitle}
+          onClose={() => setInfoOpen(false)}>
+          <PublicInfoContent isProject={true} contentIndex={infoTitle} />
+        </InfoDialogDraggable>
+
+        <TableHead>
+          <TableRow>
+            {utils.projectHeadCells.map((headCell) => {
+              if ('archive' !== headCell.id)
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <Tooltip
+                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
+                      placement="top">
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : 'asc'}
+                        onClick={createSortHandler(headCell.id)}>
+                        {headCell.label}
+                        {orderBy === headCell.id ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </Tooltip>
+
+                    {headCell.infoButton ? (
+                      <IconButton onClick={() => handleClickOpen(headCell)}>
+                        <InfoIcon color="info" />
+                      </IconButton>
                     ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              );
-          })}
-          <TableCell padding="checkbox">
-            <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
-              <Checkbox
-                color="primary"
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={rowCount > 0 && numSelected === rowCount}
-                onChange={onSelectAllClick}
-                inputProps={{
-                  'aria-label': ProjectTableI18N.selectAllProjectsForExport
-                }}
-              />
-            </Tooltip>
-          </TableCell>
-        </TableRow>
-      </TableHead>
+                  </TableCell>
+                );
+            })}
+            <TableCell padding="checkbox">
+              <Tooltip title={ProjectTableI18N.exportAllProjects} placement="top">
+                <Checkbox
+                  color="primary"
+                  indeterminate={numSelected > 0 && numSelected < rowCount}
+                  checked={rowCount > 0 && numSelected === rowCount}
+                  onChange={onSelectAllClick}
+                  inputProps={{
+                    'aria-label': ProjectTableI18N.selectAllProjectsForExport
+                  }}
+                />
+              </Tooltip>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+      </>
     );
   }
 
@@ -144,17 +190,18 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         )}
         {numSelected > 0 ? (
           <Button
-            sx={{ height: '3rem', width: '11rem' }}
+            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
             startIcon={<Icon path={mdiExport} size={1} />}>
-            <strong>{TableI18N.exportData}</strong>
+            {TableI18N.exportData}
           </Button>
         ) : (
-          <PagedTableInfoDialog isProject={true} />
+          <InfoDialog isProject={true} infoContent={'paged table'} />
         )}
       </Toolbar>
     );
@@ -163,7 +210,6 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   function PublicProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -231,6 +277,26 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const focusTooltip = (focus: string) => {
+      return (
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <ProjectsTableToolbar numSelected={selected.length} />
@@ -274,8 +340,52 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         {row.projectName}
                       </Link>
                     </TableCell>
-                    <TableCell align="left">{row.authRef}</TableCell>
-                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
+                          <Fragment key={key}>
+                            <Box ml={-3}>
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusProjectChip}
+                                label={focusTooltip(focus)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgProjectChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
                     </TableCell>
@@ -300,7 +410,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         title={
                           isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
                         }
-                        placement="right">
+                        placement="top">
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}

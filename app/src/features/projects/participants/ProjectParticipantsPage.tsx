@@ -18,16 +18,16 @@ import { CustomMenuButton } from 'components/toolbar/ActionToolbars';
 import { ProjectParticipantsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { CodeSet, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponseArrayItem
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectParticipantsHeader from './ProjectParticipantsHeader';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -51,7 +51,7 @@ const pageStyles = {
 const ProjectParticipantsPage: React.FC = () => {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(true);
   const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
@@ -111,7 +111,7 @@ const ProjectParticipantsPage: React.FC = () => {
     }
   }, [isLoadingProject, projectWithDetails, getProject]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProjectParticipants = useCallback(async () => {
     try {
@@ -245,7 +245,7 @@ const ProjectParticipantsPage: React.FC = () => {
     );
   };
 
-  if (!codes.isReady || !codes.codes || !projectParticipants || !projectWithDetails) {
+  if (!codes.isReady || !codes.data || !projectParticipants || !projectWithDetails) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -253,7 +253,7 @@ const ProjectParticipantsPage: React.FC = () => {
     <>
       <ProjectParticipantsHeader
         projectWithDetails={projectWithDetails}
-        codes={codes.codes}
+        codes={codes.data}
         refresh={getProjectParticipants}
       />
 
@@ -277,7 +277,7 @@ const ProjectParticipantsPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRows projectParticipants={projectParticipants} codes={codes.codes} />
+                <TableRows projectParticipants={projectParticipants} codes={codes.data} />
               </TableBody>
             </Table>
           </Paper>
@@ -299,7 +299,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
   const { row, projectRoleCodes, refresh } = props;
 
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const defaultErrorDialogProps = {
     dialogTitle: ProjectParticipantsI18N.updateParticipantRoleErrorTitle,

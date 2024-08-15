@@ -4,12 +4,12 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { AdministrativeActivityStatusType, AdministrativeActivityType } from 'constants/misc';
 import AccessRequestList from 'features/admin/users/AccessRequestList';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
-import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React, { useEffect, useState } from 'react';
 import ActiveUsersList from './ActiveUsersList';
+import { ISystemUser } from 'interfaces/useUserApi.interface';
+import { useCodesContext } from 'hooks/useContext';
 
 /**
  * Page to display user management data/functionality.
@@ -17,13 +17,13 @@ import ActiveUsersList from './ActiveUsersList';
  * @return {*}
  */
 const ManageUsersPage: React.FC = () => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [accessRequests, setAccessRequests] = useState<IGetAccessRequestsListResponse[]>([]);
   const [isLoadingAccessRequests, setIsLoadingAccessRequests] = useState(false);
   const [hasLoadedAccessRequests, setHasLoadedAccessRequests] = useState(false);
 
-  const [activeUsers, setActiveUsers] = useState<IGetUserResponse[]>([]);
+  const [activeUsers, setActiveUsers] = useState<ISystemUser[]>([]);
   const [isLoadingActiveUsers, setIsLoadingActiveUsers] = useState(false);
   const [hasLoadedActiveUsers, setHasLoadedActiveUsers] = useState(false);
 
@@ -85,9 +85,9 @@ const ManageUsersPage: React.FC = () => {
     getActiveUsers();
   }, [restorationTrackerApi, isLoadingActiveUsers, hasLoadedActiveUsers]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
-  if (!hasLoadedAccessRequests || !hasLoadedActiveUsers || !codes.codes || !codes.isReady) {
+  if (!hasLoadedAccessRequests || !hasLoadedActiveUsers || !codes.data || !codes.isReady) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -105,7 +105,7 @@ const ManageUsersPage: React.FC = () => {
       <Box mb={5}>
         <AccessRequestList
           accessRequests={accessRequests}
-          codes={codes.codes}
+          codes={codes.data}
           refresh={() => {
             refreshAccessRequests();
             refreshActiveUsers();
@@ -113,7 +113,7 @@ const ManageUsersPage: React.FC = () => {
         />
       </Box>
 
-      <ActiveUsersList activeUsers={activeUsers} codes={codes.codes} refresh={refreshActiveUsers} />
+      <ActiveUsersList activeUsers={activeUsers} codes={codes.data} refresh={refreshActiveUsers} />
     </Container>
   );
 };

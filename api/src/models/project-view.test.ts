@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import {
+  GetAuthorizationData,
   GetContactData,
   GetFundingData,
-  GetIUCNClassificationData,
   GetLocationData,
+  GetObjectivesData,
   GetPartnershipsData,
-  GetPermitData,
   GetProjectData,
   GetSpeciesData
 } from './project-view';
@@ -16,15 +16,11 @@ describe('GetPartnershipsData', () => {
     let data: GetPartnershipsData;
 
     before(() => {
-      data = new GetPartnershipsData(null as unknown as any[], null as unknown as any[]);
+      data = new GetPartnershipsData(null as unknown as any[]);
     });
 
-    it('sets indigenous_partnerships', function () {
-      expect(data.indigenous_partnerships).to.eql([]);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(data.stakeholder_partnerships).to.eql([]);
+    it('sets partnerships', function () {
+      expect(data.partnerships).to.eql([]);
     });
   });
 
@@ -32,112 +28,93 @@ describe('GetPartnershipsData', () => {
     let data: GetPartnershipsData;
 
     before(() => {
-      data = new GetPartnershipsData([], []);
+      data = new GetPartnershipsData([]);
     });
 
-    it('sets indigenous_partnerships', function () {
-      expect(data.indigenous_partnerships).to.eql([]);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(data.stakeholder_partnerships).to.eql([]);
+    it('sets partnerships', function () {
+      expect(data.partnerships).to.eql([]);
     });
   });
 
-  describe('indigenous_partnerships values provided', () => {
+  describe('partnerships values provided', () => {
     let data: GetPartnershipsData;
 
-    const indigenous_partnerships = [{ first_nations_id: 1 }, { first_nations_id: 2 }];
-    const stakeholder_partnerships: string[] = [];
+    const partnerships = [{ partnership: 'partner 1' }, { partnership: 'partner 2' }];
 
     before(() => {
-      data = new GetPartnershipsData(indigenous_partnerships, stakeholder_partnerships);
+      data = new GetPartnershipsData(partnerships);
     });
 
-    it('sets indigenous_partnerships', function () {
-      expect(data.indigenous_partnerships).to.eql([1, 2]);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(data.stakeholder_partnerships).to.eql([]);
-    });
-  });
-
-  describe('stakeholder_partnerships values provided', () => {
-    let data: GetPartnershipsData;
-
-    const indigenous_partnerships: string[] = [];
-    const stakeholder_partnerships = [{ name: 'partner 1' }, { name: 'partner 2' }];
-
-    before(() => {
-      data = new GetPartnershipsData(indigenous_partnerships, stakeholder_partnerships);
-    });
-
-    it('sets indigenous_partnerships', function () {
-      expect(data.indigenous_partnerships).to.eql([]);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(data.stakeholder_partnerships).to.eql(['partner 1', 'partner 2']);
+    it('sets partnerships', function () {
+      expect(data.partnerships).to.eql([{ partnership: 'partner 1' }, { partnership: 'partner 2' }]);
     });
   });
 
   describe('All values provided', () => {
     let data: GetPartnershipsData;
 
-    const indigenous_partnerships = [{ first_nations_id: 1 }, { first_nations_id: 2 }];
-    const stakeholder_partnerships = [{ name: 'partner 3' }, { name: 'partner 4' }];
+    const partnerships = [{ partnership: 'partner 3' }, { partnership: 'partner 4' }];
 
     before(() => {
-      data = new GetPartnershipsData(indigenous_partnerships, stakeholder_partnerships);
+      data = new GetPartnershipsData(partnerships);
     });
 
-    it('sets indigenous_partnerships', function () {
-      expect(data.indigenous_partnerships).to.eql([1, 2]);
-    });
-
-    it('sets stakeholder_partnerships', function () {
-      expect(data.stakeholder_partnerships).to.eql(['partner 3', 'partner 4']);
+    it('sets partnerships', function () {
+      expect(data.partnerships).to.eql([{ partnership: 'partner 3' }, { partnership: 'partner 4' }]);
     });
   });
 });
 
-describe('GetIUCNClassificationData', () => {
+describe('GetObjectivesData', () => {
   describe('No values provided', () => {
-    it('sets classification details', function () {
-      const iucnClassificationData = new GetIUCNClassificationData(null as unknown as any[]);
+    let data: GetObjectivesData;
 
-      expect(iucnClassificationData.classificationDetails).to.eql([]);
+    before(() => {
+      data = new GetObjectivesData(null as unknown as any[]);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql([]);
     });
   });
 
-  describe('Empty array as values provided', () => {
-    it('sets classification details', function () {
-      const iucnClassificationData = new GetIUCNClassificationData([]);
+  describe('Empty arrays as values provided', () => {
+    let data: GetObjectivesData;
 
-      expect(iucnClassificationData.classificationDetails).to.eql([]);
+    before(() => {
+      data = new GetObjectivesData([]);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql([]);
+    });
+  });
+
+  describe('objectives values provided', () => {
+    let data: GetObjectivesData;
+
+    const objectives = [{ objective: 'objective 1' }, { objective: 'objective 2' }];
+
+    before(() => {
+      data = new GetObjectivesData(objectives);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql([{ objective: 'objective 1' }, { objective: 'objective 2' }]);
     });
   });
 
   describe('All values provided', () => {
-    it('sets classification details', function () {
-      const iucnClassificationDataObj = [
-        {
-          classification: 'class',
-          subclassification1: 'subclass1',
-          subclassification2: 'subclass2'
-        }
-      ];
+    let data: GetObjectivesData;
 
-      const iucnClassificationData = new GetIUCNClassificationData(iucnClassificationDataObj);
+    const objectives = [{ objective: 'objective 3' }, { objective: 'objective 4' }];
 
-      expect(iucnClassificationData.classificationDetails).to.eql([
-        {
-          classification: 'class',
-          subClassification1: 'subclass1',
-          subClassification2: 'subclass2'
-        }
-      ]);
+    before(() => {
+      data = new GetObjectivesData(objectives);
+    });
+
+    it('sets objectives', function () {
+      expect(data.objectives).to.eql([{ objective: 'objective 3' }, { objective: 'objective 4' }]);
     });
   });
 });
@@ -163,9 +140,11 @@ describe('GetContactData', () => {
         first_name: 'first',
         last_name: 'last',
         email_address: 'email@example.com',
-        agency: 'agency',
         is_public: 'Y',
-        is_primary: 'Y'
+        is_primary: 'Y',
+        is_first_nation: true,
+        organization: 'organization',
+        phone_number: '123-456-7890'
       }
     ];
 
@@ -179,9 +158,11 @@ describe('GetContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
           is_public: 'true',
-          is_primary: 'true'
+          is_primary: 'true',
+          is_first_nation: true,
+          organization: 'organization',
+          phone_number: '123-456-7890'
         }
       ]);
     });
@@ -201,10 +182,6 @@ describe('GetSpeciesData', () => {
     it('sets focal species', function () {
       expect(data.focal_species).to.eql([]);
     });
-
-    it('sets focal species names', function () {
-      expect(data.focal_species_names).to.eql([]);
-    });
   });
 
   describe('All values provided', () => {
@@ -212,12 +189,10 @@ describe('GetSpeciesData', () => {
 
     const obj = [
       {
-        id: 1,
-        label: 'english1'
+        itis_tsn: 1
       },
       {
-        id: 2,
-        label: 'english2'
+        itis_tsn: 2
       }
     ];
 
@@ -227,10 +202,6 @@ describe('GetSpeciesData', () => {
 
     it('sets focal species', function () {
       expect(data.focal_species).to.eql([1, 2]);
-    });
-
-    it('sets focal species names', function () {
-      expect(data.focal_species_names).to.eql(['english1', 'english2']);
     });
   });
 });
@@ -243,9 +214,9 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData();
     });
 
-    it('sets geometry, region and range', function () {
+    it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
-      expect(locationData.region).to.eql('');
+      expect(locationData.region).to.eql(null);
     });
   });
 
@@ -256,9 +227,9 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData([], []);
     });
 
-    it('sets geometry, region and range', function () {
+    it('sets geometry, region', function () {
       expect(locationData.geometry).to.eql([]);
-      expect(locationData.region).to.eql('');
+      expect(locationData.region).to.eql(null);
     });
   });
 
@@ -300,7 +271,7 @@ describe('GetLocationData', () => {
       locationData = new GetLocationData(locationDataObj, regionDataObj);
     });
 
-    it('sets the geometry, region and range', function () {
+    it('sets the geometry, region', function () {
       expect(locationData.geometry).to.eql(geometry);
       expect(locationData.region).to.eql(1);
     });
@@ -357,38 +328,40 @@ describe('GetProjectData', () => {
   });
 });
 
-describe('GetPermitData', () => {
+describe('GetAuthorizationData', () => {
   describe('No values provided', () => {
-    let projectPermitData: GetPermitData;
+    let projectPermitData: GetAuthorizationData;
 
     before(() => {
-      projectPermitData = new GetPermitData(null as unknown as any[]);
+      projectPermitData = new GetAuthorizationData(null as unknown as any[]);
     });
 
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([]);
+    it('sets authorizations', function () {
+      expect(projectPermitData.authorizations).to.eql([]);
     });
   });
 
   describe('All values provided', () => {
-    let projectPermitData: GetPermitData;
+    let projectPermitData: GetAuthorizationData;
 
-    const permits = [
+    const authorizations = [
       {
         number: '1',
-        type: 'permit type'
+        type: 'permit type',
+        description: 'description'
       }
     ];
 
     before(() => {
-      projectPermitData = new GetPermitData(permits);
+      projectPermitData = new GetAuthorizationData(authorizations);
     });
 
-    it('sets permits', function () {
-      expect(projectPermitData.permits).to.eql([
+    it('sets authorizations', function () {
+      expect(projectPermitData.authorizations).to.eql([
         {
-          permit_number: '1',
-          permit_type: 'permit type'
+          authorization_ref: '1',
+          authorization_type: 'permit type',
+          authorization_desc: 'description'
         }
       ]);
     });
@@ -425,16 +398,13 @@ describe('GetFundingData', () => {
 
     const fundingDataObj = [
       {
-        id: 1,
-        agency_id: '1',
-        agency_name: 'Agency name',
-        agency_project_id: 'Agency123',
-        investment_action_category: 'Investment',
-        investment_action_category_name: 'Investment name',
+        organization_name: 'name',
+        description: 'description',
+        funding_project_id: 'Agency123',
+        funding_amount: 123,
         start_date: '01/01/2020',
         end_date: '01/01/2021',
-        funding_amount: 123,
-        revision_count: 0
+        is_public: 'false'
       }
     ];
 

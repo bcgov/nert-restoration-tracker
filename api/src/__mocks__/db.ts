@@ -29,6 +29,12 @@ export const getMockDBConnection = (config?: Partial<IDBConnection>): IDBConnect
     systemUserId: () => {
       return null as unknown as number;
     },
+    systemUserGUID: () => {
+      return null as unknown as string;
+    },
+    systemUserIdentifier: () => {
+      return null as unknown as string;
+    },
     open: async () => {
       // do nothing
     },
@@ -60,6 +66,10 @@ export class MockReq {
   params = {};
   body = {};
   files: any[] = [];
+  // Exists on authenticated requests. @see authentication.ts and authorization.ts
+  keycloak_token?: Record<string, any>;
+  // Exists on authenticated requests. @see authentication.ts and authorization.ts
+  system_user?: Record<string, any>;
 }
 
 export type ExtendedMockRes = MockRes & Response;
@@ -81,6 +91,13 @@ export class MockRes {
   sendValue: any;
   send = sinon.fake((value: any) => {
     this.sendValue = value;
+
+    return this;
+  });
+
+  headerValue: any;
+  setHeader = sinon.fake((header: any) => {
+    this.headerValue = header;
 
     return this;
   });

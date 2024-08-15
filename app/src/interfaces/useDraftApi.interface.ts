@@ -1,4 +1,5 @@
-import { ICreateProjectRequest } from './useProjectPlanApi.interface';
+import { ICreatePlanRequest } from './usePlanApi.interface';
+import { ICreateProjectRequest } from './useProjectApi.interface';
 
 /**
  * Create/Update draft response object.
@@ -33,5 +34,5 @@ export interface IGetDraftResponse {
   id: number;
   is_project: boolean;
   name: string;
-  data: ICreateProjectRequest;
+  data: ICreateProjectRequest | ICreatePlanRequest;
 }

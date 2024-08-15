@@ -17,8 +17,8 @@ import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { AttachmentsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment } from 'interfaces/useProjectPlanApi.interface';
+import { useNertApi } from 'hooks/useNertApi';
+import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedFileSize } from 'utils/Utils';
@@ -41,7 +41,7 @@ export interface IAttachmentsListProps {
 }
 
 const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const nertApi = useNertApi();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
@@ -97,7 +97,7 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
     }
 
     try {
-      await restorationTrackerApi.project.deleteProjectAttachment(props.projectId, attachment.id);
+      await nertApi.project.deleteProjectAttachment(props.projectId, attachment.id);
 
       props.getAttachments(true);
     } catch (error) {
@@ -158,7 +158,7 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
               {!props.attachmentsList.length && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
-                    No Attachments
+                    No Documents Attached
                   </TableCell>
                 </TableRow>
               )}

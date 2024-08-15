@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
+import InfoIcon from '@mui/icons-material/Info';
+import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
@@ -21,7 +23,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
-import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
+import InfoDialog from 'components/dialog/InfoDialog';
 import {
   getStateCodeFromLabel,
   getStateLabelFromCode,
@@ -30,15 +32,21 @@ import {
 } from 'components/workflow/StateMachine';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
-import { IPlansListProps } from 'interfaces/useProjectPlanApi.interface';
-import React, { useState } from 'react';
+import { IPlansListProps } from 'features/user/MyPlans';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import PublicInfoContent from 'pages/public/components/PublicInfoContent';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 
 const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans } = props;
   const history = useNavigate();
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+  const [selected, setSelected] = useState<readonly number[]>([]);
 
   const rows = plans
     ?.filter(
@@ -51,11 +59,17 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         id: index,
         planId: row.project.project_id,
         planName: row.project.project_name,
+        focus: utils.resolveProjectPlanFocus(
+          row.project.is_healing_land,
+          row.project.is_healing_people,
+          row.project.is_land_initiative,
+          row.project.is_cultural_initiative
+        ),
         term:
           getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
             ? PlanTableI18N.multiYear
             : PlanTableI18N.annual,
-        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        org: row.contact.contacts.map((item) => item.organization).join('\r'),
         startDate: row.project.start_date,
         endDate: row.project.end_date,
         statusCode: row.project.state_code,
@@ -72,6 +86,12 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
       } as utils.PlanData;
     });
 
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, plans);
+    setSelectedProjects(s);
+  }, [selected]);
+
   function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler =
@@ -79,46 +99,72 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         onRequestSort(event, property);
       };
 
+    const [infoOpen, setInfoOpen] = useState(false);
+    const [infoTitle, setInfoTitle] = useState('');
+
+    const handleClickOpen = (headCell: utils.PlanHeadCell) => {
+      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
+      setInfoOpen(true);
+    };
+
     return (
-      <TableHead>
-        <TableRow>
-          {utils.planHeadCells.map((headCell) => {
-            if ('archive' !== headCell.id && 'export' !== headCell.id)
-              return (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                      </Box>
+      <>
+        <InfoDialogDraggable
+          isProject={false}
+          open={infoOpen}
+          dialogTitle={infoTitle}
+          onClose={() => setInfoOpen(false)}>
+          <PublicInfoContent isProject={false} contentIndex={infoTitle} />
+        </InfoDialogDraggable>
+        <TableHead>
+          <TableRow>
+            {utils.planHeadCells.map((headCell) => {
+              if ('archive' !== headCell.id && 'export' !== headCell.id)
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <Tooltip
+                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
+                      placement="top">
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : 'asc'}
+                        onClick={createSortHandler(headCell.id)}>
+                        {headCell.label}
+                        {orderBy === headCell.id ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </Tooltip>
+                    {headCell.infoButton ? (
+                      <IconButton onClick={() => handleClickOpen(headCell)}>
+                        <InfoIcon color="info" />
+                      </IconButton>
                     ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              );
-          })}
-          <TableCell padding="checkbox">
-            <Tooltip title={PlanTableI18N.exportAllPlans} placement="right">
-              <Checkbox
-                color="primary"
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={rowCount > 0 && numSelected === rowCount}
-                onChange={onSelectAllClick}
-                inputProps={{
-                  'aria-label': PlanTableI18N.selectAllPlansForExport
-                }}
-              />
-            </Tooltip>
-          </TableCell>
-        </TableRow>
-      </TableHead>
+                  </TableCell>
+                );
+            })}
+            <TableCell padding="checkbox">
+              <Tooltip title={PlanTableI18N.exportAllPlans} placement="top">
+                <Checkbox
+                  color="primary"
+                  indeterminate={numSelected > 0 && numSelected < rowCount}
+                  checked={rowCount > 0 && numSelected === rowCount}
+                  onChange={onSelectAllClick}
+                  inputProps={{
+                    'aria-label': PlanTableI18N.selectAllPlansForExport
+                  }}
+                />
+              </Tooltip>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+      </>
     );
   }
 
@@ -155,17 +201,18 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         )}
         {numSelected > 0 ? (
           <Button
-            sx={{ height: '3rem', width: '11rem' }}
+            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
             disableElevation
             data-testid="export-plan-button"
+            onClick={() => exportData(selectedProjects)}
             aria-label={PlanTableI18N.exportPlansData}
             startIcon={<Icon path={mdiExport} size={1} />}>
-            <strong>{TableI18N.exportData}</strong>
+            {TableI18N.exportData}
           </Button>
         ) : (
-          <PagedTableInfoDialog isProject={false} />
+          <InfoDialog isProject={false} infoContent={'paged table'} />
         )}
       </Toolbar>
     );
@@ -174,7 +221,6 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   function PlanTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -242,6 +288,26 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const focusTooltip = (focus: string) => {
+      return (
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <PlansTableToolbar numSelected={selected.length} />
@@ -279,12 +345,57 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history(`/projects/${row.planId}`)}>
+                        onClick={() => history(`/plans/${row.planId}/details`)}>
                         {row.planName}
                       </Link>
                     </TableCell>
+                    <TableCell align="left">
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
+                          <Fragment key={key}>
+                            <Box ml={-3}>
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusPlanChip}
+                                label={focusTooltip(focus)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">{row.term}</TableCell>
-                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgPlanChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.startDate)}
                     </TableCell>
@@ -304,7 +415,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                           title={
                             isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
                           }
-                          placement="right">
+                          placement="top">
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
@@ -315,7 +426,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                           />
                         </Tooltip>
                       ) : (
-                        <Tooltip title={TableI18N.noDataToExport} placement="right">
+                        <Tooltip title={TableI18N.noDataToExport} placement="top">
                           <span>
                             <Checkbox
                               disabled={true}

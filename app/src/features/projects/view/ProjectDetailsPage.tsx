@@ -1,17 +1,18 @@
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { RoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import IUCNClassification from 'features/projects/view/components/IUCNClassification';
 import Partnerships from 'features/projects/view/components/Partnerships';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicProjectContact from 'pages/public/components/PublicProjectContact';
 import React from 'react';
 import FundingSource from './components/FundingSource';
 import GeneralInformation from './components/GeneralInformation';
+import ProjectAuthorizations from './components/ProjectAuthorizations';
 import ProjectContact from './components/ProjectContact';
-import ProjectPermits from './components/ProjectPermits';
+import { ProjectRoleGuard } from 'components/security/Guards';
 
 export interface IProjectDetailsProps {
   projectForViewData: IGetProjectForViewResponse;
@@ -19,13 +20,14 @@ export interface IProjectDetailsProps {
 }
 
 const pageStyles = {
+  secTitle: {
+    fontSize: '14px',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    width: '100%',
+    justifyContent: 'left'
+  },
   projectMetadata: {
-    '& section': {
-      marginBottom: '3rem'
-    },
-    '& section:last-child': {
-      marginBottom: 0
-    },
     '& dl, ul': {
       marginTop: '0.5rem',
       marginBottom: 0,
@@ -41,19 +43,13 @@ const pageStyles = {
       verticalAlign: 'top'
     },
     '& dt': {
-      width: '33.333%'
+      width: '30%'
     },
     '& dd': {
-      width: '66.666%'
+      width: '70%'
     },
     '& dd span': {
       display: 'inline'
-    },
-    '& h3': {
-      marginBottom: '0.5rem',
-      fontSize: '15px',
-      fontWeight: 700,
-      textTransform: 'uppercase'
     },
     '& ul': {
       listStyleType: 'none',
@@ -77,79 +73,77 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
   const refresh = () => {};
 
   return (
-    <Box sx={pageStyles.projectMetadata} p={3}>
-      <Box mb={3}>
-        <Typography variant="h2">Project Details</Typography>
+    <Box sx={pageStyles.projectMetadata} pt={1} px={2}>
+      <Box mb={2}>
+        <Typography variant="h2">Additional Project Details</Typography>
       </Box>
 
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="GeneralInfoTitle">
-          General Information
-        </Typography>
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="General Information"
+          size="medium"
+          data-testid="GeneralInfoTitle"
+        />
         <GeneralInformation
           projectForViewData={projectForViewData}
           codes={codes}
           refresh={refresh}
         />
       </Box>
-
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="ContactsTitle">
-          Project Contacts
-        </Typography>
-        <RoleGuard
+      <Divider />
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Project Contacts"
+          size="medium"
+          data-testid="ContactsTitle"
+        />
+        <ProjectRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
           validProjectRoles={[
             PROJECT_ROLE.PROJECT_LEAD,
             PROJECT_ROLE.PROJECT_EDITOR,
             PROJECT_ROLE.PROJECT_VIEWER
           ]}
+          validProjectPermissions={[]}
           fallback={
             <PublicProjectContact projectForViewData={projectForViewData} refresh={refresh} />
           }>
           <ProjectContact projectForViewData={projectForViewData} refresh={refresh} />
-        </RoleGuard>
+        </ProjectRoleGuard>
       </Box>
-
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="IUCNTitle">
-          IUCN Conservation Actions Classifications
-        </Typography>
-        <IUCNClassification
-          projectForViewData={projectForViewData}
-          codes={codes}
-          refresh={refresh}
+      <Divider />
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Authorizations"
+          size="medium"
+          data-testid="AuthorizationsTitle"
         />
+        <ProjectAuthorizations projectForViewData={projectForViewData} refresh={refresh} />
       </Box>
-
-      <RoleGuard
-        validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-        validProjectRoles={[
-          PROJECT_ROLE.PROJECT_LEAD,
-          PROJECT_ROLE.PROJECT_EDITOR,
-          PROJECT_ROLE.PROJECT_VIEWER
-        ]}>
-        <Box component="section">
-          <Typography variant="body1" component={'h3'} data-testid="AuthorizationsTitle">
-            Authorizations
-          </Typography>
-          <ProjectPermits projectForViewData={projectForViewData} refresh={refresh} />
-        </Box>
-      </RoleGuard>
-
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="FundingSourceTitle">
-          Funding Sources
-        </Typography>
-        <FundingSource projectForViewData={projectForViewData} refresh={refresh} />
+      <Divider />
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Funding Sources"
+          size="medium"
+          data-testid="FundingSourceTitle"
+        />
+        <FundingSource projectForViewData={projectForViewData} />
       </Box>
-
-      <Box component="section">
-        <Typography variant="body1" component={'h3'} data-testid="PartnershipTitle">
-          Partnerships
-        </Typography>
-        <Partnerships projectForViewData={projectForViewData} codes={codes} refresh={refresh} />
+      <Divider />
+      <Box mt={2}>
+        <Chip
+          sx={pageStyles.secTitle}
+          label="Partnerships"
+          size="medium"
+          data-testid="PartnershipTitle"
+        />
+        <Partnerships projectForViewData={projectForViewData} refresh={refresh} />
       </Box>
+      <Divider />
     </Box>
   );
 };

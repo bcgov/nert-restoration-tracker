@@ -1,9 +1,9 @@
 import { render, waitFor } from '@testing-library/react';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetSearchResultsResponse } from 'interfaces/useSearchApi.interface';
 import React from 'react';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
+jest.mock('../../hooks/useNertApi');
 
 const mockUseApi = {
   search: {
@@ -15,7 +15,7 @@ const mockUseApi = {
     }
   }
 };
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 
 describe.skip('SearchPage', () => {
   it('renders correctly', async () => {

@@ -8,7 +8,47 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import yup from 'utils/YupSchema';
 
 declare module 'yup' {
-  export class StringSchema extends yup.StringSchema {
+  interface NumberSchema {
+    /**
+     * Determine if number of people involved is required based on a boolean value.
+     *
+     * @param {string} [message]
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof StringSchema
+     */
+    isNumberOfPeopleInvolvedRequired(
+      message?: string
+    ): yup.NumberSchema<number | undefined, Record<number, any>, number | undefined>;
+  }
+
+  interface StringSchema {
+    /**
+     * Determine if Auth Description is required based on a boolean value.
+     *
+     *
+     * @param {string} AuthType
+     * @param {string} [message]
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof NumberSchema
+     */
+    isAuthDescriptionRequired(
+      AuthType: string,
+      message?: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
+     * Determine if conservation areas are required based on a boolean value.
+     *
+     * @param {string} booleanName
+     * @param {string} [message]
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof StringSchema
+     */
+    isConservationAreasRequired(
+      booleanName: string,
+      message?: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
     /**
      * Determine if the string is a valid date string. Does nothing if the string is null.
      *
@@ -83,7 +123,7 @@ declare module 'yup' {
     ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
   }
 
-  export class ArraySchema extends yup.ArraySchema {
+  interface ArraySchema {
     /**
      * Determine if the array of permits has duplicate permit numbers
      *
@@ -96,13 +136,35 @@ declare module 'yup' {
     ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
 
     /**
-     * Determine if the array of classification details has duplicates
+     * Determine if the array of partnerships has duplicate partnership string
      *
-     * @param {string} message='IUCN Classifications must be unique' - error message if this check fails
+     * @param {string} message='Parnership entries must be unique' - error message if this check fails
      * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
      * @memberof ArraySchema
      */
-    isUniqueIUCNClassificationDetail(
+    isUniquePartnership(
+      message: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
+     * Determine if the array of conservation areas has duplicate conservation area string
+     *
+     * @param {string} message='Conservation area entries must be unique' - error message if this check fails
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof ArraySchema
+     */
+    isUniqueConservationArea(
+      message: string
+    ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
+
+    /**
+     * Determine if the array of objective has duplicate objective string
+     *
+     * @param {string} message='Objective entries must be unique' - error message if this check fails
+     * @return {*}  {(yup.StringSchema<string | undefined, Record<string, any>, string | undefined>)}
+     * @memberof ArraySchema
+     */
+    isUniqueObjective(
       message: string
     ): yup.StringSchema<string | undefined, Record<string, any>, string | undefined>;
 

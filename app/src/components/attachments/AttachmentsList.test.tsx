@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import AttachmentsList from './AttachmentsList';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
+jest.mock('../../hooks/useNertApi');
 
 describe('AttachmentsList', () => {
   afterEach(() => {
@@ -38,7 +38,7 @@ describe('AttachmentsList', () => {
       <AttachmentsList projectId={1} attachmentsList={[]} getAttachments={jest.fn()} />
     );
 
-    expect(getByText('No Attachments')).toBeInTheDocument();
+    expect(getByText('No Documents Attached')).toBeInTheDocument();
   });
 
   it('renders correctly with attachments (of various sizes)', async () => {

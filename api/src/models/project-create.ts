@@ -15,9 +15,9 @@ export class PostProjectObject {
   authorization: PostAuthorizationData;
   project: PostProjectData;
   location: PostLocationData;
-  iucn: PostIUCNData;
   funding: PostFundingData;
-  partnerships: PostPartnershipsData;
+  partnership: PostPartnershipsData;
+  objective: PostObjectivesData;
   focus: PostFocusData;
   restoration_plan: PostRestPlanData;
 
@@ -30,10 +30,42 @@ export class PostProjectObject {
     this.project = (obj?.project && new PostProjectData(obj.project)) || null;
     this.location = (obj?.location && new PostLocationData(obj.location)) || null;
     this.funding = (obj?.funding && new PostFundingData(obj.funding)) || null;
-    this.iucn = (obj?.iucn && new PostIUCNData(obj.iucn)) || null;
-    this.partnerships = (obj?.partnerships && new PostPartnershipsData(obj.partnerships)) || [];
+    this.partnership = (obj?.partnership && new PostPartnershipsData(obj.partnership)) || [];
+    this.objective = (obj?.objective && new PostObjectivesData(obj.objective)) || [];
     this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
     this.restoration_plan = (obj?.restoration_plan && new PostRestPlanData(obj.restoration_plan)) || null;
+  }
+}
+
+export class PostPlanObject {
+  project: PostPlanData;
+  focus: PostFocusData;
+  contact: PostContactData;
+  location: PostLocationData;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
+
+    this.project = (obj?.project && new PostPlanData(obj.project)) || null;
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
+    this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
+    this.location = (obj?.location && new PostLocationData(obj.location)) || null;
+  }
+}
+
+export class PostEditPlanObject {
+  project: PostPlanData;
+  focus: PostFocusData;
+  contact: PostContactData;
+  location: PostLocationData;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostProjectObject', message: 'params', obj });
+
+    this.project = (obj?.project && new PostPlanData(obj.project)) || null;
+    this.focus = (obj?.focus && new PostFocusData(obj.focus)) || [];
+    this.contact = (obj?.contact && new PostContactData(obj.contact)) || null;
+    this.location = (obj?.location && new PostLocationData(obj.location)) || null;
   }
 }
 
@@ -41,9 +73,11 @@ export interface IPostContact {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: boolean;
   is_primary: boolean;
+  is_first_nation: boolean;
 }
 
 /**
@@ -64,9 +98,11 @@ export class PostContactData {
           first_name: item.first_name,
           last_name: item.last_name,
           email_address: item.email_address,
-          agency: item.agency,
+          organization: item.organization,
+          phone_number: item.phone_number,
           is_public: JSON.parse(item.is_public),
-          is_primary: JSON.parse(item.is_primary)
+          is_primary: JSON.parse(item.is_primary),
+          is_first_nation: item.is_first_nation
         }))) ||
       [];
   }
@@ -75,6 +111,7 @@ export class PostContactData {
 export interface IPostAuthorization {
   authorization_ref: string;
   authorization_type: string;
+  authorization_desc: string;
 }
 
 /**
@@ -94,7 +131,89 @@ export class PostAuthorizationData {
         obj.authorizations.map((item: any) => {
           return {
             authorization_ref: item.authorization_ref,
-            authorization_type: item.authorization_type
+            authorization_type: item.authorization_type,
+            authorization_desc: item.authorization_desc
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IPostPartnership {
+  partnership: string;
+}
+
+/**
+ * Processes POST /project partnerships data
+ *
+ * @export
+ * @class PostPartnershipsData
+ */
+export class PostPartnershipsData {
+  partnerships: IPostPartnership[];
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostPartnershipsData', message: 'params', obj });
+
+    this.partnerships =
+      (obj?.partnerships?.length &&
+        obj.partnerships.map((item: any) => {
+          return {
+            partnership: item.partnership
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IPostObjective {
+  objective: string;
+}
+
+/**
+ * Processes POST /project objectives data
+ *
+ * @export
+ * @class PostObjectivesData
+ */
+export class PostObjectivesData {
+  objectives: IPostObjective[];
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostObjectivesData', message: 'params', obj });
+
+    this.objectives =
+      (obj?.objectives?.length &&
+        obj.objectives.map((item: any) => {
+          return {
+            objective: item.objective
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IPostConservationArea {
+  conservationArea: string;
+}
+
+/**
+ * Processes POST /project conservationAreas data
+ *
+ * @export
+ * @class PostConservationAreasData
+ */
+export class PostConservationAreasData {
+  conservationAreas: IPostConservationArea[];
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostConservationAreasData', message: 'params', obj });
+
+    this.conservationAreas =
+      (obj?.conservationAreas?.length &&
+        obj.conservationAreas.map((item: any) => {
+          return {
+            conservationArea: item.conservationArea
           };
         })) ||
       [];
@@ -144,6 +263,40 @@ export class PostProjectData {
 }
 
 /**
+ * Processes POST /project project data.
+ *
+ * @export
+ * @class PostPlanData
+ */
+export class PostPlanData {
+  is_project: boolean;
+  name: string;
+  state_code: number;
+  start_date: string;
+  end_date: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+
+  constructor(obj?: any) {
+    defaultLog.debug({ label: 'PostPlanData', message: 'params', obj });
+
+    this.is_project = Boolean(obj?.is_project);
+    this.name = obj?.project_name || null;
+    this.state_code = obj?.state_code || 0;
+    this.start_date = obj?.start_date || null;
+    this.end_date = obj?.end_date || null;
+    this.brief_desc = obj?.brief_desc || '';
+    this.is_healing_land = Boolean(obj?.is_healing_land);
+    this.is_healing_people = Boolean(obj?.is_healing_people);
+    this.is_land_initiative = Boolean(obj?.is_land_initiative);
+    this.is_cultural_initiative = Boolean(obj?.is_cultural_initiative);
+  }
+}
+
+/**
  * Processes POST /project species data.
  *
  * @export
@@ -155,8 +308,12 @@ export class PostSpeciesData {
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostSpeciesData', message: 'params', obj });
 
-    this.focal_species = (obj?.focal_species.length && obj.focal_species) || [];
+    this.focal_species = (obj?.focal_species.length && obj.focal_species.map((value) => value.tsn)) || [];
   }
+}
+
+export interface IPostConservationArea {
+  conservationArea: string;
 }
 
 /**
@@ -171,7 +328,7 @@ export class PostLocationData {
   region: number;
   number_sites: number;
   size_ha: number;
-  name_area_conservation_priority: string[];
+  conservationAreas: IPostConservationArea[];
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostLocationData', message: 'params', obj });
@@ -181,42 +338,11 @@ export class PostLocationData {
     this.region = obj?.region || null;
     this.number_sites = obj?.number_sites || null;
     this.size_ha = obj?.size_ha || null;
-    this.name_area_conservation_priority =
-      (obj?.name_area_conservation_priority?.length &&
-        obj.name_area_conservation_priority.map((item: any) => {
+    this.conservationAreas =
+      (obj?.conservationAreas?.length &&
+        obj.conservationAreas.map((item: any) => {
           return {
-            name_area_conservation_priority: item.name_area_conservation_priority
-          };
-        })) ||
-      [];
-  }
-}
-
-export interface IPostIUCN {
-  classification: number | null;
-  subClassification1: number | null;
-  subClassification2: number | null;
-}
-
-/**
- * Processes POST /project IUCN data
- *
- * @export
- * @class PostIUCNData
- */
-export class PostIUCNData {
-  classificationDetails: IPostIUCN[];
-
-  constructor(obj?: any) {
-    defaultLog.debug({ label: 'PostIUCNData', message: 'params', obj });
-
-    this.classificationDetails =
-      (obj?.classificationDetails?.length &&
-        obj.classificationDetails.map((item: any) => {
-          return {
-            classification: item.classification,
-            subClassification1: item.subClassification1,
-            subClassification2: item.subClassification2
+            conservationArea: item.conservationArea
           };
         })) ||
       [];
@@ -224,7 +350,7 @@ export class PostIUCNData {
 }
 
 /**
- * A single project funding agency.
+ * A single project funding organization.
  *
  * @See PostFundingData
  *
@@ -232,22 +358,24 @@ export class PostIUCNData {
  * @class PostFundingSource
  */
 export class PostFundingSource {
-  agency_id: number;
-  investment_action_category: number;
-  agency_project_id: string;
+  organization_name: string;
+  description: string;
+  funding_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
+  is_public: boolean;
 
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostFundingSource', message: 'params', obj });
 
-    this.agency_id = obj?.agency_id || null;
-    this.investment_action_category = obj?.investment_action_category || null;
-    this.agency_project_id = obj?.agency_project_id || null;
+    this.organization_name = obj?.organization_name || null;
+    this.funding_project_id = obj?.funding_project_id || null;
     this.funding_amount = obj?.funding_amount || null;
     this.start_date = obj?.start_date || null;
     this.end_date = obj?.end_date || null;
+    this.description = obj?.description || null;
+    this.is_public = obj?.is_public === 'true' ? true : false;
   }
 }
 
@@ -265,22 +393,6 @@ export class PostFundingData {
 
     this.funding_sources =
       (obj?.fundingSources?.length && obj.fundingSources.map((item: any) => new PostFundingSource(item))) || [];
-  }
-}
-
-/**
- * Processes POST /project partnerships data
- *
- * @export
- * @class PostPartnershipsData
- */
-export class PostPartnershipsData {
-  partnerships: string[];
-
-  constructor(obj?: any) {
-    defaultLog.debug({ label: 'PostPartnershipsData', message: 'params', obj });
-
-    this.partnerships = (obj?.partnerships.length && obj.partnerships) || [];
   }
 }
 
@@ -314,6 +426,7 @@ export class PostRestPlanData {
   constructor(obj?: any) {
     defaultLog.debug({ label: 'PostRestPlanData', message: 'params', obj });
 
-    this.is_project_part_public_plan = obj?.is_project_part_public_plan || null;
+    this.is_project_part_public_plan =
+      typeof obj?.is_project_part_public_plan === 'boolean' ? obj?.is_project_part_public_plan : null;
   }
 }

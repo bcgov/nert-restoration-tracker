@@ -11,7 +11,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-// import { ScrollToFormikError } from 'components/formik/ScrollToFormikError';
 import YesNoDialog from 'components/dialog/YesNoDialog';
 import {
   events,
@@ -21,7 +20,6 @@ import {
 } from 'components/workflow/StateMachine';
 import { CreateProjectDraftI18N, CreateProjectI18N } from 'constants/i18n';
 import { ICONS } from 'constants/misc';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import ProjectAuthorizationForm, {
   ProjectAuthorizationFormInitialValues,
@@ -57,26 +55,27 @@ import ProjectObjectivesForm, {
   ProjectObjectiveFormYupSchema
 } from 'features/projects/components/ProjectObjectivesForm';
 import ProjectPartnershipsForm, {
-  ProjectPartnershipsFormInitialValues,
-  ProjectPartnershipsFormYupSchema
+  ProjectPartnershipFormInitialValues,
+  ProjectPartnershipFormYupSchema
 } from 'features/projects/components/ProjectPartnershipsForm';
 import ProjectRestorationPlanForm, {
   ProjectRestorationPlanFormInitialValues,
   ProjectRestorationPlanFormYupSchema
 } from 'features/projects/components/ProjectRestorationPlanForm';
-import ProjectWildlifeForm, {
-  ProjectIUCNFormYupSchema,
-  ProjectWildlifeFormInitialValues
-} from 'features/projects/components/ProjectWildlifeForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { ICreateProjectRequest } from 'interfaces/useProjectPlanApi.interface';
+import { useNertApi } from 'hooks/useNertApi';
+import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
+import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import yup from 'utils/YupSchema';
+import { checkFormikErrors } from 'utils/Utils';
+import FocalSpeciesComponent, {
+  ProjectFocalSpeciesFormInitialValues
+} from 'components/species/FocalSpeciesComponent';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -105,10 +104,10 @@ export const ProjectFormInitialValues = {
   ...ProjectObjectiveFormInitialValues,
   ...ProjectFocusFormInitialValues,
   ...ProjectContactInitialValues,
-  ...ProjectWildlifeFormInitialValues,
+  ...ProjectFocalSpeciesFormInitialValues,
   ...ProjectAuthorizationFormInitialValues,
   ...ProjectFundingFormInitialValues,
-  ...ProjectPartnershipsFormInitialValues,
+  ...ProjectPartnershipFormInitialValues,
   ...ProjectLocationFormInitialValues,
   ...ProjectRestorationPlanFormInitialValues
 };
@@ -119,10 +118,9 @@ export const ProjectFormYupSchema = yup
   .concat(ProjectObjectiveFormYupSchema)
   .concat(ProjectFocusFormYupSchema)
   .concat(ProjectContactYupSchema)
-  .concat(ProjectIUCNFormYupSchema)
   .concat(ProjectAuthorizationFormYupSchema)
   .concat(ProjectFundingFormYupSchema)
-  .concat(ProjectPartnershipsFormYupSchema)
+  .concat(ProjectPartnershipFormYupSchema)
   .concat(ProjectLocationFormYupSchema)
   .concat(ProjectRestorationPlanFormYupSchema);
 
@@ -132,10 +130,9 @@ export const ProjectFormYupSchema = yup
  * @return {*}
  */
 const CreateProjectPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const [hasLoadedDraftData, setHasLoadedDraftData] = useState(!queryParams.draftId);
 
@@ -152,7 +149,7 @@ const CreateProjectPage: React.FC = () => {
   const defaultCancelDialogProps = {
     dialogTitle: CreateProjectI18N.cancelTitle,
     dialogText: CreateProjectI18N.cancelText,
-    open: false,
+    open: true,
     onClose: () => {
       dialogContext.setYesNoDialog({ open: false });
     },
@@ -191,7 +188,13 @@ const CreateProjectPage: React.FC = () => {
       const response = await restorationTrackerApi.draft.getDraft(queryParams.draftId);
       setHasLoadedDraftData(true);
 
-      if (!response || !response.data) {
+      function instanceOfProjectRequest(
+        object: ICreateProjectRequest | ICreatePlanRequest
+      ): object is ICreateProjectRequest {
+        return 'project' in object;
+      }
+
+      if (!response || !response.data || !instanceOfProjectRequest(response.data)) {
         return;
       }
 
@@ -207,7 +210,6 @@ const CreateProjectPage: React.FC = () => {
 
   const handleCancel = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
-    history('/admin/user/projects');
   };
 
   const handleCancelConfirmation = () => {
@@ -273,16 +275,43 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, projectPostObject)) {
+        return;
+      }
+
+      // Remove empty partnerships
+      projectPostObject.partnership.partnerships =
+        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
+
+      // Remove empty Authorizations
+      projectPostObject.authorization.authorizations =
+        projectPostObject.authorization.authorizations.filter((authorization) =>
+          authorization.authorization_type.trim()
+        );
+
+      // Remove empty Conservation Areas
+      projectPostObject.location.conservationAreas =
+        projectPostObject.location.conservationAreas.filter((area) => area.conservationArea.trim());
+
+      // Confirm that the project is not a draft
       projectPostObject.restoration_plan.is_project_part_public_plan =
         !!projectPostObject.restoration_plan.is_project_part_public_plan;
+
+      // Set size_ha to 0 if it is not set
       projectPostObject.location.size_ha = projectPostObject.location.size_ha
         ? projectPostObject.location.size_ha
         : 0;
+
+      // Set the state code to the correct value for a project being created
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)
       );
-      const response = await restorationTrackerApi.project.createProject(projectPostObject);
-      if (!response?.id) {
+
+      // Create the project
+      const createProjectResponse =
+        await restorationTrackerApi.project.createProject(projectPostObject);
+
+      if (!createProjectResponse?.id) {
         showCreateErrorDialog({
           dialogError: 'The response from the server was null, or did not contain a project ID.'
         });
@@ -292,8 +321,7 @@ const CreateProjectPage: React.FC = () => {
       await deleteDraft();
       setOpenYesNoDialog(false);
       // setEnableCancelCheck(false);
-      keycloakWrapper?.refresh();
-      history(`/admin/projects/${response.id}`);
+      history(`/admin/projects/${createProjectResponse.id}/details`);
     } catch (error) {
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',
@@ -343,44 +371,12 @@ const CreateProjectPage: React.FC = () => {
     });
   };
 
-  if (!codes.codes) {
+  if (!codes.data) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
-  // /**
-  //  * Intercepts all navigation attempts (when used with a `Prompt`).
-  //  *
-  //  * Returning true allows the navigation, returning false prevents it.
-  //  *
-  //  * @param {History.Location} location
-  //  * @return {*}
-  //  */
-  // const handleLocationChange = () => {
-  //   if (!dialogContext.yesNoDialogProps.open) {
-  //     // If the cancel dialog is not open: open it
-  //     dialogContext.setYesNoDialog({
-  //       ...defaultCancelDialogProps,
-  //       onYes: () => {
-  //         dialogContext.setYesNoDialog({ open: false });
-  //         history(location.pathname);
-  //       },
-  //       open: true
-  //     });
-  //     return false;
-  //   }
-
-  //   // If the cancel dialog is already open and another location change action is triggered: allow it
-  //   return true;
-  // };
-
   return (
     <>
-      {/* <ReactRouterPrompt when={enableCancelCheck} >
-        {({ isActive, onConfirm, onCancel }) => (
-          <YesNoDialog dialogTitle="Cancel Create Project" dialogText="Are you sure you want to cancel?" open={isActive} onClose={onCancel} onNo={onCancel} onYes={onConfirm} />
-        )}
-      </ReactRouterPrompt> */}
-
       <EditDialog
         dialogTitle="Save Incomplete Project as a Draft"
         dialogSaveButtonLabel="Save"
@@ -404,7 +400,25 @@ const CreateProjectPage: React.FC = () => {
         open={openYesNoDialog}
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}
-        onYes={() => formikRef.current?.submitForm()}
+        onYes={() => {
+          setOpenYesNoDialog(false);
+          formikRef.current?.validateForm().then((errors) => {
+            const errorsText: string[] = checkFormikErrors(errors);
+
+            if (errorsText.length) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Error Creating Project',
+                dialogText: 'Please correct the errors in the form before submitting.',
+                dialogError: 'The following errors were found:',
+                dialogErrorDetails: errorsText,
+                ...defaultErrorDialogProps,
+                open: true
+              });
+            }
+          });
+
+          formikRef.current?.submitForm();
+        }}
       />
 
       <Box mb={1} ml={3}>
@@ -420,7 +434,6 @@ const CreateProjectPage: React.FC = () => {
         </Breadcrumbs>
       </Box>
 
-      {/* <Container maxWidth="xl"> */}
       <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
           <Box mb={0.5} mt={0.9}>
@@ -430,7 +443,8 @@ const CreateProjectPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration project
+            Provide the information below and submit to create a new restoration project. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 
@@ -440,11 +454,10 @@ const CreateProjectPage: React.FC = () => {
             enableReinitialize={true}
             initialValues={initialProjectFormData}
             validationSchema={ProjectFormYupSchema}
-            validateOnBlur={true}
+            validateOnBlur={false}
             validateOnChange={false}
-            onSubmit={handleProjectCreation}>
+            onSubmit={(values) => handleProjectCreation(values)}>
             <>
-              {/* <ScrollToFormikError /> */}
               <Form noValidate>
                 <Box ml={1}>
                   <Grid container spacing={2}>
@@ -454,10 +467,12 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectGeneralInformationForm />
-                      <Box component="fieldset" my={2} mx={0}>
+
+                      <Grid container spacing={3} direction="column" mb={4}>
                         <ProjectObjectivesForm />
-                      </Box>
-                      <ProjectFocusForm />
+                        <FocalSpeciesComponent />
+                        <ProjectFocusForm />
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Box>
@@ -470,10 +485,8 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Contacts</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
-                      <ProjectContactForm
-                        coordinator_agency={codes.codes.coordinator_agency.map((item) => item.name)}
-                      />
+                    <Grid item xs={12} md={8.34}>
+                      <ProjectContactForm />
                     </Grid>
                   </Grid>
                 </Box>
@@ -481,46 +494,17 @@ const CreateProjectPage: React.FC = () => {
                 <Divider />
 
                 <Box ml={1} my={3}>
-                  <Grid container spacing={2}>
+                  <Grid container spacing={3}>
                     <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">
-                        Actions Beneficial to Wildlife and/or Fish
-                      </Typography>
+                      <Typography variant="h2">Funding and Partnerships</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={8.34}>
                       <Box component="fieldset" mx={0}>
-                        <ProjectWildlifeForm
-                          classifications={
-                            codes.codes.iucn_conservation_action_level_1_classification?.map(
-                              (item) => {
-                                return { value: item.id, label: item.name };
-                              }
-                            ) || []
-                          }
-                          subClassifications1={
-                            codes.codes.iucn_conservation_action_level_2_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn1_id: item.iucn1_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                          subClassifications2={
-                            codes.codes.iucn_conservation_action_level_3_subclassification?.map(
-                              (item) => {
-                                return {
-                                  value: item.id,
-                                  iucn2_id: item.iucn2_id,
-                                  label: item.name
-                                };
-                              }
-                            ) || []
-                          }
-                        />
+                        <ProjectFundingForm />
+                      </Box>
+                      <Box component="fieldset" mt={4}>
+                        <ProjectPartnershipsForm />
                       </Box>
                     </Grid>
                   </Grid>
@@ -534,37 +518,8 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={9} mt={-1}>
                       <ProjectAuthorizationForm />
-                    </Grid>
-                  </Grid>
-                </Box>
-
-                <Divider />
-
-                <Box ml={1} my={3}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={2.5}>
-                      <Typography variant="h2">Funding and Partnerships</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} md={9}>
-                      <Box component="fieldset" mx={0}>
-                        <ProjectFundingForm
-                          fundingSources={codes.codes.funding_source.map((item) => {
-                            return { value: item.id, label: item.name };
-                          })}
-                          investment_action_category={codes.codes.investment_action_category.map(
-                            (item) => {
-                              return { value: item.id, label: item.name, fs_id: item.fs_id };
-                            }
-                          )}
-                        />
-                      </Box>
-
-                      <Box component="fieldset" mt={4} mx={0}>
-                        <ProjectPartnershipsForm />
-                      </Box>
                     </Grid>
                   </Grid>
                 </Box>
@@ -579,7 +534,7 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectLocationForm
-                        regions={codes.codes.regions.map((item) => {
+                        regions={codes.data.regions.map((item) => {
                           return { value: item.id, label: item.name };
                         })}
                       />
@@ -633,7 +588,6 @@ const CreateProjectPage: React.FC = () => {
             </>
           </Formik>
         </Box>
-        {/* </Container> */}
       </Card>
     </>
   );

@@ -3,10 +3,10 @@ import { Operation } from 'express-openapi';
 import { PROJECT_ROLE, SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
-import { queries } from '../../../queries/queries';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { AttachmentService } from '../../../services/attachment-service';
 import { AuthorizationService } from '../../../services/authorization-service';
+import { ProjectService } from '../../../services/project-service';
 import { getLogger } from '../../../utils/logger';
 
 const defaultLog = getLogger('/api/project/{projectId}/delete');
@@ -87,24 +87,18 @@ export function deleteProject(): RequestHandler {
        * Check that user is a project administrator - can delete a project (unpublished only)
        *
        */
-      const getProjectSQLStatement = queries.project.getProjectSQL(projectId);
-
-      if (!getProjectSQLStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
 
       await connection.open();
+      const projectService = new ProjectService(connection);
 
-      const projectData = await connection.query(getProjectSQLStatement.text, getProjectSQLStatement.values);
+      const response = await projectService.getProjectData(projectId);
 
-      const projectResult = (projectData && projectData.rows && projectData.rows[0]) || null;
-
-      if (!projectResult) {
+      if (!response) {
         throw new HTTP400('Failed to get the project');
       }
 
       if (
-        projectResult.publish_date &&
+        response.publish_date &&
         !AuthorizationService.userHasValidRole([SYSTEM_ROLE.SYSTEM_ADMIN], req['system_user']['role_names'])
       ) {
         throw new HTTP400('Cannot delete a published project if you are not a system administrator.');
@@ -120,13 +114,7 @@ export function deleteProject(): RequestHandler {
        * PART 3
        * Delete the project and all associated records/resources from our DB
        */
-      const deleteProjectSQLStatement = queries.project.deleteProjectSQL(projectId);
-
-      if (!deleteProjectSQLStatement) {
-        throw new HTTP400('Failed to build SQL delete statement');
-      }
-
-      await connection.query(deleteProjectSQLStatement.text, deleteProjectSQLStatement.values);
+      await projectService.deleteProject(projectId);
 
       await connection.commit();
 

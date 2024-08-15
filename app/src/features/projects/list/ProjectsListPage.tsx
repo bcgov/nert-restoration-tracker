@@ -3,6 +3,7 @@ import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -25,7 +26,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
-import PagedTableInfoDialog from 'components/dialog/PagedTableInfoDialog';
+import InfoDialog from 'components/dialog/InfoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
 import {
   getStateCodeFromLabel,
@@ -36,23 +37,31 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
-import { IProjectsListProps } from 'interfaces/useProjectPlanApi.interface';
-import React, { useContext, useState } from 'react';
+import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
+import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
+import React, { Fragment, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isAuthenticated } from 'utils/authUtils';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
   const history = useNavigate();
-  const { keycloakWrapper } = useContext(AuthStateContext);
-  const isUserCreator =
-    isAuthenticated(keycloakWrapper) &&
-    keycloakWrapper?.hasSystemRole([SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR])
-      ? false
-      : true;
+
+  const [selected, setSelected] = useState<readonly number[]>([]);
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+
+  const projectAuthStateContext = useContext(ProjectAuthStateContext);
+  const isUserCreator = projectAuthStateContext.hasSystemRole([
+    SYSTEM_ROLE.SYSTEM_ADMIN,
+    SYSTEM_ROLE.DATA_ADMINISTRATOR
+  ])
+    ? false
+    : true;
 
   let rowsProjectFilterOutArchived = projects;
   if (rowsProjectFilterOutArchived && isUserCreator) {
@@ -70,10 +79,13 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         id: index,
         projectId: row.project.project_id,
         projectName: row.project.project_name,
-        authRef: row.permit.permits
-          .map((item: { permit_number: any }) => item.permit_number)
-          .join(', '),
-        org: row.contact.contacts.map((item) => item.agency).join(', '),
+        focus: utils.resolveProjectPlanFocus(
+          row.project.is_healing_land,
+          row.project.is_healing_people,
+          row.project.is_land_initiative,
+          row.project.is_cultural_initiative
+        ),
+        org: row.contact.contacts.map((item) => item.organization).join('\r'),
         plannedStartDate: row.project.start_date,
         plannedEndDate: row.project.end_date,
         actualStartDate: row.project.actual_start_date,
@@ -95,7 +107,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             id: index + rowsProject.length,
             projectId: row.id,
             projectName: row.name,
-            authRef: '',
+            focus: '',
             org: '',
             plannedStartDate: '',
             plannedEndDate: '',
@@ -111,6 +123,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
   const rows = rowsDraft.concat(rowsProject);
 
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
+
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler =
@@ -118,68 +136,95 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         onRequestSort(event, property);
       };
 
+    const [infoOpen, setInfoOpen] = useState(false);
+    const [infoTitle, setInfoTitle] = useState('');
+
+    const handleClickOpen = (headCell: utils.ProjectHeadCell) => {
+      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
+      setInfoOpen(true);
+    };
+
     return (
-      <TableHead>
-        <TableRow>
-          {utils.projectHeadCells.map((headCell) => {
-            if ('archive' !== headCell.id)
-              return (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                      </Box>
+      <>
+        <InfoDialogDraggable
+          isProject={true}
+          open={infoOpen}
+          dialogTitle={infoTitle}
+          onClose={() => setInfoOpen(false)}>
+          <InfoContent isProject={true} contentIndex={infoTitle} />
+        </InfoDialogDraggable>
+        <TableHead>
+          <TableRow>
+            {utils.projectHeadCells.map((headCell) => {
+              if ('archive' !== headCell.id)
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <Tooltip
+                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
+                      placement="top">
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : 'asc'}
+                        onClick={createSortHandler(headCell.id)}>
+                        {headCell.label}
+                        {orderBy === headCell.id ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </Tooltip>
+
+                    {headCell.infoButton ? (
+                      <IconButton onClick={() => handleClickOpen(headCell)}>
+                        <InfoIcon color="info" />
+                      </IconButton>
                     ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              );
-          })}
-          <SystemRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-            <TableCell>
-              {!myProject ? (
-                <Typography variant="inherit">{TableI18N.archive}</Typography>
-              ) : (
-                <>
+                  </TableCell>
+                );
+            })}
+            <SystemRoleGuard
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+              <TableCell>
+                {!myProject ? (
                   <Typography variant="inherit">{TableI18N.archive}</Typography>
-                  <Typography variant="inherit">{TableI18N.delete}</Typography>
-                </>
-              )}
-            </TableCell>
-          </SystemRoleGuard>
-          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
-            <TableCell>
-              {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
-            </TableCell>
-          </SystemRoleGuard>
-          {!myProject ? (
-            <TableCell padding="checkbox">
-              <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
-                <Checkbox
-                  color="primary"
-                  indeterminate={numSelected > 0 && numSelected < rowCount}
-                  checked={rowCount > 0 && numSelected === rowCount}
-                  onChange={onSelectAllClick}
-                  inputProps={{
-                    'aria-label': ProjectTableI18N.selectAllProjectsForExport
-                  }}
-                />
-              </Tooltip>
-            </TableCell>
-          ) : (
-            <></>
-          )}
-        </TableRow>
-      </TableHead>
+                ) : (
+                  <>
+                    <Typography variant="inherit">{TableI18N.archive}</Typography>
+                    <Typography variant="inherit">{TableI18N.delete}</Typography>
+                  </>
+                )}
+              </TableCell>
+            </SystemRoleGuard>
+            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
+              <TableCell>
+                {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
+              </TableCell>
+            </SystemRoleGuard>
+            {!myProject ? (
+              <TableCell padding="checkbox">
+                <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
+                  <Checkbox
+                    color="primary"
+                    indeterminate={numSelected > 0 && numSelected < rowCount}
+                    checked={rowCount > 0 && numSelected === rowCount}
+                    onChange={onSelectAllClick}
+                    inputProps={{
+                      'aria-label': ProjectTableI18N.selectAllProjectsForExport
+                    }}
+                  />
+                </Tooltip>
+              </TableCell>
+            ) : (
+              <></>
+            )}
+          </TableRow>
+        </TableHead>
+      </>
     );
   }
 
@@ -212,17 +257,18 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         )}
         {numSelected > 0 ? (
           <Button
-            sx={{ height: '3rem', width: '11rem' }}
+            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
             startIcon={<Icon path={mdiExport} size={1} />}>
-            <strong>{TableI18N.exportData}</strong>
+            {TableI18N.exportData}
           </Button>
         ) : (
-          <PagedTableInfoDialog isProject={true} />
+          <InfoDialog isProject={true} infoContent={'paged table'} />
         )}
       </Toolbar>
     );
@@ -231,7 +277,6 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   function ProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -299,6 +344,26 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       [order, orderBy, page, rowsPerPage]
     );
 
+    const focusTooltip = (focus: string) => {
+      return (
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
         <ProjectsTableToolbar numSelected={selected.length} />
@@ -338,14 +403,58 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                         variant="body2"
                         onClick={
                           draftCode != row.statusCode
-                            ? () => history(`/admin/projects/${row.projectId}`)
+                            ? () => history(`/admin/projects/${row.projectId}/details`)
                             : () => history(`/admin/projects/create?draftId=${row.projectId}`)
                         }>
                         {row.projectName}
                       </Link>
                     </TableCell>
-                    <TableCell align="left">{row.authRef}</TableCell>
-                    <TableCell align="left">{row.org}</TableCell>
+                    <TableCell align="left">
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
+                          <Fragment key={key}>
+                            <Box ml={-3}>
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusProjectChip}
+                                label={focusTooltip(focus)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgProjectChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
                     </TableCell>

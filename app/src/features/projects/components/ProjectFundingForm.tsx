@@ -1,10 +1,11 @@
 import { mdiPencilOutline, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Paper from '@mui/material/Paper';
@@ -23,6 +24,9 @@ import ProjectFundingItemForm, {
   ProjectFundingFormArrayItemInitialValues,
   ProjectFundingFormArrayItemYupSchema
 } from './ProjectFundingItemForm';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectFundingForm {
   funding: {
@@ -44,11 +48,6 @@ export const ProjectFundingFormYupSchema = yup.object().shape({
 
 export interface IInvestmentActionCategoryOption extends IMultiAutocompleteFieldOption {
   fs_id: number;
-}
-
-export interface IProjectFundingFormProps {
-  fundingSources: IMultiAutocompleteFieldOption[];
-  investment_action_category: IInvestmentActionCategoryOption[];
 }
 
 const pageStyles = {
@@ -85,7 +84,7 @@ const pageStyles = {
  *
  * @return {*}
  */
-const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
+const ProjectFundingForm: React.FC = () => {
   const { values } = useFormikContext<IProjectFundingForm>();
 
   // Tracks information about the current funding source item that is being added/edited
@@ -95,10 +94,27 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
 
   return (
     <>
-      <Typography component="legend">Funding Sources</Typography>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={CreateProjectI18N.fundingSource}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={CreateProjectI18N.fundingSource} />
+      </InfoDialogDraggable>
+
+      <Typography component="legend">
+        Funding Sources
+        <IconButton edge="end" onClick={handleClickOpen}>
+          <InfoIcon color="info" />
+        </IconButton>
+      </Typography>
 
       <Box mb={3} maxWidth={'72ch'}>
         <Typography variant="body1" color="textSecondary">
@@ -115,12 +131,7 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                 dialogTitle={AddFundingI18N.addTitle}
                 open={isModalOpen}
                 component={{
-                  element: (
-                    <ProjectFundingItemForm
-                      fundingSources={props.fundingSources}
-                      investment_action_category={props.investment_action_category}
-                    />
-                  ),
+                  element: <ProjectFundingItemForm />,
                   initialValues: currentProjectFundingFormArrayItem.values,
                   validationSchema: ProjectFundingFormArrayItemYupSchema
                 }}
@@ -157,24 +168,14 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                   </ListItem>
                 )}
                 {values.funding.fundingSources.map((fundingSource, index) => {
-                  const investment_action_category_label =
-                    (fundingSource.agency_id === 1 && 'Investment Action') ||
-                    (fundingSource.agency_id === 2 && 'Investment Category') ||
-                    null;
-
-                  const investment_action_category_value = props.investment_action_category.filter(
-                    (item) => item.value === fundingSource.investment_action_category
-                  )?.[0]?.label;
-
                   return (
                     <ListItem dense sx={pageStyles.fundingListItem} key={index}>
                       <Paper sx={pageStyles.fundingListItemInner}>
                         <Toolbar sx={pageStyles.fundingListItemToolbar}>
                           <Typography sx={pageStyles.title}>
-                            {getCodeValueNameByID(props.fundingSources, fundingSource.agency_id)}
-                            {investment_action_category_label && (
+                            {fundingSource.organization_name && (
                               <span style={pageStyles.titleDesc}>
-                                ({investment_action_category_value})
+                                ({fundingSource.organization_name})
                               </span>
                             )}
                           </Typography>
@@ -209,10 +210,10 @@ const ProjectFundingForm: React.FC<IProjectFundingFormProps> = (props) => {
                           <Grid container spacing={2}>
                             <Grid item xs={12} sm={6} md={4}>
                               <Typography variant="body2" color="textSecondary">
-                                Agency Project ID
+                                Funding Project ID
                               </Typography>
                               <Typography variant="body1">
-                                {fundingSource.agency_project_id}
+                                {fundingSource.funding_project_id}
                               </Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>

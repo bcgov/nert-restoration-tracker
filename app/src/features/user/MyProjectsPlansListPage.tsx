@@ -1,34 +1,54 @@
 import Container from '@mui/material/Container';
-import { AuthStateContext } from 'contexts/authStateContext';
 import MyPlans from 'features/user/MyPlans';
 import MyProjects from 'features/user/MyProjects';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
-import React, { useContext, useEffect, useState } from 'react';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import React, { useEffect, useState } from 'react';
 
 const MyProjectsPlansListPage: React.FC = () => {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
+  const restorationTrackerApi = useNertApi();
 
-  const restorationTrackerApi = useRestorationTrackerApi();
-
-  const [projectsPlans, setProjectsPlans] = useState<IGetProjectForViewResponse[]>([]);
+  const [projects, setProjects] = useState<IGetProjectForViewResponse[]>([]);
+  const [plans, setPlans] = useState<IGetPlanForViewResponse[]>([]);
   const [drafts, setDrafts] = useState<IGetDraftsListResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   //projects and drafts
   useEffect(() => {
     const getProjects = async () => {
-      if (!keycloakWrapper?.hasLoadedAllUserInfo) {
+      if (
+        authStateContext.nertUserWrapper.isLoading ||
+        !authStateContext.nertUserWrapper.systemUserId
+      ) {
         return;
       }
 
       const projectsResponse = await restorationTrackerApi.project.getUserProjectsList(
-        keycloakWrapper.systemUserId
+        authStateContext.nertUserWrapper.systemUserId
       );
 
       setIsLoading(false);
-      setProjectsPlans(projectsResponse);
+      setProjects(projectsResponse);
+    };
+
+    const getPlans = async () => {
+      if (
+        authStateContext.nertUserWrapper.isLoading ||
+        !authStateContext.nertUserWrapper.systemUserId
+      ) {
+        return;
+      }
+
+      const plansResponse = await restorationTrackerApi.plan.getUserPlansList(
+        authStateContext.nertUserWrapper.systemUserId
+      );
+
+      setIsLoading(false);
+      setPlans(plansResponse);
     };
 
     const getDrafts = async () => {
@@ -42,15 +62,16 @@ const MyProjectsPlansListPage: React.FC = () => {
 
     if (isLoading) {
       getProjects();
+      getPlans();
       getDrafts();
     }
-  }, [restorationTrackerApi, isLoading, keycloakWrapper]);
+  }, [restorationTrackerApi, isLoading, authStateContext]);
 
   //TODO: add plans loading to list
   return (
     <Container maxWidth="xl">
-      <MyProjects projects={projectsPlans} drafts={drafts} />
-      <MyPlans plans={[]} drafts={drafts} />
+      <MyProjects projects={projects} drafts={drafts} />
+      <MyPlans plans={plans} drafts={drafts} />
     </Container>
   );
 };

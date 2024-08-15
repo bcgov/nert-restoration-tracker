@@ -53,14 +53,14 @@ GET.apiDoc = {
         oneOf: [
           {
             type: 'string',
-            enum: ['attachments', 'treatments'],
+            enum: ['attachments', 'thumbnail', 'draft'],
             nullable: true
           },
           {
             type: 'array',
             items: {
               type: 'string',
-              enum: ['attachments', 'treatments']
+              enum: ['attachments', 'thumbnail', 'draft']
             },
             nullable: true
           }
@@ -92,7 +92,8 @@ GET.apiDoc = {
                       type: 'string'
                     },
                     size: {
-                      type: 'number'
+                      type: 'number',
+                      nullable: true
                     },
                     url: {
                       type: 'string'

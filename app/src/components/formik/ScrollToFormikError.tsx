@@ -1,7 +1,7 @@
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { useFormikContext } from 'formik';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useEffect, useState } from 'react';
 
 export const ScrollToFormikError: React.FC = () => {
@@ -16,9 +16,6 @@ export const ScrollToFormikError: React.FC = () => {
     'project.start_date',
     'project.objectives',
     'species.focal_species',
-    /^iucn\.classificationDetails\.\[\d+]\.classification$/,
-    /^iucn\.classificationDetails\.\[\d+]\.subClassification1$/,
-    /^iucn\.classificationDetails\.\[\d+]\.subClassification2$/,
     /^permit\.permits\.\[\d+]\.permit_number$/,
     /^permit\.permits\.\[\d+]\.permit_type$/,
     'location.region',

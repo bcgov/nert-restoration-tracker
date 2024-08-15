@@ -66,12 +66,12 @@ describe('gets a list of project participants', () => {
       projectId: '1'
     };
 
-    sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves([{ id: 1 }]);
+    sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves([{ system_user_id: 1 } as any]);
 
     const requestHandler = get_project_participants.getParticipants();
 
     await requestHandler(mockReq, mockRes, mockNext);
 
-    expect(mockRes.jsonValue).to.eql({ participants: [{ id: 1 }] });
+    expect(mockRes.jsonValue).to.eql({ participants: [{ system_user_id: 1 }] });
   });
 });

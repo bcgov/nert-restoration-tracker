@@ -10,24 +10,25 @@ import ProjectFilter, {
   IProjectAdvancedFilters,
   ProjectAdvancedFiltersInitialValues
 } from 'components/search-project-filter/ProjectFilter';
-import { ICONS, focusOptions, projectStatusOptions } from 'constants/misc';
+import { focusOptions, ICONS, projectStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { useNertApi } from 'hooks/useNertApi';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicProjectsListPage from 'pages/public/list/PublicProjectsListPage';
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ProjectTableI18N } from 'constants/i18n';
+import { useCodesContext } from 'hooks/useContext';
 
 export default function PublicProjects() {
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
   const history = useNavigate();
   const location = useLocation();
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,8 +42,6 @@ export default function PublicProjects() {
       const urlParams = qs.parse(location.search.replace('?', ''));
       const values = {
         keyword: urlParams.keyword,
-        contact_agency: urlParams.contact_agency,
-        funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
@@ -50,10 +49,6 @@ export default function PublicProjects() {
         status: urlParams.status,
         focus: urlParams.focus
       } as IProjectAdvancedFilters;
-
-      if (values.funding_agency === undefined) {
-        values.funding_agency = [];
-      }
 
       return values;
     }
@@ -135,7 +130,7 @@ export default function PublicProjects() {
     });
   };
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   //projects
   useEffect(() => {
@@ -165,7 +160,7 @@ export default function PublicProjects() {
     }
   }, [isLoading, location.search, formikValues, collectFilterParams]);
 
-  if (!codes.isReady || !codes.codes) {
+  if (!codes.isReady || !codes.data) {
     return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
   }
 
@@ -195,7 +190,7 @@ export default function PublicProjects() {
       </Box>
       <Box>
         <Typography ml={1} variant="body1" color="textSecondary">
-          BC restoration projects and related data.
+          {ProjectTableI18N.projectDefinition}
         </Typography>
       </Box>
 
@@ -208,18 +203,8 @@ export default function PublicProjects() {
             onReset={handleReset}
             enableReinitialize={true}>
             <ProjectFilter
-              contact_agency={
-                codes.codes.coordinator_agency?.map((item: any) => {
-                  return item.name;
-                }) || []
-              }
-              funding_agency={
-                codes.codes.funding_source.map((item: { id: any; name: any }) => {
-                  return { value: item.id, label: item.name };
-                }) || []
-              }
               region={
-                codes.codes.regions.map((item: { id: any; name: any }) => {
+                codes.data.regions.map((item: { id: any; name: any }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }

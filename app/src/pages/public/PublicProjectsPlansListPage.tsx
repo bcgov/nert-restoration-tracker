@@ -1,14 +1,14 @@
 import Container from '@mui/material/Container';
-import { AuthStateContext } from 'contexts/authStateContext';
 import PublicPlans from 'pages/public/PublicPlans';
 import PublicProjects from 'pages/public/PublicProjects';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 
 export default function PublicProjectsPlansListPage() {
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
 
-  if (keycloakWrapper?.keycloak.authenticated) {
+  if (authStateContext.auth.isAuthenticated) {
     // User has a role
     return <Navigate replace to={{ pathname: '/admin/projects' }} />;
   }

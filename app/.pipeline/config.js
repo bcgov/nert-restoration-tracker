@@ -76,7 +76,7 @@ const phases = {
     suffix: `-dev-${deployChangeId}`,
     instance: `${name}-dev-${deployChangeId}`,
     version: `${deployChangeId}-${changeId}`,
-    tag: `dev-${version}-${deployChangeId}`,
+    tag: `dev-${version}`,
     host: (isStaticDeployment && staticUrls.dev) || `${name}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     apiHost:
       (isStaticDeployment && staticUrlsAPI.dev) || `${apiName}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
@@ -93,7 +93,10 @@ const phases = {
     memoryRequest: '50Mi',
     memoryLimit: (isStaticDeployment && '300Mi') || '200Mi',
     replicas: '1',
-    replicasMax: (isStaticDeployment && '2') || '1'
+    replicasMax: (isStaticDeployment && '2') || '1',
+    backbonePublicApiHost: 'https://api-dev-biohub-platform.apps.silver.devops.gov.bc.ca',
+    biohubTaxonPath: '/api/taxonomy/taxon',
+    biohubTaxonTsnPath: '/api/taxonomy/taxon/tsn'
   },
   test: {
     namespace: 'd83219-test',
@@ -119,7 +122,10 @@ const phases = {
     memoryRequest: '100Mi',
     memoryLimit: '400Mi',
     replicas: '2',
-    replicasMax: '3'
+    replicasMax: '3',
+    backbonePublicApiHost: 'https://api-test-biohub-platform.apps.silver.devops.gov.bc.ca',
+    biohubTaxonPath: '/api/taxonomy/taxon',
+    biohubTaxonTsnPath: '/api/taxonomy/taxon/tsn'
   },
   prod: {
     namespace: 'd83219-prod',
@@ -145,7 +151,10 @@ const phases = {
     memoryRequest: '100Mi',
     memoryLimit: '400Mi',
     replicas: '2',
-    replicasMax: '3'
+    replicasMax: '3',
+    backbonePublicApiHost: 'https://api-biohub-platform.apps.silver.devops.gov.bc.ca',
+    biohubTaxonPath: '/api/taxonomy/taxon',
+    biohubTaxonTsnPath: '/api/taxonomy/taxon/tsn'
   }
 };
 

@@ -59,6 +59,12 @@ parameters:
   - name: REACT_APP_MAPTILER_API_KEY
     description: Maptiler API key
     required: true
+  - name: REACT_APP_BACKBONE_PUBLIC_API_HOST
+    description: Backbone API host for application frontend
+  - name: REACT_APP_BIOHUB_TAXON_PATH
+    description: Taxon path for biohub
+  - name: REACT_APP_BIOHUB_TAXON_TSN_PATH
+    description: Taxon TSN path for biohub
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
@@ -68,9 +74,9 @@ parameters:
   - name: MEMORY_LIMIT
     value: '200Mi'
   - name: REPLICAS
-    value: '1'
+    value: '2'
   - name: REPLICAS_MAX
-    value: '1'
+    value: '2'
   - name: NAMELINK
     value: restoration-tracker-api
 objects:
@@ -160,6 +166,12 @@ objects:
                     secretKeyRef:
                       name: ${REACT_APP_MAPTILER_SECRET}
                       key: ${REACT_APP_MAPTILER_API_KEY}
+                - name: REACT_APP_BACKBONE_PUBLIC_API_HOST
+                  value: ${REACT_APP_BACKBONE_PUBLIC_API_HOST}
+                - name: REACT_APP_BIOHUB_TAXON_PATH
+                  value: ${REACT_APP_BIOHUB_TAXON_PATH}
+                - name: REACT_APP_BIOHUB_TAXON_TSN_PATH
+                  value: ${REACT_APP_BIOHUB_TAXON_TSN_PATH}
               image: ' '
               imagePullPolicy: Always
               name: app
@@ -261,24 +273,3 @@ objects:
       wildcardPolicy: None
     status:
       ingress: null
-  - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v2
-    metadata:
-      annotations: {}
-      creationTimestamp: null
-      labels: {}
-      name: ${NAME}${SUFFIX}
-    spec:
-      minReplicas: ${{REPLICAS}}
-      maxReplicas: ${{REPLICAS_MAX}}
-      scaleTargetRef:
-        apiVersion: apps.openshift.io/v1
-        kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
-      metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 80

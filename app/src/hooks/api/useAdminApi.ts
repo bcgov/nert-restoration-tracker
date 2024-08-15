@@ -2,9 +2,10 @@ import { AxiosInstance } from 'axios';
 import { AdministrativeActivityStatusType, AdministrativeActivityType } from 'constants/misc';
 import {
   IAccessRequestDataObject,
-  IGetAccessRequestsListResponse,
   IgcNotifyGenericMessage,
-  IgcNotifyRecipient
+  IgcNotifyRecipient,
+  IGetAccessRequestsListResponse,
+  IGetAdministrativeActivityStanding
 } from 'interfaces/useAdminApi.interface';
 import qs from 'qs';
 
@@ -45,7 +46,7 @@ const useAdminApi = (axios: AxiosInstance) => {
     type: AdministrativeActivityType[] = [],
     status: AdministrativeActivityStatusType[] = []
   ): Promise<IGetAccessRequestsListResponse[]> => {
-    const { data } = await axios.get(`/api/administrative-activities`, {
+    const { data } = await axios.get(`/api/administrative-activity/list`, {
       params: { type, status },
       paramsSerializer: (params) => {
         return qs.stringify(params);
@@ -96,15 +97,16 @@ const useAdminApi = (axios: AxiosInstance) => {
   };
 
   /**
-   * Has pending access requests.
+   * Get the administrative activity standing.
    *
-   * @return {*} {Promise<number>}
+   * @return {*}  {Promise<IGetAdministrativeActivityStanding>}
    */
-  const hasPendingAdministrativeActivities = async (): Promise<number> => {
-    const { data } = await axios.get('/api/administrative-activity');
+  const getAdministrativeActivityStanding =
+    async (): Promise<IGetAdministrativeActivityStanding> => {
+      const { data } = await axios.get('/api/administrative-activity');
 
-    return data;
-  };
+      return data;
+    };
 
   /**
    * Grant one or more system roles to a user.
@@ -151,7 +153,7 @@ const useAdminApi = (axios: AxiosInstance) => {
     approveAccessRequest,
     denyAccessRequest,
     createAdministrativeActivity,
-    hasPendingAdministrativeActivities,
+    getAdministrativeActivityStanding,
     addSystemUserRoles,
     addSystemUser
   };

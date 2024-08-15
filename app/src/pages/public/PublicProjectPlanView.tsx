@@ -1,10 +1,8 @@
 import CircularProgress from '@mui/material/CircularProgress';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import {
-  IGetPlanForViewResponse,
-  IGetProjectForViewResponse
-} from 'interfaces/useProjectPlanApi.interface';
+import { useCodesContext } from 'hooks/useContext';
+import { useNertApi } from 'hooks/useNertApi';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import PublicPlanView from 'pages/public/PublicPlanView';
 import PublicProjectView from 'pages/public/PublicProjectView';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -19,13 +17,13 @@ export default function PublicProjectPlanView() {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectPlanId = Number(urlParams['id']);
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const [isLoadingProjectPlan, setIsLoadingProjectPlan] = useState(false);
-  const [projectPlanDetails, setProjectPlanDetails] = useState<
-    (IGetProjectForViewResponse & IGetPlanForViewResponse) | null
-  >(null);
+  const [projectPlanDetails, setProjectPlanDetails] = useState<IGetProjectForViewResponse | null>(
+    null
+  );
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProjectPlan = useCallback(async () => {
     const projectPlanDetailsResponse =
@@ -46,7 +44,7 @@ export default function PublicProjectPlanView() {
     }
   }, [isLoadingProjectPlan, projectPlanDetails, getProjectPlan]);
 
-  if (!codes.codes || !projectPlanDetails) {
+  if (!codes.data || !projectPlanDetails) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -55,9 +53,9 @@ export default function PublicProjectPlanView() {
   return (
     <>
       {!isProject ? (
-        <PublicPlanView plan={projectPlanDetails} codes={codes.codes} />
+        <PublicPlanView plan={projectPlanDetails as IGetPlanForViewResponse} codes={codes.data} />
       ) : (
-        <PublicProjectView project={projectPlanDetails} codes={codes.codes} />
+        <PublicProjectView project={projectPlanDetails} codes={codes.data} />
       )}
     </>
   );

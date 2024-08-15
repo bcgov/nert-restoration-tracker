@@ -5,11 +5,12 @@ import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { S3FileType } from 'constants/attachments';
+import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
   IUploadAttachmentResponse
-} from 'interfaces/useProjectPlanApi.interface';
+} from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -27,20 +28,19 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const { attachmentsList, getAttachments } = props;
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 
-  // const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
-  const handleUploadAttachmentClick = () => true;
+  const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
-    return (file, cancelToken, handleFileUploadProgress) => {
+    return (file, cancelToken) => {
       return restorationTrackerApi.project.uploadProjectAttachments(
         projectId,
         file,
-        cancelToken,
-        handleFileUploadProgress
+        S3FileType.ATTACHMENTS,
+        cancelToken
       );
     };
   };

@@ -5,31 +5,29 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { AuthStateContext } from 'contexts/authStateContext';
-import React, { useContext } from 'react';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 const AccessDenied = () => {
   const history = useNavigate();
+  const authStateContext = useAuthStateContext();
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
-
-  if (!keycloakWrapper?.keycloak.authenticated) {
-    // User is not logged in
-    return <Navigate replace to={{ pathname: '/' }} />;
-  }
-
-  if (!keycloakWrapper.hasLoadedAllUserInfo) {
-    // User data has not been loaded, can not yet determine if they have a role
+  if (!authStateContext.auth || authStateContext.nertUserWrapper.isLoading) {
     return <CircularProgress className="pageProgress" />;
   }
 
-  if (keycloakWrapper.hasAccessRequest) {
+  const userHasARole = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles;
+
+  if (userHasARole) {
+    // User already has a role
+    return <Navigate replace to={{ pathname: '/admin/projects' }} />;
+  }
+
+  if (authStateContext.nertUserWrapper.hasAccessRequest) {
     // User already has a pending access request
     return <Navigate replace to={{ pathname: '/request-submitted' }} />;
   }
-
-  const userHasARole = !!keycloakWrapper?.systemRoles?.length;
 
   return (
     <Container>

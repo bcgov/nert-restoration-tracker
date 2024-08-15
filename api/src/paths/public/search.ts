@@ -1,8 +1,7 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
+import SQL from 'sql-template-strings';
 import { getAPIUserDBConnection } from '../../database/db';
-import { HTTP400 } from '../../errors/custom-error';
-import { queries } from '../../queries/queries';
 import { getLogger } from '../../utils/logger';
 import { _extractResults } from '../search';
 
@@ -52,18 +51,33 @@ export function getSearchResults(): RequestHandler {
     const connection = getAPIUserDBConnection();
 
     try {
-      const getSpatialSearchResultsSQLStatement = queries.public.getPublicSpatialSearchResultsSQL();
-
-      if (!getSpatialSearchResultsSQLStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
+      const sqlStatement = SQL`
+        SELECT
+          p.project_id as id,
+          p.name,
+          p.is_project,
+          p.state_code,
+          psc.number_sites,
+          psc.size_ha,
+          public.ST_asGeoJSON(psc.geography) as geometry,
+          psc.geojson#>>'{}' as geojson
+        FROM
+          project p
+        LEFT JOIN
+          project_spatial_component psc
+        ON
+          p.project_id = psc.project_id
+        LEFT join
+          project_spatial_component_type psct
+        ON
+          psc.project_spatial_component_type_id = psct.project_spatial_component_type_id
+        WHERE
+          psct.name = 'Boundary';
+      `;
 
       await connection.open();
 
-      const response = await connection.query(
-        getSpatialSearchResultsSQLStatement.text,
-        getSpatialSearchResultsSQLStatement.values
-      );
+      const response = await connection.sql(sqlStatement);
 
       await connection.commit();
 

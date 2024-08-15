@@ -20,52 +20,24 @@ GET.apiDoc = {
           schema: {
             type: 'object',
             properties: {
+              branding: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'number'
+                    },
+                    name: {
+                      type: 'string'
+                    },
+                    value: {
+                      type: 'string'
+                    }
+                  }
+                }
+              },
               first_nations: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              funding_source: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              investment_action_category: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    fs_id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              coordinator_agency: {
                 type: 'array',
                 items: {
                   type: 'object',
@@ -85,54 +57,6 @@ GET.apiDoc = {
                   type: 'object',
                   properties: {
                     id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              iucn_conservation_action_level_1_classification: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              iucn_conservation_action_level_2_subclassification: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    iucn1_id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              iucn_conservation_action_level_3_subclassification: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    iucn2_id: {
                       type: 'number'
                     },
                     name: {
@@ -170,20 +94,6 @@ GET.apiDoc = {
                 }
               },
               administrative_activity_status_type: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'number'
-                    },
-                    name: {
-                      type: 'string'
-                    }
-                  }
-                }
-              },
-              ranges: {
                 type: 'array',
                 items: {
                   type: 'object',

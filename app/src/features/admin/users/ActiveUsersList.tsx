@@ -24,9 +24,8 @@ import { CustomMenuButton, CustomMenuIconButton } from 'components/toolbar/Actio
 import { AddSystemUserI18N, DeleteSystemUserI18N, UpdateSystemUserI18N } from 'constants/i18n';
 import { DialogContext, ISnackbarProps } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
-import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
@@ -35,6 +34,7 @@ import AddSystemUsersForm, {
   AddSystemUsersFormYupSchema,
   IAddSystemUsersForm
 } from './AddSystemUsersForm';
+import { ISystemUser } from 'interfaces/useUserApi.interface';
 
 const pageStyles = {
   table: {
@@ -46,7 +46,7 @@ const pageStyles = {
 };
 
 export interface IActiveUsersListProps {
-  activeUsers: IGetUserResponse[];
+  activeUsers: ISystemUser[];
   codes: IGetAllCodeSetsResponse;
   refresh: () => void;
 }
@@ -58,7 +58,7 @@ export interface IActiveUsersListProps {
  * @return {*}
  */
 const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const { activeUsers, codes } = props;
   const history = useNavigate();
 
@@ -72,7 +72,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
     dialogContext.setSnackbar({ ...textDialogProps, open: true });
   };
 
-  const handleRemoveUserClick = (row: IGetUserResponse) => {
+  const handleRemoveUserClick = (row: ISystemUser) => {
     dialogContext.setYesNoDialog({
       dialogTitle: 'Remove User?',
       dialogContent: (
@@ -98,7 +98,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
     });
   };
 
-  const deActivateSystemUser = async (user: IGetUserResponse) => {
+  const deActivateSystemUser = async (user: ISystemUser) => {
     if (!user?.id) {
       return;
     }
@@ -137,8 +137,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
   };
 
   const handleChangeUserPermissionsClick = (
-    row: IGetUserResponse,
-    newRoleName: any,
+    row: ISystemUser,
+    newRoleName: string,
     newRoleId: number
   ) => {
     dialogContext.setYesNoDialog({
@@ -166,7 +166,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
     });
   };
 
-  const changeSystemUserRole = async (user: IGetUserResponse, roleId: number, roleName: string) => {
+  const changeSystemUserRole = async (user: ISystemUser, roleId: number, roleName: string) => {
     if (!user?.id) {
       return;
     }

@@ -25,6 +25,8 @@ export interface ILayerSwitcherProps {
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
+  open?: boolean;
+  hideProjects?: boolean;
 }
 
 const switcherStyle = {
@@ -43,7 +45,6 @@ const switcherCloseStyle = {
   right: '2px',
   top: '2px'
 };
-
 const buttonStyle = {
   position: 'absolute',
   bottom: '120px',
@@ -68,9 +69,9 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
   const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
     props.layerVisibility;
 
-  const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
+  const [switcherOpen, setSwitcherOpen] = useState(props.open ? true : false);
 
-  const [switcherOpen, setSwitcherOpen] = useState(false);
+  const toggleLayerswitcher = () => setSwitcherOpen(!switcherOpen);
 
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
@@ -78,7 +79,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
 
   return (
     <div>
-      {switcherOpen ? (
+      {!switcherOpen ? (
         <Box title="Open Layer Picker" sx={buttonStyle}>
           <IconButton onClick={toggleLayerswitcher}>
             <LayersIcon />
@@ -91,36 +92,42 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               <CloseIcon />
             </IconButton>
           </Box>
-          <b>Projects & Plans</b>
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />}
-              label={
-                <div style={iconLegendStyle}>
-                  <span>Projects</span>
-                  <img
-                    style={iconLegendIconStyle}
-                    src="/assets/icon/marker-icon.png"
-                    alt="projects"
-                  />
-                </div>
-              }
-            />
-            <FormControlLabel
-              control={<Checkbox checked={plans[0]} onClick={() => plans[1](!plans[0])} />}
-              label={
-                <div style={iconLegendStyle}>
-                  <span>Plans</span>
-                  <img
-                    style={iconLegendIconStyle}
-                    src="/assets/icon/marker-icon2.png"
-                    alt="plans"
-                  />
-                </div>
-              }
-            />
-          </FormGroup>
-          <hr />
+          {props.hideProjects !== true && (
+            <Box>
+              <b>Projects & Plans</b>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />
+                  }
+                  label={
+                    <div style={iconLegendStyle}>
+                      <span>Projects</span>
+                      <img
+                        style={iconLegendIconStyle}
+                        src="/assets/icon/marker-icon.png"
+                        alt="projects"
+                      />
+                    </div>
+                  }
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={plans[0]} onClick={() => plans[1](!plans[0])} />}
+                  label={
+                    <div style={iconLegendStyle}>
+                      <span>Plans</span>
+                      <img
+                        style={iconLegendIconStyle}
+                        src="/assets/icon/marker-icon2.png"
+                        alt="plans"
+                      />
+                    </div>
+                  }
+                />
+              </FormGroup>
+              <hr />
+            </Box>
+          )}
           <b>Context Layers</b>
           <FormGroup>
             <FormControlLabel

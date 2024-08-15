@@ -1,13 +1,13 @@
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import ProjectAdvancedFilters from './ProjectAdvancedFilters';
 import { IProjectAdvancedFilters, ProjectAdvancedFiltersInitialValues } from './ProjectFilter';
 
-jest.mock('../../hooks/useRestorationTrackerApi');
-const mockRestorationTrackerApi = useRestorationTrackerApi as jest.Mock;
+jest.mock('../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
 const mockUseApi = {
   taxonomy: {
     searchSpecies: jest.fn().mockResolvedValue({ searchResponse: [] }),
@@ -29,7 +29,7 @@ describe.skip('ProjectAdvancedFilters', () => {
     const { getByLabelText } = render(
       <MemoryRouter>
         <Formik initialValues={ProjectAdvancedFiltersInitialValues} onSubmit={() => {}}>
-          <ProjectAdvancedFilters funding_agency={[]} contact_agency={[]} ranges={[]} region={[]} />
+          <ProjectAdvancedFilters region={[]} status={[]} focus={[]} />
         </Formik>
       </MemoryRouter>
     );
@@ -45,22 +45,10 @@ describe.skip('ProjectAdvancedFilters', () => {
   });
 
   test.skip('renders properly when props are given', async () => {
-    const funding_agency = [
-      { value: 1, label: 'label1' },
-      { value: 2, label: 'label2' },
-      { value: 3, label: 'label3' }
-    ];
-    const contact_agency = ['agency1', 'agency2', 'agency3'];
-
-    const { getByTestId, getAllByTestId } = render(
+    const { getByTestId } = render(
       <MemoryRouter>
         <Formik initialValues={ProjectAdvancedFiltersInitialValues} onSubmit={() => {}}>
-          <ProjectAdvancedFilters
-            funding_agency={funding_agency}
-            contact_agency={contact_agency}
-            ranges={[]}
-            region={[]}
-          />
+          <ProjectAdvancedFilters region={[]} status={[]} focus={[]} />
         </Formik>
       </MemoryRouter>
     );
@@ -68,7 +56,6 @@ describe.skip('ProjectAdvancedFilters', () => {
     await waitFor(() => {
       expect(getByTestId('advancedFilters')).toBeInTheDocument();
       expect(getByTestId('contact_agency')).toBeInTheDocument();
-      expect(getAllByTestId('funding_agency').length).toEqual(2);
       expect(getByTestId('permit_number')).toBeInTheDocument();
       expect(getByTestId('start_date')).toBeInTheDocument();
       expect(getByTestId('end_date')).toBeInTheDocument();
@@ -85,32 +72,18 @@ describe.skip('ProjectAdvancedFilters', () => {
     });
 
     const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
-      contact_agency: 'agency1',
       permit_number: 'temp2',
-      funding_agency: [1],
       start_date: '',
       end_date: '',
-      keyword: 'temp3',
-      species: [1]
+      keyword: 'temp3'
     };
-    const funding_agency = [
-      { value: 1, label: 'label1' },
-      { value: 2, label: 'label2' },
-      { value: 3, label: 'label3' }
-    ];
-    const contact_agency = ['agency1', 'agency2', 'agency3'];
 
     const { queryByText } = render(
       <MemoryRouter>
         <Formik<IProjectAdvancedFilters>
           initialValues={ProjectAdvancedFiltersInitialValues}
           onSubmit={() => {}}>
-          <ProjectAdvancedFilters
-            funding_agency={funding_agency}
-            contact_agency={contact_agency}
-            ranges={[]}
-            region={[]}
-          />
+          <ProjectAdvancedFilters region={[]} status={[]} focus={[]} />
         </Formik>
       </MemoryRouter>
     );

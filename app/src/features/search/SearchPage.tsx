@@ -2,16 +2,12 @@ import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { IMarker } from 'components/map/components/MarkerCluster';
-import MapContainer from 'components/map/MapContainer2';
-import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
-import { AuthStateContext } from 'contexts/authStateContext';
+import MapContainer from 'components/map/MapContainer';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { LatLngTuple } from 'leaflet';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 
 /**
@@ -20,13 +16,15 @@ import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers'
  * @return {*}
  */
 const SearchPage: React.FC = () => {
-  const restorationApi = useRestorationTrackerApi();
+  const restorationApi = useNertApi();
 
   const [performSearch, setPerformSearch] = useState<boolean>(true);
-  const [geometries, setGeometries] = useState<IMarker[]>([]);
+  const [geometries, setGeometries] = useState([]);
 
+  const authStateContext = useAuthStateContext();
+
+  type LatLngTuple = [number, number, number?];
   const dialogContext = useContext(DialogContext);
-  const { keycloakWrapper } = useContext(AuthStateContext);
 
   const showFilterErrorDialog = useCallback(
     (textDialogProps?: Partial<IErrorDialogProps>) => {
@@ -43,10 +41,9 @@ const SearchPage: React.FC = () => {
     },
     [dialogContext]
   );
-
   const getSearchResults = useCallback(async () => {
     try {
-      const response = isAuthenticated(keycloakWrapper)
+      const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
 
@@ -55,7 +52,7 @@ const SearchPage: React.FC = () => {
         return;
       }
 
-      const clusteredPointGeometries: IMarker[] = [];
+      const clusteredPointGeometries: any = [];
 
       response.forEach((result: any) => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
@@ -63,7 +60,7 @@ const SearchPage: React.FC = () => {
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          popup: <SearchFeaturePopup featureData={result} />
+          feature: result
         });
       });
 
@@ -77,7 +74,7 @@ const SearchPage: React.FC = () => {
         dialogErrorDetails: apiError?.errors
       });
     }
-  }, [restorationApi.search, restorationApi.public.search, showFilterErrorDialog, keycloakWrapper]);
+  }, [restorationApi.search, restorationApi.public.search, authStateContext.auth]);
 
   useEffect(() => {
     if (performSearch) {
@@ -90,8 +87,8 @@ const SearchPage: React.FC = () => {
    */
   const boundary = useState<boolean>(true);
   const wells = useState<boolean>(false);
-  const projects = useState<boolean>(false);
-  const plans = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
   const wildlife = useState<boolean>(false);
   const indigenous = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
@@ -115,9 +112,10 @@ const SearchPage: React.FC = () => {
         mapId="search_boundary_map"
         features={geometries}
         layerVisibility={layerVisibility}
+        // bounds={projectBoundary}
         centroids={true}
       />
-      <LayerSwitcher layerVisibility={layerVisibility} />
+      <LayerSwitcher layerVisibility={layerVisibility} open={true} />
     </Box>
   );
 };

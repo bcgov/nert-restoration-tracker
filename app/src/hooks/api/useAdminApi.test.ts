@@ -1,6 +1,11 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import useAdminApi from './useAdminApi';
+import {
+  IAccessRequestDataObject,
+  IgcNotifyGenericMessage,
+  IgcNotifyRecipient
+} from 'interfaces/useAdminApi.interface';
 
 describe('useAdminApi', () => {
   let mock: any;
@@ -17,8 +22,8 @@ describe('useAdminApi', () => {
     mock.onPost('/api/gcnotify/send').reply(200);
 
     const result = await useAdminApi(axios).sendGCNotification(
-      { emailAddress: 'test@@email.com' },
-      { body: 'test' }
+      { emailAddress: 'test@@email.com' } as IgcNotifyRecipient,
+      { body: 'test' } as unknown as IgcNotifyGenericMessage
     );
 
     expect(result).toEqual(true);
@@ -39,7 +44,7 @@ describe('useAdminApi', () => {
       }
     ];
 
-    mock.onGet(`/api/administrative-activities`).reply(200, response);
+    mock.onGet(`/api/administrative-activity/list`).reply(200, response);
 
     const result = await useAdminApi(axios).getAdministrativeActivities();
 
@@ -52,7 +57,9 @@ describe('useAdminApi', () => {
       date: '2020/04/04'
     });
 
-    const result = await useAdminApi(axios).createAdministrativeActivity({ key: 'value' });
+    const result = await useAdminApi(axios).createAdministrativeActivity({
+      key: 'value'
+    } as unknown as IAccessRequestDataObject);
 
     expect(result).toEqual({
       id: 2,
@@ -60,10 +67,10 @@ describe('useAdminApi', () => {
     });
   });
 
-  it('hasPendingAdministrativeActivities works as expected', async () => {
+  it('getAdministrativeActivityStanding works as expected', async () => {
     mock.onGet('/api/administrative-activity').reply(200, 10);
 
-    const result = await useAdminApi(axios).hasPendingAdministrativeActivities();
+    const result = await useAdminApi(axios).getAdministrativeActivityStanding();
 
     expect(result).toEqual(10);
   });

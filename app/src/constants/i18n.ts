@@ -1,9 +1,33 @@
 export const CreateProjectI18N = {
+  locationArea: 'Project Areas',
+  locationGeoJSONProperties: 'GeoJSON Properties Information',
+  locationConservationArea: 'Conservation Area',
+  locationRegion: 'Region',
+  partnership: 'Partnerships',
+  fundingSource: 'Funding Sources',
+  authorization: 'Authorizations',
+  numberOfPeopleInvolved: 'Number of People Involved',
+  focus: 'Focuses',
+  objective: 'Objective',
+  briefDescription: 'Brief Description',
   cancelTitle: 'Cancel Create Project',
   cancelText: 'Are you sure you want to cancel?',
   createErrorTitle: 'Error Creating Project',
   createErrorText:
     'An error has occurred while attempting to create your project, please try again. If the error persists, please contact your system administrator.'
+};
+
+export const CreatePlanI18N = {
+  locationArea: 'Plan Areas',
+  locationGeoJSONProperties: 'GeoJSON Properties Information',
+  locationRegion: 'Region',
+  focus: 'Focuses',
+  briefDescription: 'Brief Description',
+  cancelTitle: 'Cancel Create Plan',
+  cancelText: 'Are you sure you want to cancel?',
+  createErrorTitle: 'Error Creating Plan',
+  createErrorText:
+    'An error has occurred while attempting to create your Plan, please try again. If the error persists, please contact your system administrator.'
 };
 
 export const EditProjectI18N = {
@@ -36,6 +60,12 @@ export const AttachmentsI18N = {
 };
 
 export const CreateProjectDraftI18N = {
+  draftErrorTitle: 'Error Saving Draft',
+  draftErrorText:
+    'An error has occurred while attempting to save your draft, please try again. If the error persists, please contact your system administrator.'
+};
+
+export const CreatePlanDraftI18N = {
   draftErrorTitle: 'Error Saving Draft',
   draftErrorText:
     'An error has occurred while attempting to save your draft, please try again. If the error persists, please contact your system administrator.'
@@ -76,13 +106,6 @@ export const EditLocationBoundaryI18N = {
     'An error has occurred while attempting to edit your location, please try again. If the error persists, please contact your system administrator.'
 };
 
-export const EditIUCNI18N = {
-  editTitle: 'Edit IUCN Classifications',
-  editErrorTitle: 'Error Editing IUCN Classifications',
-  editErrorText:
-    'An error has occurred while attempting to edit your IUCN classification, please try again. If the error persists, please contact your system administrator.'
-};
-
 export const EditSpeciesI18N = {
   editTitle: 'Edit Species',
   editErrorTitle: 'Error Editing Species',
@@ -98,7 +121,7 @@ export const EditObservationI18N = {
 };
 
 export const AddFundingI18N = {
-  addTitle: 'Add Funding Source',
+  addTitle: 'Funding Details',
   addErrorTitle: 'Error Adding Funding Source',
   addErrorText:
     'An error has occurred while attempting to add your funding source details, please try again. If the error persists, please contact your system administrator.'
@@ -147,6 +170,14 @@ export const DeleteProjectI18N = {
   deleteErrorTitle: 'Error Deleting Project',
   deleteErrorText:
     'An error has occurred while attempting to delete this project, its attachments and associated surveys/observations, please try again. If the error persists, please contact your system administrator.'
+};
+
+export const DeletePlanI18N = {
+  deleteTitle: 'Delete Plan',
+  deleteText: 'Are you sure you want to delete this plan?',
+  deleteErrorTitle: 'Error Deleting Plan',
+  deleteErrorText:
+    'An error has occurred while attempting to delete this plan, please try again. If the error persists, please contact your system administrator.'
 };
 
 export const AddSystemUserI18N = {
@@ -209,13 +240,14 @@ export const TableI18N = {
   sortedAsc: 'sorted ascending',
   found: 'Found',
   exportData: 'Export data',
+  importData: 'Import data',
   exportSelected: 'Export selected',
   exportNotSelected: 'Export not selected',
   deleteDraft: 'Delete draft',
   archive: 'Archive',
   unarchive: 'Unarchive',
   delete: 'Delete',
-  organizations: 'Organizations',
+  organizations: 'Organization(s)',
   status: 'Status',
   export: 'Export',
   densePadding: 'Dense padding',
@@ -225,27 +257,52 @@ export const TableI18N = {
 export const ProjectTableI18N = {
   project: 'project',
   projects: 'projects',
+  projectDefinition:
+    'Restoration Projects are specific activities planned, budgeted and executed with clear objectives in mind.',
   exportProjectsData: 'export projects data',
   exportAllProjects: 'Export all projects',
   selectAllProjectsForExport: 'select all projects for export',
   projectName: 'Project Name',
-  authorizationRef: 'Authorization Ref.',
+  focus: 'Project Focus',
+  focusTooltip: 'Project primary focus.',
+  focusInfo: 'Focus',
+  plannedStartDateTooltip:
+    'Earliest projected start date once project is approved by its decision-maker(s) to proceed, inclusive of procurement activities.',
   plannedStartDate: 'Planned Start Date',
+  orgTooltip: 'Entity responsible for project design and implementation.',
   plannedEndDate: 'Planned End Date',
+  plannedEndDateTooltip:
+    'Earliest projected completion date for all project activities, including any on-the-ground site monitoring.',
   actualStartDate: 'Actual Start Date',
-  actualEndDate: 'Actual End Date'
+  actualStartDateTooltip: 'When project activities actually begin.',
+  actualEndDate: 'Actual End Date',
+  actualEndDateTooltip:
+    'When project activities end, inclusive of any site monitoring and initial reporting.',
+  statusTooltip: 'Current status, within project workflow.',
+  statusInfo: 'Status'
 };
 
 export const PlanTableI18N = {
   plan: 'plan',
   plans: 'plans',
+  planDefinition:
+    'Restoration Plans are an aggregation of one or more restoration project ideas over a period of one or more years, which are proposed but require more specific planning and approvals. Restoration Plans are intended to precede Restoration Projects.',
   exportPlansData: 'export plans data',
+  importPlanData: 'import plans data',
   exportAllPlans: 'Export all plans',
   selectAllPlansForExport: 'select all plans for export',
   planName: 'Plan Name',
+  focus: 'Plan Focus',
+  focusTooltip: 'Plan primary focus.',
+  focusInfo: 'Focus',
+  orgTooltip: 'Entity responsible for project scoping and proposals.',
   term: 'Term',
+  termTooltip: 'Number of calendar year(s) which restoration plan covers.',
   startDate: 'Start Date',
+  startDateTooltip: 'Calendar year which restoration plan starts.',
   endDate: 'End Date',
+  endDateTooltip: 'Calendar year which restoration plan ends.',
   multiYear: 'Multi-Year',
-  annual: 'Annual'
+  annual: 'Annual',
+  statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".'
 };

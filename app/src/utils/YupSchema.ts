@@ -3,9 +3,95 @@
  * - See types/yup.d.ts
  */
 
+import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocompleteFieldVariableSize';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { focus, getFocusCodeFromLabel } from 'constants/misc';
 import dayjs from 'dayjs';
+import { FormikErrors } from 'formik';
+import { Feature } from 'maplibre-gl';
 import * as yup from 'yup';
+
+export const locationRequired = (focuses: number[] | IMultiAutocompleteFieldOption[]) => {
+  return focuses.some((values: number | IMultiAutocompleteFieldOption) => {
+    if (
+      values == getFocusCodeFromLabel(focus.HEALING_THE_LAND) ||
+      values == getFocusCodeFromLabel(focus.LAND_BASED_RESTORATION_INITIATIVE)
+    ) {
+      return true;
+    }
+    return false;
+  });
+};
+
+export const setFieldErrors = (
+  errors: FormikErrors<any>,
+  setFieldError: (field: string, message: string | undefined) => void
+) => {
+  Object.keys(errors).forEach((field) => {
+    setFieldError(field, errors[field] as string);
+  });
+};
+
+export const checkForLocationErrors = (formikRef: any, values: any) => {
+  // Check if the location is required
+
+  let locationErrors = false;
+  if (locationRequired(values.focus.focuses)) {
+    if (!values.location.region) {
+      formikRef.current?.setFieldError('location.region', 'Region is required');
+      locationErrors = true;
+    }
+    if (!values.location.geometry || !values.location.geometry.length) {
+      formikRef.current?.setFieldError('location.geometry', 'Geometry is required');
+      locationErrors = true;
+    }
+    if (values.location.geometry && values.location.geometry.length > 0) {
+      values.location.geometry.forEach((feature: Feature) => {
+        if (!feature.properties.siteName) {
+          formikRef.current?.setFieldError(`location.geometry`, 'Site name is required');
+          locationErrors = true;
+        }
+      });
+    }
+    if (!values.location.number_sites) {
+      formikRef.current?.setFieldError('location.number_sites', 'Number of sites is required');
+      locationErrors = true;
+    }
+  }
+  return locationErrors;
+};
+
+yup.addMethod(
+  yup.string,
+  'isAuthDescriptionRequired',
+  function (AuthType: string, message: string) {
+    return this.test('is-auth-description-required', message, function (value) {
+      if (this.parent.authorization_type) {
+        return this.parent.authorization_type == AuthType ? !!value : true;
+      }
+      return true;
+    });
+  }
+);
+
+yup.addMethod(yup.number, 'isNumberOfPeopleInvolvedRequired', function (message: string) {
+  return this.test('is-number-of-people-involved-required', message, function (value) {
+    if (this.parent.focuses) {
+      const isPeople = this.parent.focuses.some(
+        (values: number | IMultiAutocompleteFieldOption) => {
+          return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
+        }
+      )
+        ? true
+        : false;
+
+      if (isPeople) {
+        return value !== null;
+      }
+      return true;
+    }
+  });
+});
 
 yup.addMethod(yup.array, 'isUniquePermitNumber', function (message: string) {
   return this.test('is-unique-permit-number', message, (values) => {
@@ -17,24 +103,6 @@ yup.addMethod(yup.array, 'isUniquePermitNumber', function (message: string) {
     const hasDuplicates = values.some((permit) => {
       return seen.size === seen.add(permit.permit_number).size;
     });
-
-    return !hasDuplicates;
-  });
-});
-
-yup.addMethod(yup.array, 'isUniqueIUCNClassificationDetail', function (message: string) {
-  return this.test('is-unique-iucn-classification-detail', message, (values) => {
-    if (!values || !values.length) {
-      return true;
-    }
-
-    const hasDuplicates = values
-      .map((iucn: any) => {
-        return iucn.classification + iucn.subClassification1 + iucn.subClassification2;
-      })
-      .some((iucn, _, array) => {
-        return array.indexOf(iucn) !== array.lastIndexOf(iucn);
-      });
 
     return !hasDuplicates;
   });
@@ -178,5 +246,76 @@ yup.addMethod(yup.array, 'isUniqueAuthor', function (message: string) {
     return !hasDuplicates;
   });
 });
+
+yup.addMethod(yup.array, 'isUniquePartnership', function (message: string) {
+  return this.test('is-unique-partnership', message, (values) => {
+    if (!values || !values.length) {
+      return true;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = values.some((partnerships) => {
+      return seen.size === seen.add(partnerships.partnership).size;
+    });
+
+    return !hasDuplicates;
+  });
+});
+
+yup.addMethod(yup.array, 'isUniqueConservationArea', function (message: string) {
+  return this.test('is-unique-conservation-area', message, (values) => {
+    if (!values || !values.length) {
+      return true;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = values.some((conservationAreas) => {
+      return seen.size === seen.add(conservationAreas.conservationArea).size;
+    });
+
+    return !hasDuplicates;
+  });
+});
+
+yup.addMethod(yup.array, 'isUniqueObjective', function (message: string) {
+  return this.test('is-unique-objective', message, (values) => {
+    if (!values || !values.length) {
+      return true;
+    }
+
+    const seen = new Set();
+    const hasDuplicates = values.some((objectives) => {
+      return seen.size === seen.add(objectives.objective).size;
+    });
+
+    return !hasDuplicates;
+  });
+});
+
+yup.addMethod(
+  yup.array,
+  'isConservationAreasRequired',
+  function (booleanName: string, message: string) {
+    return this.test('is-conservation-areas-required', message, function (value) {
+      if (this.parent[booleanName] === 'false') {
+        return true;
+      }
+
+      if (value && value.length > 0) {
+        return value.some((data) => {
+          if (!data.conservationArea) {
+            return false;
+          }
+
+          return data.conservationArea !== '';
+        });
+      }
+
+      if (!value) {
+        return false;
+      }
+    });
+  }
+);
 
 export default yup;

@@ -7,7 +7,7 @@ import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
@@ -48,7 +48,7 @@ export interface IUsersHeaderProps {
 const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
   const { userDetails } = props;
   const history = useNavigate();
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
 
   const defaultErrorDialogProps: Partial<IErrorDialogProps> = {

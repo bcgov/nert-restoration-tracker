@@ -12,8 +12,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IErrorDialogProps } from '../../../components/dialog/ErrorDialog';
@@ -23,8 +22,9 @@ import { ProjectParticipantsI18N, SystemUserI18N } from '../../../constants/i18n
 import { DialogContext } from '../../../contexts/dialogContext';
 import { APIError } from '../../../hooks/api/useAxios';
 import { CodeSet, IGetAllCodeSetsResponse } from '../../../interfaces/useCodesApi.interface';
-import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectPlanApi.interface';
-import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
+import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
+import { ISystemUser } from '../../../interfaces/useUserApi.interface';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -46,7 +46,7 @@ const pageStyles = {
 };
 
 export interface IProjectDetailsProps {
-  userDetails: IGetUserResponse;
+  userDetails: ISystemUser;
 }
 
 /**
@@ -56,7 +56,7 @@ export interface IProjectDetailsProps {
  */
 const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   const { userDetails } = props;
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
   const history = useNavigate();
 
@@ -81,7 +81,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     handleGetUserProjects(userDetails.id);
   }, [userDetails.id, assignedProjects, handleGetUserProjects]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const handleRemoveProjectParticipant = async (
     projectId: number,
@@ -231,7 +231,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     );
   };
 
-  if (!codes.isReady || !codes.codes || !assignedProjects) {
+  if (!codes.isReady || !codes.data || !assignedProjects) {
     return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
   }
 
@@ -254,7 +254,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody data-testid="resources-table">
-            <TableRows assignedProjects={assignedProjects} codes={codes.codes} />
+            <TableRows assignedProjects={assignedProjects} codes={codes.data} />
           </TableBody>
         </Table>
       </Box>
@@ -275,7 +275,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
   const { row, user_identifier, projectRoleCodes, refresh } = props;
 
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const errorDialogProps = {
     dialogTitle: ProjectParticipantsI18N.updateParticipantRoleErrorTitle,

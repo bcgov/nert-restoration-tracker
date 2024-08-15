@@ -8,8 +8,6 @@ import React from 'react';
 
 const handleSaveAndNext = jest.fn();
 
-const agencies = ['Agency 1', 'Agency 2', 'Agency 3'];
-
 const projectContactFilledValues = {
   contact: {
     contacts: [
@@ -17,17 +15,19 @@ const projectContactFilledValues = {
         first_name: 'Nerea',
         last_name: 'Oneal',
         email_address: 'quxu@mailinator.com',
-        agency: 'Agency 3',
+        organization: 'Agency 3',
         is_public: 'true',
-        is_primary: 'true'
+        is_primary: 'true',
+        is_first_nation: true
       },
       {
         first_name: 'John',
         last_name: 'Doe',
         email_address: 'jd@mailinator.com',
-        agency: 'Agency 4',
+        organization: 'Agency 4',
         is_public: 'true',
-        is_primary: 'true'
+        is_primary: 'true',
+        is_first_nation: true
       }
     ]
   }
@@ -44,7 +44,7 @@ describe.skip('Project Contact Form', () => {
         onSubmit={async (values) => {
           handleSaveAndNext(values);
         }}>
-        {() => <ProjectContactForm coordinator_agency={[]} />}
+        {() => <ProjectContactForm />}
       </Formik>
     );
 
@@ -61,7 +61,7 @@ describe.skip('Project Contact Form', () => {
         onSubmit={async (values) => {
           handleSaveAndNext(values);
         }}>
-        {() => <ProjectContactForm coordinator_agency={agencies} />}
+        {() => <ProjectContactForm />}
       </Formik>
     );
 

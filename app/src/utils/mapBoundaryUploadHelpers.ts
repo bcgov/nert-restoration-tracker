@@ -1,13 +1,83 @@
 import bbox from '@turf/bbox';
 import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
-import { BBox, Feature, GeoJSON } from 'geojson';
-import { LatLngBoundsExpression } from 'leaflet';
+import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
 import get from 'lodash-es/get';
 import { v4 as uuidv4 } from 'uuid';
 
+interface cleanGeoJSONProps {
+  (geojson: GeoJSON | FeatureCollection): FeatureCollection;
+}
+
 /**
- *
+ * Clean the GeoJSON object by adding default properties and removing any invalid features
+ * @param geojson
+ * @returns Cleaned GeoJSON FeatureCollection
+ */
+export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
+  const cleanFeature = (feature: Feature) => {
+    // Exit out if the feature is not a Polygon or MultiPolygon
+    if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
+      return;
+    }
+    const area = turf.area(feature);
+    const p = feature.properties || {};
+
+    p.siteName = p.siteName || p.Site_Name || '';
+    p.areaHa = Math.round(area / 100) / 100;
+    p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
+
+    feature.properties = p;
+    return feature;
+  };
+
+  /**
+   * If the object is a single Feature, clean it.
+   * If the object is a FeatureCollection, clean all features.
+   * If the object is not a Feature or FeatureCollection, display an error.
+   * Always return a clean FeatureCollection.
+   * @param geojson
+   * @param callback
+   * @returns Cleaned GeoJSON
+   */
+  if (geojson.type === 'Feature') {
+    const cleanF = cleanFeature(geojson);
+    return { type: 'FeatureCollection', features: [cleanF] as Feature[] };
+  } else if (geojson.type === 'FeatureCollection') {
+    const cleanF = geojson.features.map(cleanFeature).filter((f): f is Feature => f !== undefined);
+    return { type: 'FeatureCollection', features: cleanF as Feature[] };
+  } else {
+    console.error(
+      'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
+    );
+    return { type: 'FeatureCollection', features: [] };
+  }
+};
+
+export interface recalculateFeatureIdsProps {
+  (features: Feature[]): Feature[];
+}
+
+/**
+ * Recalculate the IDs within a feature array
+ * @param features array
+ * @returns features array with recalculated IDs
+ */
+export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feature[]) => {
+  return features.map((feature: Feature, index: number) => {
+    feature.properties = feature.properties || {};
+    feature.properties.id = index + 1;
+    return feature;
+  });
+};
+
+/**
+ * handleGeoJSONUpload
+ * Convert the a file object to a string. Then perfrom the following:
+ * 1. Check if the file is a GeoJSON file
+ * 2. Check if the projection is correct
+ * 3. Check that there is at least one polygon or multipolygon feature
+ * 4. Inforse a reasonable limit on the number of features
  * @param file File object to upload
  * @param name Name of the formik field that the parsed geometry will be saved to
  * @param formikProps The formik props
@@ -24,62 +94,41 @@ export const handleGeoJSONUpload = async <T>(
     return jsonString;
   });
 
+  // 1. Check if the file is a GeoJSON file
   if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
     setFieldError(name, 'You must upload a GeoJSON file, please try again.');
     return;
   }
 
-  const cleanFeature = (feature: Feature) => {
-    // Exit out if the feature is not a Polygon or MultiPolygon
-    if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
-      return;
-    }
-    const area = turf.area(feature);
-    const p = feature.properties || {};
+  // 2. Check if the projection is correct
+  if (!fileAsString?.match(/\[\s*-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+\s*\]/)) {
+    setFieldError(name, 'Only GeoJSON files with EPSG:4326 projection are supported.');
+    return;
+  }
 
-    p.siteName = p.siteName || p.Site_Name || '';
-    p.areaHectares = p.areaHectares || p.Area_Hectares || Math.round(area / 100) / 100;
-    p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
+  // 3. Check that there is at least one polygon or multipolygon feature
+  if (
+    !fileAsString?.match(/"type":\s*"Polygon"/) &&
+    !fileAsString?.match(/"type":\s*"MultiPolygon"/)
+  ) {
+    setFieldError(name, 'At least one Polygon or MultiPolygon feature is required.');
+    return;
+  }
 
-    feature.properties = p;
-    return feature;
-  };
-
-  /**
-   * If the object is a single Feature, clean it.
-   * If the object is a FeatureCollection, clean all features.
-   * If the object is not a Feature or FeatureCollection, display an error.
-   * Always return a clean FeatureCollection.
-   * @param geojson
-   * @param callback
-   * @returns Cleaned GeoJSON
-   */
-  const cleanGeoJSON = (geojson: GeoJSON) => {
-    if (geojson.type === 'Feature') {
-      const cleanF = cleanFeature(geojson);
-      return { type: 'FeatureCollection', features: [cleanF] };
-    } else if (geojson.type === 'FeatureCollection') {
-      const cleanFeatures = geojson.features.map(cleanFeature);
-      if (cleanFeatures.length === 0) {
-        return { type: 'FeatureCollection', features: [] };
-      } else {
-        return { type: 'FeatureCollection', features: cleanFeatures };
-      }
-    } else {
-      setFieldError(
-        name,
-        'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
-      );
-      return { type: 'FeatureCollection', features: [] };
-    }
-  };
+  // 4. Count the number of features
+  const featureCount = fileAsString?.match(/"type":\s*"Feature"/g)?.length;
+  const maxFeatures = parseInt(process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100', 10);
+  if (featureCount && featureCount > maxFeatures) {
+    setFieldError(name, `A maximum of ${maxFeatures} features are supported.`);
+    return;
+  }
 
   try {
     const geojson = JSON.parse(fileAsString);
 
     const geojsonWithAttributes = cleanGeoJSON(geojson);
-    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
 
+    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
     if (geojsonWithAttributes?.features.length <= 0) {
       setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
       return;
@@ -89,10 +138,7 @@ export const handleGeoJSONUpload = async <T>(
     const allFeatures = [...get(values, name), ...geojsonWithAttributes.features];
 
     // Recalculate the IDs for all features
-    const allFeaturesWithIds = allFeatures.map((feature, index) => {
-      feature.id = index;
-      return feature;
-    });
+    const allFeaturesWithIds = recalculateFeatureIds(allFeatures);
 
     setFieldValue(name, allFeaturesWithIds);
   } catch (error) {
@@ -141,10 +187,22 @@ export const calculateFeatureBoundingBox = (features: Feature[]): BBox | undefin
  * @param boundingBox
  * @returns
  */
-export const latLngBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpression => {
+export const latLngBoundsFromBoundingBox = (boundingBox: BBox): any => {
   return [
     [boundingBox[1], boundingBox[0]],
     [boundingBox[3], boundingBox[2]]
+  ];
+};
+
+/**
+ * Converts a bounding box to a long/lat bounds expression
+ * @param boundingBox
+ * @returns
+ */
+export const lonLatBoundsFromBoundingBox = (boundingBox: BBox): any => {
+  return [
+    [boundingBox[0], boundingBox[1]],
+    [boundingBox[2], boundingBox[3]]
   ];
 };
 
@@ -155,15 +213,20 @@ export const latLngBoundsFromBoundingBox = (boundingBox: BBox): LatLngBoundsExpr
  * @returns The Lat/Long bounding box, or undefined if a bounding box cannot be calculated.
  */
 export const calculateUpdatedMapBounds = (
-  features: Feature[]
-): LatLngBoundsExpression | undefined => {
+  features: Feature[],
+  lngLat?: boolean
+): any | undefined => {
   const bboxCoords = calculateFeatureBoundingBox(features);
 
   if (!bboxCoords) {
     return;
   }
 
-  return latLngBoundsFromBoundingBox(bboxCoords);
+  if (lngLat) {
+    return lonLatBoundsFromBoundingBox(bboxCoords);
+  } else {
+    return latLngBoundsFromBoundingBox(bboxCoords);
+  }
 };
 
 /*

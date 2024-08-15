@@ -1,14 +1,22 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import {
+  PostAuthorizationData,
+  PostConservationAreasData,
   PostContactData,
+  PostEditPlanObject,
+  PostFocusData,
   PostFundingData,
   PostFundingSource,
-  PostIUCNData,
   PostLocationData,
+  PostObjectivesData,
   PostPartnershipsData,
+  PostPlanData,
+  PostPlanObject,
   PostProjectData,
-  PostProjectObject
+  PostProjectObject,
+  PostRestPlanData,
+  PostSpeciesData
 } from './project-create';
 
 describe('PostProjectObject', () => {
@@ -31,20 +39,20 @@ describe('PostProjectObject', () => {
       expect(projectPostObject.location).to.equal(null);
     });
 
-    it('sets iucn', function () {
-      expect(projectPostObject.iucn).to.equal(null);
-    });
-
     it('sets funding', function () {
       expect(projectPostObject.funding).to.equal(null);
     });
 
     it('sets partnerships', function () {
-      expect(projectPostObject.partnerships).to.eql([]);
+      expect(projectPostObject.partnership).to.eql([]);
+    });
+
+    it('sets objectives', function () {
+      expect(projectPostObject.objective).to.eql([]);
     });
   });
 
-  describe.skip('All values provided', () => {
+  describe('All values provided', () => {
     let projectPostObject: PostProjectObject;
 
     const obj = {
@@ -54,16 +62,122 @@ describe('PostProjectObject', () => {
             first_name: 'first',
             last_name: 'last',
             email_address: 'email@example.com',
-            agency: 'agency',
+            organization: 'organization',
             is_public: 'true',
-            is_primary: 'true'
+            is_primary: 'true',
+            is_first_nation: true
           }
         ]
       },
-      permit: {
-        permits: [
+      authorization: {
+        authorizations: [
           {
-            permit_number: 1
+            authorization_ref: 1
+          }
+        ]
+      },
+      project: {
+        project_name: 'name_test_data',
+        start_date: 'start_date_test_data',
+        end_date: 'end_date_test_data',
+        objectives: 'these are the project objectives',
+        is_project: true,
+        name: 'string;',
+        state_code: 1,
+        actual_start_date: 'string;',
+        actual_end_date: 'string;',
+        brief_desc: 'string;',
+        is_healing_land: true,
+        is_healing_people: true,
+        is_land_initiative: true,
+        is_cultural_initiative: true
+      },
+      species: {
+        focal_species: [{ tsn: 1 }]
+      },
+      location: {
+        geometry: [
+          {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [-128, 55],
+                [-128, 55.5],
+                [-128, 56],
+                [-126, 58],
+                [-128, 55]
+              ]
+            ],
+            properties: {
+              name: 'Restoration Islands'
+            }
+          }
+        ]
+      },
+      funding: {
+        funding_sources: [
+          {
+            organization_name: 'name',
+            funding_project_id: 'organization project id',
+            funding_amount: 12,
+            start_date: '2020/04/03',
+            end_date: '2020/05/05'
+          }
+        ]
+      },
+      partnership: { partnerships: [{ partnership: 'string' }] },
+      objective: { objectives: [{ objective: 'objective1' }] },
+      focus: { focuses: [1, 2], people_involved: 2 },
+      restoration_plan: { is_project_part_public_plan: true }
+    };
+
+    before(() => {
+      projectPostObject = new PostProjectObject(obj);
+    });
+
+    it('sets contact', function () {
+      expect(projectPostObject.contact.contacts[0].first_name).to.equal(obj.contact.contacts[0].first_name);
+    });
+  });
+});
+
+describe('PostPlanObject', () => {
+  describe('No values provided', () => {
+    let planPostObject: PostPlanObject;
+
+    before(() => {
+      planPostObject = new PostPlanObject(null);
+    });
+
+    it('sets contact', function () {
+      expect(planPostObject.contact).to.equal(null);
+    });
+
+    it('sets project', function () {
+      expect(planPostObject.project).to.equal(null);
+    });
+
+    it('sets location', function () {
+      expect(planPostObject.location).to.equal(null);
+    });
+    it('sets focus', function () {
+      expect(planPostObject.focus).to.eql([]);
+    });
+  });
+  describe('All values provided', () => {
+    let planPostObject: PostPlanObject;
+
+    const obj = {
+      contact: {
+        contacts: [
+          {
+            first_name: 'first',
+            last_name: 'last',
+            email_address: 'email@example.com',
+            organization: 'organization',
+            is_public: 'true',
+            is_primary: 'true',
+            is_first_nation: true
           }
         ]
       },
@@ -102,36 +216,103 @@ describe('PostProjectObject', () => {
           }
         ]
       },
-      funding: {
-        funding_sources: [
-          {
-            agency_id: 1,
-            investment_action_category: 1,
-            agency_project_id: 'agency project id',
-            funding_amount: 12,
-            start_date: '2020/04/03',
-            end_date: '2020/05/05'
-          }
-        ]
-      },
-      iucn: {
-        classificationDetails: [
-          {
-            classification: 1,
-            subClassification1: 2,
-            subClassification2: 3
-          }
-        ]
-      },
-      partnerships: ['partner1, partner2']
+      focus: { focuses: [1, 2], people_involved: 2 }
     };
 
     before(() => {
-      projectPostObject = new PostProjectObject(obj);
+      planPostObject = new PostPlanObject(obj);
     });
 
     it('sets contact', function () {
-      expect(projectPostObject.contact.contacts[0].first_name).to.equal(obj.contact.contacts[0].first_name);
+      expect(planPostObject.contact.contacts[0].first_name).to.equal(obj.contact.contacts[0].first_name);
+    });
+  });
+});
+
+describe('PostEditPlanObject', () => {
+  describe('No values provided', () => {
+    let planEditPostObject: PostEditPlanObject;
+
+    before(() => {
+      planEditPostObject = new PostEditPlanObject(null);
+    });
+
+    it('sets contact', function () {
+      expect(planEditPostObject.contact).to.equal(null);
+    });
+
+    it('sets project', function () {
+      expect(planEditPostObject.project).to.equal(null);
+    });
+
+    it('sets location', function () {
+      expect(planEditPostObject.location).to.equal(null);
+    });
+    it('sets focus', function () {
+      expect(planEditPostObject.focus).to.eql([]);
+    });
+  });
+  describe('All values provided', () => {
+    let planEditPostObject: PostEditPlanObject;
+
+    const obj = {
+      contact: {
+        contacts: [
+          {
+            first_name: 'first',
+            last_name: 'last',
+            email_address: 'email@example.com',
+            organization: 'organization',
+            is_public: 'true',
+            is_primary: 'true',
+            is_first_nation: true
+          }
+        ]
+      },
+      project: {
+        project_name: 'name_test_data',
+        start_date: 'start_date_test_data',
+        end_date: 'end_date_test_data',
+        objectives: 'these are the project objectives',
+        is_project: true,
+        name: 'string;',
+        state_code: 1,
+        actual_start_date: 'string;',
+        actual_end_date: 'string;',
+        brief_desc: 'string;',
+        is_healing_land: true,
+        is_healing_people: true,
+        is_land_initiative: true,
+        is_cultural_initiative: true
+      },
+      location: {
+        geometry: [
+          {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [-128, 55],
+                [-128, 55.5],
+                [-128, 56],
+                [-126, 58],
+                [-128, 55]
+              ]
+            ],
+            properties: {
+              name: 'Restoration Islands'
+            }
+          }
+        ]
+      },
+      focus: { focuses: [1, 2], people_involved: 2 }
+    };
+
+    before(() => {
+      planEditPostObject = new PostEditPlanObject(obj);
+    });
+
+    it('sets contact', function () {
+      expect(planEditPostObject.contact.contacts[0].first_name).to.equal(obj.contact.contacts[0].first_name);
     });
   });
 });
@@ -181,6 +362,61 @@ describe('PostProjectData', () => {
 
     it('sets end_date', function () {
       expect(projectPostData.end_date).to.equal('end_date_test_data');
+    });
+  });
+});
+
+describe('PostPlanData', () => {
+  describe('No values provided', () => {
+    let projectPlanData: PostPlanData;
+
+    before(() => {
+      projectPlanData = new PostPlanData(null);
+    });
+
+    it('sets name', function () {
+      expect(projectPlanData.name).to.equal(null);
+    });
+
+    it('sets start_date', function () {
+      expect(projectPlanData.start_date).to.equal(null);
+    });
+
+    it('sets end_date', function () {
+      expect(projectPlanData.end_date).to.equal(null);
+    });
+  });
+
+  describe('All values provided', () => {
+    let projectPlanData: PostPlanData;
+
+    const obj = {
+      is_project: false,
+      project_name: 'name',
+      state_code: 1,
+      start_date: 'start_date',
+      end_date: 'end_date',
+      brief_desc: 'string',
+      is_healing_land: false,
+      is_healing_people: false,
+      is_land_initiative: false,
+      is_cultural_initiative: false
+    };
+
+    before(() => {
+      projectPlanData = new PostPlanData(obj);
+    });
+
+    it('sets name', function () {
+      expect(projectPlanData.name).to.equal('name');
+    });
+
+    it('sets start_date', function () {
+      expect(projectPlanData.start_date).to.equal('start_date');
+    });
+
+    it('sets end_date', function () {
+      expect(projectPlanData.end_date).to.equal('end_date');
     });
   });
 });
@@ -235,9 +471,11 @@ describe('PostContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
+          organization: 'organization',
+          phone_number: '1234567890',
           is_public: 'true',
-          is_primary: 'true'
+          is_primary: 'true',
+          is_first_nation: true
         }
       ]
     };
@@ -252,11 +490,77 @@ describe('PostContactData', () => {
           first_name: 'first',
           last_name: 'last',
           email_address: 'email@example.com',
-          agency: 'agency',
+          organization: 'organization',
+          phone_number: '1234567890',
           is_public: true,
-          is_primary: true
+          is_primary: true,
+          is_first_nation: true
         }
       ]);
+    });
+  });
+});
+
+describe('PostAuthorizationData', () => {
+  describe('No values provided', () => {
+    let projectAuthorizationData: PostAuthorizationData;
+
+    before(() => {
+      projectAuthorizationData = new PostAuthorizationData(null);
+    });
+
+    it('sets authorizations', function () {
+      expect(projectAuthorizationData.authorizations).to.eql([]);
+    });
+  });
+
+  describe('All values provided are null', () => {
+    let projectAuthorizationData: PostAuthorizationData;
+
+    before(() => {
+      projectAuthorizationData = new PostAuthorizationData({
+        authorizations: null
+      });
+    });
+
+    it('sets permits', function () {
+      expect(projectAuthorizationData.authorizations).to.eql([]);
+    });
+  });
+
+  describe('All values provided are empty arrays', () => {
+    let projectAuthorizationData: PostAuthorizationData;
+
+    before(() => {
+      projectAuthorizationData = new PostAuthorizationData({
+        authorizations: []
+      });
+    });
+
+    it('sets permits', function () {
+      expect(projectAuthorizationData.authorizations).to.eql([]);
+    });
+  });
+
+  describe('All values provided', () => {
+    let projectAuthorizationData: PostAuthorizationData;
+
+    const obj = {
+      authorizations: [
+        {
+          authorization_ref: 1,
+          authorization_type: 'type',
+          authorization_desc: 'desc'
+        }
+      ]
+    };
+
+    before(() => {
+      projectAuthorizationData = new PostAuthorizationData(obj);
+    });
+
+    it('sets authorizations', function () {
+      expect(projectAuthorizationData.authorizations).to.eql(obj.authorizations);
     });
   });
 });
@@ -274,17 +578,73 @@ describe('PostPartnershipsData', () => {
     });
   });
 
-  describe.skip('All values provided', () => {
+  describe('All values provided', () => {
     let projectPartnershipsData: PostPartnershipsData;
 
-    const obj = ['1', '2'];
+    const obj = { partnerships: [{ partnership: '1' }, { partnership: '2' }] };
 
     before(() => {
       projectPartnershipsData = new PostPartnershipsData(obj);
     });
 
     it('sets projectPartnershipsData', function () {
-      expect(projectPartnershipsData.partnerships).to.eql(obj);
+      expect(projectPartnershipsData.partnerships).to.eql(obj.partnerships);
+    });
+  });
+});
+
+describe('PostObjectivesData', () => {
+  describe('No values provided', () => {
+    let projectObjectiveData: PostObjectivesData;
+
+    before(() => {
+      projectObjectiveData = new PostObjectivesData(null);
+    });
+
+    it('sets projectObjectivesData', function () {
+      expect(projectObjectiveData.objectives).to.eql([]);
+    });
+  });
+
+  describe('All values provided', () => {
+    let projectObjectiveData: PostObjectivesData;
+
+    const obj = { objectives: [{ objective: '1' }, { objective: '2' }] };
+
+    before(() => {
+      projectObjectiveData = new PostObjectivesData(obj);
+    });
+
+    it('sets projectObjectivesData', function () {
+      expect(projectObjectiveData.objectives).to.eql(obj.objectives);
+    });
+  });
+});
+
+describe('PostConservationAreasData', () => {
+  describe('No values provided', () => {
+    let projectConservationAreasData: PostConservationAreasData;
+
+    before(() => {
+      projectConservationAreasData = new PostConservationAreasData(null);
+    });
+
+    it('sets conservationAreas', function () {
+      expect(projectConservationAreasData.conservationAreas).to.eql([]);
+    });
+  });
+
+  describe('All values provided', () => {
+    let projectConservationAreasData: PostConservationAreasData;
+
+    const obj = { conservationAreas: [{ conservationArea: '1' }, { conservationArea: '2' }] };
+
+    before(() => {
+      projectConservationAreasData = new PostConservationAreasData(obj);
+    });
+
+    it('sets conservationAreas', function () {
+      expect(projectConservationAreasData.conservationAreas).to.eql(obj.conservationAreas);
     });
   });
 });
@@ -297,16 +657,12 @@ describe('PostFundingSource', () => {
       projectFundingData = new PostFundingSource(null);
     });
 
-    it('sets agency_id', () => {
-      expect(projectFundingData.agency_id).to.equal(null);
+    it('sets organization_name', () => {
+      expect(projectFundingData.organization_name).to.equal(null);
     });
 
-    it('sets investment_action_category', () => {
-      expect(projectFundingData.investment_action_category).to.equal(null);
-    });
-
-    it('sets agency_project_id', () => {
-      expect(projectFundingData.agency_project_id).to.equal(null);
+    it('sets funding_project_id', () => {
+      expect(projectFundingData.funding_project_id).to.equal(null);
     });
 
     it('sets funding_amount', () => {
@@ -326,28 +682,25 @@ describe('PostFundingSource', () => {
     let projectFundingData: PostFundingSource;
 
     const obj = {
-      agency_id: 1,
-      investment_action_category: 1,
-      agency_project_id: 'agency project id',
+      organization_name: 'name',
+      funding_project_id: 'organization project id',
       funding_amount: 20,
       start_date: '2020/04/04',
-      end_date: '2020/05/05'
+      end_date: '2020/05/05',
+      description: 'description',
+      is_public: 'true'
     };
 
     before(() => {
       projectFundingData = new PostFundingSource(obj);
     });
 
-    it('sets agency_id', () => {
-      expect(projectFundingData.agency_id).to.equal(obj.agency_id);
+    it('sets organization_name', () => {
+      expect(projectFundingData.organization_name).to.equal(obj.organization_name);
     });
 
-    it('sets investment_action_category', () => {
-      expect(projectFundingData.investment_action_category).to.equal(obj.investment_action_category);
-    });
-
-    it('sets agency_project_id', () => {
-      expect(projectFundingData.agency_project_id).to.equal(obj.agency_project_id);
+    it('sets funding_project_id', () => {
+      expect(projectFundingData.funding_project_id).to.equal(obj.funding_project_id);
     });
 
     it('sets funding_amount', () => {
@@ -364,38 +717,32 @@ describe('PostFundingSource', () => {
   });
 });
 
-describe('PostIUCNData', () => {
+describe('PostSpeciesData', () => {
   describe('No values provided', () => {
-    let projectIUCNData: PostIUCNData;
+    let projectSpeciesData: PostSpeciesData;
 
     before(() => {
-      projectIUCNData = new PostIUCNData(null);
+      projectSpeciesData = new PostSpeciesData(null);
     });
 
-    it('sets classification details', function () {
-      expect(projectIUCNData.classificationDetails).to.eql([]);
+    it('sets species', () => {
+      expect(projectSpeciesData.focal_species).to.eql([]);
     });
   });
 
   describe('All values provided', () => {
-    let projectIUCNData: PostIUCNData;
+    let projectSpeciesData: PostSpeciesData;
 
     const obj = {
-      classificationDetails: [
-        {
-          classification: 1,
-          subClassification1: 2,
-          subClassification2: 3
-        }
-      ]
+      focal_species: [{ tsn: 1 }]
     };
 
     before(() => {
-      projectIUCNData = new PostIUCNData(obj);
+      projectSpeciesData = new PostSpeciesData(obj);
     });
 
-    it('sets classification details', function () {
-      expect(projectIUCNData.classificationDetails).to.eql(obj.classificationDetails);
+    it('sets species', () => {
+      expect(projectSpeciesData.focal_species).to.eql([1]);
     });
   });
 });
@@ -433,7 +780,12 @@ describe('PostLocationData', () => {
             name: 'Restoration Islands'
           }
         }
-      ]
+      ],
+      is_within_overlapping: 'T',
+      region: 1,
+      number_sites: 1,
+      size_ha: 1,
+      conservationAreas: [{ conservationArea: 'string' }]
     };
 
     before(() => {
@@ -497,12 +849,27 @@ describe('PostFundingData', () => {
     const obj = {
       fundingSources: [
         {
-          agency_id: 1,
-          investment_action_category: 1,
-          agency_project_id: 'agency project id',
-          funding_amount: 12,
-          start_date: '2020/04/03',
-          end_date: '2020/05/05'
+          organization_name: 'name',
+          description: 'description',
+          funding_project_id: 'Agency123',
+          start_date: '01/01/2020',
+          end_date: '01/01/2021',
+          funding_amount: 123,
+          is_public: 'false'
+        }
+      ]
+    };
+
+    const objReturn = {
+      fundingSources: [
+        {
+          organization_name: 'name',
+          description: 'description',
+          funding_project_id: 'Agency123',
+          start_date: '01/01/2020',
+          end_date: '01/01/2021',
+          funding_amount: 123,
+          is_public: false
         }
       ]
     };
@@ -512,7 +879,102 @@ describe('PostFundingData', () => {
     });
 
     it('sets funding_sources', () => {
-      expect(data.funding_sources).to.eql(obj.fundingSources);
+      expect(data.funding_sources).to.eql(objReturn.fundingSources);
+    });
+  });
+});
+
+describe('PostFocusData', () => {
+  describe('No values provided', () => {
+    let data: PostFocusData;
+
+    before(() => {
+      data = new PostFocusData(null);
+    });
+
+    it('sets focus', () => {
+      expect(data.focuses).to.eql([]);
+    });
+  });
+
+  describe('Values provided but with no length', () => {
+    let data: PostFocusData;
+
+    const obj = {
+      focuses: []
+    };
+
+    before(() => {
+      data = new PostFocusData(obj);
+    });
+
+    it('sets focus', () => {
+      expect(data.focuses).to.eql([]);
+      expect(data.people_involved).to.eql(null);
+    });
+  });
+
+  describe('All values provided', () => {
+    let data: PostFocusData;
+
+    const obj = {
+      focuses: [1, 2],
+      people_involved: 2
+    };
+
+    before(() => {
+      data = new PostFocusData(obj);
+    });
+
+    it('sets focus', () => {
+      expect(data.focuses).to.eql(obj.focuses);
+      expect(data.people_involved).to.eql(obj.people_involved);
+    });
+  });
+});
+
+describe('PostRestPlanData', () => {
+  describe('No values provided', () => {
+    let data: PostRestPlanData;
+
+    before(() => {
+      data = new PostRestPlanData(null);
+    });
+
+    it('sets name', () => {
+      expect(data.is_project_part_public_plan).to.eql(null);
+    });
+  });
+
+  describe('Values provided but not valid type', () => {
+    let data: PostRestPlanData;
+
+    const obj = {
+      is_project_part_public_plan: 'string'
+    };
+
+    before(() => {
+      data = new PostRestPlanData(obj);
+    });
+
+    it('sets is_project_part_public_plan', () => {
+      expect(data.is_project_part_public_plan).to.eql(null);
+    });
+  });
+
+  describe('All values provided', () => {
+    let data: PostRestPlanData;
+
+    const obj = {
+      is_project_part_public_plan: false
+    };
+
+    before(() => {
+      data = new PostRestPlanData(obj);
+    });
+
+    it('sets is_project_part_public_plan', () => {
+      expect(data.is_project_part_public_plan).to.eql(obj.is_project_part_public_plan);
     });
   });
 });

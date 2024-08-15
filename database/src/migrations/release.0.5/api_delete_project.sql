@@ -18,28 +18,24 @@ $$
 --                  2021-06-21  added delete survey
 -- Kjartan.Einarsson@quartech.com
 --                  2022-02-25  added delete species
--- charlie.garrettjones@quartech.com
---                  2022-03-03  added delete treatment treatment types
+-- Kjartan.Einarsson@quartech.com
+--                  2024-06-17 nert db release
 -- *******************************************************************
 declare
 
 begin
-  delete from treatment_treatment_type where treatment_id in (select treatment_id from treatment where treatment_unit_id in (select treatment_unit_id from treatment_unit where project_id = p_project_id));
-  delete from treatment where treatment_unit_id in (select treatment_unit_id from treatment_unit where project_id = p_project_id);
-  delete from treatment_unit where project_id = p_project_id;
-
-  delete from permit where project_id = p_project_id;
-  delete from project_spatial_component where project_id = p_project_id;
-  delete from stakeholder_partnership where project_id = p_project_id;
-  delete from project_funding_source where project_id = p_project_id;
-  delete from project_iucn_action_classification where project_id = p_project_id;
-  delete from project_attachment where project_id = p_project_id;
+  delete from partnership where project_id = p_project_id;
   delete from project_first_nation where project_id = p_project_id;
+  delete from objective where project_id = p_project_id;
+  delete from project_funding_source where project_id = p_project_id;
+  delete from permit where project_id = p_project_id;
   delete from project_participation where project_id = p_project_id;
   delete from project_contact where project_id = p_project_id;
-  delete from nrm_region where project_id = p_project_id;
-  delete from project_caribou_population_unit where project_id = p_project_id;
+  delete from project_spatial_component where project_id = p_project_id;
   delete from project_species where project_id = p_project_id;
+  delete from nrm_region where project_id = p_project_id;
+  delete from conservation_area where project_id = p_project_id;
+  delete from project_attachment where project_id = p_project_id;
   delete from project where project_id = p_project_id;
 
 exception

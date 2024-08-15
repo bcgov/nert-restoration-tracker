@@ -1,11 +1,12 @@
 import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
+import { focus } from 'constants/misc';
 
 /**  Project related objects **/
 export interface ProjectData {
   id: number;
   projectId: number;
   projectName: string;
-  authRef: string;
+  focus: string;
   org: string;
   plannedStartDate: string;
   plannedEndDate: string;
@@ -29,6 +30,8 @@ export interface ProjectHeadCell {
   disablePadding: boolean;
   id: keyof ProjectData;
   label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
   numeric: boolean;
 }
 
@@ -40,46 +43,55 @@ export const projectHeadCells: readonly ProjectHeadCell[] = [
     label: ProjectTableI18N.projectName
   },
   {
-    id: 'authRef',
+    id: 'focus',
     numeric: false,
-    disablePadding: false,
-    label: ProjectTableI18N.authorizationRef
+    disablePadding: true,
+    label: ProjectTableI18N.focus,
+    tooltipLabel: ProjectTableI18N.focusTooltip,
+    infoButton: ProjectTableI18N.focusInfo
   },
   {
     id: 'org',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.organizations
+    label: TableI18N.organizations,
+    tooltipLabel: ProjectTableI18N.orgTooltip
   },
   {
     id: 'plannedStartDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.plannedStartDate
+    label: ProjectTableI18N.plannedStartDate,
+    tooltipLabel: ProjectTableI18N.plannedStartDateTooltip
   },
   {
     id: 'actualStartDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.actualStartDate
+    label: ProjectTableI18N.actualStartDate,
+    tooltipLabel: ProjectTableI18N.actualStartDateTooltip
   },
   {
     id: 'plannedEndDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.plannedEndDate
+    label: ProjectTableI18N.plannedEndDate,
+    tooltipLabel: ProjectTableI18N.plannedEndDateTooltip
   },
   {
     id: 'actualEndDate',
     numeric: false,
     disablePadding: false,
-    label: ProjectTableI18N.actualEndDate
+    label: ProjectTableI18N.actualEndDate,
+    tooltipLabel: ProjectTableI18N.actualEndDateTooltip
   },
   {
     id: 'statusLabel',
     numeric: false,
-    disablePadding: false,
-    label: TableI18N.status
+    disablePadding: true,
+    label: TableI18N.status,
+    tooltipLabel: ProjectTableI18N.statusTooltip,
+    infoButton: ProjectTableI18N.statusInfo
   },
   {
     id: 'archive',
@@ -94,6 +106,7 @@ export interface PlanData {
   id: number;
   planId: number;
   planName: string;
+  focus: string;
   term: string;
   org: string;
   startDate: string;
@@ -117,6 +130,8 @@ export interface PlanHeadCell {
   disablePadding: boolean;
   id: keyof PlanData;
   label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
   numeric: boolean;
 }
 
@@ -128,34 +143,47 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     label: PlanTableI18N.planName
   },
   {
+    id: 'focus',
+    numeric: false,
+    disablePadding: true,
+    label: PlanTableI18N.focus,
+    tooltipLabel: PlanTableI18N.focusTooltip,
+    infoButton: PlanTableI18N.focusInfo
+  },
+  {
     id: 'term',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.term
+    label: PlanTableI18N.term,
+    tooltipLabel: PlanTableI18N.termTooltip
   },
   {
     id: 'org',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.organizations
+    label: TableI18N.organizations,
+    tooltipLabel: PlanTableI18N.orgTooltip
   },
   {
     id: 'startDate',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.startDate
+    label: PlanTableI18N.startDate,
+    tooltipLabel: PlanTableI18N.startDateTooltip
   },
   {
     id: 'endDate',
     numeric: false,
     disablePadding: false,
-    label: PlanTableI18N.endDate
+    label: PlanTableI18N.endDate,
+    tooltipLabel: PlanTableI18N.endDateTooltip
   },
   {
     id: 'statusLabel',
     numeric: false,
     disablePadding: false,
-    label: TableI18N.status
+    label: TableI18N.status,
+    tooltipLabel: PlanTableI18N.statusTooltip
   },
   {
     id: 'archive',
@@ -207,4 +235,117 @@ export function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => n
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
+}
+
+export const authStyles = {
+  authChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  pendingAuthChip: {
+    backgroundColor: '#FFFFDD',
+    marginBottom: '1px',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  noAuthChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  authLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
+export const orgStyles = {
+  orgProjectChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '230px',
+    width: '100%'
+  },
+  orgPlanChip: {
+    backgroundColor: '#FFF4EB',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '230px',
+    width: '100%'
+  },
+  noOrgChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  orgLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
+export const focusStyles = {
+  focusProjectChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '210px',
+    width: '100%'
+  },
+  focusPlanChip: {
+    backgroundColor: '#FFF4EB',
+    marginBottom: '1px',
+    justifyContent: 'left',
+    maxWidth: '210px',
+    width: '100%'
+  },
+  noFocusChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  focusLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
+export function resolveProjectPlanFocus(
+  isHealingLand: boolean,
+  isHealingPeople: boolean,
+  isLandInitiative: boolean,
+  isCulturalInitiative: boolean
+) {
+  let resolvedFocusString = '';
+  if (isHealingLand) {
+    resolvedFocusString += focus.HEALING_THE_LAND;
+  }
+  if (isHealingPeople) {
+    resolvedFocusString += '\r' + focus.HEALING_THE_PEOPLE;
+  }
+  if (isLandInitiative) {
+    resolvedFocusString += '\r' + focus.LAND_BASED_RESTORATION_INITIATIVE;
+  }
+  if (isCulturalInitiative) {
+    resolvedFocusString += '\r' + focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE;
+  }
+  return resolvedFocusString.trim();
 }

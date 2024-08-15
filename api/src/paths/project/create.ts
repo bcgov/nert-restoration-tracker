@@ -45,7 +45,6 @@ POST.apiDoc = {
             'focus',
             'contact',
             'species',
-            'iucn',
             'authorization',
             'funding',
             'partnership',
@@ -60,6 +59,11 @@ POST.apiDoc = {
               properties: {
                 project_name: {
                   type: 'string'
+                },
+                project_image: {
+                  type: 'string',
+                  nullable: true,
+                  description: 'URL to the project image'
                 },
                 is_project: {
                   type: 'boolean',
@@ -113,14 +117,12 @@ POST.apiDoc = {
             objective: {
               title: 'Project objectives',
               type: 'object',
-              required: ['objectives'],
               additionalProperties: false,
               properties: {
                 objectives: {
                   type: 'array',
-                  required: ['objective'],
                   items: {
-                    title: 'Project objective',
+                    title: 'Project objectives',
                     type: 'object',
                     properties: {
                       objective: {
@@ -157,35 +159,25 @@ POST.apiDoc = {
                 focal_species: {
                   type: 'array',
                   items: {
-                    type: 'number'
-                  }
-                }
-              }
-            },
-            iucn: {
-              title: 'Project IUCN classifications',
-              type: 'object',
-              required: ['classificationDetails'],
-              additionalProperties: false,
-              properties: {
-                classificationDetails: {
-                  type: 'array',
-                  items: {
-                    title: 'IUCN classification',
                     type: 'object',
-                    required: ['classification', 'subClassification1', 'subClassification2'],
                     properties: {
-                      classification: {
-                        type: 'number',
-                        nullable: true
+                      tsn: {
+                        type: 'number'
                       },
-                      subClassification1: {
-                        type: 'number',
-                        nullable: true
+                      commonNames: {
+                        type: 'array',
+                        items: {
+                          type: 'string'
+                        }
                       },
-                      subClassification2: {
-                        type: 'number',
-                        nullable: true
+                      scientificName: {
+                        type: 'string'
+                      },
+                      rank: {
+                        type: 'string'
+                      },
+                      kingdom: {
+                        type: 'string'
                       }
                     }
                   }
@@ -203,7 +195,15 @@ POST.apiDoc = {
                   items: {
                     title: 'contacts',
                     type: 'object',
-                    required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                    required: [
+                      'first_name',
+                      'last_name',
+                      'email_address',
+                      'organization',
+                      'is_public',
+                      'is_primary',
+                      'is_first_nation'
+                    ],
                     properties: {
                       first_name: {
                         type: 'string'
@@ -214,7 +214,7 @@ POST.apiDoc = {
                       email_address: {
                         type: 'string'
                       },
-                      agency: {
+                      organization: {
                         type: 'string'
                       },
                       is_public: {
@@ -224,6 +224,13 @@ POST.apiDoc = {
                       is_primary: {
                         type: 'string',
                         enum: ['true', 'false']
+                      },
+                      is_first_nation: {
+                        type: 'boolean'
+                      },
+                      phone_number: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
@@ -248,6 +255,10 @@ POST.apiDoc = {
                       },
                       authorization_type: {
                         type: 'string'
+                      },
+                      authorization_desc: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
@@ -258,22 +269,22 @@ POST.apiDoc = {
               title: 'Project funding sources',
               type: 'object',
               required: ['fundingSources'],
-              additionalProperties: false,
               properties: {
                 fundingSources: {
                   type: 'array',
                   items: {
-                    title: 'Project funding agency',
+                    title: 'Project funding organization',
                     type: 'object',
-                    required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
+                    required: ['organization_name', 'funding_amount', 'is_public'],
                     properties: {
-                      agency_id: {
-                        type: 'number'
+                      organization_name: {
+                        type: 'string'
                       },
-                      investment_action_category: {
-                        type: 'number'
+                      description: {
+                        type: 'string',
+                        nullable: true
                       },
-                      agency_project_id: {
+                      funding_project_id: {
                         type: 'string'
                       },
                       funding_amount: {
@@ -281,11 +292,17 @@ POST.apiDoc = {
                       },
                       start_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
                       },
                       end_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
+                      },
+                      is_public: {
+                        type: 'string',
+                        enum: ['true', 'false']
                       }
                     }
                   }
@@ -300,7 +317,13 @@ POST.apiDoc = {
                 partnerships: {
                   type: 'array',
                   items: {
-                    type: 'string'
+                    title: 'Project partnerships',
+                    type: 'object',
+                    properties: {
+                      partnership: {
+                        type: 'string'
+                      }
+                    }
                   }
                 }
               }
@@ -322,11 +345,17 @@ POST.apiDoc = {
                 number_sites: {
                   type: 'number'
                 },
-                name_area_conservation_priority: {
+                conservationAreas: {
                   type: 'array',
+                  additionalProperties: true,
                   items: {
-                    title: 'Cultural or conservation area name',
-                    type: 'string'
+                    title: 'Project conservation areas',
+                    type: 'object',
+                    properties: {
+                      conservationArea: {
+                        type: 'string'
+                      }
+                    }
                   }
                 },
                 geometry: {
@@ -336,7 +365,14 @@ POST.apiDoc = {
                   }
                 },
                 region: {
-                  type: 'number'
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ]
                 }
               }
             },
@@ -399,7 +435,9 @@ POST.apiDoc = {
 export function createProject(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
+
     const sanitizedProjectPostData = new PostProjectObject(req.body);
+
     try {
       await connection.open();
 

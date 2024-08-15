@@ -10,24 +10,25 @@ import PlanFilter, {
   IPlanAdvancedFilters,
   PlanAdvancedFiltersInitialValues
 } from 'components/search-plan-filter/PlanFilter';
-import { ICONS, focusOptions, planStatusOptions } from 'constants/misc';
+import { focusOptions, ICONS, planStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetPlanForViewResponse } from 'interfaces/useProjectPlanApi.interface';
+import { useNertApi } from 'hooks/useNertApi';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import qs from 'qs';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
-import PlanListPage from './list/PlanListPage';
+import PlanListPage from 'features/plans/PlanListPage';
+import { PlanTableI18N } from 'constants/i18n';
+import { useCodesContext } from 'hooks/useContext';
 
 export default function Plans() {
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
   const history = useNavigate();
   const location = useLocation();
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,8 +42,6 @@ export default function Plans() {
       const urlParams = qs.parse(location.search.replace('?', ''));
       const values = {
         keyword: urlParams.keyword,
-        contact_agency: urlParams.contact_agency,
-        funding_agency: urlParams.funding_agency as unknown as number[],
         permit_number: urlParams.permit_number,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
@@ -50,10 +49,6 @@ export default function Plans() {
         status: urlParams.status,
         focus: urlParams.focus
       } as IPlanAdvancedFilters;
-
-      if (values.funding_agency === undefined) {
-        values.funding_agency = [];
-      }
 
       return values;
     }
@@ -132,7 +127,7 @@ export default function Plans() {
     });
   };
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   //plans
   useEffect(() => {
@@ -161,7 +156,7 @@ export default function Plans() {
     }
   }, [isLoading, location.search, formikValues, collectFilterParams]);
 
-  if (!codes.isReady || !codes.codes) {
+  if (!codes.isReady || !codes.data) {
     return <CircularProgress data-testid="plans-loading" className="pageProgress" size={40} />;
   }
 
@@ -191,7 +186,7 @@ export default function Plans() {
       </Box>
       <Box>
         <Typography ml={1} variant="body1" color="textSecondary">
-          BC restoration plans and related data.
+          {PlanTableI18N.planDefinition}
         </Typography>
       </Box>
 
@@ -204,18 +199,8 @@ export default function Plans() {
             onReset={handleReset}
             enableReinitialize={true}>
             <PlanFilter
-              contact_agency={
-                codes.codes.coordinator_agency?.map((item: any) => {
-                  return item.name;
-                }) || []
-              }
-              funding_agency={
-                codes.codes.funding_source.map((item: { id: any; name: any }) => {
-                  return { value: item.id, label: item.name };
-                }) || []
-              }
               region={
-                codes.codes.regions.map((item: { id: any; name: any }) => {
+                codes.data.regions.map((item: { id: string | number; name: string }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }

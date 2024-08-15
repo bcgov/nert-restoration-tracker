@@ -4,6 +4,7 @@ import { getAPIUserDBConnection } from '../../../../database/db';
 import { geoJsonFeature } from '../../../../openapi/schemas/geoJson';
 import { ProjectService } from '../../../../services/project-service';
 import { getLogger } from '../../../../utils/logger';
+import { maskGateKeeper } from '../../../../utils/spatial-utils';
 
 const defaultLog = getLogger('paths/public/project/{projectId}/view');
 
@@ -30,7 +31,7 @@ GET.apiDoc = {
           schema: {
             title: 'Project get response object, for view purposes',
             type: 'object',
-            required: ['project', 'permit', 'contact', 'location', 'iucn', 'funding', 'partnerships'],
+            required: ['project', 'authorization', 'contact', 'location', 'funding'],
             properties: {
               project: {
                 description: 'Basic project metadata',
@@ -67,41 +68,23 @@ GET.apiDoc = {
                   }
                 }
               },
-              iucn: {
-                description: 'The International Union for Conservation of Nature number',
-                type: 'object',
-                required: ['classificationDetails'],
-                properties: {
-                  classificationDetails: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        classification: {
-                          type: 'number'
-                        },
-                        subClassification1: {
-                          type: 'number'
-                        },
-                        subClassification2: {
-                          type: 'number'
-                        }
-                      }
-                    }
-                  }
-                }
-              },
               contact: {
-                title: 'Project contact',
                 type: 'object',
-                required: ['contacts'],
                 properties: {
                   contacts: {
                     type: 'array',
                     items: {
-                      title: 'contacts',
+                      title: 'Project contact',
                       type: 'object',
-                      required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                      required: [
+                        'first_name',
+                        'last_name',
+                        'email_address',
+                        'organization',
+                        'is_public',
+                        'is_primary',
+                        'is_first_nation'
+                      ],
                       properties: {
                         first_name: {
                           type: 'string'
@@ -112,7 +95,10 @@ GET.apiDoc = {
                         email_address: {
                           type: 'string'
                         },
-                        agency: {
+                        organization: {
+                          type: 'string'
+                        },
+                        phone_number: {
                           type: 'string'
                         },
                         is_public: {
@@ -122,27 +108,30 @@ GET.apiDoc = {
                         is_primary: {
                           type: 'string',
                           enum: ['true', 'false']
+                        },
+                        is_first_nation: {
+                          type: 'boolean'
                         }
                       }
                     }
                   }
                 }
               },
-              permit: {
+              authorization: {
                 type: 'object',
-                required: ['permits'],
+                required: ['authorizations'],
                 properties: {
-                  permits: {
+                  authorizations: {
                     type: 'array',
                     items: {
-                      title: 'Project permit',
-                      required: ['permit_number', 'permit_type'],
+                      title: 'Project authorization',
+                      required: ['authorization_ref', 'authorization_type'],
                       type: 'object',
                       properties: {
-                        permit_number: {
+                        authorization_ref: {
                           type: 'string'
                         },
-                        permit_type: {
+                        authorization_type: {
                           type: 'string'
                         }
                       }
@@ -151,69 +140,83 @@ GET.apiDoc = {
                 }
               },
               funding: {
-                description: 'The project funding details',
+                title: 'Project funding sources',
                 type: 'object',
                 required: ['fundingSources'],
                 properties: {
                   fundingSources: {
                     type: 'array',
                     items: {
+                      title: 'Project funding organization',
                       type: 'object',
-                      required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
+                      required: ['organization_name', 'funding_amount', 'is_public'],
                       properties: {
-                        id: {
-                          type: 'number'
-                        },
-                        agency_id: {
-                          type: 'number'
-                        },
-                        investment_action_category: {
-                          type: 'number'
-                        },
-                        investment_action_category_name: {
+                        organization_name: {
                           type: 'string'
                         },
-                        agency_name: {
+                        description: {
+                          type: 'string',
+                          nullable: true
+                        },
+                        funding_project_id: {
                           type: 'string'
                         },
                         funding_amount: {
                           type: 'number'
                         },
                         start_date: {
-                          oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                          description: 'ISO 8601 date string for the funding start date'
-                        },
-                        end_date: {
-                          oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                          description: 'ISO 8601 date string for the funding end date'
-                        },
-                        agency_project_id: {
                           type: 'string',
+                          description: 'ISO 8601 date string',
                           nullable: true
                         },
-                        revision_count: {
-                          type: 'number'
+                        end_date: {
+                          type: 'string',
+                          description: 'ISO 8601 date string',
+                          nullable: true
+                        },
+                        is_public: {
+                          type: 'string',
+                          enum: ['true', 'false']
                         }
                       }
                     }
                   }
                 }
               },
-              partnerships: {
-                description: 'The project partners',
+              partnership: {
+                description: 'Project partnerships',
                 type: 'object',
-                required: ['indigenous_partnerships', 'stakeholder_partnerships'],
+                required: ['partnerships'],
                 properties: {
-                  indigenous_partnerships: {
+                  partnerships: {
                     type: 'array',
                     items: {
-                      type: 'number'
+                      title: 'Project partnerships',
+                      type: 'object',
+                      properties: {
+                        partnership: {
+                          type: 'string'
+                        }
+                      }
                     }
-                  },
-                  stakeholder_partnerships: {
+                  }
+                }
+              },
+              objective: {
+                description: 'Project objectives',
+                type: 'object',
+                required: ['objectives'],
+                properties: {
+                  objectives: {
                     type: 'array',
                     items: {
-                      type: 'string'
+                      title: 'Project objectives',
+                      type: 'object',
+                      properties: {
+                        objective: {
+                          type: 'string'
+                        }
+                      }
                     }
                   }
                 }
@@ -271,6 +274,13 @@ export function getPublicProjectForView(): RequestHandler {
       const result = await projectService.getProjectById(Number(req.params.projectId), true);
 
       await connection.commit();
+
+      // Mask private geometries
+      const maskFilter = result.location.geometry?.map((feature) => {
+        return maskGateKeeper(feature);
+      });
+
+      result.location.geometry = maskFilter;
 
       return res.status(200).json(result);
     } catch (error) {

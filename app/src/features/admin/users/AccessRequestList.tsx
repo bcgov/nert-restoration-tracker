@@ -16,7 +16,7 @@ import { ReviewAccessRequestI18N } from 'constants/i18n';
 import { AdministrativeActivityStatusType } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React, { useContext, useState } from 'react';
@@ -51,7 +51,7 @@ export interface IAccessRequestListProps {
 const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
   const { accessRequests, codes, refresh } = props;
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [activeReviewDialog, setActiveReviewDialog] = useState<{
     open: boolean;

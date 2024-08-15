@@ -130,10 +130,4 @@ describe('generateS3FileKey', () => {
 
     expect(result).to.equal('restoration/projects/1/attachments/testFileName');
   });
-
-  it('returns a project treatments key', async () => {
-    const result = generateS3FileKey({ projectId: 1, fileType: 'treatments', fileName: 'testFileName' });
-
-    expect(result).to.equal('restoration/projects/1/treatments/testFileName');
-  });
 });

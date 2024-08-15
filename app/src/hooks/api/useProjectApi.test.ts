@@ -2,21 +2,22 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import {
   ICreateProjectRequest,
+  IEditProjectRequest,
   IGetProjectForViewResponseContact,
   IGetProjectForViewResponseDetails,
   IGetProjectForViewResponseFundingData,
-  IGetProjectForViewResponseIUCN,
   IGetProjectForViewResponseLocation,
+  IGetProjectForViewResponseObjectives,
   IGetProjectForViewResponsePartnerships,
   IGetProjectForViewResponsePermit,
-  IGetProjectForViewResponseSpecies,
-  IPostTreatmentUnitResponse
-} from 'interfaces/useProjectPlanApi.interface';
+  IGetProjectForViewResponseSpecies
+} from 'interfaces/useProjectApi.interface';
 import { getProjectForViewResponse } from 'test-helpers/project-helpers';
 import useProjectApi, { usePublicProjectApi } from './useProjectApi';
+import { S3FileType } from 'constants/attachments';
 
 describe('useProjectApi', () => {
-  let mock: any;
+  let mock: MockAdapter;
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
@@ -29,7 +30,6 @@ describe('useProjectApi', () => {
   const userId = 123;
   const projectId = 1;
   const attachmentId = 1;
-  const treatmentUnitId = 1;
 
   it('getAllUserProjectsParticipation works as expected', async () => {
     mock.onGet(`/api/user/${userId}/projects/participation/list`).reply(200, [
@@ -114,28 +114,6 @@ describe('useProjectApi', () => {
     expect(result).toEqual(getProjectForViewResponse);
   });
 
-  it('addFundingSource works as expected', async () => {
-    mock.onPost(`/api/project/${projectId}/funding-sources/add`).reply(200, {
-      id: 1
-    });
-
-    const result = await useProjectApi(axios).addFundingSource(projectId, {
-      funding_source_name: 'funding source name'
-    });
-
-    expect(result).toEqual({ id: 1 });
-  });
-
-  it('deleteFundingSource works as expected', async () => {
-    const pfsId = 2;
-
-    mock.onDelete(`/api/project/${projectId}/funding-sources/${pfsId}/delete`).reply(200, true);
-
-    const result = await useProjectApi(axios).deleteFundingSource(projectId, pfsId);
-
-    expect(result).toEqual(true);
-  });
-
   it('uploadProjectAttachments works as expected', async () => {
     const file = new File(['foo'], 'foo.txt', {
       type: 'text/plain'
@@ -143,13 +121,19 @@ describe('useProjectApi', () => {
 
     mock.onPost(`/api/project/${projectId}/attachments/upload`).reply(200, 'result 1');
 
-    const result = await useProjectApi(axios).uploadProjectAttachments(projectId, file);
+    const result = await useProjectApi(axios).uploadProjectAttachments(
+      projectId,
+      file,
+      S3FileType.ATTACHMENTS
+    );
 
     expect(result).toEqual('result 1');
   });
 
   it('createProject works as expected', async () => {
-    const projectData = {} as unknown as ICreateProjectRequest;
+    const projectData = {
+      project: { project_image: undefined, image_url: undefined, image_key: undefined }
+    } as unknown as ICreateProjectRequest;
 
     mock.onPost('/api/project/create').reply(200, {
       id: 1
@@ -211,58 +195,6 @@ describe('useProjectApi', () => {
     expect(result).toEqual(true);
   });
 
-  it('deleteProjectTreatmentUnit works as expected', async () => {
-    mock
-      .onDelete(`/api/project/${projectId}/treatments/treatment-unit/${treatmentUnitId}/delete`)
-      .reply(200);
-
-    const result = await useProjectApi(axios).deleteProjectTreatmentUnit(
-      projectId,
-      treatmentUnitId
-    );
-
-    expect(result).toEqual(true);
-  });
-
-  it('deleteProjectTreatments works as expected', async () => {
-    mock.onDelete(`/api/project/${projectId}/treatments/delete`).reply(200);
-
-    const result = await useProjectApi(axios).deleteProjectTreatments(projectId);
-
-    expect(result).toEqual(true);
-  });
-
-  it('getProjectTreatments works as expected', async () => {
-    const mockResponse = { treatmentList: [] };
-    mock.onGet(`/api/project/${projectId}/treatments/list`).reply(200, mockResponse);
-
-    const result = await useProjectApi(axios).getProjectTreatments(projectId);
-
-    expect(result).toEqual(mockResponse);
-  });
-
-  it('getProjectTreatmentsYears works as expected', async () => {
-    const mockResponse = [{ year: 1 }];
-    mock.onGet(`/api/project/${projectId}/treatments/year/list`).reply(200, mockResponse);
-
-    const result = await useProjectApi(axios).getProjectTreatmentsYears(projectId);
-
-    expect(result).toEqual(mockResponse);
-  });
-
-  it('importProjectTreatmentSpatialFile works as expected', async () => {
-    const treatmentResponse = {
-      treatment_unit_id: 1,
-      revision_count: 2
-    } as IPostTreatmentUnitResponse;
-
-    mock.onPost(`/api/project/${projectId}/treatments/upload`).reply(200, treatmentResponse);
-
-    const result = await useProjectApi(axios).importProjectTreatmentSpatialFile(1, {} as File);
-
-    expect(result).toEqual(treatmentResponse);
-  });
-
   it('updateProject works as expected', async () => {
     const mockResponse = [{ id: 1 }];
     mock.onPut(`/api/project/${projectId}/update`).reply(200, mockResponse);
@@ -273,10 +205,10 @@ describe('useProjectApi', () => {
       permit: {} as IGetProjectForViewResponsePermit,
       location: {} as IGetProjectForViewResponseLocation,
       contact: {} as IGetProjectForViewResponseContact,
-      iucn: {} as IGetProjectForViewResponseIUCN,
       funding: {} as IGetProjectForViewResponseFundingData,
-      partnerships: {} as IGetProjectForViewResponsePartnerships
-    };
+      partnerships: {} as IGetProjectForViewResponsePartnerships,
+      objectives: {} as IGetProjectForViewResponseObjectives
+    } as unknown as IEditProjectRequest;
 
     const result = await useProjectApi(axios).updateProject(projectId, newProjectData);
 
@@ -285,7 +217,7 @@ describe('useProjectApi', () => {
 });
 
 describe('usePublicProjectApi', () => {
-  let mock: any;
+  let mock: MockAdapter;
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
@@ -319,7 +251,7 @@ describe('usePublicProjectApi', () => {
   it.skip('getProjectById works as expected', async () => {
     mock.onGet(`/api/public/project/${projectId}/view`).reply(200, getProjectForViewResponse);
 
-    const result = await usePublicProjectApi(axios).getProjectForView(projectId);
+    const result = await usePublicProjectApi(axios).getProjectPlanForView(projectId);
 
     expect(result).toEqual(getProjectForViewResponse);
   });
@@ -360,9 +292,10 @@ describe('usePublicProjectApi', () => {
       ]
     });
 
-    const result = await useProjectApi(axios).getProjectAttachments(projectId, {
-      type: 'attachments'
-    });
+    const result = await useProjectApi(axios).getProjectAttachments(
+      projectId,
+      S3FileType.ATTACHMENTS
+    );
 
     expect(result.attachmentsList).toEqual([
       {
@@ -372,23 +305,5 @@ describe('usePublicProjectApi', () => {
         size: 3028
       }
     ]);
-  });
-
-  it('getProjectTreatments works as expected', async () => {
-    const mockResponse = { treatmentList: [] };
-    mock.onGet(`/api/public/project/${projectId}/treatments/list`).reply(200, mockResponse);
-
-    const result = await usePublicProjectApi(axios).getProjectTreatments(projectId);
-
-    expect(result).toEqual(mockResponse);
-  });
-
-  it('getProjectTreatmentsYears works as expected', async () => {
-    const mockResponse = [{ year: 1 }];
-    mock.onGet(`/api/public/project/${projectId}/treatments/year/list`).reply(200, mockResponse);
-
-    const result = await usePublicProjectApi(axios).getProjectTreatmentsYears(projectId);
-
-    expect(result).toEqual(mockResponse);
   });
 });
