@@ -121,7 +121,7 @@ const Header: React.FC = () => {
   const codes = useCodesContext().codesDataLoader;
 
   const title =
-    codes.data?.branding.find((data) => data.name == 'title')?.value || 'NERT Restoration Tracker';
+    codes.data?.branding.find((data) => data.name == 'title')?.value || 'Restoration Tracker';
 
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
