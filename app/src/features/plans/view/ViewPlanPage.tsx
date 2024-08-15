@@ -29,6 +29,7 @@ import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 import { useCodesContext } from '../../../hooks/useContext';
 
@@ -251,6 +252,7 @@ const ViewPlanPage: React.FC = () => {
                               sx={{ height: '2.8rem', width: '10rem' }}
                               color="primary"
                               variant="outlined"
+                              onClick={() => exportData([planWithDetails])}
                               disableElevation
                               data-testid="export-planWithDetails-button"
                               aria-label={ProjectTableI18N.exportProjectsData}

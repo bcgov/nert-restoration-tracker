@@ -37,12 +37,13 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import InfoContent from 'components/info/InfoContent';
 
@@ -50,6 +51,9 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
   const history = useNavigate();
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
+
+  const [selected, setSelected] = useState<readonly number[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
 
   const isUserCreator = projectAuthStateContext.hasProjectRole([
     SYSTEM_ROLE.SYSTEM_ADMIN,
@@ -124,6 +128,12 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     : [];
 
   const rows = rowsDraft.concat(rowsPlan);
+
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, plans);
+    setSelectedProjects(s);
+  }, [selected]);
 
   function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -261,6 +271,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
             sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-plan-button"
             aria-label={PlanTableI18N.exportPlansData}
@@ -277,7 +288,6 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   function PlanTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);

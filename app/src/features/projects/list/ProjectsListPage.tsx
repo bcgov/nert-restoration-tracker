@@ -39,16 +39,21 @@ import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import InfoContent from 'components/info/InfoContent';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
   const history = useNavigate();
+
+  const [selected, setSelected] = useState<readonly number[]>([]);
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
 
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
   const isUserCreator = projectAuthStateContext.hasSystemRole([
@@ -117,6 +122,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     : [];
 
   const rows = rowsDraft.concat(rowsProject);
+
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
 
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -249,6 +260,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
@@ -265,7 +277,6 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   function ProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);

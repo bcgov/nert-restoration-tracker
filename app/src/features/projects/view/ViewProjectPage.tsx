@@ -35,6 +35,7 @@ import ProjectDetails from './components/ProjectDetails';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useCodesContext } from 'hooks/useContext';
 
@@ -46,17 +47,6 @@ const pageStyles = {
   titleContainerActions: {
     '& button + button': {
       marginLeft: 1
-    }
-  },
-  fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
     }
   }
 };
@@ -265,6 +255,7 @@ const ViewProjectPage: React.FC = () => {
                             sx={{ height: '2.8rem', width: '10rem' }}
                             color="primary"
                             variant="outlined"
+                            onClick={() => exportData([project])}
                             disableElevation
                             data-testid="export-project-button"
                             aria-label={ProjectTableI18N.exportProjectsData}
