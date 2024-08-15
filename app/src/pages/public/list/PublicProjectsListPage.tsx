@@ -33,16 +33,21 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import PublicInfoContent from 'pages/public/components/PublicInfoContent';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
   const history = useNavigate();
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+
+  const [selected, setSelected] = useState<readonly number[]>([]);
 
   const rows = projects
     ?.filter(
@@ -71,6 +76,12 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         archive: ''
       } as utils.ProjectData;
     });
+
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
 
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -182,6 +193,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
@@ -198,7 +210,6 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   function PublicProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
