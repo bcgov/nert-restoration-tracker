@@ -289,7 +289,7 @@ export class UserRepository extends BaseRepository {
             WHERE
                 name = ${identitySource.toUpperCase()}
             ),
-            ${userIdentifier},
+            ${userIdentifier.toLowerCase()},
             now()
         )
         RETURNING

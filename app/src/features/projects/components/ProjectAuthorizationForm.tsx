@@ -1,5 +1,6 @@
 import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -15,8 +16,11 @@ import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 const pageStyles = {
   customListItem: {
@@ -107,8 +111,27 @@ const ProjectAuthorizationForm: React.FC = () => {
     'Other - please specify'
   ];
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
+
   return (
     <>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={CreateProjectI18N.authorization}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={CreateProjectI18N.authorization} />
+      </InfoDialogDraggable>
+
+      <Typography component="legend">
+        Project Authorizations
+        <IconButton edge="end" onClick={handleClickOpen}>
+          <InfoIcon color="info" />
+        </IconButton>
+      </Typography>
       <FieldArray
         name="authorization.authorizations"
         render={(arrayHelpers) => (

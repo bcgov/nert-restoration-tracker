@@ -285,7 +285,8 @@ GET.apiDoc = {
                       }
                     },
                     region: {
-                      type: 'number'
+                      type: 'number',
+                      nullable: true
                     }
                   }
                 }

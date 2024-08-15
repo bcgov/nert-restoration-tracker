@@ -14,7 +14,6 @@ import { focusOptions, ICONS, planStatusOptions } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import qs from 'qs';
@@ -23,6 +22,7 @@ import { useCollapse } from 'react-collapsed';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PlanListPage from 'features/plans/PlanListPage';
 import { PlanTableI18N } from 'constants/i18n';
+import { useCodesContext } from 'hooks/useContext';
 
 export default function Plans() {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
@@ -127,7 +127,7 @@ export default function Plans() {
     });
   };
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   //plans
   useEffect(() => {
@@ -156,7 +156,7 @@ export default function Plans() {
     }
   }, [isLoading, location.search, formikValues, collectFilterParams]);
 
-  if (!codes.isReady || !codes.codes) {
+  if (!codes.isReady || !codes.data) {
     return <CircularProgress data-testid="plans-loading" className="pageProgress" size={40} />;
   }
 
@@ -200,7 +200,7 @@ export default function Plans() {
             enableReinitialize={true}>
             <PlanFilter
               region={
-                codes.codes.regions.map((item: { id: string | number; name: string }) => {
+                codes.data.regions.map((item: { id: string | number; name: string }) => {
                   return { value: item.id, label: item.name };
                 }) || []
               }

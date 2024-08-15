@@ -210,11 +210,11 @@ export interface IGetProjectForViewResponseConservationAreas {
 }
 
 export interface IGetProjectForViewResponseLocation {
-  geometry: Feature[];
-  is_within_overlapping: string;
-  region: number;
-  number_sites: number;
-  size_ha: number;
+  geometry: Feature[] | null;
+  is_within_overlapping: string | null;
+  region: number | null;
+  number_sites: number | null;
+  size_ha: number | null;
   conservationAreas: IGetProjectForViewResponseConservationAreas[];
 }
 

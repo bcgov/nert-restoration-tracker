@@ -14,12 +14,11 @@ import { EditProjectI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IEditPlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import yup from 'utils/YupSchema';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
 import { ICONS } from 'constants/misc';
 import PlanContactForm, { PlanContactYupSchema } from '../components/PlanContactForm';
 import PlanGeneralInformationForm, {
@@ -29,6 +28,7 @@ import PlanLocationForm, { PlanLocationFormYupSchema } from '../components/PlanL
 import { PlanFormInitialValues } from '../create/CreatePlanPage';
 import PlanFocusForm from '../components/PlanFocusForm';
 import { handleFocusFormValues } from 'utils/Utils';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -71,7 +71,7 @@ const EditPlanPage: React.FC = () => {
   const urlParams: Record<string, string | number | undefined> = useParams();
   const projectId = Number(urlParams['id']);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const [hasLoadedDraftData, setHasLoadedDraftData] = useState(false);
 
@@ -88,9 +88,16 @@ const EditPlanPage: React.FC = () => {
     const getEditPlanFields = async () => {
       const response = await restorationTrackerApi.plan.getPlanByIdForUpdate(projectId);
 
-      const focus = handleFocusFormValues(response.project);
+      const editPlan = {
+        ...response,
+        location: {
+          ...response.location,
+          region: response.location.region || ''
+        },
+        focus: { focuses: handleFocusFormValues(response.project) }
+      };
 
-      setInitialPlanFormData({ ...response, focus: { focuses: focus } });
+      setInitialPlanFormData(editPlan);
 
       if (!response || !response.project.project_id) {
         return;
@@ -111,6 +118,10 @@ const EditPlanPage: React.FC = () => {
    */
   const handlePlanEdits = async (values: IEditPlanRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, values)) {
+        return;
+      }
+
       const response = await restorationTrackerApi.plan.updatePlan(projectId, values);
 
       if (!response?.project_id) {
@@ -169,7 +180,7 @@ const EditPlanPage: React.FC = () => {
     });
   };
 
-  if (!codes.codes || !hasLoadedDraftData) {
+  if (!codes.data || !hasLoadedDraftData) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -217,7 +228,9 @@ const EditPlanPage: React.FC = () => {
                   </Grid>
 
                   <Grid item xs={12} md={9}>
-                    <PlanGeneralInformationForm />
+                    <PlanGeneralInformationForm
+                      currentStateCode={initialPlanFormData.project.state_code}
+                    />
                     <Box mt={2}>
                       <PlanFocusForm />
                     </Box>
@@ -249,7 +262,7 @@ const EditPlanPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <PlanLocationForm
-                      regions={codes.codes.regions.map((item) => {
+                      regions={codes.data.regions.map((item) => {
                         return { value: item.id, label: item.name };
                       })}
                     />

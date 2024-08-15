@@ -342,7 +342,7 @@ export function resolveProjectPlanFocus(
     resolvedFocusString += '\r' + focus.HEALING_THE_PEOPLE;
   }
   if (isLandInitiative) {
-    resolvedFocusString += '\r' + focus.LAND_BASED_RESTOTRATION_INITIATIVE;
+    resolvedFocusString += '\r' + focus.LAND_BASED_RESTORATION_INITIATIVE;
   }
   if (isCulturalInitiative) {
     resolvedFocusString += '\r' + focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE;

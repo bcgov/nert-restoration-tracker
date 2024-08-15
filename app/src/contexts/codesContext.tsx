@@ -29,5 +29,7 @@ export const CodesContextProvider = (props: PropsWithChildren<Record<never, any>
 
   const codesContext: ICodesContext = useMemo(() => ({ codesDataLoader }), [codesDataLoader]);
 
+  codesDataLoader.load();
+
   return <CodesContext.Provider value={codesContext}>{props.children}</CodesContext.Provider>;
 };

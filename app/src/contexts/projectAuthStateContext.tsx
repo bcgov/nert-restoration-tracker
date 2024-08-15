@@ -99,7 +99,7 @@ export const ProjectAuthStateContextProvider: React.FC<React.PropsWithChildren> 
     [authStateContext.nertUserWrapper]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     // If perceived projectId does not differ from the currently loaded participant, skip refresh
     if (!projectId || projectId === participantDataLoader.data?.project_id) {
       return;

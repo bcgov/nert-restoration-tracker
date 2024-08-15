@@ -29,7 +29,7 @@ import IDIRRequestForm, {
 } from './IDIRRequestForm';
 import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
-import useDataLoader from 'hooks/useDataLoader';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -67,8 +67,7 @@ export const AccessRequestPage: React.FC = () => {
 
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
 
-  const codesDataLoader = useDataLoader(() => nertApi.codes.getAllCodeSets());
-  codesDataLoader.load();
+  const codesDataLoader = useCodesContext().codesDataLoader;
 
   const showAccessRequestErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
     dialogContext.setErrorDialog({

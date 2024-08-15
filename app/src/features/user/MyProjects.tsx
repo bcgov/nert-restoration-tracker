@@ -16,7 +16,7 @@ import { ProjectTableI18N } from 'constants/i18n';
 
 const MyProjects: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts } = props;
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: false });
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
   const history = useNavigate();
 
   return (

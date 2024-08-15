@@ -143,7 +143,7 @@ export class DraftRepository extends BaseRepository {
    * @memberof DraftRepository
    */
   async updateDraft(id: number, name: string, data: any): Promise<ICreateDraftResponse> {
-    defaultLog.debug({ label: 'createDraft', message: 'params', id, name, data });
+    defaultLog.debug({ label: 'updateDraft', message: 'params', id, name, data });
 
     try {
       const putDraftSQLStatement = SQL`
@@ -164,7 +164,7 @@ export class DraftRepository extends BaseRepository {
 
       return response.rows[0];
     } catch (error) {
-      defaultLog.debug({ label: 'createDraft', message: 'error', error });
+      defaultLog.debug({ label: 'updateDraft', message: 'error', error });
       throw error;
     }
   }

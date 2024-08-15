@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
+import InfoIcon from '@mui/icons-material/Info';
 import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
@@ -43,6 +44,8 @@ import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
@@ -139,74 +142,96 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
         onRequestSort(event, property);
       };
 
+    const [infoOpen, setInfoOpen] = useState(false);
+    const [infoTitle, setInfoTitle] = useState('');
+
+    const handleClickOpen = (headCell: utils.PlanHeadCell) => {
+      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
+      setInfoOpen(true);
+    };
+
     return (
-      <TableHead>
-        <TableRow>
-          {utils.planHeadCells.map((headCell) => {
-            if ('archive' !== headCell.id && 'export' !== headCell.id)
-              return (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <Tooltip
-                    title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
-                    placement="top">
-                    <TableSortLabel
-                      active={orderBy === headCell.id}
-                      direction={orderBy === headCell.id ? order : 'asc'}
-                      onClick={createSortHandler(headCell.id)}>
-                      {headCell.label}
-                      {orderBy === headCell.id ? (
-                        <Box component="span" sx={visuallyHidden}>
-                          {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                        </Box>
-                      ) : null}
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-              );
-          })}
+      <>
+        <InfoDialogDraggable
+          isProject={false}
+          open={infoOpen}
+          dialogTitle={infoTitle}
+          onClose={() => setInfoOpen(false)}>
+          <InfoContent isProject={false} contentIndex={infoTitle} />
+        </InfoDialogDraggable>
+        <TableHead>
+          <TableRow>
+            {utils.planHeadCells.map((headCell) => {
+              if ('archive' !== headCell.id && 'export' !== headCell.id)
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <Tooltip
+                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
+                      placement="top">
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : 'asc'}
+                        onClick={createSortHandler(headCell.id)}>
+                        {headCell.label}
+                        {orderBy === headCell.id ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </Tooltip>
+                    {headCell.infoButton ? (
+                      <IconButton onClick={() => handleClickOpen(headCell)}>
+                        <InfoIcon color="info" />
+                      </IconButton>
+                    ) : null}
+                  </TableCell>
+                );
+            })}
 
-          <SystemRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-            <TableCell>
-              {!myPlan ? (
-                <Typography variant="inherit">{TableI18N.archive}</Typography>
-              ) : (
-                <>
+            <SystemRoleGuard
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+              <TableCell>
+                {!myPlan ? (
                   <Typography variant="inherit">{TableI18N.archive}</Typography>
-                  <Typography variant="inherit">{TableI18N.delete}</Typography>
-                </>
-              )}
-            </TableCell>
-          </SystemRoleGuard>
-          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
-            <TableCell>
-              {!myPlan ? <></> : <Typography variant="inherit">Delete</Typography>}
-            </TableCell>
-          </SystemRoleGuard>
+                ) : (
+                  <>
+                    <Typography variant="inherit">{TableI18N.archive}</Typography>
+                    <Typography variant="inherit">{TableI18N.delete}</Typography>
+                  </>
+                )}
+              </TableCell>
+            </SystemRoleGuard>
+            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
+              <TableCell>
+                {!myPlan ? <></> : <Typography variant="inherit">Delete</Typography>}
+              </TableCell>
+            </SystemRoleGuard>
 
-          {!myPlan ? (
-            <TableCell padding="checkbox">
-              <Tooltip title={PlanTableI18N.exportAllPlans} placement="right">
-                <Checkbox
-                  color="primary"
-                  indeterminate={numSelected > 0 && numSelected < rowCount}
-                  checked={rowCount > 0 && numSelected === rowCount}
-                  onChange={onSelectAllClick}
-                  inputProps={{
-                    'aria-label': PlanTableI18N.selectAllPlansForExport
-                  }}
-                />
-              </Tooltip>
-            </TableCell>
-          ) : (
-            <></>
-          )}
-        </TableRow>
-      </TableHead>
+            {!myPlan ? (
+              <TableCell padding="checkbox">
+                <Tooltip title={PlanTableI18N.exportAllPlans} placement="right">
+                  <Checkbox
+                    color="primary"
+                    indeterminate={numSelected > 0 && numSelected < rowCount}
+                    checked={rowCount > 0 && numSelected === rowCount}
+                    onChange={onSelectAllClick}
+                    inputProps={{
+                      'aria-label': PlanTableI18N.selectAllPlansForExport
+                    }}
+                  />
+                </Tooltip>
+              </TableCell>
+            ) : (
+              <></>
+            )}
+          </TableRow>
+        </TableHead>
+      </>
     );
   }
 
@@ -399,7 +424,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                       {row.focus &&
                         row.focus.split('\r').map((focus: string, key) => (
                           <Fragment key={key}>
-                            <Box>
+                            <Box ml={-3}>
                               <Chip
                                 data-testid="focus_item"
                                 size="small"

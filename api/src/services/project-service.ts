@@ -453,7 +453,7 @@ export class ProjectService extends DBService {
     );
 
     // Handle region associated to this project
-    promises.push(this.projectRepository.insertProjectRegion(postProjectData.location.region, projectId));
+    promises.push(this.insertProjectRegion(postProjectData.location.region, projectId));
 
     // Handle focus
     promises.push(this.insertFocus(postProjectData.focus, projectId));
@@ -504,10 +504,32 @@ export class ProjectService extends DBService {
    * @return {*}  {Promise<number>}
    * @memberof ProjectService
    */
-  async insertProjectSpatial(locationData: PostLocationData, project_id: number): Promise<number> {
+  async insertProjectSpatial(locationData: PostLocationData, project_id: number): Promise<number | undefined> {
+    if (!locationData.geometry.length) {
+      return;
+    }
+
     const response = await this.projectRepository.insertProjectLocation(locationData, project_id);
 
     return response.project_spatial_component_id;
+  }
+
+  /**
+   * Insert a new project region.
+   *
+   * @param {number} regionNumber
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertProjectRegion(regionNumber: number, projectId: number): Promise<number | undefined> {
+    if (!regionNumber) {
+      return;
+    }
+
+    const response = await this.projectRepository.insertProjectRegion(regionNumber, projectId);
+
+    return response.nrm_region_id;
   }
 
   /**

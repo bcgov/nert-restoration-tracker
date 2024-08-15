@@ -99,8 +99,9 @@ export class PlanService extends DBService {
     await this.projectRepository.updateProjectFocus(plan.focus, planResponse.project_id);
 
     // insert location
-    await this.projectRepository.insertProjectLocation(plan.location, planResponse.project_id);
-
+    if (plan.location.geometry.length > 0) {
+      await this.projectRepository.insertProjectLocation(plan.location, planResponse.project_id);
+    }
     // insert region
     if (plan.location.region) {
       await this.projectRepository.insertProjectRegion(plan.location.region, planResponse.project_id);
@@ -180,12 +181,12 @@ export class PlanService extends DBService {
 
     // update location
     if (plan.location) {
-      await this.projectRepository.updateProjectLocation(projectId, plan.location);
+      await this.projectService.updateProjectSpatialData(projectId, plan.location);
     }
 
     //update region
     if (plan.location.region) {
-      await this.projectRepository.updateProjectRegion(plan.location.region, projectId);
+      await this.projectService.updateProjectRegionData(projectId, plan.location);
     }
 
     return planResponse;

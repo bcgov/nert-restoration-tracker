@@ -2,7 +2,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import { FormikContextType, useFormikContext } from 'formik';
 import get from 'lodash-es/get';
-import React from 'react';
+import React, { FC } from 'react';
 
 interface IIntegerSingleFieldProps {
   name: string;
@@ -10,7 +10,7 @@ interface IIntegerSingleFieldProps {
   required?: boolean;
   helperText?: string;
   handleBlur?: FormikContextType<any>['handleBlur'];
-  adornment?: string;
+  adornment?: string | JSX.Element;
 }
 
 /**
