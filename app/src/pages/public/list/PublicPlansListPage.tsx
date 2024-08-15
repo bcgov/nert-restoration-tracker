@@ -33,16 +33,20 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { IPlansListProps } from 'features/user/MyPlans';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import PublicInfoContent from 'pages/public/components/PublicInfoContent';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 
 const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans } = props;
   const history = useNavigate();
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+  const [selected, setSelected] = useState<readonly number[]>([]);
 
   const rows = plans
     ?.filter(
@@ -81,6 +85,13 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
             : 'Yes'
       } as utils.PlanData;
     });
+
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    // @ts-ignore - This is better then adding a new type for allProjects.
+    const s = calculateSelectedProjectsPlans(selected, rows, plans);
+    setSelectedProjects(s);
+  }, [selected]);
 
   function PlansTableHead(props: utils.PlansTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -196,6 +207,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
             variant="outlined"
             disableElevation
             data-testid="export-plan-button"
+            onClick={() => exportData(selectedProjects)}
             aria-label={PlanTableI18N.exportPlansData}
             startIcon={<Icon path={mdiExport} size={1} />}>
             {TableI18N.exportData}
@@ -210,7 +222,6 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
   function PlanTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);

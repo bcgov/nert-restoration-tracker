@@ -39,37 +39,14 @@ import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import PublicInfoContent from 'pages/public/components/PublicInfoContent';
-import { exportData } from 'utils/dataTransfer';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 
-
-// The interface for the calculateSelectedProjectsPlans function.
-interface CalculateSelectedProjectsPlans {
-  (selected: readonly number[], rows: utils.ProjectData[], allProjects: any): any;
-} 
-
-/**
- * TODO: Bring this into the utils/dataTransfer.ts file.
- * @param selected rows
- * @param rows filtered by the page
- * @param allProjects 
- * @returns selected projects
- */
-const calculateSelectedProjectsPlans: CalculateSelectedProjectsPlans = (
-  selected: readonly number[],
-  rows: utils.ProjectData[],
-  allProjects: any
-) => {
-  const projectIds = selected.map((id) => rows[id].projectId);
-  return allProjects.filter((proj: { project: { project_id: number } }) =>
-    projectIds.includes(proj.project.project_id)
-  );
-};
 
 const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects } = props;
   const history = useNavigate();
 
-  const [selectedProjects, setSelectedProjects] = useState<readonly number[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
 
   const [selected, setSelected] = useState<readonly number[]>([]);
 

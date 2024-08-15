@@ -2,6 +2,7 @@ import * as turf from '@turf/turf';
 import { BlobWriter, ZipWriter, TextReader } from '@zip.js/zip.js';
 import dayjs from 'dayjs';
 import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
 /**
  * Export all the project data.
  * This will eventually reside in a different place so all forms can use it.
@@ -28,7 +29,7 @@ const packageData = (project: any | null): ExtendedFeatureCollection => {
 /**
  * Download the project data as a GeoJSON file.
  */
-export const exportData = async (projects: [any] | null) => {
+export const exportData = async (projects: any[] | null) => {
   if (!projects) return;
 
   const zipFileWriter = new BlobWriter();
@@ -62,4 +63,33 @@ export const exportData = async (projects: [any] | null) => {
   // Clean up.
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+};
+
+const isProjectData = (data: utils.ProjectData | utils.PlanData): data is utils.ProjectData => {
+  return (data as utils.ProjectData).projectId !== undefined;
+}
+
+// The interface for the calculateSelectedProjectsPlans function.
+interface CalculateSelectedProjectsPlans {
+  (selected: readonly number[], rows: utils.ProjectData[], allProjects: any): any;
+} 
+
+/**
+ * Calculate the selected projects array.
+ * @param selected rows
+ * @param rows filtered by the page
+ * @param allProjects 
+ * @returns selected projects
+ */
+export const calculateSelectedProjectsPlans: CalculateSelectedProjectsPlans = (
+  selected: readonly number[],
+  rows: utils.ProjectData[] | utils.PlanData[],
+  allProjects: any
+) => {
+  const projectIds = selected.map((id) => {
+    return isProjectData(rows[id]) ? rows[id].projectId : rows[id].planId;
+  });
+  return allProjects.filter((proj: { project: { project_id: number } }) =>
+    projectIds.includes(proj.project.project_id)
+  );
 };
