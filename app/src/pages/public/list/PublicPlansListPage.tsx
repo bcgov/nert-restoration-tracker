@@ -88,7 +88,6 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
 
   // Make sure the data download knows what projects are selected.
   useEffect(() => {
-    // @ts-ignore - This is better then adding a new type for allProjects.
     const s = calculateSelectedProjectsPlans(selected, rows, plans);
     setSelectedProjects(s);
   }, [selected]);

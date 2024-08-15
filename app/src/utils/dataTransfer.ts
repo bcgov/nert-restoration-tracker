@@ -67,18 +67,22 @@ export const exportData = async (projects: any[] | null) => {
 
 const isProjectData = (data: utils.ProjectData | utils.PlanData): data is utils.ProjectData => {
   return (data as utils.ProjectData).projectId !== undefined;
-}
+};
 
 // The interface for the calculateSelectedProjectsPlans function.
 interface CalculateSelectedProjectsPlans {
-  (selected: readonly number[], rows: utils.ProjectData[], allProjects: any): any;
-} 
+  (
+    selected: readonly number[],
+    rows: utils.ProjectData[] | utils.PlanData[],
+    allProjects: any
+  ): any;
+}
 
 /**
  * Calculate the selected projects array.
  * @param selected rows
  * @param rows filtered by the page
- * @param allProjects 
+ * @param allProjects
  * @returns selected projects
  */
 export const calculateSelectedProjectsPlans: CalculateSelectedProjectsPlans = (
