@@ -1,10 +1,11 @@
 import { mdiPencilOutline, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Paper from '@mui/material/Paper';
@@ -23,6 +24,9 @@ import ProjectFundingItemForm, {
   ProjectFundingFormArrayItemInitialValues,
   ProjectFundingFormArrayItemYupSchema
 } from './ProjectFundingItemForm';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectFundingForm {
   funding: {
@@ -90,10 +94,27 @@ const ProjectFundingForm: React.FC = () => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
 
   return (
     <>
-      <Typography component="legend">Funding Sources</Typography>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={CreateProjectI18N.fundingSource}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={CreateProjectI18N.fundingSource} />
+      </InfoDialogDraggable>
+
+      <Typography component="legend">
+        Funding Sources
+        <IconButton edge="end" onClick={handleClickOpen}>
+          <InfoIcon color="info" />
+        </IconButton>
+      </Typography>
 
       <Box mb={3} maxWidth={'72ch'}>
         <Typography variant="body1" color="textSecondary">

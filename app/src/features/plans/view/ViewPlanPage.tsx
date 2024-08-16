@@ -3,7 +3,8 @@ import {
   mdiPencilOutline,
   mdiFilePdfBox,
   mdiExport,
-  mdiImport
+  mdiImport,
+  mdiArrowCollapseDown
 } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
@@ -15,23 +16,22 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import InfoDialog from 'components/dialog/InfoDialog';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanDetailsPage from './PlanDetailsPage';
-import MapContainer from 'components/map/MapContainer';
-import LayerSwitcher from 'components/map/components/LayerSwitcher';
-import { Card, Chip } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Card, Chip } from '@mui/material';
 import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
 import { S3FileType } from 'constants/attachments';
 import PlanDetails from './components/PlanDetails';
 import { focus, ICONS } from 'constants/misc';
-import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
+import LocationBoundary from 'features/projects/view/components/LocationBoundary';
+import { useCodesContext } from '../../../hooks/useContext';
 
 const pageStyles = {
   titleContainerActions: {
@@ -81,7 +81,7 @@ const ViewPlanPage: React.FC = () => {
   const [planWithDetails, setPlanWithDetails] = useState<IGetPlanForViewResponse | null>(null);
   const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getPlan = useCallback(async () => {
     const planWithDetailsResponse = await restorationTrackerApi.plan.getPlanById(planId);
@@ -122,34 +122,7 @@ const ViewPlanPage: React.FC = () => {
     }
   }, [isLoadingPlan, planWithDetails, getPlan, getAttachments]);
 
-  const bounds = calculateUpdatedMapBounds(planWithDetails?.location.geometry || [], true) || null;
-
-  // const closeMapDialog = () => {
-  //   setOpenFullScreen(false);
-  // };
-
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
-  };
-
-  if (!codes.isReady || !codes.codes || !planWithDetails) {
+  if (!codes.isReady || !codes.data || !planWithDetails) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -191,7 +164,7 @@ const ViewPlanPage: React.FC = () => {
                     <Chip
                       size="small"
                       color={'default'}
-                      label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
+                      label={focus.LAND_BASED_RESTORATION_INITIATIVE}
                     />
                   )}
                   {planWithDetails.project.is_cultural_initiative && (
@@ -256,63 +229,73 @@ const ViewPlanPage: React.FC = () => {
                     </Box>
                   </Paper>
                 </Box>
-                <Paper elevation={2}>
-                  <Box
-                    px={1}
-                    py={1}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center">
-                    <Typography variant="h2">Restoration Plan Area</Typography>
-                    <Box>
-                      <Button
-                        sx={{ height: '2.8rem', width: '10rem' }}
-                        color="primary"
-                        variant="outlined"
-                        disableElevation
-                        data-testid="export-project-button"
-                        aria-label={ProjectTableI18N.exportProjectsData}
-                        startIcon={<Icon path={mdiExport} size={1} />}>
-                        {TableI18N.exportData}
-                      </Button>
-                      <ProjectRoleGuard
-                        validSystemRoles={[
-                          SYSTEM_ROLE.SYSTEM_ADMIN,
-                          SYSTEM_ROLE.DATA_ADMINISTRATOR
-                        ]}
-                        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-                        validProjectPermissions={[]}>
-                        <Button
-                          sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
-                          color="primary"
-                          variant="outlined"
-                          disableElevation
-                          data-testid="import-plan-button"
-                          aria-label={PlanTableI18N.importPlanData}
-                          startIcon={<Icon path={mdiImport} size={1} />}>
-                          {TableI18N.importData}
-                        </Button>
-                      </ProjectRoleGuard>
-                    </Box>
-                  </Box>
-                  <Box height={500}>
-                    <MapContainer
-                      mapId={'plan_location_map'}
-                      layerVisibility={layerVisibility}
-                      features={planWithDetails.location.geometry}
-                      bounds={bounds}
-                      mask={null}
-                    />
-                  </Box>
-                  <Box sx={pageStyles.layerSwitcherContainer}>
-                    <LayerSwitcher layerVisibility={layerVisibility} />
-                  </Box>
-                </Paper>
-                <Box mt={2} />
+
+                <Box mb={1.2}>
+                  <Paper elevation={2}>
+                    <Accordion
+                      defaultExpanded={!!planWithDetails.location.geometry?.length || false}>
+                      <AccordionSummary
+                        expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                        aria-controls="panel1-content"
+                        id="panel1-header">
+                        <Box
+                          px={2}
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          width={'100%'}>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="h2">Restoration Plan Area</Typography>
+                          </Box>
+                          <Box>
+                            <Button
+                              sx={{ height: '2.8rem', width: '10rem' }}
+                              color="primary"
+                              variant="outlined"
+                              onClick={() => exportData([planWithDetails])}
+                              disableElevation
+                              data-testid="export-planWithDetails-button"
+                              aria-label={ProjectTableI18N.exportProjectsData}
+                              startIcon={<Icon path={mdiExport} size={1} />}>
+                              {TableI18N.exportData}
+                            </Button>
+
+                            <ProjectRoleGuard
+                              validSystemRoles={[
+                                SYSTEM_ROLE.SYSTEM_ADMIN,
+                                SYSTEM_ROLE.DATA_ADMINISTRATOR
+                              ]}
+                              validProjectRoles={[
+                                PROJECT_ROLE.PROJECT_LEAD,
+                                PROJECT_ROLE.PROJECT_EDITOR
+                              ]}
+                              validProjectPermissions={[]}>
+                              <Button
+                                sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
+                                color="primary"
+                                variant="outlined"
+                                disableElevation
+                                data-testid="import-planWithDetails-button"
+                                aria-label={PlanTableI18N.importPlanData}
+                                startIcon={<Icon path={mdiImport} size={1} />}>
+                                {TableI18N.importData}
+                              </Button>
+                            </ProjectRoleGuard>
+                          </Box>
+                        </Box>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Box height="500px" position="relative">
+                          <LocationBoundary locationData={planWithDetails.location} />
+                        </Box>
+                      </AccordionDetails>
+                    </Accordion>
+                  </Paper>
+                </Box>
               </Grid>
               <Grid item md={4}>
                 <Paper elevation={2}>
-                  <PlanDetailsPage planForViewData={planWithDetails} codes={codes.codes} />
+                  <PlanDetailsPage planForViewData={planWithDetails} codes={codes.data} />
                 </Paper>
               </Grid>
             </Grid>

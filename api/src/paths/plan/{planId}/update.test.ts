@@ -96,4 +96,55 @@ describe('update', () => {
       expect(mockRes.statusValue).to.equal(200);
     });
   });
+
+  describe('viewPlanForEdit', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should return a plan for editing', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        planId: '1'
+      };
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      sinon.stub(PlanService.prototype, 'getPlanByIdForEdit').resolves({ id: 1 } as any);
+
+      const requestHandler = update.viewPlanForEdit();
+
+      await requestHandler(mockReq, mockRes, mockNext);
+
+      expect(mockRes.statusValue).to.equal(200);
+      expect(mockRes.jsonValue).to.eql({ id: 1 });
+    });
+
+    it('should catch and re-throw an error', async () => {
+      const dbConnectionObj = getMockDBConnection({ release: sinon.stub() });
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        planId: '1'
+      };
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      sinon.stub(PlanService.prototype, 'getPlanByIdForEdit').rejects(new Error('a test error'));
+
+      const requestHandler = update.viewPlanForEdit();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect(dbConnectionObj.release).to.have.been.called;
+        expect((actualError as HTTPError).message).to.equal('a test error');
+      }
+    });
+  });
 });

@@ -12,7 +12,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +23,8 @@ import { DialogContext } from '../../../contexts/dialogContext';
 import { APIError } from '../../../hooks/api/useAxios';
 import { CodeSet, IGetAllCodeSetsResponse } from '../../../interfaces/useCodesApi.interface';
 import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
-import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
+import { ISystemUser } from '../../../interfaces/useUserApi.interface';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -46,7 +46,7 @@ const pageStyles = {
 };
 
 export interface IProjectDetailsProps {
-  userDetails: IGetUserResponse;
+  userDetails: ISystemUser;
 }
 
 /**
@@ -81,7 +81,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     handleGetUserProjects(userDetails.id);
   }, [userDetails.id, assignedProjects, handleGetUserProjects]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const handleRemoveProjectParticipant = async (
     projectId: number,
@@ -231,7 +231,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     );
   };
 
-  if (!codes.isReady || !codes.codes || !assignedProjects) {
+  if (!codes.isReady || !codes.data || !assignedProjects) {
     return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
   }
 
@@ -254,7 +254,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody data-testid="resources-table">
-            <TableRows assignedProjects={assignedProjects} codes={codes.codes} />
+            <TableRows assignedProjects={assignedProjects} codes={codes.data} />
           </TableBody>
         </Table>
       </Box>

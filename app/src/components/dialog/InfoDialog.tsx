@@ -73,8 +73,8 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
 
   return (
     <Fragment>
-      <Tooltip title={`${item.typeLabel} ${infoContent}`} placement="right">
-        <IconButton onClick={handleClickOpen}>
+      <Tooltip title={`${item.typeLabel} ${infoContent}`} placement="top">
+        <IconButton edge="end" onClick={handleClickOpen}>
           <InfoIcon color="info" />
         </IconButton>
       </Tooltip>

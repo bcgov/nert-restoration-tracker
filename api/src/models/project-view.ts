@@ -159,7 +159,7 @@ export class GetLocationData {
     const locationDataItem = locationData && locationData.length && locationData[0];
     this.geometry = (locationDataItem?.geojson?.length && locationDataItem.geojson) || [];
     this.is_within_overlapping = locationData && locationData?.length && locationData[0]?.is_within_overlapping;
-    this.region = (regionData && regionData?.length && regionData[0]?.objectid) || ('' as unknown as number);
+    this.region = (regionData && regionData?.length && regionData[0]?.objectid) || null;
     this.number_sites =
       (locationData && locationData?.length && locationData[0]?.number_sites) || ('' as unknown as number);
     this.size_ha = (locationData && locationData?.length && locationData[0]?.size_ha) || ('' as unknown as number);

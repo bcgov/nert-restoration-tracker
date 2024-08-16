@@ -20,6 +20,23 @@ GET.apiDoc = {
           schema: {
             type: 'object',
             properties: {
+              branding: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'number'
+                    },
+                    name: {
+                      type: 'string'
+                    },
+                    value: {
+                      type: 'string'
+                    }
+                  }
+                }
+              },
               first_nations: {
                 type: 'array',
                 items: {

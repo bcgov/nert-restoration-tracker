@@ -116,7 +116,17 @@ describe('ProjectRepository', () => {
     });
 
     it('should return array in rows with isPublic = true', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+      const mockObject = {
+        first_name: 'first_name',
+        last_name: 'last_name',
+        email_address: 'email_address',
+        organization: 'organization',
+        phone_number: 'phone_number',
+        is_public: 'Y',
+        is_primary: 'Y',
+        is_first_nation: true
+      };
+      const mockQueryResponse = { rowCount: 1, rows: [mockObject] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
         sql: async () => {
@@ -128,7 +138,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.getContactData(1, true);
 
-      expect(response).to.deep.equal(new GetContactData([]));
+      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'First Nation' }]));
     });
 
     it('should return array in rows with isPublic = false', async () => {
@@ -276,6 +286,46 @@ describe('ProjectRepository', () => {
     });
   });
 
+  describe('getConservationAreasData', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should return array in rows', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [{ conservation_area: 'string' }] } as any as Promise<
+        QueryResult<any>
+      >;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      const response = await projectRepository.getConservationAreasData(1);
+
+      expect(response).to.deep.equal([{ conservationArea: 'string' }]);
+    });
+
+    it('catches errors and throws', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('error');
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      try {
+        await projectRepository.getConservationAreasData(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('error');
+      }
+    });
+  });
+
   describe('getFundingData', () => {
     afterEach(() => {
       sinon.restore();
@@ -293,6 +343,22 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       const response = await projectRepository.getFundingData(1, false);
+
+      expect(response).to.deep.equal(new GetFundingData([]));
+    });
+
+    it('should return array in rows when public is true', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      const response = await projectRepository.getFundingData(1, true);
 
       expect(response).to.deep.equal(new GetFundingData([]));
     });
@@ -402,6 +468,44 @@ describe('ProjectRepository', () => {
 
       try {
         await projectRepository.getRegionData(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('error');
+      }
+    });
+  });
+
+  describe('getSpecies', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should return array in rows', async () => {
+      const mockQueryResponse = { rowCount: 1, rows: [{ itis_tsn: 1 }] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      const response = await projectRepository.getSpecies(1);
+
+      expect(response).to.deep.equal([{ itis_tsn: 1 }]);
+    });
+
+    it('catches errors and throws', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('error');
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      try {
+        await projectRepository.getSpecies(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -653,7 +757,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.updateProjectFocus({ id: 1 } as any, 1);
+      const response = await projectRepository.updateProjectFocus({ focuses: [1, 2, 3, 4], people_involved: 1 }, 1);
 
       expect(response).to.eql({ project_id: 1 });
     });
@@ -955,6 +1059,64 @@ describe('ProjectRepository', () => {
     });
   });
 
+  describe('insertConservationArea', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should insert conservation area and return id on success', async () => {
+      const mockQueryResponse = { rowCount: 1, rows: [{ conservation_area_id: 1 }] } as any as Promise<
+        QueryResult<any>
+      >;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      const response = await projectRepository.insertConservationArea('string', 1);
+
+      expect(response).to.eql({ conservation_area_id: 1 });
+    });
+
+    it('throws error if no data is found', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      try {
+        await projectRepository.insertConservationArea('string', 1);
+      } catch (error: any) {
+        expect(error.message).to.equal('Failed to insert project conservation area');
+      }
+    });
+
+    it('catches errors and throws', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('error');
+        }
+      });
+
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      try {
+        await projectRepository.insertConservationArea('string', 1);
+      } catch (error: any) {
+        expect(error.message).to.equal('error');
+      }
+    });
+  });
+
   describe('insertAuthorization', () => {
     afterEach(() => {
       sinon.restore();
@@ -1134,7 +1296,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.insertProjectLocation(
         {
-          geometry: [],
+          geometry: [{ coordinates: [1, 2] } as any],
           is_within_overlapping: 'string',
           region: 1,
           number_sites: 1,
@@ -1338,6 +1500,42 @@ describe('ProjectRepository', () => {
     });
   });
 
+  describe('updateProjectRegion', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should update project region and return id on success', async () => {
+      const mockQueryResponse = { rowCount: 1, rows: [{ nrm_region_id: 1 }] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      const response = await projectRepository.updateProjectRegion(1, 1);
+
+      expect(response).to.eql({ nrm_region_id: 1 });
+    });
+
+    it('catches errors and throws', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('error');
+        }
+      });
+      const projectRepository = new ProjectRepository(mockDBConnection);
+
+      try {
+        await projectRepository.updateProjectRegion(1, 1);
+      } catch (error: any) {
+        expect(error.message).to.equal('error');
+      }
+    });
+  });
+
   describe('deleteProject', () => {
     afterEach(() => {
       sinon.restore();
@@ -1359,17 +1557,20 @@ describe('ProjectRepository', () => {
     });
 
     it('catches errors and throws', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
       const mockDBConnection = getMockDBConnection({
         sql: async () => {
-          throw new Error('error');
+          return mockQueryResponse;
         }
       });
+
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
         await projectRepository.deleteProject(1);
       } catch (error: any) {
-        expect(error.message).to.equal('error');
+        expect(error.message).to.equal('Failed to delete Project');
       }
     });
   });
@@ -1817,6 +2018,38 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
       try {
         await projectRepository.deleteProjectSpecies(1);
+      } catch (error: any) {
+        expect(error.message).to.equal('error');
+      }
+    });
+  });
+
+  describe('deleteProjectConservationArea', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should delete project conservation area and return true on success', async () => {
+      const mockQueryResponse = { rowCount: 1, rows: [true] } as any as Promise<QueryResult<any>>;
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+      const projectRepository = new ProjectRepository(mockDBConnection);
+      const response = await projectRepository.deleteProjectConservationArea(1);
+      expect(response).to.eql(undefined);
+    });
+
+    it('catches errors and throws', async () => {
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          throw new Error('error');
+        }
+      });
+      const projectRepository = new ProjectRepository(mockDBConnection);
+      try {
+        await projectRepository.deleteProjectConservationArea(1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

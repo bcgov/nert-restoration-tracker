@@ -9,7 +9,6 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { Container } from '@mui/system';
 import EditDialog from 'components/dialog/EditDialog';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import YesNoDialog from 'components/dialog/YesNoDialog';
@@ -28,13 +27,12 @@ import PlanLocationForm, {
 } from 'features/plans/components/PlanLocationForm';
 import { Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useNertApi } from 'hooks/useNertApi';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import yup from 'utils/YupSchema';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
 import PlanContactForm, {
   PlanContactInitialValues,
   PlanContactYupSchema
@@ -52,6 +50,7 @@ import PlanGeneralInformationForm, {
   PlanGeneralInformationFormInitialValues,
   PlanGeneralInformationFormYupSchema
 } from '../components/PlanGeneralInformationForm';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   formButtons: {
@@ -91,7 +90,7 @@ export const PlanFormYupSchema = yup
 const CreatePlanPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
   const dialogContext = useContext(DialogContext);
   const history = useNavigate();
 
@@ -173,7 +172,7 @@ const CreatePlanPage: React.FC = () => {
       if (draftId) {
         if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
-            StateMachine(true, states.DRAFT, events.saving)
+            StateMachine(false, states.DRAFT, events.saving)
           );
         }
         response = await restorationTrackerApi.draft.updateDraft(
@@ -184,7 +183,7 @@ const CreatePlanPage: React.FC = () => {
       } else {
         if (formikRef.current) {
           formikRef.current.values.project.state_code = getStateCodeFromLabel(
-            StateMachine(true, states.DRAFT, events.creating)
+            StateMachine(false, states.DRAFT, events.creating)
           );
         }
 
@@ -223,6 +222,10 @@ const CreatePlanPage: React.FC = () => {
    */
   const handlePlanCreation = async (planPostObject: ICreatePlanRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, planPostObject)) {
+        return;
+      }
+
       planPostObject.location.size_ha = planPostObject.location.size_ha
         ? planPostObject.location.size_ha
         : 0;
@@ -292,7 +295,7 @@ const CreatePlanPage: React.FC = () => {
     });
   };
 
-  if (!codes.codes) {
+  if (!codes.data) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -356,7 +359,8 @@ const CreatePlanPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration Plan
+            Provide the information below and submit to create a new restoration plan. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 
@@ -366,6 +370,8 @@ const CreatePlanPage: React.FC = () => {
             enableReinitialize={true}
             initialValues={initialPlanFormData}
             validationSchema={PlanFormYupSchema}
+            validateOnBlur={false}
+            validateOnChange={false}
             onSubmit={handlePlanCreation}>
             <>
               <Box ml={1} my={3}>
@@ -407,7 +413,7 @@ const CreatePlanPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <PlanLocationForm
-                      regions={codes.codes.regions.map((item) => {
+                      regions={codes.data.regions.map((item) => {
                         return { value: item.id, label: item.name };
                       })}
                     />

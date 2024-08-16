@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { z } from 'zod';
 import { SYSTEM_IDENTITY_SOURCE } from '../constants/database';
 import {
   BceidBasicUserInformation,
@@ -7,7 +8,39 @@ import {
   DatabaseUserInformation,
   IdirUserInformation
 } from '../utils/keycloak-utils';
-import { getGenericizedKeycloakUserInformation } from './db-utils';
+import { getGenericizedKeycloakUserInformation, syncErrorWrapper } from './db-utils';
+
+describe('syncErrorWrapper', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('calls the wrapped function and returns the result', () => {
+    const fn = sinon.stub().returns('test');
+
+    const result = syncErrorWrapper(fn)();
+
+    expect(result).to.equal('test');
+  });
+
+  it('throws an error if the wrapped function throws an error', () => {
+    const fn = sinon.stub().throws(new Error('test'));
+
+    expect(() => syncErrorWrapper(fn)()).to.throw('Failed to execute SQL');
+  });
+
+  it('throws an error if the wrapped function throws an ApiExecuteSQLError', () => {
+    const fn = sinon.stub().throws(new Error('CONCURRENCY_EXCEPTION'));
+
+    expect(() => syncErrorWrapper(fn)()).to.throw('Failed to update stale data');
+  });
+
+  it('throws an error if the wrapped function throws an unknown error', () => {
+    const fn = sinon.stub().throws(new z.ZodError([]));
+
+    expect(() => syncErrorWrapper(fn)()).to.throw('SQL response failed schema check');
+  });
+});
 
 describe('getGenericizedKeycloakUserInformation', () => {
   afterEach(() => {

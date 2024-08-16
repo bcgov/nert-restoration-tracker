@@ -352,13 +352,6 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (!response.rowCount) {
-        throw new ApiExecuteSQLError('Failed to get Geometry', [
-          'ProjectRepository->getGeometryData',
-          'rowCount was null or undefined, expected rowCount > 0'
-        ]);
-      }
-
       return response && response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getGeometryData', message: 'error', error });
@@ -414,7 +407,6 @@ export class ProjectRepository extends BaseRepository {
           `;
 
     const response = await this.connection.sql(sqlStatement);
-    console.log('response', response);
 
     return response.rows as [{ itis_tsn: number }];
   }
@@ -1185,13 +1177,6 @@ export class ProjectRepository extends BaseRepository {
 
       const response = await this.connection.sql(sqlStatement);
 
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to update Location', [
-          'ProjectRepository->updateProjectLocation',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
       const result = (response && response.rows && response.rows[0]) || null;
 
       return result;
@@ -1350,30 +1335,6 @@ export class ProjectRepository extends BaseRepository {
       await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProjectObjectives', message: 'error', error });
-      throw error;
-    }
-  }
-
-  /**
-   * Delete a project conservation areas.
-   *
-   * @param {number} projectId
-   * @memberof ProjectRepository
-   */
-  async deleteProjectConservationAreas(projectId: number) {
-    defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'params', projectId });
-
-    try {
-      const sqlStatement = SQL`
-        DELETE
-          from conservation_area
-        WHERE
-          project_id = ${projectId};
-      `;
-
-      await this.connection.sql(sqlStatement);
-    } catch (error) {
-      defaultLog.debug({ label: 'deleteProjectConservationAreas', message: 'error', error });
       throw error;
     }
   }

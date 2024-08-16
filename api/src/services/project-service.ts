@@ -453,7 +453,7 @@ export class ProjectService extends DBService {
     );
 
     // Handle region associated to this project
-    promises.push(this.projectRepository.insertProjectRegion(postProjectData.location.region, projectId));
+    promises.push(this.insertProjectRegion(postProjectData.location.region, projectId));
 
     // Handle focus
     promises.push(this.insertFocus(postProjectData.focus, projectId));
@@ -504,10 +504,28 @@ export class ProjectService extends DBService {
    * @return {*}  {Promise<number>}
    * @memberof ProjectService
    */
-  async insertProjectSpatial(locationData: PostLocationData, project_id: number): Promise<number> {
+  async insertProjectSpatial(locationData: PostLocationData, project_id: number): Promise<number | undefined> {
+    if (!locationData.geometry.length) {
+      return;
+    }
+
     const response = await this.projectRepository.insertProjectLocation(locationData, project_id);
 
     return response.project_spatial_component_id;
+  }
+
+  /**
+   * Insert a new project region.
+   *
+   * @param {number} regionNumber
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   * @memberof ProjectService
+   */
+  async insertProjectRegion(regionNumber: number, projectId: number): Promise<number | undefined> {
+    const response = await this.projectRepository.insertProjectRegion(regionNumber, projectId);
+
+    return response.nrm_region_id;
   }
 
   /**
@@ -699,6 +717,7 @@ export class ProjectService extends DBService {
       promises.push(this.updateProjectRegionData(projectId, entities.location));
       promises.push(this.updateProjectConservationAreaData(projectId, entities.location));
     }
+
     if (entities?.species) {
       promises.push(this.updateProjectSpeciesData(projectId, entities.species));
     }
@@ -823,7 +842,7 @@ export class ProjectService extends DBService {
   async updateProjectSpatialData(projectId: number, location: PostLocationData): Promise<void> {
     await this.projectRepository.deleteProjectLocation(projectId);
 
-    if (!location?.geometry) {
+    if (!location?.geometry.length) {
       // No spatial data to insert
       return;
     }
@@ -852,7 +871,7 @@ export class ProjectService extends DBService {
   async updateProjectConservationAreaData(projectId: number, location: PostLocationData): Promise<void> {
     await this.projectRepository.deleteProjectConservationArea(projectId);
 
-    if (!location?.conservationAreas) {
+    if (!location?.conservationAreas.length) {
       // No spatial data to insert
       return;
     }

@@ -3,7 +3,8 @@ import {
   mdiFilePdfBox,
   mdiPencilOutline,
   mdiExport,
-  mdiImport
+  mdiImport,
+  mdiArrowCollapseDown
 } from '@mdi/js';
 import { Icon } from '@mdi/react';
 import Box from '@mui/material/Box';
@@ -22,7 +23,6 @@ import LocationBoundary from 'features/projects/view/components/LocationBoundary
 import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
 import ProjectAttachments from 'features/projects/view/ProjectAttachments';
 import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
@@ -35,6 +35,9 @@ import ProjectDetails from './components/ProjectDetails';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import ProjectFocalSpecies from './components/ProjectFocalSpecies';
 import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   conservationAreChip: {
@@ -44,17 +47,6 @@ const pageStyles = {
   titleContainerActions: {
     '& button + button': {
       marginLeft: 1
-    }
-  },
-  fullScreenBtn: {
-    padding: '3px',
-    borderRadius: '4px',
-    background: '#ffffff',
-    color: '#000000',
-    border: '2px solid rgba(0,0,0,0.2)',
-    backgroundClip: 'padding-box',
-    '&:hover': {
-      backgroundColor: '#eeeeee'
     }
   }
 };
@@ -81,7 +73,7 @@ const ViewProjectPage: React.FC = () => {
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
   const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProject = useCallback(async () => {
     const projectWithDetailsResponse =
@@ -131,7 +123,7 @@ const ViewProjectPage: React.FC = () => {
       setIsLoadingProject(true);
     }
   }, [isLoadingProject, project, getProject, getAttachments]);
-  if (!codes.isReady || !codes.codes || !project) {
+  if (!codes.isReady || !codes.data || !project) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
@@ -174,7 +166,7 @@ const ViewProjectPage: React.FC = () => {
                   <Chip
                     size="small"
                     color={'default'}
-                    label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
+                    label={focus.LAND_BASED_RESTORATION_INITIATIVE}
                   />
                 )}
                 {project.project.is_cultural_initiative && (
@@ -244,48 +236,63 @@ const ViewProjectPage: React.FC = () => {
 
               <Box mb={1.2}>
                 <Paper elevation={2}>
-                  <Box
-                    px={1}
-                    py={1}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center">
-                    <Typography variant="h2">Restoration Project Area</Typography>
-                    <Box>
-                      <Button
-                        sx={{ height: '2.8rem', width: '10rem' }}
-                        color="primary"
-                        variant="outlined"
-                        disableElevation
-                        data-testid="export-project-button"
-                        aria-label={ProjectTableI18N.exportProjectsData}
-                        startIcon={<Icon path={mdiExport} size={1} />}>
-                        {TableI18N.exportData}
-                      </Button>
+                  <Accordion defaultExpanded={!!project.location.geometry?.length || false}>
+                    <AccordionSummary
+                      expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                      aria-controls="panel1-content"
+                      id="panel1-header">
+                      <Box
+                        px={2}
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        width={'100%'}>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="h2">Restoration Project Area</Typography>
+                        </Box>
+                        <Box>
+                          <Button
+                            sx={{ height: '2.8rem', width: '10rem' }}
+                            color="primary"
+                            variant="outlined"
+                            onClick={() => exportData([project])}
+                            disableElevation
+                            data-testid="export-project-button"
+                            aria-label={ProjectTableI18N.exportProjectsData}
+                            startIcon={<Icon path={mdiExport} size={1} />}>
+                            {TableI18N.exportData}
+                          </Button>
 
-                      <ProjectRoleGuard
-                        validSystemRoles={[
-                          SYSTEM_ROLE.SYSTEM_ADMIN,
-                          SYSTEM_ROLE.DATA_ADMINISTRATOR
-                        ]}
-                        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-                        validProjectPermissions={[]}>
-                        <Button
-                          sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
-                          color="primary"
-                          variant="outlined"
-                          disableElevation
-                          data-testid="import-plan-button"
-                          aria-label={PlanTableI18N.importPlanData}
-                          startIcon={<Icon path={mdiImport} size={1} />}>
-                          {TableI18N.importData}
-                        </Button>
-                      </ProjectRoleGuard>
-                    </Box>
-                  </Box>
-                  <Box height="500px" position="relative">
-                    <LocationBoundary locationData={project.location} />
-                  </Box>
+                          <ProjectRoleGuard
+                            validSystemRoles={[
+                              SYSTEM_ROLE.SYSTEM_ADMIN,
+                              SYSTEM_ROLE.DATA_ADMINISTRATOR
+                            ]}
+                            validProjectRoles={[
+                              PROJECT_ROLE.PROJECT_LEAD,
+                              PROJECT_ROLE.PROJECT_EDITOR
+                            ]}
+                            validProjectPermissions={[]}>
+                            <Button
+                              sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
+                              color="primary"
+                              variant="outlined"
+                              disableElevation
+                              data-testid="import-plan-button"
+                              aria-label={PlanTableI18N.importPlanData}
+                              startIcon={<Icon path={mdiImport} size={1} />}>
+                              {TableI18N.importData}
+                            </Button>
+                          </ProjectRoleGuard>
+                        </Box>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box height="500px" position="relative">
+                        <LocationBoundary locationData={project.location} />
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
                 </Paper>
               </Box>
 
@@ -300,7 +307,7 @@ const ViewProjectPage: React.FC = () => {
 
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={project} codes={codes.codes} />
+                <ProjectDetailsPage projectForViewData={project} codes={codes.data} />
               </Paper>
             </Grid>
           </Grid>

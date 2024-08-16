@@ -15,7 +15,7 @@ export const GET: Operation = [
     return {
       or: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         },
         {
@@ -263,7 +263,7 @@ GET.apiDoc = {
               location: {
                 description: 'The project location object',
                 type: 'object',
-                required: ['geometry', 'region'],
+                required: [],
                 properties: {
                   conservationAreas: {
                     type: 'array',
@@ -288,7 +288,8 @@ GET.apiDoc = {
                     nullable: true
                   },
                   region: {
-                    type: 'number'
+                    type: 'number',
+                    nullable: true
                   }
                 }
               }

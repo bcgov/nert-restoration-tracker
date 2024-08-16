@@ -67,8 +67,8 @@ describe('AttachmentRepository', () => {
 
     it('catch and throw error', async () => {
       const mockDBConnection = getMockDBConnection({
-        sql: async () => {
-          return { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+        sql: () => {
+          throw new Error('Failed to get project attachment by filename');
         }
       });
 

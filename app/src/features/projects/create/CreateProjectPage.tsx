@@ -64,18 +64,18 @@ import ProjectRestorationPlanForm, {
 } from 'features/projects/components/ProjectRestorationPlanForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useQuery } from 'hooks/useQuery';
 import { useNertApi } from 'hooks/useNertApi';
 import { ICreatePlanRequest } from 'interfaces/usePlanApi.interface';
 import { ICreateProjectRequest } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import yup from 'utils/YupSchema';
 import { checkFormikErrors } from 'utils/Utils';
 import FocalSpeciesComponent, {
   ProjectFocalSpeciesFormInitialValues
 } from 'components/species/FocalSpeciesComponent';
+import yup, { checkForLocationErrors } from 'utils/YupSchema';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -132,7 +132,7 @@ export const ProjectFormYupSchema = yup
 const CreateProjectPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
   const queryParams = useQuery();
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const [hasLoadedDraftData, setHasLoadedDraftData] = useState(!queryParams.draftId);
 
@@ -275,6 +275,10 @@ const CreateProjectPage: React.FC = () => {
    */
   const handleProjectCreation = async (projectPostObject: ICreateProjectRequest) => {
     try {
+      if (checkForLocationErrors(formikRef, projectPostObject)) {
+        return;
+      }
+
       // Remove empty partnerships
       projectPostObject.partnership.partnerships =
         projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
@@ -367,7 +371,7 @@ const CreateProjectPage: React.FC = () => {
     });
   };
 
-  if (!codes.codes) {
+  if (!codes.data) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -439,7 +443,8 @@ const CreateProjectPage: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body1" color="textSecondary">
-            Configure and submit a new restoration project
+            Provide the information below and submit to create a new restoration project. * indicate
+            required information, while all other fields are preferred.
           </Typography>
         </Box>
 
@@ -513,7 +518,7 @@ const CreateProjectPage: React.FC = () => {
                       <Typography variant="h2">Authorizations</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12} md={9} mt={-1}>
                       <ProjectAuthorizationForm />
                     </Grid>
                   </Grid>
@@ -529,7 +534,7 @@ const CreateProjectPage: React.FC = () => {
 
                     <Grid item xs={12} md={9}>
                       <ProjectLocationForm
-                        regions={codes.codes.regions.map((item) => {
+                        regions={codes.data.regions.map((item) => {
                           return { value: item.id, label: item.name };
                         })}
                       />

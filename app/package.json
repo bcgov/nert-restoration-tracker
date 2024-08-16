@@ -40,6 +40,7 @@
     "@turf/boolean-equal": "~6.5.0",
     "@turf/centroid": "~6.5.0",
     "@turf/turf": "^6.5.0",
+    "@zip.js/zip.js": "^2.7.48",
     "axios": "^1.7.3",
     "buffer": "^6.0.3",
     "clsx": "~2.1.0",

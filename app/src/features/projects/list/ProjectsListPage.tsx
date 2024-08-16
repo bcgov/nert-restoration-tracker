@@ -1,9 +1,9 @@
-import { mdiExport, mdiAlphaPCircleOutline } from '@mdi/js';
+import { mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import DoneIcon from '@mui/icons-material/Done';
+import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -39,14 +39,21 @@ import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
+import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
   const history = useNavigate();
+
+  const [selected, setSelected] = useState<readonly number[]>([]);
+
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
 
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
   const isUserCreator = projectAuthStateContext.hasSystemRole([
@@ -116,6 +123,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
   const rows = rowsDraft.concat(rowsProject);
 
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
+
   function ProjectsTableHead(props: utils.ProjectsTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler =
@@ -123,72 +136,95 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
         onRequestSort(event, property);
       };
 
+    const [infoOpen, setInfoOpen] = useState(false);
+    const [infoTitle, setInfoTitle] = useState('');
+
+    const handleClickOpen = (headCell: utils.ProjectHeadCell) => {
+      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
+      setInfoOpen(true);
+    };
+
     return (
-      <TableHead>
-        <TableRow>
-          {utils.projectHeadCells.map((headCell) => {
-            if ('archive' !== headCell.id)
-              return (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <Tooltip
-                    title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
-                    placement="top">
-                    <TableSortLabel
-                      active={orderBy === headCell.id}
-                      direction={orderBy === headCell.id ? order : 'asc'}
-                      onClick={createSortHandler(headCell.id)}>
-                      {headCell.label}
-                      {orderBy === headCell.id ? (
-                        <Box component="span" sx={visuallyHidden}>
-                          {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                        </Box>
-                      ) : null}
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-              );
-          })}
-          <SystemRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-            <TableCell>
-              {!myProject ? (
-                <Typography variant="inherit">{TableI18N.archive}</Typography>
-              ) : (
-                <>
+      <>
+        <InfoDialogDraggable
+          isProject={true}
+          open={infoOpen}
+          dialogTitle={infoTitle}
+          onClose={() => setInfoOpen(false)}>
+          <InfoContent isProject={true} contentIndex={infoTitle} />
+        </InfoDialogDraggable>
+        <TableHead>
+          <TableRow>
+            {utils.projectHeadCells.map((headCell) => {
+              if ('archive' !== headCell.id)
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <Tooltip
+                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
+                      placement="top">
+                      <TableSortLabel
+                        active={orderBy === headCell.id}
+                        direction={orderBy === headCell.id ? order : 'asc'}
+                        onClick={createSortHandler(headCell.id)}>
+                        {headCell.label}
+                        {orderBy === headCell.id ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </Tooltip>
+
+                    {headCell.infoButton ? (
+                      <IconButton onClick={() => handleClickOpen(headCell)}>
+                        <InfoIcon color="info" />
+                      </IconButton>
+                    ) : null}
+                  </TableCell>
+                );
+            })}
+            <SystemRoleGuard
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+              <TableCell>
+                {!myProject ? (
                   <Typography variant="inherit">{TableI18N.archive}</Typography>
-                  <Typography variant="inherit">{TableI18N.delete}</Typography>
-                </>
-              )}
-            </TableCell>
-          </SystemRoleGuard>
-          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
-            <TableCell>
-              {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
-            </TableCell>
-          </SystemRoleGuard>
-          {!myProject ? (
-            <TableCell padding="checkbox">
-              <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
-                <Checkbox
-                  color="primary"
-                  indeterminate={numSelected > 0 && numSelected < rowCount}
-                  checked={rowCount > 0 && numSelected === rowCount}
-                  onChange={onSelectAllClick}
-                  inputProps={{
-                    'aria-label': ProjectTableI18N.selectAllProjectsForExport
-                  }}
-                />
-              </Tooltip>
-            </TableCell>
-          ) : (
-            <></>
-          )}
-        </TableRow>
-      </TableHead>
+                ) : (
+                  <>
+                    <Typography variant="inherit">{TableI18N.archive}</Typography>
+                    <Typography variant="inherit">{TableI18N.delete}</Typography>
+                  </>
+                )}
+              </TableCell>
+            </SystemRoleGuard>
+            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
+              <TableCell>
+                {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
+              </TableCell>
+            </SystemRoleGuard>
+            {!myProject ? (
+              <TableCell padding="checkbox">
+                <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
+                  <Checkbox
+                    color="primary"
+                    indeterminate={numSelected > 0 && numSelected < rowCount}
+                    checked={rowCount > 0 && numSelected === rowCount}
+                    onChange={onSelectAllClick}
+                    inputProps={{
+                      'aria-label': ProjectTableI18N.selectAllProjectsForExport
+                    }}
+                  />
+                </Tooltip>
+              </TableCell>
+            ) : (
+              <></>
+            )}
+          </TableRow>
+        </TableHead>
+      </>
     );
   }
 
@@ -224,6 +260,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
             color="primary"
             variant="outlined"
+            onClick={() => exportData(selectedProjects)}
             disableElevation
             data-testid="export-project-button"
             aria-label={ProjectTableI18N.exportProjectsData}
@@ -240,7 +277,6 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   function ProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [selected, setSelected] = useState<readonly number[]>([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -377,7 +413,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                       {row.focus &&
                         row.focus.split('\r').map((focus: string, key) => (
                           <Fragment key={key}>
-                            <Box>
+                            <Box ml={-3}>
                               <Chip
                                 data-testid="focus_item"
                                 size="small"

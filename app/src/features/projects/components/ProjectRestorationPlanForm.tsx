@@ -49,7 +49,8 @@ const ProjectRestorationPlanForm: React.FC = () => {
                 Boolean(errors.restoration_plan?.is_project_part_public_plan)
               }>
               <FormLabel component="legend">
-                Is this project part of a publicly available restoration plan? *
+                Is this project part of a publicly available Restoration Plan within this
+                Restoration Tracker? *
               </FormLabel>
               <RadioGroup
                 name="restoration_plan.is_project_part_public_plan"

@@ -2,9 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { getMockDBConnection } from '../../../../__mocks__/db';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
+import { ProjectService } from '../../../../services/project-service';
 import { UserService } from '../../../../services/user-service';
 import * as create_project_participants from './create';
 
@@ -78,5 +79,94 @@ describe('createProjectParticipants', () => {
     } catch (actualError) {
       expect((actualError as HTTPError).message).to.equal('an error');
     }
+  });
+
+  it('should return successfully when no errors are thrown', async () => {
+    const mockQuery = sinon.stub();
+    const { mockRes, mockNext } = getRequestHandlerMocks();
+    mockQuery.resolves({
+      rows: null
+    });
+
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+    sinon.stub(UserService.prototype, 'ensureSystemUser').resolves({ id: 1 } as any);
+    sinon.stub(create_project_participants, 'ensureSystemUserAndProjectParticipantUser').resolves();
+
+    const result = create_project_participants.createProjectParticipants();
+    await result({ ...sampleReq }, mockRes, mockNext);
+  });
+});
+
+describe('ensureSystemUserAndProjectParticipantUser', () => {
+  const dbConnectionObj = getMockDBConnection();
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('should catch and re-throw an error thrown by ensureSystemUser', async () => {
+    const mockQuery = sinon.stub();
+
+    mockQuery.resolves({
+      rows: null
+    });
+
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+    sinon.stub(UserService.prototype, 'ensureSystemUser').rejects(new Error('an error'));
+
+    try {
+      const result = create_project_participants.ensureSystemUserAndProjectParticipantUser(
+        1,
+        { userIdentifier: 'jsmith', identitySource: 'IDIR', roleId: 1, userGuid: null },
+        dbConnectionObj
+      );
+      await result;
+      expect.fail();
+    } catch (actualError) {
+      expect((actualError as HTTPError).message).to.equal('an error');
+    }
+  });
+
+  it('should catch and re-throw an error thrown by addProjectRole', async () => {
+    const mockQuery = sinon.stub();
+
+    mockQuery.resolves({
+      rows: null
+    });
+
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+    sinon.stub(UserService.prototype, 'ensureSystemUser').resolves({ id: 1 } as any);
+    sinon.stub(ProjectService.prototype, 'ensureProjectParticipant').rejects(new Error('an error'));
+
+    try {
+      const result = create_project_participants.ensureSystemUserAndProjectParticipantUser(
+        1,
+        { userIdentifier: 'jsmith', identitySource: 'IDIR', roleId: 1, userGuid: null },
+        dbConnectionObj
+      );
+      await result;
+      expect.fail();
+    } catch (actualError) {
+      expect((actualError as HTTPError).message).to.equal('an error');
+    }
+  });
+
+  it('should return successfully when no errors are thrown', async () => {
+    const mockQuery = sinon.stub();
+
+    mockQuery.resolves({
+      rows: null
+    });
+
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+    sinon.stub(UserService.prototype, 'ensureSystemUser').resolves({ id: 1 } as any);
+    sinon.stub(ProjectService.prototype, 'ensureProjectParticipant').resolves();
+
+    const result = create_project_participants.ensureSystemUserAndProjectParticipantUser(
+      1,
+      { userIdentifier: 'jsmith', identitySource: 'IDIR', roleId: 1, userGuid: null },
+      dbConnectionObj
+    );
+    await result;
   });
 });

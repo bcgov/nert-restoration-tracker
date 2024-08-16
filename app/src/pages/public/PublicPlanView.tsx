@@ -23,6 +23,7 @@ import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import { S3FileType } from 'constants/attachments';
 import { useNertApi } from 'hooks/useNertApi';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
 
 const pageStyles = {
   layerSwitcherContainer: {
@@ -136,7 +137,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                     <Chip
                       size="small"
                       color={'default'}
-                      label={focus.LAND_BASED_RESTOTRATION_INITIATIVE}
+                      label={focus.LAND_BASED_RESTORATION_INITIATIVE}
                     />
                   )}
                   {plan.project.is_cultural_initiative && (
@@ -173,6 +174,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                       sx={{ height: '2.8rem', width: '10rem' }}
                       color="primary"
                       variant="outlined"
+                      onClick={() => exportData([plan])}
                       disableElevation
                       data-testid="export-project-button"
                       aria-label={ProjectTableI18N.exportProjectsData}
@@ -191,7 +193,7 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                     />
                   </Box>
                   <Box sx={pageStyles.layerSwitcherContainer}>
-                    <LayerSwitcher layerVisibility={layerVisibility} />
+                    <LayerSwitcher layerVisibility={layerVisibility} hideProjects={true} />
                   </Box>
                 </Paper>
                 <Box mt={2} />

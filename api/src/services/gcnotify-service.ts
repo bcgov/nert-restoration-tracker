@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ApiError, ApiErrorType } from '../errors/custom-error';
-import { IgcNotifyGenericMessage, IgcNotifyPostReturn } from '../models/gcnotify';
+import { IgcNotifyGenericMessage, IgcNotifyPostReturn } from '../interfaces/gcnotify';
 
 const EMAIL_TEMPLATE = process.env.GCNOTIFY_ONBOARDING_REQUEST_EMAIL_TEMPLATE || '';
 const SMS_TEMPLATE = process.env.GCNOTIFY_ONBOARDING_REQUEST_SMS_TEMPLATE || '';

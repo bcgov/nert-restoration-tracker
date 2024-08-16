@@ -4,6 +4,7 @@ import {
   ADMINISTRATIVE_ACTIVITY_TYPE
 } from '../constants/administrative-activity';
 import { ApiExecuteSQLError } from '../errors/custom-error';
+import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
 
 export interface IAdministrativeActivityStanding {
@@ -28,6 +29,8 @@ export interface ICreateAdministrativeActivity {
   id: number;
   date: string;
 }
+
+const defaultLog = getLogger('repositories/administrative-activity-repository');
 
 /**
  * A repository class for accessing administrative activity data.
@@ -127,7 +130,8 @@ export class AdministrativeActivityRepository extends BaseRepository {
     systemUserId: number,
     data: string | object
   ): Promise<ICreateAdministrativeActivity> {
-    const sqlStatement = SQL`
+    try {
+      const sqlStatement = SQL`
       INSERT INTO administrative_activity (
         reported_system_user_id,
         administrative_activity_type_id,
@@ -158,15 +162,19 @@ export class AdministrativeActivityRepository extends BaseRepository {
         create_date::timestamptz AS date
     `;
 
-    const response = await this.connection.sql(sqlStatement);
+      const response = await this.connection.sql(sqlStatement);
 
-    if (response.rowCount !== 1) {
-      throw new ApiExecuteSQLError('Failed to create administrative activity record', [
-        'AdministrativeActivityRepository->createPendingAccessRequest'
-      ]);
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to create administrative activity record', [
+          'AdministrativeActivityRepository->createPendingAccessRequest'
+        ]);
+      }
+
+      return response.rows[0];
+    } catch (error) {
+      defaultLog.debug({ label: 'createPendingAccessRequest', message: 'error', error });
+      throw error;
     }
-
-    return response.rows[0];
   }
 
   /**

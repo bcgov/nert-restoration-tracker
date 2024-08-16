@@ -18,7 +18,6 @@ import { CustomMenuButton } from 'components/toolbar/ActionToolbars';
 import { ProjectParticipantsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
 import { useNertApi } from 'hooks/useNertApi';
 import { CodeSet, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
@@ -28,6 +27,7 @@ import {
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectParticipantsHeader from './ProjectParticipantsHeader';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   actionButton: {
@@ -111,7 +111,7 @@ const ProjectParticipantsPage: React.FC = () => {
     }
   }, [isLoadingProject, projectWithDetails, getProject]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProjectParticipants = useCallback(async () => {
     try {
@@ -245,7 +245,7 @@ const ProjectParticipantsPage: React.FC = () => {
     );
   };
 
-  if (!codes.isReady || !codes.codes || !projectParticipants || !projectWithDetails) {
+  if (!codes.isReady || !codes.data || !projectParticipants || !projectWithDetails) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -253,7 +253,7 @@ const ProjectParticipantsPage: React.FC = () => {
     <>
       <ProjectParticipantsHeader
         projectWithDetails={projectWithDetails}
-        codes={codes.codes}
+        codes={codes.data}
         refresh={getProjectParticipants}
       />
 
@@ -277,7 +277,7 @@ const ProjectParticipantsPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRows projectParticipants={projectParticipants} codes={codes.codes} />
+                <TableRows projectParticipants={projectParticipants} codes={codes.data} />
               </TableBody>
             </Table>
           </Paper>

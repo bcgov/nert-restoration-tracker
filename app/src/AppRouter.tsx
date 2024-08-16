@@ -1,5 +1,5 @@
 import { CircularProgress } from '@mui/material';
-import { SystemRoleRouteGuard } from 'components/security/RouteGuards';
+import { AuthenticatedRouteGuard, SystemRoleRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
 import PlansRouter from 'features/plans/PlansRouter';
@@ -48,17 +48,7 @@ export const AppRouter = () => {
         <Route path="/logout" element={<LogOutPage />} />
 
         {/* System Role Routes */}
-        <Route
-          path="/admin"
-          element={
-            <SystemRoleRouteGuard
-              validRoles={[
-                SYSTEM_ROLE.DATA_ADMINISTRATOR,
-                SYSTEM_ROLE.PROJECT_CREATOR,
-                SYSTEM_ROLE.SYSTEM_ADMIN
-              ]}
-            />
-          }>
+        <Route path="/admin" element={<AuthenticatedRouteGuard />}>
           <Route index element={<SearchPage />} />
           <Route path="/admin/search" element={<SearchPage />} />
           <Route path="/admin/projects/*" element={<ProjectsRouter />} />

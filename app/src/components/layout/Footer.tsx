@@ -3,7 +3,8 @@ import React from 'react';
 
 const pageStyles = {
   appFooter: {
-    backgroundColor: '#003366'
+    backgroundColor: '#003366',
+    borderTop: '1px solid white'
   },
   appFooterToolbar: {
     minHeight: '46px',
@@ -34,7 +35,11 @@ const pageStyles = {
 const Footer: React.FC = () => {
   return (
     <footer style={pageStyles.appFooter}>
-      <Toolbar sx={pageStyles.appFooterToolbar} role="navigation" aria-label="Footer">
+      <Toolbar
+        variant="dense"
+        sx={pageStyles.appFooterToolbar}
+        role="navigation"
+        aria-label="Footer">
         <ul>
           <li>
             <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer">Disclaimer</a>
