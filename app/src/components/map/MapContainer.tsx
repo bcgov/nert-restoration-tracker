@@ -199,6 +199,7 @@ const initializeMasks = (feature: Feature): maskParams => {
   const p2 = turf.point([bbox[2], bbox[3]]);
   const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
   const area = turf.area(feature) * 100;
+  console.log('area');
   const innerRadius = Math.sqrt(area / Math.PI);
   const outerRadius = innerRadius + buffer;
 
@@ -1016,7 +1017,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   // Listen for masks being turned on and off
   useEffect(() => {
     updateMasks(mask, maskState, features);
-  }, [mask, maskState, features]);
+  }, [mask, maskState]);
 
   // Listen for active feature changes
   useEffect(() => {
