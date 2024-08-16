@@ -174,34 +174,54 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: database-user
-                      name: '${DATABASE_SECRET_REF}'
+                      name: ${DATABASE_SECRET_REF}
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-user-password
-                      name: '${DATABASE_SECRET_REF}'
+                      name: ${DATABASE_SECRET_REF}
                 - name: PG_ROOT_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-admin-password
-                      name: '${DATABASE_SECRET_REF}'
+                      name: ${DATABASE_SECRET_REF}
                 - name: PG_DATABASE
                   valueFrom:
                     secretKeyRef:
                       key: database-name
-                      name: '${DATABASE_SECRET_REF}'
+                      name: ${DATABASE_SECRET_REF}
                 - name: PG_PRIMARY_PORT
                   value: '5432'
                 - name: PG_PRIMARY_USER
                   valueFrom:
                     secretKeyRef:
                       key: database-user
-                      name: '${DATABASE_SECRET_REF}'
+                      name: ${DATABASE_SECRET_REF}
                 - name: PG_PRIMARY_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-user-password
-                      name: '${DATABASE_SECRET_REF}'
+                      name: ${DATABASE_SECRET_REF}
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_url
+                      name: ${OBJECT_STORE_SECRETS}
+                - name: S3_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_access_key_id
+                      name: ${OBJECT_STORE_SECRETS}
+                - name: S3_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_secret_key_id
+                      name: ${OBJECT_STORE_SECRETS}
+                - name: S3_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_bucket_name
+                      name: ${OBJECT_STORE_SECRETS}
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
@@ -307,7 +327,7 @@ parameters:
     displayName: Database Password Key Name
     description: The database password key name stored in database deployment resources specified by DATABASE_DEPLOYMENT_NAME.
     required: true
-    value: database-password
+    value: database-user-password
   - name: MSSQL_SA_PASSWORD
     displayName: MSSQL SA Password
     description: The database password to use for the local backup database.
@@ -336,7 +356,7 @@ parameters:
     displayName: Ftp URL Hostname
     description: Ftp URL Hostname.  The backup-deploy.overrides.sh will parse this from the supplied FTP_URL, and fetch it from a secret for updates.
     required: false
-    value:
+    value: ""
   - name: FTP_USER
     displayName: FTP user name
     description: FTP user name
@@ -347,6 +367,10 @@ parameters:
     description: FTP password
     required: false
     value: ""
+  - name: OBJECT_STORE_SECRETS
+    description: Secrets used to read and write to the S3 storage
+    required: false
+    value: restoration-tracker-object-store
   - name: WEBHOOK_URL
     displayName: Webhook URL
     description: The URL of the webhook to use for notifications.  If not specified, the webhook integration feature is disabled.
