@@ -4,6 +4,7 @@
  create or replace view contact_type as select * from restoration.contact_type;
  create or replace view first_nations as select * from restoration.first_nations;
  create or replace view branding as select * from restoration.branding;
+ create or replace view authorization_type as select * from restoration.authorization_type;
  create or replace view nrm_region as select * from restoration.nrm_region;
  create or replace view permit as select * from restoration.permit;
  create or replace view objective as select * from restoration.objective;

@@ -323,6 +323,7 @@ const CreateProjectPage: React.FC = () => {
       // setEnableCancelCheck(false);
       history(`/admin/projects/${createProjectResponse.id}/details`);
     } catch (error) {
+      console.log('error', error);
       showCreateErrorDialog({
         dialogTitle: 'Error Creating Project',
         dialogError: (error as APIError)?.message,

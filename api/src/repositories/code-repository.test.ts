@@ -154,4 +154,25 @@ describe('CodeRepository', () => {
       expect(response).to.deep.equal([]);
     });
   });
+
+  describe('getAuthorizationType', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return array in rows', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const codeRepository = new CodeRepository(mockDBConnection);
+
+      const response = await codeRepository.getAuthorizationType();
+
+      expect(response).to.deep.equal([]);
+    });
+  });
 });

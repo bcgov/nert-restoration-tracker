@@ -23,6 +23,7 @@ export interface IAllCodeSets {
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
+  authorization_type: CodeSet;
   branding: {
     id: number;
     name: string;
@@ -168,6 +169,26 @@ export class CodeRepository extends BaseRepository {
         name,
         value
       FROM branding
+      WHERE record_end_date is null;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows;
+  }
+
+  /**
+   * Fetch authorization type codes.
+   *
+   * @return {*}
+   * @memberof CodeRepository
+   */
+  async getAuthorizationType() {
+    const sqlStatement = SQL`
+      SELECT
+        authorization_type_id as id,
+        name
+      FROM authorization_type
       WHERE record_end_date is null;
     `;
 

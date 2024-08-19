@@ -198,6 +198,9 @@ describe('useProjectApi', () => {
   it('updateProject works as expected', async () => {
     const mockResponse = [{ id: 1 }];
     mock.onPut(`/api/project/${projectId}/update`).reply(200, mockResponse);
+    mock
+      .onDelete(`/api/project/${projectId}/attachments/thumbnail/delete`)
+      .reply(200, mockResponse);
 
     const newProjectData = {
       project: {} as IGetProjectForViewResponseDetails,
