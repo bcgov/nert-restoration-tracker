@@ -3,6 +3,7 @@
  create trigger journal_first_nations after insert or update or delete on restoration.first_nations for each row execute procedure tr_journal_trigger();
  create trigger journal_project after insert or update or delete on restoration.project for each row execute procedure tr_journal_trigger();
  create trigger journal_branding after insert or update or delete on restoration.branding for each row execute procedure tr_journal_trigger();
+ create trigger journal_authorization_type after insert or update or delete on restoration.authorization_type for each row execute procedure tr_journal_trigger();
  create trigger journal_nrm_region after insert or update or delete on restoration.nrm_region for each row execute procedure tr_journal_trigger();
  create trigger journal_permit after insert or update or delete on restoration.permit for each row execute procedure tr_journal_trigger();
  create trigger journal_project_first_nation after insert or update or delete on restoration.project_first_nation for each row execute procedure tr_journal_trigger();
