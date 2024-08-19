@@ -51,6 +51,9 @@ export async function up(knex: Knex): Promise<void> {
   const populate_system_constants = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_constant.sql'));
   const populate_system_branding = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_branding.sql'));
   const populate_first_nations = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_first_nations.sql'));
+  const populate_authorization_type = fs.readFileSync(
+    path.join(__dirname, DB_RELEASE, 'populate_authorization_type.sql')
+  );
 
   const populate_project_role = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_project_role.sql'));
   const populate_system_role = fs.readFileSync(path.join(__dirname, DB_RELEASE, 'populate_system_role.sql'));
@@ -122,6 +125,7 @@ export async function up(knex: Knex): Promise<void> {
     ${populate_system_constants}
     ${populate_system_branding}
     ${populate_first_nations}
+    ${populate_authorization_type}
     ${populate_project_role}
     ${populate_system_role}
     ${populate_administrative_activity_type}

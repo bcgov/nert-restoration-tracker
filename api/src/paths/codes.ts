@@ -20,6 +20,20 @@ GET.apiDoc = {
           schema: {
             type: 'object',
             properties: {
+              authorization_type: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'number'
+                    },
+                    name: {
+                      type: 'string'
+                    }
+                  }
+                }
+              },
               branding: {
                 type: 'array',
                 items: {
