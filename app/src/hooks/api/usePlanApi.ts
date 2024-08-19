@@ -123,7 +123,7 @@ const usePlanApi = (axios: AxiosInstance) => {
       PlanData.project.image_key = undefined;
 
       await uploadPlanAttachments(planId, projectImage, S3FileType.THUMBNAIL);
-    } else {
+    } else if (!PlanData.project.project_image && PlanData.project.image_key) {
       PlanData.project.image_url = undefined;
       PlanData.project.image_key = undefined;
 

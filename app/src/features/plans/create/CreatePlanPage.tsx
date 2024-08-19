@@ -51,6 +51,7 @@ import PlanGeneralInformationForm, {
   PlanGeneralInformationFormYupSchema
 } from '../components/PlanGeneralInformationForm';
 import { useCodesContext } from 'hooks/useContext';
+import { checkFormikErrors } from 'utils/Utils';
 
 const pageStyles = {
   formButtons: {
@@ -325,15 +326,23 @@ const CreatePlanPage: React.FC = () => {
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}
         onYes={() => {
-          if (!formikRef.current?.isValid) {
-            showCreateErrorDialog({
-              dialogTitle: 'Error Creating Plan',
-              dialogError: 'Please fill out all required fields.'
-            });
+          setOpenYesNoDialog(false);
+          formikRef.current?.validateForm().then((errors) => {
+            const errorsText: string[] = checkFormikErrors(errors);
 
-            setOpenYesNoDialog(false);
-          }
-          formikRef.current?.handleSubmit();
+            if (errorsText.length) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Error Creating Plan',
+                dialogText: 'Please correct the errors in the form before submitting.',
+                dialogError: 'The following errors were found:',
+                dialogErrorDetails: errorsText,
+                ...defaultErrorDialogProps,
+                open: true
+              });
+            }
+          });
+
+          formikRef.current?.submitForm();
         }}
       />
 

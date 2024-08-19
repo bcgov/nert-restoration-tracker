@@ -523,6 +523,10 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async insertProjectRegion(regionNumber: number, projectId: number): Promise<number | undefined> {
+    if (!regionNumber) {
+      return;
+    }
+
     const response = await this.projectRepository.insertProjectRegion(regionNumber, projectId);
 
     return response.nrm_region_id;
