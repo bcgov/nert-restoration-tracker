@@ -198,8 +198,8 @@ const initializeMasks = (feature: Feature): maskParams => {
   const p1 = turf.point([bbox[0], bbox[1]]);
   const p2 = turf.point([bbox[2], bbox[3]]);
   const buffer = turf.distance(p1, p2, { units: 'meters' }) / 2;
-  const area = turf.area(feature) * 100;
-  console.log('area');
+  let area = turf.area(feature) * 100;
+  if (area < 100000) area = 100000;
   const innerRadius = Math.sqrt(area / Math.PI);
   const outerRadius = innerRadius + buffer;
 
