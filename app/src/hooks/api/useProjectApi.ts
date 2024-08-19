@@ -180,7 +180,7 @@ const useProjectApi = (axios: AxiosInstance) => {
       projectData.project.image_key = undefined;
 
       await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
-    } else {
+    } else if (!projectData.project.project_image && projectData.project.image_key) {
       projectData.project.image_url = undefined;
       projectData.project.image_key = undefined;
 
