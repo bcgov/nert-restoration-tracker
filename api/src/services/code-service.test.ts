@@ -56,6 +56,7 @@ describe('CodeService', () => {
       sinon.stub(CodeRepository.prototype, 'getProjectRoles').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getAdministrativeActivityStatusType').resolves([]);
       sinon.stub(CodeRepository.prototype, 'getBranding').resolves([]);
+      sinon.stub(CodeRepository.prototype, 'getAuthorizationType').resolves([]);
 
       const codeService = new CodeService(mockDBConnection);
 
@@ -67,13 +68,15 @@ describe('CodeService', () => {
         'project_roles',
         'administrative_activity_status_type',
         'regions',
-        'branding'
+        'branding',
+        'authorization_type'
       );
       expect(response.first_nations).to.eql([]);
       expect(response.system_roles).to.eql([]);
       expect(response.project_roles).to.eql([]);
       expect(response.administrative_activity_status_type).to.eql([]);
       expect(response.branding).to.eql([]);
+      expect(response.authorization_type).to.eql([]);
     });
   });
 });
