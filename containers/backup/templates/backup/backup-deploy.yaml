@@ -203,25 +203,13 @@ objects:
                       key: database-user-password
                       name: ${DATABASE_SECRET_REF}
                 - name: S3_ENDPOINT
-                  valueFrom:
-                    secretKeyRef:
-                      key: object_store_url
-                      name: ${OBJECT_STORE_SECRETS}
+                  value: ${S3_ENDPOINT}
                 - name: S3_USER
-                  valueFrom:
-                    secretKeyRef:
-                      key: object_store_access_key_id
-                      name: ${OBJECT_STORE_SECRETS}
+                  value: ${S3_USER}
                 - name: S3_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: object_store_secret_key_id
-                      name: ${OBJECT_STORE_SECRETS}
+                  value: ${S3_PASSWORD}
                 - name: S3_BUCKET
-                  valueFrom:
-                    secretKeyRef:
-                      key: object_store_bucket_name
-                      name: ${OBJECT_STORE_SECRETS}
+                  value: ${S3_BUCKET}
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
@@ -263,6 +251,26 @@ objects:
                   subPath: ${CONFIG_FILE_NAME}
 
 parameters:
+  - name: S3_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        key: object_store_url
+        name: ${OBJECT_STORE_SECRETS}
+  - name: S3_USER
+    valueFrom:
+      secretKeyRef:
+        key: object_store_access_key_id
+        name: ${OBJECT_STORE_SECRETS}
+  - name: S3_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: object_store_secret_key_id
+        name: ${OBJECT_STORE_SECRETS}
+  - name: S3_BUCKET
+    valueFrom:
+      secretKeyRef:
+        key: object_store_bucket_name
+        name: ${OBJECT_STORE_SECRETS}
   - name: NAME
     displayName: Name
     description: The name assigned to all of the resources.  Use 'backup-{database name}' depending on your database provider
