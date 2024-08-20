@@ -279,7 +279,8 @@ export const ProjectTableI18N = {
   actualEndDateTooltip:
     'When project activities end, inclusive of any site monitoring and initial reporting.',
   statusTooltip: 'Current status, within project workflow.',
-  statusInfo: 'Status'
+  statusInfo: 'Status',
+  projectConfirmation: 'project confirmation'
 };
 
 export const PlanTableI18N = {
@@ -304,5 +305,6 @@ export const PlanTableI18N = {
   endDateTooltip: 'Calendar year which restoration plan ends.',
   multiYear: 'Multi-Year',
   annual: 'Annual',
-  statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".'
+  statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".',
+  planConfirmation: 'plan confirmation'
 };

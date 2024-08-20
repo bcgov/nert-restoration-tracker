@@ -27,6 +27,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import InfoDialog from 'components/dialog/InfoDialog';
+import { DialogContext } from 'contexts/dialogContext';
+import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
 import {
   getStateCodeFromLabel,
@@ -37,11 +39,12 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import React, { Fragment, useContext, useState, useEffect } from 'react';
+import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
@@ -54,80 +57,94 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
   const [selected, setSelected] = useState<readonly number[]>([]);
   const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+  const [page, setPage] = useState(0);
+  // using state for table row changes
+  const [rows, setRows] = useState<utils.PlanData[]>([]);
 
-  const isUserCreator = projectAuthStateContext.hasProjectRole([
+  const isUserAdmin = projectAuthStateContext.hasSystemRole([
     SYSTEM_ROLE.SYSTEM_ADMIN,
     SYSTEM_ROLE.DATA_ADMINISTRATOR
-  ]);
-
-  let rowsPlanFilterOutArchived = plans;
-  if (rowsPlanFilterOutArchived && isUserCreator) {
-    rowsPlanFilterOutArchived = plans.filter(
-      (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
-    );
-  }
+  ])
+    ? true
+    : false;
 
   const myPlan = myplan && true === myplan ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-  const rowsPlan = rowsPlanFilterOutArchived
-    ?.filter((plan) => !plan.project.is_project)
-    .map((row, index) => {
-      return {
-        id: index,
-        planId: row.project.project_id,
-        planName: row.project.project_name,
-        focus: utils.resolveProjectPlanFocus(
-          row.project.is_healing_land,
-          row.project.is_healing_people,
-          row.project.is_land_initiative,
-          row.project.is_cultural_initiative
-        ),
-        term:
-          getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
-            ? PlanTableI18N.multiYear
-            : PlanTableI18N.annual,
-        org: row.contact.contacts.map((item) => item.organization).join('\r'),
-        startDate: row.project.start_date,
-        endDate: row.project.end_date,
-        statusCode: row.project.state_code,
-        statusLabel: getStateLabelFromCode(row.project.state_code),
-        statusStyle: getStatusStyle(row.project.state_code),
-        archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive,
-        export:
-          row.project.is_healing_people &&
-          !row.project.is_healing_land &&
-          !row.project.is_cultural_initiative &&
-          !row.project.is_land_initiative
-            ? ''
-            : 'Yes'
-      } as utils.PlanData;
-    });
-
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
-  const rowsDraft = drafts
-    ? drafts
-        .filter((draft) => !draft.is_project)
-        .map((row, index) => {
-          return {
-            id: index + rowsPlan.length,
-            planId: row.id,
-            planName: row.name,
-            focus: '',
-            term: '',
-            org: '',
-            startDate: '',
-            endDate: '',
-            statusCode: draftCode,
-            statusLabel: states.DRAFT,
-            statusStyle: draftStatusStyle,
-            archive: '',
-            export: ''
-          } as utils.PlanData;
-        })
-    : [];
 
-  const rows = rowsDraft.concat(rowsPlan);
+  function filterPlans(planData: IGetPlanForViewResponse[]): utils.PlanData[] {
+    let rowsPlanFilterOutArchived = plans;
+    if (rowsPlanFilterOutArchived && isUserAdmin) {
+      rowsPlanFilterOutArchived = plans.filter(
+        (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+      );
+    }
+
+    const rowsPlan = rowsPlanFilterOutArchived
+      ?.filter((plan) => !plan.project.is_project)
+      .map((row, index) => {
+        return {
+          id: index,
+          planId: row.project.project_id,
+          planName: row.project.project_name,
+          focus: utils.resolveProjectPlanFocus(
+            row.project.is_healing_land,
+            row.project.is_healing_people,
+            row.project.is_land_initiative,
+            row.project.is_cultural_initiative
+          ),
+          term:
+            getDateDiffInMonths(row.project.start_date, row.project.end_date) > 12
+              ? PlanTableI18N.multiYear
+              : PlanTableI18N.annual,
+          org: row.contact.contacts.map((item) => item.organization).join('\r'),
+          startDate: row.project.start_date,
+          endDate: row.project.end_date,
+          statusCode: row.project.state_code,
+          statusLabel: getStateLabelFromCode(row.project.state_code),
+          statusStyle: getStatusStyle(row.project.state_code),
+          archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive,
+          export:
+            row.project.is_healing_people &&
+            !row.project.is_healing_land &&
+            !row.project.is_cultural_initiative &&
+            !row.project.is_land_initiative
+              ? ''
+              : 'Yes'
+        } as utils.PlanData;
+      });
+
+    const rowsDraft = drafts
+      ? drafts
+          .filter((draft) => !draft.is_project)
+          .map((row, index) => {
+            return {
+              id: index + rowsPlan.length,
+              planId: row.id,
+              planName: row.name,
+              focus: '',
+              term: '',
+              org: '',
+              startDate: '',
+              endDate: '',
+              statusCode: draftCode,
+              statusLabel: states.DRAFT,
+              statusStyle: draftStatusStyle,
+              archive: '',
+              export: ''
+            } as utils.PlanData;
+          })
+      : [];
+
+    return rowsDraft.concat(rowsPlan);
+  }
+
+  // Make sure state is preserved for table component
+  useEffect(() => {
+    const filteredPlans = filterPlans(plans);
+    setRows(filteredPlans);
+  }, [plans]);
 
   // Make sure the data download knows what projects are selected.
   useEffect(() => {
@@ -288,7 +305,6 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   function PlanTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
-    const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -347,7 +363,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const visibleRows = React.useMemo(
+    const visibleRows = useMemo(
       () =>
         utils
           .stableSort(rows, utils.getComparator(order, orderBy))
@@ -373,6 +389,39 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
           </Typography>
         </Tooltip>
       );
+    };
+
+    const handleArchiveUnarchive = (id: number) => {
+      if (rows[id].statusCode !== getStateCodeFromLabel(states.ARCHIVED)) {
+        // TODO: update plan in the backend need to create API
+
+        rows[id].statusCode = getStateCodeFromLabel(states.ARCHIVED);
+        rows[id].statusLabel = states.ARCHIVED;
+        rows[id].archive = TableI18N.unarchive;
+        setRows([...rows]);
+        setPage(page);
+        return;
+      }
+      // TODO: update plan in the backendneed to create API
+
+      rows[id].statusCode = getStateCodeFromLabel(states.PLANNING);
+      rows[id].statusLabel = states.PLANNING;
+      rows[id].archive = TableI18N.archive;
+      setRows([...rows]);
+      setPage(page);
+    };
+
+    const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
+      onClose: () => dialogContext.setYesNoDialog({ open: false }),
+      onNo: () => dialogContext.setYesNoDialog({ open: false })
+    };
+    const dialogContext = useContext(DialogContext);
+    const openYesNoDialog = (yesNoDialogProps?: Partial<IYesNoDialogProps>) => {
+      dialogContext.setYesNoDialog({
+        ...defaultYesNoDialogProps,
+        ...yesNoDialogProps,
+        open: true
+      });
     };
 
     return (
@@ -491,8 +540,59 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                             title={
                               archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive
                             }
-                            placement="right">
-                            <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                            placement="top">
+                            <IconButton
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    (archCode !== row.statusCode
+                                      ? TableI18N.archive
+                                      : TableI18N.unarchive) +
+                                    ' ' +
+                                    PlanTableI18N.planConfirmation,
+                                  dialogTitleBgColor: '#FFF4EB',
+                                  dialogContent: (
+                                    <>
+                                      <Typography variant="body1" color="textPrimary">
+                                        <strong>{row.planName}</strong>
+                                      </Typography>
+                                      {archCode !== row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Archiving this plan will not remove it from the
+                                            application, only means it will not be publicly
+                                            available any more.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to archive this plan?
+                                          </Typography>
+                                        </>
+                                      )}
+                                      {archCode === row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Unarchiving this plan will make it public again. The new
+                                            status for the project will be "PLANNING". Please make
+                                            sure there is no PI information before publishing.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to unarchive (publish) this plan?'
+                                          </Typography>
+                                        </>
+                                      )}
+                                    </>
+                                  ),
+                                  yesButtonLabel:
+                                    archCode !== row.statusCode ? 'Archive Plan' : 'Unarchive Plan',
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleArchiveUnarchive(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                             </IconButton>
                           </Tooltip>
