@@ -176,14 +176,9 @@ const useProjectApi = (axios: AxiosInstance) => {
 
       const projectImage = projectData.project.project_image;
       projectData.project.project_image = null;
-      projectData.project.image_url = undefined;
-      projectData.project.image_key = undefined;
 
       await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
-    } else if (!projectData.project.project_image && projectData.project.image_key) {
-      projectData.project.image_url = undefined;
-      projectData.project.image_key = undefined;
-
+    } else if (!projectData.project.image_key) {
       await deleteProjectThumbnail(projectId);
     }
 
