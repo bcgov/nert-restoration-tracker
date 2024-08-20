@@ -22,6 +22,13 @@ export interface IYesNoDialogProps {
    */
   dialogTitle: string;
   /**
+   * The dialog window title text.
+   *
+   * @type {string}
+   * @memberof IYesNoDialogProps
+   */
+  dialogTitleBgColor?: string;
+  /**
    * The dialog window body text.
    *
    * @type {string}
@@ -106,14 +113,16 @@ const YesNoDialog: React.FC<IYesNoDialogProps> = (props) => {
       data-testid="yes-no-dialog"
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
+      <DialogTitle bgcolor={props.dialogTitleBgColor} id="alert-dialog-title">
+        {props.dialogTitle}
+      </DialogTitle>
       <DialogContent>
         {props.dialogText && (
           <DialogContentText id="alert-dialog-description">{props.dialogText}</DialogContentText>
         )}
         {props.dialogContent}
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ bgcolor: props.dialogTitleBgColor }}>
         <Button
           data-testid="yes-button"
           onClick={props.onYes}

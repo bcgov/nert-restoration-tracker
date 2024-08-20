@@ -27,6 +27,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import InfoDialog from 'components/dialog/InfoDialog';
+import { DialogContext } from 'contexts/dialogContext';
+import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
 import {
   getStateCodeFromLabel,
@@ -38,8 +40,8 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
-import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React, { Fragment, useContext, useState, useEffect } from 'react';
+import { IGetProjectForViewResponse, IProjectsListProps } from 'interfaces/useProjectApi.interface';
+import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
@@ -52,76 +54,87 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const history = useNavigate();
 
   const [selected, setSelected] = useState<readonly number[]>([]);
-
-  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<utils.ProjectData[]>([]);
+  const [page, setPage] = useState(0);
+  // using state for table row changes
+  const [rows, setRows] = useState<utils.ProjectData[]>([]);
 
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
-  const isUserCreator = projectAuthStateContext.hasSystemRole([
+  const isUserAdmin = projectAuthStateContext.hasSystemRole([
     SYSTEM_ROLE.SYSTEM_ADMIN,
     SYSTEM_ROLE.DATA_ADMINISTRATOR
   ])
-    ? false
-    : true;
-
-  let rowsProjectFilterOutArchived = projects;
-  if (rowsProjectFilterOutArchived && isUserCreator) {
-    rowsProjectFilterOutArchived = projects.filter(
-      (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
-    );
-  }
+    ? true
+    : false;
 
   const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-  const rowsProject = rowsProjectFilterOutArchived
-    ?.filter((proj) => proj.project.is_project)
-    .map((row, index) => {
-      return {
-        id: index,
-        projectId: row.project.project_id,
-        projectName: row.project.project_name,
-        focus: utils.resolveProjectPlanFocus(
-          row.project.is_healing_land,
-          row.project.is_healing_people,
-          row.project.is_land_initiative,
-          row.project.is_cultural_initiative
-        ),
-        org: row.contact.contacts.map((item) => item.organization).join('\r'),
-        plannedStartDate: row.project.start_date,
-        plannedEndDate: row.project.end_date,
-        actualStartDate: row.project.actual_start_date,
-        actualEndDate: row.project.actual_end_date,
-        statusCode: row.project.state_code,
-        statusLabel: getStateLabelFromCode(row.project.state_code),
-        statusStyle: getStatusStyle(row.project.state_code),
-        archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
-      } as utils.ProjectData;
-    });
-
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
-  const rowsDraft = drafts
-    ? drafts
-        .filter((draft) => draft.is_project)
-        .map((row, index) => {
-          return {
-            id: index + rowsProject.length,
-            projectId: row.id,
-            projectName: row.name,
-            focus: '',
-            org: '',
-            plannedStartDate: '',
-            plannedEndDate: '',
-            actualStartDate: '',
-            actualEndDate: '',
-            statusCode: draftCode,
-            statusLabel: states.DRAFT,
-            statusStyle: draftStatusStyle,
-            archive: ''
-          } as utils.ProjectData;
-        })
-    : [];
 
-  const rows = rowsDraft.concat(rowsProject);
+  function filterProjects(projectData: IGetProjectForViewResponse[]): utils.ProjectData[] {
+    let rowsProjectFilterOutArchived = projects;
+    if (rowsProjectFilterOutArchived && isUserAdmin) {
+      rowsProjectFilterOutArchived = projects.filter(
+        (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+      );
+    }
+
+    const rowsProject = rowsProjectFilterOutArchived
+      ?.filter((proj) => proj.project.is_project)
+      .map((row, index) => {
+        return {
+          id: index,
+          projectId: row.project.project_id,
+          projectName: row.project.project_name,
+          focus: utils.resolveProjectPlanFocus(
+            row.project.is_healing_land,
+            row.project.is_healing_people,
+            row.project.is_land_initiative,
+            row.project.is_cultural_initiative
+          ),
+          org: row.contact.contacts.map((item) => item.organization).join('\r'),
+          plannedStartDate: row.project.start_date,
+          plannedEndDate: row.project.end_date,
+          actualStartDate: row.project.actual_start_date,
+          actualEndDate: row.project.actual_end_date,
+          statusCode: row.project.state_code,
+          statusLabel: getStateLabelFromCode(row.project.state_code),
+          statusStyle: getStatusStyle(row.project.state_code),
+          archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
+        } as utils.ProjectData;
+      });
+
+    const rowsDraft = drafts
+      ? drafts
+          .filter((draft) => draft.is_project)
+          .map((row, index) => {
+            return {
+              id: index + rowsProject.length,
+              projectId: row.id,
+              projectName: row.name,
+              focus: '',
+              org: '',
+              plannedStartDate: '',
+              plannedEndDate: '',
+              actualStartDate: '',
+              actualEndDate: '',
+              statusCode: draftCode,
+              statusLabel: states.DRAFT,
+              statusStyle: draftStatusStyle,
+              archive: ''
+            } as utils.ProjectData;
+          })
+      : [];
+
+    return rowsDraft.concat(rowsProject);
+  }
+
+  // Make sure state is preserved for table component
+  useEffect(() => {
+    const filteredProjects = filterProjects(projects);
+    setRows(filteredProjects);
+  }, [projects]);
 
   // Make sure the data download knows what projects are selected.
   useEffect(() => {
@@ -277,7 +290,6 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   function ProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -336,7 +348,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const visibleRows = React.useMemo(
+    const visibleRows = useMemo(
       () =>
         utils
           .stableSort(rows, utils.getComparator(order, orderBy))
@@ -362,6 +374,39 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
           </Typography>
         </Tooltip>
       );
+    };
+
+    const handleArchiveUnarchive = (id: number) => {
+      if (rows[id].statusCode !== getStateCodeFromLabel(states.ARCHIVED)) {
+        // TODO: update project in the backend need to create API
+
+        rows[id].statusCode = getStateCodeFromLabel(states.ARCHIVED);
+        rows[id].statusLabel = states.ARCHIVED;
+        rows[id].archive = TableI18N.unarchive;
+        setRows([...rows]);
+        setPage(page);
+        return;
+      }
+      // TODO: update project in the backendneed to create API
+
+      rows[id].statusCode = getStateCodeFromLabel(states.PLANNING);
+      rows[id].statusLabel = states.PLANNING;
+      rows[id].archive = TableI18N.archive;
+      setRows([...rows]);
+      setPage(page);
+    };
+
+    const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
+      onClose: () => dialogContext.setYesNoDialog({ open: false }),
+      onNo: () => dialogContext.setYesNoDialog({ open: false })
+    };
+    const dialogContext = useContext(DialogContext);
+    const openYesNoDialog = (yesNoDialogProps?: Partial<IYesNoDialogProps>) => {
+      dialogContext.setYesNoDialog({
+        ...defaultYesNoDialogProps,
+        ...yesNoDialogProps,
+        open: true
+      });
     };
 
     return (
@@ -485,8 +530,62 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                             title={
                               archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive
                             }
-                            placement="right">
-                            <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                            placement="top">
+                            <IconButton
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    (archCode !== row.statusCode
+                                      ? TableI18N.archive
+                                      : TableI18N.unarchive) +
+                                    ' ' +
+                                    ProjectTableI18N.projectConfirmation,
+                                  dialogTitleBgColor: '#E9FBFF',
+                                  dialogContent: (
+                                    <>
+                                      <Typography variant="body1" color="textPrimary">
+                                        <strong>{row.projectName}</strong>
+                                      </Typography>
+                                      {archCode !== row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Archiving this project will not remove it from the
+                                            application, only means it will not be publicly
+                                            available any more.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to archive this project?
+                                          </Typography>
+                                        </>
+                                      )}
+                                      {archCode === row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Unarchiving this project will make it public again. The
+                                            new status for the project will be "PLANNING". Please
+                                            make sure there is no PI information before publishing.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to unarchive (publish) this
+                                            project?'
+                                          </Typography>
+                                        </>
+                                      )}
+                                    </>
+                                  ),
+                                  yesButtonLabel:
+                                    archCode !== row.statusCode
+                                      ? 'Archive Project'
+                                      : 'Unarchive Project',
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleArchiveUnarchive(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                             </IconButton>
                           </Tooltip>
