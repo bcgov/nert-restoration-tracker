@@ -7,6 +7,48 @@
 --
 
 --
+-- TABLE: authorization_type
+--
+
+CREATE TABLE authorization_type(
+    authorization_type_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    name                     varchar(50)       NOT NULL,
+    description              varchar(250),
+    record_effective_date    date              NOT NULL,
+    record_end_date          date,
+    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user              integer           NOT NULL,
+    update_date              timestamptz(6),
+    update_user              integer,
+    revision_count           integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT authorization_types_pk PRIMARY KEY (authorization_type_id)
+)
+;
+
+COMMENT ON COLUMN authorization_type.authorization_type_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN authorization_type.name IS 'The name of the record.'
+;
+COMMENT ON COLUMN authorization_type.description IS 'The description of the record.'
+;
+COMMENT ON COLUMN authorization_type.record_effective_date IS 'Record level effective date.'
+;
+COMMENT ON COLUMN authorization_type.record_end_date IS 'Record level end date.'
+;
+COMMENT ON COLUMN authorization_type.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN authorization_type.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN authorization_type.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN authorization_type.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN authorization_type.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE authorization_type IS 'Authorization types are a list of authorization types that are used to control access to the application.'
+;
+
+--
 -- TABLE: branding
 --
 
@@ -1426,6 +1468,12 @@ CREATE UNIQUE INDEX first_nations_nuk1 ON first_nations(name, (record_end_date i
 --
 
 CREATE UNIQUE INDEX branding_nuk1 ON branding(name, (record_end_date is NULL)) where record_end_date is null
+;
+--
+-- INDEX: "authorization_types_nuk1"
+--
+
+CREATE UNIQUE INDEX "authorization_types_nuk1" ON authorization_type(name, (record_end_date is NULL)) where record_end_date is null
 ;
 -- 
 -- INDEX: nrm_region_uk1 

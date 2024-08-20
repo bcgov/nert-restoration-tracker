@@ -288,12 +288,30 @@ export const handleFocusFormValues = (project: IGetProjectForViewResponseDetails
 
 export const checkFormikErrors = (errors: FormikErrors<any> | undefined) => {
   if (errors) {
-    const errorsText = Object.keys(errors).map((key) => {
+    const errorsText: string[] = [];
+
+    Object.keys(errors).map((key) => {
       if (typeof errors[key] === 'object') {
-        return `${key}: ${JSON.stringify(errors[key], null, 2)}`;
+        const nestedErrors = errors[key] as Record<string, any>;
+
+        Object.keys(nestedErrors).map((nestedKey) => {
+          if (Array.isArray(nestedErrors[nestedKey])) {
+            nestedErrors[nestedKey].map((nestedError: any) => {
+              Object.keys(nestedError).map((nestedKey) => {
+                errorsText.push(`${nestedKey}: ${nestedError[nestedKey]}`);
+              });
+            });
+          }
+
+          if (typeof nestedErrors[nestedKey] === 'string') {
+            errorsText.push(`${nestedKey}: ${nestedErrors[nestedKey]}`);
+          }
+        });
       }
 
-      return `${key}: ${errors[key]}`;
+      if (typeof errors[key] === 'string') {
+        errorsText.push(`${key}: ${errors[key]}`);
+      }
     });
 
     return errorsText;

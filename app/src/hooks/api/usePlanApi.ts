@@ -119,10 +119,10 @@ const usePlanApi = (axios: AxiosInstance) => {
 
       const projectImage = PlanData.project.project_image;
       PlanData.project.project_image = null;
-      PlanData.project.image_url = undefined;
-      PlanData.project.image_key = undefined;
 
       await uploadPlanAttachments(planId, projectImage, S3FileType.THUMBNAIL);
+    } else if (!PlanData.project.image_key) {
+      await deletePlanThumbnail(planId);
     }
 
     const { data } = await axios.put(`api/plan/${planId}/update`, PlanData);
@@ -194,6 +194,18 @@ const usePlanApi = (axios: AxiosInstance) => {
     return data;
   };
 
+  /**
+   * Delete plan thumbnail based on project ID
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   */
+  const deletePlanThumbnail = async (projectId: number): Promise<number> => {
+    const { data } = await axios.delete(`/api/project/${projectId}/attachments/thumbnail/delete`);
+
+    return data;
+  };
+
   return {
     getAllUserPlansParticipation,
     getPlansList,
@@ -203,7 +215,8 @@ const usePlanApi = (axios: AxiosInstance) => {
     updatePlan,
     deletePlan,
     getUserPlansList,
-    uploadPlanAttachments
+    uploadPlanAttachments,
+    deletePlanThumbnail
   };
 };
 

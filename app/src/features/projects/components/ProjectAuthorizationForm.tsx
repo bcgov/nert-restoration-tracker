@@ -21,6 +21,8 @@ import yup from 'utils/YupSchema';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import InfoContent from 'components/info/InfoContent';
 import { CreateProjectI18N } from 'constants/i18n';
+import { useCodesContext } from 'hooks/useContext';
+import { CircularProgress } from '@mui/material';
 
 const pageStyles = {
   customListItem: {
@@ -95,26 +97,17 @@ const ProjectAuthorizationForm: React.FC = () => {
   const { values, handleChange, getFieldMeta, errors } =
     useFormikContext<IProjectAuthorizationForm>();
 
-  // [OI] this array needs to go into the database (codes)
-  const authorizationTypes = [
-    'Alteration Permit',
-    'Authorized Change',
-    'Forest Licence to Cut',
-    'Government Actions Regulation Exemption',
-    'Heritage Inspection Permit',
-    'Licence of Occupation',
-    'Motorized Vehicle Exemption',
-    'Occupant Licence to Cut',
-    'Road Use Permit',
-    'Short Term Use Approval',
-    'Special Use Permit',
-    'Other - please specify'
-  ];
+  const codesContext = useCodesContext();
 
   const [infoOpen, setInfoOpen] = useState(false);
   const handleClickOpen = () => {
     setInfoOpen(true);
   };
+
+  if (codesContext.codesDataLoader.isLoading || !codesContext.codesDataLoader.data) {
+    return <CircularProgress />;
+  }
+  const authorizationTypes = codesContext.codesDataLoader.data.authorization_type;
 
   return (
     <>
@@ -173,9 +166,9 @@ const ProjectAuthorizationForm: React.FC = () => {
                                     Boolean(authorizationTypeMeta.error)
                                   }
                                   inputProps={{ 'aria-label': 'Authorization Type' }}>
-                                  {authorizationTypes.map((authorizationType, index2) => (
-                                    <MenuItem key={index2} value={authorizationType}>
-                                      {authorizationType}
+                                  {authorizationTypes.map((code, index2) => (
+                                    <MenuItem key={index2} value={code.name}>
+                                      {code.name}
                                     </MenuItem>
                                   ))}
                                 </Select>

@@ -38,6 +38,7 @@ const ThumbnailImageField: React.FC = () => {
   const deleteImage = () => {
     setFieldValue('project.project_image', null);
     setFieldValue('project.image_url', null);
+    setFieldValue('project.image_key', null);
     setImage('');
   };
 
