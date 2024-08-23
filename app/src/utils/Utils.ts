@@ -315,8 +315,6 @@ export const handleGetPartnershipRefName = (
 
   const type = codes.partnership_type.find((x) => x.id === Number(typeId));
 
-
-
   if (type?.name === PartnershipTypes.INDIGENOUS_PARTNER) {
     const partner = codes.first_nations.find((x) => x.id === Number(refId));
 
