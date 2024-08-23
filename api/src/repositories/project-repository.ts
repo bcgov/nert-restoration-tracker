@@ -3,6 +3,7 @@ import { ApiExecuteSQLError } from '../errors/custom-error';
 import { ILocation, IProject } from '../interfaces/project.interface';
 import {
   IPostContact,
+  IPostPartnership,
   PostFocusData,
   PostFundingSource,
   PostLocationData,
@@ -192,9 +193,12 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
       SELECT
-        *
+        partnership_type_id,
+        partnerships_id,
+        first_nations_id,
+        name
       FROM
-        partnership
+        project_partnership
       WHERE
         project_id = ${projectId};
     `;
@@ -735,25 +739,40 @@ export class ProjectRepository extends BaseRepository {
    * Insert a project partnership.
    *
    * @param {number} projectId
-   * @param {string} partnership
-   * @return {*}  {Promise<{ partnership_id: number }>}
+   * @param {IPostPartnership} partnership
+   * @return {*}  {Promise<{ project_partnership_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertPartnership(partnership: string, projectId: number): Promise<{ partnership_id: number }> {
-    defaultLog.debug({ label: 'insertPartnership', message: 'params', partnership });
+  async insertPartnership(
+    partnership: IPostPartnership,
+    projectId: number
+  ): Promise<{ project_partnership_id: number }> {
+    defaultLog.debug({ label: 'insertPartnership', message: 'params', partnership, projectId });
 
     try {
       const sqlStatement = SQL`
-      INSERT INTO partnership (
+      INSERT INTO project_partnership (
         project_id,
-        partnership
-      ) VALUES (
-        ${projectId},
-        ${partnership}
-      )
-      RETURNING
-        partnership_id;
-    `;
+        partnership_type_id,
+        partnerships_id,
+        first_nations_id,
+        name
+        ) VALUES (
+          ${projectId},
+          (SELECT partnership_type_id FROM partnership_type WHERE name = ${partnership.partnership_type}),
+          (
+            SELECT partnerships_id FROM partnerships WHERE name = ${partnership.partnership_ref} 
+            AND partnership_type_id = 
+              (
+              SELECT partnership_type_id FROM partnership_type WHERE name = ${partnership.partnership_type}
+              )
+          ),
+          (SELECT first_nations_id FROM first_nations WHERE name = ${partnership.partnership_ref}),
+          ${partnership.partnership_name}
+          )
+          RETURNING
+          project_partnership_id;
+          `;
 
       const response = await this.connection.sql(sqlStatement);
 
@@ -1303,7 +1322,7 @@ export class ProjectRepository extends BaseRepository {
     try {
       const sqlStatement = SQL`
         DELETE
-          from partnership
+          from project_partnership
         WHERE
           project_id = ${projectId};
       `;

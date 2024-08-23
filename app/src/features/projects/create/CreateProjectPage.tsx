@@ -281,7 +281,9 @@ const CreateProjectPage: React.FC = () => {
 
       // Remove empty partnerships
       projectPostObject.partnership.partnerships =
-        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
+        projectPostObject.partnership.partnerships.filter((partner) =>
+          partner.partnership_type.trim()
+        );
 
       // Remove empty Authorizations
       projectPostObject.authorization.authorizations =

@@ -1,10 +1,15 @@
 import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
-import { focusOptions } from 'constants/misc';
+import { focusOptions, PartnershipTypes } from 'constants/misc';
+import { ICodesContext } from 'contexts/codesContext';
 import { IConfig } from 'contexts/configContext';
 import dayjs from 'dayjs';
 import { FormikErrors } from 'formik';
-import { IGetProjectForViewResponseDetails } from 'interfaces/useProjectApi.interface';
+import { ICode, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
+import {
+  IGetProjectForViewResponseDetails,
+  IGetProjectForViewResponsePartnershipsArrayItem
+} from 'interfaces/useProjectApi.interface';
 
 /**
  * Checks if a url string starts with an `http[s]://` protocol, and adds `https://` if it does not. If the url
@@ -284,6 +289,41 @@ export const handleFocusFormValues = (project: IGetProjectForViewResponseDetails
   }
 
   return newValues;
+};
+
+export const handlePartnershipRefValues = (
+  partnershipType: ICode | undefined,
+  partnershipRefId: string | undefined,
+  codes: IGetAllCodeSetsResponse | undefined
+) => {
+  if (!codes) {
+    return '';
+  }
+
+  switch (partnershipType?.name) {
+    case PartnershipTypes.INDIGENOUS_PARTNER: {
+      const partner = codes.first_nations.find((x) => x.id === Number(partnershipRefId));
+
+      if (!partner) {
+        return 'Other - please specify';
+      }
+
+      return partner.name;
+    }
+    case PartnershipTypes.STAKEHOLDER_PROPONENT_PARTNER: {
+      const partner = codes.partnerships.find((x) => x.id === Number(partnershipRefId));
+
+      if (!partner) {
+        return '';
+      }
+
+      return partner.name;
+    }
+    case PartnershipTypes.NON_GOVERNMENTAL_ORGANIZATION_PARTNER:
+      return '';
+    default:
+      return '';
+  }
 };
 
 export const checkFormikErrors = (errors: FormikErrors<any> | undefined) => {
