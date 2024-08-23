@@ -25,7 +25,7 @@ import {
   Select
 } from '@mui/material';
 import { useCodesContext } from 'hooks/useContext';
-import { PartnershipTypes } from 'constants/misc';
+import { handleGetPartnershipRefList } from 'utils/Utils';
 
 const pageStyles = {
   customListItem: {
@@ -93,27 +93,11 @@ const ProjectPartnershipsForm: React.FC = () => {
     setInfoOpen(true);
   };
 
-  const getPartnershipRefList = (type: string) => {
-    if (!codes) {
-      return [];
-    }
-
-    //if partnership type is indigenous, return indigenous codes
-    if (type === PartnershipTypes.INDIGENOUS_PARTNER) {
-      return [...codes.first_nations, { id: 0, name: 'Other - please specify' }];
-    }
-
-    return partnershipNames.filter(
-      (data) => data.type_id === partnershipTypes.find((x) => x.name === type)?.id
-    );
-  };
-
   if (!codes) {
     return <CircularProgress />;
   }
 
   const partnershipTypes = codes.partnership_type;
-  const partnershipNames = codes.partnerships;
 
   return (
     <>
@@ -185,7 +169,8 @@ const ProjectPartnershipsForm: React.FC = () => {
                             </Grid>
                             {
                               /* Partnership Name */
-                              getPartnershipRefList(partnership.partnership_type).length > 0 ? (
+                              handleGetPartnershipRefList(partnership.partnership_type, codes)
+                                .length > 0 ? (
                                 <Grid item xs={4} md={4}>
                                   <FormControl fullWidth size="small" variant="outlined">
                                     <InputLabel id="partnership-ref-label">
@@ -204,13 +189,14 @@ const ProjectPartnershipsForm: React.FC = () => {
                                         Boolean(partnershipRefMeta.error)
                                       }
                                       inputProps={{ 'aria-label': 'Partnership Ref' }}>
-                                      {getPartnershipRefList(partnership.partnership_type).map(
-                                        (code, index2) => (
-                                          <MenuItem key={index2} value={code.name}>
-                                            {code.name}
-                                          </MenuItem>
-                                        )
-                                      )}
+                                      {handleGetPartnershipRefList(
+                                        partnership.partnership_type,
+                                        codes
+                                      ).map((code, index2) => (
+                                        <MenuItem key={index2} value={code.name}>
+                                          {code.name}
+                                        </MenuItem>
+                                      ))}
                                     </Select>
                                     <FormHelperText error={true}>
                                       {partnershipRefMeta.touched && partnershipRefMeta.error}

@@ -185,14 +185,6 @@ export async function up(knex: Knex): Promise<void> {
 
         INSERT INTO restoration.partnerships (partnership_type_id, name, record_effective_date)
         VALUES (
-            (SELECT partnership_type_id FROM restoration.partnership_type WHERE name = 'Stakeholder / Proponent partner'), 
-            'Other - please specify', 
-            now()
-        );
-
-
-        INSERT INTO restoration.partnerships (partnership_type_id, name, record_effective_date)
-        VALUES (
             (SELECT partnership_type_id FROM restoration.partnership_type WHERE name = 'Non-governmental organization partner'), 
             'BC Parks Foundation', 
             now()
@@ -244,13 +236,6 @@ export async function up(knex: Knex): Promise<void> {
         VALUES (
             (SELECT partnership_type_id FROM restoration.partnership_type WHERE name = 'Non-governmental organization partner'), 
             'Nature Trust', 
-            now()
-        );
-
-        INSERT INTO restoration.partnerships (partnership_type_id, name, record_effective_date)
-        VALUES (
-            (SELECT partnership_type_id FROM restoration.partnership_type WHERE name = 'Non-governmental organization partner'), 
-            'Other - please specify', 
             now()
         );
     `);

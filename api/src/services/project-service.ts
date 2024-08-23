@@ -221,8 +221,14 @@ export class ProjectService extends DBService {
     ]);
 
     if (attachmentData.length === 0) {
+      const newProjectData = {
+        ...projectData,
+        image_url: '',
+        image_key: ''
+      };
+
       return {
-        project: projectData,
+        project: newProjectData,
         species: speciesData,
         contact: contactData,
         partnership: partnershipsData,

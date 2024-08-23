@@ -178,7 +178,7 @@ const useProjectApi = (axios: AxiosInstance) => {
       projectData.project.project_image = null;
 
       await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
-    } else if (!projectData.project.image_key) {
+    } else if (projectData.project.image_key === null) {
       await deleteProjectThumbnail(projectId);
     }
 
