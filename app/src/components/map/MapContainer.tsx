@@ -325,7 +325,8 @@ const initializeMap = (
 
   map = new Map({
     container: mapId,
-    style: '/styles/bcgov.json',
+    // style: '/styles/bcgov.json',
+    style: '/styles/from_gov_site.json',
     center: center,
     zoom: zoom,
     maxPitch: 65,
