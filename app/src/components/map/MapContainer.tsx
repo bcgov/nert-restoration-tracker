@@ -325,7 +325,7 @@ const initializeMap = (
 
   map = new Map({
     container: mapId,
-    style: '/styles/hybrid.json',
+    style: '/styles/bcgov.json',
     center: center,
     zoom: zoom,
     maxPitch: 65,
@@ -1006,13 +1006,13 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   }, []);
 
   // Listen to layer changes
-  useEffect(() => {
-    if (centroids) {
-      checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
-    } else {
-      checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
-    }
-  }, [layerVisibility, projectMarker, planMarker]);
+  // useEffect(() => {
+  //   if (centroids) {
+  //     checkLayerVisibility(layerVisibility, convertToCentroidGeoJSON(features));
+  //   } else {
+  //     checkLayerVisibility(layerVisibility, convertToGeoJSON(features));
+  //   }
+  // }, [layerVisibility, projectMarker, planMarker]);
 
   // Listen for masks being turned on and off
   useEffect(() => {
