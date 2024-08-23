@@ -36,31 +36,17 @@ describe('GetPartnershipsData', () => {
     });
   });
 
-  describe('partnerships values provided', () => {
-    let data: GetPartnershipsData;
-
-    const partnerships = [{ partnership: 'partner 1' }, { partnership: 'partner 2' }];
-
-    before(() => {
-      data = new GetPartnershipsData(partnerships);
-    });
-
-    it('sets partnerships', function () {
-      expect(data.partnerships).to.eql([{ partnership: 'partner 1' }, { partnership: 'partner 2' }]);
-    });
-  });
-
   describe('All values provided', () => {
     let data: GetPartnershipsData;
 
-    const partnerships = [{ partnership: 'partner 3' }, { partnership: 'partner 4' }];
+    const partnerships = [{ partnership_type_id: 'id', partnerships_id: 'id', name: 'name' }];
 
     before(() => {
       data = new GetPartnershipsData(partnerships);
     });
 
     it('sets partnerships', function () {
-      expect(data.partnerships).to.eql([{ partnership: 'partner 3' }, { partnership: 'partner 4' }]);
+      expect(data.partnerships).to.eql([{ partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' }]);
     });
   });
 });

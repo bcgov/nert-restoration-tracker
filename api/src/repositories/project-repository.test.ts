@@ -963,7 +963,10 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertPartnership('string', 1);
+      const response = await projectRepository.insertPartnership(
+        { partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' },
+        1
+      );
 
       expect(response).to.eql({ partnership_id: 1 });
     });
@@ -980,7 +983,10 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertPartnership('string', 1);
+        await projectRepository.insertPartnership(
+          { partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' },
+          1
+        );
       } catch (error: any) {
         expect(error.message).to.equal('Failed to insert project partnership');
       }
@@ -996,7 +1002,10 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertPartnership('string', 1);
+        await projectRepository.insertPartnership(
+          { partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' },
+          1
+        );
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }

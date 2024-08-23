@@ -121,7 +121,7 @@ const usePlanApi = (axios: AxiosInstance) => {
       PlanData.project.project_image = null;
 
       await uploadPlanAttachments(planId, projectImage, S3FileType.THUMBNAIL);
-    } else if (!PlanData.project.image_key) {
+    } else if (PlanData.project.image_key === null) {
       await deletePlanThumbnail(planId);
     }
 

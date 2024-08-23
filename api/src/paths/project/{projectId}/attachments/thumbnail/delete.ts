@@ -43,12 +43,10 @@ DELETE.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'id of deleted thumbnail attachment',
+      description: 'deleted thumbnail attachment',
       content: {
         'text/plain': {
-          schema: {
-            type: 'number'
-          }
+          schema: {}
         }
       }
     },
@@ -84,7 +82,7 @@ export function deleteThumbnail(): RequestHandler {
       }
       await connection.commit();
 
-      return res.status(200).json(existingThumbnails.attachmentsList[0].id);
+      return res.status(200).json();
     } catch (error) {
       defaultLog.error({ label: 'deleteThumbnail', message: 'error', error });
       await connection.rollback();

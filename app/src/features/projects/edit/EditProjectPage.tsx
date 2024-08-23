@@ -20,9 +20,7 @@ import ProjectContactForm from 'features/projects/components/ProjectContactForm'
 import ProjectFundingForm from 'features/projects/components/ProjectFundingForm';
 import ProjectGeneralInformationForm from 'features/projects/components/ProjectGeneralInformationForm';
 import ProjectLocationForm from 'features/projects/components/ProjectLocationForm';
-import ProjectPartnershipsForm, {
-  ProjectPartnershipsFormArrayItemInitialValues
-} from 'features/projects/components/ProjectPartnershipsForm';
+import ProjectPartnershipsForm from 'features/projects/components/ProjectPartnershipsForm';
 import {
   ProjectFormInitialValues,
   ProjectFormYupSchema
@@ -35,7 +33,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProjectObjectivesForm from '../components/ProjectObjectivesForm';
 import ProjectFocusForm from '../components/ProjectFocusForm';
-import { handleFocusFormValues } from 'utils/Utils';
+import { handleFocusFormValues, handlePartnershipRefValues } from 'utils/Utils';
 import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
 import FocalSpeciesComponent from 'components/species/FocalSpeciesComponent';
 import { checkForLocationErrors } from 'utils/YupSchema';
@@ -71,7 +69,7 @@ const pageStyles = {
 const EditProjectPage: React.FC = () => {
   const history = useNavigate();
   const dialogContext = useContext(DialogContext);
-  const codes = useCodesContext().codesDataLoader;
+  const codes = useCodesContext().codesDataLoader.data;
 
   const restorationTrackerApi = useNertApi();
 
@@ -99,6 +97,10 @@ const EditProjectPage: React.FC = () => {
 
   useEffect(() => {
     const getEditProjectFields = async () => {
+      if (!codes) {
+        return;
+      }
+
       const response = await restorationTrackerApi.project.getProjectByIdForEdit(projectId);
 
       const focus = handleFocusFormValues(response.project);
@@ -127,6 +129,25 @@ const EditProjectPage: React.FC = () => {
         },
         species: {
           focal_species: speciesData
+        },
+        partnership: {
+          partnerships: response.partnership.partnerships.map((partner) => {
+            const partnerType = codes?.partnership_type.find(
+              (type) => type.id === Number(partner.partnership_type)
+            );
+
+            const partnerRef = handlePartnershipRefValues(
+              partnerType,
+              partner.partnership_ref,
+              codes
+            );
+
+            return {
+              partnership_type: partnerType?.name || '',
+              partnership_ref: partnerRef,
+              partnership_name: partner.partnership_name || ''
+            };
+          })
         }
       };
 
@@ -135,7 +156,7 @@ const EditProjectPage: React.FC = () => {
       }
 
       if (editProject.partnership.partnerships.length === 0) {
-        editProject.partnership.partnerships = [ProjectPartnershipsFormArrayItemInitialValues];
+        editProject.partnership.partnerships = [];
       }
 
       setInitialProjectFormData(editProject);
@@ -152,7 +173,7 @@ const EditProjectPage: React.FC = () => {
     }
 
     getEditProjectFields();
-  }, [hasLoadedDraftData, restorationTrackerApi.project, urlParams]);
+  }, [hasLoadedDraftData, restorationTrackerApi.project, urlParams, codes]);
 
   /**
    * Handle project edits.
@@ -163,7 +184,7 @@ const EditProjectPage: React.FC = () => {
     }
     // Remove empty partnerships
     values.partnership.partnerships = values.partnership.partnerships.filter((partner) =>
-      partner.partnership.trim()
+      partner.partnership_type.trim()
     );
 
     // Remove empty Authorizations
@@ -242,7 +263,7 @@ const EditProjectPage: React.FC = () => {
     dialogContext.setYesNoDialog(defaultCancelDialogProps);
   };
 
-  if (!codes.data || !hasLoadedDraftData) {
+  if (!codes || !hasLoadedDraftData) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -362,7 +383,7 @@ const EditProjectPage: React.FC = () => {
 
                   <Grid item xs={12} md={9}>
                     <ProjectLocationForm
-                      regions={codes.data.regions.map((item) => {
+                      regions={codes.regions.map((item) => {
                         return { value: item.id, label: item.name };
                       })}
                     />
