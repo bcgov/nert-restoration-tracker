@@ -1499,4 +1499,46 @@ export class ProjectRepository extends BaseRepository {
       throw error;
     }
   }
+
+  /**
+   * Update a project state code.
+   *
+   * @param {number} projectId
+   * @param {number} stateCode
+   * @memberof ProjectRepository
+   */
+  async updateStateCode(projectId: number, stateCode: number) {
+    defaultLog.debug({
+      label: 'updateStateCode',
+      message: 'params',
+      projectId,
+      stateCode
+    });
+
+    try {
+      const sqlStatement = SQL`
+        UPDATE project
+        SET
+          state_code = ${stateCode}
+        WHERE
+          project_id = ${projectId}
+        RETURNING
+          project_id;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+
+      if (response.rowCount !== 1) {
+        throw new ApiExecuteSQLError('Failed to update state code', [
+          'ProjectRepository->updateStateCode',
+          'rowCount was null or undefined, expected rowCount = 1'
+        ]);
+      }
+
+      return { id: response.rows[0].project_id };
+    } catch (error) {
+      defaultLog.debug({ label: 'updateStateCode', message: 'error', error });
+      throw error;
+    }
+  }
 }

@@ -978,4 +978,15 @@ export class ProjectService extends DBService {
   async deleteFundingSourceById(projectId: number, pfsId: number): Promise<{ project_funding_source_id: number }> {
     return this.projectRepository.deleteFundingSourceById(projectId, pfsId);
   }
+
+  /**
+   * Update state code for a project
+   *
+   * @param {number} projectId
+   * @param {number} stateCode
+   * @memberof ProjectService
+   */
+  async updateStateCode(projectId: number, stateCode: number) {
+    return this.projectRepository.updateStateCode(projectId, stateCode);
+  }
 }
