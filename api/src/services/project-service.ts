@@ -221,8 +221,14 @@ export class ProjectService extends DBService {
     ]);
 
     if (attachmentData.length === 0) {
+      const newProjectData = {
+        ...projectData,
+        image_url: '',
+        image_key: ''
+      };
+
       return {
-        project: projectData,
+        project: newProjectData,
         species: speciesData,
         contact: contactData,
         partnership: partnershipsData,
@@ -406,7 +412,7 @@ export class ProjectService extends DBService {
     promises.push(
       Promise.all(
         postProjectData.partnership.partnerships?.map((partner: IPostPartnership) =>
-          this.insertPartnership(partner.partnership, projectId)
+          this.insertPartnership(partner, projectId)
         ) || []
       )
     );
@@ -577,15 +583,15 @@ export class ProjectService extends DBService {
   /**
    * Insert a new project partnership.
    *
-   * @param {string} partner
+   * @param {IPostPartnership} partner
    * @param {number} projectId
    * @return {*}  {Promise<number>}
    * @memberof ProjectService
    */
-  async insertPartnership(partner: string, projectId: number): Promise<number> {
-    const response = await this.projectRepository.insertPartnership(partner, projectId);
+  async insertPartnership(partnership: IPostPartnership, projectId: number): Promise<number> {
+    const response = await this.projectRepository.insertPartnership(partnership, projectId);
 
-    return response.partnership_id;
+    return response.project_partnership_id;
   }
 
   /**
@@ -773,11 +779,12 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async updateProjectPartnershipsData(projectId: number, partnershipsData: PostPartnershipsData): Promise<void> {
+    console.log('partnershipsData', partnershipsData);
     await this.projectRepository.deleteProjectPartnership(projectId);
 
     const insertPartnershipsPromises =
-      partnershipsData?.partnerships?.map((partnershipData: { partnership: string }) =>
-        this.insertPartnership(partnershipData.partnership, projectId)
+      partnershipsData?.partnerships?.map(async (partnershipData) =>
+        this.insertPartnership(partnershipData, projectId)
       ) || [];
 
     await Promise.all([...insertPartnershipsPromises]);

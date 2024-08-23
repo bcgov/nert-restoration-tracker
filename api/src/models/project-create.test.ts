@@ -125,7 +125,7 @@ describe('PostProjectObject', () => {
           }
         ]
       },
-      partnership: { partnerships: [{ partnership: 'string' }] },
+      partnership: { partnerships: [{ partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' }] },
       objective: { objectives: [{ objective: 'objective1' }] },
       focus: { focuses: [1, 2], people_involved: 2 },
       restoration_plan: { is_project_part_public_plan: true }
@@ -581,7 +581,9 @@ describe('PostPartnershipsData', () => {
   describe('All values provided', () => {
     let projectPartnershipsData: PostPartnershipsData;
 
-    const obj = { partnerships: [{ partnership: '1' }, { partnership: '2' }] };
+    const obj = {
+      partnerships: [{ partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' }]
+    };
 
     before(() => {
       projectPartnershipsData = new PostPartnershipsData(obj);
