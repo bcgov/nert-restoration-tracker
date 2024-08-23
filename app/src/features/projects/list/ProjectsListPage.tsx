@@ -1,32 +1,24 @@
-import { mdiExport } from '@mdi/js';
-import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import InfoIcon from '@mui/icons-material/Info';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import { alpha } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import { visuallyHidden } from '@mui/utils';
-import InfoDialog from 'components/dialog/InfoDialog';
+import {
+  Box,
+  Card,
+  Checkbox,
+  Chip,
+  FormControlLabel,
+  IconButton,
+  Link,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import { DialogContext } from 'contexts/dialogContext';
 import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
@@ -45,9 +37,10 @@ import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
-import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
-import InfoContent from 'components/info/InfoContent';
+import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import ProjectsTableHead from 'features/projects/components/ProjectsTableHead';
+import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
+import ProjectsTableToolbar from 'features/projects/components/ProjectsTableToolbar';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
@@ -142,156 +135,13 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     setSelectedProjects(s);
   }, [selected]);
 
-  function ProjectsTableHead(props: utils.ProjectsTableProps) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    const createSortHandler =
-      (property: keyof utils.ProjectData) => (event: React.MouseEvent<unknown>) => {
-        onRequestSort(event, property);
-      };
-
-    const [infoOpen, setInfoOpen] = useState(false);
-    const [infoTitle, setInfoTitle] = useState('');
-
-    const handleClickOpen = (headCell: utils.ProjectHeadCell) => {
-      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
-      setInfoOpen(true);
-    };
-
-    return (
-      <>
-        <InfoDialogDraggable
-          isProject={true}
-          open={infoOpen}
-          dialogTitle={infoTitle}
-          onClose={() => setInfoOpen(false)}>
-          <InfoContent isProject={true} contentIndex={infoTitle} />
-        </InfoDialogDraggable>
-        <TableHead>
-          <TableRow>
-            {utils.projectHeadCells.map((headCell) => {
-              if ('archive' !== headCell.id)
-                return (
-                  <TableCell
-                    key={headCell.id}
-                    align={headCell.numeric ? 'right' : 'left'}
-                    padding={headCell.disablePadding ? 'none' : 'normal'}
-                    sortDirection={orderBy === headCell.id ? order : false}>
-                    <Tooltip
-                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
-                      placement="top">
-                      <TableSortLabel
-                        active={orderBy === headCell.id}
-                        direction={orderBy === headCell.id ? order : 'asc'}
-                        onClick={createSortHandler(headCell.id)}>
-                        {headCell.label}
-                        {orderBy === headCell.id ? (
-                          <Box component="span" sx={visuallyHidden}>
-                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                          </Box>
-                        ) : null}
-                      </TableSortLabel>
-                    </Tooltip>
-
-                    {headCell.infoButton ? (
-                      <IconButton onClick={() => handleClickOpen(headCell)}>
-                        <InfoIcon color="info" />
-                      </IconButton>
-                    ) : null}
-                  </TableCell>
-                );
-            })}
-            <SystemRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-              <TableCell>
-                {!myProject ? (
-                  <Typography variant="inherit">{TableI18N.archive}</Typography>
-                ) : (
-                  <>
-                    <Typography variant="inherit">{TableI18N.archive}</Typography>
-                    <Typography variant="inherit">{TableI18N.delete}</Typography>
-                  </>
-                )}
-              </TableCell>
-            </SystemRoleGuard>
-            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
-              <TableCell>
-                {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
-              </TableCell>
-            </SystemRoleGuard>
-            {!myProject ? (
-              <TableCell padding="checkbox">
-                <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
-                  <Checkbox
-                    color="primary"
-                    indeterminate={numSelected > 0 && numSelected < rowCount}
-                    checked={rowCount > 0 && numSelected === rowCount}
-                    onChange={onSelectAllClick}
-                    inputProps={{
-                      'aria-label': ProjectTableI18N.selectAllProjectsForExport
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
-            ) : (
-              <></>
-            )}
-          </TableRow>
-        </TableHead>
-      </>
-    );
-  }
-
-  function ProjectsTableToolbar(props: utils.TableToolbarProps) {
-    const { numSelected } = props;
-    return (
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) =>
-              alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-          })
-        }}>
-        {numSelected > 0 ? (
-          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}{' '}
-            {TableI18N.selectedToExport}
-          </Typography>
-        ) : (
-          <Typography
-            sx={{ mx: '0.5rem', flex: '1 1 100%' }}
-            variant="h2"
-            id="tableTitle"
-            component="div">
-            {TableI18N.found} {rows?.length}{' '}
-            {rows?.length !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
-          </Typography>
-        )}
-        {numSelected > 0 ? (
-          <Button
-            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
-            color="primary"
-            variant="outlined"
-            onClick={() => exportData(selectedProjects)}
-            disableElevation
-            data-testid="export-project-button"
-            aria-label={ProjectTableI18N.exportProjectsData}
-            startIcon={<Icon path={mdiExport} size={1} />}>
-            {TableI18N.exportData}
-          </Button>
-        ) : (
-          <InfoDialog isProject={true} infoContent={'paged table'} />
-        )}
-      </Toolbar>
-    );
-  }
-
   function ProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const { changeStateCode } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -377,19 +227,24 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     };
 
     const handleArchiveUnarchive = (id: number) => {
-      if (rows[id].statusCode !== getStateCodeFromLabel(states.ARCHIVED)) {
-        // TODO: update project in the backend need to create API
+      const stateArchiveCode = getStateCodeFromLabel(states.ARCHIVED);
 
-        rows[id].statusCode = getStateCodeFromLabel(states.ARCHIVED);
+      if (rows[id].statusCode !== stateArchiveCode) {
+        changeStateCode(true, rows[id].projectId, stateArchiveCode);
+
+        rows[id].statusCode = stateArchiveCode;
         rows[id].statusLabel = states.ARCHIVED;
         rows[id].archive = TableI18N.unarchive;
         setRows([...rows]);
         setPage(page);
         return;
       }
-      // TODO: update project in the backendneed to create API
 
-      rows[id].statusCode = getStateCodeFromLabel(states.PLANNING);
+      const statePlanningCode = getStateCodeFromLabel(states.PLANNING);
+
+      changeStateCode(true, rows[id].projectId, statePlanningCode);
+
+      rows[id].statusCode = statePlanningCode;
       rows[id].statusLabel = states.PLANNING;
       rows[id].archive = TableI18N.archive;
       setRows([...rows]);
@@ -411,13 +266,18 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
     return (
       <Box sx={{ width: '100%' }}>
-        <ProjectsTableToolbar numSelected={selected.length} />
+        <ProjectsTableToolbar
+          numSelected={selected.length}
+          numRows={rows.length}
+          selectedProjects={selectedProjects}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}>
             <ProjectsTableHead
+              myProject={myProject}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
