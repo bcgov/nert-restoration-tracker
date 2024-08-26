@@ -203,7 +203,7 @@ objects:
                       key: database-user-password
                       name: ${DATABASE_SECRET_REF}
                 - name: S3_ENDPOINT
-                  value: ${S3_ENDPOINT_URL}
+                  value: https://nrs.objectstore.gov.bc.ca/
                 - name: S3_ENDPOINT_URL
                   valueFrom:
                     secretKeyRef:
@@ -220,6 +220,8 @@ objects:
                       key: object_store_secret_key_id
                       name: ${OBJECT_STORE_SECRETS}
                 - name: S3_BUCKET
+                  value: nerdel/backups/${ENVIRONMENT_NAME}/
+                - name: S3_BUCKET_NAME
                   valueFrom:
                     secretKeyRef:
                       key: object_store_bucket_name
@@ -248,6 +250,9 @@ objects:
                   value: ${ENVIRONMENT_FRIENDLY_NAME}
                 - name: ENVIRONMENT_NAME
                   value: ${ENVIRONMENT_NAME}
+                - name: PGDUTY_SVC_KEY
+                  required: false
+                  value: ""
               resources:
                 requests:
                   cpu: ${CPU_REQUEST}
