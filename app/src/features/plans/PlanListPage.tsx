@@ -42,6 +42,7 @@ import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
 import PlansTableHead from 'features/plans/components/PlansTableHead';
 import PlansTableToolbar from 'features/plans/components/PlansTableToolbar';
+import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
@@ -66,7 +67,10 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
 
-  function filterPlans(planData: IGetPlanForViewResponse[]): utils.PlanData[] {
+  function filterPlans(
+    plans: IGetPlanForViewResponse[],
+    drafts?: IGetDraftsListResponse[]
+  ): utils.PlanData[] {
     let rowsPlanFilterOutArchived = plans;
     if (rowsPlanFilterOutArchived && isUserAdmin) {
       rowsPlanFilterOutArchived = plans.filter(
@@ -135,9 +139,9 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
   // Make sure state is preserved for table component
   useEffect(() => {
-    const filteredPlans = filterPlans(plans);
+    const filteredPlans = filterPlans(plans, drafts);
     setRows(filteredPlans);
-  }, [plans]);
+  }, [plans, drafts]);
 
   // Make sure the data download knows what projects are selected.
   useEffect(() => {
