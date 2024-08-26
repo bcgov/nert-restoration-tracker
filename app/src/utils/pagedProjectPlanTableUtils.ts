@@ -1,5 +1,10 @@
 import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { focus } from 'constants/misc';
+import { useNertApi } from 'hooks/useNertApi';
+import { DialogContext } from 'contexts/dialogContext';
+import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import { useContext } from 'react';
+import { APIError } from 'hooks/api/useAxios';
 
 /**  Project related objects **/
 export interface ProjectData {
@@ -18,6 +23,7 @@ export interface ProjectData {
 }
 
 export interface ProjectsTableProps {
+  myProject?: boolean;
   numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ProjectData) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -118,6 +124,7 @@ export interface PlanData {
 }
 
 export interface PlansTableProps {
+  myPlan?: boolean;
   numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof PlanData) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;

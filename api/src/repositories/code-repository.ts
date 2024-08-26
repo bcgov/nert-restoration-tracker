@@ -18,11 +18,18 @@ export interface ICode {
 export type CodeSet<T extends ICode = ICode> = T[];
 
 export interface IAllCodeSets {
+  partnership_type: CodeSet;
+  partnerships: CodeSet<{
+    id: number;
+    type_id: number;
+    name: string;
+  }>;
   first_nations: CodeSet;
   regions: CodeSet;
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
+  authorization_type: CodeSet;
   branding: {
     id: number;
     name: string;
@@ -168,6 +175,67 @@ export class CodeRepository extends BaseRepository {
         name,
         value
       FROM branding
+      WHERE record_end_date is null;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows;
+  }
+
+  /**
+   * Fetch authorization type codes.
+   *
+   * @return {*}
+   * @memberof CodeRepository
+   */
+  async getAuthorizationType() {
+    const sqlStatement = SQL`
+      SELECT
+        authorization_type_id as id,
+        name
+      FROM authorization_type
+      WHERE record_end_date is null;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows;
+  }
+
+  /**
+   * Fetch partnership type codes.
+   *
+   * @return {*}
+   * @memberof CodeRepository
+   */
+  async getPartnershipType() {
+    const sqlStatement = SQL`
+      SELECT
+        partnership_type_id as id,
+        name
+      FROM partnership_type
+      WHERE record_end_date is null;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows;
+  }
+
+  /**
+   * Fetch partnerships.
+   *
+   * @return {*}
+   * @memberof CodeRepository
+   */
+  async getPartnerships() {
+    const sqlStatement = SQL`
+      SELECT
+        partnerships_id as id,
+        partnership_type_id as type_id,
+        name
+      FROM partnerships
       WHERE record_end_date is null;
     `;
 

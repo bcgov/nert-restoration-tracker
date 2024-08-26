@@ -63,7 +63,7 @@ describe('PlanService', () => {
       expect(getProjectDataStub).to.have.been.calledOnce;
       expect(getContactDataStub).to.have.been.calledOnce;
       expect(getLocationDataStub).to.have.been.calledOnce;
-      expect(response).to.eql({ project: {}, contact: {}, location: {} });
+      expect(response).to.eql({ project: { image_key: '', image_url: '' }, contact: {}, location: {} });
     });
 
     it('should get a plan by ID for edit with thumbnail', async () => {

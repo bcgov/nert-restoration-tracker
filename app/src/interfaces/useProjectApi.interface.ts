@@ -249,7 +249,9 @@ export interface IGetProjectForViewResponseFundingData {
 }
 
 export interface IGetProjectForViewResponsePartnershipsArrayItem {
-  partnership: string;
+  partnership_type: string;
+  partnership_ref: string;
+  partnership_name: string;
 }
 export interface IGetProjectForViewResponsePartnerships {
   partnerships: IGetProjectForViewResponsePartnershipsArrayItem[];

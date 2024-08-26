@@ -119,10 +119,10 @@ const usePlanApi = (axios: AxiosInstance) => {
 
       const projectImage = PlanData.project.project_image;
       PlanData.project.project_image = null;
-      PlanData.project.image_url = undefined;
-      PlanData.project.image_key = undefined;
 
       await uploadPlanAttachments(planId, projectImage, S3FileType.THUMBNAIL);
+    } else if (PlanData.project.image_key === null) {
+      await deletePlanThumbnail(planId);
     }
 
     const { data } = await axios.put(`api/plan/${planId}/update`, PlanData);
@@ -194,6 +194,31 @@ const usePlanApi = (axios: AxiosInstance) => {
     return data;
   };
 
+  /**
+   * Delete plan thumbnail based on project ID
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   */
+  const deletePlanThumbnail = async (projectId: number): Promise<number> => {
+    const { data } = await axios.delete(`/api/project/${projectId}/attachments/thumbnail/delete`);
+
+    return data;
+  };
+
+  /**
+   * Update plan state code based on project ID
+   *
+   * @param {number} projectId
+   * @param {number} statCode
+   * @return {*}  {Promise<number>}
+   */
+  const updatePlanStateCode = async (projectId: number, stateCode: number): Promise<number> => {
+    const { data } = await axios.put(`/api/project/${projectId}/state/${stateCode}/update`);
+
+    return data;
+  };
+
   return {
     getAllUserPlansParticipation,
     getPlansList,
@@ -203,7 +228,9 @@ const usePlanApi = (axios: AxiosInstance) => {
     updatePlan,
     deletePlan,
     getUserPlansList,
-    uploadPlanAttachments
+    uploadPlanAttachments,
+    deletePlanThumbnail,
+    updatePlanStateCode
   };
 };
 

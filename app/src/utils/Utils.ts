@@ -1,10 +1,15 @@
 import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { DATE_FORMAT, TIME_FORMAT } from 'constants/dateTimeFormats';
-import { focusOptions } from 'constants/misc';
+import { focusOptions, PartnershipTypes } from 'constants/misc';
+import { ICodesContext } from 'contexts/codesContext';
 import { IConfig } from 'contexts/configContext';
 import dayjs from 'dayjs';
 import { FormikErrors } from 'formik';
-import { IGetProjectForViewResponseDetails } from 'interfaces/useProjectApi.interface';
+import { ICode, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
+import {
+  IGetProjectForViewResponseDetails,
+  IGetProjectForViewResponsePartnershipsArrayItem
+} from 'interfaces/useProjectApi.interface';
 
 /**
  * Checks if a url string starts with an `http[s]://` protocol, and adds `https://` if it does not. If the url
@@ -286,14 +291,134 @@ export const handleFocusFormValues = (project: IGetProjectForViewResponseDetails
   return newValues;
 };
 
+export const handleGetPartnershipTypeName = (
+  typeId: string,
+  codes: IGetAllCodeSetsResponse | undefined
+) => {
+  if (!codes) {
+    return '';
+  }
+
+  const type = codes.partnership_type.find((x) => x.id === Number(typeId));
+
+  return type?.name || '';
+};
+
+export const handleGetPartnershipRefName = (
+  typeId: string,
+  refId: string,
+  codes: IGetAllCodeSetsResponse | undefined
+) => {
+  if (!codes) {
+    return '';
+  }
+
+  const type = codes.partnership_type.find((x) => x.id === Number(typeId));
+
+  if (type?.name === PartnershipTypes.INDIGENOUS_PARTNER) {
+    const partner = codes.first_nations.find((x) => x.id === Number(refId));
+
+    if (!partner) {
+      return 'Other';
+    }
+
+    return partner.name;
+  } else if (
+    type?.name === PartnershipTypes.STAKEHOLDER_PROPONENT_PARTNER ||
+    type?.name === PartnershipTypes.NON_GOVERNMENTAL_ORGANIZATION_PARTNER
+  ) {
+    const partner = codes.partnerships.find((x) => x.id === Number(refId));
+
+    if (!partner) {
+      return 'Other';
+    }
+
+    return partner.name;
+  } else {
+    return '';
+  }
+};
+
+export const handleGetPartnershipRefList = (
+  type: string,
+  codes: IGetAllCodeSetsResponse | undefined
+): ICode[] => {
+  if (!codes) {
+    return [];
+  }
+  const partnershipTypes = codes.partnership_type;
+  const partnershipNames = codes.partnerships;
+
+  //if partnership type is indigenous, return indigenous codes
+  if (type === PartnershipTypes.INDIGENOUS_PARTNER) {
+    return [...codes.first_nations, { id: 0, name: 'Other - please specify' }];
+  }
+
+  const partnershipRefs = partnershipNames.filter(
+    (data) => data.type_id === partnershipTypes.find((x) => x.name === type)?.id
+  );
+
+  return [...partnershipRefs, { id: 0, name: 'Other - please specify' }];
+};
+
+export const handlePartnershipRefValues = (
+  partnershipType: ICode | undefined,
+  partnershipRefId: string | undefined,
+  codes: IGetAllCodeSetsResponse | undefined
+) => {
+  if (!codes) {
+    return '';
+  }
+  if (partnershipType?.name === PartnershipTypes.INDIGENOUS_PARTNER) {
+    const partner = codes.first_nations.find((x) => x.id === Number(partnershipRefId));
+
+    if (!partner) {
+      return 'Other - please specify';
+    }
+
+    return partner.name;
+  } else if (
+    partnershipType?.name === PartnershipTypes.STAKEHOLDER_PROPONENT_PARTNER ||
+    partnershipType?.name === PartnershipTypes.NON_GOVERNMENTAL_ORGANIZATION_PARTNER
+  ) {
+    const partner = codes.partnerships.find((x) => x.id === Number(partnershipRefId));
+
+    if (!partner) {
+      return 'Other - please specify';
+    }
+
+    return partner.name;
+  } else {
+    return '';
+  }
+};
+
 export const checkFormikErrors = (errors: FormikErrors<any> | undefined) => {
   if (errors) {
-    const errorsText = Object.keys(errors).map((key) => {
+    const errorsText: string[] = [];
+
+    Object.keys(errors).map((key) => {
       if (typeof errors[key] === 'object') {
-        return `${key}: ${JSON.stringify(errors[key], null, 2)}`;
+        const nestedErrors = errors[key] as Record<string, any>;
+
+        Object.keys(nestedErrors).map((nestedKey) => {
+          if (Array.isArray(nestedErrors[nestedKey])) {
+            nestedErrors[nestedKey].map((nestedError: any) => {
+              Object.keys(nestedError).map((nestedKey) => {
+                errorsText.push(`${nestedKey}: ${nestedError[nestedKey]}`);
+              });
+            });
+          }
+
+          if (typeof nestedErrors[nestedKey] === 'string') {
+            errorsText.push(`${nestedKey}: ${nestedErrors[nestedKey]}`);
+          }
+        });
       }
 
-      return `${key}: ${errors[key]}`;
+      if (typeof errors[key] === 'string') {
+        errorsText.push(`${key}: ${errors[key]}`);
+      }
     });
 
     return errorsText;

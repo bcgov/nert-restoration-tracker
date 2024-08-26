@@ -102,6 +102,18 @@ const useProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Delete project thumbnail based on project ID
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   */
+  const deleteProjectThumbnail = async (projectId: number): Promise<number> => {
+    const { data } = await axios.delete(`/api/project/${projectId}/attachments/thumbnail/delete`);
+
+    return data;
+  };
+
+  /**
    * Get projects list (potentially based on filter criteria).
    *
    * @param {IProjectAdvancedFilterRequest} filterFieldData
@@ -164,10 +176,10 @@ const useProjectApi = (axios: AxiosInstance) => {
 
       const projectImage = projectData.project.project_image;
       projectData.project.project_image = null;
-      projectData.project.image_url = undefined;
-      projectData.project.image_key = undefined;
 
       await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    } else if (projectData.project.image_key === null) {
+      await deleteProjectThumbnail(projectId);
     }
 
     const { data } = await axios.put(`api/project/${projectId}/update`, projectData);
@@ -312,6 +324,19 @@ const useProjectApi = (axios: AxiosInstance) => {
     return status === 200;
   };
 
+  /**
+   * Update project state code based on project ID
+   *
+   * @param {number} projectId
+   * @param {number} statCode
+   * @return {*}  {Promise<number>}
+   */
+  const updateProjectStateCode = async (projectId: number, stateCode: number): Promise<number> => {
+    const { data } = await axios.put(`/api/project/${projectId}/state/${stateCode}/update`);
+
+    return data;
+  };
+
   return {
     getAllUserProjectsParticipation,
     getProjectsList,
@@ -322,12 +347,14 @@ const useProjectApi = (axios: AxiosInstance) => {
     updateProject,
     getProjectAttachments,
     deleteProjectAttachment,
+    deleteProjectThumbnail,
     deleteProject,
     getProjectParticipants,
     addProjectParticipants,
     removeProjectParticipant,
     updateProjectParticipantRole,
-    getUserProjectsList
+    getUserProjectsList,
+    updateProjectStateCode
   };
 };
 

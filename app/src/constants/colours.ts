@@ -25,16 +25,6 @@ type ColourMap = Record<string, { colour: Color }>;
 const DEFAULT_COLOUR = blueGrey;
 
 /**
- * Colour map for `Survey Progress` chips.
- *
- */
-const SURVEY_PROGRESS_COLOUR_MAP = {
-  Planning: { colour: blueGrey },
-  'In progress': { colour: deepPurple },
-  Completed: { colour: green }
-};
-
-/**
  * Colour map for `Taxon Rank` chips.
  *
  */
@@ -69,7 +59,6 @@ const NRM_REGION_COLOUR_MAP = {
  * ColourMap key types
  *
  */
-export type SurveyProgressKeys = keyof typeof SURVEY_PROGRESS_COLOUR_MAP;
 export type TaxonRankKeys = keyof typeof TAXON_RANK_COLOUR_MAP;
 export type NrmRegionKeys = keyof typeof NRM_REGION_COLOUR_MAP;
 
@@ -87,12 +76,6 @@ const generateColourMapGetter = <T extends ColourMap>(
 ) => {
   return (lookup: keyof T) => colourMap[lookup]?.colour ?? fallbackColour;
 };
-
-/**
- * Get survey progress colour mapping.
- *
- */
-export const getSurveyProgressColour = generateColourMapGetter(SURVEY_PROGRESS_COLOUR_MAP);
 
 /**
  * Get taxon rank colour mapping.

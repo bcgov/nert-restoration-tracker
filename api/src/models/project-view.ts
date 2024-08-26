@@ -122,13 +122,28 @@ export class GetAuthorizationData {
 }
 
 export interface IGetPartnership {
-  partnership: string;
+  partnership_type: string;
+  partnership_ref: string;
+  partnership_name: string;
 }
 export class GetPartnershipsData {
   partnerships: IGetPartnership[];
 
   constructor(partnerships?: any[]) {
-    this.partnerships = (partnerships?.length && partnerships.map((item: any) => item)) || [];
+    this.partnerships =
+      (partnerships?.length &&
+        partnerships.map((item: any) => {
+          return {
+            partnership_type: String(item.partnership_type_id),
+            partnership_ref: item.partnerships_id
+              ? String(item.partnerships_id)
+              : item.first_nations_id
+              ? String(item.first_nations_id)
+              : '',
+            partnership_name: item.name || ''
+          };
+        })) ||
+      [];
   }
 }
 

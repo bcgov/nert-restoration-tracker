@@ -1,32 +1,26 @@
-import { mdiExport } from '@mdi/js';
-import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import InfoIcon from '@mui/icons-material/Info';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import { alpha } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import { visuallyHidden } from '@mui/utils';
-import InfoDialog from 'components/dialog/InfoDialog';
+import {
+  Box,
+  Card,
+  Checkbox,
+  Chip,
+  FormControlLabel,
+  IconButton,
+  Link,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Tooltip,
+  Typography
+} from '@mui/material';
+import { DialogContext } from 'contexts/dialogContext';
+import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
 import {
   getStateCodeFromLabel,
@@ -38,90 +32,102 @@ import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
-import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React, { Fragment, useContext, useState, useEffect } from 'react';
+import { IGetProjectForViewResponse, IProjectsListProps } from 'interfaces/useProjectApi.interface';
+import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getFormattedDate } from 'utils/Utils';
-import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
-import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
-import InfoContent from 'components/info/InfoContent';
+import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import ProjectsTableHead from 'features/projects/components/ProjectsTableHead';
+import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
+import ProjectsTableToolbar from 'features/projects/components/ProjectsTableToolbar';
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const { projects, drafts, myproject } = props;
   const history = useNavigate();
 
   const [selected, setSelected] = useState<readonly number[]>([]);
-
-  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<utils.ProjectData[]>([]);
+  const [page, setPage] = useState(0);
+  // using state for table row changes
+  const [rows, setRows] = useState<utils.ProjectData[]>([]);
 
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
-  const isUserCreator = projectAuthStateContext.hasSystemRole([
+  const isUserAdmin = projectAuthStateContext.hasSystemRole([
     SYSTEM_ROLE.SYSTEM_ADMIN,
     SYSTEM_ROLE.DATA_ADMINISTRATOR
   ])
-    ? false
-    : true;
-
-  let rowsProjectFilterOutArchived = projects;
-  if (rowsProjectFilterOutArchived && isUserCreator) {
-    rowsProjectFilterOutArchived = projects.filter(
-      (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
-    );
-  }
+    ? true
+    : false;
 
   const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
-  const rowsProject = rowsProjectFilterOutArchived
-    ?.filter((proj) => proj.project.is_project)
-    .map((row, index) => {
-      return {
-        id: index,
-        projectId: row.project.project_id,
-        projectName: row.project.project_name,
-        focus: utils.resolveProjectPlanFocus(
-          row.project.is_healing_land,
-          row.project.is_healing_people,
-          row.project.is_land_initiative,
-          row.project.is_cultural_initiative
-        ),
-        org: row.contact.contacts.map((item) => item.organization).join('\r'),
-        plannedStartDate: row.project.start_date,
-        plannedEndDate: row.project.end_date,
-        actualStartDate: row.project.actual_start_date,
-        actualEndDate: row.project.actual_end_date,
-        statusCode: row.project.state_code,
-        statusLabel: getStateLabelFromCode(row.project.state_code),
-        statusStyle: getStatusStyle(row.project.state_code),
-        archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
-      } as utils.ProjectData;
-    });
-
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
-  const rowsDraft = drafts
-    ? drafts
-        .filter((draft) => draft.is_project)
-        .map((row, index) => {
-          return {
-            id: index + rowsProject.length,
-            projectId: row.id,
-            projectName: row.name,
-            focus: '',
-            org: '',
-            plannedStartDate: '',
-            plannedEndDate: '',
-            actualStartDate: '',
-            actualEndDate: '',
-            statusCode: draftCode,
-            statusLabel: states.DRAFT,
-            statusStyle: draftStatusStyle,
-            archive: ''
-          } as utils.ProjectData;
-        })
-    : [];
 
-  const rows = rowsDraft.concat(rowsProject);
+  function filterProjects(projectData: IGetProjectForViewResponse[]): utils.ProjectData[] {
+    let rowsProjectFilterOutArchived = projects;
+    if (rowsProjectFilterOutArchived && isUserAdmin) {
+      rowsProjectFilterOutArchived = projects.filter(
+        (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+      );
+    }
+
+    const rowsProject = rowsProjectFilterOutArchived
+      ?.filter((proj) => proj.project.is_project)
+      .map((row, index) => {
+        return {
+          id: index,
+          projectId: row.project.project_id,
+          projectName: row.project.project_name,
+          focus: utils.resolveProjectPlanFocus(
+            row.project.is_healing_land,
+            row.project.is_healing_people,
+            row.project.is_land_initiative,
+            row.project.is_cultural_initiative
+          ),
+          org: row.contact.contacts.map((item) => item.organization).join('\r'),
+          plannedStartDate: row.project.start_date,
+          plannedEndDate: row.project.end_date,
+          actualStartDate: row.project.actual_start_date,
+          actualEndDate: row.project.actual_end_date,
+          statusCode: row.project.state_code,
+          statusLabel: getStateLabelFromCode(row.project.state_code),
+          statusStyle: getStatusStyle(row.project.state_code),
+          archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
+        } as utils.ProjectData;
+      });
+
+    const rowsDraft = drafts
+      ? drafts
+          .filter((draft) => draft.is_project)
+          .map((row, index) => {
+            return {
+              id: index + rowsProject.length,
+              projectId: row.id,
+              projectName: row.name,
+              focus: '',
+              org: '',
+              plannedStartDate: '',
+              plannedEndDate: '',
+              actualStartDate: '',
+              actualEndDate: '',
+              statusCode: draftCode,
+              statusLabel: states.DRAFT,
+              statusStyle: draftStatusStyle,
+              archive: ''
+            } as utils.ProjectData;
+          })
+      : [];
+
+    return rowsDraft.concat(rowsProject);
+  }
+
+  // Make sure state is preserved for table component
+  useEffect(() => {
+    const filteredProjects = filterProjects(projects);
+    setRows(filteredProjects);
+  }, [projects]);
 
   // Make sure the data download knows what projects are selected.
   useEffect(() => {
@@ -129,157 +135,13 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     setSelectedProjects(s);
   }, [selected]);
 
-  function ProjectsTableHead(props: utils.ProjectsTableProps) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    const createSortHandler =
-      (property: keyof utils.ProjectData) => (event: React.MouseEvent<unknown>) => {
-        onRequestSort(event, property);
-      };
-
-    const [infoOpen, setInfoOpen] = useState(false);
-    const [infoTitle, setInfoTitle] = useState('');
-
-    const handleClickOpen = (headCell: utils.ProjectHeadCell) => {
-      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
-      setInfoOpen(true);
-    };
-
-    return (
-      <>
-        <InfoDialogDraggable
-          isProject={true}
-          open={infoOpen}
-          dialogTitle={infoTitle}
-          onClose={() => setInfoOpen(false)}>
-          <InfoContent isProject={true} contentIndex={infoTitle} />
-        </InfoDialogDraggable>
-        <TableHead>
-          <TableRow>
-            {utils.projectHeadCells.map((headCell) => {
-              if ('archive' !== headCell.id)
-                return (
-                  <TableCell
-                    key={headCell.id}
-                    align={headCell.numeric ? 'right' : 'left'}
-                    padding={headCell.disablePadding ? 'none' : 'normal'}
-                    sortDirection={orderBy === headCell.id ? order : false}>
-                    <Tooltip
-                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
-                      placement="top">
-                      <TableSortLabel
-                        active={orderBy === headCell.id}
-                        direction={orderBy === headCell.id ? order : 'asc'}
-                        onClick={createSortHandler(headCell.id)}>
-                        {headCell.label}
-                        {orderBy === headCell.id ? (
-                          <Box component="span" sx={visuallyHidden}>
-                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                          </Box>
-                        ) : null}
-                      </TableSortLabel>
-                    </Tooltip>
-
-                    {headCell.infoButton ? (
-                      <IconButton onClick={() => handleClickOpen(headCell)}>
-                        <InfoIcon color="info" />
-                      </IconButton>
-                    ) : null}
-                  </TableCell>
-                );
-            })}
-            <SystemRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-              <TableCell>
-                {!myProject ? (
-                  <Typography variant="inherit">{TableI18N.archive}</Typography>
-                ) : (
-                  <>
-                    <Typography variant="inherit">{TableI18N.archive}</Typography>
-                    <Typography variant="inherit">{TableI18N.delete}</Typography>
-                  </>
-                )}
-              </TableCell>
-            </SystemRoleGuard>
-            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
-              <TableCell>
-                {!myProject ? <></> : <Typography variant="inherit">{TableI18N.delete}</Typography>}
-              </TableCell>
-            </SystemRoleGuard>
-            {!myProject ? (
-              <TableCell padding="checkbox">
-                <Tooltip title={ProjectTableI18N.exportAllProjects} placement="right">
-                  <Checkbox
-                    color="primary"
-                    indeterminate={numSelected > 0 && numSelected < rowCount}
-                    checked={rowCount > 0 && numSelected === rowCount}
-                    onChange={onSelectAllClick}
-                    inputProps={{
-                      'aria-label': ProjectTableI18N.selectAllProjectsForExport
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
-            ) : (
-              <></>
-            )}
-          </TableRow>
-        </TableHead>
-      </>
-    );
-  }
-
-  function ProjectsTableToolbar(props: utils.TableToolbarProps) {
-    const { numSelected } = props;
-    return (
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) =>
-              alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-          })
-        }}>
-        {numSelected > 0 ? (
-          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}{' '}
-            {TableI18N.selectedToExport}
-          </Typography>
-        ) : (
-          <Typography
-            sx={{ mx: '0.5rem', flex: '1 1 100%' }}
-            variant="h2"
-            id="tableTitle"
-            component="div">
-            {TableI18N.found} {rows?.length}{' '}
-            {rows?.length !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
-          </Typography>
-        )}
-        {numSelected > 0 ? (
-          <Button
-            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
-            color="primary"
-            variant="outlined"
-            onClick={() => exportData(selectedProjects)}
-            disableElevation
-            data-testid="export-project-button"
-            aria-label={ProjectTableI18N.exportProjectsData}
-            startIcon={<Icon path={mdiExport} size={1} />}>
-            {TableI18N.exportData}
-          </Button>
-        ) : (
-          <InfoDialog isProject={true} infoContent={'paged table'} />
-        )}
-      </Toolbar>
-    );
-  }
-
   function ProjectsTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
-    const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const { changeStateCode } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -336,7 +198,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const visibleRows = React.useMemo(
+    const visibleRows = useMemo(
       () =>
         utils
           .stableSort(rows, utils.getComparator(order, orderBy))
@@ -364,15 +226,58 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
       );
     };
 
+    const handleArchiveUnarchive = (id: number) => {
+      const stateArchiveCode = getStateCodeFromLabel(states.ARCHIVED);
+
+      if (rows[id].statusCode !== stateArchiveCode) {
+        changeStateCode(true, rows[id].projectId, stateArchiveCode);
+
+        rows[id].statusCode = stateArchiveCode;
+        rows[id].statusLabel = states.ARCHIVED;
+        rows[id].archive = TableI18N.unarchive;
+        setRows([...rows]);
+        setPage(page);
+        return;
+      }
+
+      const statePlanningCode = getStateCodeFromLabel(states.PLANNING);
+
+      changeStateCode(true, rows[id].projectId, statePlanningCode);
+
+      rows[id].statusCode = statePlanningCode;
+      rows[id].statusLabel = states.PLANNING;
+      rows[id].archive = TableI18N.archive;
+      setRows([...rows]);
+      setPage(page);
+    };
+
+    const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
+      onClose: () => dialogContext.setYesNoDialog({ open: false }),
+      onNo: () => dialogContext.setYesNoDialog({ open: false })
+    };
+    const dialogContext = useContext(DialogContext);
+    const openYesNoDialog = (yesNoDialogProps?: Partial<IYesNoDialogProps>) => {
+      dialogContext.setYesNoDialog({
+        ...defaultYesNoDialogProps,
+        ...yesNoDialogProps,
+        open: true
+      });
+    };
+
     return (
       <Box sx={{ width: '100%' }}>
-        <ProjectsTableToolbar numSelected={selected.length} />
+        <ProjectsTableToolbar
+          numSelected={selected.length}
+          numRows={rows.length}
+          selectedProjects={selectedProjects}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}>
             <ProjectsTableHead
+              myProject={myProject}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
@@ -485,8 +390,62 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                             title={
                               archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive
                             }
-                            placement="right">
-                            <IconButton color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                            placement="top">
+                            <IconButton
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    (archCode !== row.statusCode
+                                      ? TableI18N.archive
+                                      : TableI18N.unarchive) +
+                                    ' ' +
+                                    ProjectTableI18N.projectConfirmation,
+                                  dialogTitleBgColor: '#E9FBFF',
+                                  dialogContent: (
+                                    <>
+                                      <Typography variant="body1" color="textPrimary">
+                                        <strong>{row.projectName}</strong>
+                                      </Typography>
+                                      {archCode !== row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Archiving this project will not remove it from the
+                                            application, only means it will not be publicly
+                                            available any more.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to archive this project?
+                                          </Typography>
+                                        </>
+                                      )}
+                                      {archCode === row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Unarchiving this project will make it public again. The
+                                            new status for the project will be "PLANNING". Please
+                                            make sure there is no PI information before publishing.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to unarchive (publish) this
+                                            project?'
+                                          </Typography>
+                                        </>
+                                      )}
+                                    </>
+                                  ),
+                                  yesButtonLabel:
+                                    archCode !== row.statusCode
+                                      ? 'Archive Project'
+                                      : 'Unarchive Project',
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleArchiveUnarchive(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                             </IconButton>
                           </Tooltip>

@@ -28,7 +28,7 @@ export const useNertApi = () => {
 
   const search = useSearchApi(apiAxios);
 
-  const taxonomy = useTaxonomyApi(apiAxios);
+  const taxonomy = useTaxonomyApi();
 
   const codes = useCodesApi(apiAxios);
 

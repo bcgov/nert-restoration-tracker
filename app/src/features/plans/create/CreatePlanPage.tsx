@@ -51,6 +51,7 @@ import PlanGeneralInformationForm, {
   PlanGeneralInformationFormYupSchema
 } from '../components/PlanGeneralInformationForm';
 import { useCodesContext } from 'hooks/useContext';
+import { checkFormikErrors } from 'utils/Utils';
 
 const pageStyles = {
   formButtons: {
@@ -320,20 +321,46 @@ const CreatePlanPage: React.FC = () => {
 
       <YesNoDialog
         dialogTitle="Create Plan Confirmation"
-        dialogText="Please make sure there is no PI in the data. Creating a Plan means it will be published (publicly available). Are you sure you want to create this Plan?"
+        dialogText=""
+        dialogTitleBgColor="#E9FBFF"
+        dialogContent={
+          <>
+            <Typography variant="body1" color="textPrimary">
+              Please make sure there is no Private Information (PI) in the data. Creating a Plan
+              means it will be published (publicly available). See the{' '}
+              <Link
+                href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
+                color="primary">
+                BC Government PI
+              </Link>{' '}
+              page for more information.
+            </Typography>
+            <Typography variant="body1" mt={1} color="textPrimary">
+              Are you sure you want to create this Plan?
+            </Typography>
+          </>
+        }
         open={openYesNoDialog}
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}
         onYes={() => {
-          if (!formikRef.current?.isValid) {
-            showCreateErrorDialog({
-              dialogTitle: 'Error Creating Plan',
-              dialogError: 'Please fill out all required fields.'
-            });
+          setOpenYesNoDialog(false);
+          formikRef.current?.validateForm().then((errors) => {
+            const errorsText: string[] = checkFormikErrors(errors);
 
-            setOpenYesNoDialog(false);
-          }
-          formikRef.current?.handleSubmit();
+            if (errorsText.length) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Error Creating Plan',
+                dialogText: 'Please correct the errors in the form before submitting.',
+                dialogError: 'The following errors were found:',
+                dialogErrorDetails: errorsText,
+                ...defaultErrorDialogProps,
+                open: true
+              });
+            }
+          });
+
+          formikRef.current?.submitForm();
         }}
       />
 

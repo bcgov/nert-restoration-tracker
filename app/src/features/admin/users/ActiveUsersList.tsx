@@ -334,7 +334,8 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                               {
                                 menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
                                 menuLabel: 'View Users Details',
-                                menuOnClick: () => history(`/admin/users/${row.id}`, { state: row })
+                                menuOnClick: () =>
+                                  history(`/admin/users/${row.id}/details`, { state: row })
                               },
                               {
                                 menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,

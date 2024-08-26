@@ -30,4 +30,7 @@ export interface IGetAllCodeSetsResponse {
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
+  authorization_type: CodeSet;
+  partnership_type: CodeSet;
+  partnerships: CodeSet<{ id: number; type_id: number; name: string }>;
 }

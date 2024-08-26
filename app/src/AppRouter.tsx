@@ -56,9 +56,7 @@ export const AppRouter = () => {
           <Route path="/admin/user/*" element={<UserRouter />} />
 
           {/* Admin Routes */}
-          <Route
-            path="/admin/users/*"
-            element={<SystemRoleRouteGuard validRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]} />}>
+          <Route element={<SystemRoleRouteGuard validRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]} />}>
             <Route path="/admin/users/*" element={<AdminUsersRouter />} />
           </Route>
         </Route>
