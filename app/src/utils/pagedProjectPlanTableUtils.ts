@@ -197,12 +197,6 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: TableI18N.archive
-  },
-  {
-    id: 'export',
-    numeric: false,
-    disablePadding: false,
-    label: TableI18N.export
   }
 ];
 

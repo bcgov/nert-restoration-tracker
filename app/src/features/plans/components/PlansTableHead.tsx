@@ -26,6 +26,7 @@ import { SYSTEM_ROLE } from 'constants/roles';
 
 function PlansTableHead(props: PlansTableProps) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, myPlan } = props;
+
   const createSortHandler = (property: keyof PlanData) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
@@ -99,7 +100,6 @@ function PlansTableHead(props: PlansTableProps) {
               {!myPlan ? <></> : <Typography variant="inherit">Delete</Typography>}
             </TableCell>
           </SystemRoleGuard>
-
           {!myPlan ? (
             <TableCell padding="checkbox">
               <Tooltip title={PlanTableI18N.exportAllPlans} placement="right">
