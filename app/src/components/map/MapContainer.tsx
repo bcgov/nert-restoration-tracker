@@ -327,8 +327,23 @@ const initializeMap = (
     container: mapId,
     // style: '/styles/bcgov.json',
     // style: '/styles/from_gov_site.json',
-    style: '/styles/hybrid.json',
+    style: '/styles/from_the_main_page.json',
     center: center,
+    // Use transformRequest to set the Referrer Policy to no-referrer-when-downgrade
+    // This is required for the BC Gov WMS layers
+    // transformRequest: (url: string, resourceType: string) => {
+    //   console.log('url', url);
+    //   console.log('resourceType', resourceType);
+    //   if (resourceType === 'Tile' && url.includes('tiles.arcgis.com')) {
+    //     return {
+    //       url: url,
+    //       headers: {
+    //         'Referrer Policy': 'no-referrer-when-downgrade'
+    //       },
+    //       credentials: 'include'
+    //     };
+    //   }
+    // },
     zoom: zoom,
     maxPitch: 65,
     hash: 'loc',
