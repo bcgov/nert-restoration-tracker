@@ -66,7 +66,10 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
 
-  function filterProjects(projects: IGetProjectForViewResponse[], drafts?: IGetDraftsListResponse[]): utils.ProjectData[] {
+  function filterProjects(
+    projects: IGetProjectForViewResponse[],
+    drafts?: IGetDraftsListResponse[]
+  ): utils.ProjectData[] {
     let rowsProjectFilterOutArchived = projects;
     if (rowsProjectFilterOutArchived && isUserAdmin) {
       rowsProjectFilterOutArchived = projects.filter(

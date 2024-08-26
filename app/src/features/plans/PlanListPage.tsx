@@ -67,7 +67,10 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
 
-  function filterPlans(plans: IGetPlanForViewResponse[], drafts?: IGetDraftsListResponse[]): utils.PlanData[] {
+  function filterPlans(
+    plans: IGetPlanForViewResponse[],
+    drafts?: IGetDraftsListResponse[]
+  ): utils.PlanData[] {
     let rowsPlanFilterOutArchived = plans;
     if (rowsPlanFilterOutArchived && isUserAdmin) {
       rowsPlanFilterOutArchived = plans.filter(
