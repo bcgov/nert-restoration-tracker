@@ -203,13 +203,27 @@ objects:
                       key: database-user-password
                       name: ${DATABASE_SECRET_REF}
                 - name: S3_ENDPOINT
-                  value: ${S3_ENDPOINT}
+                  value: ${S3_ENDPOINT_URL}
+                - name: S3_ENDPOINT_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_url
+                      name: ${OBJECT_STORE_SECRETS}
                 - name: S3_USER
-                  value: ${S3_USER}
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_access_key_id
+                      name: ${OBJECT_STORE_SECRETS}
                 - name: S3_PASSWORD
-                  value: ${S3_PASSWORD}
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_secret_key_id
+                      name: ${OBJECT_STORE_SECRETS}
                 - name: S3_BUCKET
-                  value: ${S3_BUCKET}
+                  valueFrom:
+                    secretKeyRef:
+                      key: object_store_bucket_name
+                      name: ${OBJECT_STORE_SECRETS}    
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
@@ -251,26 +265,6 @@ objects:
                   subPath: ${CONFIG_FILE_NAME}
 
 parameters:
-  - name: S3_ENDPOINT
-    valueFrom:
-      secretKeyRef:
-        key: object_store_url
-        name: ${OBJECT_STORE_SECRETS}
-  - name: S3_USER
-    valueFrom:
-      secretKeyRef:
-        key: object_store_access_key_id
-        name: ${OBJECT_STORE_SECRETS}
-  - name: S3_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        key: object_store_secret_key_id
-        name: ${OBJECT_STORE_SECRETS}
-  - name: S3_BUCKET
-    valueFrom:
-      secretKeyRef:
-        key: object_store_bucket_name
-        name: ${OBJECT_STORE_SECRETS}
   - name: NAME
     displayName: Name
     description: The name assigned to all of the resources.  Use 'backup-{database name}' depending on your database provider
@@ -375,10 +369,6 @@ parameters:
     description: FTP password
     required: false
     value: ""
-  - name: OBJECT_STORE_SECRETS
-    description: Secrets used to read and write to the S3 storage
-    required: false
-    value: restoration-tracker-object-store
   - name: WEBHOOK_URL
     displayName: Webhook URL
     description: The URL of the webhook to use for notifications.  If not specified, the webhook integration feature is disabled.
@@ -504,3 +494,8 @@ parameters:
     description: The name of the secret containing the database credentials.
     required: true
     value: restoration-tracker-creds
+  - name: OBJECT_STORE_SECRETS
+    displayName: Object Store Secrets
+    description: Secrets used to read and write to the S3 storage
+    required: true
+    value: restoration-tracker-object-store
