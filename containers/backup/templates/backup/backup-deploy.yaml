@@ -170,15 +170,15 @@ objects:
                   value: ${MONGODB_AUTHENTICATION_DATABASE}
                 - name: TABLE_SCHEMA
                   value: ${TABLE_SCHEMA}
-                - name: DATABASE_USER
+                - name: RESTORATION_TRACKER_DB_POSTGRESQL_DEV_DEPLOY_USER
                   valueFrom:
                     secretKeyRef:
-                      key: database-user
+                      key: database-admin
                       name: ${DATABASE_SECRET_REF}
-                - name: DATABASE_PASSWORD
+                - name: RESTORATION_TRACKER_DB_POSTGRESQL_DEV_DEPLOY_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      key: database-user-password
+                      key: database-admin-password
                       name: ${DATABASE_SECRET_REF}
                 - name: PG_ROOT_PASSWORD
                   valueFrom:
