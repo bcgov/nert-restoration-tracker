@@ -281,7 +281,9 @@ const CreateProjectPage: React.FC = () => {
 
       // Remove empty partnerships
       projectPostObject.partnership.partnerships =
-        projectPostObject.partnership.partnerships.filter((partner) => partner.partnership.trim());
+        projectPostObject.partnership.partnerships.filter((partner) =>
+          partner.partnership_type.trim()
+        );
 
       // Remove empty Authorizations
       projectPostObject.authorization.authorizations =
@@ -397,7 +399,25 @@ const CreateProjectPage: React.FC = () => {
 
       <YesNoDialog
         dialogTitle="Create Project Confirmation"
-        dialogText="Please make sure there is no PI in the data. Creating a project means it will be published (publicly available). Are you sure you want to create this project?"
+        dialogText=""
+        dialogTitleBgColor="#E9FBFF"
+        dialogContent={
+          <>
+            <Typography variant="body1" color="textPrimary">
+              Please make sure there is no Private Information (PI) in the data. Creating a project
+              means it will be published (publicly available). See the{' '}
+              <Link
+                href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
+                color="primary">
+                BC Government PI
+              </Link>{' '}
+              page for more information.
+            </Typography>
+            <Typography variant="body1" mt={1} color="textPrimary">
+              Are you sure you want to create this project?
+            </Typography>
+          </>
+        }
         open={openYesNoDialog}
         onClose={handleCancelConfirmation}
         onNo={handleCancelConfirmation}

@@ -1,32 +1,24 @@
-import { mdiExport } from '@mdi/js';
-import Icon from '@mdi/react';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import InfoIcon from '@mui/icons-material/Info';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import { alpha } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import { visuallyHidden } from '@mui/utils';
-import InfoDialog from 'components/dialog/InfoDialog';
+import {
+  Box,
+  Card,
+  Checkbox,
+  Chip,
+  FormControlLabel,
+  IconButton,
+  Link,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import { DialogContext } from 'contexts/dialogContext';
 import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { SystemRoleGuard } from 'components/security/Guards';
@@ -46,9 +38,11 @@ import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
-import { exportData, calculateSelectedProjectsPlans } from 'utils/dataTransfer';
-import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
-import InfoContent from 'components/info/InfoContent';
+import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
+import PlansTableHead from 'features/plans/components/PlansTableHead';
+import PlansTableToolbar from 'features/plans/components/PlansTableToolbar';
+import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
@@ -56,7 +50,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
 
   const [selected, setSelected] = useState<readonly number[]>([]);
-  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
+  const [selectedPlans, setSelectedPlans] = useState<any[]>([]);
   const [page, setPage] = useState(0);
   // using state for table row changes
   const [rows, setRows] = useState<utils.PlanData[]>([]);
@@ -73,7 +67,10 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const draftCode = getStateCodeFromLabel(states.DRAFT);
   const draftStatusStyle = getStatusStyle(draftCode);
 
-  function filterPlans(planData: IGetPlanForViewResponse[]): utils.PlanData[] {
+  function filterPlans(
+    plans: IGetPlanForViewResponse[],
+    drafts?: IGetDraftsListResponse[]
+  ): utils.PlanData[] {
     let rowsPlanFilterOutArchived = plans;
     if (rowsPlanFilterOutArchived && isUserAdmin) {
       rowsPlanFilterOutArchived = plans.filter(
@@ -142,171 +139,23 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
   // Make sure state is preserved for table component
   useEffect(() => {
-    const filteredPlans = filterPlans(plans);
+    const filteredPlans = filterPlans(plans, drafts);
     setRows(filteredPlans);
-  }, [plans]);
+  }, [plans, drafts]);
 
   // Make sure the data download knows what projects are selected.
   useEffect(() => {
     const s = calculateSelectedProjectsPlans(selected, rows, plans);
-    setSelectedProjects(s);
+    setSelectedPlans(s);
   }, [selected]);
-
-  function PlansTableHead(props: utils.PlansTableProps) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    const createSortHandler =
-      (property: keyof utils.PlanData) => (event: React.MouseEvent<unknown>) => {
-        onRequestSort(event, property);
-      };
-
-    const [infoOpen, setInfoOpen] = useState(false);
-    const [infoTitle, setInfoTitle] = useState('');
-
-    const handleClickOpen = (headCell: utils.PlanHeadCell) => {
-      setInfoTitle(headCell.infoButton ? headCell.infoButton : '');
-      setInfoOpen(true);
-    };
-
-    return (
-      <>
-        <InfoDialogDraggable
-          isProject={false}
-          open={infoOpen}
-          dialogTitle={infoTitle}
-          onClose={() => setInfoOpen(false)}>
-          <InfoContent isProject={false} contentIndex={infoTitle} />
-        </InfoDialogDraggable>
-        <TableHead>
-          <TableRow>
-            {utils.planHeadCells.map((headCell) => {
-              if ('archive' !== headCell.id && 'export' !== headCell.id)
-                return (
-                  <TableCell
-                    key={headCell.id}
-                    align={headCell.numeric ? 'right' : 'left'}
-                    padding={headCell.disablePadding ? 'none' : 'normal'}
-                    sortDirection={orderBy === headCell.id ? order : false}>
-                    <Tooltip
-                      title={headCell.tooltipLabel ? headCell.tooltipLabel : null}
-                      placement="top">
-                      <TableSortLabel
-                        active={orderBy === headCell.id}
-                        direction={orderBy === headCell.id ? order : 'asc'}
-                        onClick={createSortHandler(headCell.id)}>
-                        {headCell.label}
-                        {orderBy === headCell.id ? (
-                          <Box component="span" sx={visuallyHidden}>
-                            {order === 'desc' ? TableI18N.sortedDesc : TableI18N.sortedAsc}
-                          </Box>
-                        ) : null}
-                      </TableSortLabel>
-                    </Tooltip>
-                    {headCell.infoButton ? (
-                      <IconButton onClick={() => handleClickOpen(headCell)}>
-                        <InfoIcon color="info" />
-                      </IconButton>
-                    ) : null}
-                  </TableCell>
-                );
-            })}
-
-            <SystemRoleGuard
-              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
-              <TableCell>
-                {!myPlan ? (
-                  <Typography variant="inherit">{TableI18N.archive}</Typography>
-                ) : (
-                  <>
-                    <Typography variant="inherit">{TableI18N.archive}</Typography>
-                    <Typography variant="inherit">{TableI18N.delete}</Typography>
-                  </>
-                )}
-              </TableCell>
-            </SystemRoleGuard>
-            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>
-              <TableCell>
-                {!myPlan ? <></> : <Typography variant="inherit">Delete</Typography>}
-              </TableCell>
-            </SystemRoleGuard>
-
-            {!myPlan ? (
-              <TableCell padding="checkbox">
-                <Tooltip title={PlanTableI18N.exportAllPlans} placement="right">
-                  <Checkbox
-                    color="primary"
-                    indeterminate={numSelected > 0 && numSelected < rowCount}
-                    checked={rowCount > 0 && numSelected === rowCount}
-                    onChange={onSelectAllClick}
-                    inputProps={{
-                      'aria-label': PlanTableI18N.selectAllPlansForExport
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
-            ) : (
-              <></>
-            )}
-          </TableRow>
-        </TableHead>
-      </>
-    );
-  }
-
-  interface PlansTableToolbarProps {
-    numSelected: number;
-  }
-
-  function PlansTableToolbar(props: PlansTableToolbarProps) {
-    const { numSelected } = props;
-    return (
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) =>
-              alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-          })
-        }}>
-        {numSelected > 0 ? (
-          <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
-            {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}{' '}
-            {TableI18N.selectedToExport}
-          </Typography>
-        ) : (
-          <Typography
-            sx={{ mx: '0.5rem', flex: '1 1 100%' }}
-            variant="h2"
-            id="tableTitle"
-            component="div">
-            {TableI18N.found} {rows?.length}{' '}
-            {rows?.length !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}
-          </Typography>
-        )}
-        {numSelected > 0 ? (
-          <Button
-            sx={{ height: '2.8rem', width: '10rem', fontWeight: 600 }}
-            color="primary"
-            variant="outlined"
-            onClick={() => exportData(selectedProjects)}
-            disableElevation
-            data-testid="export-plan-button"
-            aria-label={PlanTableI18N.exportPlansData}
-            startIcon={<Icon path={mdiExport} size={1} />}>
-            {TableI18N.exportData}
-          </Button>
-        ) : (
-          <InfoDialog isProject={false} infoContent={'paged table'} />
-        )}
-      </Toolbar>
-    );
-  }
 
   function PlanTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
     const [orderBy, setOrderBy] = useState<keyof utils.PlanData>('planName');
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const { changeStateCode } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -392,19 +241,23 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     };
 
     const handleArchiveUnarchive = (id: number) => {
-      if (rows[id].statusCode !== getStateCodeFromLabel(states.ARCHIVED)) {
-        // TODO: update plan in the backend need to create API
+      const stateArchiveCode = getStateCodeFromLabel(states.ARCHIVED);
+      if (rows[id].statusCode !== stateArchiveCode) {
+        changeStateCode(false, rows[id].planId, stateArchiveCode);
 
-        rows[id].statusCode = getStateCodeFromLabel(states.ARCHIVED);
+        rows[id].statusCode = stateArchiveCode;
         rows[id].statusLabel = states.ARCHIVED;
         rows[id].archive = TableI18N.unarchive;
         setRows([...rows]);
         setPage(page);
         return;
       }
-      // TODO: update plan in the backendneed to create API
 
-      rows[id].statusCode = getStateCodeFromLabel(states.PLANNING);
+      const statePlanningCode = getStateCodeFromLabel(states.PLANNING);
+
+      changeStateCode(false, rows[id].planId, statePlanningCode);
+
+      rows[id].statusCode = statePlanningCode;
       rows[id].statusLabel = states.PLANNING;
       rows[id].archive = TableI18N.archive;
       setRows([...rows]);
@@ -426,13 +279,18 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
     return (
       <Box sx={{ width: '100%' }}>
-        <PlansTableToolbar numSelected={selected.length} />
+        <PlansTableToolbar
+          numSelected={selected.length}
+          numRows={rows.length}
+          selectedPlans={selectedPlans}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}>
             <PlansTableHead
+              myPlan={myPlan}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}

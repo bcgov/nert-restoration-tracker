@@ -18,7 +18,16 @@ export class CodeService extends DBService {
    */
   async getAllCodeSets(): Promise<IAllCodeSets> {
     const [
-      [first_nations, system_roles, project_roles, administrative_activity_status_type, branding, authorization_type],
+      [
+        first_nations,
+        system_roles,
+        project_roles,
+        administrative_activity_status_type,
+        branding,
+        authorization_type,
+        partnership_type,
+        partnerships
+      ],
       regions
     ] = await Promise.all([
       Promise.all([
@@ -27,7 +36,9 @@ export class CodeService extends DBService {
         this.codeRepository.getProjectRoles(),
         this.codeRepository.getAdministrativeActivityStatusType(),
         this.codeRepository.getBranding(),
-        this.codeRepository.getAuthorizationType()
+        this.codeRepository.getAuthorizationType(),
+        this.codeRepository.getPartnershipType(),
+        this.codeRepository.getPartnerships()
       ]),
       getNRMRegions()
     ]);
@@ -39,7 +50,9 @@ export class CodeService extends DBService {
       administrative_activity_status_type,
       regions,
       branding,
-      authorization_type
+      authorization_type,
+      partnership_type,
+      partnerships
     };
   }
 }

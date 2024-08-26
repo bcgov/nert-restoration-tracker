@@ -320,8 +320,16 @@ POST.apiDoc = {
                     title: 'Project partnerships',
                     type: 'object',
                     properties: {
-                      partnership: {
+                      partnership_type: {
                         type: 'string'
+                      },
+                      partnership_ref: {
+                        type: 'string',
+                        nullable: true
+                      },
+                      partnership_name: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }

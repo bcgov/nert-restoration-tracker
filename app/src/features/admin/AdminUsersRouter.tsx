@@ -13,10 +13,8 @@ import { RedirectURL } from 'utils/AppRoutesUtils';
 const AdminUsersRouter: React.FC = () => {
   return (
     <Routes>
-      <Route path="/*" element={<AdminUsersLayout />}>
-        <Route index element={<ManageUsersPage />} />
-        <Route path=":id" element={<RedirectURL basePath="/admin/users" />} />
-        <Route path=":id" element={<Navigate replace to=":id/details" />} />
+      <Route element={<AdminUsersLayout />}>
+        <Route path="/" element={<ManageUsersPage />} />
         <Route path=":id/details" element={<UsersDetailPage />} />
       </Route>
 
