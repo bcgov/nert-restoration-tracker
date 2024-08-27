@@ -250,9 +250,6 @@ objects:
                   value: ${ENVIRONMENT_FRIENDLY_NAME}
                 - name: ENVIRONMENT_NAME
                   value: ${ENVIRONMENT_NAME}
-                - name: PGDUTY_SVC_KEY
-                  required: false
-                  value: ""
               resources:
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -304,7 +301,7 @@ parameters:
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true
-    value: latest
+    value: "2.8"
   - name: DATABASE_SERVICE_NAME
     displayName: Database Service Name
     description: Used for backward compatibility only. Not needed when using the recommended 'backup.conf' configuration.  The name of the database service.
