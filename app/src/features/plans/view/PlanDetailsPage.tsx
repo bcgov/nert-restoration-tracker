@@ -93,7 +93,7 @@ const PlanDetailsPage: React.FC<IPlanDetailsProps> = (props) => {
           data-testid="PlanContactsTitle"
         />
         <ProjectRoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
           validProjectRoles={[
             PROJECT_ROLE.PROJECT_LEAD,
             PROJECT_ROLE.PROJECT_EDITOR,

@@ -32,7 +32,7 @@ const ChipSelect = (props: IChipSelectProps) => {
   const authStateContext = useAuthStateContext();
   const role = authStateContext.auth.isAuthenticated
     ? authStateContext.nertUserWrapper.roleNames?.find((role) =>
-        [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR].includes(role as SYSTEM_ROLE)
+        [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER].includes(role as SYSTEM_ROLE)
       )
       ? 'admin'
       : 'user'
