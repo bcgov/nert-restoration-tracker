@@ -328,6 +328,7 @@ const initializeMap = (
     // style: '/styles/bcgov.json',
     // style: '/styles/from_gov_site.json',
     style: '/styles/from_the_main_page.json',
+    // style: 'styles/hybrid.json',
     center: center,
     // Use transformRequest to set the Referrer Policy to no-referrer-when-downgrade
     // This is required for the BC Gov WMS layers
@@ -338,9 +339,8 @@ const initializeMap = (
     //     return {
     //       url: url,
     //       headers: {
-    //         'Referrer Policy': 'no-referrer-when-downgrade'
-    //       },
-    //       credentials: 'include'
+    //         'Accept Encoding': 'gzip'
+    //       }
     //     };
     //   }
     // },
