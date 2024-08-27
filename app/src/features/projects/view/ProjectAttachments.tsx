@@ -1,11 +1,14 @@
 import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
+import { Button } from '@mui/material';
 import AttachmentsList from 'components/attachments/AttachmentsList';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
+import { ProjectRoleGuard } from 'components/security/Guards';
+import { ActionToolbar } from 'components/toolbar/ActionToolbars';
 import { S3FileType } from 'constants/attachments';
+import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
@@ -57,17 +60,27 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         <FileUpload uploadHandler={getUploadHandler()} />
       </ComponentDialog>
 
-      <H2ButtonToolbar
-        aria-label="upload documents"
-        label="Documents"
-        buttonLabel="Upload"
-        buttonTitle="Upload Documents"
-        buttonStartIcon={<Icon path={mdiTrayArrowUp} size={1} />}
-        buttonOnClick={handleUploadAttachmentClick}
-        buttonProps={{
-          variant: 'outlined'
-        }}
-      />
+      <ProjectRoleGuard
+        validProjectRoles={[
+          PROJECT_ROLE.PROJECT_LEAD,
+          PROJECT_ROLE.PROJECT_EDITOR,
+          PROJECT_ROLE.PROJECT_VIEWER
+        ]}
+        validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
+        <ActionToolbar label={'Documents'} labelProps={{ variant: 'h2' }}>
+          <Button
+            id={'upload-documents'}
+            data-testid={'upload-documents'}
+            variant="outlined"
+            color="primary"
+            title={'Upload Documents'}
+            aria-label={'Upload Documents'}
+            startIcon={<Icon path={mdiTrayArrowUp} size={1} />}
+            onClick={() => handleUploadAttachmentClick()}>
+            Upload
+          </Button>
+        </ActionToolbar>
+      </ProjectRoleGuard>
 
       <AttachmentsList
         projectId={projectId}

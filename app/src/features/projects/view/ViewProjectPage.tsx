@@ -92,7 +92,7 @@ const ViewProjectPage: React.FC = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const thumbnailResponse = await restorationTrackerApi.public.project.getProjectAttachments(
+        const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
           projectId,
           S3FileType.THUMBNAIL
         );
