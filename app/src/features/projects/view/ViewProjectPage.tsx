@@ -92,15 +92,6 @@ const ViewProjectPage: React.FC = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectAttachments(
-          projectId,
-          S3FileType.ATTACHMENTS
-        );
-
-        if (response?.attachmentsList) {
-          setAttachmentsList([...response.attachmentsList]);
-        }
-
         const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
           projectId,
           S3FileType.THUMBNAIL
@@ -108,6 +99,15 @@ const ViewProjectPage: React.FC = () => {
 
         if (thumbnailResponse?.attachmentsList) {
           setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
+
+        const response = await restorationTrackerApi.project.getProjectAttachments(
+          projectId,
+          S3FileType.ATTACHMENTS
+        );
+
+        if (response?.attachmentsList) {
+          setAttachmentsList([...response.attachmentsList]);
         }
       } catch (error) {
         return error;
