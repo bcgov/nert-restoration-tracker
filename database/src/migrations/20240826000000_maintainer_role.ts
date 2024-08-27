@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
     SET SEARCH_PATH = ${DB_SCHEMA_DAPI_V1};
   `);
 
-  // Update role 
+  // Update role
   await knex.raw(`
     SET SCHEMA '${DB_SCHEMA}';
     SET SEARCH_PATH = ${DB_SCHEMA};
