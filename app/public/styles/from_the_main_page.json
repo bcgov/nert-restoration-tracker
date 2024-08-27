@@ -9,7 +9,7 @@
       "bounds": [-180, -0.653144, -15.864, 84.0666],
       "minzoom": 3,
       "maxzoom": 17,
-      "scheme": "xyz",
+      "scheme": "tms",
       "url": "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer",
       "tiles": [
         "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf"
