@@ -246,11 +246,7 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
               Download File
             </MenuItem>
             <ProjectRoleGuard
-              validProjectRoles={[
-                PROJECT_ROLE.PROJECT_LEAD,
-                PROJECT_ROLE.PROJECT_EDITOR,
-                PROJECT_ROLE.PROJECT_VIEWER
-              ]}
+              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
               validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
               <MenuItem
                 onClick={() => {

@@ -61,11 +61,7 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
       </ComponentDialog>
 
       <ProjectRoleGuard
-        validProjectRoles={[
-          PROJECT_ROLE.PROJECT_LEAD,
-          PROJECT_ROLE.PROJECT_EDITOR,
-          PROJECT_ROLE.PROJECT_VIEWER
-        ]}
+        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
         validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
         <ActionToolbar label={'Documents'} labelProps={{ variant: 'h2' }}>
           <Button
