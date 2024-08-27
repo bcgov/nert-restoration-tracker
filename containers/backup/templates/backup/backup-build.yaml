@@ -51,7 +51,7 @@ parameters:
     displayName: Git Reference
     description: The git reference or branch.
     required: true
-    value: master
+    value: "2.8.0"
   - name: SOURCE_CONTEXT_DIR
     displayName: Source Context Directory
     description: The source context directory.
@@ -66,7 +66,7 @@ parameters:
     displayName: Output Image Tag
     description: The tag given to the built image.
     required: true
-    value: "2.8"
+    value: latest
   - name: BASE_IMAGE_FOR_BUILD
     displayName: FROM Image Tag
     description: Base image to build from.  Docker creds or Artificatory setup may be needed to alleviate docker rate-limiting
