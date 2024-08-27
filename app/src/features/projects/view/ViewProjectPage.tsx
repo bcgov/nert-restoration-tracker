@@ -181,7 +181,7 @@ const ViewProjectPage: React.FC = () => {
           </Box>
 
           <ProjectRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
             validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
             validProjectPermissions={[]}>
             <Box
@@ -264,10 +264,7 @@ const ViewProjectPage: React.FC = () => {
                           </Button>
 
                           <ProjectRoleGuard
-                            validSystemRoles={[
-                              SYSTEM_ROLE.SYSTEM_ADMIN,
-                              SYSTEM_ROLE.DATA_ADMINISTRATOR
-                            ]}
+                            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                             validProjectRoles={[
                               PROJECT_ROLE.PROJECT_LEAD,
                               PROJECT_ROLE.PROJECT_EDITOR

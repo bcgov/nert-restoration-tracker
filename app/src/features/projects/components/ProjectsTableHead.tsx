@@ -83,8 +83,7 @@ function ProjectsTableHead(props: ProjectsTableProps) {
       <TableHead>
         <TableRow>
           {projectRows}
-          <SystemRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
             <TableCell>
               {!myProject ? (
                 <Typography variant="inherit">{TableI18N.archive}</Typography>

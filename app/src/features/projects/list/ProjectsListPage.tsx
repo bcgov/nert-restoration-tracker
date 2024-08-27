@@ -56,7 +56,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   const projectAuthStateContext = useContext(ProjectAuthStateContext);
   const isUserAdmin = projectAuthStateContext.hasSystemRole([
     SYSTEM_ROLE.SYSTEM_ADMIN,
-    SYSTEM_ROLE.DATA_ADMINISTRATOR
+    SYSTEM_ROLE.MAINTAINER
   ])
     ? true
     : false;
@@ -386,10 +386,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     <TableCell align="left">
                       {draftCode !== row.statusCode ? (
                         <SystemRoleGuard
-                          validSystemRoles={[
-                            SYSTEM_ROLE.SYSTEM_ADMIN,
-                            SYSTEM_ROLE.DATA_ADMINISTRATOR
-                          ]}>
+                          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
                           <Tooltip
                             title={
                               archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive

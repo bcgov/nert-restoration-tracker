@@ -82,8 +82,7 @@ function PlansTableHead(props: PlansTableProps) {
       <TableHead>
         <TableRow>
           {planRows}
-          <SystemRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}>
+          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
             <TableCell>
               {!myPlan ? (
                 <Typography variant="inherit">{TableI18N.archive}</Typography>
