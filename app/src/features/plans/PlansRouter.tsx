@@ -29,7 +29,7 @@ const PlansRouter: React.FC = () => {
           element={
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                 validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
                 fallback={<Route path="" element={<Navigate replace to={`/plans`} />} />}>
                 <EditPlanPage />
@@ -44,7 +44,7 @@ const PlansRouter: React.FC = () => {
               <ProjectRoleGuard
                 validSystemRoles={[
                   SYSTEM_ROLE.SYSTEM_ADMIN,
-                  SYSTEM_ROLE.DATA_ADMINISTRATOR,
+                  SYSTEM_ROLE.MAINTAINER,
                   SYSTEM_ROLE.PROJECT_CREATOR
                 ]}
                 validProjectRoles={[
@@ -63,7 +63,7 @@ const PlansRouter: React.FC = () => {
           element={
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                 validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
                 fallback={<Navigate replace to={`/plans`} />}>
                 <PlanParticipantsPage />

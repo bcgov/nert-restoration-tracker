@@ -281,7 +281,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
         { selected }: any
       ) => {
         return (
-          <Box component="li" {...renderProps}>
+          <Box component="li" {...renderProps} key={renderOption.value}>
             <Checkbox
               icon={<CheckBoxOutlineBlank fontSize="small" />}
               checkedIcon={<CheckBox fontSize="small" />}

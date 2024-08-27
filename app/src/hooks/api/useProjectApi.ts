@@ -176,14 +176,9 @@ const useProjectApi = (axios: AxiosInstance) => {
 
       const projectImage = projectData.project.project_image;
       projectData.project.project_image = null;
-      projectData.project.image_url = undefined;
-      projectData.project.image_key = undefined;
 
       await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
-    } else if (!projectData.project.project_image && projectData.project.image_key) {
-      projectData.project.image_url = undefined;
-      projectData.project.image_key = undefined;
-
+    } else if (projectData.project.image_key === null) {
       await deleteProjectThumbnail(projectId);
     }
 
@@ -329,6 +324,19 @@ const useProjectApi = (axios: AxiosInstance) => {
     return status === 200;
   };
 
+  /**
+   * Update project state code based on project ID
+   *
+   * @param {number} projectId
+   * @param {number} statCode
+   * @return {*}  {Promise<number>}
+   */
+  const updateProjectStateCode = async (projectId: number, stateCode: number): Promise<number> => {
+    const { data } = await axios.put(`/api/project/${projectId}/state/${stateCode}/update`);
+
+    return data;
+  };
+
   return {
     getAllUserProjectsParticipation,
     getProjectsList,
@@ -345,7 +353,8 @@ const useProjectApi = (axios: AxiosInstance) => {
     addProjectParticipants,
     removeProjectParticipant,
     updateProjectParticipantRole,
-    getUserProjectsList
+    getUserProjectsList,
+    updateProjectStateCode
   };
 };
 

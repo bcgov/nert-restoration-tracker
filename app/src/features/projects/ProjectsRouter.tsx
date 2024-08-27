@@ -32,7 +32,7 @@ const ProjectsRouter: React.FC = () => {
           element={
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                 validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
                 <EditProjectPage />
               </ProjectRoleGuard>
@@ -49,7 +49,7 @@ const ProjectsRouter: React.FC = () => {
               <ProjectRoleGuard
                 validSystemRoles={[
                   SYSTEM_ROLE.SYSTEM_ADMIN,
-                  SYSTEM_ROLE.DATA_ADMINISTRATOR,
+                  SYSTEM_ROLE.MAINTAINER,
                   SYSTEM_ROLE.PROJECT_CREATOR
                 ]}
                 validProjectRoles={[
@@ -69,7 +69,7 @@ const ProjectsRouter: React.FC = () => {
           element={
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                 validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
                 <ProjectParticipantsPage />
               </ProjectRoleGuard>

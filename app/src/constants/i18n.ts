@@ -251,7 +251,10 @@ export const TableI18N = {
   status: 'Status',
   export: 'Export',
   densePadding: 'Dense padding',
-  noDataToExport: 'No data to export'
+  noDataToExport: 'No data to export',
+  updateStateCodeErrorTitle: 'Error Updating Status',
+  updateStateCodeErrorText:
+    'An error has occurred while attempting to update the status. If the error persists, please contact your system administrator.'
 };
 
 export const ProjectTableI18N = {
@@ -279,7 +282,8 @@ export const ProjectTableI18N = {
   actualEndDateTooltip:
     'When project activities end, inclusive of any site monitoring and initial reporting.',
   statusTooltip: 'Current status, within project workflow.',
-  statusInfo: 'Status'
+  statusInfo: 'Status',
+  projectConfirmation: 'project confirmation'
 };
 
 export const PlanTableI18N = {
@@ -304,5 +308,6 @@ export const PlanTableI18N = {
   endDateTooltip: 'Calendar year which restoration plan ends.',
   multiYear: 'Multi-Year',
   annual: 'Annual',
-  statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".'
+  statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".',
+  planConfirmation: 'plan confirmation'
 };

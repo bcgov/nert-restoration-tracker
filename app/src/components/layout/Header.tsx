@@ -302,7 +302,7 @@ const Header: React.FC = () => {
             <SystemRoleGuard
               validSystemRoles={[
                 SYSTEM_ROLE.SYSTEM_ADMIN,
-                SYSTEM_ROLE.DATA_ADMINISTRATOR,
+                SYSTEM_ROLE.MAINTAINER,
                 SYSTEM_ROLE.PROJECT_CREATOR
               ]}
               fallback={

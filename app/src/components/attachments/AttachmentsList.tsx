@@ -14,7 +14,9 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import { ProjectRoleGuard } from 'components/security/Guards';
 import { AttachmentsI18N } from 'constants/i18n';
+import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useNertApi } from 'hooks/useNertApi';
@@ -243,17 +245,21 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
               </ListItemIcon>
               Download File
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                props.handleDeleteFileClick(props.attachment);
-                setAnchorEl(null);
-              }}
-              data-testid="attachment-action-menu-delete">
-              <ListItemIcon>
-                <Icon path={mdiTrashCanOutline} size={1} />
-              </ListItemIcon>
-              Delete File
-            </MenuItem>
+            <ProjectRoleGuard
+              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
+              <MenuItem
+                onClick={() => {
+                  props.handleDeleteFileClick(props.attachment);
+                  setAnchorEl(null);
+                }}
+                data-testid="attachment-action-menu-delete">
+                <ListItemIcon>
+                  <Icon path={mdiTrashCanOutline} size={1} />
+                </ListItemIcon>
+                Delete File
+              </MenuItem>
+            </ProjectRoleGuard>
           </Menu>
         </Box>
       </Box>

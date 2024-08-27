@@ -54,7 +54,7 @@ const ProjectFocalSpecies: React.FC<IProjectFocusSpeciesProps> = (props) => {
   return (
     <Box mt={1}>
       <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
-        Project Focal Species:
+        Wildlife and/or fish species expected to benefit from project:
       </Typography>
       <Box display="flex" flexDirection={'column'} alignItems="left">
         {speciesData && speciesData?.length ? (
@@ -69,7 +69,7 @@ const ProjectFocalSpecies: React.FC<IProjectFocusSpeciesProps> = (props) => {
             );
           })
         ) : (
-          <Chip label="No Focal Species" data-testid="no_objective_loaded" />
+          <Chip label="No Assigned Species" data-testid="no_objective_loaded" />
         )}
       </Box>
     </Box>
