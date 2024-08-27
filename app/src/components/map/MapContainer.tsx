@@ -340,7 +340,7 @@ const initializeMap = (
     //     return {
     //       url: url,
     //       headers: {
-    //         'Accept-Encoding': 'gzip, deflate, br,zstd',
+    //         'Accept-Encoding': 'gzip;q=0',
     //       }
     //     };
     //   }

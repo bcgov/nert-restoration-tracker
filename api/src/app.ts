@@ -8,6 +8,7 @@ import { HTTPErrorType, ensureHTTPError } from './errors/custom-error';
 import { rootAPIDoc } from './openapi/root-api-doc';
 import { authenticateRequest } from './request-handlers/security/authentication';
 import { getLogger } from './utils/logger';
+const proxy = require('express-http-proxy');
 
 const defaultLog = getLogger('app');
 
@@ -40,6 +41,8 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 
   next();
 });
+
+app.use('/geobc-tiles', proxy('https://tiles.arcgis.com/tiles/ubm4tcTYICKBpist/arcgis/rest/services/BC_BASEMAP_20240307/VectorTileServer'));
 
 // Initialize express-openapi framework
 const openAPIFramework = initialize({

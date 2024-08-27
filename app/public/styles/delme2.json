@@ -5,11 +5,6 @@
   "sources": {
     "esri": {
       "type": "vector",
-      "attribution": "Ministry of Land, Water and Resource Stewardship - GeoBC Branch",
-      "bounds": [-180, -0.653144, -15.864, 84.0666],
-      "minzoom": 3,
-      "maxzoom": 17,
-      "scheme": "xyz",
       "url": "https://tiles.arcgis.com/tiles/ubm4tcTYICKBpist/arcgis/rest/services/BC_BASEMAP_20240307/VectorTileServer",
       "tiles": [
         "https://tiles.arcgis.com/tiles/ubm4tcTYICKBpist/arcgis/rest/services/BC_BASEMAP_20240307/VectorTileServer/tile/{z}/{y}/{x}.pbf"
