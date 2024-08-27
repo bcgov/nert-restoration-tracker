@@ -26,6 +26,7 @@ import {
 } from '@mui/material';
 import { useCodesContext } from 'hooks/useContext';
 import { handleGetPartnershipRefList } from 'utils/Utils';
+import { PartnershipTypes } from 'constants/misc';
 
 const pageStyles = {
   customListItem: {
@@ -65,11 +66,47 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
     partnerships: yup.array().of(
       yup.object().shape({
         partnership_type: yup.string().required('Partnership Type is required.'),
-        partnership_ref: yup.string().nullable(),
+        partnership_ref: yup
+          .string()
+          .test(
+            'required-if-partnership-type',
+            'Partnership Ref is required.',
+            function (value: string | undefined) {
+              if (
+                this.parent.partnership_type === PartnershipTypes.FEDERAL_GOVERNMENT_PARTNER ||
+                this.parent.partnership_type === PartnershipTypes.BC_GOVERNMENT_PARTNER
+              ) {
+                return true;
+              }
+
+              if (this.parent.partnership_type === null) {
+                return false;
+              }
+
+              return value !== undefined && value.trim() !== '';
+            }
+          ),
+        // required if partnership_type is not null
         partnership_name: yup
           .string()
-          .nullable()
-          .transform((value, orig) => (orig.trim() === '' ? null : value))
+          .test(
+            'required-if-partnership-type',
+            'Partnership is required.',
+            function (value: string | undefined) {
+              if (
+                this.parent.partnership_type === PartnershipTypes.FEDERAL_GOVERNMENT_PARTNER ||
+                this.parent.partnership_type === PartnershipTypes.BC_GOVERNMENT_PARTNER
+              ) {
+                return value !== undefined && value.trim() !== '';
+              }
+
+              if (this.parent.partnership_ref === 'Other - please specify') {
+                return value !== undefined && value.trim() !== '';
+              } else {
+                return true;
+              }
+            }
+          )
           .max(100, 'Cannot exceed 100 characters.')
       })
     )
@@ -170,7 +207,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                             {
                               /* Partnership Name */
                               handleGetPartnershipRefList(partnership.partnership_type, codes)
-                                .length > 0 ? (
+                                .length > 1 ? (
                                 <Grid item xs={4} md={4}>
                                   <FormControl fullWidth size="small" variant="outlined">
                                     <InputLabel id="partnership-ref-label">
@@ -188,6 +225,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                                         partnershipRefMeta.touched &&
                                         Boolean(partnershipRefMeta.error)
                                       }
+                                      required={true}
                                       inputProps={{ 'aria-label': 'Partnership Ref' }}>
                                       {handleGetPartnershipRefList(
                                         partnership.partnership_type,
@@ -215,7 +253,8 @@ const ProjectPartnershipsForm: React.FC = () => {
                                         partnershipNameMeta.touched &&
                                         Boolean(partnershipNameMeta.error),
                                       helperText:
-                                        partnershipNameMeta.touched && partnershipNameMeta.error
+                                        partnershipNameMeta.touched && partnershipNameMeta.error,
+                                      required: partnership.partnership_type !== '' ? true : false
                                     }}
                                   />
                                 </Grid>
@@ -234,7 +273,8 @@ const ProjectPartnershipsForm: React.FC = () => {
                                       partnershipNameMeta.touched &&
                                       Boolean(partnershipNameMeta.error),
                                     helperText:
-                                      partnershipNameMeta.touched && partnershipNameMeta.error
+                                      partnershipNameMeta.touched && partnershipNameMeta.error,
+                                    required: partnership.partnership_type !== '' ? true : false
                                   }}
                                 />
                               </Grid>

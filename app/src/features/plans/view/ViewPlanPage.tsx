@@ -99,7 +99,7 @@ const ViewPlanPage: React.FC = () => {
       if (thumbnailImage.length && !forceFetch) return;
 
       try {
-        const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
+        const thumbnailResponse = await restorationTrackerApi.public.project.getProjectAttachments(
           planId,
           S3FileType.THUMBNAIL
         );

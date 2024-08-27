@@ -1,7 +1,7 @@
-import { mdiExport } from '@mdi/js';
+import { mdiArrowCollapseDown, mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
 import Button from '@mui/material/Button';
-import { Card } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Card } from '@mui/material';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
@@ -14,23 +14,14 @@ import PlanDetailsPage from 'features/plans/view/PlanDetailsPage';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import React, { useState, useCallback, useEffect } from 'react';
-import MapContainer from 'components/map/MapContainer';
-import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { focus, ICONS } from 'constants/misc';
 import PlanDetails from 'features/plans/view/components/PlanDetails';
-import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import { S3FileType } from 'constants/attachments';
 import { useNertApi } from 'hooks/useNertApi';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { exportData } from 'utils/dataTransfer';
-
-const pageStyles = {
-  layerSwitcherContainer: {
-    position: 'relative',
-    bottom: '-70px'
-  }
-};
+import LocationBoundary from 'features/projects/view/components/LocationBoundary';
 
 interface IPlanViewFormProps {
   plan: IGetPlanForViewResponse;
@@ -44,28 +35,6 @@ interface IPlanViewFormProps {
  */
 const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
   const { plan, codes } = props;
-
-  const bounds = calculateUpdatedMapBounds(plan?.location.geometry || [], true) || null;
-  /**
-   * Reactive state to share between the layer picker and the map
-   */
-  const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
-  const projects = useState<boolean>(true);
-  const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
-  const baselayer = useState<string>('hybrid');
-
-  const layerVisibility = {
-    boundary,
-    wells,
-    projects,
-    plans,
-    wildlife,
-    indigenous,
-    baselayer
-  };
 
   const [isLoadingThumbnailImage, setIsLoadingThumbnailImage] = useState(false);
   const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
@@ -162,41 +131,45 @@ const PublicPlanView: React.FC<IPlanViewFormProps> = (props) => {
                     </Box>
                   </Paper>
                 </Box>
-                <Paper elevation={2}>
-                  <Box
-                    px={1}
-                    py={1}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center">
-                    <Typography variant="h2">Restoration Plan Area</Typography>
-                    <Button
-                      sx={{ height: '2.8rem', width: '10rem' }}
-                      color="primary"
-                      variant="outlined"
-                      onClick={() => exportData([plan])}
-                      disableElevation
-                      data-testid="export-project-button"
-                      aria-label={ProjectTableI18N.exportProjectsData}
-                      startIcon={<Icon path={mdiExport} size={1} />}>
-                      {TableI18N.exportData}
-                    </Button>
-                  </Box>
-
-                  <Box height={500} position="relative">
-                    <MapContainer
-                      mapId={'plan_location_map'}
-                      layerVisibility={layerVisibility}
-                      features={plan.location.geometry}
-                      bounds={bounds}
-                      mask={null}
-                    />
-                  </Box>
-                  <Box sx={pageStyles.layerSwitcherContainer}>
-                    <LayerSwitcher layerVisibility={layerVisibility} hideProjects={true} />
-                  </Box>
-                </Paper>
-                <Box mt={2} />
+                <Box mb={1.2}>
+                  <Paper elevation={2}>
+                    <Accordion defaultExpanded={!!plan.location.geometry?.length || false}>
+                      <AccordionSummary
+                        expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                        aria-controls="panel1-content"
+                        id="panel1-header">
+                        <Box
+                          px={2}
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          width={'100%'}>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="h2">Restoration Plan Area</Typography>
+                          </Box>
+                          <Box>
+                            <Button
+                              sx={{ height: '2.8rem', width: '10rem' }}
+                              color="primary"
+                              variant="outlined"
+                              onClick={() => exportData([plan])}
+                              disableElevation
+                              data-testid="export-project-button"
+                              aria-label={ProjectTableI18N.exportProjectsData}
+                              startIcon={<Icon path={mdiExport} size={1} />}>
+                              {TableI18N.exportData}
+                            </Button>
+                          </Box>
+                        </Box>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Box height="500px" position="relative">
+                          <LocationBoundary locationData={plan.location} />
+                        </Box>
+                      </AccordionDetails>
+                    </Accordion>
+                  </Paper>
+                </Box>
               </Grid>
               <Grid item md={4}>
                 <Paper elevation={2}>

@@ -1,4 +1,4 @@
-import { mdiExport } from '@mdi/js';
+import { mdiArrowCollapseDown, mdiExport } from '@mdi/js';
 import Icon from '@mdi/react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -27,6 +27,7 @@ import ProjectDetails from 'features/projects/view/components//ProjectDetails';
 import ProjectFocalSpecies from 'features/projects/view/components/ProjectFocalSpecies';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { exportData } from 'utils/dataTransfer';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 
 interface IProjectViewFormProps {
   project: IGetProjectForViewResponse;
@@ -155,29 +156,41 @@ const PublicProjectView: React.FC<IProjectViewFormProps> = (props) => {
 
                 <Box mb={1.2}>
                   <Paper elevation={2}>
-                    <Box
-                      px={1}
-                      py={1}
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center">
-                      <Typography variant="h2">Restoration Project Area</Typography>
-                      <Button
-                        sx={{ height: '2.8rem', width: '10rem' }}
-                        color="primary"
-                        variant="outlined"
-                        onClick={() => exportData([project])}
-                        disableElevation
-                        data-testid="export-project-button"
-                        aria-label={ProjectTableI18N.exportProjectsData}
-                        startIcon={<Icon path={mdiExport} size={1} />}>
-                        {TableI18N.exportData}
-                      </Button>
-                    </Box>
-
-                    <Box height="500px" position="relative">
-                      <LocationBoundary locationData={project.location} />
-                    </Box>
+                    <Accordion defaultExpanded={!!project.location.geometry?.length || false}>
+                      <AccordionSummary
+                        expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                        aria-controls="panel1-content"
+                        id="panel1-header">
+                        <Box
+                          px={2}
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          width={'100%'}>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="h2">Restoration Project Area</Typography>
+                          </Box>
+                          <Box>
+                            <Button
+                              sx={{ height: '2.8rem', width: '10rem' }}
+                              color="primary"
+                              variant="outlined"
+                              onClick={() => exportData([project])}
+                              disableElevation
+                              data-testid="export-project-button"
+                              aria-label={ProjectTableI18N.exportProjectsData}
+                              startIcon={<Icon path={mdiExport} size={1} />}>
+                              {TableI18N.exportData}
+                            </Button>
+                          </Box>
+                        </Box>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Box height="500px" position="relative">
+                          <LocationBoundary locationData={project.location} />
+                        </Box>
+                      </AccordionDetails>
+                    </Accordion>
                   </Paper>
                 </Box>
 
