@@ -2,9 +2,9 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../__mocks__/db';
 import * as db from '../../database/db';
 import { UserService } from '../../services/user-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../__mocks__/db';
 import * as users from './list';
 
 chai.use(sinonChai);
@@ -41,6 +41,27 @@ describe('users', () => {
       await requestHandler(mockReq, mockRes, mockNext);
 
       expect(mockRes.jsonValue).to.eql(mockResponse);
+    });
+
+    it('catches and rethrows error', async () => {
+      const mockDBConnection = getMockDBConnection();
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      sinon.stub(db, 'getDBConnection').returns(mockDBConnection);
+
+      const mockError = new Error('mock error');
+
+      sinon.stub(UserService.prototype, 'listSystemUsers').throws(mockError);
+
+      const requestHandler = users.getUserList();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (err) {
+        expect(err).to.eql(mockError);
+      }
     });
   });
 });

@@ -3,7 +3,7 @@ import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
 import { HTTP400 } from '../../../errors/custom-error';
-import { queries } from '../../../queries/queries';
+import { DraftRepository } from '../../../repositories/draft-repository';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { getLogger } from '../../../utils/logger';
 
@@ -14,7 +14,7 @@ export const DELETE: Operation = [
     return {
       and: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         }
       ]
@@ -74,17 +74,13 @@ export function deleteDraft(): RequestHandler {
     try {
       await connection.open();
 
-      const deleteDraftSQLStatement = queries.project.draft.deleteDraftSQL(Number(req.params.draftId));
+      const draftRepository = new DraftRepository(connection);
 
-      if (!deleteDraftSQLStatement) {
-        throw new HTTP400('Failed to build SQL delete statement');
-      }
-
-      const result = await connection.query(deleteDraftSQLStatement.text, deleteDraftSQLStatement.values);
+      const draftResponse = await draftRepository.deleteDraft(Number(req.params.draftId));
 
       await connection.commit();
 
-      return res.status(200).json(result && result.rowCount);
+      return res.status(200).json(draftResponse);
     } catch (error) {
       defaultLog.error({ label: 'deleteDraft', message: 'error', error });
       await connection.rollback();

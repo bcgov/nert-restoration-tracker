@@ -1,22 +1,22 @@
-[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bcgov_restoration-tracker&metric=alert_status)](https://sonarcloud.io/dashboard?id=bcgov_restoration-tracker) [![codecov](https://codecov.io/gh/bcgov/restoration-tracker/branch/dev/graph/badge.svg?token=CyJ2NTS3Bh)](https://codecov.io/gh/bcgov/restoration-tracker) [![Restoration](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/w8oxci/dev&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/bq8wdr/runs)
+[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bcgov_restoration-tracker&metric=alert_status)](https://sonarcloud.io/dashboard?id=bcgov_restoration-tracker) [![codecov](https://codecov.io/gh/bcgov/restoration-tracker/branch/dev/graph/badge.svg?token=CyJ2NTS3Bh)](https://codecov.io/gh/bcgov/restoration-tracker) [![Restoration](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/w8oxci/dev&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/bq8wdr/runs)
 
-# Habitat Restoration Tracker
+# Northeast Restoration Tracker (NERT)
 
-The Habitat Restoration Tracker is a system which supports the planning, implementation and monitoring of restoration projects in British Columbia. The initial release (March 2022) collects project and treatment details for caribou herd restoration initiatives in the north east of the province. Future development will support all restoration projects within the province and will assist with planning and monitoring the effectiveness of these projects.
+The Northeast Restoration Tracker (NERT) will provide an integrated, science-based view of restoration activities on the land base, and become the single point of restoration-activity truth for the entire province.
 
 ## Technologies Used
 
 | Technology | Version | Website                | Description          |
 | ---------- | ------- | ---------------------- | -------------------- |
-| node       | 14.x.x  | https://nodejs.org/en/ | JavaScript Runtime   |
-| npm        | 6.x.x   | https://www.npmjs.com/ | Node Package Manager |
+| node       | 20.x.x  | https://nodejs.org/en/ | JavaScript Runtime   |
+| npm        | 10.x.x  | https://www.npmjs.com/ | Node Package Manager |
 
 <br />
 # Pre-reqs
 
 ## Install Node/NPM
 
-- Requires Node version 14+
+- Requires Node version 20+
 - https://nodejs.org/en/download/
 
 ## Install Git
@@ -25,7 +25,7 @@ The Habitat Restoration Tracker is a system which supports the planning, impleme
 
 ### Clone the repo
 
-- `git clone https://github.com/bcgov/restoration-tracker.git`
+- `git clone https://github.com/bcgov/nert-restoration-tracker.git`
 
 ## Install Docker
 
@@ -107,7 +107,7 @@ _Note: Run all commands in a terminal that supports make. On Mac you can use the
 
 This will copy `./env_config/env.docker` to `./.env`.  
 This should only need to be run once.  
-This file may need additional editing to provide secrets for external services (like S3).
+This file may need additional editing to provide secrets for external services (like keycloak and S3). These can be found in the OpenShift dev namespace secrets of the NERT.  
 
 ```
 make env
@@ -327,7 +327,7 @@ _Note: all of the above connection values can be found in the `.env` file_
 
 # License
 
-    Copyright 2019 Province of British Columbia
+    Copyright 2024 Province of British Columbia
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

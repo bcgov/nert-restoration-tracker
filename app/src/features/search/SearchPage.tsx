@@ -1,18 +1,13 @@
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { IMarker } from 'components/map/components/MarkerCluster';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import MapContainer from 'components/map/MapContainer';
-import { SearchFeaturePopup } from 'components/map/SearchFeaturePopup';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { LatLngTuple } from 'leaflet';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { isAuthenticated } from 'utils/authUtils';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 
 /**
@@ -21,13 +16,15 @@ import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers'
  * @return {*}
  */
 const SearchPage: React.FC = () => {
-  const restorationApi = useRestorationTrackerApi();
+  const restorationApi = useNertApi();
 
   const [performSearch, setPerformSearch] = useState<boolean>(true);
-  const [geometries, setGeometries] = useState<IMarker[]>([]);
+  const [geometries, setGeometries] = useState([]);
 
+  const authStateContext = useAuthStateContext();
+
+  type LatLngTuple = [number, number, number?];
   const dialogContext = useContext(DialogContext);
-  const { keycloakWrapper } = useContext(AuthStateContext);
 
   const showFilterErrorDialog = useCallback(
     (textDialogProps?: Partial<IErrorDialogProps>) => {
@@ -44,10 +41,9 @@ const SearchPage: React.FC = () => {
     },
     [dialogContext]
   );
-
   const getSearchResults = useCallback(async () => {
     try {
-      const response = isAuthenticated(keycloakWrapper)
+      const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
 
@@ -56,14 +52,15 @@ const SearchPage: React.FC = () => {
         return;
       }
 
-      const clusteredPointGeometries: IMarker[] = [];
+      const clusteredPointGeometries: any = [];
 
       response.forEach((result: any) => {
-        const feature = generateValidGeometryCollection(result.geometry, result.id).geometryCollection[0];
+        const feature = generateValidGeometryCollection(result.geometry, result.id)
+          .geometryCollection[0];
 
         clusteredPointGeometries.push({
           position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          popup: <SearchFeaturePopup featureData={result} />
+          feature: result
         });
       });
 
@@ -77,7 +74,7 @@ const SearchPage: React.FC = () => {
         dialogErrorDetails: apiError?.errors
       });
     }
-  }, [restorationApi.search, restorationApi.public.search, showFilterErrorDialog, keycloakWrapper]);
+  }, [restorationApi.search, restorationApi.public.search, authStateContext.auth]);
 
   useEffect(() => {
     if (performSearch) {
@@ -86,22 +83,40 @@ const SearchPage: React.FC = () => {
   }, [performSearch, getSearchResults]);
 
   /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
+
+  /**
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Container maxWidth="xl">
-      <Box mb={5} display="flex" justifyContent="space-between">
-        <Typography variant="h1">Map</Typography>
-      </Box>
-      <Box height={750}>
-        <MapContainer
-          mapId="search_boundary_map"
-          fullScreenControl={true}
-          scrollWheelZoom={true}
-          markers={geometries}
-        />
-      </Box>
-    </Container>
+    <Box sx={{ height: '100%' }}>
+      <MapContainer
+        mapId="search_boundary_map"
+        features={geometries}
+        layerVisibility={layerVisibility}
+        // bounds={projectBoundary}
+        centroids={true}
+      />
+      <LayerSwitcher layerVisibility={layerVisibility} open={true} />
+    </Box>
   );
 };
 

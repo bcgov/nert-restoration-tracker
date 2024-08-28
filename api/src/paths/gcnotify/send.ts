@@ -1,8 +1,7 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../../constants/roles';
-import { HTTP400 } from '../../errors/custom-error';
-import { IgcNotifyPostReturn } from '../../models/gcnotify';
+import { IgcNotifyPostReturn } from '../../interfaces/gcnotify';
 import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
 import { GCNotifyService } from '../../services/gcnotify-service';
 import { getLogger } from '../../utils/logger';
@@ -137,34 +136,6 @@ export function sendNotification(): RequestHandler {
     const recipient = req.body?.recipient || null;
     const message = req.body?.message || null;
 
-    if (!req.body) {
-      throw new HTTP400('Missing required param: body');
-    }
-
-    if (!recipient) {
-      throw new HTTP400('Missing required body param: recipient');
-    }
-
-    if (!message) {
-      throw new HTTP400('Missing required body param: message');
-    }
-
-    if (!message.header) {
-      throw new HTTP400('Missing required body param: message.header');
-    }
-
-    if (!message.body1) {
-      throw new HTTP400('Missing required body param: message.body1');
-    }
-
-    if (!message.body2) {
-      throw new HTTP400('Missing required body param: message.body2');
-    }
-
-    if (!message.footer) {
-      throw new HTTP400('Missing required body param: message.footer');
-    }
-
     try {
       const gcnotifyService = new GCNotifyService();
       let response = {} as IgcNotifyPostReturn;
@@ -175,10 +146,6 @@ export function sendNotification(): RequestHandler {
 
       if (recipient.phoneNumber) {
         response = await gcnotifyService.sendPhoneNumberGCNotification(recipient.phoneNumber, message);
-      }
-
-      if (recipient.userId) {
-        defaultLog.error({ label: 'send gcnotify', message: 'email and sms from Id not implemented yet' });
       }
 
       return res.status(200).json(response);

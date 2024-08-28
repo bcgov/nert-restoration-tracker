@@ -1,59 +1,104 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormLabel from '@material-ui/core/FormLabel';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
 import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
+import InfoIcon from '@mui/icons-material/Info';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Select from '@mui/material/Select';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import * as turf from '@turf/turf';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
 import { IAutocompleteFieldOption } from 'components/fields/AutocompleteField';
 import MapContainer from 'components/map/MapContainer';
-import { ProjectAttachmentValidExtensions } from 'constants/attachments';
+import MapFeatureList from 'components/map/components/MapFeatureList';
 import { useFormikContext } from 'formik';
 import { Feature } from 'geojson';
-import React, { useState } from 'react';
-import { handleGPXUpload, handleKMLUpload, handleShapefileUpload } from 'utils/mapBoundaryUploadHelpers';
-import yup from 'utils/YupSchema';
+import React, { useEffect, useState } from 'react';
+import { handleGeoJSONUpload } from 'utils/mapBoundaryUploadHelpers';
+import yup, { locationRequired } from 'utils/YupSchema';
+import './styles/projectLocation.css';
+import ProjectLocationConservationAreas, {
+  IProjectLocationConservationAreasArrayItem,
+  ProjectLocationConservationAreasFormArrayItemInitialValues
+} from 'features/projects/components/ProjectLocationConservationAreasForm';
+import { ICreateProjectRequest, IEditProjectRequest } from 'interfaces/useProjectApi.interface';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectLocationForm {
   location: {
-    geometry: Feature[];
-    priority: string;
-    region: number;
-    range: number;
+    geometry: Feature[] | null;
+    number_sites: number | null;
+    region: number | string | null;
+    is_within_overlapping: string | null;
+    size_ha: number | null;
+    conservationAreas: IProjectLocationConservationAreasArrayItem[];
   };
 }
 
 export const ProjectLocationFormInitialValues: IProjectLocationForm = {
   location: {
     geometry: [],
-    range: (undefined as unknown) as number,
-    priority: 'false',
-    region: ('' as unknown) as number
+    region: '' as unknown as number,
+    number_sites: '' as unknown as number,
+    is_within_overlapping: 'false',
+    size_ha: '' as unknown as number,
+    conservationAreas: [ProjectLocationConservationAreasFormArrayItemInitialValues]
   }
 };
 
 export const ProjectLocationFormYupSchema = yup.object().shape({
   location: yup.object().shape({
-    geometry: yup.array().min(1, 'You must specify a project boundary').required('You must specify a project boundary'),
-    range: yup.string().notRequired(),
-    priority: yup.string().notRequired(),
-    region: yup.string().required('Required')
+    region: yup.string(),
+    geometry: yup.array(),
+    is_within_overlapping: yup.string().notRequired(),
+    size_ha: yup.number().nullable(),
+    number_sites: yup.number(),
+    conservationAreas: yup
+      .array()
+      .of(
+        yup.object().shape({
+          conservationArea: yup.string().max(100, 'Cannot exceed 100 characters.').nullable()
+        })
+      )
+      .isUniqueConservationArea('Conservation area entries must be unique.')
+      .isConservationAreasRequired(
+        'is_within_overlapping',
+        'At least one conservation areas is required when project is within or overlapping a known area of cultural or conservation.'
+      )
   })
 });
 
+/**
+ * Calculate the total area of an array of features.
+ * Represented in Hectares with 2 decimal places.
+ * Overlapping areas are merged into one.
+ * @param features
+ * @returns Hectares with 2 decimal places
+ */
+const calculateTotalArea = (features: any) => {
+  // This is working event though the docs say it should be a FeatureCollection.
+  const merged = features.reduce((acc: any, feature: any) => {
+    return turf.union(acc, feature);
+  }, features[0]);
+
+  return Math.round(turf.area(merged) / 100) / 100;
+};
+
 export interface IProjectLocationFormProps {
-  ranges: IAutocompleteFieldOption<number>[];
   regions: IAutocompleteFieldOption<number>[];
 }
 
@@ -64,124 +109,218 @@ export interface IProjectLocationFormProps {
  */
 const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const formikProps = useFormikContext<IProjectLocationForm>();
+  const parentFormikProps = useFormikContext<ICreateProjectRequest | IEditProjectRequest>();
 
   const { errors, touched, values, handleChange, setFieldValue } = formikProps;
 
   const [openUploadBoundary, setOpenUploadBoundary] = useState(false);
 
+  if (!values.location || !values.location.geometry) {
+    return null;
+  }
+
+  const [maskState, setMaskState] = useState<boolean[]>(
+    values.location.geometry.map((feature) => feature?.properties?.maskedLocation) || []
+  );
+
+  /**
+   * Listen for a change in the number of sites and update the form
+   */
+  useEffect(() => {
+    if (!values.location.geometry) {
+      return;
+    }
+
+    if (values.location.number_sites !== values.location.geometry.length) {
+      setFieldValue('location.number_sites', values.location.geometry.length);
+    }
+
+    const totalArea =
+      values.location.geometry.length > 0 ? calculateTotalArea(values.location.geometry) : 0;
+
+    if (values.location.size_ha !== totalArea) {
+      setFieldValue('location.size_ha', totalArea);
+    }
+  }, [values.location.geometry.length]);
+
+  /**
+   * Mask change indicator
+   * This is important in mainting the order between the map and the list
+   */
+  const [mask, setMask] = useState<null | number>(null);
+
   const getUploadHandler = (): IUploadHandler => {
     return async (file) => {
-      if (file?.type.includes('zip') || file?.name.includes('.zip')) {
-        handleShapefileUpload(file, 'location.geometry', formikProps);
-      } else if (file?.type.includes('gpx') || file?.name.includes('.gpx')) {
-        handleGPXUpload(file, 'location.geometry', formikProps);
-      } else if (file?.type.includes('kml') || file?.name.includes('.kml')) {
-        handleKMLUpload(file, 'location.geometry', formikProps);
+      if (file?.name.includes('json')) {
+        handleGeoJSONUpload(file, 'location.geometry', formikProps);
       }
-
       return Promise.resolve();
     };
   };
 
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(true);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
+
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
+
+  /**
+   * State to share with the map to indicate which
+   * feature is selected or hovered over
+   */
+  const [activeFeature, setActiveFeature] = useState<number | null>(null);
+
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState('');
+
+  const handleClickOpen = (indexContent: string) => {
+    setInfoTitle(indexContent ? indexContent : '');
+    setInfoOpen(true);
+  };
+
   return (
     <>
-      <Box mb={5}>
-        <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <FormControl component="fieldset" required={true} fullWidth variant="outlined">
-              <InputLabel id="nrm-region-select-label">NRM Region</InputLabel>
-              <Select
-                id="nrm-region-select"
-                name="location.region"
-                labelId="nrm-region-select-label"
-                label="NRM Region"
-                value={values.location.region ? values.location.region : ''}
-                onChange={formikProps.handleChange}
-                error={touched?.location?.region && Boolean(errors?.location?.region)}
-                displayEmpty
-                inputProps={{ 'aria-label': 'NRM Region' }}>
-                {props.regions.map((item) => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>{errors?.location?.region}</FormHelperText>
-            </FormControl>
-          </Grid>
-        </Grid>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={infoTitle}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={infoTitle} />
+      </InfoDialogDraggable>
 
-        <Box>
-          <Box my={2} maxWidth={'72ch'}>
-            <Typography variant="body1" color="textSecondary">
-              Specify the caribou range associate with this project.
-            </Typography>
-          </Box>
-
+      <Box mb={5} mt={0}>
+        <Box mb={2}>
+          <Typography component="legend">
+            Area and Location Details
+            <IconButton
+              edge="end"
+              onClick={() => handleClickOpen(CreateProjectI18N.locationRegion)}>
+              <InfoIcon color="info" />
+            </IconButton>
+          </Typography>
+        </Box>
+        <Box mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={6}>
-              <FormControl component="fieldset" required={false} fullWidth variant="outlined">
-                <InputLabel id="caribou-range-select-label">Caribou Range</InputLabel>
+              <FormControl
+                component="fieldset"
+                size="small"
+                required={locationRequired(
+                  parentFormikProps.values.focus.focuses
+                    ? parentFormikProps.values.focus.focuses
+                    : []
+                )}
+                fullWidth
+                variant="outlined">
+                <InputLabel id="nrm-region-select-label">
+                  Natural Resource Management Region
+                </InputLabel>
                 <Select
-                  id="caribou-range-select"
-                  name="location.range"
-                  labelId="caribou-range-select-label"
-                  label="Caribou Range"
-                  value={values.location.range ? values.location.range : ''}
+                  id="nrm-region-select"
+                  name="location.region"
+                  labelId="nrm-region-select-label"
+                  label="Natural Resource Management Region"
+                  value={values.location.region ?? ''}
                   onChange={handleChange}
-                  error={touched.location?.range && Boolean(errors.location?.range)}
-                  inputProps={{ 'aria-label': 'Caribou Range' }}>
-                  <MenuItem key={'empty'} value={undefined}>
-                    Not Applicable
-                  </MenuItem>
-                  {props.ranges.map((item) => (
+                  error={touched?.location?.region && Boolean(errors?.location?.region)}
+                  inputProps={{ 'aria-label': 'NRM Region' }}>
+                  {props.regions.map((item) => (
                     <MenuItem key={item.value} value={item.value}>
                       {item.label}
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{errors.location?.range}</FormHelperText>
+                <FormHelperText>{errors?.location?.region}</FormHelperText>
               </FormControl>
             </Grid>
           </Grid>
         </Box>
+
+        <Box mb={2}>
+          <FormControl
+            component="fieldset"
+            error={
+              touched.location?.is_within_overlapping &&
+              Boolean(errors.location?.is_within_overlapping)
+            }>
+            <FormLabel component="legend">
+              Is the project within or overlapping a known area of cultural or conservation?
+              <IconButton
+                edge="end"
+                onClick={() => handleClickOpen(CreateProjectI18N.locationConservationArea)}>
+                <InfoIcon color="info" />
+              </IconButton>
+            </FormLabel>
+
+            <Box mt={1}>
+              <RadioGroup
+                name="location.is_within_overlapping"
+                aria-label="project within or overlapping a known area of cultural or conservation"
+                value={values.location.is_within_overlapping || 'false'}
+                onChange={handleChange}>
+                <FormControlLabel
+                  value="false"
+                  control={<Radio color="primary" size="small" />}
+                  label="No"
+                />
+                <FormControlLabel
+                  value="true"
+                  control={<Radio color="primary" size="small" />}
+                  label="Yes"
+                />
+                <FormControlLabel
+                  value="dont_know"
+                  control={<Radio color="primary" size="small" />}
+                  label="Don't know"
+                />
+                <FormHelperText>
+                  {touched.location?.is_within_overlapping &&
+                    errors.location?.is_within_overlapping}
+                </FormHelperText>
+              </RadioGroup>
+            </Box>
+          </FormControl>
+        </Box>
+
+        <Box component="fieldset" mb={4}>
+          <ProjectLocationConservationAreas />
+        </Box>
       </Box>
-
-      <Box mb={4}>
-        <FormControl
-          component="fieldset"
-          required={true}
-          error={touched.location?.priority && Boolean(errors.location?.priority)}>
-          <FormLabel component="legend">Is this location a priority area?</FormLabel>
-
-          <Box mt={2}>
-            <RadioGroup
-              name="location.priority"
-              aria-label="Location Priority"
-              value={values.location.priority || 'false'}
-              onChange={handleChange}>
-              <FormControlLabel
-                value="false"
-                control={<Radio required={true} color="primary" size="small" />}
-                label="No"
-              />
-              <FormControlLabel
-                value="true"
-                control={<Radio required={true} color="primary" size="small" />}
-                label="Yes"
-              />
-              <FormHelperText>{touched.location?.priority && errors.location?.priority}</FormHelperText>
-            </RadioGroup>
-          </Box>
-        </FormControl>
-      </Box>
-
       <Box component="fieldset">
-        <Typography component="legend">Project Boundary *</Typography>
+        <Typography component="legend">
+          {CreateProjectI18N.locationArea}{' '}
+          {locationRequired(
+            parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
+          ) && '*'}
+          <IconButton edge="end" onClick={() => handleClickOpen(CreateProjectI18N.locationArea)}>
+            <InfoIcon color="info" />
+          </IconButton>
+        </Typography>
         <Box mb={3} maxWidth={'72ch'}>
           <Typography variant="body1" color="textSecondary">
-            Upload a shapefile or use the drawing tools on the map to define your project boundary (KML or shapefiles
-            accepted).
+            Upload a GeoJSON file to define your project boundary.
+            <Tooltip title={CreateProjectI18N.locationGeoJSONProperties} placement="right">
+              <IconButton
+                edge="end"
+                onClick={() => handleClickOpen(CreateProjectI18N.locationGeoJSONProperties)}>
+                <InfoIcon color="info" />
+              </IconButton>
+            </Tooltip>
           </Typography>
         </Box>
 
@@ -194,35 +333,49 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             startIcon={<Icon path={mdiTrayArrowUp} size={1}></Icon>}
             onClick={() => setOpenUploadBoundary(true)}
             data-testid="project-boundary-upload">
-            Upload Boundary
+            Upload Areas
           </Button>
+        </Box>
+
+        <Box className="feature-box">
+          <MapFeatureList
+            mask={[mask, setMask]}
+            maskState={[maskState, setMaskState]}
+            activeFeatureState={[activeFeature, setActiveFeature]}
+          />
         </Box>
 
         <Box height={500}>
           <MapContainer
             mapId={'project_location_map'}
-            fullScreenControl={true}
-            drawControls={{
-              features: values.location.geometry,
-              onChange: (features) => setFieldValue('location.geometry', features)
-            }}
+            layerVisibility={layerVisibility}
+            features={values.location.geometry}
+            mask={mask}
+            maskState={maskState}
+            activeFeatureState={[activeFeature, setActiveFeature]}
+            autoFocus={true}
+            editModeOn={true}
           />
         </Box>
         {errors?.location?.geometry && (
           <Box pt={2}>
-            <Typography style={{ fontSize: '16px', color: '#f44336' }}>{errors?.location?.geometry}</Typography>
+            <Typography style={{ fontSize: '16px', color: '#f44336' }}>
+              {errors?.location?.geometry as string}
+            </Typography>
           </Box>
         )}
       </Box>
 
       <ComponentDialog
         open={openUploadBoundary}
-        dialogTitle="Upload Project Boundary"
+        dialogTitle="Upload Project Areas"
         onClose={() => setOpenUploadBoundary(false)}>
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
-            acceptedFileExtensions: ProjectAttachmentValidExtensions.SPATIAL
+            acceptedFileExtensions: {
+              'application/json': ['.json', '.geojson']
+            }
           }}
         />
       </ComponentDialog>

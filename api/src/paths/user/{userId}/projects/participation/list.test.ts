@@ -2,11 +2,11 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import * as db from '../../../../../database/db';
 import { HTTPError } from '../../../../../errors/custom-error';
 import { ProjectParticipantObject } from '../../../../../models/user';
 import { UserService } from '../../../../../services/user-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import * as projects from './list';
 
 chai.use(sinonChai);
@@ -71,6 +71,27 @@ describe('projects', () => {
           project_participation_id: 88
         }
       ]);
+    });
+
+    it('should catch and re-throw an error thrown by getUserProjectParticipation', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = { userId: '12' };
+
+      sinon.stub(UserService.prototype, 'getUserProjectParticipation').rejects(new Error('an error'));
+
+      try {
+        const result = projects.getAllUserProjects();
+
+        await result(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('an error');
+      }
     });
   });
 });

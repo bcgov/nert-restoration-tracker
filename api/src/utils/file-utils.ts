@@ -1,8 +1,8 @@
 import AWS from 'aws-sdk';
-import { DeleteObjectOutput, GetObjectOutput, ManagedUpload, Metadata } from 'aws-sdk/clients/s3';
+import { DeleteObjectOutput, GetObjectOutput, HeadObjectOutput, ManagedUpload, Metadata } from 'aws-sdk/clients/s3';
 import clamd from 'clamdjs';
 
-export type S3FileType = 'attachments' | 'treatments';
+export type S3FileType = 'attachments' | 'thumbnail' | 'draft';
 
 export interface IS3FileKey {
   projectId: number;
@@ -166,6 +166,40 @@ export async function getFileFromS3(key: string, versionId?: string): Promise<Ge
 }
 
 /**
+ * Find a file in S3.
+ *
+ * @export
+ * @param {string} key
+ * @return {*}  {Promise<HeadObjectOutput>}
+ */
+export async function findFileInS3(key: string): Promise<HeadObjectOutput> {
+  const s3Client = _getS3Client();
+
+  return s3Client.headObject({ Bucket: _getObjectStoreBucketName(), Key: key }).promise();
+}
+
+/**
+ * Move a file in S3.
+ *
+ * @export
+ * @param {string} key
+ * @param {string} destinationKey
+ */
+export async function moveFileInS3(key: string, destinationKey: string) {
+  const s3Client = _getS3Client();
+  const copyParams = {
+    Bucket: _getObjectStoreBucketName(),
+    CopySource: `${_getObjectStoreBucketName()}/${key}`,
+    Key: destinationKey
+  };
+  const deleteParams = {
+    Bucket: _getObjectStoreBucketName(),
+    Key: key
+  };
+  await s3Client.copyObject(copyParams).promise();
+  await s3Client.deleteObject(deleteParams).promise();
+}
+/**
  * Get an s3 signed url.
  *
  * @param {string} key S3 object key
@@ -207,6 +241,24 @@ export function generateS3FileKey(options: IS3FileKey): string {
   return keyParts.filter(Boolean).join('/');
 }
 
+/**
+ * Generate an S3 key for a draft file.
+ *
+ * @export
+ * @param {IS3FileKey} options
+ * @return {*}  {string}
+ */
+export function generateDraftS3FileKey(options: IS3FileKey): string {
+  const keyParts: (string | number)[] = [];
+
+  keyParts.push(_getS3KeyPrefix());
+  keyParts.push('draft');
+  keyParts.push(options.projectId);
+  keyParts.push(options.fileType);
+  keyParts.push(options.fileName);
+
+  return keyParts.filter(Boolean).join('/');
+}
 /**
  * Scan a file for viruses.
  *

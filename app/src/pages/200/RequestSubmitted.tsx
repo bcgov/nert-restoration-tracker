@@ -1,32 +1,18 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
 import { mdiCheck } from '@mdi/js';
 import Icon from '@mdi/react';
-import { AuthStateContext } from 'contexts/authStateContext';
-import React, { useContext } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import { CircularProgress } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import React from 'react';
+import { useAuth } from 'react-oidc-context';
 
 const RequestSubmitted = () => {
-  const history = useHistory();
+  const auth = useAuth();
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
-
-  if (!keycloakWrapper?.hasLoadedAllUserInfo) {
-    // User data has not been loaded, can not yet determine if they have a role
-    return <CircularProgress className="pageProgress" />;
-  }
-
-  if (keycloakWrapper?.systemRoles.length) {
-    // User already has a role
-    return <Redirect to={{ pathname: '/admin/projects' }} />;
-  }
-
-  if (!keycloakWrapper.hasAccessRequest) {
-    // User has no pending access request
-    return <Redirect to={{ pathname: '/' }} />;
+  if (!auth) {
+    return <CircularProgress className="pageProgress" size={40} />;
   }
 
   return (
@@ -38,7 +24,7 @@ const RequestSubmitted = () => {
         <Box pt={4}>
           <Button
             onClick={() => {
-              history.push('/logout');
+              auth.signoutRedirect();
             }}
             type="submit"
             size="large"

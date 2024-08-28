@@ -15,7 +15,7 @@ export const GET: Operation = [
     return {
       or: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         },
         {
@@ -53,14 +53,14 @@ GET.apiDoc = {
         oneOf: [
           {
             type: 'string',
-            enum: ['attachments', 'treatments'],
+            enum: ['attachments', 'thumbnail', 'draft'],
             nullable: true
           },
           {
             type: 'array',
             items: {
               type: 'string',
-              enum: ['attachments', 'treatments']
+              enum: ['attachments', 'thumbnail', 'draft']
             },
             nullable: true
           }
@@ -92,7 +92,8 @@ GET.apiDoc = {
                       type: 'string'
                     },
                     size: {
-                      type: 'number'
+                      type: 'number',
+                      nullable: true
                     },
                     url: {
                       type: 'string'

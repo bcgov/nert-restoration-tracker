@@ -1,103 +1,69 @@
-import { SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
-import { AuthenticatedRouteGuard } from 'components/security/RouteGuards';
+import { CircularProgress } from '@mui/material';
+import { AuthenticatedRouteGuard, SystemRoleRouteGuard } from 'components/security/RouteGuards';
 import { SYSTEM_ROLE } from 'constants/roles';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
+import PlansRouter from 'features/plans/PlansRouter';
+import PublicPlansRouter from 'features/plans/PublicPlansRouter';
 import ProjectsRouter from 'features/projects/ProjectsRouter';
 import PublicProjectsRouter from 'features/projects/PublicProjectsRouter';
 import SearchPage from 'features/search/SearchPage';
 import UserRouter from 'features/user/UserRouter';
-import PublicLayout from 'layouts/PublicLayout';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import AppLayout from 'layouts/AppLayout';
 import RequestSubmitted from 'pages/200/RequestSubmitted';
 import AccessDenied from 'pages/403/AccessDenied';
 import NotFoundPage from 'pages/404/NotFoundPage';
 import AccessRequestPage from 'pages/access/AccessRequestPage';
 import LogOutPage from 'pages/logout/LogOutPage';
 import React from 'react';
-import { Redirect, Switch, useLocation } from 'react-router-dom';
-import AppRoute from 'utils/AppRoute';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-const AppRouter: React.FC = () => {
-  const location = useLocation();
+export const AppRouter = () => {
+  const authStateContext = useAuthStateContext();
 
-  const getTitle = (page: string) => {
-    return `Habitat Restoration Tracker - ${page}`;
-  };
+  if (!authStateContext.auth) {
+    return <CircularProgress className="pageProgress" size={40} />;
+  }
 
   return (
-    <Switch>
-      <Redirect from="/:url*(/+)" to={{ ...location, pathname: location.pathname.slice(0, -1) }} />
+    <Routes>
+      <Route
+        path="/:url*(/+)"
+        element={
+          <Navigate replace to={{ ...location, pathname: location.pathname.slice(0, -1) }} />
+        }
+      />
+      <Route path="/" element={<Navigate replace to="/search" />} />
+      <Route path="/admin" element={<Navigate replace to="/admin/search" />} />
 
-      <Redirect exact from="/" to="/projects" />
+      {/* User Routes */}
+      <Route element={<AppLayout />}>
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/projects/*" element={<PublicProjectsRouter />} />
+        <Route path="/plans/*" element={<PublicPlansRouter />} />
+        <Route path="/page-not-found" element={<NotFoundPage />} />
+        <Route path="/forbidden" element={<AccessDenied />} />
+        <Route path="/access-request" element={<AccessRequestPage />} />
+        <Route path="/request-submitted" element={<RequestSubmitted />} />
+        <Route path="/logout" element={<LogOutPage />} />
 
-      <AppRoute path="/projects" title={getTitle('Projects')} layout={PublicLayout}>
-        <PublicProjectsRouter />
-      </AppRoute>
+        {/* System Role Routes */}
+        <Route path="/admin" element={<AuthenticatedRouteGuard />}>
+          <Route index element={<SearchPage />} />
+          <Route path="/admin/search" element={<SearchPage />} />
+          <Route path="/admin/projects/*" element={<ProjectsRouter />} />
+          <Route path="/admin/plans/*" element={<PlansRouter />} />
+          <Route path="/admin/user/*" element={<UserRouter />} />
 
-      <AppRoute path="/search" title={getTitle('Search')} layout={PublicLayout}>
-        <UnAuthGuard>
-          <SearchPage />
-        </UnAuthGuard>
-      </AppRoute>
+          {/* Admin Routes */}
+          <Route element={<SystemRoleRouteGuard validRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]} />}>
+            <Route path="/admin/users/*" element={<AdminUsersRouter />} />
+          </Route>
+        </Route>
+      </Route>
 
-      <AppRoute path="/page-not-found" title={getTitle('Page Not Found')} layout={PublicLayout}>
-        <NotFoundPage />
-      </AppRoute>
-
-      <AppRoute path="/forbidden" title={getTitle('Forbidden')} layout={PublicLayout}>
-        <AccessDenied />
-      </AppRoute>
-
-      <AppRoute path="/access-request" title={getTitle('Access Request')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <AccessRequestPage />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <AppRoute path="/request-submitted" title={getTitle('Request submitted')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <RequestSubmitted />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <Redirect exact from="/admin" to="/admin/projects" />
-
-      <AppRoute path="/admin/projects" title={getTitle('Projects')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <ProjectsRouter />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <AppRoute path="/admin/user" title={getTitle('My Projects')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <UserRouter />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <AppRoute path="/admin/users" title={getTitle('Users')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-            <AdminUsersRouter />
-          </SystemRoleGuard>
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <AppRoute path="/admin/search" title={getTitle('Search')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <SearchPage />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <AppRoute path="/logout" title={getTitle('Logout')} layout={PublicLayout}>
-        <AuthenticatedRouteGuard>
-          <LogOutPage />
-        </AuthenticatedRouteGuard>
-      </AppRoute>
-
-      <AppRoute title="*" path="*">
-        <Redirect to="/page-not-found" />
-      </AppRoute>
-    </Switch>
+      {/* Fallback */}
+      <Route path="*" element={<Navigate replace to="/page-not-found" />} />
+    </Routes>
   );
 };
-
-export default AppRouter;

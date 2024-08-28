@@ -2,12 +2,12 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../__mocks__/db';
 import { SYSTEM_IDENTITY_SOURCE } from '../../constants/database';
 import * as db from '../../database/db';
 import { HTTPError } from '../../errors/custom-error';
 import { UserObject } from '../../models/user';
 import { UserService } from '../../services/user-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../__mocks__/db';
 import * as user from './add';
 
 chai.use(sinonChai);
@@ -140,6 +140,33 @@ describe('user', () => {
 
       expect(ensureSystemUserStub).to.have.been.calledOnce;
       expect(adduserSystemRolesStub).to.have.been.calledOnce;
+    });
+
+    it('catches errors and rethrows error', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.body = {
+        userIdentifier: 'username',
+        identitySource: SYSTEM_IDENTITY_SOURCE.IDIR,
+        roleId: 1
+      };
+
+      const mockError = new Error('mock error');
+
+      sinon.stub(UserService.prototype, 'ensureSystemUser').throws(mockError);
+
+      const requestHandler = user.addSystemRoleUser();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect(actualError).to.equal(mockError);
+      }
     });
   });
 });

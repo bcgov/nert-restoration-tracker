@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import * as db from '../../../database/db';
 import { HTTPError } from '../../../errors/custom-error';
 import { UserService } from '../../../services/user-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../__mocks__/db';
 import * as user from './get';
 
 chai.use(sinonChai);
@@ -35,6 +35,29 @@ describe('user', () => {
       } catch (actualError) {
         expect((actualError as HTTPError).status).to.equal(400);
         expect((actualError as HTTPError).message).to.equal('Missing required param: userId');
+      }
+    });
+
+    it('throws 400 error when user not found', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        userId: '1'
+      };
+
+      sinon.stub(UserService.prototype, 'getUserById').resolves(undefined);
+
+      try {
+        const requestHandler = user.getUserById();
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).status).to.equal(400);
+        expect((actualError as HTTPError).message).to.equal('Failed to get system user');
       }
     });
 
@@ -72,6 +95,31 @@ describe('user', () => {
         role_ids: [],
         role_names: []
       });
+    });
+
+    it('catches and rethrows error', async () => {
+      const dbConnectionObj = getMockDBConnection();
+
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+      mockReq.params = {
+        userId: '1'
+      };
+
+      const mockError = new Error('mock error');
+
+      sinon.stub(UserService.prototype, 'getUserById').throws(mockError);
+
+      const requestHandler = user.getUserById();
+
+      try {
+        await requestHandler(mockReq, mockRes, mockNext);
+        expect.fail();
+      } catch (err) {
+        expect(err).to.eql(mockError);
+      }
     });
   });
 });

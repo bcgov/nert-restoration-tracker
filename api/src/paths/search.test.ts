@@ -2,13 +2,11 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../__mocks__/db';
 import { SYSTEM_ROLE } from '../constants/roles';
 import * as db from '../database/db';
-import { HTTPError } from '../errors/custom-error';
-import search_queries from '../queries/search';
 import { AuthorizationService } from '../services/authorization-service';
-import { getMockDBConnection } from '../__mocks__/db';
+import { ProjectService } from '../services/project-service';
 import * as search from './search';
 
 chai.use(sinonChai);
@@ -40,28 +38,23 @@ describe('search', () => {
       sinon.restore();
     });
 
-    it('should throw a 400 error when fails to get sql statement', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-      sinon.stub(AuthorizationService, 'userHasValidRole').returns(true);
-      sinon.stub(search_queries, 'getSpatialSearchResultsSQL').returns(null);
+    it('catches and rethrows errors', async () => {
+      sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
 
       try {
+        sinon.stub(ProjectService.prototype, 'getSpatialSearch').rejects(new Error('An error occurred'));
+
         const result = search.getSearchResults();
 
-        await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
+        await result(sampleReq, sampleRes as any, null as unknown as any);
+
         expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
+      } catch (actualError: any) {
+        expect(actualError.message).to.equal('An error occurred');
       }
     });
 
-    it('should return null when no response returned from getSpatialSearchResultsSQL', async () => {
+    it('should return null when no response returned from getSpatialSearch', async () => {
       const mockQuery = sinon.stub();
 
       mockQuery.resolves({ rows: null });
@@ -74,11 +67,11 @@ describe('search', () => {
         query: mockQuery
       });
       sinon.stub(AuthorizationService, 'userHasValidRole').returns(true);
-      sinon.stub(search_queries, 'getSpatialSearchResultsSQL').returns(SQL`something`);
+      sinon.stub(ProjectService.prototype, 'getSpatialSearch').resolves(undefined);
 
       const result = search.getSearchResults();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult).to.equal(null);
     });
@@ -96,11 +89,11 @@ describe('search', () => {
         query: mockQuery
       });
       sinon.stub(AuthorizationService, 'userHasValidRole').returns(true);
-      sinon.stub(search_queries, 'getSpatialSearchResultsSQL').returns(SQL`something`);
+      sinon.stub(ProjectService.prototype, 'getSpatialSearch').resolves([]);
 
       const result = search.getSearchResults();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult).to.eql([]);
     });
@@ -110,32 +103,36 @@ describe('search', () => {
         {
           id: 1,
           name: 'name',
+          is_project: false,
+          number_sites: 1,
+          size_ha: 100,
+          state_code: 1,
           geometry: '{"type":"Point","coordinates":[50.7,60.9]}'
         }
       ];
-
-      const mockQuery = sinon.stub();
-
-      mockQuery.resolves({ rows: searchList });
 
       sinon.stub(db, 'getDBConnection').returns({
         ...dbConnectionObj,
         systemUserId: () => {
           return 20;
-        },
-        query: mockQuery
+        }
       });
+
       sinon.stub(AuthorizationService, 'userHasValidRole').returns(true);
-      sinon.stub(search_queries, 'getSpatialSearchResultsSQL').returns(SQL`something`);
+      sinon.stub(ProjectService.prototype, 'getSpatialSearch').resolves(searchList);
 
       const result = search.getSearchResults();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult).to.eql([
         {
           id: searchList[0].id,
           name: searchList[0].name,
+          is_project: false,
+          number_sites: searchList[0].number_sites,
+          size_ha: searchList[0].size_ha,
+          state_code: searchList[0].state_code,
           geometry: [
             {
               type: 'Point',

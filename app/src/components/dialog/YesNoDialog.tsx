@@ -1,9 +1,9 @@
-import Button, { ButtonProps } from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Button, { ButtonProps } from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import React, { ReactNode } from 'react';
 
 export interface IYesNoDialogProps {
@@ -21,6 +21,13 @@ export interface IYesNoDialogProps {
    * @memberof IYesNoDialogProps
    */
   dialogTitle: string;
+  /**
+   * The dialog window title text.
+   *
+   * @type {string}
+   * @memberof IYesNoDialogProps
+   */
+  dialogTitleBgColor?: string;
   /**
    * The dialog window body text.
    *
@@ -106,12 +113,16 @@ const YesNoDialog: React.FC<IYesNoDialogProps> = (props) => {
       data-testid="yes-no-dialog"
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">{props.dialogTitle}</DialogTitle>
+      <DialogTitle bgcolor={props.dialogTitleBgColor} id="alert-dialog-title">
+        {props.dialogTitle}
+      </DialogTitle>
       <DialogContent>
-        {props.dialogText && <DialogContentText id="alert-dialog-description">{props.dialogText}</DialogContentText>}
+        {props.dialogText && (
+          <DialogContentText id="alert-dialog-description">{props.dialogText}</DialogContentText>
+        )}
         {props.dialogContent}
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ bgcolor: props.dialogTitleBgColor }}>
         <Button
           data-testid="yes-button"
           onClick={props.onYes}

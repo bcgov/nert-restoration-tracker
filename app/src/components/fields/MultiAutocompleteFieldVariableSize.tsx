@@ -1,11 +1,14 @@
-import Checkbox from '@material-ui/core/Checkbox';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import TextField from '@material-ui/core/TextField';
-import CheckBox from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlank from '@material-ui/icons/CheckBoxOutlineBlank';
-import { FilterOptionsState } from '@material-ui/lab';
-import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@material-ui/lab/Autocomplete';
+import CheckBox from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
+import Autocomplete, {
+  AutocompleteInputChangeReason,
+  createFilterOptions
+} from '@mui/material/Autocomplete';
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import ListSubheader from '@mui/material/ListSubheader';
+import TextField from '@mui/material/TextField';
+import { FilterOptionsState } from '@mui/material/useAutocomplete';
 import { useFormikContext } from 'formik';
 import { DebouncedFunc } from 'lodash-es';
 import get from 'lodash-es/get';
@@ -74,50 +77,52 @@ function useResetCache(data: any) {
 }
 
 // Adapter for react-window
-const ListboxComponent = React.forwardRef<HTMLDivElement>(function ListboxComponent(props, ref) {
-  const { children, ...other } = props;
-  const itemData = React.Children.toArray(children);
-  const itemCount = itemData.length;
-  const itemSize = 54;
+const ListboxComponent = React.forwardRef<HTMLDivElement, React.PropsWithChildren>(
+  function ListboxComponent(props, ref) {
+    const { children, ...other } = props;
+    const itemData = React.Children.toArray(children);
+    const itemCount = itemData.length;
+    const itemSize = 42;
 
-  const getChildSize = (child: React.ReactNode) => {
-    if (React.isValidElement(child) && child.type === ListSubheader) {
-      return 48;
-    }
+    const getChildSize = (child: React.ReactNode) => {
+      if (React.isValidElement(child) && child.type === ListSubheader) {
+        return 36;
+      }
 
-    return itemSize;
-  };
+      return itemSize;
+    };
 
-  const getHeight = () => {
-    if (itemCount > 8) {
-      return 8 * itemSize;
-    }
-    return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
-  };
+    const getHeight = () => {
+      if (itemCount > 8) {
+        return 8 * itemSize;
+      }
+      return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
+    };
 
-  const gridRef = useResetCache(itemCount);
+    const gridRef = useResetCache(itemCount);
 
-  return (
-    <div ref={ref}>
-      <OuterElementContext.Provider value={other}>
-        <VariableSizeList
-          itemData={itemData}
-          height={getHeight() + 2 * LISTBOX_PADDING}
-          width="100%"
-          ref={gridRef}
-          outerElementType={OuterElementType}
-          innerElementType="ul"
-          itemSize={(index: number) => getChildSize(itemData[index])}
-          overscanCount={5}
-          itemCount={itemCount}>
-          {renderRow}
-        </VariableSizeList>
-      </OuterElementContext.Provider>
-    </div>
-  );
-});
+    return (
+      <div ref={ref}>
+        <OuterElementContext.Provider value={other}>
+          <VariableSizeList
+            itemData={itemData}
+            height={getHeight() + 2 * LISTBOX_PADDING}
+            width="100%"
+            ref={gridRef}
+            outerElementType={OuterElementType}
+            innerElementType="ul"
+            itemSize={(index: number) => getChildSize(itemData[index])}
+            overscanCount={5}
+            itemCount={itemCount}>
+            {renderRow}
+          </VariableSizeList>
+        </OuterElementContext.Provider>
+      </div>
+    );
+  }
+);
 
-const useStyles = makeStyles({
+const pageStyles = {
   listbox: {
     boxSizing: 'border-box',
     '& ul': {
@@ -125,12 +130,11 @@ const useStyles = makeStyles({
       margin: 0
     }
   }
-});
+};
 
 const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (props) => {
-  const classes = useStyles();
-
-  const { values, touched, errors, setFieldValue } = useFormikContext<IMultiAutocompleteFieldOption>();
+  const { values, touched, errors, setFieldValue } =
+    useFormikContext<IMultiAutocompleteFieldOption>();
 
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(props.options || []); // store options if provided
@@ -149,7 +153,8 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
           },
           async searchSpecies() {
             const existingValues = get(values, props.id);
-            const selectedOptions = (existingValues?.length && options.slice(0, existingValues.length)) || [];
+            const selectedOptions =
+              (existingValues?.length && options.slice(0, existingValues.length)) || [];
 
             if (!inputValue) {
               setOptions(selectedOptions);
@@ -167,20 +172,19 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
 
   useEffect(() => {
     apiSearchTypeHelpers && apiSearchTypeHelpers.loadOptionsForSelectedValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedValues]);
 
   useEffect(() => {
     apiSearchTypeHelpers && apiSearchTypeHelpers.searchSpecies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
 
   useEffect(() => {
     setOptions(props.options || []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.options]);
 
-  const getExistingValue = (existingValues: (number | string)[]): IMultiAutocompleteFieldOption[] => {
+  const getExistingValue = (
+    existingValues: (number | string)[]
+  ): IMultiAutocompleteFieldOption[] => {
     if (existingValues) {
       return options.filter((option) => existingValues.includes(option.value));
     }
@@ -194,7 +198,11 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     return !option?.value || !value?.value ? false : option.value === value.value;
   };
 
-  const handleOnInputChange = (event: React.ChangeEvent<any>, value: string, reason: AutocompleteInputChangeReason) => {
+  const handleOnInputChange = (
+    event: React.ChangeEvent<any>,
+    value: string,
+    reason: AutocompleteInputChangeReason
+  ) => {
     if (event && event.type === 'blur') {
       setInputValue('');
     } else if (reason !== 'reset') {
@@ -202,11 +210,14 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     }
   };
 
-  const handleOnChange = (_event: React.ChangeEvent<any>, selectedOptions: IMultiAutocompleteFieldOption[]) => {
+  const handleOnChange = (
+    _event: React.ChangeEvent<any>,
+    selectedOptions: IMultiAutocompleteFieldOption[]
+  ) => {
     const selectedOptionsValue = selectedOptions.map((item) => item.value);
     const remainingOptions = options.filter((item) => !selectedOptionsValue.includes(item.value));
 
-    // when type is api-search and no input, dont show any options
+    // when type is api-search and no input, don't show any options
     // as options gets populated as searched by keyword.
     if (!inputValue && props.type === 'api-search') {
       setOptions(selectedOptions);
@@ -238,46 +249,53 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
     state: FilterOptionsState<IMultiAutocompleteFieldOption>
   ) => {
     // For api-search selected will be always on top and options doesn't need to be filtered
-    // as search funciton maintains both of this.
-    return props.type === 'api-search' ? optionsList : filterOptionsKeepingSelectedOnTop(optionsList, state);
+    // as search function maintains both of this.
+    return props.type === 'api-search'
+      ? optionsList
+      : filterOptionsKeepingSelectedOnTop(optionsList, state);
   };
 
   return (
     <Autocomplete
+      size="small"
       multiple
-      noOptionsText="Type to start searching"
+      noOptionsText="No matching options"
       autoHighlight={true}
       value={getExistingValue(get(values, props.id))}
       ListboxComponent={ListboxComponent as React.ComponentType<React.HTMLAttributes<HTMLElement>>}
       id={props.id}
       data-testid={props.id}
       options={options}
-      getOptionLabel={(option) => option.label}
-      getOptionSelected={handleGetOptionSelected}
+      getOptionLabel={(option: { label: any }) => option.label}
+      isOptionEqualToValue={handleGetOptionSelected}
       disableCloseOnSelect
       disableListWrap
-      classes={classes}
+      sx={pageStyles.listbox}
       inputValue={inputValue}
       onInputChange={handleOnInputChange}
       onChange={handleOnChange}
       filterOptions={handleFiltering}
-      renderOption={(option, { selected }) => {
+      renderOption={(
+        renderProps: React.HTMLAttributes<HTMLLIElement>,
+        renderOption: IMultiAutocompleteFieldOption,
+        { selected }: any
+      ) => {
         return (
-          <>
+          <Box component="li" {...renderProps} key={renderOption.value}>
             <Checkbox
               icon={<CheckBoxOutlineBlank fontSize="small" />}
               checkedIcon={<CheckBox fontSize="small" />}
               style={{ marginRight: 8 }}
               checked={selected}
-              disabled={(props.options && props.options?.indexOf(option) !== -1) || false}
-              value={option.value}
+              disabled={props.options?.includes(renderOption) || false}
+              value={renderOption.value}
               color="default"
             />
-            {option.label}
-          </>
+            {renderOption.label}
+          </Box>
         );
       }}
-      renderInput={(params) => (
+      renderInput={(params: any) => (
         <TextField
           {...params}
           name={props.id}
@@ -285,6 +303,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
           label={props.label}
           variant="outlined"
           fullWidth
+          placeholder="Type to start searching"
           error={get(touched, props.id) && Boolean(get(errors, props.id))}
           helperText={get(touched, props.id) && get(errors, props.id)}
         />

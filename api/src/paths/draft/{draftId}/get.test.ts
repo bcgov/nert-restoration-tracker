@@ -2,11 +2,9 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
-import * as db from '../../../database/db';
-import { HTTPError } from '../../../errors/custom-error';
-import draft_queries from '../../../queries/project/draft';
 import { getMockDBConnection } from '../../../__mocks__/db';
+import * as db from '../../../database/db';
+import { DraftRepository } from '../../../repositories/draft-repository';
 import * as viewDraftProject from './get';
 
 chai.use(sinonChai);
@@ -38,7 +36,23 @@ describe('gets a draft project', () => {
     sinon.restore();
   });
 
-  it('should throw a 400 error when no sql statement returned for getDraftSQL', async () => {
+  it('catches and rethrows errors', async () => {
+    sinon.stub(db, 'getDBConnection').returns(dbConnectionObj);
+
+    try {
+      sinon.stub(DraftRepository.prototype, 'getDraft').throws(new Error('An error occurred'));
+
+      const result = viewDraftProject.getSingleDraft();
+
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+
+      expect.fail();
+    } catch (actualError: any) {
+      expect(actualError.message).to.equal('An error occurred');
+    }
+  });
+
+  it('should return the draft project on success', async () => {
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
@@ -46,59 +60,28 @@ describe('gets a draft project', () => {
       }
     });
 
-    sinon.stub(draft_queries, 'getDraftSQL').returns(null);
-
-    try {
-      const result = viewDraftProject.getSingleDraft();
-
-      await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
-      expect.fail();
-    } catch (actualError) {
-      expect((actualError as HTTPError).status).to.equal(400);
-      expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
-    }
-  });
-
-  it('should return the draft project on success', async () => {
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: [{ id: 1 }] });
-
-    sinon.stub(db, 'getDBConnection').returns({
-      ...dbConnectionObj,
-      systemUserId: () => {
-        return 20;
-      },
-      query: mockQuery
-    });
-
-    sinon.stub(draft_queries, 'getDraftSQL').returns(SQL`something`);
+    sinon.stub(DraftRepository.prototype, 'getDraft').resolves({ id: 1 } as any);
 
     const result = viewDraftProject.getSingleDraft();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql({ id: 1 });
   });
 
   it('should return null if the draft project does not exist', async () => {
-    const mockQuery = sinon.stub();
-
-    mockQuery.resolves({ rows: undefined });
-
     sinon.stub(db, 'getDBConnection').returns({
       ...dbConnectionObj,
       systemUserId: () => {
         return 20;
-      },
-      query: mockQuery
+      }
     });
 
-    sinon.stub(draft_queries, 'getDraftSQL').returns(SQL`something`);
+    sinon.stub(DraftRepository.prototype, 'getDraft').resolves(undefined);
 
     const result = viewDraftProject.getSingleDraft();
 
-    await result(sampleReq, sampleRes as any, (null as unknown) as any);
+    await result(sampleReq, sampleRes as any, null as unknown as any);
 
     expect(actualResult).to.eql(null);
   });

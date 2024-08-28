@@ -1,35 +1,33 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
 import { mdiAlertCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
-import { AuthStateContext } from 'contexts/authStateContext';
-import React, { useContext } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import React from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const AccessDenied = () => {
-  const history = useHistory();
+  const history = useNavigate();
+  const authStateContext = useAuthStateContext();
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
-
-  if (!keycloakWrapper?.keycloak.authenticated) {
-    // User is not logged in
-    return <Redirect to={{ pathname: '/' }} />;
-  }
-
-  if (!keycloakWrapper.hasLoadedAllUserInfo) {
-    // User data has not been loaded, can not yet determine if they have a role
+  if (!authStateContext.auth || authStateContext.nertUserWrapper.isLoading) {
     return <CircularProgress className="pageProgress" />;
   }
 
-  if (keycloakWrapper.hasAccessRequest) {
-    // User already has a pending access request
-    return <Redirect to={{ pathname: '/request-submitted' }} />;
+  const userHasARole = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles;
+
+  if (userHasARole) {
+    // User already has a role
+    return <Navigate replace to={{ pathname: '/admin/projects' }} />;
   }
 
-  const userHasARole = !!keycloakWrapper?.systemRoles?.length;
+  if (authStateContext.nertUserWrapper.hasAccessRequest) {
+    // User already has a pending access request
+    return <Navigate replace to={{ pathname: '/request-submitted' }} />;
+  }
 
   return (
     <Container>
@@ -37,12 +35,14 @@ const AccessDenied = () => {
         <Icon path={mdiAlertCircleOutline} size={2} color="#ff5252" />
         <h1>Access Denied</h1>
         <Typography>
-          {`You do not have permission to access this ${(userHasARole && 'page') || 'application'}.`}
+          {`You do not have permission to access this ${
+            (userHasARole && 'page') || 'application'
+          }.`}
         </Typography>
         <Box pt={4}>
           {!userHasARole && (
             <Button
-              onClick={() => history.push('/access-request')}
+              onClick={() => history('/access-request')}
               type="submit"
               size="large"
               variant="contained"

@@ -1,15 +1,14 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { AccessStatusChip } from 'components/chips/RequestChips';
 import RequestDialog from 'components/dialog/RequestDialog';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
@@ -17,7 +16,7 @@ import { ReviewAccessRequestI18N } from 'constants/i18n';
 import { AdministrativeActivityStatusType } from 'constants/misc';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetAccessRequestsListResponse } from 'interfaces/useAdminApi.interface';
 import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import React, { useContext, useState } from 'react';
@@ -28,14 +27,14 @@ import ReviewAccessRequestForm, {
   ReviewAccessRequestFormYupSchema
 } from './ReviewAccessRequestForm';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   table: {
     tableLayout: 'fixed',
     '& td': {
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 export interface IAccessRequestListProps {
   accessRequests: IGetAccessRequestsListResponse[];
@@ -52,9 +51,7 @@ export interface IAccessRequestListProps {
 const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
   const { accessRequests, codes, refresh } = props;
 
-  const classes = useStyles();
-
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const [activeReviewDialog, setActiveReviewDialog] = useState<{
     open: boolean;
@@ -152,7 +149,7 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
           </Box>
         </Toolbar>
         <TableContainer>
-          <Table className={classes.table}>
+          <Table sx={pageStyles.table}>
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
@@ -175,7 +172,9 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
                 return (
                   <TableRow data-testid={`access-request-row-${index}`} key={index}>
                     <TableCell>{row.data?.username || ''}</TableCell>
-                    <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.create_date)}</TableCell>
+                    <TableCell>
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.create_date)}
+                    </TableCell>
                     <TableCell>
                       <AccessStatusChip status={row.status_name} />
                     </TableCell>

@@ -1,40 +1,40 @@
-import Box from '@material-ui/core/Box';
-import IconButton from '@material-ui/core/IconButton';
-import Link from '@material-ui/core/Link';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
 import { mdiDotsVertical, mdiDownload, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
+import { ProjectRoleGuard } from 'components/security/Guards';
 import { AttachmentsI18N } from 'constants/i18n';
+import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { IGetProjectAttachment } from 'interfaces/useProjectApi.interface';
 import React, { useContext, useState } from 'react';
 import { handleChangePage, handleChangeRowsPerPage } from 'utils/tablePaginationUtils';
 import { getFormattedFileSize } from 'utils/Utils';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   attachmentsTable: {
     '& .MuiTableCell-root': {
       verticalAlign: 'middle'
     }
   },
   uploadMenu: {
-    marginTop: theme.spacing(1)
+    marginTop: '0.5rem'
   }
-}));
+};
 
 export interface IAttachmentsListProps {
   projectId: number;
@@ -43,8 +43,7 @@ export interface IAttachmentsListProps {
 }
 
 const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
-  const classes = useStyles();
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const nertApi = useNertApi();
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
@@ -100,7 +99,7 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
     }
 
     try {
-      await restorationTrackerApi.project.deleteProjectAttachment(props.projectId, attachment.id);
+      await nertApi.project.deleteProjectAttachment(props.projectId, attachment.id);
 
       props.getAttachments(true);
     } catch (error) {
@@ -121,7 +120,7 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
     <>
       <Box>
         <TableContainer>
-          <Table className={classes.attachmentsTable} aria-label="attachments-list-table">
+          <Table sx={pageStyles.attachmentsTable} aria-label="attachments-list-table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -133,29 +132,35 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
             </TableHead>
             <TableBody>
               {props.attachmentsList.length > 0 &&
-                props.attachmentsList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                  return (
-                    <TableRow key={`${row.fileName}-${index}`}>
-                      <TableCell scope="row">
-                        <Link underline="always" component="button" variant="body2" onClick={() => openAttachment(row)}>
-                          {row.fileName}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{getFormattedFileSize(row.size)}</TableCell>
-                      <TableCell align="center">
-                        <AttachmentItemMenuButton
-                          attachment={row}
-                          handleDownloadFileClick={handleDownloadFileClick}
-                          handleDeleteFileClick={handleDeleteFileClick}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                props.attachmentsList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    return (
+                      <TableRow key={`${row.fileName}-${index}`}>
+                        <TableCell scope="row">
+                          <Link
+                            underline="always"
+                            component="button"
+                            variant="body2"
+                            onClick={() => openAttachment(row)}>
+                            {row.fileName}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{getFormattedFileSize(row.size)}</TableCell>
+                        <TableCell align="center">
+                          <AttachmentItemMenuButton
+                            attachment={row}
+                            handleDownloadFileClick={handleDownloadFileClick}
+                            handleDeleteFileClick={handleDeleteFileClick}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               {!props.attachmentsList.length && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
-                    No Attachments
+                    No Documents Attached
                   </TableCell>
                 </TableRow>
               )}
@@ -169,8 +174,10 @@ const AttachmentsList: React.FC<IAttachmentsListProps> = (props) => {
             count={props.attachmentsList.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onChangePage={(event: unknown, newPage: number) => handleChangePage(event, newPage, setPage)}
-            onChangeRowsPerPage={(event: React.ChangeEvent<HTMLInputElement>) =>
+            onPageChange={(event: unknown, newPage: number) =>
+              handleChangePage(event, newPage, setPage)
+            }
+            onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChangeRowsPerPage(event, setPage, setRowsPerPage)
             }
           />
@@ -189,8 +196,6 @@ interface IAttachmentItemMenuButtonProps {
 }
 
 const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (props) => {
-  const classes = useStyles();
-
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -213,8 +218,7 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
             <Icon path={mdiDotsVertical} size={1} />
           </IconButton>
           <Menu
-            className={classes.uploadMenu}
-            getContentAnchorEl={null}
+            sx={pageStyles.uploadMenu}
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right'
@@ -241,17 +245,21 @@ const AttachmentItemMenuButton: React.FC<IAttachmentItemMenuButtonProps> = (prop
               </ListItemIcon>
               Download File
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                props.handleDeleteFileClick(props.attachment);
-                setAnchorEl(null);
-              }}
-              data-testid="attachment-action-menu-delete">
-              <ListItemIcon>
-                <Icon path={mdiTrashCanOutline} size={1} />
-              </ListItemIcon>
-              Delete File
-            </MenuItem>
+            <ProjectRoleGuard
+              validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+              validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
+              <MenuItem
+                onClick={() => {
+                  props.handleDeleteFileClick(props.attachment);
+                  setAnchorEl(null);
+                }}
+                data-testid="attachment-action-menu-delete">
+                <ListItemIcon>
+                  <Icon path={mdiTrashCanOutline} size={1} />
+                </ListItemIcon>
+                Delete File
+              </MenuItem>
+            </ProjectRoleGuard>
           </Menu>
         </Box>
       </Box>

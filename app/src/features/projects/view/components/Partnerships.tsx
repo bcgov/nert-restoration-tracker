@@ -1,23 +1,13 @@
-import Box from '@material-ui/core/Box';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
+import { CircularProgress } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import { Box } from '@mui/system';
+import { useCodesContext } from 'hooks/useContext';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React from 'react';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    partnerItem: {
-      '&:last-child .seperator': {
-        display: 'none'
-      }
-    }
-  })
-);
+import { handleGetPartnershipRefName, handleGetPartnershipTypeName } from 'utils/Utils';
 
 export interface IPartnershipsProps {
   projectForViewData: IGetProjectForViewResponse;
-  codes: IGetAllCodeSetsResponse;
   refresh: () => void;
 }
 
@@ -27,68 +17,52 @@ export interface IPartnershipsProps {
  * @return {*}
  */
 const Partnerships: React.FC<IPartnershipsProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: {
-      partnerships: { indigenous_partnerships, stakeholder_partnerships }
-    },
-    codes
+      partnership: { partnerships }
+    }
   } = props;
 
-  const hasIndigenousPartnerships = indigenous_partnerships && indigenous_partnerships.length > 0;
-  const hasStakeholderPartnerships = stakeholder_partnerships && stakeholder_partnerships.length > 0;
+  const codes = useCodesContext().codesDataLoader.data;
+
+  const hasPartnerships = partnerships && partnerships.length > 0;
+
+  if (!hasPartnerships) {
+    return (
+      <Typography variant="body2" color="textSecondary" data-testid="no_partnerships_data">
+        No Partnerships
+      </Typography>
+    );
+  }
+
+  if (!codes) {
+    return <CircularProgress />;
+  }
 
   return (
-    <Box component="dl">
-      <div>
-        <Typography
-          component="dt"
-          variant="body2"
-          color="textSecondary"
-          data-testid="indigenousData"
-          aria-label="Indigenous Partnerships">
-          Indigenous:
-        </Typography>
-
-        <Typography component="dd" variant="body2">
-          {hasIndigenousPartnerships &&
-            indigenous_partnerships?.map((indigenousPartnership: number, index: number) => {
-              const codeValue = codes.first_nations.find((code) => code.id === indigenousPartnership);
-              return (
-                <span key={index} data-testid="indigenous_partners_data" className={classes.partnerItem}>
-                  {codeValue?.name}
-                  <span className="seperator">,&nbsp;</span>
-                </span>
-              );
-            })}
-          {!hasIndigenousPartnerships && <span data-testid="no_indigenous_partners_data">None</span>}
-        </Typography>
-      </div>
-
-      <div>
-        <Typography
-          component="dt"
-          variant="body2"
-          color="textSecondary"
-          data-testid="stakeholderData"
-          aria-label="Other Partnerships">
-          Other:
-        </Typography>
-
-        <Typography component="dd" variant="body2">
-          {hasStakeholderPartnerships &&
-            stakeholder_partnerships?.map((stakeholderPartnership: string, index: number) => {
-              return (
-                <span key={index} data-testid="stakeholder_partners_data" className={classes.partnerItem}>
-                  {stakeholderPartnership}
-                  <span className="seperator">,&nbsp;</span>
-                </span>
-              );
-            })}
-          {!hasStakeholderPartnerships && <span data-testid="no_stakeholder_partners_data">None</span>}
-        </Typography>
-      </div>
+    <Box py={2}>
+      {partnerships?.map((data, index: number) => {
+        return (
+          <Typography
+            key={index}
+            variant="body2"
+            color="textSecondary"
+            data-testid="partnerships_data"
+            sx={{
+              display: 'inline-block',
+              '&::first-letter': {
+                textTransform: 'capitalize'
+              }
+            }}>
+            <strong>{handleGetPartnershipTypeName(data.partnership_type, codes)}</strong>
+            {'|'}
+            <em>
+              {handleGetPartnershipRefName(data.partnership_type, data.partnership_ref, codes)}
+            </em>
+            {data.partnership_name ? `|${data.partnership_name}` : ''}
+          </Typography>
+        );
+      })}
     </Box>
   );
 };

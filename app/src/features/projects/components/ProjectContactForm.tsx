@@ -1,27 +1,21 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { mdiPencilOutline, mdiPlus, mdiTrashCanOutline } from '@mdi/js';
+import { mdiPlus } from '@mdi/js';
 import { Icon } from '@mdi/react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import EditDialog from 'components/dialog/EditDialog';
 import { FieldArray, useFormikContext } from 'formik';
 import React, { useState } from 'react';
 import yup from 'utils/YupSchema';
 import ProjectContactItemForm, {
   IProjectContactItemForm,
-  IProjectContactItemFormProps,
   ProjectContactItemInitialValues,
   ProjectContactItemYupSchema
 } from './ProjectContactItemForm';
+import ContactListItem from 'components/contact/ContactItem';
 
 export interface IProjectContactForm {
   contact: {
@@ -37,56 +31,21 @@ export const ProjectContactInitialValues: IProjectContactForm = {
 
 export const ProjectContactYupSchema = yup.object().shape({
   contact: yup.object().shape({
-    contacts: yup.array().of(ProjectContactItemYupSchema)
+    contacts: yup
+      .array()
+      .of(ProjectContactItemYupSchema)
+      .min(1, 'You must add at least one Contact')
+      .required('Required')
   })
 });
-
-export type IProjectContactFormProps = IProjectContactItemFormProps;
-
-const useStyles = makeStyles((theme: Theme) => ({
-  legend: {
-    marginTop: '1rem',
-    float: 'left',
-    marginBottom: '0.75rem',
-    letterSpacing: '-0.01rem'
-  },
-  title: {
-    flexGrow: 1,
-    marginRight: '1rem',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontWeight: 700
-  },
-  titleDesc: {
-    marginLeft: theme.spacing(1),
-    fontWeight: 400
-  },
-  contactListItem: {
-    padding: 0,
-    '& + li': {
-      marginTop: theme.spacing(2)
-    }
-  },
-  contactListItemInner: {
-    flexGrow: 1,
-    flexShrink: 1,
-    overflow: 'hidden'
-  },
-  contactListItemToolbar: {
-    paddingRight: theme.spacing(2)
-  }
-}));
 
 /**
  * Create project - contact section
  *
  * @return {*}
  */
-const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_agency }) => {
-  const classes = useStyles();
-
-  const { values } = useFormikContext<IProjectContactForm>();
+const ProjectContactForm: React.FC = () => {
+  const { values, errors } = useFormikContext<IProjectContactForm>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -103,6 +62,15 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
           Specify all contacts for the project.
         </Typography>
       </Box>
+      <Box mt={1} mb={2}>
+        {errors.contact &&
+          errors.contact.contacts &&
+          typeof errors.contact.contacts == 'string' && (
+            <Typography variant="body2" color="error">
+              {errors.contact.contacts}
+            </Typography>
+          )}
+      </Box>
       <Box>
         <FieldArray
           name="contact.contacts"
@@ -112,7 +80,7 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
                 dialogTitle={'Add Contact'}
                 open={isModalOpen}
                 component={{
-                  element: <ProjectContactItemForm coordinator_agency={coordinator_agency} />,
+                  element: <ProjectContactItemForm />,
                   initialValues: currentProjectContact.values,
                   validationSchema: ProjectContactItemYupSchema
                 }}
@@ -144,67 +112,25 @@ const ProjectContactForm: React.FC<IProjectContactFormProps> = ({ coordinator_ag
               <List dense disablePadding>
                 {!values.contact.contacts.length && (
                   <ListItem dense component={Paper}>
-                    <Box display="flex" flexGrow={1} justifyContent="center" alignContent="middle" p={2}>
+                    <Box
+                      display="flex"
+                      flexGrow={1}
+                      justifyContent="center"
+                      alignContent="middle"
+                      p={2}>
                       <Typography variant="subtitle2">No Contacts</Typography>
                     </Box>
                   </ListItem>
                 )}
                 {values.contact.contacts.map((contact, index) => (
-                  <ListItem dense className={classes.contactListItem} key={index}>
-                    <Paper className={classes.contactListItemInner}>
-                      <Toolbar className={classes.contactListItemToolbar}>
-                        <Typography className={classes.title}>
-                          {`${contact.first_name} ${contact.last_name}`}
-                          {JSON.parse(contact.is_primary) && (
-                            <Box ml={1} component="sup">
-                              <Typography variant="caption" color="textSecondary">
-                                Primary
-                              </Typography>
-                            </Box>
-                          )}
-                        </Typography>
-                        <IconButton
-                          color="primary"
-                          data-testid={'edit-button-' + index}
-                          title="Edit Contact"
-                          aria-label="Edit Contact"
-                          onClick={() => {
-                            setCurrentProjectContact({
-                              index: index,
-                              values: values.contact.contacts[index]
-                            });
-                            setIsModalOpen(true);
-                          }}>
-                          <Icon path={mdiPencilOutline} size={1} />
-                        </IconButton>
-                        <IconButton
-                          color="primary"
-                          data-testid={'delete-button-' + index}
-                          title="Remove Contact"
-                          aria-label="Remove Contact"
-                          onClick={() => arrayHelpers.remove(index)}>
-                          <Icon path={mdiTrashCanOutline} size={1} />
-                        </IconButton>
-                      </Toolbar>
-                      <Divider />
-                      <Box py={2} px={3}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} sm={6} md={4}>
-                            <Typography variant="body2" color="textSecondary">
-                              Agency
-                            </Typography>
-                            <Typography variant="body1">{contact.agency}</Typography>
-                          </Grid>
-                          <Grid item xs={12} sm={6} md={4}>
-                            <Typography variant="body2" color="textSecondary">
-                              Email
-                            </Typography>
-                            <Typography variant="body1">{contact.email_address}</Typography>
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    </Paper>
-                  </ListItem>
+                  <ContactListItem
+                    key={index}
+                    index={index}
+                    contact={contact}
+                    arrayHelpers={arrayHelpers}
+                    setCurrentContact={setCurrentProjectContact}
+                    setIsModalOpen={setIsModalOpen}
+                  />
                 ))}
               </List>
             </Box>

@@ -1,15 +1,15 @@
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
+import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from '../../../../constants/administrative-activity';
 import { SYSTEM_IDENTITY_SOURCE } from '../../../../constants/database';
 import { SYSTEM_ROLE } from '../../../../constants/roles';
 import { getDBConnection } from '../../../../database/db';
 import { HTTP400 } from '../../../../errors/custom-error';
 import { authorizeRequestHandler } from '../../../../request-handlers/security/authorization';
+import { AdministrativeActivityService } from '../../../../services/administrative-activity-service';
 import { UserService } from '../../../../services/user-service';
 import { coerceUserIdentitySource } from '../../../../utils/keycloak-utils';
 import { getLogger } from '../../../../utils/logger';
-import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from '../../../administrative-activities';
-import { updateAdministrativeActivity } from '../../../administrative-activity';
 
 const defaultLog = getLogger('paths/administrative-activity/system-access/{administrativeActivityId}/approve');
 
@@ -28,7 +28,7 @@ export const PUT: Operation = [
 ];
 
 PUT.apiDoc = {
-  description: "Update a user's system access request and add any specified system roles to the user.",
+  description: 'Update a users system access request and add any specified system roles to the user.',
   tags: ['user'],
   security: [
     {
@@ -124,6 +124,7 @@ export function approveAccessRequest(): RequestHandler {
       await connection.open();
 
       const userService = new UserService(connection);
+      const administrativeActivityService = new AdministrativeActivityService(connection);
 
       // Get the system user (adding or activating them if they already existed).
       const systemUserObject = await userService.ensureSystemUser(userGuid, userIdentifier, identitySource);
@@ -137,10 +138,9 @@ export function approveAccessRequest(): RequestHandler {
       }
 
       // Update the access request record status
-      await updateAdministrativeActivity(
+      await administrativeActivityService.putAdministrativeActivity(
         administrativeActivityId,
-        ADMINISTRATIVE_ACTIVITY_STATUS_TYPE.ACTIONED,
-        connection
+        ADMINISTRATIVE_ACTIVITY_STATUS_TYPE.ACTIONED
       );
 
       await connection.commit();

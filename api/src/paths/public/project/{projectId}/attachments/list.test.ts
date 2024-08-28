@@ -2,11 +2,11 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import * as db from '../../../../../database/db';
 import { HTTPError } from '../../../../../errors/custom-error';
 import { GetAttachmentsData } from '../../../../../models/project-attachments';
 import { AttachmentService } from '../../../../../services/attachment-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../../../__mocks__/db';
 import { getPublicProjectAttachments } from './list';
 
 chai.use(sinonChai);
@@ -22,18 +22,6 @@ describe('getPublicProjectAttachments', () => {
     }
   } as any;
 
-  let actualResult: any = null;
-
-  const sampleRes = {
-    status: () => {
-      return {
-        json: (result: any) => {
-          actualResult = result;
-        }
-      };
-    }
-  };
-
   afterEach(() => {
     sinon.restore();
   });
@@ -44,8 +32,8 @@ describe('getPublicProjectAttachments', () => {
     try {
       await getPublicProjectAttachments()(
         { ...sampleReq, params: { ...sampleReq.params, projectId: null } },
-        (null as unknown) as any,
-        (null as unknown) as any
+        null as unknown as any,
+        null as unknown as any
       );
       expect.fail();
     } catch (actualError) {
@@ -59,10 +47,18 @@ describe('getPublicProjectAttachments', () => {
 
     sinon.stub(AttachmentService.prototype, 'getAttachmentsByType').resolves(new GetAttachmentsData());
 
-    await getPublicProjectAttachments()(sampleReq, sampleRes as any, (null as unknown) as any);
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
-    expect(actualResult).to.be.eql(new GetAttachmentsData());
+    mockReq.params = { projectId: '1' };
+
+    const requestHandler = getPublicProjectAttachments();
+
+    await requestHandler(mockReq, mockRes, mockNext);
+
+    expect(mockRes.jsonValue).to.eql({ attachmentsList: [] });
+    expect(mockRes.statusValue).to.equal(200);
   });
+
   it('should throw an error when list attachments fails', async () => {
     const dbConnectionObj = getMockDBConnection({ rollback: sinon.stub(), release: sinon.stub() });
 

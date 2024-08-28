@@ -14,9 +14,11 @@ describe('PublicProjectContact', () => {
             first_name: 'Amanda',
             last_name: 'Christensen',
             email_address: 'amanda@christensen.com',
-            agency: 'some associates',
+            organization: 'some associates',
+            phone_number: '123-456-7890',
             is_public: 'true',
-            is_primary: 'true'
+            is_primary: 'true',
+            is_first_nation: true
           }
         ]
       }

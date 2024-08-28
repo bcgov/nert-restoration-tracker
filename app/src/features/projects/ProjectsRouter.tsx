@@ -1,70 +1,86 @@
-import { RoleGuard, SystemRoleGuard } from 'components/security/Guards';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import EditProjectPage from 'features/edit/EditProjectPage';
 import CreateProjectPage from 'features/projects/create/CreateProjectPage';
-import ProjectsLayout from 'features/projects/ProjectsLayout';
+import EditProjectPage from 'features/projects/edit/EditProjectPage';
 import ViewProjectPage from 'features/projects/view/ViewProjectPage';
 import React from 'react';
-import { Redirect, Switch } from 'react-router';
-import AppRoute from 'utils/AppRoute';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ProjectParticipantsPage from './participants/ProjectParticipantsPage';
-import ProjectsPage from './ProjectsPage';
+import ProjectsPlansListPage from './ProjectsPlansListPage';
+import ProjectsLayout from 'layouts/ProjectsLayout';
+import { RedirectURL } from 'utils/AppRoutesUtils';
+import { ProjectAuthStateContextProvider } from 'contexts/projectAuthStateContext';
+import { ProjectRoleGuard } from 'components/security/Guards';
 
 /**
  * Router for all `/admin/project/*` pages.
  *
- * @param {*} props
  * @return {*}
  */
 const ProjectsRouter: React.FC = () => {
   return (
-    <Switch>
-      <AppRoute exact path="/admin/projects" layout={ProjectsLayout}>
-        <ProjectsPage />
-      </AppRoute>
+    <Routes>
+      <Route element={<ProjectsLayout />}>
+        {/*  Redirect any unknown routes to the projects page */}
+        <Route path="/" element={<ProjectsPlansListPage />} />
+        <Route path=":id" element={<RedirectURL basePath="/admin/projects" />} />
+        {/* Create */}
+        <Route path="/create" element={<CreateProjectPage />} />
 
-      <AppRoute exact path="/admin/projects/create" layout={ProjectsLayout}>
-        <SystemRoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR]}
-          fallback={<Redirect to={'/projects'} />}>
-          <CreateProjectPage />
-        </SystemRoleGuard>
-      </AppRoute>
+        {/* Edit */}
+        <Route
+          path=":id/edit"
+          element={
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+                <EditProjectPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
+          }
+        />
 
-      <AppRoute exact path="/admin/projects/:id/edit" layout={ProjectsLayout}>
-        <RoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-          fallback={(projectId) => <Redirect to={`/projects/${projectId}`} path="" />}>
-          <EditProjectPage />
-        </RoleGuard>
-      </AppRoute>
+        {/* View */}
+        <Route path=":id" element={<Navigate replace to=":id/details" />} />
+        <Route
+          path=":id/details"
+          element={
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[
+                  SYSTEM_ROLE.SYSTEM_ADMIN,
+                  SYSTEM_ROLE.MAINTAINER,
+                  SYSTEM_ROLE.PROJECT_CREATOR
+                ]}
+                validProjectRoles={[
+                  PROJECT_ROLE.PROJECT_LEAD,
+                  PROJECT_ROLE.PROJECT_EDITOR,
+                  PROJECT_ROLE.PROJECT_VIEWER
+                ]}>
+                <ViewProjectPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
+          }
+        />
 
-      <Redirect exact from="/admin/projects/:id" to="/admin/projects/:id/details" />
-
-      <AppRoute exact path="/admin/projects/:id/details" layout={ProjectsLayout}>
-        <RoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER]}
-          fallback={(projectId) => <Redirect to={`/projects/${projectId}`} />}>
-          <ViewProjectPage />
-        </RoleGuard>
-      </AppRoute>
-
-      <AppRoute exact path="/admin/projects/:id/users" layout={ProjectsLayout}>
-        <RoleGuard
-          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-          validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
-          fallback={(projectId) => <Redirect to={`/projects/${projectId}`} />}>
-          <ProjectParticipantsPage />
-        </RoleGuard>
-      </AppRoute>
+        {/* Participants */}
+        <Route
+          path=":id/users"
+          element={
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
+                <ProjectParticipantsPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
+          }
+        />
+      </Route>
 
       {/*  Catch any unknown routes, and re-direct to the not found page */}
-      <AppRoute path="/admin/projects/*">
-        <Redirect to="/page-not-found" />
-      </AppRoute>
-    </Switch>
+      <Route path="*" element={<Navigate replace to="/page-not-found" />} />
+    </Routes>
   );
 };
 

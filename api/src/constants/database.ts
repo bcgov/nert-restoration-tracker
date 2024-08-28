@@ -11,3 +11,14 @@ export enum SYSTEM_IDENTITY_SOURCE {
   BCEID_BUSINESS = 'BCEIDBUSINESS',
   SYSTEM = 'SYSTEM'
 }
+
+/**
+ * The source system for a dataset submission.
+ *
+ *
+ * @export
+ * @enum {number}
+ */
+export enum SOURCE_SYSTEM {
+  'NERT-PUBLIC-5352' = 'nert-public-5352'
+}

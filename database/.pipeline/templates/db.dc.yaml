@@ -19,7 +19,7 @@ parameters:
   - description: The OpenShift Namespace where the ImageStream resides.
     displayName: Namespace
     name: IMAGE_STREAM_NAMESPACE
-    value: 'b1d40d-tools'
+    value: 'd83219-tools'
   - description: The name of the OpenShift Service exposed for the database.
     displayName: Database Service Name
     name: DATABASE_SERVICE_NAME
@@ -136,7 +136,8 @@ objects:
       creationTimestamp:
       labels:
         shared: 'true'
-      annotations: {}
+      annotations:
+        iconClass: icon-postgresql
       role: db
     spec:
       lookupPolicy:

@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
 import * as db from '../../../../database/db';
 import { HTTPError } from '../../../../errors/custom-error';
 import { ProjectService } from '../../../../services/project-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
 import * as get_project_participants from './get';
 
 chai.use(sinonChai);
@@ -66,12 +66,12 @@ describe('gets a list of project participants', () => {
       projectId: '1'
     };
 
-    sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves([{ id: 1 }]);
+    sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves([{ system_user_id: 1 } as any]);
 
     const requestHandler = get_project_participants.getParticipants();
 
     await requestHandler(mockReq, mockRes, mockNext);
 
-    expect(mockRes.jsonValue).to.eql({ participants: [{ id: 1 }] });
+    expect(mockRes.jsonValue).to.eql({ participants: [{ system_user_id: 1 }] });
   });
 });

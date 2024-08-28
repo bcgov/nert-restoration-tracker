@@ -2,11 +2,8 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
-import * as db from '../../database/db';
-import { HTTPError } from '../../errors/custom-error';
-import public_queries from '../../queries/public';
 import { getMockDBConnection } from '../../__mocks__/db';
+import * as db from '../../database/db';
 import * as search from './search';
 
 chai.use(sinonChai);
@@ -35,26 +32,6 @@ describe('search', () => {
       sinon.restore();
     });
 
-    it('should throw a 400 error when fails to get sql statement', async () => {
-      sinon.stub(db, 'getDBConnection').returns({
-        ...dbConnectionObj,
-        systemUserId: () => {
-          return 20;
-        }
-      });
-      sinon.stub(public_queries, 'getPublicSpatialSearchResultsSQL').returns(null);
-
-      try {
-        const result = search.getSearchResults();
-
-        await result(sampleReq, (null as unknown) as any, (null as unknown) as any);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Failed to build SQL get statement');
-      }
-    });
-
     it('should return null when no response returned from getPublicSpatialSearchResultsSQL', async () => {
       const mockQuery = sinon.stub();
 
@@ -65,13 +42,12 @@ describe('search', () => {
         systemUserId: () => {
           return 20;
         },
-        query: mockQuery
+        sql: mockQuery
       });
-      sinon.stub(public_queries, 'getPublicSpatialSearchResultsSQL').returns(SQL`something`);
 
       const result = search.getSearchResults();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult).to.equal(null);
     });
@@ -86,13 +62,12 @@ describe('search', () => {
         systemUserId: () => {
           return 20;
         },
-        query: mockQuery
+        sql: mockQuery
       });
-      sinon.stub(public_queries, 'getPublicSpatialSearchResultsSQL').returns(SQL`something`);
 
       const result = search.getSearchResults();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult).to.eql([]);
     });
@@ -102,6 +77,10 @@ describe('search', () => {
         {
           id: 1,
           name: 'name',
+          is_project: false,
+          number_sites: 1,
+          size_ha: 100,
+          state_code: 1,
           geometry: '{"type":"Point","coordinates":[50.7,60.9]}'
         }
       ];
@@ -115,18 +94,21 @@ describe('search', () => {
         systemUserId: () => {
           return 20;
         },
-        query: mockQuery
+        sql: mockQuery
       });
-      sinon.stub(public_queries, 'getPublicSpatialSearchResultsSQL').returns(SQL`something`);
 
       const result = search.getSearchResults();
 
-      await result(sampleReq, sampleRes as any, (null as unknown) as any);
+      await result(sampleReq, sampleRes as any, null as unknown as any);
 
       expect(actualResult).to.eql([
         {
           id: searchList[0].id,
+          is_project: false,
           name: searchList[0].name,
+          number_sites: searchList[0].number_sites,
+          size_ha: searchList[0].size_ha,
+          state_code: searchList[0].state_code,
           geometry: [
             {
               type: 'Point',

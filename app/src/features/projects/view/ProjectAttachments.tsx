@@ -1,12 +1,19 @@
 import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
+import { Button } from '@mui/material';
 import AttachmentsList from 'components/attachments/AttachmentsList';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
-import { H2ButtonToolbar } from 'components/toolbar/ActionToolbars';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IGetProjectAttachment, IUploadAttachmentResponse } from 'interfaces/useProjectApi.interface';
+import { ProjectRoleGuard } from 'components/security/Guards';
+import { ActionToolbar } from 'components/toolbar/ActionToolbars';
+import { S3FileType } from 'constants/attachments';
+import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
+import { useNertApi } from 'hooks/useNertApi';
+import {
+  IGetProjectAttachment,
+  IUploadAttachmentResponse
+} from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 
@@ -22,21 +29,21 @@ export interface IProjectAttachmentsProps {
  */
 const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
   const { attachmentsList, getAttachments } = props;
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const urlParams: Record<string, string | number | undefined> = useParams();
+  const projectId = Number(urlParams['id']);
+  const restorationTrackerApi = useNertApi();
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 
   const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
-    return (file, cancelToken, handleFileUploadProgress) => {
+    return (file, cancelToken) => {
       return restorationTrackerApi.project.uploadProjectAttachments(
         projectId,
         file,
-        cancelToken,
-        handleFileUploadProgress
+        S3FileType.ATTACHMENTS,
+        cancelToken
       );
     };
   };
@@ -53,19 +60,29 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
         <FileUpload uploadHandler={getUploadHandler()} />
       </ComponentDialog>
 
-      <H2ButtonToolbar
-        aria-label="upload documents"
-        label="Documents"
-        buttonLabel="Upload"
-        buttonTitle="Upload Documents"
-        buttonStartIcon={<Icon path={mdiTrayArrowUp} size={1} />}
-        buttonOnClick={handleUploadAttachmentClick}
-        buttonProps={{
-          variant: 'outlined'
-        }}
-      />
+      <ProjectRoleGuard
+        validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+        validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
+        <ActionToolbar label={'Documents'} labelProps={{ variant: 'h2' }}>
+          <Button
+            id={'upload-documents'}
+            data-testid={'upload-documents'}
+            variant="outlined"
+            color="primary"
+            title={'Upload Documents'}
+            aria-label={'Upload Documents'}
+            startIcon={<Icon path={mdiTrayArrowUp} size={1} />}
+            onClick={() => handleUploadAttachmentClick()}>
+            Upload
+          </Button>
+        </ActionToolbar>
+      </ProjectRoleGuard>
 
-      <AttachmentsList projectId={projectId} attachmentsList={attachmentsList} getAttachments={getAttachments} />
+      <AttachmentsList
+        projectId={projectId}
+        attachmentsList={attachmentsList}
+        getAttachments={getAttachments}
+      />
     </>
   );
 };

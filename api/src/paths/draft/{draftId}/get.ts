@@ -2,8 +2,7 @@ import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../../../constants/roles';
 import { getDBConnection } from '../../../database/db';
-import { HTTP400 } from '../../../errors/custom-error';
-import { queries } from '../../../queries/queries';
+import { DraftRepository } from '../../../repositories/draft-repository';
 import { authorizeRequestHandler } from '../../../request-handlers/security/authorization';
 import { getLogger } from '../../../utils/logger';
 
@@ -14,7 +13,7 @@ export const GET: Operation = [
     return {
       and: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         }
       ]
@@ -49,10 +48,13 @@ GET.apiDoc = {
           schema: {
             title: 'Draft Get Response Object',
             type: 'object',
-            required: ['id', 'name', 'data'],
+            required: ['id', 'is_project', 'name', 'data'],
             properties: {
               id: {
                 type: 'number'
+              },
+              is_project: {
+                type: 'boolean'
               },
               name: {
                 type: 'string',
@@ -94,21 +96,16 @@ GET.apiDoc = {
 export function getSingleDraft(): RequestHandler {
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
-
     try {
-      const getDraftSQLStatement = queries.project.draft.getDraftSQL(Number(req.params.draftId));
-
-      if (!getDraftSQLStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
-
       await connection.open();
 
-      const draftResponse = await connection.query(getDraftSQLStatement.text, getDraftSQLStatement.values);
+      const draftRepository = new DraftRepository(connection);
+
+      const draftResponse = await draftRepository.getDraft(Number(req.params.draftId));
 
       await connection.commit();
 
-      const draftResult = (draftResponse && draftResponse.rows && draftResponse.rows[0]) || null;
+      const draftResult = draftResponse || null;
 
       return res.status(200).json(draftResult);
     } catch (error) {

@@ -1,19 +1,18 @@
 import { AxiosInstance, CancelTokenSource } from 'axios';
-import { attachmentType } from 'constants/misc';
+import { S3FileType } from 'constants/attachments';
+import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import {
   IAddProjectParticipant,
   ICreateProjectRequest,
   ICreateProjectResponse,
+  IEditProjectRequest,
   IGetProjectAttachmentsResponse,
+  IGetProjectForEditResponse,
   IGetProjectForViewResponse,
   IGetProjectParticipantsResponse,
-  IGetProjectsListResponse,
-  IGetProjectTreatmentsResponse,
   IGetUserProjectsListResponse,
-  IPostTreatmentUnitResponse,
   IProjectAdvancedFilterRequest,
-  IUploadAttachmentResponse,
-  TreatmentSearchCriteria
+  IUploadAttachmentResponse
 } from 'interfaces/useProjectApi.interface';
 import qs from 'qs';
 
@@ -30,7 +29,9 @@ const useProjectApi = (axios: AxiosInstance) => {
    * @param {number} userId
    * @return {*} {Promise<IGetProjectsListResponse[]>}
    */
-  const getAllUserProjectsParticipation = async (userId: number): Promise<IGetUserProjectsListResponse[]> => {
+  const getAllUserProjectsParticipation = async (
+    userId: number
+  ): Promise<IGetUserProjectsListResponse[]> => {
     const { data } = await axios.get(`/api/user/${userId}/projects/participation/list`);
     return data;
   };
@@ -55,46 +56,17 @@ const useProjectApi = (axios: AxiosInstance) => {
    */
   const getProjectAttachments = async (
     projectId: number,
-    type?: attachmentType
+    type?: S3FileType
   ): Promise<IGetProjectAttachmentsResponse> => {
     const { data } = await axios.get(`/api/project/${projectId}/attachments/list`, {
       params: { type: type },
       paramsSerializer: (params) => {
-        return qs.stringify(params, { arrayFormat: 'repeat', filter: (_prefix, value) => value || undefined });
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
       }
     });
-
-    return data;
-  };
-
-  /**
-   * Get project treatments based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatments = async (
-    projectId: number,
-    filterByYear?: TreatmentSearchCriteria
-  ): Promise<IGetProjectTreatmentsResponse> => {
-    const { data } = await axios.get(`/api/project/${projectId}/treatments/list`, {
-      params: filterByYear,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, { arrayFormat: 'repeat', filter: (_prefix, value) => value || undefined });
-      }
-    });
-
-    return data;
-  };
-
-  /**
-   * Get project treatments years based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatmentsYears = async (projectId: number): Promise<{ year: number }[]> => {
-    const { data } = await axios.get(`/api/project/${projectId}/treatments/year/list`);
 
     return data;
   };
@@ -118,8 +90,25 @@ const useProjectApi = (axios: AxiosInstance) => {
    * @param {number} attachmentId
    * @returns {*} {Promise<number>}
    */
-  const deleteProjectAttachment = async (projectId: number, attachmentId: number): Promise<number> => {
-    const { data } = await axios.delete(`/api/project/${projectId}/attachments/${attachmentId}/delete`);
+  const deleteProjectAttachment = async (
+    projectId: number,
+    attachmentId: number
+  ): Promise<number> => {
+    const { data } = await axios.delete(
+      `/api/project/${projectId}/attachments/${attachmentId}/delete`
+    );
+
+    return data;
+  };
+
+  /**
+   * Delete project thumbnail based on project ID
+   *
+   * @param {number} projectId
+   * @return {*}  {Promise<number>}
+   */
+  const deleteProjectThumbnail = async (projectId: number): Promise<number> => {
+    const { data } = await axios.delete(`/api/project/${projectId}/attachments/thumbnail/delete`);
 
     return data;
   };
@@ -136,7 +125,10 @@ const useProjectApi = (axios: AxiosInstance) => {
     const { data } = await axios.get(`/api/project/list`, {
       params: filterFieldData,
       paramsSerializer: (params) => {
-        return qs.stringify(params, { arrayFormat: 'repeat', filter: (_prefix, value) => value || undefined });
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
       }
     });
 
@@ -156,13 +148,40 @@ const useProjectApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Get project details based on its ID for viewing purposes.
+   *
+   * @param {number} projectId
+   * @return {*} {Promise<IGetProjectForViewResponse>}
+   */
+  const getProjectByIdForEdit = async (projectId: number): Promise<IGetProjectForEditResponse> => {
+    const { data } = await axios.get(`/api/project/${projectId}/update`);
+
+    return data;
+  };
+
+  /**
    * Update an existing project.
    *
    * @param {number} projectId
-   * @param {IGetProjectForViewResponse} projectData
+   * @param {IEditProjectRequest} projectData
    * @return {*}  {Promise<any>}
    */
-  const updateProject = async (projectId: number, projectData: IGetProjectForViewResponse): Promise<any> => {
+  const updateProject = async (
+    projectId: number,
+    projectData: IEditProjectRequest
+  ): Promise<{ id: number }> => {
+    // if project image is provided, handle it
+    if (projectData.project.project_image) {
+      // if image key is provided, remove the image from the project
+
+      const projectImage = projectData.project.project_image;
+      projectData.project.project_image = null;
+
+      await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    } else if (projectData.project.image_key === null) {
+      await deleteProjectThumbnail(projectId);
+    }
+
     const { data } = await axios.put(`api/project/${projectId}/update`, projectData);
 
     return data;
@@ -175,34 +194,32 @@ const useProjectApi = (axios: AxiosInstance) => {
    * @return {*}  {Promise<ICreateProjectResponse>}
    */
   const createProject = async (project: ICreateProjectRequest): Promise<ICreateProjectResponse> => {
+    // Handle the project image file
+    // remove the image file off project json
+    const projectImage = project.project.project_image;
+    project.project.project_image = null;
+    project.project.image_url = undefined;
+
+    const imageKey = project.project.image_key;
+    project.project.image_key = undefined;
+
     const { data } = await axios.post('/api/project/create', project);
 
-    return data;
-  };
+    const projectId = data.id;
 
-  /**
-   * Upload project treatment spacial files.
-   *
-   * @param {number} projectId
-   * @param {File} file
-   * @param {CancelTokenSource} [cancelTokenSource]
-   * @param {(progressEvent: ProgressEvent) => void} [onProgress]
-   * @return {*}  {Promise<string[]>}
-   */
-  const importProjectTreatmentSpatialFile = async (
-    projectId: number,
-    file: File,
-    cancelTokenSource?: CancelTokenSource,
-    onProgress?: (progressEvent: ProgressEvent) => void
-  ): Promise<IPostTreatmentUnitResponse> => {
-    const req_message = new FormData();
-
-    req_message.append('media', file);
-
-    const { data } = await axios.post(`/api/project/${projectId}/treatments/upload`, req_message, {
-      cancelToken: cancelTokenSource?.token,
-      onUploadProgress: onProgress
-    });
+    /*
+     * Upload Thumbnail Image
+     * If a project image is provided, upload it to S3 and associate it with the project.
+     * If an image URL is provided, associate it with the project. and move the image to the correct location
+     */
+    if (projectImage) {
+      await uploadProjectAttachments(projectId, projectImage, S3FileType.THUMBNAIL);
+    } else if (imageKey) {
+      await axios.post(`/api/project/${projectId}/attachments/update`, {
+        key: imageKey,
+        fileType: S3FileType.THUMBNAIL
+      });
+    }
 
     return data;
   };
@@ -219,55 +236,18 @@ const useProjectApi = (axios: AxiosInstance) => {
   const uploadProjectAttachments = async (
     projectId: number,
     file: File,
-    cancelTokenSource?: CancelTokenSource,
-    onProgress?: (progressEvent: ProgressEvent) => void
+    fileType: string,
+    cancelTokenSource?: CancelTokenSource
   ): Promise<IUploadAttachmentResponse> => {
     const req_message = new FormData();
 
     req_message.append('media', file);
+    req_message.append('fileType', fileType);
 
     const { data } = await axios.post(`/api/project/${projectId}/attachments/upload`, req_message, {
-      cancelToken: cancelTokenSource?.token,
-      onUploadProgress: onProgress
+      cancelToken: cancelTokenSource?.token
     });
 
-    return data;
-  };
-
-  /**
-   * Delete funding source based on project and funding source ID
-   *
-   * @param {number} projectId
-   * @param {number} pfsId
-   * @returns {*} {Promise<any>}
-   */
-  const deleteFundingSource = async (projectId: number, pfsId: number): Promise<any> => {
-    const { data } = await axios.delete(`/api/project/${projectId}/funding-sources/${pfsId}/delete`);
-
-    return data;
-  };
-
-  /**
-   * Add new funding source based on projectId
-   *
-   * @param {number} projectId
-   * @returns {*} {Promise<any>}
-   */
-  const addFundingSource = async (projectId: number, fundingSource: any): Promise<any> => {
-    const { data } = await axios.post(`/api/project/${projectId}/funding-sources/add`, fundingSource);
-
-    return data;
-  };
-
-  /**
-   * Publish/unpublish a project.
-   *
-   * @param {number} projectId the project id
-   * @param {boolean} publish set to `true` to publish the project, `false` to unpublish the project.
-   * @return {*}  {Promise<any>}
-   */
-  const publishProject = async (projectId: number, publish: boolean): Promise<any> => {
-    const { data } = await axios.put(`/api/project/${projectId}/publish`, { publish: publish });
     return data;
   };
 
@@ -277,7 +257,9 @@ const useProjectApi = (axios: AxiosInstance) => {
    * @param {number} projectId
    * @return {*}  {Promise<IGetProjectParticipantsResponse>}
    */
-  const getProjectParticipants = async (projectId: number): Promise<IGetProjectParticipantsResponse> => {
+  const getProjectParticipants = async (
+    projectId: number
+  ): Promise<IGetProjectParticipantsResponse> => {
     const { data } = await axios.get(`/api/project/${projectId}/participants/get`);
 
     return data;
@@ -294,7 +276,9 @@ const useProjectApi = (axios: AxiosInstance) => {
     projectId: number,
     participants: IAddProjectParticipant[]
   ): Promise<boolean> => {
-    const { status } = await axios.post(`/api/project/${projectId}/participants/create`, { participants });
+    const { status } = await axios.post(`/api/project/${projectId}/participants/create`, {
+      participants
+    });
 
     return status === 200;
   };
@@ -306,8 +290,13 @@ const useProjectApi = (axios: AxiosInstance) => {
    * @param {number} projectParticipationId
    * @return {*}  {Promise<boolean>} `true` if the request was successful, false otherwise.
    */
-  const removeProjectParticipant = async (projectId: number, projectParticipationId: number): Promise<boolean> => {
-    const { status } = await axios.delete(`/api/project/${projectId}/participants/${projectParticipationId}/delete`);
+  const removeProjectParticipant = async (
+    projectId: number,
+    projectParticipationId: number
+  ): Promise<boolean> => {
+    const { status } = await axios.delete(
+      `/api/project/${projectId}/participants/${projectParticipationId}/delete`
+    );
 
     return status === 200;
   };
@@ -325,55 +314,27 @@ const useProjectApi = (axios: AxiosInstance) => {
     projectParticipationId: number,
     roleId: number
   ): Promise<boolean> => {
-    const { status } = await axios.put(`/api/project/${projectId}/participants/${projectParticipationId}/update`, {
-      roleId
-    });
-
-    return status === 200;
-  };
-
-  /**
-   * Delete project treatment unit based on project and treatmentUnit ID
-   *
-   * @param {number} projectId
-   * @param {number} treatmentUnitId
-   * @returns {*} {Promise<number>}
-   */
-  const deleteProjectTreatmentUnit = async (projectId: number, treatmentUnitId: number): Promise<boolean> => {
-    const { status } = await axios.delete(
-      `/api/project/${projectId}/treatments/treatment-unit/${treatmentUnitId}/delete`
+    const { status } = await axios.put(
+      `/api/project/${projectId}/participants/${projectParticipationId}/update`,
+      {
+        roleId
+      }
     );
 
     return status === 200;
   };
 
   /**
-   * Delete project treatments based on project ID and year
+   * Update project state code based on project ID
    *
    * @param {number} projectId
-   * @param {number} attachmentId
-   * @returns {*} {Promise<void>}
+   * @param {number} statCode
+   * @return {*}  {Promise<number>}
    */
-  const deleteProjectTreatments = async (projectId: number): Promise<boolean> => {
-    const { status } = await axios.delete(`/api/project/${projectId}/treatments/delete`);
+  const updateProjectStateCode = async (projectId: number, stateCode: number): Promise<number> => {
+    const { data } = await axios.put(`/api/project/${projectId}/state/${stateCode}/update`);
 
-    return status === 200;
-  };
-
-  /**
-   * Download an EML file containing the project meta data.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<{ fileData: string; fileName: string }>}
-   */
-  const downloadProjectEML = async (projectId: number): Promise<{ fileData: string; fileName: string }> => {
-    const response = await axios.get<{ eml: string }>(`/api/project/${projectId}/export/eml`);
-
-    const fileName =
-      response.headers?.['content-disposition']?.split('filename=')[1].replace(/(^['"]|['"]$)/g, '') ||
-      'project_eml.xml';
-
-    return { fileData: response.data.eml, fileName: fileName };
+    return data;
   };
 
   return {
@@ -381,25 +342,19 @@ const useProjectApi = (axios: AxiosInstance) => {
     getProjectsList,
     createProject,
     getProjectById,
-    getProjectTreatmentsYears,
-    importProjectTreatmentSpatialFile,
-    deleteProjectTreatmentUnit,
-    deleteProjectTreatments,
-    getProjectTreatments,
+    getProjectByIdForEdit,
     uploadProjectAttachments,
     updateProject,
     getProjectAttachments,
     deleteProjectAttachment,
-    deleteFundingSource,
-    addFundingSource,
+    deleteProjectThumbnail,
     deleteProject,
-    publishProject,
     getProjectParticipants,
     addProjectParticipants,
     removeProjectParticipant,
     updateProjectParticipantRole,
     getUserProjectsList,
-    downloadProjectEML
+    updateProjectStateCode
   };
 };
 
@@ -413,23 +368,56 @@ export default useProjectApi;
  */
 export const usePublicProjectApi = (axios: AxiosInstance) => {
   /**
-   * Get public facing (published) projects list.
+   * Get projects list (potentially based on filter criteria).
    *
-   * @return {*}  {Promise<IGetProjectsListResponse[]>}
+   * @param {IProjectAdvancedFilterRequest} filterFieldData
+   * @return {*}  {Promise<IGetProjectForViewResponse[]>}
    */
-  const getProjectsList = async (): Promise<IGetProjectsListResponse[]> => {
-    const { data } = await axios.get(`/api/public/projects`);
+  const getProjectsList = async (
+    filterFieldData?: IProjectAdvancedFilterRequest
+  ): Promise<IGetProjectForViewResponse[]> => {
+    const { data } = await axios.get(`/api/public/projects`, {
+      params: filterFieldData,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
+      }
+    });
 
     return data;
   };
 
   /**
-   * Get public (published) project details based on its ID for viewing purposes.
+   * Get plans list (potentially based on filter criteria).
+   *
+   * @param {IProjectAdvancedFilterRequest} filterFieldData
+   * @return {*}  {Promise<IGetProjectForViewResponse[]>}
+   */
+  const getPlansList = async (
+    filterFieldData?: IProjectAdvancedFilterRequest
+  ): Promise<IGetPlanForViewResponse[]> => {
+    const { data } = await axios.get(`/api/public/plans`, {
+      params: filterFieldData,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, {
+          arrayFormat: 'repeat',
+          filter: (_prefix, value) => value || undefined
+        });
+      }
+    });
+
+    return data;
+  };
+
+  /**
+   * Get public (published) project or plan details based on its ID for viewing purposes.
    *
    * @param {number} projectId
-   * @return {*} {Promise<IGetProjectForViewResponse>}
+   * @return {*} {any>}  could be a project or a plan response
    */
-  const getProjectForView = async (projectId: number): Promise<IGetProjectForViewResponse> => {
+  const getProjectPlanForView = async (projectId: number): Promise<IGetProjectForViewResponse> => {
     const { data } = await axios.get(`/api/public/project/${projectId}/view`);
 
     return data;
@@ -439,68 +427,23 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
    * Get public (published) project attachments based on project ID
    *
    * @param {number} projectId
+   * @param {S3FileType} type
    * @returns {*} {Promise<IGetProjectAttachmentsResponse>}
    */
-  const getProjectAttachments = async (projectId: number): Promise<IGetProjectAttachmentsResponse> => {
-    const { data } = await axios.get(`/api/public/project/${projectId}/attachments/list`);
-
-    return data;
-  };
-
-  /**
-   * Get project treatments based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatments = async (
+  const getProjectAttachments = async (
     projectId: number,
-    filterByYear?: TreatmentSearchCriteria
-  ): Promise<IGetProjectTreatmentsResponse> => {
-    const { data } = await axios.get(`/api/public/project/${projectId}/treatments/list`, {
-      params: filterByYear,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, { arrayFormat: 'repeat', filter: (_prefix, value) => value || undefined });
-      }
+    type?: S3FileType
+  ): Promise<IGetProjectAttachmentsResponse> => {
+    const { data } = await axios.get(`/api/public/project/${projectId}/attachments/list`, {
+      params: { type: type }
     });
-
     return data;
-  };
-
-  /**
-   * Get project treatments years based on project ID
-   *
-   * @param {AxiosInstance} axios
-   * @returns {*} {Promise<IGetProjectTreatmentResponse>}
-   */
-  const getProjectTreatmentsYears = async (projectId: number): Promise<{ year: number }[]> => {
-    const { data } = await axios.get(`/api/public/project/${projectId}/treatments/year/list`);
-
-    return data;
-  };
-
-  /**
-   * Download an EML file containing the project meta data.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<{ fileData: string; fileName: string }>}
-   */
-  const downloadProjectEML = async (projectId: number): Promise<{ fileData: string; fileName: string }> => {
-    const response = await axios.get<{ eml: string }>(`/api/public/project/${projectId}/export/eml`);
-
-    const fileName =
-      response.headers?.['content-disposition']?.split('filename=')[1].replace(/(^['"]|['"]$)/g, '') ||
-      'project_eml.xml';
-
-    return { fileData: response.data.eml, fileName: fileName };
   };
 
   return {
+    getPlansList,
     getProjectsList,
-    getProjectForView,
-    getProjectAttachments,
-    getProjectTreatments,
-    getProjectTreatmentsYears,
-    downloadProjectEML
+    getProjectPlanForView,
+    getProjectAttachments
   };
 };

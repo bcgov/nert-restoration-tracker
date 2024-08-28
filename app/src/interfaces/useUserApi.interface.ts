@@ -1,17 +1,12 @@
-export interface IGetUserResponse {
-  project_id: number;
-  name: string;
-  system_user_id: number;
-  project_role_id: number;
-  project_role_name: string;
-  project_participation_id: number;
-}
-
-export interface IGetUserResponse {
+export interface ISystemUser {
   id: number;
   user_identifier: string;
-  record_end_date: string;
-  role_ids: string[];
-  role_names: string[];
-  projects: IGetUserResponse[];
+  user_guid: string | null;
+  identity_source: string;
+  record_end_date: string | null;
+  role_ids: [number] | [];
+  role_names: [string] | [];
+  email: string;
+  display_name: string;
+  agency: string | null;
 }

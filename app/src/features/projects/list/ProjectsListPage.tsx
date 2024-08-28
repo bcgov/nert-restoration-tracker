@@ -1,210 +1,526 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import Chip from '@material-ui/core/Chip';
-import Link from '@material-ui/core/Link';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import clsx from 'clsx';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { DownloadEMLI18N } from 'constants/i18n';
-import { ProjectStatusType } from 'constants/misc';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import {
+  Box,
+  Card,
+  Checkbox,
+  Chip,
+  FormControlLabel,
+  IconButton,
+  Link,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import { DialogContext } from 'contexts/dialogContext';
-import { APIError } from 'hooks/api/useAxios';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
+import { SystemRoleGuard } from 'components/security/Guards';
+import {
+  getStateCodeFromLabel,
+  getStateLabelFromCode,
+  getStatusStyle,
+  states
+} from 'components/workflow/StateMachine';
+import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { ProjectTableI18N, TableI18N } from 'constants/i18n';
+import { SYSTEM_ROLE } from 'constants/roles';
+import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
+import { IGetProjectForViewResponse, IProjectsListProps } from 'interfaces/useProjectApi.interface';
+import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as utils from 'utils/pagedProjectPlanTableUtils';
+import { getFormattedDate } from 'utils/Utils';
+import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
+import ProjectsTableHead from 'features/projects/components/ProjectsTableHead';
+import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
+import ProjectsTableToolbar from 'features/projects/components/ProjectsTableToolbar';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
-import moment from 'moment';
-import React, { useContext } from 'react';
-import { useHistory } from 'react-router';
-import { getFormattedDate, triggerFileDownload } from 'utils/Utils';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  linkButton: {
-    textAlign: 'left'
-  },
-  chip: {
-    color: 'white'
-  },
-  chipActive: {
-    backgroundColor: theme.palette.success.main
-  },
-  chipPublishedCompleted: {
-    backgroundColor: theme.palette.success.main
-  },
-  chipDraft: {
-    backgroundColor: theme.palette.info.main
-  }
-}));
-
-export interface IProjectsListProps {
-  projects: IGetProjectForViewResponse[];
-  drafts?: IGetDraftsListResponse[];
-}
 
 const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
-  const { projects, drafts } = props;
+  const { projects, drafts, myproject } = props;
+  const history = useNavigate();
 
-  const history = useHistory();
-  const classes = useStyles();
+  const [selected, setSelected] = useState<readonly number[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<utils.ProjectData[]>([]);
+  const [page, setPage] = useState(0);
+  // using state for table row changes
+  const [rows, setRows] = useState<utils.ProjectData[]>([]);
 
-  const dialogContext = useContext(DialogContext);
+  const projectAuthStateContext = useContext(ProjectAuthStateContext);
+  const isUserAdmin = projectAuthStateContext.hasSystemRole([
+    SYSTEM_ROLE.SYSTEM_ADMIN,
+    SYSTEM_ROLE.MAINTAINER
+  ])
+    ? true
+    : false;
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const myProject = myproject && true === myproject ? true : false;
+  const archCode = getStateCodeFromLabel(states.ARCHIVED);
+  const draftCode = getStateCodeFromLabel(states.DRAFT);
+  const draftStatusStyle = getStatusStyle(draftCode);
 
-  const getProjectStatusType = (projectData: IGetProjectForViewResponse): ProjectStatusType => {
-    if (projectData.project.end_date && moment(projectData.project.end_date).endOf('day').isBefore(moment())) {
-      return ProjectStatusType.COMPLETED;
+  function filterProjects(
+    projects: IGetProjectForViewResponse[],
+    drafts?: IGetDraftsListResponse[]
+  ): utils.ProjectData[] {
+    let rowsProjectFilterOutArchived = projects;
+    if (rowsProjectFilterOutArchived && isUserAdmin) {
+      rowsProjectFilterOutArchived = projects.filter(
+        (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+      );
     }
 
-    return ProjectStatusType.ACTIVE;
-  };
-
-  const getChipIcon = (statusType: ProjectStatusType) => {
-    let chipLabel;
-    let chipStatusClass;
-
-    if (ProjectStatusType.ACTIVE === statusType) {
-      chipLabel = 'Active';
-      chipStatusClass = classes.chipActive;
-    } else if (ProjectStatusType.COMPLETED === statusType) {
-      chipLabel = 'Completed';
-      chipStatusClass = classes.chipPublishedCompleted;
-    } else if (ProjectStatusType.DRAFT === statusType) {
-      chipLabel = 'Draft';
-      chipStatusClass = classes.chipDraft;
-    }
-
-    return <Chip size="small" className={clsx(classes.chip, chipStatusClass)} label={chipLabel} />;
-  };
-
-  const handleDownloadProjectEML = async (projectId: number) => {
-    let response;
-
-    try {
-      response = await restorationTrackerApi.project.downloadProjectEML(projectId);
-    } catch (error) {
-      dialogContext.setErrorDialog({
-        dialogTitle: DownloadEMLI18N.errorTitle,
-        dialogText: DownloadEMLI18N.errorText,
-        dialogError: (error as APIError).message,
-        dialogErrorDetails: (error as APIError).errors,
-        open: true,
-        onClose: () => {
-          dialogContext.setErrorDialog({ open: false });
-        },
-        onOk: () => {
-          dialogContext.setErrorDialog({ open: false });
-        }
+    const rowsProject = rowsProjectFilterOutArchived
+      ?.filter((proj) => proj.project.is_project)
+      .map((row, index) => {
+        return {
+          id: index,
+          projectId: row.project.project_id,
+          projectName: row.project.project_name,
+          focus: utils.resolveProjectPlanFocus(
+            row.project.is_healing_land,
+            row.project.is_healing_people,
+            row.project.is_land_initiative,
+            row.project.is_cultural_initiative
+          ),
+          org: row.contact.contacts.map((item) => item.organization).join('\r'),
+          plannedStartDate: row.project.start_date,
+          plannedEndDate: row.project.end_date,
+          actualStartDate: row.project.actual_start_date,
+          actualEndDate: row.project.actual_end_date,
+          statusCode: row.project.state_code,
+          statusLabel: getStateLabelFromCode(row.project.state_code),
+          statusStyle: getStatusStyle(row.project.state_code),
+          archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
+        } as utils.ProjectData;
       });
 
-      return;
-    }
+    const rowsDraft = drafts
+      ? drafts
+          .filter((draft) => draft.is_project)
+          .map((row, index) => {
+            return {
+              id: index + rowsProject.length,
+              projectId: row.id,
+              projectName: row.name,
+              focus: '',
+              org: '',
+              plannedStartDate: '',
+              plannedEndDate: '',
+              actualStartDate: '',
+              actualEndDate: '',
+              statusCode: draftCode,
+              statusLabel: states.DRAFT,
+              statusStyle: draftStatusStyle,
+              archive: ''
+            } as utils.ProjectData;
+          })
+      : [];
 
-    triggerFileDownload(response.fileData, response.fileName);
-  };
+    return rowsDraft.concat(rowsProject);
+  }
+
+  // Make sure state is preserved for table component
+  useEffect(() => {
+    const filteredProjects = filterProjects(projects, drafts);
+    setRows(filteredProjects);
+  }, [projects, drafts]);
+
+  // Make sure the data download knows what projects are selected.
+  useEffect(() => {
+    const s = calculateSelectedProjectsPlans(selected, rows, projects);
+    setSelectedProjects(s);
+  }, [selected]);
+
+  function ProjectsTable() {
+    const [order, setOrder] = useState<utils.Order>('asc');
+    const [orderBy, setOrderBy] = useState<keyof utils.ProjectData>('projectName');
+    const [dense, setDense] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const { changeStateCode } = useProjectPlanTableUtils();
+
+    const handleRequestSort = (
+      event: React.MouseEvent<unknown>,
+      property: keyof utils.ProjectData
+    ) => {
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
+    };
+
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.checked) {
+        const newSelected = rows.map((n) => n.id);
+        setSelected(newSelected);
+        return;
+      }
+      setSelected([]);
+    };
+
+    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+      const selectedIndex = selected.indexOf(id);
+      let newSelected: readonly number[] = [];
+
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, id);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1)
+        );
+      }
+      setSelected(newSelected);
+    };
+
+    const handleChangePage = (event: unknown, newPage: number) => {
+      setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
+
+    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setDense(event.target.checked);
+    };
+
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+    const visibleRows = useMemo(
+      () =>
+        utils
+          .stableSort(rows, utils.getComparator(order, orderBy))
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      [order, orderBy, page, rowsPerPage]
+    );
+
+    const focusTooltip = (focus: string) => {
+      return (
+        <Tooltip title={focus} disableHoverListener={focus.length < 35}>
+          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+            {focus}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
+    const orgTooltip = (org: string) => {
+      return (
+        <Tooltip title={org} disableHoverListener={org.length < 35}>
+          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+            {org}
+          </Typography>
+        </Tooltip>
+      );
+    };
+
+    const handleArchiveUnarchive = (id: number) => {
+      const stateArchiveCode = getStateCodeFromLabel(states.ARCHIVED);
+
+      if (rows[id].statusCode !== stateArchiveCode) {
+        changeStateCode(true, rows[id].projectId, stateArchiveCode);
+
+        rows[id].statusCode = stateArchiveCode;
+        rows[id].statusLabel = states.ARCHIVED;
+        rows[id].archive = TableI18N.unarchive;
+        setRows([...rows]);
+        setPage(page);
+        return;
+      }
+
+      const statePlanningCode = getStateCodeFromLabel(states.PLANNING);
+
+      changeStateCode(true, rows[id].projectId, statePlanningCode);
+
+      rows[id].statusCode = statePlanningCode;
+      rows[id].statusLabel = states.PLANNING;
+      rows[id].archive = TableI18N.archive;
+      setRows([...rows]);
+      setPage(page);
+    };
+
+    const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
+      onClose: () => dialogContext.setYesNoDialog({ open: false }),
+      onNo: () => dialogContext.setYesNoDialog({ open: false })
+    };
+    const dialogContext = useContext(DialogContext);
+    const openYesNoDialog = (yesNoDialogProps?: Partial<IYesNoDialogProps>) => {
+      dialogContext.setYesNoDialog({
+        ...defaultYesNoDialogProps,
+        ...yesNoDialogProps,
+        open: true
+      });
+    };
+
+    return (
+      <Box sx={{ width: '100%' }}>
+        <ProjectsTableToolbar
+          numSelected={selected.length}
+          numRows={rows.length}
+          selectedProjects={selectedProjects}
+        />
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={dense ? 'small' : 'medium'}>
+            <ProjectsTableHead
+              myProject={myProject}
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {visibleRows.map((row, index) => {
+                const isItemSelected = isSelected(row.id);
+                const labelId = `projects-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={isItemSelected}
+                    sx={{ cursor: 'pointer' }}>
+                    <TableCell component="th" id={labelId} scope="row" padding="normal">
+                      <Link
+                        data-testid={row.projectName}
+                        underline="always"
+                        component="button"
+                        sx={{ textAlign: 'left' }}
+                        variant="body2"
+                        onClick={
+                          draftCode != row.statusCode
+                            ? () => history(`/admin/projects/${row.projectId}/details`)
+                            : () => history(`/admin/projects/create?draftId=${row.projectId}`)
+                        }>
+                        {row.projectName}
+                      </Link>
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.focus &&
+                        row.focus.split('\r').map((focus: string, key) => (
+                          <Fragment key={key}>
+                            <Box ml={-3}>
+                              <Chip
+                                data-testid="focus_item"
+                                size="small"
+                                sx={utils.focusStyles.focusProjectChip}
+                                label={focusTooltip(focus)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.focus && (
+                        <Chip
+                          label="No Focuses"
+                          sx={utils.focusStyles.noFocusChip}
+                          data-testid="no_focuses_loaded"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.org &&
+                        row.org.split('\r').map((organization: string, key) => (
+                          <Fragment key={key}>
+                            <Box>
+                              <Chip
+                                data-testid="organization_item"
+                                size="small"
+                                sx={utils.orgStyles.orgProjectChip}
+                                label={orgTooltip(organization)}
+                              />
+                            </Box>
+                          </Fragment>
+                        ))}
+
+                      {!row.org && (
+                        <Chip
+                          label="No Organizations"
+                          sx={utils.orgStyles.noOrgChip}
+                          data-testid="no_organizations_loaded"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualStartDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedEndDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualEndDate)}
+                    </TableCell>
+                    <TableCell align="left">
+                      <Chip
+                        size="small"
+                        sx={getStatusStyle(row.statusCode)}
+                        label={row.statusLabel}
+                      />
+                    </TableCell>
+                    <TableCell align="left">
+                      {draftCode !== row.statusCode ? (
+                        <SystemRoleGuard
+                          validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
+                          <Tooltip
+                            title={
+                              archCode !== row.statusCode ? TableI18N.archive : TableI18N.unarchive
+                            }
+                            placement="top">
+                            <IconButton
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    (archCode !== row.statusCode
+                                      ? TableI18N.archive
+                                      : TableI18N.unarchive) +
+                                    ' ' +
+                                    ProjectTableI18N.projectConfirmation,
+                                  dialogTitleBgColor: '#E9FBFF',
+                                  dialogContent: (
+                                    <>
+                                      <Typography variant="body1" color="textPrimary">
+                                        <strong>{row.projectName}</strong>
+                                      </Typography>
+                                      {archCode !== row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Archiving this project will not remove it from the
+                                            application, only means it will not be publicly
+                                            available any more.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to archive this project?
+                                          </Typography>
+                                        </>
+                                      )}
+                                      {archCode === row.statusCode && (
+                                        <>
+                                          <Typography variant="body1" color="textPrimary">
+                                            Unarchiving this project will make it public again. The
+                                            new status for the project will be "PLANNING". Please
+                                            make sure there is no PI information before publishing.
+                                          </Typography>
+                                          <Typography mt={1} variant="body1" color="textPrimary">
+                                            Are you sure you want to unarchive (publish) this
+                                            project?'
+                                          </Typography>
+                                        </>
+                                      )}
+                                    </>
+                                  ),
+                                  yesButtonLabel:
+                                    archCode !== row.statusCode
+                                      ? 'Archive Project'
+                                      : 'Unarchive Project',
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleArchiveUnarchive(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                              {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                        </SystemRoleGuard>
+                      ) : (
+                        <Tooltip title={TableI18N.deleteDraft} placement="right">
+                          <IconButton color="error">
+                            <DeleteForeverIcon />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </TableCell>
+
+                    {!myProject ? (
+                      <TableCell padding="checkbox">
+                        <Tooltip
+                          title={
+                            isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
+                          }
+                          placement="right">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId
+                            }}
+                            onClick={(event) => handleClick(event, row.id)}
+                          />
+                        </Tooltip>
+                      </TableCell>
+                    ) : (
+                      <></>
+                    )}
+                  </TableRow>
+                );
+              })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * emptyRows
+                  }}>
+                  <TableCell colSpan={9} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box display="flex" justifyContent="space-between" sx={{ backgroundColor: '#E9FBFF' }}>
+          <FormControlLabel
+            sx={{ ml: '0.5rem' }}
+            control={<Switch size="small" checked={dense} onChange={handleChangeDense} />}
+            label={<Typography variant="caption">{TableI18N.densePadding}</Typography>}
+          />
+          <TablePagination
+            sx={{ backgroundColor: '#E9FBFF' }}
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Box>
+      </Box>
+    );
+  }
 
   /**
    * Displays project list.
    */
   return (
     <Card>
-      <Box display="flex" alignItems="center" justifyContent="space-between" p={3}>
-        <Typography variant="h2">
-          Found {projects?.length} {projects?.length !== 1 ? 'projects' : 'project'}
-        </Typography>
-      </Box>
-      <Box>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Project Name</TableCell>
-                <TableCell>Permits</TableCell>
-                <TableCell>Contact Agencies</TableCell>
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell width="105" align="left">
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody data-testid="project-table">
-              {!drafts?.length && !projects?.length && (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <Box display="flex" justifyContent="center">
-                      No Results
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              )}
-              {drafts?.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    <Link
-                      data-testid={row.name}
-                      underline="always"
-                      component="button"
-                      className={classes.linkButton}
-                      variant="body2"
-                      onClick={() => history.push(`/admin/projects/create?draftId=${row.id}`)}>
-                      {row.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                  <TableCell>{getChipIcon(ProjectStatusType.DRAFT)}</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              ))}
-              {projects?.map((row) => (
-                <TableRow key={row.project.project_id}>
-                  <TableCell component="th" scope="row">
-                    <Link
-                      data-testid={row.project.project_name}
-                      underline="always"
-                      component="button"
-                      variant="body2"
-                      onClick={() => history.push(`/admin/projects/${row.project.project_id}`)}>
-                      {row.project.project_name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{row.permit.permits.map((item) => item.permit_number).join(', ')}</TableCell>
-                  <TableCell>{row.contact.contacts.map((item) => item.agency).join(', ')}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.start_date)}</TableCell>
-                  <TableCell>{getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.project.end_date)}</TableCell>
-                  <TableCell>{getChipIcon(getProjectStatusType(row))}</TableCell>
-                  <TableCell align="center">
-                    <Box my={-1}>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        title="Download project metadata"
-                        aria-label="download project metadata"
-                        data-testid="project-table-download-eml"
-                        onClick={() => handleDownloadProjectEML(row.project.project_id)}>
-                        Download
-                      </Button>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
+      <ProjectsTable />
     </Card>
   );
 };

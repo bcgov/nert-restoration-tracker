@@ -1,6 +1,9 @@
+import * as turf from '@turf/turf';
 import axios, { AxiosError } from 'axios';
+import { Feature } from 'geojson';
+import { SQL, SQLStatement } from 'sql-template-strings';
 import { ApiGeneralError } from '../errors/custom-error';
-import { CodeSet } from '../services/code-service';
+import { CodeSet } from '../repositories/code-repository';
 
 export interface IWFSParams {
   url?: string;
@@ -38,6 +41,27 @@ const UTM_STRING_FORMAT = RegExp(/^[1-9]\d?[NPQRSTUVWXCDEFGHJKLM]? \d+ \d+$/i);
 const UTM_ZONE_WITH_LETTER_FORMAT = RegExp(/^[1-9]\d?[NPQRSTUVWXCDEFGHJKLM]$/i);
 
 /**
+ * Take in a feature and replace the geometry with a mask if it exists.
+ * @param {Feature} feature
+ * @return {Feature} original feature or feature with mask applied
+ */
+export const maskGateKeeper = (feature: Feature): Feature => {
+  const properties = feature.properties;
+
+  if (properties?.maskedLocation && properties?.mask) {
+    const mask = turf.circle(properties?.mask.centroid, properties?.mask.radius, {
+      steps: 64,
+      units: 'meters',
+      properties
+    });
+
+    return mask;
+  }
+
+  return feature;
+};
+
+/**
  * Parses a UTM string of the form: `9N 573674 6114170`
  *
  * String format: `"<zone_number><zone_letter> <easting> <northing>"`
@@ -54,8 +78,8 @@ export function parseUTMString(utm: string): IUTM | null {
 
   const utmParts = utm.split(' ');
 
-  let zone_letter = undefined;
-  let zone_number = undefined;
+  let zone_letter;
+  let zone_number;
 
   const hasZoneLetter = UTM_ZONE_WITH_LETTER_FORMAT.test(utmParts[0]);
 
@@ -177,3 +201,33 @@ export const buildWFSURLByBoundingBox = (typeName: string, wfsParams: IWFSParams
 
   return `${params.url}?service=WFS&&version=${params.version}&request=${params.request}&typeName=${typeName}&outputFormat=${params.outputFormat}&srsName=${params.srsName}&bbox=${bbox},${params.bboxSrsName}`;
 };
+
+/*
+  Function to generate the SQL for insertion of a geometry collection
+*/
+export function generateGeometryCollectionSQL(geometry: Feature[]): SQLStatement {
+  if (geometry.length === 1) {
+    const geo = JSON.stringify(geometry[0].geometry);
+
+    return SQL`public.ST_Force2D(public.ST_GeomFromGeoJSON(${geo}))`;
+  }
+
+  const sqlStatement: SQLStatement = SQL`public.ST_AsText(public.ST_Collect(array[`;
+
+  geometry.forEach((geom: Feature, index: number) => {
+    const geo = JSON.stringify(geom.geometry);
+
+    // as long as it is not the last geometry, keep adding to the ST_collect
+    if (index !== geometry.length - 1) {
+      sqlStatement.append(SQL`
+        public.ST_Force2D(public.ST_GeomFromGeoJSON(${geo})),
+      `);
+    } else {
+      sqlStatement.append(SQL`
+        public.ST_Force2D(public.ST_GeomFromGeoJSON(${geo}))]))
+      `);
+    }
+  });
+
+  return sqlStatement;
+}

@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 
-export type AsyncFunction<AFArgs extends any[], AFResponse> = (...args: AFArgs) => Promise<AFResponse>;
+export type AsyncFunction<AFArgs extends any[], AFResponse> = (
+  ...args: AFArgs
+) => Promise<AFResponse>;
 
 /**
  * Wraps an async function to prevent duplicate calls if the previous call is still pending.

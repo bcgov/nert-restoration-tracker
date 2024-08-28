@@ -1,26 +1,24 @@
-import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiMenuDown, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { IYesNoDialogProps } from 'components/dialog/YesNoDialog';
 import { CustomMenuButton } from 'components/toolbar/ActionToolbars';
 import { ProjectParticipantsI18N } from 'constants/i18n';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import { useNertApi } from 'hooks/useNertApi';
 import { CodeSet, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 import {
   IGetProjectForViewResponse,
@@ -29,8 +27,9 @@ import {
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import ProjectParticipantsHeader from './ProjectParticipantsHeader';
+import { useCodesContext } from 'hooks/useContext';
 
-const useStyles = makeStyles((theme) => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
@@ -38,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   teamMembersToolbar: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingLeft: '1rem',
+    paddingRight: '1rem'
   },
   teamMembersTable: {
     tableLayout: 'fixed',
@@ -47,23 +46,23 @@ const useStyles = makeStyles((theme) => ({
       verticalAlign: 'middle'
     }
   }
-}));
+};
 
 const ProjectParticipantsPage: React.FC = () => {
-  const urlParams = useParams();
+  const urlParams: Record<string, string | number | undefined> = useParams();
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
-
-  const classes = useStyles();
+  const restorationTrackerApi = useNertApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(true);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
-
-  const [projectParticipants, setProjectParticipants] = useState<IGetProjectParticipantsResponseArrayItem[] | null>(
+  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(
     null
   );
 
-  const projectId = urlParams['id'];
+  const [projectParticipants, setProjectParticipants] = useState<
+    IGetProjectParticipantsResponseArrayItem[] | null
+  >(null);
+
+  const projectId = Number(urlParams['id']);
 
   const defaultErrorDialogProps: Partial<IErrorDialogProps> = {
     onClose: () => dialogContext.setErrorDialog({ open: false }),
@@ -95,7 +94,8 @@ const ProjectParticipantsPage: React.FC = () => {
   };
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+    const projectWithDetailsResponse =
+      await restorationTrackerApi.project.getProjectById(projectId);
 
     if (!projectWithDetailsResponse) {
       return;
@@ -111,7 +111,7 @@ const ProjectParticipantsPage: React.FC = () => {
     }
   }, [isLoadingProject, projectWithDetails, getProject]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProjectParticipants = useCallback(async () => {
     try {
@@ -148,7 +148,10 @@ const ProjectParticipantsPage: React.FC = () => {
 
   const handleRemoveProjectParticipant = async (projectParticipationId: number) => {
     try {
-      const response = await restorationTrackerApi.project.removeProjectParticipant(projectId, projectParticipationId);
+      const response = await restorationTrackerApi.project.removeProjectParticipant(
+        projectId,
+        projectParticipationId
+      );
 
       if (!response) {
         openErrorDialog({
@@ -199,8 +202,8 @@ const ProjectParticipantsPage: React.FC = () => {
                         dialogTitle: ProjectParticipantsI18N.removeParticipantTitle,
                         dialogContent: (
                           <Typography variant="body1" component="div" color="textSecondary">
-                            Removing user <strong>{row.user_identifier}</strong> will revoke their access to this
-                            project. Are you sure you want to proceed?
+                            Removing user <strong>{row.user_identifier}</strong> will revoke their
+                            access to this project. Are you sure you want to proceed?
                           </Typography>
                         ),
                         yesButtonLabel: 'Remove User',
@@ -219,7 +222,8 @@ const ProjectParticipantsPage: React.FC = () => {
                           });
                         }
                       })
-                    }>
+                    }
+                    size="large">
                     <Icon path={mdiTrashCanOutline} size={1} aria-label="remove team member" />
                   </IconButton>
                 </Box>
@@ -241,7 +245,7 @@ const ProjectParticipantsPage: React.FC = () => {
     );
   };
 
-  if (!codes.isReady || !codes.codes || !projectParticipants || !projectWithDetails) {
+  if (!codes.isReady || !codes.data || !projectParticipants || !projectWithDetails) {
     return <CircularProgress className="pageProgress" size={40} />;
   }
 
@@ -249,20 +253,20 @@ const ProjectParticipantsPage: React.FC = () => {
     <>
       <ProjectParticipantsHeader
         projectWithDetails={projectWithDetails}
-        codes={codes.codes}
+        codes={codes.data}
         refresh={getProjectParticipants}
       />
 
       <Container maxWidth="xl">
         <Box my={3}>
           <Paper>
-            <Toolbar className={classes.teamMembersToolbar}>
+            <Toolbar sx={pageStyles.teamMembersToolbar}>
               <Typography variant="h2" color="inherit">
                 Team Members
               </Typography>
             </Toolbar>
 
-            <Table className={classes.teamMembersTable}>
+            <Table sx={pageStyles.teamMembersTable}>
               <TableHead>
                 <TableRow>
                   <TableCell>Username</TableCell>
@@ -273,7 +277,7 @@ const ProjectParticipantsPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRows projectParticipants={projectParticipants} codes={codes.codes} />
+                <TableRows projectParticipants={projectParticipants} codes={codes.data} />
               </TableBody>
             </Table>
           </Paper>
@@ -295,7 +299,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
   const { row, projectRoleCodes, refresh } = props;
 
   const dialogContext = useContext(DialogContext);
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const restorationTrackerApi = useNertApi();
 
   const defaultErrorDialogProps = {
     dialogTitle: ProjectParticipantsI18N.updateParticipantRoleErrorTitle,
@@ -367,7 +371,8 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
         open: true,
         snackbarMessage: (
           <Typography variant="body2" component="div">
-            User <strong>{item.user_identifier}</strong>'s role changed to <strong>{newRole}</strong>.
+            User <strong>{item.user_identifier}</strong>'s role changed to{' '}
+            <strong>{newRole}</strong>.
           </Typography>
         )
       });
@@ -379,7 +384,9 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     }
   };
 
-  const currentProjectRoleName = projectRoleCodes.find((item) => item.id === row.project_role_id)?.name;
+  const currentProjectRoleName = projectRoleCodes.find(
+    (item) => item.id === row.project_role_id
+  )?.name;
 
   return (
     <CustomMenuButton

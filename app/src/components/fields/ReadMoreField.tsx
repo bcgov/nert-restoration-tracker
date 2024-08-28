@@ -1,6 +1,6 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -55,7 +55,11 @@ export const ReadMoreField: React.FC<IReadMoreFieldProps> = (props) => {
               return renderParagraph(paragraph);
             })}
           <Box mt={3}>
-            <Button size="small" variant="outlined" color="primary" onClick={() => setIsTruncatedText(false)}>
+            <Button
+              size="small"
+              variant="outlined"
+              color="primary"
+              onClick={() => setIsTruncatedText(false)}>
               Read More
             </Button>
           </Box>
@@ -68,7 +72,11 @@ export const ReadMoreField: React.FC<IReadMoreFieldProps> = (props) => {
           })}
           {text?.length > maxCharLength && (
             <Box mt={3}>
-              <Button size="small" variant="outlined" color="primary" onClick={() => setIsTruncatedText(true)}>
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                onClick={() => setIsTruncatedText(true)}>
                 Read Less
               </Button>
             </Box>

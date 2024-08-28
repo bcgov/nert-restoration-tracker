@@ -1,192 +1,102 @@
-import Box from '@material-ui/core/Box';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import { IStaticLayer, IStaticLayerFeature } from 'components/map/components/StaticLayers';
+import Box from '@mui/material/Box';
 import MapContainer from 'components/map/MapContainer';
-import { IGetProjectForViewResponse, IGetProjectTreatment } from 'interfaces/useProjectApi.interface';
-import React, { useEffect, useState } from 'react';
+import LayerSwitcher from 'components/map/components/LayerSwitcher';
+import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
+import React, { useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
-import { getFormattedTreatmentStringsByYear, groupTreatmentsByYear } from 'utils/treatments';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    mapContainer: {
-      '& dl': {
-        marginBottom: 0
-      },
-      '& dl div + div': {
-        marginTop: theme.spacing(0.75)
-      },
-      '& dd, dt': {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      '& dt': {
-        width: '40%'
-      },
-      '& dd': {
-        width: '60%'
-      },
-      '& dd span': {
-        display: 'inline'
-      },
-      '& ul': {
-        border: '1px solid #ccccccc',
-        borderRadius: '4px'
-      }
+const pageStyles = {
+  mapContainer: {
+    '& dl': {
+      marginBottom: 0
+    },
+    '& dl div + div': {
+      marginTop: '0.5rem'
+    },
+    '& dd, dt': {
+      display: 'inline-block',
+      verticalAlign: 'top'
+    },
+    '& dt': {
+      width: '40%'
+    },
+    '& dd': {
+      width: '60%'
+    },
+    '& dd span': {
+      display: 'inline'
+    },
+    '& ul': {
+      border: '1px solid #ccccccc',
+      borderRadius: '4px'
     }
-  })
-);
+  },
+  layerSwitcherContainer: {
+    position: 'relative',
+    bottom: '-70px'
+  }
+};
 
 export interface ILocationBoundaryProps {
-  projectForViewData: IGetProjectForViewResponse;
-  treatmentList: IGetProjectTreatment[];
-  refresh: () => void;
+  locationData: IGetProjectForViewResponseLocation;
   scrollWheelZoom?: boolean;
 }
 
 /**
- * Location boundary content for a project.
+ * Location boundary content for a project or plan.
  *
  * @return {*}
  */
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
-  const {
-    projectForViewData: { location },
-    treatmentList
-  } = props;
+  const { locationData } = props;
 
-  const classes = useStyles();
+  if (!locationData || !locationData.geometry) {
+    return null;
+  }
 
-  const [bounds, setBounds] = useState<any[] | undefined>([]);
-  const [staticLayers, setStaticLayers] = useState<IStaticLayer[]>([]);
+  const locationFeatures: any[] = locationData.geometry.map((item) => {
+    return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
+  });
 
-  useEffect(() => {
-    const projectLocationFeatures: IStaticLayerFeature[] = location.geometry.map((item) => {
-      return { geoJSON: item, GeoJSONProps: { style: { fillOpacity: 0.1, weight: 2 } } };
-    });
+  const bounds = calculateUpdatedMapBounds(
+    [...locationFeatures].map((item) => item.geoJSON),
+    true
+  );
 
-    const treatmentFeatures: IStaticLayerFeature[] = [];
+  /**
+   * Reactive state to share between the layer picker and the map
+   */
+  const boundary = useState<boolean>(true);
+  const wells = useState<boolean>(false);
+  const projects = useState<boolean>(false);
+  const plans = useState<boolean>(true);
+  const wildlife = useState<boolean>(false);
+  const indigenous = useState<boolean>(false);
+  const baselayer = useState<string>('hybrid');
 
-    treatmentList.forEach((item) => {
-      if (!item.geometry) {
-        return;
-      }
-
-      treatmentFeatures.push({
-        key: item.id,
-        geoJSON: item.geometry,
-        GeoJSONProps: { style: { weight: 3 } },
-        tooltip: <p>{`Treatment Unit ID: ${item.id}`}</p>,
-        popup: <TreatmentPopup treatment={item} />,
-        PopupProps: { minWidth: 300 }
-      });
-    });
-
-    const allLayers: IStaticLayer[] = [
-      { layerName: 'Boundary', features: projectLocationFeatures },
-      { layerName: 'Treatments', features: treatmentFeatures }
-    ];
-
-    setBounds(
-      calculateUpdatedMapBounds([...projectLocationFeatures, ...treatmentFeatures].map((item) => item.geoJSON))
-    );
-
-    setStaticLayers(allLayers);
-  }, [location.geometry, treatmentList]);
+  const layerVisibility = {
+    boundary,
+    wells,
+    projects,
+    plans,
+    wildlife,
+    indigenous,
+    baselayer
+  };
 
   return (
-    <Box width="100%" height="100%" overflow="hidden" data-testid="map_container" className={classes.mapContainer}>
+    <Box width="100%" height="100%" data-testid="map_container" sx={pageStyles.mapContainer}>
       <MapContainer
         mapId="project_location_form_map"
-        staticLayers={staticLayers}
+        features={locationData.geometry}
         bounds={bounds}
-        scrollWheelZoom={props.scrollWheelZoom || false}
+        layerVisibility={layerVisibility}
       />
+      <Box sx={pageStyles.layerSwitcherContainer}>
+        <LayerSwitcher layerVisibility={layerVisibility} open={false} hideProjects={true} />
+      </Box>
     </Box>
   );
 };
 
 export default LocationBoundary;
-
-const TreatmentPopup: React.FC<{ treatment: IGetProjectTreatment }> = (props) => {
-  const { treatment } = props;
-
-  const treatmentStrings = getFormattedTreatmentStringsByYear(groupTreatmentsByYear(treatment.treatments));
-
-  return (
-    <Box component="dl">
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          ID
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.id}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Type
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.type}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Width (m)
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.width}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Length (m)
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.length}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Area (m<sup>2</sup>)
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.area}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Reconnaissance Conducted
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.reconnaissance_conducted}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Treatments
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {(treatmentStrings.length > 1 && (
-            <Box component="ul" pl={2} m={0}>
-              {treatmentStrings.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </Box>
-          )) ||
-            treatmentStrings}
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body2" component="dt" color="textSecondary">
-          Comments
-        </Typography>
-        <Typography variant="body2" component="dd">
-          {treatment.comments}
-        </Typography>
-      </div>
-    </Box>
-  );
-};

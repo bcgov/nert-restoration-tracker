@@ -5,16 +5,10 @@ import DropZone from './DropZone';
 const onFiles = jest.fn();
 
 const renderContainer = () => {
-  return render(<DropZone onFiles={onFiles} acceptedFileExtensions=".txt" />);
+  return render(<DropZone onFiles={onFiles} acceptedFileExtensions={{ 'text/plain': ['.txt'] }} />);
 };
 
 describe('DropZone', () => {
-  it('matches the snapshot', () => {
-    const { asFragment } = renderContainer();
-
-    expect(asFragment()).toMatchSnapshot();
-  });
-
   it('calls the `onFiles` callback when files are selected', async () => {
     const { getByTestId } = renderContainer();
 

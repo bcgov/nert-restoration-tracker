@@ -1,33 +1,44 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import { AccessRequestI18N } from 'constants/i18n';
-import { AuthStateContext } from 'contexts/authStateContext';
 import { DialogContext } from 'contexts/dialogContext';
 import { Formik } from 'formik';
 import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
-import { IBCeIDAccessRequestDataObject, IIDIRAccessRequestDataObject } from 'interfaces/useAdminApi.interface';
+import { useNertApi } from 'hooks/useNertApi';
+import {
+  IBCeIDBasicAccessRequestDataObject,
+  IBCeIDBusinessAccessRequestDataObject,
+  IIDIRAccessRequestDataObject
+} from 'interfaces/useAdminApi.interface';
 import React, { ReactElement, useContext, useState } from 'react';
-import { Redirect, useHistory } from 'react-router';
-import BCeIDRequestForm, { BCeIDRequestFormInitialValues, BCeIDRequestFormYupSchema } from './BCeIDRequestForm';
-import IDIRRequestForm, { IDIRRequestFormInitialValues, IDIRRequestFormYupSchema } from './IDIRRequestForm';
+import { useNavigate } from 'react-router-dom';
+import BCeIDRequestForm, {
+  BCeIDBasicRequestFormInitialValues,
+  BCeIDBasicRequestFormYupSchema,
+  BCeIDBusinessRequestFormInitialValues,
+  BCeIDBusinessRequestFormYupSchema
+} from './BCeIDRequestForm';
+import IDIRRequestForm, {
+  IDIRRequestFormInitialValues,
+  IDIRRequestFormYupSchema
+} from './IDIRRequestForm';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import { useCodesContext } from 'hooks/useContext';
 
-const useStyles = makeStyles(() => ({
+const pageStyles = {
   actionButton: {
     minWidth: '6rem',
     '& + button': {
       marginLeft: '0.5rem'
     }
   }
-}));
+};
 
 /**
  * Access Request form
@@ -35,11 +46,10 @@ const useStyles = makeStyles(() => ({
  * @return {*}
  */
 export const AccessRequestPage: React.FC = () => {
-  const classes = useStyles();
-  const restorationTrackerApi = useRestorationTrackerApi();
-  const history = useHistory();
+  const nertApi = useNertApi();
+  const history = useNavigate();
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const authStateContext = useAuthStateContext();
 
   const dialogContext = useContext(DialogContext);
 
@@ -57,7 +67,7 @@ export const AccessRequestPage: React.FC = () => {
 
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
 
-  const codes = useCodes();
+  const codesDataLoader = useCodesContext().codesDataLoader;
 
   const showAccessRequestErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
     dialogContext.setErrorDialog({
@@ -69,15 +79,21 @@ export const AccessRequestPage: React.FC = () => {
     });
   };
 
-  const handleSubmitAccessRequest = async (values: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject) => {
+  const handleSubmitAccessRequest = async (
+    values:
+      | IIDIRAccessRequestDataObject
+      | IBCeIDBasicAccessRequestDataObject
+      | IBCeIDBusinessAccessRequestDataObject
+  ) => {
     try {
-      const response = await restorationTrackerApi.admin.createAdministrativeActivity({
+      const response = await nertApi.admin.createAdministrativeActivity({
         ...values,
-        userGuid: keycloakWrapper?.getUserGuid() as string,
-        name: keycloakWrapper?.displayName as string,
-        username: keycloakWrapper?.getUserIdentifier() as string,
-        email: keycloakWrapper?.email as string,
-        identitySource: keycloakWrapper?.getIdentitySource() as string
+        userGuid: authStateContext.nertUserWrapper.userGuid as string,
+        name: authStateContext.nertUserWrapper.displayName as string,
+        username: authStateContext.nertUserWrapper.userIdentifier as string,
+        email: authStateContext.nertUserWrapper.email as string,
+        identitySource: authStateContext.nertUserWrapper.identitySource as string,
+        displayName: authStateContext.nertUserWrapper.displayName as string
       });
 
       if (!response?.id) {
@@ -88,9 +104,9 @@ export const AccessRequestPage: React.FC = () => {
       }
       setIsSubmittingRequest(false);
 
-      keycloakWrapper?.refresh();
+      authStateContext.nertUserWrapper.refresh();
 
-      history.push('/request-submitted');
+      history('/request-submitted');
     } catch (error) {
       const apiError = error as APIError;
 
@@ -103,36 +119,36 @@ export const AccessRequestPage: React.FC = () => {
     }
   };
 
-  if (!keycloakWrapper?.keycloak.authenticated) {
-    // User is not logged in
-    return <Redirect to={{ pathname: '/' }} />;
-  }
+  let initialValues:
+    | IIDIRAccessRequestDataObject
+    | IBCeIDBasicAccessRequestDataObject
+    | IBCeIDBusinessAccessRequestDataObject;
 
-  if (!keycloakWrapper.hasLoadedAllUserInfo) {
-    // User data has not been loaded, can not yet determine if they have a role
-    return <CircularProgress className="pageProgress" />;
-  }
+  let validationSchema:
+    | typeof IDIRRequestFormYupSchema
+    | typeof BCeIDBasicRequestFormYupSchema
+    | typeof BCeIDBusinessRequestFormYupSchema;
 
-  if (keycloakWrapper?.hasAccessRequest) {
-    // User already has a pending access request
-    return <Redirect to={{ pathname: '/request-submitted' }} />;
-  }
-
-  let initialValues: IIDIRAccessRequestDataObject | IBCeIDAccessRequestDataObject;
-  let validationSchema: typeof IDIRRequestFormYupSchema | typeof BCeIDRequestFormYupSchema;
   let requestForm: ReactElement;
 
-  if (
-    keycloakWrapper?.getIdentitySource() === SYSTEM_IDENTITY_SOURCE.BCEID_BASIC ||
-    keycloakWrapper?.getIdentitySource() === SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS
-  ) {
-    initialValues = BCeIDRequestFormInitialValues;
-    validationSchema = BCeIDRequestFormYupSchema;
-    requestForm = <BCeIDRequestForm />;
-  } else {
-    initialValues = IDIRRequestFormInitialValues;
-    validationSchema = IDIRRequestFormYupSchema;
-    requestForm = <IDIRRequestForm codes={codes.codes} />;
+  switch (authStateContext.nertUserWrapper.identitySource) {
+    case SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS:
+      initialValues = BCeIDBusinessRequestFormInitialValues;
+      validationSchema = BCeIDBusinessRequestFormYupSchema;
+      requestForm = <BCeIDRequestForm accountType={SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS} />;
+      break;
+
+    case SYSTEM_IDENTITY_SOURCE.BCEID_BASIC:
+      initialValues = BCeIDBasicRequestFormInitialValues;
+      validationSchema = BCeIDBasicRequestFormYupSchema;
+      requestForm = <BCeIDRequestForm accountType={SYSTEM_IDENTITY_SOURCE.BCEID_BASIC} />;
+      break;
+
+    case SYSTEM_IDENTITY_SOURCE.IDIR:
+    default:
+      initialValues = IDIRRequestFormInitialValues;
+      validationSchema = IDIRRequestFormYupSchema;
+      requestForm = <IDIRRequestForm codes={codesDataLoader.data} />;
   }
 
   return (
@@ -152,7 +168,8 @@ export const AccessRequestPage: React.FC = () => {
               <Typography variant="h1">Request Access</Typography>
               <Box mt={3}>
                 <Typography variant="body1" color="textSecondary">
-                  You will need to provide some additional details before accessing this application.
+                  You will need to provide some additional details before accessing this
+                  application.
                 </Typography>
               </Box>
               <Box mt={4}>
@@ -164,7 +181,7 @@ export const AccessRequestPage: React.FC = () => {
                         type="submit"
                         variant="contained"
                         color="primary"
-                        className={classes.actionButton}
+                        sx={pageStyles.actionButton}
                         disabled={isSubmittingRequest}>
                         <strong>Submit Request</strong>
                       </Button>
@@ -186,9 +203,9 @@ export const AccessRequestPage: React.FC = () => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        history.push('/logout');
+                        authStateContext.auth.signoutRedirect();
                       }}
-                      className={classes.actionButton}
+                      sx={pageStyles.actionButton}
                       data-testid="logout-button">
                       Log out
                     </Button>

@@ -44,8 +44,6 @@ declare
   _geography project_spatial_component.geography%type;
   _project_funding_source_id project_funding_source.project_funding_source_id%type;
   _project_attachment_id project_attachment.project_attachment_id%type;
-  _treatment_unit_id treatment_unit.treatment_unit_id%type;
-  _treatment_id treatment.treatment_id%type;
 begin
   -- set security context
   select api_set_context('myIDIR', 'IDIR') into _system_user_id;
@@ -64,25 +62,24 @@ begin
     , now()+interval '1 day'
     ) returning project_id into _project_id;
 
-  insert into stakeholder_partnership (project_id, name) values (_project_id, 'test');
+  insert into partnership (project_id, partnership) values (_project_id, 'test');
+  insert into objective (project_id, objective) values (_project_id, 'test');
   insert into project_funding_source (project_id, investment_action_category_id, funding_amount, funding_start_date, funding_end_date, funding_source_project_id) values (_project_id, (select investment_action_category_id from investment_action_category where name = 'Action 1'), '$1,000.00', now(), now(), 'test') returning project_funding_source_id into _project_funding_source_id;
   --insert into project_funding_source (project_id, investment_action_category_id, funding_amount, funding_start_date, funding_end_date) values (_project_id, 43, '$1,000.00', now(), now());
-  insert into project_iucn_action_classification (project_id, iucn_conservation_action_level_3_subclassification_id) values (_project_id, (select iucn_conservation_action_level_3_subclassification_id from iucn_conservation_action_level_3_subclassification where name = 'Primary Education'));
   insert into project_attachment (project_id, file_name, title, key, file_size, file_type) values (_project_id, 'test_filename.txt', 'test filename', 'projects/'||_project_id::text, 10000, 'video');
   insert into project_first_nation (project_id, first_nations_id) values (_project_id, (select first_nations_id from first_nations where name = 'Kitselas Nation'));
   insert into permit (system_user_id, number, type, issue_date, end_date) values (_system_user_id, '8377262', 'permit type', now(), now()+interval '1 day');
   insert into project_spatial_component (name, project_id, geography, project_spatial_component_type_id) values ('test project spatial', _project_id, _geography, (select project_spatial_component_type_id from project_spatial_component_type where name = 'Boundary'));
-  insert into project_contact (project_id, contact_type_id, first_name, last_name, agency, email_address, is_primary, is_public) values (_project_id, (select contact_type_id from contact_type where name = 'Coordinator'), 'john', 'doe', 'an agency', 'nobody@nowhere.com', 'Y', 'Y');
+  insert into project_contact (project_id, contact_type_id, first_name, last_name, agency, email_address, is_primary, is_public, is_first_nation) values (_project_id, (select contact_type_id from contact_type where name = 'Coordinator'), 'john', 'doe', 'an agency', 'nobody@nowhere.com', 'Y', 'Y', true);
   insert into nrm_region (project_id, name, objectid) values (_project_id, 'test region name', 367463);
-  insert into project_caribou_population_unit (project_id, caribou_population_unit_id) values (_project_id, (select caribou_population_unit_id from caribou_population_unit where name = 'Atlin'));
 
 
-  select count(1) into _count from stakeholder_partnership;
-  assert _count = 1, 'FAIL stakeholder_partnership';
+  select count(1) into _count from partnership;
+  assert _count = 1, 'FAIL partnership';
+  select count(1) into _count from objective;
+  assert _count = 1, 'FAIL objective';
   select count(1) into _count from project_funding_source;
   assert _count = 1, 'FAIL project_funding_source';
-  select count(1) into _count from project_iucn_action_classification;
-  assert _count = 1, 'FAIL project_iucn_action_classification';
   select count(1) into _count from project_attachment;
   assert _count = 1, 'FAIL project_attachment';
   select count(1) into _count from project_first_nation;
@@ -95,24 +92,11 @@ begin
   assert _count = 1, 'FAIL project_contact';
   select count(1) into _count from nrm_region;
   assert _count = 1, 'FAIL nrm_region';
-  select count(1) into _count from project_caribou_population_unit;
-  assert _count = 1, 'FAIL project_caribou_population_unit';
 
-  -- test treatments
-  insert into treatment_unit (name, project_id, width, reconnaissance_conducted, feature_type_id, geography) values ('test treatment unit', _project_id, 4.06, 'N', (select feature_type_id from feature_type where name = 'Road' and record_end_date is null), _geography) returning treatment_unit_id into _treatment_unit_id;
-  insert into treatment (year, treatment_unit_id) values ('2022', _treatment_unit_id) returning treatment_id into _treatment_id;
-  insert into treatment_treatment_type (treatment_id, treatment_type_id) values (_treatment_id, (select treatment_type_id from treatment_type where name = 'Mounding'));
-  
-  select count(1) into _count from treatment_unit;
-  assert _count = 1, 'FAIL treatment_unit';
-  select count(1) into _count from treatment;
-  assert _count = 1, 'FAIL treatment';
-  select count(1) into _count from treatment_treatment_type;
-  assert _count = 1, 'FAIL treatment_treatment_type';
 
   -- test ancillary data
   delete from webform_draft;
-  insert into webform_draft (system_user_id, name, data) values ((select system_user_id from system_user limit 1), 'my draft name', '{ "customer": "John Doe", "items": {"product": "Beer","qty": 6}}');
+  insert into webform_draft (system_user_id, is_project, name, data) values ((select system_user_id from system_user limit 1), true, 'my draft name', '{ "customer": "John Doe", "items": {"product": "Beer","qty": 6}}');
   select count(1) into _count from webform_draft;
   assert _count = 1, 'FAIL webform_draft';
 

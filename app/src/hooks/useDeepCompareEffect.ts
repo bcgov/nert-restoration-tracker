@@ -5,6 +5,5 @@ export function useDeepCompareEffect(
   callback: EffectCallback,
   dependencies: DependencyList
 ): ReturnType<typeof useEffect> {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useEffect(callback, useDeepCompareMemo(dependencies));
 }

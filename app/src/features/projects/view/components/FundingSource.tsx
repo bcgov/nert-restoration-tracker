@@ -1,23 +1,15 @@
-import Box from '@material-ui/core/Box';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectForViewResponse,
+  IGetProjectForViewResponseFundingSource
+} from 'interfaces/useProjectApi.interface';
 import React from 'react';
 import { getFormattedAmount, getFormattedDate } from 'utils/Utils';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    projectFundingList: {
-      margin: 0,
-      padding: 0
-    }
-  })
-);
-
 export interface IProjectFundingProps {
   projectForViewData: IGetProjectForViewResponse;
-  refresh: () => void;
 }
 
 /**
@@ -26,8 +18,6 @@ export interface IProjectFundingProps {
  * @return {*}
  */
 const FundingSource: React.FC<IProjectFundingProps> = (props) => {
-  const classes = useStyles();
-
   const {
     projectForViewData: { funding }
   } = props;
@@ -36,12 +26,12 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
 
   return (
     <>
-      <ul className={classes.projectFundingList}>
-        {hasFundingSources &&
-          funding.fundingSources.map((item: any, index: number) => (
-            <li key={index} data-testid="funding_data">
+      {hasFundingSources &&
+        funding.fundingSources.map(
+          (item: IGetProjectForViewResponseFundingSource, index: number) => (
+            <Box key={index} data-testid="funding_data">
               <Box mb={1}>
-                <strong>{item.agency_name}</strong>
+                <strong>{item.organization_name}</strong>
               </Box>
               <Box component="dl" mt={1}>
                 <div>
@@ -57,37 +47,49 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                     Project ID:
                   </Typography>
                   <Typography variant="body2" component="dd">
-                    {item.agency_project_id}
+                    {item.funding_project_id}
                   </Typography>
                 </div>
-                <div>
-                  <Typography variant="body2" component="dt" color="textSecondary">
-                    Start Date:
-                  </Typography>
-                  <Typography variant="body2" component="dd">
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.start_date)}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="body2" component="dt" color="textSecondary">
-                    End Date:
-                  </Typography>
-                  <Typography variant="body2" component="dd">
-                    {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.end_date)}
-                  </Typography>
-                </div>
+                {item.description && (
+                  <div>
+                    <Typography variant="body2" component="dt" color="textSecondary">
+                      Description:
+                    </Typography>
+                    <Typography variant="body2" component="dd">
+                      {item.description}
+                    </Typography>
+                  </div>
+                )}
+                {item.start_date && (
+                  <div>
+                    <Typography variant="body2" component="dt" color="textSecondary">
+                      Start Date:
+                    </Typography>
+                    <Typography variant="body2" component="dd">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.start_date)}
+                    </Typography>
+                  </div>
+                )}
+                {item.end_date && (
+                  <div>
+                    <Typography variant="body2" component="dt" color="textSecondary">
+                      End Date:
+                    </Typography>
+                    <Typography variant="body2" component="dd">
+                      {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.end_date)}
+                    </Typography>
+                  </div>
+                )}
               </Box>
-            </li>
-          ))}
-
-        {!hasFundingSources && (
-          <li>
-            <Typography variant="body2" color="textSecondary" data-testid="no_funding_sources">
-              No Funding Sources
-            </Typography>
-          </li>
+            </Box>
+          )
         )}
-      </ul>
+
+      {!hasFundingSources && (
+        <Typography variant="body2" color="textSecondary" data-testid="no_funding_sources">
+          No Funding Sources
+        </Typography>
+      )}
     </>
   );
 };

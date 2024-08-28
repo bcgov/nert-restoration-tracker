@@ -1,7 +1,5 @@
-import Box from '@material-ui/core/Box';
-import List from '@material-ui/core/List';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { FileError, FileRejection } from 'react-dropzone';
 import DropZone, { IDropZoneConfigProps } from './DropZone';
@@ -13,22 +11,26 @@ import {
   UploadFileStatus
 } from './FileUploadItem';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   dropZone: {
     clear: 'both',
-    borderRadius: '4px',
+    borderRadius: '25px',
+    overflow: 'hidden',
     borderStyle: 'dashed',
-    borderWidth: '2px',
-    borderColor: theme.palette.text.disabled,
-    background: theme.palette.primary.main + '11',
+    borderWidth: '4px',
+    borderColor: 'lightgray',
+    background: 'white',
+    textAlign: 'center',
     transition: 'all ease-out 0.2s',
     '&:hover, &:focus': {
-      borderColor: theme.palette.primary.main,
-      backgroundColor: theme.palette.primary.main + '22'
+      borderColor: 'darkgray'
+    },
+    '&.hoverApproved': {
+      borderColor: '#00e03c'
     },
     cursor: 'pointer'
   }
-}));
+};
 
 export interface IUploadFile {
   file: File;
@@ -104,13 +106,26 @@ export interface IFileUploadProps {
 }
 
 export const FileUpload: React.FC<IFileUploadProps> = (props) => {
-  const classes = useStyles();
-
   const [files, setFiles] = useState<IUploadFile[]>([]);
 
   const [fileUploadItems, setFileUploadItems] = useState<any[]>([]);
 
   const [fileToRemove, setFileToRemove] = useState<string>('');
+
+  // Check if the file is an approved file type
+  const [uploadCheckApproved, setUploadCheckApproved] = useState<boolean>(false);
+  const allApprovedExtensions = props.dropZoneProps?.acceptedFileExtensions
+    ? Object.entries(props.dropZoneProps.acceptedFileExtensions)
+    : [];
+  const approvedExtensions = allApprovedExtensions.map((value) => value[0]);
+
+  const checkApproved = (e: any) => {
+    const match =
+      approvedExtensions.some((extension) => extension === e.dataTransfer.items[0].type) || false;
+    setUploadCheckApproved(match);
+  };
+
+  const checkLeave = () => setUploadCheckApproved(false);
 
   /**
    * Handles files which are added (via either drag/drop or browsing).
@@ -137,7 +152,9 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
 
     // Parse out any rejected files that have already been added
     rejectedFiles.forEach((item) => {
-      const isAlreadyRejected = files.some((existingFile) => existingFile.file.name === item.file.name);
+      const isAlreadyRejected = files.some(
+        (existingFile) => existingFile.file.name === item.file.name
+      );
 
       if (isAlreadyRejected) {
         return;
@@ -230,7 +247,11 @@ export const FileUpload: React.FC<IFileUploadProps> = (props) => {
 
   return (
     <Box>
-      <Box className={classes.dropZone}>
+      <Box
+        sx={pageStyles.dropZone}
+        onDragOver={checkApproved}
+        onDragLeave={checkLeave}
+        className={uploadCheckApproved ? 'hoverApproved' : ''}>
         <DropZone onFiles={onFiles} {...props.dropZoneProps} />
       </Box>
       <Box>

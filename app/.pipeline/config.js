@@ -52,7 +52,7 @@ options = processOptions(options);
 
 const phases = {
   build: {
-    namespace: 'b1d40d-tools',
+    namespace: 'd83219-tools',
     name: `${name}`,
     phase: 'build',
     changeId: changeId,
@@ -65,34 +65,41 @@ const phases = {
     cpuRequest: '100m',
     cpuLimit: '1000m',
     memoryRequest: '512Mi',
-    memoryLimit: '3Gi'
+    memoryLimit: '3Gi',
+    mapTiler: config.mapTiler.dev
   },
   dev: {
-    namespace: 'b1d40d-dev',
+    namespace: 'd83219-dev',
     name: `${name}`,
     phase: 'dev',
     changeId: deployChangeId,
     suffix: `-dev-${deployChangeId}`,
     instance: `${name}-dev-${deployChangeId}`,
     version: `${deployChangeId}-${changeId}`,
-    tag: `dev-${version}-${deployChangeId}`,
-    host: (isStaticDeployment && staticUrls.dev) || `${name}-${changeId}-b1d40d-dev.apps.silver.devops.gov.bc.ca`,
+    tag: `dev-${version}`,
+    host: (isStaticDeployment && staticUrls.dev) || `${name}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     apiHost:
-      (isStaticDeployment && staticUrlsAPI.dev) || `${apiName}-${changeId}-b1d40d-dev.apps.silver.devops.gov.bc.ca`,
+      (isStaticDeployment && staticUrlsAPI.dev) || `${apiName}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     siteminderLogoutURL: config.siteminderLogoutURL.dev,
+    objectStorageURL: config.objectStorageURL.dev,
+    objectStorageBucket: config.objectStorageBucket.dev,
     maxUploadNumFiles,
     maxUploadFileSize,
-    env: 'dev',
+    env: 'development',
+    mapTiler: config.mapTiler.dev,
     sso: config.sso.dev,
     cpuRequest: '50m',
     cpuLimit: (isStaticDeployment && '300m') || '200m',
     memoryRequest: '50Mi',
     memoryLimit: (isStaticDeployment && '300Mi') || '200Mi',
     replicas: '1',
-    replicasMax: (isStaticDeployment && '2') || '1'
+    replicasMax: (isStaticDeployment && '2') || '1',
+    backbonePublicApiHost: 'https://api-dev-biohub-platform.apps.silver.devops.gov.bc.ca',
+    biohubTaxonPath: '/api/taxonomy/taxon',
+    biohubTaxonTsnPath: '/api/taxonomy/taxon/tsn'
   },
   test: {
-    namespace: 'b1d40d-test',
+    namespace: 'd83219-test',
     name: `${name}`,
     phase: 'test',
     changeId: deployChangeId,
@@ -103,19 +110,25 @@ const phases = {
     host: staticUrls.test,
     apiHost: staticUrlsAPI.test,
     siteminderLogoutURL: config.siteminderLogoutURL.test,
+    objectStorageURL: config.objectStorageURL.test,
+    objectStorageBucket: config.objectStorageBucket.test,
     maxUploadNumFiles,
     maxUploadFileSize,
     env: 'test',
+    mapTiler: config.mapTiler.test,
     sso: config.sso.test,
     cpuRequest: '100m',
     cpuLimit: '400m',
     memoryRequest: '100Mi',
     memoryLimit: '400Mi',
     replicas: '2',
-    replicasMax: '3'
+    replicasMax: '3',
+    backbonePublicApiHost: 'https://api-test-biohub-platform.apps.silver.devops.gov.bc.ca',
+    biohubTaxonPath: '/api/taxonomy/taxon',
+    biohubTaxonTsnPath: '/api/taxonomy/taxon/tsn'
   },
   prod: {
-    namespace: 'b1d40d-prod',
+    namespace: 'd83219-prod',
     name: `${name}`,
     phase: 'prod',
     changeId: deployChangeId,
@@ -126,16 +139,22 @@ const phases = {
     host: staticUrls.prod,
     apiHost: staticUrlsAPI.prod,
     siteminderLogoutURL: config.siteminderLogoutURL.prod,
+    objectStorageURL: config.objectStorageURL.prod,
+    objectStorageBucket: config.objectStorageBucket.prod,
     maxUploadNumFiles,
     maxUploadFileSize,
     env: 'prod',
+    mapTiler: config.mapTiler.prod,
     sso: config.sso.prod,
     cpuRequest: '100m',
     cpuLimit: '400m',
     memoryRequest: '100Mi',
     memoryLimit: '400Mi',
     replicas: '2',
-    replicasMax: '3'
+    replicasMax: '3',
+    backbonePublicApiHost: 'https://api-biohub-platform.apps.silver.devops.gov.bc.ca',
+    biohubTaxonPath: '/api/taxonomy/taxon',
+    biohubTaxonTsnPath: '/api/taxonomy/taxon/tsn'
   }
 };
 

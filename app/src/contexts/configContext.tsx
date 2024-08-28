@@ -5,6 +5,8 @@ import { ensureProtocol } from 'utils/Utils';
 
 export interface IConfig {
   API_HOST: string;
+  REACT_APP_OBJECT_STORE_URL: string;
+  REACT_APP_OBJECT_STORE_BUCKET_NAME: string;
   CHANGE_VERSION: string;
   NODE_ENV: string;
   REACT_APP_NODE_ENV: string;
@@ -13,10 +15,18 @@ export interface IConfig {
   SITEMINDER_LOGOUT_URL: string;
   MAX_UPLOAD_NUM_FILES: number;
   MAX_UPLOAD_FILE_SIZE: number;
+  MAX_IMAGE_UPLOAD_SIZE: number;
+  MAX_IMAGE_NUM_FILES: number;
+  ALLOW_MULTIPLE_IMAGE_UPLOADS: boolean;
+  BACKBONE_PUBLIC_API_HOST: string;
+  BIOHUB_TAXON_PATH: string;
+  BIOHUB_TAXON_TSN_PATH: string;
 }
 
 export const ConfigContext = React.createContext<IConfig | undefined>({
   API_HOST: '',
+  REACT_APP_OBJECT_STORE_URL: '',
+  REACT_APP_OBJECT_STORE_BUCKET_NAME: '',
   CHANGE_VERSION: '',
   NODE_ENV: '',
   REACT_APP_NODE_ENV: '',
@@ -28,7 +38,13 @@ export const ConfigContext = React.createContext<IConfig | undefined>({
   },
   SITEMINDER_LOGOUT_URL: '',
   MAX_UPLOAD_NUM_FILES: 10,
-  MAX_UPLOAD_FILE_SIZE: 52428800
+  MAX_UPLOAD_FILE_SIZE: 52428800,
+  MAX_IMAGE_UPLOAD_SIZE: 10485760,
+  MAX_IMAGE_NUM_FILES: 1,
+  ALLOW_MULTIPLE_IMAGE_UPLOADS: false,
+  BACKBONE_PUBLIC_API_HOST: '',
+  BIOHUB_TAXON_PATH: '',
+  BIOHUB_TAXON_TSN_PATH: ''
 });
 
 /**
@@ -44,6 +60,8 @@ const getLocalConfig = (): IConfig => {
 
   return {
     API_HOST: ensureProtocol(API_URL, 'http://'),
+    REACT_APP_OBJECT_STORE_URL: process.env.REACT_APP_OBJECT_STORE_URL || '',
+    REACT_APP_OBJECT_STORE_BUCKET_NAME: process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME || '',
     CHANGE_VERSION: process.env.CHANGE_VERSION || 'NA',
     NODE_ENV: process.env.NODE_ENV,
     REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || 'dev',
@@ -55,7 +73,14 @@ const getLocalConfig = (): IConfig => {
     },
     SITEMINDER_LOGOUT_URL: process.env.REACT_APP_SITEMINDER_LOGOUT_URL || '',
     MAX_UPLOAD_NUM_FILES: Number(process.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
-    MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800
+    MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800,
+    MAX_IMAGE_UPLOAD_SIZE: Number(process.env.REACT_APP_MAX_IMAGE_UPLOAD_SIZE) || 10485760,
+    MAX_IMAGE_NUM_FILES: Number(process.env.REACT_APP_MAX_IMAGE_NUM_FILES) || 1,
+    ALLOW_MULTIPLE_IMAGE_UPLOADS:
+      Boolean(process.env.REACT_APP_ALLOW_MULTIPLE_IMAGE_UPLOADS) || false,
+    BACKBONE_PUBLIC_API_HOST: process.env.REACT_APP_BACKBONE_PUBLIC_API_HOST || '',
+    BIOHUB_TAXON_PATH: process.env.REACT_APP_BIOHUB_TAXON_PATH || '',
+    BIOHUB_TAXON_TSN_PATH: process.env.REACT_APP_BIOHUB_TAXON_TSN_PATH || ''
   };
 };
 
@@ -92,7 +117,7 @@ const isDevelopment = (): boolean => {
  * @param {*} props
  * @return {*}
  */
-export const ConfigContextProvider: React.FC = (props) => {
+export const ConfigContextProvider: React.FC<React.PropsWithChildren> = (props) => {
   const [config, setConfig] = useState<IConfig>();
 
   useEffect(() => {

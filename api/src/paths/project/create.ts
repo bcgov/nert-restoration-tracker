@@ -15,7 +15,7 @@ export const POST: Operation = [
     return {
       and: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         }
       ]
@@ -39,7 +39,18 @@ POST.apiDoc = {
         schema: {
           title: 'Project post request object',
           type: 'object',
-          required: ['project', 'iucn', 'contact', 'permit', 'funding', 'partnerships', 'location'],
+          required: [
+            'project',
+            'objective',
+            'focus',
+            'contact',
+            'species',
+            'authorization',
+            'funding',
+            'partnership',
+            'location',
+            'restoration_plan'
+          ],
           additionalProperties: false,
           properties: {
             project: {
@@ -49,16 +60,94 @@ POST.apiDoc = {
                 project_name: {
                   type: 'string'
                 },
+                project_image: {
+                  type: 'string',
+                  nullable: true,
+                  description: 'URL to the project image'
+                },
+                is_project: {
+                  type: 'boolean',
+                  description: 'True is project, False is plan'
+                },
+                brief_desc: {
+                  type: 'string'
+                },
+                state_code: {
+                  type: 'number',
+                  description: 'Workflow project or plan state'
+                },
                 start_date: {
                   type: 'string',
-                  description: 'ISO 8601 date string'
+                  description: 'ISO 8601 date string',
+                  nullable: true
                 },
                 end_date: {
                   type: 'string',
-                  description: 'ISO 8601 date string'
+                  description: 'ISO 8601 date string',
+                  nullable: true
                 },
+                actual_start_date: {
+                  type: 'string',
+                  description: 'ISO 8601 date string',
+                  nullable: true
+                },
+                actual_end_date: {
+                  type: 'string',
+                  description: 'ISO 8601 date string',
+                  nullable: true
+                },
+                is_healing_land: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on healing the land'
+                },
+                is_healing_people: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on healing the people'
+                },
+                is_land_initiative: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on land based restoration initiative'
+                },
+                is_cultural_initiative: {
+                  type: 'boolean',
+                  description: 'Project or plan focused on cultural or community investment initiative'
+                }
+              }
+            },
+            objective: {
+              title: 'Project objectives',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
                 objectives: {
-                  type: 'string'
+                  type: 'array',
+                  items: {
+                    title: 'Project objectives',
+                    type: 'object',
+                    properties: {
+                      objective: {
+                        type: 'string'
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            focus: {
+              title: 'Project focuses',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                focuses: {
+                  type: 'array',
+                  items: {
+                    type: 'number'
+                  }
+                },
+                people_involved: {
+                  type: 'number',
+                  description: 'Number of people involved in the project',
+                  nullable: true
                 }
               }
             },
@@ -70,32 +159,25 @@ POST.apiDoc = {
                 focal_species: {
                   type: 'array',
                   items: {
-                    type: 'number'
-                  }
-                }
-              }
-            },
-            iucn: {
-              title: 'Project IUCN classifications',
-              type: 'object',
-              required: ['classificationDetails'],
-              additionalProperties: false,
-              properties: {
-                classificationDetails: {
-                  type: 'array',
-                  items: {
-                    title: 'IUCN classification',
                     type: 'object',
-                    required: ['classification', 'subClassification1', 'subClassification2'],
                     properties: {
-                      classification: {
+                      tsn: {
                         type: 'number'
                       },
-                      subClassification1: {
-                        type: 'number'
+                      commonNames: {
+                        type: 'array',
+                        items: {
+                          type: 'string'
+                        }
                       },
-                      subClassification2: {
-                        type: 'number'
+                      scientificName: {
+                        type: 'string'
+                      },
+                      rank: {
+                        type: 'string'
+                      },
+                      kingdom: {
+                        type: 'string'
                       }
                     }
                   }
@@ -113,7 +195,15 @@ POST.apiDoc = {
                   items: {
                     title: 'contacts',
                     type: 'object',
-                    required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public', 'is_primary'],
+                    required: [
+                      'first_name',
+                      'last_name',
+                      'email_address',
+                      'organization',
+                      'is_public',
+                      'is_primary',
+                      'is_first_nation'
+                    ],
                     properties: {
                       first_name: {
                         type: 'string'
@@ -124,7 +214,7 @@ POST.apiDoc = {
                       email_address: {
                         type: 'string'
                       },
-                      agency: {
+                      organization: {
                         type: 'string'
                       },
                       is_public: {
@@ -134,30 +224,41 @@ POST.apiDoc = {
                       is_primary: {
                         type: 'string',
                         enum: ['true', 'false']
+                      },
+                      is_first_nation: {
+                        type: 'boolean'
+                      },
+                      phone_number: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
                 }
               }
             },
-            permit: {
-              title: 'Project permits',
+            authorization: {
+              title: 'Project authorizations',
               type: 'object',
-              required: ['permits'],
+              required: ['authorizations'],
               additionalProperties: false,
               properties: {
-                permits: {
+                authorizations: {
                   type: 'array',
-                  required: ['permit_number', 'permit_type'],
+                  required: ['authorization_ref', 'authorization_type'],
                   items: {
-                    title: 'Project permit',
+                    title: 'Project authorization',
                     type: 'object',
                     properties: {
-                      permit_number: {
+                      authorization_ref: {
                         type: 'string'
                       },
-                      permit_type: {
+                      authorization_type: {
                         type: 'string'
+                      },
+                      authorization_desc: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
@@ -168,22 +269,22 @@ POST.apiDoc = {
               title: 'Project funding sources',
               type: 'object',
               required: ['fundingSources'],
-              additionalProperties: false,
               properties: {
                 fundingSources: {
                   type: 'array',
                   items: {
-                    title: 'Project funding agency',
+                    title: 'Project funding organization',
                     type: 'object',
-                    required: ['agency_id', 'funding_amount', 'investment_action_category', 'start_date', 'end_date'],
+                    required: ['organization_name', 'funding_amount', 'is_public'],
                     properties: {
-                      agency_id: {
-                        type: 'number'
+                      organization_name: {
+                        type: 'string'
                       },
-                      investment_action_category: {
-                        type: 'number'
+                      description: {
+                        type: 'string',
+                        nullable: true
                       },
-                      agency_project_id: {
+                      funding_project_id: {
                         type: 'string'
                       },
                       funding_amount: {
@@ -191,32 +292,46 @@ POST.apiDoc = {
                       },
                       start_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
                       },
                       end_date: {
                         type: 'string',
-                        description: 'ISO 8601 date string'
+                        description: 'ISO 8601 date string',
+                        nullable: true
+                      },
+                      is_public: {
+                        type: 'string',
+                        enum: ['true', 'false']
                       }
                     }
                   }
                 }
               }
             },
-            partnerships: {
+            partnership: {
               title: 'Project partnerships',
               type: 'object',
               additionalProperties: false,
               properties: {
-                indigenous_partnerships: {
+                partnerships: {
                   type: 'array',
                   items: {
-                    type: 'number'
-                  }
-                },
-                stakeholder_partnerships: {
-                  type: 'array',
-                  items: {
-                    type: 'string'
+                    title: 'Project partnerships',
+                    type: 'object',
+                    properties: {
+                      partnership_type: {
+                        type: 'string'
+                      },
+                      partnership_ref: {
+                        type: 'string',
+                        nullable: true
+                      },
+                      partnership_name: {
+                        type: 'string',
+                        nullable: true
+                      }
+                    }
                   }
                 }
               }
@@ -224,16 +339,32 @@ POST.apiDoc = {
             location: {
               title: 'Location',
               type: 'object',
-              required: ['geometry', 'region'],
+              required: ['geometry', 'region', 'number_sites'],
               additionalProperties: false,
               properties: {
-                range: {
+                is_within_overlapping: {
+                  type: 'string',
+                  enum: ['true', 'false', 'dont_know']
+                },
+                size_ha: {
                   type: 'number',
                   nullable: true
                 },
-                priority: {
-                  type: 'string',
-                  enum: ['true', 'false']
+                number_sites: {
+                  type: 'number'
+                },
+                conservationAreas: {
+                  type: 'array',
+                  additionalProperties: true,
+                  items: {
+                    title: 'Project conservation areas',
+                    type: 'object',
+                    properties: {
+                      conservationArea: {
+                        type: 'string'
+                      }
+                    }
+                  }
                 },
                 geometry: {
                   type: 'array',
@@ -242,7 +373,24 @@ POST.apiDoc = {
                   }
                 },
                 region: {
-                  type: 'number'
+                  oneOf: [
+                    {
+                      type: 'string'
+                    },
+                    {
+                      type: 'number'
+                    }
+                  ]
+                }
+              }
+            },
+            restoration_plan: {
+              title: 'Project related to public plan',
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                is_project_part_public_plan: {
+                  type: 'boolean'
                 }
               }
             }

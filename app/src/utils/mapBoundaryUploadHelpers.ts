@@ -1,157 +1,232 @@
-import { gpx, kml } from '@tmcw/togeojson';
 import bbox from '@turf/bbox';
+import * as turf from '@turf/turf';
 import { FormikContextType } from 'formik';
-import { Feature, GeoJSON } from 'geojson';
+import { BBox, Feature, GeoJSON, FeatureCollection } from 'geojson';
 import get from 'lodash-es/get';
-import shp from 'shpjs';
 import { v4 as uuidv4 } from 'uuid';
 
+interface cleanGeoJSONProps {
+  (geojson: GeoJSON | FeatureCollection): FeatureCollection;
+}
+
 /**
- * Function to handle zipped shapefile spatial boundary uploads
- *
- * @template T Type of the formikProps (should be auto-determined if the incoming formikProps are properly typed)
- * @param {File} file The file to upload
- * @param {string} name The name of the formik field that the parsed geometry will be saved to
- * @param {FormikContextType<T>} formikProps The formik props
- * @return {*}
+ * Clean the GeoJSON object by adding default properties and removing any invalid features
+ * @param geojson
+ * @returns Cleaned GeoJSON FeatureCollection
  */
-export const handleShapefileUpload = <T>(file: File, name: string, formikProps: FormikContextType<T>) => {
-  const { values, setFieldValue, setFieldError } = formikProps;
-
-  // Back out if not a zipped file
-  if (!file?.type.match(/zip/) || !file?.name.includes('.zip')) {
-    setFieldError(name, 'You must upload a valid shapefile (.zip format). Please try again.');
-    return;
-  }
-
-  // Create a file reader to extract the binary data
-  const reader = new FileReader();
-  reader.readAsArrayBuffer(file);
-
-  // When the file is loaded run the conversion
-  reader.onload = async (event: any) => {
-    // The converter wants a buffer
-    const zip: Buffer = event?.target?.result as Buffer;
-
-    // Exit out if no zip
-    if (!zip) {
+export const cleanGeoJSON: cleanGeoJSONProps = (geojson: GeoJSON) => {
+  const cleanFeature = (feature: Feature) => {
+    // Exit out if the feature is not a Polygon or MultiPolygon
+    if (feature.geometry.type !== 'Polygon' && feature.geometry.type !== 'MultiPolygon') {
       return;
     }
+    const area = turf.area(feature);
+    const p = feature.properties || {};
 
-    // Run the conversion
-    const geojson = await shp(zip);
+    p.siteName = p.siteName || p.Site_Name || '';
+    p.areaHa = Math.round(area / 100) / 100;
+    p.maskedLocation = p.maskedLocation || p.Masked_Location || false;
 
-    let features: Feature[] = [];
-    if (Array.isArray(geojson)) {
-      geojson.forEach((item) => {
-        features = features.concat(item.features);
-      });
-    } else {
-      features = geojson.features;
-    }
-
-    setFieldValue(name, [...features, ...get(values, name)]);
+    feature.properties = p;
+    return feature;
   };
+
+  /**
+   * If the object is a single Feature, clean it.
+   * If the object is a FeatureCollection, clean all features.
+   * If the object is not a Feature or FeatureCollection, display an error.
+   * Always return a clean FeatureCollection.
+   * @param geojson
+   * @param callback
+   * @returns Cleaned GeoJSON
+   */
+  if (geojson.type === 'Feature') {
+    const cleanF = cleanFeature(geojson);
+    return { type: 'FeatureCollection', features: [cleanF] as Feature[] };
+  } else if (geojson.type === 'FeatureCollection') {
+    const cleanF = geojson.features.map(cleanFeature).filter((f): f is Feature => f !== undefined);
+    return { type: 'FeatureCollection', features: cleanF as Feature[] };
+  } else {
+    console.error(
+      'Invalid GeoJSON file. Hint: Make sure there is a Feature or FeatureCollection within your JSON file.'
+    );
+    return { type: 'FeatureCollection', features: [] };
+  }
+};
+
+export interface recalculateFeatureIdsProps {
+  (features: Feature[]): Feature[];
+}
+
+/**
+ * Recalculate the IDs within a feature array
+ * @param features array
+ * @returns features array with recalculated IDs
+ */
+export const recalculateFeatureIds: recalculateFeatureIdsProps = (features: Feature[]) => {
+  return features.map((feature: Feature, index: number) => {
+    feature.properties = feature.properties || {};
+    feature.properties.id = index + 1;
+    return feature;
+  });
 };
 
 /**
- * Function to handle GPX file spatial boundary uploads
- *
- * @template T Type of the formikProps (should be auto-determined if the incoming formikProps are properly typed)
- * @param {File} file The file to upload
- * @param {string} name The name of the formik field that the parsed geometry will be saved to
- * @param {FormikContextType<T>} formikProps The formik props
- * @return {*}
+ * handleGeoJSONUpload
+ * Convert the a file object to a string. Then perfrom the following:
+ * 1. Check if the file is a GeoJSON file
+ * 2. Check if the projection is correct
+ * 3. Check that there is at least one polygon or multipolygon feature
+ * 4. Inforse a reasonable limit on the number of features
+ * @param file File object to upload
+ * @param name Name of the formik field that the parsed geometry will be saved to
+ * @param formikProps The formik props
+ * @returns
  */
-export const handleGPXUpload = async <T>(file: File, name: string, formikProps: FormikContextType<T>) => {
+export const handleGeoJSONUpload = async <T>(
+  file: File,
+  name: string,
+  formikProps: FormikContextType<T>
+) => {
   const { values, setFieldValue, setFieldError } = formikProps;
 
-  const fileAsString = await file?.text().then((xmlString: string) => {
-    return xmlString;
+  const fileAsString = await file?.text().then((jsonString: string) => {
+    return jsonString;
   });
 
-  if (!file?.type.includes('gpx') && !fileAsString?.includes('</gpx>')) {
-    setFieldError(name, 'You must upload a GPX file, please try again.');
+  // 1. Check if the file is a GeoJSON file
+  if (!file?.name.includes('json') && !fileAsString?.includes('Feature')) {
+    setFieldError(name, 'You must upload a GeoJSON file, please try again.');
+    return;
+  }
+
+  // 2. Check if the projection is correct
+  if (!fileAsString?.match(/\[\s*-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+\s*\]/)) {
+    setFieldError(name, 'Only GeoJSON files with EPSG:4326 projection are supported.');
+    return;
+  }
+
+  // 3. Check that there is at least one polygon or multipolygon feature
+  if (
+    !fileAsString?.match(/"type":\s*"Polygon"/) &&
+    !fileAsString?.match(/"type":\s*"MultiPolygon"/)
+  ) {
+    setFieldError(name, 'At least one Polygon or MultiPolygon feature is required.');
+    return;
+  }
+
+  // 4. Count the number of features
+  const featureCount = fileAsString?.match(/"type":\s*"Feature"/g)?.length;
+  const maxFeatures = parseInt(process.env.REACT_APP_MAX_NUMBER_OF_FEATURES || '100', 10);
+  if (featureCount && featureCount > maxFeatures) {
+    setFieldError(name, `A maximum of ${maxFeatures} features are supported.`);
     return;
   }
 
   try {
-    const domGpx = new DOMParser().parseFromString(fileAsString, 'application/xml');
-    const geoJson = gpx(domGpx);
+    const geojson = JSON.parse(fileAsString);
 
-    const sanitizedGeoJSON: Feature[] = [];
-    geoJson.features.forEach((feature: Feature) => {
-      if (feature.geometry) {
-        sanitizedGeoJSON.push(feature);
-      }
-    });
+    const geojsonWithAttributes = cleanGeoJSON(geojson);
 
-    setFieldValue(name, [...sanitizedGeoJSON, ...get(values, name)]);
-  } catch (error) {
-    setFieldError(name, 'Error uploading your GPX file, please check the file and try again.');
-  }
-};
-
-/**
- * Function to handle KML file spatial boundary uploads
- *
- * @template T Type of the formikProps (should be auto-determined if the incoming formikProps are properly typed)
- * @param {File} file The file to upload
- * @param {string} name The name of the formik field that the parsed geometry will be saved to
- * @param {FormikContextType<T>} formikProps The formik props
- * @return {*}
- */
-export const handleKMLUpload = async <T>(file: File, name: string, formikProps: FormikContextType<T>) => {
-  const { values, setFieldValue, setFieldError } = formikProps;
-
-  const fileAsString = await file?.text().then((xmlString: string) => {
-    return xmlString;
-  });
-
-  if (file?.type !== 'application/vnd.google-earth.kml+xml' && !fileAsString?.includes('</kml>')) {
-    setFieldError(name, 'You must upload a KML file, please try again.');
-    return;
-  }
-
-  const domKml = new DOMParser().parseFromString(fileAsString, 'application/xml');
-  const geojson = kml(domKml);
-
-  const sanitizedGeoJSON: Feature[] = [];
-  geojson.features.forEach((feature: Feature) => {
-    if (feature.geometry) {
-      sanitizedGeoJSON.push(feature);
+    // If there are no features, display an error that that only Polygon or MultiPolygon features are supported
+    if (geojsonWithAttributes?.features.length <= 0) {
+      setFieldError(name, 'Only Polygon or MultiPolygon features are supported.');
+      return;
     }
-  });
 
-  setFieldValue(name, [...sanitizedGeoJSON, ...get(values, name)]);
+    // Merge the new features with the existing features
+    const allFeatures = [...get(values, name), ...geojsonWithAttributes.features];
+
+    // Recalculate the IDs for all features
+    const allFeaturesWithIds = recalculateFeatureIds(allFeatures);
+
+    setFieldValue(name, allFeaturesWithIds);
+  } catch (error) {
+    setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
+  }
 };
 
 /**
- * @param geometries geometry values on map
+ * Calculates the bounding box that encompasses all of the given features
+ *
+ * @param features The features used to calculate the bounding box
+ * @returns The bounding box, or undefined if a bounding box cannot be calculated.
  */
-export const calculateUpdatedMapBounds = (geometries: Feature[]): any[][] | undefined => {
-  /*
-    If no geometries, we do not need to set bounds
-
-    If there is only one geometry and it is a point, we cannot do the bound setting
-    because leaflet does not know how to handle that and tries to zoom in way too much
-
-    If there are multiple points or a polygon and a point, this is not an issue
-  */
-  if (!geometries || !geometries.length || (geometries.length === 1 && geometries[0]?.geometry?.type === 'Point')) {
+export const calculateFeatureBoundingBox = (features: Feature[]): BBox | undefined => {
+  // If no geometries, we do not need to set bounds
+  if (!features.length) {
     return;
   }
 
+  /**
+   * If there is only one geometry and it is a point, we cannot automatically calculate
+   * a bounding box, because leaflet does not know how to handle the scale, and tries
+   * to zoom in way too much. In this case, we manually create a bounding box.
+   */
+  if (features.length === 1 && features[0]?.geometry?.type === 'Point') {
+    const singlePoint = features[0]?.geometry;
+    const [longitude, latitude] = singlePoint.coordinates;
+
+    return [longitude + 1, latitude + 1, longitude - 1, latitude - 1];
+  }
+
+  /**
+   * If there are multiple points or a polygon and a point, we can automatically
+   * create a bounding box using Turf.
+   */
   const allGeosFeatureCollection = {
     type: 'FeatureCollection',
-    features: [...geometries]
+    features: [...features]
   };
-  const bboxCoords = bbox(allGeosFeatureCollection);
 
+  return bbox(allGeosFeatureCollection);
+};
+
+/**
+ * Converts a bounding box to a lat/long bounds expression
+ * @param boundingBox
+ * @returns
+ */
+export const latLngBoundsFromBoundingBox = (boundingBox: BBox): any => {
   return [
-    [bboxCoords[1], bboxCoords[0]],
-    [bboxCoords[3], bboxCoords[2]]
+    [boundingBox[1], boundingBox[0]],
+    [boundingBox[3], boundingBox[2]]
   ];
+};
+
+/**
+ * Converts a bounding box to a long/lat bounds expression
+ * @param boundingBox
+ * @returns
+ */
+export const lonLatBoundsFromBoundingBox = (boundingBox: BBox): any => {
+  return [
+    [boundingBox[0], boundingBox[1]],
+    [boundingBox[2], boundingBox[3]]
+  ];
+};
+
+/**
+ * Calculates the bounding box that encompasses all of the given features
+ *
+ * @param features The features used to calculate the map bounds
+ * @returns The Lat/Long bounding box, or undefined if a bounding box cannot be calculated.
+ */
+export const calculateUpdatedMapBounds = (
+  features: Feature[],
+  lngLat?: boolean
+): any | undefined => {
+  const bboxCoords = calculateFeatureBoundingBox(features);
+
+  if (!bboxCoords) {
+    return;
+  }
+
+  if (lngLat) {
+    return lonLatBoundsFromBoundingBox(bboxCoords);
+  } else {
+    return latLngBoundsFromBoundingBox(bboxCoords);
+  }
 };
 
 /*

@@ -153,10 +153,6 @@ export function getUser(): RequestHandler {
 
       const projectObjects = await userService.getUserProjectParticipation(userId);
 
-      if (!projectObjects) {
-        throw new HTTP400('Failed to get system user projects');
-      }
-
       await connection.commit();
 
       return res.status(200).json({ ...userObject, projects: projectObjects });

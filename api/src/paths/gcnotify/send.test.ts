@@ -3,8 +3,8 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { HTTPError } from '../../errors/custom-error';
 import { getRequestHandlerMocks } from '../../__mocks__/db';
+import { GCNotifyService } from '../../services/gcnotify-service';
 import * as notify from './send';
 
 chai.use(sinonChai);
@@ -43,122 +43,22 @@ describe('gcnotify', () => {
       }
     };
 
-    it('should throw a 400 error when no req body', async () => {
+    it('catches and rethrows errors', async () => {
       const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
       mockReq.params = sampleReq.params;
-      mockReq.body = null;
+      mockReq.body = sampleReq.body;
+      process.env.GCNOTIFY_SECRET_API_KEY = 'temp';
+
+      sinon.stub(GCNotifyService.prototype, 'sendEmailGCNotification').throws(new Error('An error occurred'));
+
+      const requestHandler = notify.sendNotification();
 
       try {
-        const requestHandler = notify.sendNotification();
-
         await requestHandler(mockReq, mockRes, mockNext);
         expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required param: body');
-      }
-    });
-
-    it('should throw a 400 error when no recipient', async () => {
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = sampleReq.params;
-      mockReq.body = { ...sampleReq.body, recipient: null };
-
-      try {
-        const requestHandler = notify.sendNotification();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required body param: recipient');
-      }
-    });
-
-    it('should throw a 400 error when no message', async () => {
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = sampleReq.params;
-      mockReq.body = { ...sampleReq.body, message: null };
-
-      try {
-        const requestHandler = notify.sendNotification();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required body param: message');
-      }
-    });
-
-    it('should throw a 400 error when no message.header', async () => {
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = sampleReq.params;
-      mockReq.body = { ...sampleReq.body, message: { ...sampleReq.body.message, header: null } };
-
-      try {
-        const requestHandler = notify.sendNotification();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required body param: message.header');
-      }
-    });
-
-    it('should throw a 400 error when no message.body1', async () => {
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = sampleReq.params;
-      mockReq.body = { ...sampleReq.body, message: { ...sampleReq.body.message, body1: null } };
-
-      try {
-        const requestHandler = notify.sendNotification();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required body param: message.body1');
-      }
-    });
-
-    it('should throw a 400 error when no message.body2', async () => {
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = sampleReq.params;
-      mockReq.body = { ...sampleReq.body, message: { ...sampleReq.body.message, body2: null } };
-
-      try {
-        const requestHandler = notify.sendNotification();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required body param: message.body2');
-      }
-    });
-
-    it('should throw a 400 error when no message.footer', async () => {
-      const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
-
-      mockReq.params = sampleReq.params;
-      mockReq.body = { ...sampleReq.body, message: { ...sampleReq.body.message, footer: null } };
-
-      try {
-        const requestHandler = notify.sendNotification();
-
-        await requestHandler(mockReq, mockRes, mockNext);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as HTTPError).status).to.equal(400);
-        expect((actualError as HTTPError).message).to.equal('Missing required body param: message.footer');
+      } catch (actualError: any) {
+        expect(actualError.message).to.equal('An error occurred');
       }
     });
 

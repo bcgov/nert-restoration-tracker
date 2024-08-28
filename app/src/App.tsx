@@ -1,44 +1,60 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { ThemeProvider } from '@material-ui/core/styles';
-// Strange looking `type {}` import below, see: https://github.com/microsoft/TypeScript/issues/36812
-import type {} from '@material-ui/lab/themeAugmentation'; // this allows `@material-ui/lab` components to be themed
-import { ReactKeycloakProvider } from '@react-keycloak/web';
-import AppRouter from 'AppRouter';
+import CircularProgress from '@mui/material/CircularProgress';
+import { ThemeProvider } from '@mui/material/styles';
+import { AppRouter } from 'AppRouter';
 import { AuthStateContextProvider } from 'contexts/authStateContext';
-import { ConfigContext, ConfigContextProvider } from 'contexts/configContext';
-import Keycloak from 'keycloak-js';
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { CodesContextProvider } from 'contexts/codesContext';
+import { ConfigContext } from 'contexts/configContext';
+import { DialogContextProvider } from 'contexts/dialogContext';
+import { MapStateContextProvider } from 'contexts/mapContext';
+import { WebStorageStateStore } from 'oidc-client-ts';
+import React, { useContext } from 'react';
+import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 import appTheme from 'themes/appTheme';
+import { buildUrl } from 'utils/Utils';
 
 const App: React.FC = () => {
+  const configContext = useContext(ConfigContext);
+
+  if (!configContext) {
+    return <CircularProgress className="pageProgress" size={40} />;
+  }
+
+  const logoutRedirectUri = configContext.SITEMINDER_LOGOUT_URL
+    ? `${configContext.SITEMINDER_LOGOUT_URL}?returl=${window.location.origin}&retnow=1`
+    : buildUrl(window.location.origin);
+
+  const authConfig: AuthProviderProps = {
+    authority: `${configContext.KEYCLOAK_CONFIG.url}/realms/${configContext.KEYCLOAK_CONFIG.realm}/`,
+    client_id: configContext.KEYCLOAK_CONFIG.clientId,
+    resource: configContext.KEYCLOAK_CONFIG.clientId,
+    // Default sign in redirect
+    redirect_uri: buildUrl(window.location.origin),
+    // Default sign out redirect
+    post_logout_redirect_uri: logoutRedirectUri,
+    automaticSilentRenew: true,
+    // Automatically load additional user profile information
+    loadUserInfo: true,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    onSigninCallback: (): void => {
+      // See https://github.com/authts/react-oidc-context#getting-started
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  };
+
   return (
-    <ThemeProvider theme={appTheme}>
-      <ConfigContextProvider>
-        <ConfigContext.Consumer>
-          {(config) => {
-            if (!config) {
-              return <CircularProgress className="pageProgress" size={40} />;
-            }
-
-            const keycloak = new Keycloak(config.KEYCLOAK_CONFIG);
-
-            return (
-              <ReactKeycloakProvider
-                authClient={keycloak}
-                initOptions={{ pkceMethod: 'S256' }}
-                LoadingComponent={<CircularProgress className="pageProgress" size={40} />}>
-                <AuthStateContextProvider>
-                  <BrowserRouter>
-                    <AppRouter />
-                  </BrowserRouter>
-                </AuthStateContextProvider>
-              </ReactKeycloakProvider>
-            );
-          }}
-        </ConfigContext.Consumer>
-      </ConfigContextProvider>
-    </ThemeProvider>
+    <AuthProvider {...authConfig}>
+      <ThemeProvider theme={appTheme}>
+        <AuthStateContextProvider>
+          <MapStateContextProvider>
+            <DialogContextProvider>
+              <CodesContextProvider>
+                <AppRouter />
+              </CodesContextProvider>
+            </DialogContextProvider>
+          </MapStateContextProvider>
+        </AuthStateContextProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 };
 

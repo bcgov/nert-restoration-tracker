@@ -6,6 +6,89 @@
 -- Target DBMS : PostgreSQL 10.x-12.x
 --
 
+--
+-- TABLE: authorization_type
+--
+
+CREATE TABLE authorization_type(
+    authorization_type_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    name                     varchar(50)       NOT NULL,
+    description              varchar(250),
+    record_effective_date    date              NOT NULL,
+    record_end_date          date,
+    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user              integer           NOT NULL,
+    update_date              timestamptz(6),
+    update_user              integer,
+    revision_count           integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT authorization_types_pk PRIMARY KEY (authorization_type_id)
+)
+;
+
+COMMENT ON COLUMN authorization_type.authorization_type_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN authorization_type.name IS 'The name of the record.'
+;
+COMMENT ON COLUMN authorization_type.description IS 'The description of the record.'
+;
+COMMENT ON COLUMN authorization_type.record_effective_date IS 'Record level effective date.'
+;
+COMMENT ON COLUMN authorization_type.record_end_date IS 'Record level end date.'
+;
+COMMENT ON COLUMN authorization_type.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN authorization_type.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN authorization_type.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN authorization_type.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN authorization_type.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE authorization_type IS 'Authorization types are a list of authorization types that are used to control access to the application.'
+;
+
+--
+-- TABLE: branding
+--
+
+CREATE TABLE branding(
+    branding_id             integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    name                    varchar(50)       NOT NULL,
+    value                   varchar(50),
+    record_effective_date   date              NOT NULL,
+    record_end_date         date,
+    create_date             timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user             integer           NOT NULL,
+    update_date             timestamptz(6),
+    update_user             integer,
+    revision_count          integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT branding_pk PRIMARY KEY (branding_id)
+)
+;
+
+COMMENT ON COLUMN branding.branding_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN branding.name IS 'The name of the record.'
+;
+COMMENT ON COLUMN branding.value IS 'The value of the record.'
+;
+COMMENT ON COLUMN branding.record_effective_date IS 'Record level effective date.'
+;
+COMMENT ON COLUMN branding.record_end_date IS 'Record level end date.'
+;
+COMMENT ON COLUMN branding.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN branding.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN branding.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN branding.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN branding.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE branding IS 'Branding is a list of branding elements that are used to customize the application.'
+;
 -- 
 -- TABLE: administrative_activity 
 --
@@ -183,59 +266,6 @@ COMMENT ON TABLE audit_log IS 'Holds record level audit log data for the entire 
 ;
 
 -- 
--- TABLE: caribou_population_unit 
---
-
-CREATE TABLE caribou_population_unit(
-    caribou_population_unit_id    integer                     GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                          varchar(300),
-    description                   varchar(3000),
-    geometry                      geometry(geometry, 3005),
-    geography                     geography(geometry),
-    geojson                       jsonb,
-    record_effective_date         date                        NOT NULL,
-    record_end_date               date,
-    create_date                   timestamptz(6)              DEFAULT now() NOT NULL,
-    create_user                   integer                     NOT NULL,
-    update_date                   timestamptz(6),
-    update_user                   integer,
-    revision_count                integer                     DEFAULT 0 NOT NULL,
-    CONSTRAINT caribou_population_unit_pk PRIMARY KEY (caribou_population_unit_id)
-)
-;
-
-
-
-COMMENT ON COLUMN caribou_population_unit.caribou_population_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN caribou_population_unit.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.geometry IS 'The containing geometry of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.geography IS 'The containing geography of the record.'
-;
-COMMENT ON COLUMN caribou_population_unit.geojson IS 'A JSON representation of the geometry that provides necessary details for shape manipulation in client side tools.'
-;
-COMMENT ON COLUMN caribou_population_unit.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN caribou_population_unit.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN caribou_population_unit.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN caribou_population_unit.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN caribou_population_unit.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN caribou_population_unit.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN caribou_population_unit.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE caribou_population_unit IS 'A list of caribou population units.'
-;
-
--- 
 -- TABLE: contact_type 
 --
 
@@ -280,50 +310,6 @@ COMMENT ON TABLE contact_type IS 'A list of contact types. Example types include
 ;
 
 -- 
--- TABLE: feature_type 
---
-
-CREATE TABLE feature_type(
-    feature_type_id          integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                     varchar(300)      NOT NULL,
-    description              varchar(250),
-    record_effective_date    date              NOT NULL,
-    record_end_date          date,
-    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user              integer           NOT NULL,
-    update_date              timestamptz(6),
-    update_user              integer,
-    revision_count           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT feature_type_pk_1 PRIMARY KEY (feature_type_id)
-)
-;
-
-
-
-COMMENT ON COLUMN feature_type.feature_type_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN feature_type.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN feature_type.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN feature_type.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN feature_type.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN feature_type.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN feature_type.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN feature_type.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN feature_type.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN feature_type.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE feature_type IS 'A list of linear feature types.'
-;
-
--- 
 -- TABLE: first_nations 
 --
 
@@ -365,239 +351,6 @@ COMMENT ON COLUMN first_nations.update_user IS 'The id of the user who updated t
 COMMENT ON COLUMN first_nations.revision_count IS 'Revision count used for concurrency control.'
 ;
 COMMENT ON TABLE first_nations IS 'A list of first nations.'
-;
-
--- 
--- TABLE: funding_source 
---
-
-CREATE TABLE funding_source(
-    funding_source_id        integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                     varchar(100)      NOT NULL,
-    description              varchar(250),
-    record_effective_date    date              NOT NULL,
-    record_end_date          date,
-    project_id_optional      boolean           NOT NULL,
-    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user              integer           NOT NULL,
-    update_date              timestamptz(6),
-    update_user              integer,
-    revision_count           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT funding_source_pk PRIMARY KEY (funding_source_id)
-)
-;
-
-
-
-COMMENT ON COLUMN funding_source.funding_source_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN funding_source.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN funding_source.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN funding_source.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN funding_source.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN funding_source.project_id_optional IS 'Provides whether the project id for the identified funding source is optional. A value of "Y" provides that the project id is optional and a value of "N" provides that the project id is not optional.'
-;
-COMMENT ON COLUMN funding_source.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN funding_source.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN funding_source.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN funding_source.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN funding_source.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE funding_source IS 'Agency or Ministry funding the project.'
-;
-
--- 
--- TABLE: investment_action_category 
---
-
-CREATE TABLE investment_action_category(
-    investment_action_category_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    funding_source_id                integer           NOT NULL,
-    name                             varchar(300),
-    description                      varchar(250),
-    record_effective_date            date              NOT NULL,
-    record_end_date                  date,
-    create_date                      timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                      integer           NOT NULL,
-    update_date                      timestamptz(6),
-    update_user                      integer,
-    revision_count                   integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT investment_action_category_pk PRIMARY KEY (investment_action_category_id)
-)
-;
-
-
-
-COMMENT ON COLUMN investment_action_category.investment_action_category_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN investment_action_category.funding_source_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN investment_action_category.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN investment_action_category.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN investment_action_category.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN investment_action_category.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN investment_action_category.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN investment_action_category.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN investment_action_category.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN investment_action_category.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN investment_action_category.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE investment_action_category IS 'The investment or action categories associated with the funding source. Funding sources may have no investment or action category thus the default category of Not Applicable is used.'
-;
-
--- 
--- TABLE: iucn_conservation_action_level_1_classification 
---
-
-CREATE TABLE iucn_conservation_action_level_1_classification(
-    iucn_conservation_action_level_1_classification_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                                                  varchar(300),
-    description                                           varchar(3000),
-    record_effective_date                                 date              NOT NULL,
-    record_end_date                                       date,
-    create_date                                           timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                                           integer           NOT NULL,
-    update_date                                           timestamptz(6),
-    update_user                                           integer,
-    revision_count                                        integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT iucn_conservation_action_level_1_classification_pk PRIMARY KEY (iucn_conservation_action_level_1_classification_id)
-)
-;
-
-
-
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.iucn_conservation_action_level_1_classification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_1_classification.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE iucn_conservation_action_level_1_classification IS 'List of IUCN conservation level 1 action classifications.'
-;
-
--- 
--- TABLE: iucn_conservation_action_level_2_subclassification 
---
-
-CREATE TABLE iucn_conservation_action_level_2_subclassification(
-    iucn_conservation_action_level_2_subclassification_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    iucn_conservation_action_level_1_classification_id       integer           NOT NULL,
-    name                                                     varchar(300),
-    description                                              varchar(3000),
-    record_effective_date                                    date              NOT NULL,
-    record_end_date                                          date,
-    create_date                                              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                                              integer           NOT NULL,
-    update_date                                              timestamptz(6),
-    update_user                                              integer,
-    revision_count                                           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT iucn_conservation_action_level_2_subclassification_pk PRIMARY KEY (iucn_conservation_action_level_2_subclassification_id)
-)
-;
-
-
-
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.iucn_conservation_action_level_2_subclassification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.iucn_conservation_action_level_1_classification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_2_subclassification.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE iucn_conservation_action_level_2_subclassification IS 'List of IUCN conservation action level 2 subclassifications.'
-;
-
--- 
--- TABLE: iucn_conservation_action_level_3_subclassification 
---
-
-CREATE TABLE iucn_conservation_action_level_3_subclassification(
-    iucn_conservation_action_level_3_subclassification_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    iucn_conservation_action_level_2_subclassification_id    integer           NOT NULL,
-    name                                                     varchar(300),
-    description                                              varchar(3000),
-    record_effective_date                                    date              NOT NULL,
-    record_end_date                                          date,
-    create_date                                              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                                              integer           NOT NULL,
-    update_date                                              timestamptz(6),
-    update_user                                              integer,
-    revision_count                                           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT iucn_conservation_action_level_3_subclassification_pk PRIMARY KEY (iucn_conservation_action_level_3_subclassification_id)
-)
-;
-
-
-
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.iucn_conservation_action_level_3_subclassification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.iucn_conservation_action_level_2_subclassification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.name IS 'The name of the IUCN action classification sublevel 2.
-'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN iucn_conservation_action_level_3_subclassification.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE iucn_conservation_action_level_3_subclassification IS 'List of IUCN conservation action level 3 subclassifications.'
 ;
 
 -- 
@@ -649,8 +402,9 @@ CREATE TABLE permit(
     permit_id                    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     system_user_id               integer           NOT NULL,
     project_id                   integer,
-    number                       varchar(100)      NOT NULL,
+    number                       varchar(100),
     type                         varchar(300)      NOT NULL,
+    description                  varchar(300),
     coordinator_first_name       varchar(50),
     coordinator_last_name        varchar(50),
     coordinator_email_address    varchar(500),
@@ -676,12 +430,13 @@ COMMENT ON COLUMN permit.project_id IS 'System generated surrogate primary key i
 ;
 COMMENT ON COLUMN permit.number IS 'Permit number provided by FrontCounter BC.'
 ;
-COMMENT ON COLUMN permit.type IS 'The tye of the permit.'
+COMMENT ON COLUMN permit.type IS 'The type of the permit.'
+;
+COMMENT ON COLUMN permit.description IS 'Description of the permit.'
 ;
 COMMENT ON COLUMN permit.coordinator_first_name IS 'The first name of the permit coordinator.'
 ;
-COMMENT ON COLUMN permit.coordinator_last_name IS 'The last name of the permit coordinator.
-'
+COMMENT ON COLUMN permit.coordinator_last_name IS 'The last name of the permit coordinator.'
 ;
 COMMENT ON COLUMN permit.coordinator_email_address IS 'The email address.'
 ;
@@ -713,22 +468,104 @@ NOTE: there are conceptual problems with associating permits to projects early i
 ;
 
 -- 
+-- TABLE: objective 
+--
+
+CREATE TABLE objective(
+    objective_id                 integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    project_id                   integer,
+    objective                    varchar(500)      NOT NULL,
+    create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                  integer           NOT NULL,
+    update_date                  timestamptz(6),
+    update_user                  integer,
+    revision_count               integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT objective_pk PRIMARY KEY (objective_id)
+)
+;
+
+COMMENT ON COLUMN objective.objective_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.project_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN objective.objective IS 'Project objective'
+;
+COMMENT ON COLUMN objective.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN objective.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN objective.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN objective.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN objective.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE objective IS 'Stores project objectives.'
+;
+
+-- 
+-- TABLE: conservation_area 
+--
+
+CREATE TABLE conservation_area(
+    conservation_area_id         integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    project_id                   integer,
+    conservation_area            varchar(200)      NOT NULL,
+    create_date                  timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                  integer           NOT NULL,
+    update_date                  timestamptz(6),
+    update_user                  integer,
+    revision_count               integer           DEFAULT 0 NOT NULL,
+    CONSTRAINT conservation_area_pk PRIMARY KEY (conservation_area_id)
+)
+;
+
+COMMENT ON COLUMN conservation_area.conservation_area_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN conservation_area.project_id IS 'System generated surrogate primary key identifier.'
+;
+COMMENT ON COLUMN conservation_area.conservation_area IS 'Project conservation_area'
+;
+COMMENT ON COLUMN conservation_area.create_date IS 'The datetime the record was created.'
+;
+COMMENT ON COLUMN conservation_area.create_user IS 'The id of the user who created the record as identified in the system user table.'
+;
+COMMENT ON COLUMN conservation_area.update_date IS 'The datetime the record was updated.'
+;
+COMMENT ON COLUMN conservation_area.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+;
+COMMENT ON COLUMN conservation_area.revision_count IS 'Revision count used for concurrency control.'
+;
+COMMENT ON TABLE conservation_area IS 'Stores project conservation areas.'
+;
+
+-- 
 -- TABLE: project 
 --
 
 CREATE TABLE project(
-    project_id           integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    uuid                 uuid              DEFAULT public.gen_random_uuid(),
-    name                 varchar(300),
-    objectives           varchar(3000)     NOT NULL,
-    start_date           date              NOT NULL,
-    end_date             date,
-    publish_timestamp    TIMESTAMPTZ,
-    create_date          timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user          integer           NOT NULL,
-    update_date          timestamptz(6),
-    update_user          integer,
-    revision_count       integer           DEFAULT 0 NOT NULL,
+    project_id                  integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    uuid                        uuid              DEFAULT public.gen_random_uuid(),
+    is_project                  boolean           NOT NULL,
+    name                        varchar(300),
+    brief_desc                  varchar(3000)     NOT NULL,
+    start_date                  date,
+    end_date                    date,
+    actual_start_date           date,
+    actual_end_date             date,
+    state_code                  integer           NOT NULL,
+    people_involved             integer,
+    is_healing_land             boolean           DEFAULT false,
+    is_healing_people           boolean           DEFAULT false,
+    is_land_initiative          boolean           DEFAULT false,
+    is_cultural_initiative      boolean           DEFAULT false,
+    is_project_part_public_plan boolean           DEFAULT false,
+    publish_timestamp           TIMESTAMPTZ,
+    create_date                 timestamptz(6)    DEFAULT now() NOT NULL,
+    create_user                 integer           NOT NULL,
+    update_date                 timestamptz(6),
+    update_user                 integer,
+    revision_count              integer           DEFAULT 0 NOT NULL,
     CONSTRAINT project_pk PRIMARY KEY (project_id)
 )
 ;
@@ -739,13 +576,33 @@ COMMENT ON COLUMN project.project_id IS 'System generated surrogate primary key 
 ;
 COMMENT ON COLUMN project.uuid IS 'The universally unique identifier for the record.'
 ;
-COMMENT ON COLUMN project.name IS 'Name given to a project.'
+COMMENT ON COLUMN project.is_project IS 'When true project, when false plan.'
 ;
-COMMENT ON COLUMN project.objectives IS 'The objectives for the project.'
+COMMENT ON COLUMN project.name IS 'Name given to a project or plan.'
 ;
-COMMENT ON COLUMN project.start_date IS 'The start date of the project.'
+COMMENT ON COLUMN project.brief_desc IS 'Brief description of a project or plan.'
 ;
-COMMENT ON COLUMN project.end_date IS 'The end date of the project.'
+COMMENT ON COLUMN project.start_date IS 'The planned start date of a project or a plan.'
+;
+COMMENT ON COLUMN project.end_date IS 'The planned end date of a project or plan.'
+;
+COMMENT ON COLUMN project.actual_start_date IS 'The actual start date of a project.'
+;
+COMMENT ON COLUMN project.actual_end_date IS 'The actual end date of a project.'
+;
+COMMENT ON COLUMN project.state_code IS 'The state of a project or plan within their corresponding workflows.'
+;
+COMMENT ON COLUMN project.people_involved IS 'The number of people involved in a Healing the People project.'
+;
+COMMENT ON COLUMN project.is_healing_land IS 'Project or plan focused on healing the land.'
+;
+COMMENT ON COLUMN project.is_healing_people IS 'Project or plan focused on healing the people.'
+;
+COMMENT ON COLUMN project.is_land_initiative IS 'Project or plan focused on land based restoration initiative.'
+;
+COMMENT ON COLUMN project.is_cultural_initiative IS 'Project or plan focused on cultural or community investment initiative.'
+;
+COMMENT ON COLUMN project.is_project_part_public_plan IS 'Project is or not part of a publicly available restoration plan.'
 ;
 COMMENT ON COLUMN project.publish_timestamp IS 'A timestamp that indicates that the project metadata has been approved for discovery. If the timestamp is not null then project metadata is public. If the timestamp is null the project metadata is not yet public.'
 ;
@@ -770,7 +627,7 @@ CREATE TABLE project_attachment(
     project_attachment_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     project_id               integer           NOT NULL,
     file_name                varchar(300)      NOT NULL,
-    file_type                varchar(300),
+    file_type                varchar(100)      NOT NULL,
     title                    varchar(300)      NOT NULL,
     description              varchar(3000),
     key                      varchar(1000)     NOT NULL,
@@ -816,44 +673,6 @@ COMMENT ON TABLE project_attachment IS 'A list of project attachments.'
 ;
 
 -- 
--- TABLE: project_caribou_population_unit 
---
-
-CREATE TABLE project_caribou_population_unit(
-    project_caribou_population_unit_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    project_id                            integer           NOT NULL,
-    caribou_population_unit_id            integer           NOT NULL,
-    create_date                           timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                           integer           NOT NULL,
-    update_date                           timestamptz(6),
-    update_user                           integer,
-    revision_count                        integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT "PK63" PRIMARY KEY (project_caribou_population_unit_id)
-)
-;
-
-
-
-COMMENT ON COLUMN project_caribou_population_unit.project_caribou_population_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.project_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.caribou_population_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN project_caribou_population_unit.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE project_caribou_population_unit IS 'A associative entity that joins projects and caribou population units.'
-;
-
--- 
 -- TABLE: project_contact 
 --
 
@@ -863,10 +682,12 @@ CREATE TABLE project_contact(
     contact_type_id       integer           NOT NULL,
     first_name            varchar(50),
     last_name             varchar(50),
-    agency                varchar(100)      NOT NULL,
+    organization          varchar(100)      NOT NULL,
     email_address         varchar(300),
+    phone_number          varchar(20),
     is_primary            character(1)      NOT NULL,
     is_public             character(1)      NOT NULL,
+    is_first_nation       boolean           DEFAULT false,
     create_date           timestamptz(6)    DEFAULT now() NOT NULL,
     create_user           integer           NOT NULL,
     update_date           timestamptz(6),
@@ -888,14 +709,17 @@ COMMENT ON COLUMN project_contact.first_name IS 'The first name of the contact.'
 ;
 COMMENT ON COLUMN project_contact.last_name IS 'The last name of the contact.'
 ;
-COMMENT ON COLUMN project_contact.agency IS 'The agency name of the contact.'
+COMMENT ON COLUMN project_contact.organization IS 'The organization name of the contact.'
+;
+COMMENT ON COLUMN project_contact.phone_number IS 'The phone number of the contact.'
 ;
 COMMENT ON COLUMN project_contact.email_address IS 'The email address of the contact.'
 ;
-COMMENT ON COLUMN project_contact.is_primary IS 'A flag that determines whether contact is a primary contact. A value of "Y" provides that contact is a primary contact.
-'
+COMMENT ON COLUMN project_contact.is_primary IS 'A flag that determines whether contact is a primary contact. A value of "Y" provides that contact is a primary contact.'
 ;
 COMMENT ON COLUMN project_contact.is_public IS 'A flag that determines whether contact details are public. A value of "Y" provides that contact details are public.'
+;
+COMMENT ON COLUMN project_contact.is_first_nation IS 'Determines whether contact is a first nation or and idigenous governing body. A value of "Y" provides that contact details are public.'
 ;
 COMMENT ON COLUMN project_contact.create_date IS 'The datetime the record was created.'
 ;
@@ -954,12 +778,14 @@ COMMENT ON TABLE project_first_nation IS 'A associative entity that joins projec
 
 CREATE TABLE project_funding_source(
     project_funding_source_id        integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    investment_action_category_id    integer           NOT NULL,
     project_id                       integer           NOT NULL,
-    funding_source_project_id        varchar(50),
+    organization_name                varchar(300)      NOT NULL,
+    funding_project_id               varchar(50),
     funding_amount                   money             NOT NULL,
-    funding_start_date               date              NOT NULL,
-    funding_end_date                 date              NOT NULL,
+    funding_start_date               date,
+    funding_end_date                 date,
+    description                      varchar(3000),
+    is_public                        boolean           DEFAULT false,
     create_date                      timestamptz(6)    DEFAULT now() NOT NULL,
     create_user                      integer           NOT NULL,
     update_date                      timestamptz(6),
@@ -973,17 +799,21 @@ CREATE TABLE project_funding_source(
 
 COMMENT ON COLUMN project_funding_source.project_funding_source_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_funding_source.investment_action_category_id IS 'System generated surrogate primary key identifier.'
-;
 COMMENT ON COLUMN project_funding_source.project_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_funding_source.funding_source_project_id IS 'Idenfification number used by funding source to reference the project'
+COMMENT ON COLUMN project_funding_source.organization_name IS 'The name of the funding source.'
+;
+COMMENT ON COLUMN project_funding_source.funding_project_id IS 'Identification number used by funding source to reference the project'
 ;
 COMMENT ON COLUMN project_funding_source.funding_amount IS 'Funding amount from funding source.'
 ;
 COMMENT ON COLUMN project_funding_source.funding_start_date IS 'Start date for funding from the source.'
 ;
 COMMENT ON COLUMN project_funding_source.funding_end_date IS 'End date for funding from the source.'
+;
+COMMENT ON COLUMN project_funding_source.description IS 'The description of the record.'
+;
+COMMENT ON COLUMN project_funding_source.is_public IS 'Indicates whether the funding source is public or not.'
 ;
 COMMENT ON COLUMN project_funding_source.create_date IS 'The datetime the record was created.'
 ;
@@ -996,44 +826,6 @@ COMMENT ON COLUMN project_funding_source.update_user IS 'The id of the user who 
 COMMENT ON COLUMN project_funding_source.revision_count IS 'Revision count used for concurrency control.'
 ;
 COMMENT ON TABLE project_funding_source IS 'A associative entity that joins projects and funding source details.'
-;
-
--- 
--- TABLE: project_iucn_action_classification 
---
-
-CREATE TABLE project_iucn_action_classification(
-    project_iucn_action_classification_id                    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    project_id                                               integer           NOT NULL,
-    iucn_conservation_action_level_3_subclassification_id    integer           NOT NULL,
-    create_date                                              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                                              integer           NOT NULL,
-    update_date                                              timestamptz(6),
-    update_user                                              integer,
-    revision_count                                           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT project_iucn_action_classification_pk PRIMARY KEY (project_iucn_action_classification_id)
-)
-;
-
-
-
-COMMENT ON COLUMN project_iucn_action_classification.project_iucn_action_classification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.project_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.iucn_conservation_action_level_3_subclassification_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN project_iucn_action_classification.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE project_iucn_action_classification IS 'An associative entity that links projects and IUCN classifications.'
 ;
 
 -- 
@@ -1135,7 +927,9 @@ CREATE TABLE project_spatial_component(
     name                                 varchar(50)                 NOT NULL,
     description                          varchar(3000),
     geometry                             geometry(geometry, 3005),
-    priority                             character(1)                DEFAULT 'N' NOT NULL,
+    is_within_overlapping                character(1)                DEFAULT 'N' NOT NULL,
+    number_sites                         integer                     NOT NULL,
+    size_ha                              numeric(12, 2)              NOT NULL,
     geography                            geography(geometry),
     geojson                              jsonb,
     create_date                          timestamptz(6)              DEFAULT now() NOT NULL,
@@ -1161,7 +955,11 @@ COMMENT ON COLUMN project_spatial_component.description IS 'The description of t
 ;
 COMMENT ON COLUMN project_spatial_component.geometry IS 'The containing geometry of the record.'
 ;
-COMMENT ON COLUMN project_spatial_component.priority IS 'Indicates that the boundary contains treatment units that are considered high value restoration targets.'
+COMMENT ON COLUMN project_spatial_component.is_within_overlapping IS 'Indicates that the area contains or overlaps a known area of cultural or conservation priority.'
+;
+COMMENT ON COLUMN project_spatial_component.number_sites IS 'Total number of projects sites.'
+;
+COMMENT ON COLUMN project_spatial_component.size_ha IS 'Total area in hectars of all project sites, excluding overlapping areas.'
 ;
 COMMENT ON COLUMN project_spatial_component.geography IS 'The containing geography of the record.'
 ;
@@ -1230,7 +1028,7 @@ COMMENT ON TABLE project_spatial_component_type IS 'A list of spatial component 
 
 CREATE TABLE project_species(
     project_species_id       integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    wldtaxonomic_units_id    integer           NOT NULL,
+    itis_tsn                 integer           NOT NULL,
     project_id               integer           NOT NULL,
     create_date              timestamptz(6)    DEFAULT now() NOT NULL,
     create_user              integer           NOT NULL,
@@ -1245,7 +1043,7 @@ CREATE TABLE project_species(
 
 COMMENT ON COLUMN project_species.project_species_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN project_species.wldtaxonomic_units_id IS 'System generated UID for a taxon.'
+COMMENT ON COLUMN project_species.itis_tsn IS 'Foreign key to taxonomy service describing the taxonomic unit of the record.'
 ;
 COMMENT ON COLUMN project_species.project_id IS 'System generated surrogate primary key identifier.'
 ;
@@ -1263,41 +1061,39 @@ COMMENT ON TABLE project_species IS 'The species of interest to the project.'
 ;
 
 -- 
--- TABLE: stakeholder_partnership 
+-- TABLE: partnership 
 --
 
-CREATE TABLE stakeholder_partnership(
-    stakeholder_partnership_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+CREATE TABLE partnership(
+    partnership_id                integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     project_id                    integer           NOT NULL,
-    name                          varchar(300),
+    partnership                   varchar(300),
     create_date                   timestamptz(6)    DEFAULT now() NOT NULL,
     create_user                   integer           NOT NULL,
     update_date                   timestamptz(6),
     update_user                   integer,
     revision_count                integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT stakeholder_partnership_pk PRIMARY KEY (stakeholder_partnership_id)
+    CONSTRAINT partnership_pk PRIMARY KEY (partnership_id)
 )
 ;
 
-
-
-COMMENT ON COLUMN stakeholder_partnership.stakeholder_partnership_id IS 'System generated surrogate primary key identifier.'
+COMMENT ON COLUMN partnership.partnership_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.project_id IS 'System generated surrogate primary key identifier.'
+COMMENT ON COLUMN partnership.project_id IS 'System generated surrogate primary key identifier.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.name IS 'The name of the record.'
+COMMENT ON COLUMN partnership.partnership IS 'Partnership description.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.create_date IS 'The datetime the record was created.'
+COMMENT ON COLUMN partnership.create_date IS 'The datetime the record was created.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.create_user IS 'The id of the user who created the record as identified in the system user table.'
+COMMENT ON COLUMN partnership.create_user IS 'The id of the user who created the record as identified in the system user table.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.update_date IS 'The datetime the record was updated.'
+COMMENT ON COLUMN partnership.update_date IS 'The datetime the record was updated.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.update_user IS 'The id of the user who updated the record as identified in the system user table.'
+COMMENT ON COLUMN partnership.update_user IS 'The id of the user who updated the record as identified in the system user table.'
 ;
-COMMENT ON COLUMN stakeholder_partnership.revision_count IS 'Revision count used for concurrency control.'
+COMMENT ON COLUMN partnership.revision_count IS 'Revision count used for concurrency control.'
 ;
-COMMENT ON TABLE stakeholder_partnership IS 'Stakeholder partnerships associated with the project.'
+COMMENT ON TABLE partnership IS 'Partnerships associated with the project.'
 ;
 
 -- 
@@ -1443,6 +1239,11 @@ CREATE TABLE system_user(
     system_user_id             integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     user_identity_source_id    integer           NOT NULL,
     user_identifier            varchar(200)      NOT NULL,
+    email                      varchar(300),
+    display_name               varchar(50),
+    given_name                 varchar(50),
+    family_name                varchar(50),
+    agency                     varchar(50),
     record_effective_date      date              NOT NULL,
     record_end_date            date,
     create_date                timestamptz(6)    DEFAULT now() NOT NULL,
@@ -1461,6 +1262,16 @@ COMMENT ON COLUMN system_user.system_user_id IS 'System generated surrogate prim
 COMMENT ON COLUMN system_user.user_identity_source_id IS 'System generated surrogate primary key identifier.'
 ;
 COMMENT ON COLUMN system_user.user_identifier IS 'The identifier of the user.'
+;
+COMMENT ON COLUMN system_user.email IS 'The email address of the user.'
+;
+COMMENT ON COLUMN system_user.display_name IS 'The display name of the user.'
+;
+COMMENT ON COLUMN system_user.given_name IS 'The given name of the user.'
+;
+COMMENT ON COLUMN system_user.family_name IS 'The family name of the user.'
+;
+COMMENT ON COLUMN system_user.agency IS 'The agency of the user.'
 ;
 COMMENT ON COLUMN system_user.record_effective_date IS 'Record level effective date.'
 ;
@@ -1518,187 +1329,6 @@ COMMENT ON TABLE system_user_role IS 'A associative entity that joins system use
 ;
 
 -- 
--- TABLE: treatment 
---
-
-CREATE TABLE treatment(
-    treatment_id         integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    treatment_unit_id    integer           NOT NULL,
-    year                 character(4),
-    create_date          timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user          integer           NOT NULL,
-    update_date          timestamptz(6),
-    update_user          integer,
-    revision_count       integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT treatment_pk PRIMARY KEY (treatment_id)
-)
-;
-
-
-
-COMMENT ON COLUMN treatment.treatment_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment.treatment_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment.year IS 'The year the treatment was applied.'
-;
-COMMENT ON COLUMN treatment.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN treatment.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN treatment.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE treatment IS 'Treatment persists the treatments applied to treatment units.'
-;
-
--- 
--- TABLE: treatment_treatment_type 
---
-
-CREATE TABLE treatment_treatment_type(
-    treatment_treatment_type_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    treatment_id                   integer           NOT NULL,
-    treatment_type_id              integer           NOT NULL,
-    create_date                    timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user                    integer           NOT NULL,
-    update_date                    timestamptz(6),
-    update_user                    integer,
-    revision_count                 integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT treatment_treatment_type_pk PRIMARY KEY (treatment_treatment_type_id)
-)
-;
-
-
-
-COMMENT ON COLUMN treatment_treatment_type.treatment_treatment_type_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_treatment_type.treatment_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_treatment_type.treatment_type_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_treatment_type.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN treatment_treatment_type.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment_treatment_type.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN treatment_treatment_type.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment_treatment_type.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE treatment_treatment_type IS 'Treatment Treatment Type is an associative entity between Treatment Types and Treatment.'
-;
-
--- 
--- TABLE: treatment_type 
---
-
-CREATE TABLE treatment_type(
-    treatment_type_id        integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    name                     varchar(300)      NOT NULL,
-    description              varchar(250),
-    record_effective_date    date              NOT NULL,
-    record_end_date          date,
-    create_date              timestamptz(6)    DEFAULT now() NOT NULL,
-    create_user              integer           NOT NULL,
-    update_date              timestamptz(6),
-    update_user              integer,
-    revision_count           integer           DEFAULT 0 NOT NULL,
-    CONSTRAINT treatment_type_pk PRIMARY KEY (treatment_type_id)
-)
-;
-
-
-
-COMMENT ON COLUMN treatment_type.treatment_type_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_type.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN treatment_type.description IS 'The description of the record.'
-;
-COMMENT ON COLUMN treatment_type.record_effective_date IS 'Record level effective date.'
-;
-COMMENT ON COLUMN treatment_type.record_end_date IS 'Record level end date.'
-;
-COMMENT ON COLUMN treatment_type.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN treatment_type.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment_type.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN treatment_type.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment_type.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE treatment_type IS 'A list of treatment types.'
-;
-
--- 
--- TABLE: treatment_unit 
---
-
-CREATE TABLE treatment_unit(
-    treatment_unit_id           integer                     GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    project_id                  integer                     NOT NULL,
-    feature_type_id             integer                     NOT NULL,
-    name                        varchar(300),
-    width                       float4,
-    length                      float4,
-    area                        float4,
-    comments                    varchar(3000),
-    reconnaissance_conducted    character(1)                NOT NULL,
-    geometry                    geometry(geometry, 3005),
-    geography                   geography(geometry),
-    geojson                     jsonb,
-    create_date                 timestamptz(6)              DEFAULT now() NOT NULL,
-    create_user                 integer                     NOT NULL,
-    update_date                 timestamptz(6),
-    update_user                 integer,
-    revision_count              integer                     DEFAULT 0 NOT NULL,
-    CONSTRAINT treatment_unit_pk PRIMARY KEY (treatment_unit_id)
-)
-;
-
-
-
-COMMENT ON COLUMN treatment_unit.treatment_unit_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_unit.project_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_unit.feature_type_id IS 'System generated surrogate primary key identifier.'
-;
-COMMENT ON COLUMN treatment_unit.name IS 'The name of the record.'
-;
-COMMENT ON COLUMN treatment_unit.area IS 'The area of the treatment unit in hectares.'
-;
-COMMENT ON COLUMN treatment_unit.comments IS 'The comments of the record.'
-;
-COMMENT ON COLUMN treatment_unit.reconnaissance_conducted IS 'Defines whether reconnaissance was conducted or not for a treatment unit.'
-;
-COMMENT ON COLUMN treatment_unit.geometry IS 'The containing geometry of the record.'
-;
-COMMENT ON COLUMN treatment_unit.geography IS 'The containing geography of the record.'
-;
-COMMENT ON COLUMN treatment_unit.geojson IS 'A JSON representation of the geometry that provides necessary details for shape manipulation in client side tools.'
-;
-COMMENT ON COLUMN treatment_unit.create_date IS 'The datetime the record was created.'
-;
-COMMENT ON COLUMN treatment_unit.create_user IS 'The id of the user who created the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment_unit.update_date IS 'The datetime the record was updated.'
-;
-COMMENT ON COLUMN treatment_unit.update_user IS 'The id of the user who updated the record as identified in the system user table.'
-;
-COMMENT ON COLUMN treatment_unit.revision_count IS 'Revision count used for concurrency control.'
-;
-COMMENT ON TABLE treatment_unit IS 'Treatment Unit describes a set of geographical unit that has received restoration treatments.'
-;
-
--- 
 -- TABLE: user_identity_source 
 --
 
@@ -1717,7 +1347,6 @@ CREATE TABLE user_identity_source(
     CONSTRAINT user_identity_source_pk PRIMARY KEY (user_identity_source_id)
 )
 ;
-
 
 
 COMMENT ON COLUMN user_identity_source.user_identity_source_id IS 'System generated surrogate primary key identifier.'
@@ -1752,6 +1381,7 @@ COMMENT ON TABLE user_identity_source IS 'The source of the user identifier. Thi
 CREATE TABLE webform_draft(
     webform_draft_id    integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     system_user_id      integer           NOT NULL,
+    is_project          boolean           NOT NULL,
     name                varchar(300)      NOT NULL,
     data                json              NOT NULL,
     security_token      uuid,
@@ -1770,6 +1400,8 @@ COMMENT ON COLUMN webform_draft.webform_draft_id IS 'System generated surrogate 
 ;
 COMMENT ON COLUMN webform_draft.system_user_id IS 'System generated surrogate primary key identifier.'
 ;
+COMMENT ON COLUMN webform_draft.is_project IS 'When true project, when false plan.'
+;
 COMMENT ON COLUMN webform_draft.name IS 'The name of the record.'
 ;
 COMMENT ON COLUMN webform_draft.data IS 'The json data associated with the record.'
@@ -1787,77 +1419,6 @@ COMMENT ON COLUMN webform_draft.update_user IS 'The id of the user who updated t
 COMMENT ON COLUMN webform_draft.revision_count IS 'Revision count used for concurrency control.'
 ;
 COMMENT ON TABLE webform_draft IS 'A persistent store for draft webform data. For example, if a user starts a project creation process and wants to save that information as a draft then the webform data can be persisted for subsequent reload into the project creation process.'
-;
-
--- 
--- TABLE: wldtaxonomic_units 
---
-
-CREATE TABLE wldtaxonomic_units(
-    wldtaxonomic_units_id      integer           GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    unit_name1                 varchar(50)       NOT NULL,
-    unit_name2                 varchar(50),
-    unit_name3                 varchar(50),
-    taxon_authority            varchar(100),
-    code                       varchar(35),
-    english_name               varchar(50),
-    tty_kingdom                varchar(10)       NOT NULL,
-    tty_name                   varchar(20)       NOT NULL,
-    tcn_id                     numeric(10, 0),
-    txn_id                     numeric(10, 0),
-    sensitive_data_flag        varchar(1),
-    breed_in_bc_flag           varchar(1),
-    introduced_species_flag    varchar(1),
-    phylo_sort_sequence        numeric(10, 0),
-    start_date                 date,
-    end_date                   date,
-    note                       varchar(2000),
-    element_subnational_id     numeric(10, 0),
-    CONSTRAINT wldtaxonomic_units_pk PRIMARY KEY (wldtaxonomic_units_id)
-)
-;
-
-
-
-COMMENT ON COLUMN wldtaxonomic_units.wldtaxonomic_units_id IS 'System generated UID for a taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.unit_name1 IS 'The first part of a species or taxon  name.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.unit_name2 IS 'Idenifies the species.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.unit_name3 IS 'Subspecies name.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.taxon_authority IS 'Name of the author(s) who first described the species, eg. Linnae'
-;
-COMMENT ON COLUMN wldtaxonomic_units.code IS 'Code commonly used to identify a taxon usually at a species or su'
-;
-COMMENT ON COLUMN wldtaxonomic_units.english_name IS 'Common english name of the species or taxa. Ex. Grizzly Bear'
-;
-COMMENT ON COLUMN wldtaxonomic_units.tty_kingdom IS 'The kingdom the taxon hierarchy represents'
-;
-COMMENT ON COLUMN wldtaxonomic_units.tty_name IS 'The name of the taxon level, eg. PHYLUM, ORDER, GENUS, etc'
-;
-COMMENT ON COLUMN wldtaxonomic_units.tcn_id IS 'FK: WLD_COMMON_NAMES'
-;
-COMMENT ON COLUMN wldtaxonomic_units.txn_id IS 'System generated UID for a taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.sensitive_data_flag IS 'Indicates that the data is sensitive and access restricted'
-;
-COMMENT ON COLUMN wldtaxonomic_units.breed_in_bc_flag IS 'Indicates whether or not an animal breeds in BC.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.introduced_species_flag IS 'Indicates that species is not native to British Columbia.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.phylo_sort_sequence IS 'The phologenetic sequence order of the taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.start_date IS 'The date the taxon name becomes effective.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.end_date IS 'The date a taxon becomes obsolete.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.note IS 'Free form text about the taxon.'
-;
-COMMENT ON COLUMN wldtaxonomic_units.element_subnational_id IS 'Identifier that can be used to link this record to the matching Biotics field.'
-;
-COMMENT ON TABLE wldtaxonomic_units IS 'A table to mimic a view into SPI taxonomic data, specifically CWI_TXN.WLDTAXONOMIC_UNITS, for development purposes. This table should be replaced by live views of the data in production systems.'
 ;
 
 -- 
@@ -1897,70 +1458,22 @@ CREATE UNIQUE INDEX administrative_activity_status_type_nuk1 ON administrative_a
 CREATE UNIQUE INDEX administrative_activity_type_nuk1 ON administrative_activity_type(name, (record_end_date is NULL)) where record_end_date is null
 ;
 -- 
--- INDEX: caribou_population_unit_nuk1 
---
-
-CREATE UNIQUE INDEX caribou_population_unit_nuk1 ON caribou_population_unit(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
--- INDEX: feature_type_nuk1 
---
-
-CREATE UNIQUE INDEX feature_type_nuk1 ON feature_type(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
 -- INDEX: first_nations_nuk1 
 --
 
 CREATE UNIQUE INDEX first_nations_nuk1 ON first_nations(name, (record_end_date is NULL)) where record_end_date is null
 ;
 -- 
--- INDEX: funding_source_nuk1 
+-- INDEX: branding_nuk1 
 --
 
-CREATE UNIQUE INDEX funding_source_nuk1 ON funding_source(name, (record_end_date is NULL)) where record_end_date is null
+CREATE UNIQUE INDEX branding_nuk1 ON branding(name, (record_end_date is NULL)) where record_end_date is null
 ;
--- 
--- INDEX: investment_action_category_nuk1 
+--
+-- INDEX: "authorization_types_nuk1"
 --
 
-CREATE UNIQUE INDEX investment_action_category_nuk1 ON investment_action_category(name, record_end_date, funding_source_id)
-;
--- 
--- INDEX: "Ref253" 
---
-
-CREATE INDEX "Ref253" ON investment_action_category(funding_source_id)
-;
--- 
--- INDEX: iucn_conservation_action_level_1_classification_nuk1 
---
-
-CREATE UNIQUE INDEX iucn_conservation_action_level_1_classification_nuk1 ON iucn_conservation_action_level_1_classification(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
--- INDEX: iucn_conservation_action_level_2_subclassification_nuk1 
---
-
-CREATE UNIQUE INDEX iucn_conservation_action_level_2_subclassification_nuk1 ON iucn_conservation_action_level_2_subclassification(name, record_end_date, iucn_conservation_action_level_1_classification_id)
-;
--- 
--- INDEX: "Ref425" 
---
-
-CREATE INDEX "Ref425" ON iucn_conservation_action_level_2_subclassification(iucn_conservation_action_level_1_classification_id)
-;
--- 
--- INDEX: iucn_conservation_action_level_3_subclassification_nuk1 
---
-
-CREATE UNIQUE INDEX iucn_conservation_action_level_3_subclassification_nuk1 ON iucn_conservation_action_level_3_subclassification(name, record_end_date, iucn_conservation_action_level_2_subclassification_id)
-;
--- 
--- INDEX: "Ref727" 
---
-
-CREATE INDEX "Ref727" ON iucn_conservation_action_level_3_subclassification(iucn_conservation_action_level_2_subclassification_id)
+CREATE UNIQUE INDEX "authorization_types_nuk1" ON authorization_type(name, (record_end_date is NULL)) where record_end_date is null
 ;
 -- 
 -- INDEX: nrm_region_uk1 
@@ -1978,7 +1491,7 @@ CREATE INDEX "Ref1346" ON nrm_region(project_id)
 -- INDEX: permit_uk1 
 --
 
-CREATE UNIQUE INDEX permit_uk1 ON permit(number)
+CREATE INDEX permit_uk1 ON permit(number)
 ;
 -- 
 -- INDEX: "Ref2926" 
@@ -1996,25 +1509,13 @@ CREATE INDEX "Ref1339" ON permit(project_id)
 -- INDEX: project_attachment_uk1 
 --
 
-CREATE UNIQUE INDEX project_attachment_uk1 ON project_attachment(project_id, file_name)
+CREATE UNIQUE INDEX project_attachment_uk1 ON project_attachment(project_id, file_name, file_type)
 ;
 -- 
 -- INDEX: "Ref1313" 
 --
 
 CREATE INDEX "Ref1313" ON project_attachment(project_id)
-;
--- 
--- INDEX: "Ref1347" 
---
-
-CREATE INDEX "Ref1347" ON project_caribou_population_unit(project_id)
-;
--- 
--- INDEX: "Ref6748" 
---
-
-CREATE INDEX "Ref6748" ON project_caribou_population_unit(caribou_population_unit_id)
 ;
 -- 
 -- INDEX: "Ref1340" 
@@ -2050,37 +1551,13 @@ CREATE INDEX "Ref132" ON project_first_nation(project_id)
 -- INDEX: project_funding_source_uk1 
 --
 
-CREATE UNIQUE INDEX project_funding_source_uk1 ON project_funding_source(funding_source_project_id, investment_action_category_id, project_id)
-;
--- 
--- INDEX: "Ref24" 
---
-
-CREATE INDEX "Ref24" ON project_funding_source(investment_action_category_id)
+CREATE UNIQUE INDEX project_funding_source_uk1 ON project_funding_source(funding_project_id, project_id)
 ;
 -- 
 -- INDEX: "Ref135" 
 --
 
 CREATE INDEX "Ref135" ON project_funding_source(project_id)
-;
--- 
--- INDEX: project_iucn_action_classification_uk1 
---
-
-CREATE UNIQUE INDEX project_iucn_action_classification_uk1 ON project_iucn_action_classification(project_id, iucn_conservation_action_level_3_subclassification_id)
-;
--- 
--- INDEX: "Ref1328" 
---
-
-CREATE INDEX "Ref1328" ON project_iucn_action_classification(project_id)
-;
--- 
--- INDEX: "Ref829" 
---
-
-CREATE INDEX "Ref829" ON project_iucn_action_classification(iucn_conservation_action_level_3_subclassification_id)
 ;
 -- 
 -- INDEX: project_participation_uk1 
@@ -2140,13 +1617,7 @@ CREATE UNIQUE INDEX project_spatial_component_type_uk1 ON project_spatial_compon
 -- INDEX: project_species_uk1 
 --
 
-CREATE UNIQUE INDEX project_species_uk1 ON project_species(project_id, wldtaxonomic_units_id)
-;
--- 
--- INDEX: "Ref5843" 
---
-
-CREATE INDEX "Ref5843" ON project_species(wldtaxonomic_units_id)
+CREATE UNIQUE INDEX project_species_uk1 ON project_species(project_id, itis_tsn)
 ;
 -- 
 -- INDEX: "Ref1344" 
@@ -2155,16 +1626,42 @@ CREATE INDEX "Ref5843" ON project_species(wldtaxonomic_units_id)
 CREATE INDEX "Ref1344" ON project_species(project_id)
 ;
 -- 
--- INDEX: stakeholder_partnership_uk1 
+-- INDEX: partnership_uk1 
 --
 
-CREATE UNIQUE INDEX stakeholder_partnership_uk1 ON stakeholder_partnership(name, project_id)
+CREATE UNIQUE INDEX partnership_uk1 ON partnership(partnership, project_id)
 ;
 -- 
 -- INDEX: "Ref1330" 
 --
 
-CREATE INDEX "Ref1330" ON stakeholder_partnership(project_id)
+CREATE INDEX "Ref1330" ON partnership(project_id)
+;
+-- 
+-- INDEX: objective_uk1 
+--
+
+CREATE UNIQUE INDEX objective_uk1 ON objective(objective, project_id)
+;
+
+-- 
+-- INDEX: "IX_objective_objective" 
+--
+
+CREATE INDEX "IX_objective_objective" ON objective(project_id)
+;
+-- 
+-- INDEX: conservation_area_uk1 
+--
+
+CREATE UNIQUE INDEX conservation_area_uk1 ON conservation_area(conservation_area, project_id)
+;
+
+-- 
+-- INDEX: "IX_conservation_area_conservation_area" 
+--
+
+CREATE INDEX "IX_conservation_area_conservation_area" ON conservation_area(project_id)
 ;
 -- 
 -- INDEX: system_constant_uk1 
@@ -2215,60 +1712,6 @@ CREATE INDEX "Ref296" ON system_user_role(system_user_id)
 CREATE INDEX "Ref317" ON system_user_role(system_role_id)
 ;
 -- 
--- INDEX: treatment_uk1 
---
-
-CREATE UNIQUE INDEX treatment_uk1 ON treatment(treatment_unit_id, year)
-;
--- 
--- INDEX: "Ref3236" 
---
-
-CREATE INDEX "Ref3236" ON treatment(treatment_unit_id)
-;
--- 
--- INDEX: treatment_treatment_type_uk1 
---
-
-CREATE UNIQUE INDEX treatment_treatment_type_uk1 ON treatment_treatment_type(treatment_id, treatment_type_id)
-;
--- 
--- INDEX: "Ref4150" 
---
-
-CREATE INDEX "Ref4150" ON treatment_treatment_type(treatment_id)
-;
--- 
--- INDEX: "Ref4051" 
---
-
-CREATE INDEX "Ref4051" ON treatment_treatment_type(treatment_type_id)
-;
--- 
--- INDEX: treatment_type_nuk1 
---
-
-CREATE UNIQUE INDEX treatment_type_nuk1 ON treatment_type(name, (record_end_date is NULL)) where record_end_date is null
-;
--- 
--- INDEX: treatment_unit_uk1 
---
-
-CREATE UNIQUE INDEX treatment_unit_uk1 ON treatment_unit(project_id, feature_type_id, name)
-;
--- 
--- INDEX: "Ref1331" 
---
-
-CREATE INDEX "Ref1331" ON treatment_unit(project_id)
-;
--- 
--- INDEX: "Ref3432" 
---
-
-CREATE INDEX "Ref3432" ON treatment_unit(feature_type_id)
-;
--- 
 -- INDEX: user_identity_source_nuk1 
 --
 
@@ -2302,36 +1745,6 @@ ALTER TABLE administrative_activity ADD CONSTRAINT "Refadministrative_activity_t
 ALTER TABLE administrative_activity ADD CONSTRAINT "Refadministrative_activity_status_type12" 
     FOREIGN KEY (administrative_activity_status_type_id)
     REFERENCES administrative_activity_status_type(administrative_activity_status_type_id)
-;
-
-
--- 
--- TABLE: investment_action_category 
---
-
-ALTER TABLE investment_action_category ADD CONSTRAINT "Reffunding_source3" 
-    FOREIGN KEY (funding_source_id)
-    REFERENCES funding_source(funding_source_id)
-;
-
-
--- 
--- TABLE: iucn_conservation_action_level_2_subclassification 
---
-
-ALTER TABLE iucn_conservation_action_level_2_subclassification ADD CONSTRAINT "Refiucn_conservation_action_level_1_classification25" 
-    FOREIGN KEY (iucn_conservation_action_level_1_classification_id)
-    REFERENCES iucn_conservation_action_level_1_classification(iucn_conservation_action_level_1_classification_id)
-;
-
-
--- 
--- TABLE: iucn_conservation_action_level_3_subclassification 
---
-
-ALTER TABLE iucn_conservation_action_level_3_subclassification ADD CONSTRAINT "Refiucn_conservation_action_level_2_subclassification27" 
-    FOREIGN KEY (iucn_conservation_action_level_2_subclassification_id)
-    REFERENCES iucn_conservation_action_level_2_subclassification(iucn_conservation_action_level_2_subclassification_id)
 ;
 
 
@@ -2371,21 +1784,6 @@ ALTER TABLE project_attachment ADD CONSTRAINT "Refproject13"
 
 
 -- 
--- TABLE: project_caribou_population_unit 
---
-
-ALTER TABLE project_caribou_population_unit ADD CONSTRAINT "Refproject47" 
-    FOREIGN KEY (project_id)
-    REFERENCES project(project_id)
-;
-
-ALTER TABLE project_caribou_population_unit ADD CONSTRAINT "Refcaribou_population_unit48" 
-    FOREIGN KEY (caribou_population_unit_id)
-    REFERENCES caribou_population_unit(caribou_population_unit_id)
-;
-
-
--- 
 -- TABLE: project_contact 
 --
 
@@ -2419,29 +1817,9 @@ ALTER TABLE project_first_nation ADD CONSTRAINT "Refproject2"
 -- TABLE: project_funding_source 
 --
 
-ALTER TABLE project_funding_source ADD CONSTRAINT "Refinvestment_action_category4" 
-    FOREIGN KEY (investment_action_category_id)
-    REFERENCES investment_action_category(investment_action_category_id)
-;
-
 ALTER TABLE project_funding_source ADD CONSTRAINT "Refproject5" 
     FOREIGN KEY (project_id)
     REFERENCES project(project_id)
-;
-
-
--- 
--- TABLE: project_iucn_action_classification 
---
-
-ALTER TABLE project_iucn_action_classification ADD CONSTRAINT "Refproject28" 
-    FOREIGN KEY (project_id)
-    REFERENCES project(project_id)
-;
-
-ALTER TABLE project_iucn_action_classification ADD CONSTRAINT "Refiucn_conservation_action_level_3_subclassification29" 
-    FOREIGN KEY (iucn_conservation_action_level_3_subclassification_id)
-    REFERENCES iucn_conservation_action_level_3_subclassification(iucn_conservation_action_level_3_subclassification_id)
 ;
 
 
@@ -2484,11 +1862,6 @@ ALTER TABLE project_spatial_component ADD CONSTRAINT "Refproject_spatial_compone
 -- TABLE: project_species 
 --
 
-ALTER TABLE project_species ADD CONSTRAINT "Refwldtaxonomic_units43" 
-    FOREIGN KEY (wldtaxonomic_units_id)
-    REFERENCES wldtaxonomic_units(wldtaxonomic_units_id)
-;
-
 ALTER TABLE project_species ADD CONSTRAINT "Refproject44" 
     FOREIGN KEY (project_id)
     REFERENCES project(project_id)
@@ -2496,10 +1869,30 @@ ALTER TABLE project_species ADD CONSTRAINT "Refproject44"
 
 
 -- 
--- TABLE: stakeholder_partnership 
+-- TABLE: partnership 
 --
 
-ALTER TABLE stakeholder_partnership ADD CONSTRAINT "Refproject30" 
+ALTER TABLE partnership ADD CONSTRAINT "Refproject30" 
+    FOREIGN KEY (project_id)
+    REFERENCES project(project_id)
+;
+
+
+-- 
+-- TABLE: objective 
+--
+
+ALTER TABLE objective ADD CONSTRAINT "Refproject18790" 
+    FOREIGN KEY (project_id)
+    REFERENCES project(project_id)
+;
+
+
+-- 
+-- TABLE: conservation_area 
+--
+
+ALTER TABLE conservation_area ADD CONSTRAINT "Refproject18800" 
     FOREIGN KEY (project_id)
     REFERENCES project(project_id)
 ;
@@ -2528,47 +1921,6 @@ ALTER TABLE system_user_role ADD CONSTRAINT "Refsystem_role7"
     FOREIGN KEY (system_role_id)
     REFERENCES system_role(system_role_id)
 ;
-
-
--- 
--- TABLE: treatment 
---
-
-ALTER TABLE treatment ADD CONSTRAINT "Reftreatment_unit36" 
-    FOREIGN KEY (treatment_unit_id)
-    REFERENCES treatment_unit(treatment_unit_id)
-;
-
-
--- 
--- TABLE: treatment_treatment_type 
---
-
-ALTER TABLE treatment_treatment_type ADD CONSTRAINT "Reftreatment50" 
-    FOREIGN KEY (treatment_id)
-    REFERENCES treatment(treatment_id)
-;
-
-ALTER TABLE treatment_treatment_type ADD CONSTRAINT "Reftreatment_type51" 
-    FOREIGN KEY (treatment_type_id)
-    REFERENCES treatment_type(treatment_type_id)
-;
-
-
--- 
--- TABLE: treatment_unit 
---
-
-ALTER TABLE treatment_unit ADD CONSTRAINT "Refproject31" 
-    FOREIGN KEY (project_id)
-    REFERENCES project(project_id)
-;
-
-ALTER TABLE treatment_unit ADD CONSTRAINT "Reffeature_type32" 
-    FOREIGN KEY (feature_type_id)
-    REFERENCES feature_type(feature_type_id)
-;
-
 
 -- 
 -- TABLE: webform_draft 

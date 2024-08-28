@@ -23,19 +23,19 @@ parameters:
     value: api
   - name: SOURCE_REPOSITORY_URL
     required: true
-    value: https://github.com/bcgov/restoration-tracker
+    value: https://github.com/bcgov/nert-restoration-tracker
   - name: SOURCE_REPOSITORY_REF
     required: false
     value: dev
   - name: BASE_IMAGE_URL
     required: true
-    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:14-ubi8
+    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs-20-minimal:1-41.1712567743
   - name: SOURCE_IMAGE_NAME
     required: true
-    value: nodejs
+    value: nodejs-20-minimal
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: 14-ubi8
+    value: 1-41.1712567743
   - name: CPU_REQUEST
     value: '100m'
   - name: CPU_LIMIT

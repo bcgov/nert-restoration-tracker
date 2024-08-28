@@ -1,11 +1,11 @@
+import * as turf from '@turf/turf';
 import { RequestHandler } from 'express';
 import { Operation } from 'express-openapi';
 import { SYSTEM_ROLE } from '../constants/roles';
 import { getDBConnection } from '../database/db';
-import { HTTP400 } from '../errors/custom-error';
-import { queries } from '../queries/queries';
 import { authorizeRequestHandler } from '../request-handlers/security/authorization';
 import { AuthorizationService } from '../services/authorization-service';
+import { ProjectService } from '../services/project-service';
 import { getLogger } from '../utils/logger';
 
 const defaultLog = getLogger('paths/search');
@@ -78,24 +78,17 @@ export function getSearchResults(): RequestHandler {
         req['system_user']['role_names']
       );
 
-      const getSpatialSearchResultsSQLStatement = queries.search.getSpatialSearchResultsSQL(isUserAdmin, systemUserId);
+      const projectService = new ProjectService(connection);
 
-      if (!getSpatialSearchResultsSQLStatement) {
-        throw new HTTP400('Failed to build SQL get statement');
-      }
-
-      const response = await connection.query(
-        getSpatialSearchResultsSQLStatement.text,
-        getSpatialSearchResultsSQLStatement.values
-      );
+      const response = await projectService.getSpatialSearch(isUserAdmin, systemUserId);
 
       await connection.commit();
 
-      if (!response || !response.rows) {
+      if (!response) {
         return res.status(200).json(null);
       }
 
-      const result: any[] = _extractResults(response.rows);
+      const result: any[] = _extractResults(response);
 
       return res.status(200).json(result);
     } catch (error) {
@@ -106,6 +99,36 @@ export function getSearchResults(): RequestHandler {
     }
   };
 }
+
+/**
+ * Cycle through a feature array and apply a mask if the feature has a mask.
+ * This function is unique to this end point and is not used elsewhere.
+ * @param originalFeatureArray
+ * @param originalGeoJSON
+ * @returns new feature array with mask applied
+ */
+const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
+  const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
+  try {
+    const geojson = originalGeoJSON && JSON.parse(originalGeoJSON);
+
+    // If there is a mask and maskedLocation, return the mask instead of the geometry
+    geojson.forEach((feature, index) => {
+      if (feature.properties.maskedLocation && feature.properties.mask) {
+        const mask = turf.circle(feature.properties.mask.centroid, feature.properties.mask.radius, {
+          steps: 64,
+          units: 'meters',
+          properties: feature.properties
+        });
+        featureArray.coordinates[index] = mask.geometry.coordinates;
+      }
+    });
+  } catch (error) {
+    console.log('error', error);
+  }
+
+  return featureArray;
+};
 
 /**
  * Extract an array of search result data from DB query.
@@ -122,10 +145,17 @@ export function _extractResults(rows: any[]): any[] {
   const searchResults: any[] = [];
 
   rows.forEach((row) => {
+    // Protected shapes must have their geometry masked here
+    const features = _maskGateKeeper(row.geometry, row.geojson);
+
     const result: any = {
       id: row.id,
       name: row.name,
-      geometry: row.geometry && [JSON.parse(row.geometry)]
+      is_project: row.is_project,
+      state_code: row.state_code,
+      number_sites: row.number_sites,
+      size_ha: row.size_ha,
+      geometry: [features]
     };
 
     searchResults.push(result);

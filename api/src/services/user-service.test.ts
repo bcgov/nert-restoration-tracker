@@ -1,14 +1,15 @@
 import chai, { expect } from 'chai';
 import { describe } from 'mocha';
-import { QueryResult } from 'pg';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import SQL from 'sql-template-strings';
+import { getMockDBConnection } from '../__mocks__/db';
 import { SYSTEM_IDENTITY_SOURCE } from '../constants/database';
 import { ApiError } from '../errors/custom-error';
 import { UserObject } from '../models/user';
-import { queries } from '../queries/queries';
-import { getMockDBConnection } from '../__mocks__/db';
+import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
+import { UserRepository } from '../repositories/user-repository';
+import * as user_utils from '../utils/user-utils';
+import { ProjectService } from './project-service';
 import { UserService } from './user-service';
 
 chai.use(sinonChai);
@@ -19,35 +20,34 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('throws an error if no user is found', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'getUserByIdSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      try {
-        await userService.getUserById(1);
-
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as ApiError).message).to.equal('Failed to fetch system user');
-      }
-    });
-
     it('returns a UserObject for the first row of the response', async function () {
       const mockResponseRow = { id: 123 };
-      const mockQueryResponse = ({ rowCount: 1, rows: [mockResponseRow] } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockDBConnection = getMockDBConnection();
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'getUserByIdSQL').returns(mockUsersByIdSQLResponse);
+      sinon.stub(UserRepository.prototype, 'getUserById').resolves(mockResponseRow as any);
 
       const userService = new UserService(mockDBConnection);
 
       const result = await userService.getUserById(1);
+
+      expect(result).to.eql(new UserObject(mockResponseRow));
+    });
+  });
+
+  describe('getUserByGuid', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('returns a UserObject for the first row of the response', async function () {
+      const mockResponseRow = { id: 123 };
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(UserRepository.prototype, 'getUserByGuid').resolves(mockResponseRow as any);
+
+      const userService = new UserService(mockDBConnection);
+
+      const result = await userService.getUserByGuid('identifier');
 
       expect(result).to.eql(new UserObject(mockResponseRow));
     });
@@ -58,31 +58,15 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('returns null if the query response has no rows', async function () {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'getUserByUserIdentifierSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      const result = await userService.getUserByIdentifier('identifier', SYSTEM_IDENTITY_SOURCE.IDIR);
-
-      expect(result).to.be.null;
-    });
-
     it('returns a UserObject for the first row of the response', async function () {
       const mockResponseRow = { id: 123 };
-      const mockQueryResponse = ({ rows: [mockResponseRow] } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockDBConnection = getMockDBConnection();
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'getUserByUserIdentifierSQL').returns(mockUsersByIdSQLResponse);
+      sinon.stub(UserRepository.prototype, 'getUserByUserIdentifier').resolves(mockResponseRow as any);
 
       const userService = new UserService(mockDBConnection);
 
-      const result = await userService.getUserByIdentifier('identifier', SYSTEM_IDENTITY_SOURCE.BCEID_BASIC);
+      const result = await userService.getUserByIdentifier('username', SYSTEM_IDENTITY_SOURCE.IDIR);
 
       expect(result).to.eql(new UserObject(mockResponseRow));
     });
@@ -93,35 +77,13 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('should throw an error when response has no rows', async () => {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ query: async () => mockQueryResponse });
-
-      const userService = new UserService(mockDBConnection);
-
-      sinon.stub(queries.users, 'addSystemUserSQL').returns(SQL`valid sql`);
-
-      const userGuid = '12345';
-      const userIdentifier = 'username';
-      const identitySource = SYSTEM_IDENTITY_SOURCE.IDIR;
-
-      try {
-        await userService.addSystemUser(userGuid, userIdentifier, identitySource);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as ApiError).message).to.equal('Failed to insert system user');
-      }
-    });
-
     it('should not throw an error on success', async () => {
       const mockRowObj = { id: 123 };
-      const mockQueryResponse = ({ rows: [mockRowObj] } as unknown) as QueryResult<any>;
-      const mockQuery = sinon.fake.resolves(mockQueryResponse);
-      const mockDBConnection = getMockDBConnection({ query: mockQuery });
+      const mockDBConnection = getMockDBConnection();
+
+      const addSystemUserStub = sinon.stub(UserRepository.prototype, 'addSystemUser').resolves(mockRowObj as any);
 
       const userService = new UserService(mockDBConnection);
-
-      const addSystemUserSQLStub = sinon.stub(queries.users, 'addSystemUserSQL').returns(SQL`valid sql`);
 
       const userGuid = '12345';
       const userIdentifier = 'username';
@@ -131,8 +93,7 @@ describe('UserService', () => {
 
       expect(result).to.eql(new UserObject(mockRowObj));
 
-      expect(addSystemUserSQLStub).to.have.been.calledOnce;
-      expect(mockQuery).to.have.been.calledOnce;
+      expect(addSystemUserStub).to.have.been.calledOnce;
     });
   });
 
@@ -141,31 +102,15 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('returns empty array if the query response has no rows', async function () {
-      const mockQueryResponse = ({ rows: [] } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'getUserListSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      const result = await userService.listSystemUsers();
-
-      expect(result).to.eql([]);
-    });
-
     it('returns a UserObject for each row of the response', async function () {
       const mockResponseRow1 = { id: 123 };
       const mockResponseRow2 = { id: 456 };
       const mockResponseRow3 = { id: 789 };
-      const mockQueryResponse = ({
-        rows: [mockResponseRow1, mockResponseRow2, mockResponseRow3]
-      } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockRowObj = [mockResponseRow1, mockResponseRow2, mockResponseRow3];
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'getUserListSQL').returns(mockUsersByIdSQLResponse);
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(UserRepository.prototype, 'getUserList').resolves(mockRowObj as any);
 
       const userService = new UserService(mockDBConnection);
 
@@ -185,7 +130,7 @@ describe('UserService', () => {
     });
 
     it('throws an error if it fails to get the current system user id', async () => {
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => (null as unknown) as number });
+      const mockDBConnection = getMockDBConnection({ systemUserId: () => null as unknown as number });
 
       const existingSystemUser = null;
       const getUserByGuidStub = sinon.stub(UserService.prototype, 'getUserByGuid').resolves(existingSystemUser);
@@ -318,29 +263,10 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('throws an error if the query response has no rowCount', async function () {
-      const mockQueryResponse = ({ rowCount: 0 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'activateSystemUserSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      try {
-        await userService.activateSystemUser(1);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as ApiError).message).to.equal('Failed to activate system user');
-      }
-    });
-
     it('returns nothing on success', async function () {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockDBConnection = getMockDBConnection();
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'activateSystemUserSQL').returns(mockUsersByIdSQLResponse);
+      sinon.stub(UserRepository.prototype, 'activateSystemUser').resolves();
 
       const userService = new UserService(mockDBConnection);
 
@@ -355,29 +281,10 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('throws an error if the query response has no rowCount', async function () {
-      const mockQueryResponse = ({ rowCount: 0 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'deactivateSystemUserSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      try {
-        await userService.deactivateSystemUser(1);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as ApiError).message).to.equal('Failed to deactivate system user');
-      }
-    });
-
     it('returns nothing on success', async function () {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockDBConnection = getMockDBConnection();
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'deactivateSystemUserSQL').returns(mockUsersByIdSQLResponse);
+      sinon.stub(UserRepository.prototype, 'deactivateSystemUser').resolves();
 
       const userService = new UserService(mockDBConnection);
 
@@ -392,33 +299,32 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('throws an error if the query response has no rowCount', async function () {
-      const mockQueryResponse = ({ rowCount: 0 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'deleteAllSystemRolesSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      try {
-        await userService.deleteUserSystemRoles(1);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as ApiError).message).to.equal('Failed to delete user system roles');
-      }
-    });
-
     it('returns nothing on success', async function () {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockDBConnection = getMockDBConnection();
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'deleteAllSystemRolesSQL').returns(mockUsersByIdSQLResponse);
+      sinon.stub(UserRepository.prototype, 'deleteUserSystemRoles').resolves();
 
       const userService = new UserService(mockDBConnection);
 
       const result = await userService.deleteUserSystemRoles(1);
+
+      expect(result).to.be.undefined;
+    });
+  });
+
+  describe('deleteAllProjectRoles', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('returns nothing on success', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(UserRepository.prototype, 'deleteAllProjectRoles').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      const result = await userService.deleteAllProjectRoles(1);
 
       expect(result).to.be.undefined;
     });
@@ -429,35 +335,232 @@ describe('UserService', () => {
       sinon.restore();
     });
 
-    it('throws an error if the query response has no rowCount', async function () {
-      const mockQueryResponse = ({ rowCount: 0 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
-
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'postSystemRolesSQL').returns(mockUsersByIdSQLResponse);
-
-      const userService = new UserService(mockDBConnection);
-
-      try {
-        await userService.addUserSystemRoles(1, [1]);
-        expect.fail();
-      } catch (actualError) {
-        expect((actualError as ApiError).message).to.equal('Failed to insert user system roles');
-      }
-    });
-
     it('returns nothing on success', async function () {
-      const mockQueryResponse = ({ rowCount: 1 } as unknown) as QueryResult<any>;
-      const mockDBConnection = getMockDBConnection({ systemUserId: () => 1, query: async () => mockQueryResponse });
+      const mockDBConnection = getMockDBConnection();
 
-      const mockUsersByIdSQLResponse = SQL`Test SQL Statement`;
-      sinon.stub(queries.users, 'postSystemRolesSQL').returns(mockUsersByIdSQLResponse);
+      sinon.stub(UserRepository.prototype, 'postSystemRoles').resolves();
 
       const userService = new UserService(mockDBConnection);
 
       const result = await userService.addUserSystemRoles(1, [1]);
 
       expect(result).to.be.undefined;
+    });
+  });
+
+  describe('getUserProjectParticipation', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('returns a ProjectParticipantObject for each row of the response', async function () {
+      const mockResponseRow1 = {
+        project_id: 123,
+        project_name: 'string',
+        system_user_id: 1,
+        project_role_id: 1,
+        project_role_name: 'string',
+        project_participation_id: 1
+      };
+      const mockRowObj = [mockResponseRow1];
+
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectParticipationRepository.prototype, 'getAllUserProjects').resolves(mockRowObj as any);
+
+      const userService = new UserService(mockDBConnection);
+
+      const result = await userService.getUserProjectParticipation(1);
+
+      expect(result).to.eql([
+        {
+          project_id: 123,
+          name: 'string',
+          system_user_id: 1,
+          project_role_id: 1,
+          project_role_name: 'string',
+          project_participation_id: 1
+        }
+      ]);
+    });
+  });
+
+  describe('handleDeleteSystemUser', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('throws error if user has record_end_date', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      const userService = new UserService(mockDBConnection);
+
+      sinon.stub(UserService.prototype, 'getUserById').resolves({ record_end_date: '2021-11-22' } as any);
+
+      try {
+        await userService.handleDeleteSystemUser(1);
+      } catch (err: any) {
+        expect(err.message).to.equal('The system user is not active');
+      }
+    });
+
+    it('returns nothing on success', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(UserService.prototype, 'getUserById').resolves({ record_end_date: null } as any);
+      sinon.stub(UserService.prototype, 'deleteAllProjectRoles').resolves();
+      sinon.stub(UserService.prototype, 'deleteUserSystemRoles').resolves();
+      sinon.stub(UserService.prototype, 'deactivateSystemUser').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      const result = await userService.handleDeleteSystemUser(1);
+
+      expect(result).to.be.undefined;
+    });
+  });
+
+  describe('handleDeleteProjectParticipant', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('throws error when delete project participation record fails', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon.stub(user_utils, 'doAllProjectsHaveAProjectLead').resolves(false);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      try {
+        await userService.handleDeleteProjectParticipant(1, 1);
+      } catch (err: any) {
+        expect(err.message).to.equal('Failed to delete project participant');
+      }
+    });
+
+    it('returns undefined when project does not have another lead', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon.stub(user_utils, 'doAllProjectsHaveAProjectLead').resolves(false);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 } as any);
+
+      const userService = new UserService(mockDBConnection);
+
+      const response = await userService.handleDeleteProjectParticipant(1, 1);
+      expect(response).to.eql(undefined);
+    });
+
+    it('returns undefined when project has another lead', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon.stub(user_utils, 'doAllProjectsHaveAProjectLead').resolves(true);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 } as any);
+
+      const userService = new UserService(mockDBConnection);
+
+      const response = await userService.handleDeleteProjectParticipant(1, 1);
+      expect(response).to.eql(undefined);
+    });
+
+    it('throws error when project has another lead and delete project participation record fails', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon
+        .stub(user_utils, 'doAllProjectsHaveAProjectLead')
+        .onFirstCall()
+        .resolves(true)
+        .onSecondCall()
+        .resolves(false);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 } as any);
+
+      const userService = new UserService(mockDBConnection);
+
+      try {
+        await userService.handleDeleteProjectParticipant(1, 1);
+      } catch (err: any) {
+        expect(err.message).to.equal('Cannot delete project user. User is the only Project Lead for the project.');
+      }
+    });
+  });
+
+  describe('handleUpdateProjectParticipantRole', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('throws error when delete project participation record fails', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon.stub(user_utils, 'doAllProjectsHaveAProjectLead').resolves(false);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      try {
+        await userService.handleUpdateProjectParticipantRole(1, 1, 1);
+      } catch (err: any) {
+        expect(err.message).to.equal('Failed to update project participant role');
+      }
+    });
+
+    it('returns undefined when project does not have another lead', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon.stub(user_utils, 'doAllProjectsHaveAProjectLead').resolves(false);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 } as any);
+      sinon.stub(ProjectService.prototype, 'addProjectParticipant').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      const response = await userService.handleUpdateProjectParticipantRole(1, 1, 1);
+      expect(response).to.eql(undefined);
+    });
+
+    it('returns undefined when project has another lead', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+      sinon.stub(user_utils, 'doAllProjectsHaveAProjectLead').resolves(true);
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 } as any);
+      sinon.stub(ProjectService.prototype, 'addProjectParticipant').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      const response = await userService.handleUpdateProjectParticipantRole(1, 1, 1);
+      expect(response).to.eql(undefined);
+    });
+
+    it('throws error when project has another lead and delete project participation record fails', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      sinon.stub(ProjectService.prototype, 'getProjectParticipants').resolves({ id: 1 } as any);
+
+      sinon
+        .stub(user_utils, 'doAllProjectsHaveAProjectLead')
+        .onFirstCall()
+        .resolves(true)
+        .onSecondCall()
+        .resolves(false);
+
+      sinon.stub(ProjectService.prototype, 'deleteProjectParticipationRecord').resolves({ system_user_id: 1 } as any);
+
+      sinon.stub(ProjectService.prototype, 'addProjectParticipant').resolves();
+
+      const userService = new UserService(mockDBConnection);
+
+      try {
+        await userService.handleUpdateProjectParticipantRole(1, 1, 1);
+      } catch (err: any) {
+        expect(err.message).to.equal('Cannot delete project user. User is the only Project Lead for the project.');
+      }
     });
   });
 });

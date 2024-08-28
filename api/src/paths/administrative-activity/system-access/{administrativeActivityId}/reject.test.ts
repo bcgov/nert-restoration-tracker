@@ -2,10 +2,10 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import * as db from '../../../../database/db';
 import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
-import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from '../../../administrative-activities';
-import * as administrative_activity from '../../../administrative-activity';
+import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from '../../../../constants/administrative-activity';
+import * as db from '../../../../database/db';
+import { AdministrativeActivityService } from '../../../../services/administrative-activity-service';
 import * as reject_request from './reject';
 
 chai.use(sinonChai);
@@ -27,7 +27,7 @@ describe('rejectAccessRequest', () => {
 
     const expectedError = new Error('test error');
 
-    sinon.stub(administrative_activity, 'updateAdministrativeActivity').rejects(expectedError);
+    sinon.stub(AdministrativeActivityService.prototype, 'putAdministrativeActivity').throws(expectedError);
 
     const requestHandler = reject_request.rejectAccessRequest();
 
@@ -50,7 +50,7 @@ describe('rejectAccessRequest', () => {
     };
 
     const updateAdministrativeActivityStub = sinon
-      .stub(administrative_activity, 'updateAdministrativeActivity')
+      .stub(AdministrativeActivityService.prototype, 'putAdministrativeActivity')
       .resolves();
 
     const requestHandler = reject_request.rejectAccessRequest();
@@ -59,8 +59,7 @@ describe('rejectAccessRequest', () => {
 
     expect(updateAdministrativeActivityStub).to.have.been.calledOnceWith(
       1,
-      ADMINISTRATIVE_ACTIVITY_STATUS_TYPE.REJECTED,
-      mockDBConnection
+      ADMINISTRATIVE_ACTIVITY_STATUS_TYPE.REJECTED
     );
   });
 });

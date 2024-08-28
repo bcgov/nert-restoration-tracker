@@ -16,9 +16,15 @@ import { DataLoader } from './useDataLoader';
  * function that receives the dataLoader and returns an `IErrorDialogProps` object, which will be passed to the
  * rendered error dialog.
  */
-export default function useDataLoaderError<AFArgs extends any[], AFResponse = unknown, AFError = unknown>(
+export default function useDataLoaderError<
+  AFArgs extends any[],
+  AFResponse = unknown,
+  AFError = unknown
+>(
   dataLoader: DataLoader<AFArgs, AFResponse, AFError>,
-  getErrorDialogProps: (dataLoader: DataLoader<AFArgs, AFResponse, AFError>) => Partial<IErrorDialogProps>
+  getErrorDialogProps: (
+    dataLoader: DataLoader<AFArgs, AFResponse, AFError>
+  ) => Partial<IErrorDialogProps>
 ) {
   const dialogContext = useContext(DialogContext);
 

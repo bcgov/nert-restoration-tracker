@@ -40,6 +40,8 @@ const request = require('request');
   app.use('/config', (_, resp) => {
     const config = {
       API_HOST: process.env.REACT_APP_API_HOST || 'localhost',
+      REACT_APP_OBJECT_STORE_URL: process.env.REACT_APP_OBJECT_STORE_URL,
+      REACT_APP_OBJECT_STORE_BUCKET_NAME: process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME,
       CHANGE_VERSION: process.env.CHANGE_VERSION || 'NA',
       NODE_ENV: process.env.NODE_ENV || 'development',
       REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || 'dev',
@@ -51,7 +53,14 @@ const request = require('request');
       },
       SITEMINDER_LOGOUT_URL: process.env.REACT_APP_SITEMINDER_LOGOUT_URL,
       MAX_UPLOAD_NUM_FILES: Number(process.env.REACT_APP_MAX_UPLOAD_NUM_FILES) || 10,
-      MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800
+      MAX_UPLOAD_FILE_SIZE: Number(process.env.REACT_APP_MAX_UPLOAD_FILE_SIZE) || 52428800,
+      MAX_IMAGE_UPLOAD_SIZE: Number(process.env.REACT_APP_MAX_IMAGE_UPLOAD_SIZE) || 5242880,
+      MAX_IMAGE_NUM_FILES: Number(process.env.REACT_APP_MAX_IMAGE_NUM_FILES) || 1,
+      ALLOW_MULTIPLE_IMAGE_UPLOADS:
+        Boolean(process.env.REACT_APP_ALLOW_MULTIPLE_IMAGE_UPLOADS) || false,
+      BACKBONE_PUBLIC_API_HOST: process.env.REACT_APP_BACKBONE_PUBLIC_API_HOST || '',
+      BIOHUB_TAXON_PATH: process.env.REACT_APP_BIOHUB_TAXON_PATH || '',
+      BIOHUB_TAXON_TSN_PATH: process.env.REACT_APP_BIOHUB_TAXON_TSN_PATH || ''
     };
     resp.status(200).json(config);
   });

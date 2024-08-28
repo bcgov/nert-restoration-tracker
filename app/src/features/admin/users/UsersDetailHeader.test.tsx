@@ -1,45 +1,47 @@
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { DialogContextProvider } from 'contexts/dialogContext';
-import { createMemoryHistory } from 'history';
 import { IGetUserResponse } from 'interfaces/useUserApi.interface';
 import React from 'react';
-import { Router } from 'react-router';
-import { useRestorationTrackerApi } from '../../../hooks/useRestorationTrackerApi';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { useNertApi } from '../../../hooks/useNertApi';
 import UsersDetailHeader from './UsersDetailHeader';
 
-const history = createMemoryHistory();
-
-jest.mock('../../../hooks/useRestorationTrackerApi');
-
-const mockuseRestorationTrackerApi = {
+jest.mock('../../../hooks/useNertApi');
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
+const mockUseApi = {
   user: {
     deleteSystemUser: jest.fn<Promise<number>, []>()
   }
 };
 
-const mockRestorationTrackerApi = ((useRestorationTrackerApi as unknown) as jest.Mock<
-  typeof mockuseRestorationTrackerApi
->).mockReturnValue(mockuseRestorationTrackerApi);
-
-const mockUser = ({
+const mockUser = {
   id: 1,
   user_identifier: 'testUser',
   record_end_date: 'ending',
   role_names: ['system']
-} as unknown) as IGetUserResponse;
+} as unknown as IGetUserResponse;
 
 describe('UsersDetailHeader', () => {
+  beforeEach(() => {
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
+  });
+
   afterEach(() => {
     cleanup();
   });
 
   it('renders correctly when selectedUser are loaded', async () => {
-    history.push('/admin/users/1');
+    const routes = [
+      { path: '/admin/users/1', element: <UsersDetailHeader userDetails={mockUser} /> },
+      { path: '/admin/users', element: <div>Manage Users</div> }
+    ];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/admin/users/1'] });
 
     const { getAllByTestId } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailHeader userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -49,12 +51,17 @@ describe('UsersDetailHeader', () => {
   });
 
   it('breadcrumbs link routes user correctly', async () => {
-    history.push('/admin/users/1');
+    const routes = [
+      { path: '/admin/users/1', element: <UsersDetailHeader userDetails={mockUser} /> },
+      { path: '/admin/users', element: <div>Manage Users</div> }
+    ];
+
+    const router = createMemoryRouter(routes, { initialEntries: ['/admin/users/1'] });
 
     const { getAllByTestId, getByText } = render(
-      <Router history={history}>
+      <RouterProvider router={router}>
         <UsersDetailHeader userDetails={mockUser} />
-      </Router>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -64,19 +71,24 @@ describe('UsersDetailHeader', () => {
     fireEvent.click(getByText('Manage Users'));
 
     await waitFor(() => {
-      expect(history.location.pathname).toEqual('/admin/users');
+      expect(router.state.location.pathname).toEqual('/admin/users');
     });
   });
 
   describe('Are you sure? Dialog', () => {
     it('Remove User button opens dialog', async () => {
-      history.push('/admin/users/1');
+      const routes = [
+        { path: '/admin/users/1', element: <UsersDetailHeader userDetails={mockUser} /> },
+        { path: '/admin/users', element: <div>Manage Users</div> }
+      ];
+
+      const router = createMemoryRouter(routes, { initialEntries: ['/admin/users/1'] });
 
       const { getAllByTestId, getAllByText, getByText } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailHeader userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 
@@ -92,13 +104,18 @@ describe('UsersDetailHeader', () => {
     });
 
     it('does nothing if the user clicks `Cancel` or away from the dialog', async () => {
-      history.push('/admin/users/1');
+      const routes = [
+        { path: '/admin/users/1', element: <UsersDetailHeader userDetails={mockUser} /> },
+        { path: '/admin/users', element: <div>Manage Users</div> }
+      ];
+
+      const router = createMemoryRouter(routes, { initialEntries: ['/admin/users/1'] });
 
       const { getAllByTestId, getAllByText, getByText } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailHeader userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 
@@ -115,7 +132,7 @@ describe('UsersDetailHeader', () => {
       fireEvent.click(getByText('Cancel'));
 
       await waitFor(() => {
-        expect(history.location.pathname).toEqual('/admin/users/1');
+        expect(router.state.location.pathname).toEqual('/admin/users/1');
       });
     });
 
@@ -124,13 +141,18 @@ describe('UsersDetailHeader', () => {
         response: 200
       } as any);
 
-      history.push('/admin/users/1');
+      const routes = [
+        { path: '/admin/users/1', element: <UsersDetailHeader userDetails={mockUser} /> },
+        { path: '/admin/users', element: <div>Manage Users</div> }
+      ];
+
+      const router = createMemoryRouter(routes, { initialEntries: ['/admin/users/1'] });
 
       const { getAllByTestId, getAllByText, getByText } = render(
         <DialogContextProvider>
-          <Router history={history}>
+          <RouterProvider router={router}>
             <UsersDetailHeader userDetails={mockUser} />
-          </Router>
+          </RouterProvider>
         </DialogContextProvider>
       );
 
@@ -147,7 +169,7 @@ describe('UsersDetailHeader', () => {
       fireEvent.click(getAllByTestId('yes-button')[0]);
 
       await waitFor(() => {
-        expect(history.location.pathname).toEqual('/admin/users');
+        expect(router.state.location.pathname).toEqual('/admin/users');
       });
     });
   });

@@ -1,8 +1,7 @@
 {
   "extends": [
-    "react-app",
     "eslint:recommended",
-    "prettier/@typescript-eslint",
+    "prettier",
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
@@ -11,9 +10,12 @@
   "plugins": ["prettier", "@typescript-eslint"],
   "rules": {
     "prettier/prettier": ["warn"],
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/ban-types": ["error", { "types": { "object": false, "extendDefaults": true } }],
+    "@typescript-eslint/ban-types": [
+      "error",
+      { "types": { "object": false, "extendDefaults": true } }
+    ],
     "@typescript-eslint/no-empty-function": ["error", { "allow": ["arrowFunctions"] }],
     "@typescript-eslint/ban-ts-comment": [
       "error",
@@ -24,6 +26,7 @@
         "ts-check": false
       }
     ],
-    "no-var": "error"
+    "no-var": "error",
+    "@typescript-eslint/no-unnecessary-type-constraint": "off"
   }
 }

@@ -3,7 +3,7 @@ import { AxiosInstance, CancelTokenSource } from 'axios';
 /**
  * Returns a set of methods for working with external APIs.
  *
- * Note: Should not be used for internal Habitat Restoration Tracker API calls, as these methods will not include any auth tokens in the
+ * Note: Should not be used for internal Northeast Restoration Tracker API calls, as these methods will not include any auth tokens in the
  * request.
  *
  * @param {AxiosInstance} axios
@@ -33,7 +33,11 @@ const useExternalApi = (axios: AxiosInstance) => {
    * @param {CancelTokenSource} [cancelTokenSource] Cancel token to manually cancel the request (optional)
    * @return {Promise<T=any>} A promise that resolves with the response data
    */
-  const post = async <T = any>(url: string, body: any, cancelTokenSource?: CancelTokenSource): Promise<T> => {
+  const post = async <T = any>(
+    url: string,
+    body: any,
+    cancelTokenSource?: CancelTokenSource
+  ): Promise<T> => {
     const { data } = await axios.post(url, body, { cancelToken: cancelTokenSource?.token });
 
     return data;

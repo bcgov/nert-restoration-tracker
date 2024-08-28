@@ -1,30 +1,34 @@
-import AppBar from '@material-ui/core/AppBar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import OtherLink from '@material-ui/core/Link';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { mdiAccountCircle, mdiHelpCircle, mdiLoginVariant } from '@mdi/js';
 import Icon from '@mdi/react';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
+import OtherLink from '@mui/material/Link';
+import { alpha } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import headerImageLarge from 'assets/images/gov-bc-logo-horiz.png';
 import headerImageSmall from 'assets/images/gov-bc-logo-vert.png';
 import { AuthGuard, SystemRoleGuard, UnAuthGuard } from 'components/security/Guards';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { AuthStateContext } from 'contexts/authStateContext';
-import { SYSTEM_IDENTITY_SOURCE } from 'hooks/useKeycloakWrapper';
-import React, { useContext } from 'react';
+import { ConfigContext } from 'contexts/configContext';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getFormattedIdentitySource } from 'utils/Utils';
+import { useCodesContext } from 'hooks/useContext';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const pageStyles = {
   govHeaderToolbar: {
     height: '70px'
   },
@@ -60,15 +64,14 @@ const useStyles = makeStyles((theme: Theme) => ({
       display: 'block'
     }
   },
-  appPhaseTag: {
-    marginLeft: theme.spacing(0.75),
+  appVersionTag: {
+    marginLeft: '0.5rem',
     color: '#fcba19',
-    textTransform: 'uppercase',
     fontSize: '0.75rem',
     fontWeight: 400
   },
   userProfile: {
-    color: theme.palette.primary.contrastText,
+    color: 'white',
     fontSize: '0.9375rem',
     '& hr': {
       backgroundColor: '#4b5e7e',
@@ -91,82 +94,107 @@ const useStyles = makeStyles((theme: Theme) => ({
   mainNavToolbar: {
     '& a': {
       display: 'block',
-      padding: theme.spacing(2),
+      paddingX: '0.5rem',
       color: 'inherit',
       fontSize: '1rem',
       textDecoration: 'none'
     },
     '& a:hover': {
-      textDecoration: 'underline'
+      textDecoration: 'underline',
+      backgroundColor: (theme: {
+        palette: { primary: { main: string }; action: { activatedOpacity: number } };
+      }) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
     },
-    '& a:first-child': {
-      marginLeft: theme.spacing(-2)
+    '& a:first-of-type': {
+      marginLeft: '-1rem'
     }
   },
   '.MuiDialogContent-root': {
     '& p + p': {
-      marginTop: theme.spacing(2)
+      marginTop: '1rem'
     }
   }
-}));
+};
 
 const Header: React.FC = () => {
-  const classes = useStyles();
+  const config = useContext(ConfigContext);
+  const codes = useCodesContext().codesDataLoader;
 
-  const { keycloakWrapper } = useContext(AuthStateContext);
+  const title =
+    codes.data?.branding.find((data) => data.name == 'title')?.value || 'Restoration Tracker';
+
+  const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
+
+  const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  const nert_version = mmm ?? '0.0.0.NA';
+  const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
+
+  const authStateContext = useAuthStateContext();
+  const identitySource = authStateContext.nertUserWrapper.identitySource || '';
+  const userIdentifier = authStateContext.nertUserWrapper.userIdentifier || '';
+  const formattedUsername = [
+    getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE),
+    userIdentifier
+  ]
+    .filter(Boolean)
+    .join('/');
 
   // Authenticated view
   const LoggedInUser = () => {
-    const identitySource = keycloakWrapper?.getIdentitySource() || '';
-    const userIdentifier = keycloakWrapper?.getUserIdentifier() || '';
-    const formattedUsername = [getFormattedIdentitySource(identitySource as SYSTEM_IDENTITY_SOURCE), userIdentifier]
-      .filter(Boolean)
-      .join('/');
-
     return (
-      <Box display="flex" className={classes.userProfile} my="auto" alignItems="center">
+      <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
         <Icon path={mdiAccountCircle} size={1.12} />
         <Box ml={1}>{formattedUsername}</Box>
         <Box px={2}>
           <Divider orientation="vertical" />
         </Box>
-        <Link to="/logout" data-testid="menu_log_out">
+        <Button
+          component="a"
+          variant="text"
+          onClick={() => authStateContext.auth.signoutRedirect()}
+          data-testid="menu_log_out"
+          sx={{
+            color: 'inherit',
+            fontSize: '16px',
+            fontWeight: 700,
+            textTransform: 'none'
+          }}>
           Log Out
-        </Link>
-        <Box pl={2}>
-          <Divider orientation="vertical" />
-        </Box>
-        <IconButton aria-label="need help" className={classes.govHeaderIconButton} onClick={showSupportDialog}>
-          <Icon path={mdiHelpCircle} size={1.12} />
-        </IconButton>
+        </Button>
       </Box>
     );
   };
 
   // Unauthenticated public view
   const PublicViewUser = () => {
+    const authStateContext = useAuthStateContext();
+
     return (
-      <Box display="flex" className={classes.userProfile} alignItems="center" my="auto">
+      <>
         <Button
-          onClick={() => keycloakWrapper?.keycloak.login()}
-          type="submit"
-          variant="contained"
-          color="primary"
+          component="a"
+          color="inherit"
+          variant="text"
+          onClick={() => authStateContext.auth.signinRedirect()}
           disableElevation
-          startIcon={<Icon path={mdiLoginVariant} size={1.12} />}
-          data-testid="login">
+          startIcon={<Icon path={mdiLoginVariant} size={1} />}
+          data-testid="menu_log_in"
+          sx={{
+            p: 1,
+            fontSize: '16px',
+            fontWeight: 700,
+            textTransform: 'none'
+          }}>
           Log In
         </Button>
-        <IconButton className={classes.govHeaderIconButton} onClick={showSupportDialog}>
-          <Icon path={mdiHelpCircle} size={1.12} />
-        </IconButton>
-      </Box>
+      </>
     );
   };
 
   const [open, setOpen] = React.useState(false);
 
   const showSupportDialog = () => {
+    handleClose();
     setOpen(true);
   };
 
@@ -174,81 +202,178 @@ const Header: React.FC = () => {
     setOpen(false);
   };
 
-  const BetaLabel = () => {
-    return <span aria-label="This application is currently in beta phase of development">Beta</span>;
+  const VersionEnvironmentLabel = () => {
+    return (
+      <Typography
+        sx={pageStyles.appVersionTag}
+        variant="subtitle2"
+        aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
+        v{nert_version} {nert_environment}
+      </Typography>
+    );
+  };
+
+  const [infoOpen, setInfoOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
+  const handleClickClose = () => {
+    setInfoOpen(false);
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (e: any) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
     <>
       <AppBar position="sticky" style={{ boxShadow: 'none' }}>
-        <Toolbar className={classes.govHeaderToolbar}>
+        <Toolbar variant="dense">
           <Box display="flex" justifyContent="space-between" width="100%">
-            <Link to="/projects" className={classes.brand} aria-label="Go to Habitat Restoration Tracker Home">
-              <picture>
-                <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
-                <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
-                <img src={headerImageSmall} alt={'Government of British Columbia'} />
-              </picture>
-              <span>
-                Habitat Restoration Tracker
-                <sup className={classes.appPhaseTag}>
-                  <BetaLabel />
-                </sup>
-              </span>
-            </Link>
+            <Box display="flex" justifyContent="left">
+              <Link to="/" style={pageStyles.brand} aria-label="Go to {title} Home">
+                <picture>
+                  <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
+                  <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
+                  <img src={headerImageSmall} alt={'Government of British Columbia'} />
+                </picture>
+              </Link>
+
+              <Box ml={2}>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  {title}
+                </Typography>
+                <VersionEnvironmentLabel />
+              </Box>
+              <Box mt={-0.5}>
+                <IconButton aria-label="General Info" onClick={handleClickOpen} size="small">
+                  <InfoIcon color="info" />
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box display="flex" justifyContent="left" minWidth={100} sx={pageStyles.brand}>
             <UnAuthGuard>
               <PublicViewUser />
             </UnAuthGuard>
             <AuthGuard>
               <LoggedInUser />
             </AuthGuard>
+            {/* <Box pl={2}>
+              <Divider orientation="vertical" />
+            </Box> */}
+            <IconButton
+              aria-controls="simple-menu"
+              aria-haspopup="true"
+              aria-label="need help"
+              sx={pageStyles.govHeaderIconButton}
+              onClick={handleClick}
+              size="large">
+              <Icon path={mdiHelpCircle} size={1.12} />
+            </IconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}>
+              <MenuItem onClick={handleClose} key={'Tracker FAQ'} value={'Tracker FAQ'}>
+                Tracker FAQ
+              </MenuItem>
+              <MenuItem onClick={showSupportDialog} key={'Need Help'} value={'Need Help'}>
+                Need Help
+              </MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
 
-        <Box className={classes.mainNav}>
-          <Toolbar variant="dense" className={classes.mainNavToolbar} role="navigation" aria-label="Main Navigation">
-            <UnAuthGuard>
-              <Link to="/" id="menu_projects">
-                Projects
-              </Link>
-              <Link to="/search" id="menu_search">
-                Map
-              </Link>
-            </UnAuthGuard>
-            <AuthGuard>
+        <Box borderBottom={'1px solid'} sx={pageStyles.mainNav}>
+          <Toolbar
+            variant="dense"
+            sx={pageStyles.mainNavToolbar}
+            role="navigation"
+            aria-label="Main Navigation">
+            <SystemRoleGuard
+              validSystemRoles={[
+                SYSTEM_ROLE.SYSTEM_ADMIN,
+                SYSTEM_ROLE.MAINTAINER,
+                SYSTEM_ROLE.PROJECT_CREATOR
+              ]}
+              fallback={
+                <>
+                  <Link to="/projects" id="menu_projects">
+                    All Projects/All Plans
+                  </Link>
+                  <Link to="/search" id="menu_search">
+                    Map
+                  </Link>
+                  <AuthGuard>
+                    <Link to="/access-request" id="menu_request_access">
+                      Request Access
+                    </Link>
+                  </AuthGuard>
+                </>
+              }>
               <Link to="/admin/projects" id="menu_projects">
-                Projects
+                All Projects/All Plans
               </Link>
               <Link to="/admin/user/projects" id="menu_user_projects">
-                My Projects
+                My Projects/My Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
                 Map
               </Link>
-            </AuthGuard>
-            <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-              <Link to="/admin/users" id="menu_admin_users">
-                Manage Users
-              </Link>
+              <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+                <Link to="/admin/users" id="menu_admin_users">
+                  Manage Users
+                </Link>
+              </SystemRoleGuard>
             </SystemRoleGuard>
           </Toolbar>
         </Box>
       </AppBar>
 
+      <Dialog open={infoOpen}>
+        <DialogTitle>General Info: {title}</DialogTitle>
+        <DialogContent>
+          <Typography>
+            The Restoration Tracker is a web application providing planned, active and completed
+            restoration project information in a simple, accessible format. Restoration information
+            can be used in many ways, such as for restoration project coordination, communication
+            and consultation purposes, for other planned activities, for land use planning, and for
+            viewing overall restoration activity and investment. Restoration information is entered
+            by restoration project planners, implementers, administrators or others involved in the
+            process. Find more information and training resources here.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="primary" onClick={handleClickClose}>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog open={open}>
         <DialogTitle>Need Help?</DialogTitle>
         <DialogContent>
           <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
-            For technical support or questions about this application, please contact:&nbsp;
+            For technical support or questions about this application, please email:&nbsp;
             <OtherLink
-              href="mailto:biohub@gov.bc.ca?subject=Habitat Restoration Tracker - Support Request"
+              href={`mailto:${email}?subject=${title} - Support Request`}
               underline="always">
-              biohub@gov.bc.ca
+              {email}
             </OtherLink>
             .
           </Typography>
-          <Typography variant="body1" color="textSecondary">
-            A support representative will respond to your request shortly.
+          <Typography variant="body2">{title}</Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            Version: {nert_version} Environment: {nert_environment}
           </Typography>
         </DialogContent>
         <DialogActions>

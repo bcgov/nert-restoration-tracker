@@ -2,11 +2,16 @@
 # This DockerFile is used for deployments only, please do not change for other purposes. It will break our deployment.
 # ####################################################################################################################
 
-FROM node:14
+FROM node:20
+
+USER 0
 
 ENV HOME=/opt/app-root/src
 
 RUN mkdir -p $HOME
+
+RUN chgrp -R 0 $HOME && \
+    chmod -R g+rwX $HOME
 
 WORKDIR $HOME
 
@@ -27,6 +32,8 @@ COPY . ./
 RUN npm run build
 
 EXPOSE 7100
+
+USER 1001
 
 # RUN APP
 CMD ["npm", "run", "deploy_start"]

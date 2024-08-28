@@ -1,0 +1,51 @@
+/**
+ * Maplibre related styles are best imported from here. 
+ */
+.maplibregl-popup {
+  max-width: 400px !important;
+}
+
+.maplibregl-popup-content {
+  border-radius: 10px;
+  padding: 15px 20px;
+}
+
+.maplibregl-popup-content .view-btn button {
+  transition: transform 0.2s;
+}
+.maplibregl-popup-content .view-btn button:hover {
+  transform: scale(1.1) !important;
+}
+
+.maplibregl-popup-close-button {
+  color: black;
+  border-radius: 50%;
+}
+
+#tooltip {
+  position: none;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+#tooltip.visible {
+  position: absolute;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 101;
+  animation: fadeIn 0.5s;
+  opacity: 1;
+  text-shadow: 0px 0px 3px black;
+}

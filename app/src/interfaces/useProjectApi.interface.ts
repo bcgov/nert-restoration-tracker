@@ -1,11 +1,16 @@
+import { IProjectFocalSpeciesForm } from 'components/species/FocalSpeciesComponent';
+import { PROJECT_PERMISSION, PROJECT_ROLE } from 'constants/roles';
+import { IProjectAuthorizationForm } from 'features/projects/components/ProjectAuthorizationForm';
 import { IProjectContactForm } from 'features/projects/components/ProjectContactForm';
+import { IProjectFocusForm } from 'features/projects/components/ProjectFocusForm';
 import { IProjectFundingForm } from 'features/projects/components/ProjectFundingForm';
 import { IProjectGeneralInformationForm } from 'features/projects/components/ProjectGeneralInformationForm';
-import { IProjectIUCNForm } from 'features/projects/components/ProjectIUCNForm';
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
+import { IProjectObjectivesForm } from 'features/projects/components/ProjectObjectivesForm';
 import { IProjectPartnershipsForm } from 'features/projects/components/ProjectPartnershipsForm';
-import { IProjectPermitForm } from 'features/projects/components/ProjectPermitForm';
+import { IProjectRestorationPlanForm } from 'features/projects/components/ProjectRestorationPlanForm';
 import { Feature } from 'geojson';
+import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 
 export interface IGetProjectAttachment {
   id: number;
@@ -20,8 +25,6 @@ export interface IGetProjectAttachment {
  */
 export interface IProjectAdvancedFilterRequest {
   keyword?: string;
-  contact_agency?: string | string[];
-  funding_agency?: number | number[];
   permit_number?: string;
   species?: number | number[];
   start_date?: string;
@@ -85,106 +88,35 @@ export interface ICreateProjectResponse {
  */
 export interface ICreateProjectRequest
   extends IProjectGeneralInformationForm,
-    IProjectIUCNForm,
+    IProjectObjectivesForm,
+    IProjectFocusForm,
     IProjectContactForm,
-    IProjectPermitForm,
+    IProjectFocalSpeciesForm,
+    IProjectAuthorizationForm,
     IProjectFundingForm,
     IProjectPartnershipsForm,
+    IProjectRestorationPlanForm,
+    IProjectLocationForm {
+  [key: string]: any;
+}
+
+export interface IEditProjectRequest
+  extends IProjectGeneralInformationForm,
+    IProjectObjectivesForm,
+    IProjectFocusForm,
+    IProjectAuthorizationForm,
+    IProjectContactForm,
+    IProjectFocalSpeciesForm,
+    IProjectAuthorizationForm,
+    IProjectFundingForm,
+    IProjectPartnershipsForm,
+    IProjectRestorationPlanForm,
     IProjectLocationForm {}
 
-export enum UPDATE_GET_ENTITIES {
-  contact = 'contact',
-  permit = 'permit',
-  project = 'project',
-  objectives = 'objectives',
-  location = 'location',
-  iucn = 'iucn',
-  funding = 'funding',
-  partnerships = 'partnerships'
-}
-
-/**
- * An interface for a single instance of project metadata, for update-only use cases.
- *
- * @export
- * @interface IGetProjectForUpdateResponse
- */
-export interface IGetProjectForUpdateResponse {
-  project?: IGetGeneralInformationForUpdateResponseDetails;
-  permit?: IGetProjectForUpdateResponsePermit;
-  location?: IGetProjectForUpdateResponseLocation;
-  contact?: IGetProjectForUpdateResponseContact;
-  iucn?: IGetProjectForUpdateResponseIUCN;
-  funding?: IGetProjectForUpdateResponseFundingData;
-  partnerships?: IGetProjectForUpdateResponsePartnerships;
-}
-
-export interface IGetGeneralInformationForUpdateResponseDetails {
-  project_name: string;
-  start_date: string;
-  end_date: string;
-  objectives: string;
-  revision_count: number;
-}
-
-interface IGetProjectForUpdateResponsePermitArrayItem {
-  permit_number: string;
-  permit_type: string;
-}
-
-export interface IGetProjectForUpdateResponsePermit {
-  permits: IGetProjectForUpdateResponsePermitArrayItem[];
-}
-
-export interface IGetProjectForUpdateResponseLocation {
-  geometry: Feature[];
-  range: string;
-  priority: string;
-  revision_count: number;
-}
-
-export interface IGetProjectForUpdateResponseContactArrayItem {
-  first_name: string;
-  last_name: string;
-  email_address: string;
-  agency: string;
-  is_public: string;
-  is_primary: string;
-}
-
-export interface IGetProjectForUpdateResponseContact {
-  contacts: IGetProjectForUpdateResponseContactArrayItem[];
-}
-
-interface IGetProjectForUpdateResponseIUCNArrayItem {
-  classification: number;
-  subClassification1: number;
-  subClassification2: number;
-}
-
-export interface IGetProjectForUpdateResponseIUCN {
-  classificationDetails: IGetProjectForUpdateResponseIUCNArrayItem[];
-}
-
-interface IGetProjectForUpdateResponseFundingSource {
-  id: number;
-  agency_id: number;
-  investment_action_category: number;
-  investment_action_category_name: string;
-  agency_project_id: string;
-  funding_amount: number;
-  start_date: string;
-  end_date: string;
-  revision_count: number;
-}
-
-export interface IGetProjectForUpdateResponseFundingData {
-  fundingSources: IGetProjectForUpdateResponseFundingSource[];
-}
-
-export interface IGetProjectForUpdateResponsePartnerships {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+export interface IProjectsListProps {
+  projects: IGetProjectForViewResponse[];
+  drafts?: IGetDraftsListResponse[];
+  myproject?: boolean;
 }
 
 /**
@@ -196,90 +128,146 @@ export interface IGetProjectForUpdateResponsePartnerships {
 export interface IGetProjectForViewResponse {
   project: IGetProjectForViewResponseDetails;
   species: IGetProjectForViewResponseSpecies;
-  permit: IGetProjectForViewResponsePermit;
+  authorization: IGetProjectForViewResponseAuthorization;
   location: IGetProjectForViewResponseLocation;
   contact: IGetProjectForViewResponseContact;
-  iucn: IGetProjectForViewResponseIUCN;
   funding: IGetProjectForViewResponseFundingData;
-  partnerships: IGetProjectForViewResponsePartnerships;
+  partnership: IGetProjectForViewResponsePartnerships;
+  objective: IGetProjectForViewResponseObjectives;
+}
+
+export interface IGetProjectForEditResponse {
+  project: IGetProjectForEditResponseDetails;
+  objective: IGetProjectForViewResponseObjectives;
+  focus: { focuses: number[]; people_involved: number };
+  contact: IGetProjectForViewResponseContact;
+  species: IGetProjectForViewResponseSpecies;
+  location: IGetProjectForViewResponseLocation;
+  authorization: IGetProjectForViewResponseAuthorization;
+  funding: IGetProjectForViewResponseFundingData;
+  partnership: IGetProjectForViewResponsePartnerships;
+  restoration_plan: { is_project_part_public_plan: boolean };
 }
 
 export interface IGetProjectForViewResponseDetails {
+  state_code: number;
+  is_project: boolean;
   project_id: number;
   project_name: string;
   start_date: string;
   end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
   publish_date: string;
-  objectives: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
   region: string;
+}
+
+export interface IGetProjectForEditResponseDetails {
+  state_code: number;
+  is_project: boolean;
+  project_id: number;
+  project_name: string;
+  start_date: string;
+  end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
+  publish_date: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
+  region: string;
+  image_url: string;
+  image_key: string;
 }
 
 export interface IGetProjectForViewResponseSpecies {
   focal_species: number[];
-  focal_species_names?: string[];
 }
 
 interface IGetProjectForViewResponsePermitArrayItem {
   permit_number: string;
   permit_type: string;
+  permit_description: string;
 }
 
 export interface IGetProjectForViewResponsePermit {
   permits: IGetProjectForViewResponsePermitArrayItem[];
 }
 
+export interface IGetProjectForViewResponseConservationAreas {
+  conservationArea: string;
+}
+
 export interface IGetProjectForViewResponseLocation {
-  geometry: Feature[];
-  priority: string;
-  region: number;
-  range: number;
+  geometry: Feature[] | null;
+  is_within_overlapping: string | null;
+  region: number | null;
+  number_sites: number | null;
+  size_ha: number | null;
+  conservationAreas: IGetProjectForViewResponseConservationAreas[];
 }
 
 export interface IGetProjectForViewResponseContactArrayItem {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export interface IGetProjectForViewResponseContact {
   contacts: IGetProjectForViewResponseContactArrayItem[];
 }
 
-interface IGetProjectForViewResponseIUCNArrayItem {
-  classification: number;
-  subClassification1: number;
-  subClassification2: number;
-}
-
-export interface IGetProjectForViewResponseIUCN {
-  classificationDetails: IGetProjectForViewResponseIUCNArrayItem[];
-}
-
-interface IGetProjectForViewResponseFundingSource {
-  id: number;
-  agency_id: number;
-  agency_name: string;
+export interface IGetProjectForViewResponseFundingSource {
+  organization_name: string;
   investment_action_category: number;
-  investment_action_category_name: string;
+  description: string;
+  funding_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  agency_project_id: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export interface IGetProjectForViewResponseFundingData {
   fundingSources: IGetProjectForViewResponseFundingSource[];
 }
 
+export interface IGetProjectForViewResponsePartnershipsArrayItem {
+  partnership_type: string;
+  partnership_ref: string;
+  partnership_name: string;
+}
 export interface IGetProjectForViewResponsePartnerships {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
+  partnerships: IGetProjectForViewResponsePartnershipsArrayItem[];
 }
 
+export interface IGetProjectForViewResponseObjectives {
+  objectives: { objective: string }[];
+}
+
+export interface IGetProjectForViewResponseAuthorization {
+  authorizations: {
+    authorization_ref: string;
+    authorization_type: string;
+    authorization_desc: string;
+  }[];
+}
 /**
  * A single media item.
  *
@@ -321,39 +309,24 @@ export interface IAddProjectParticipant {
   roleId: number;
 }
 
-export interface IGetTreatmentItem {
-  treatment_name: string;
-  treatment_year: string;
-  implemented: string | null;
+export interface IGetProjectParticipant {
+  project_participation_id: number;
+  project_id: number;
+  system_user_id: number;
+  identity_source: string;
+  user_identifier: string;
+  email: string | null;
+  display_name: string;
+  agency: string | null;
+  project_role_ids: number[];
+  project_role_names: string[];
+  project_role_permissions: string[];
 }
 
-export interface IGetProjectTreatment {
-  id: string;
-  type: string;
-  width: number;
-  length: number;
-  area: number;
-  reconnaissance_conducted: string | null;
-  comments: string;
-  geometry: Feature;
-  treatments: IGetTreatmentItem[];
-}
-
-export interface IPostTreatmentUnitResponse {
-  treatment_unit_id: number;
-  revision_count: number;
-}
-
-export interface TreatmentSearchCriteria {
-  years: string[];
-}
-
-/**
- * Get project attachments response object.
- *
- * @export
- * @interface IGetProjectTreatmentsResponse
- */
-export interface IGetProjectTreatmentsResponse {
-  treatmentList: IGetProjectTreatment[];
-}
+export type IGetUserProjectParticipantResponse = {
+  project_id: number;
+  system_user_id: number;
+  project_role_ids: number[];
+  project_role_names: PROJECT_ROLE[];
+  project_role_permissions: PROJECT_PERMISSION[];
+} | null;

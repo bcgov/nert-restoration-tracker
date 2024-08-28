@@ -23,19 +23,19 @@ parameters:
     value: app
   - name: SOURCE_REPOSITORY_URL
     required: true
-    value: https://github.com/bcgov/restoration-tracker
+    value: https://github.com/bcgov/nert-restoration-tracker
   - name: SOURCE_REPOSITORY_REF
     required: false
     value: dev
   - name: BASE_IMAGE_URL
     required: true
-    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:14-ubi8
+    value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs-20-minimal:1-41.1712567743
   - name: SOURCE_IMAGE_NAME
     required: true
-    value: nodejs
+    value: nodejs-20-minimal
   - name: SOURCE_IMAGE_TAG
     required: true
-    value: 14-ubi8
+    value: 1-41.1712567743
   - name: CPU_REQUEST
     value: '100m'
   - name: CPU_LIMIT
@@ -44,6 +44,12 @@ parameters:
     value: '512Mi'
   - name: MEMORY_LIMIT
     value: '5Gi'
+  - name: REACT_APP_MAPTILER_SECRET
+    description: Secrets used to read and write to the Maptiler API
+    required: true
+  - name: REACT_APP_MAPTILER_API_KEY
+    description: Maptiler API key
+    required: true
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
@@ -109,6 +115,12 @@ objects:
         type: Git
       strategy:
         dockerStrategy:
+          env:
+          - name: REACT_APP_MAPTILER_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: ${REACT_APP_MAPTILER_SECRET}
+                key: ${REACT_APP_MAPTILER_API_KEY}
           from:
             kind: ImageStreamTag
             name: ${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}

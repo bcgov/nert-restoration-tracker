@@ -1,59 +1,55 @@
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
-import Dialog from '@material-ui/core/Dialog';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import { mdiAccountMultipleOutline, mdiArrowLeft, mdiFullscreen, mdiPencilOutline } from '@mdi/js';
+import {
+  mdiAccountMultipleOutline,
+  mdiFilePdfBox,
+  mdiPencilOutline,
+  mdiExport,
+  mdiImport,
+  mdiArrowCollapseDown
+} from '@mdi/js';
 import { Icon } from '@mdi/react';
-import { ProjectPriorityChip, ProjectStatusChip } from 'components/chips/ProjectChips';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { RoleGuard } from 'components/security/Guards';
-import { DeleteProjectI18N } from 'constants/i18n';
-import { attachmentType } from 'constants/misc';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import InfoDialog from 'components/dialog/InfoDialog';
+import { getStateLabelFromCode, getStatusStyle } from 'components/workflow/StateMachine';
+import { focus, ICONS } from 'constants/misc';
 import { PROJECT_ROLE, SYSTEM_ROLE } from 'constants/roles';
-import { DialogContext } from 'contexts/dialogContext';
 import LocationBoundary from 'features/projects/view/components/LocationBoundary';
-import { APIError } from 'hooks/api/useAxios';
-import useCodes from 'hooks/useCodes';
-import { useRestorationTrackerApi } from 'hooks/useRestorationTrackerApi';
+import ProjectObjectives from 'features/projects/view/components/ProjectObjectives';
+import ProjectAttachments from 'features/projects/view/ProjectAttachments';
+import ProjectDetailsPage from 'features/projects/view/ProjectDetailsPage';
+import { useNertApi } from 'hooks/useNertApi';
 import {
   IGetProjectAttachment,
-  IGetProjectForViewResponse,
-  IGetProjectTreatment,
-  TreatmentSearchCriteria
+  IGetProjectForViewResponse
 } from 'interfaces/useProjectApi.interface';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import TreatmentList from './components/TreatmentList';
-import TreatmentSpatialUnits from './components/TreatmentSpatialUnits';
-import ProjectAttachments from './ProjectAttachments';
-import ProjectDetailsPage from './ProjectDetailsPage';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { S3FileType } from 'constants/attachments';
+import ProjectDetails from './components/ProjectDetails';
+import { ProjectRoleGuard } from 'components/security/Guards';
+import ProjectFocalSpecies from './components/ProjectFocalSpecies';
+import { ProjectTableI18N, PlanTableI18N, TableI18N } from 'constants/i18n';
+import { exportData } from 'utils/dataTransfer';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { useCodesContext } from 'hooks/useContext';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    titleContainerActions: {
-      '& button + button': {
-        marginLeft: theme.spacing(1)
-      }
-    },
-    fullScreenBtn: {
-      padding: '3px',
-      borderRadius: '4px',
-      background: '#ffffff',
-      color: '#000000',
-      border: '2px solid rgba(0,0,0,0.2)',
-      backgroundClip: 'padding-box',
-      '&:hover': {
-        backgroundColor: '#eeeeee'
-      }
+const pageStyles = {
+  conservationAreChip: {
+    marginBottom: '2px',
+    justifyContent: 'left'
+  },
+  titleContainerActions: {
+    '& button + button': {
+      marginLeft: 1
     }
-  })
-);
+  }
+};
 
 /**
  * Page to display a single Project.
@@ -61,32 +57,34 @@ const useStyles = makeStyles((theme: Theme) =>
  * @return {*}
  */
 const ViewProjectPage: React.FC = () => {
-  const classes = useStyles();
-  const history = useHistory();
-  const urlParams = useParams();
-  const projectId = urlParams['id'];
-  const dialogContext = useContext(DialogContext);
+  const history = useNavigate();
+  const urlParams: Record<string, string | number | undefined> = useParams();
 
-  const [openFullScreen, setOpenFullScreen] = React.useState(false);
+  if (!urlParams['id']) {
+    throw new Error('Invalid project ID.');
+  }
 
-  const restorationTrackerApi = useRestorationTrackerApi();
+  const projectId = Number(urlParams['id']);
+
+  const restorationTrackerApi = useNertApi();
 
   const [isLoadingProject, setIsLoadingProject] = useState(false);
-  const [projectWithDetails, setProjectWithDetails] = useState<IGetProjectForViewResponse | null>(null);
+  const [project, setProject] = useState<IGetProjectForViewResponse | null>(null);
   const [attachmentsList, setAttachmentsList] = useState<IGetProjectAttachment[]>([]);
-  const [treatmentList, setTreatmentList] = useState<IGetProjectTreatment[]>([]);
+  const [thumbnailImage, setThumbnailImage] = useState<IGetProjectAttachment[]>([]);
 
-  const codes = useCodes();
+  const codes = useCodesContext().codesDataLoader;
 
   const getProject = useCallback(async () => {
-    const projectWithDetailsResponse = await restorationTrackerApi.project.getProjectById(urlParams['id']);
+    const projectWithDetailsResponse =
+      await restorationTrackerApi.project.getProjectById(projectId);
 
-    if (!projectWithDetailsResponse) {
+    if (!projectWithDetailsResponse || !projectWithDetailsResponse.project.is_project) {
       // TODO error handling/messaging
       return;
     }
 
-    setProjectWithDetails(projectWithDetailsResponse);
+    setProject(projectWithDetailsResponse);
   }, [restorationTrackerApi.project, urlParams]);
 
   const getAttachments = useCallback(
@@ -94,14 +92,23 @@ const ViewProjectPage: React.FC = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectAttachments(
+        const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
           projectId,
-          attachmentType.ATTACHMENTS
+          S3FileType.THUMBNAIL
         );
 
-        if (!response?.attachmentsList) return;
+        if (thumbnailResponse?.attachmentsList) {
+          setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
 
-        setAttachmentsList([...response.attachmentsList]);
+        const response = await restorationTrackerApi.project.getProjectAttachments(
+          projectId,
+          S3FileType.ATTACHMENTS
+        );
+
+        if (response?.attachmentsList) {
+          setAttachmentsList([...response.attachmentsList]);
+        }
       } catch (error) {
         return error;
       }
@@ -109,244 +116,200 @@ const ViewProjectPage: React.FC = () => {
     [restorationTrackerApi.project, projectId, attachmentsList.length]
   );
 
-  const getTreatments = useCallback(
-    async (forceFetch: boolean, selectedYears?: TreatmentSearchCriteria) => {
-      if (treatmentList.length && !forceFetch) return;
-
-      try {
-        const response = await restorationTrackerApi.project.getProjectTreatments(projectId, selectedYears);
-
-        if (!response?.treatmentList) return;
-
-        setTreatmentList([...response.treatmentList]);
-      } catch (error) {
-        return error;
-      }
-    },
-    [restorationTrackerApi.project, projectId, treatmentList.length]
-  );
-
   useEffect(() => {
-    if (!isLoadingProject && !projectWithDetails) {
+    if (!isLoadingProject && !project) {
       getProject();
       getAttachments(false);
-      getTreatments(false);
       setIsLoadingProject(true);
     }
-  }, [isLoadingProject, projectWithDetails, getProject, getAttachments, getTreatments]);
-  if (!codes.isReady || !codes.codes || !projectWithDetails) {
+  }, [isLoadingProject, project, getProject, getAttachments]);
+  if (!codes.isReady || !codes.data || !project) {
     return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
   }
 
-  const defaultYesNoDialogProps = {
-    dialogTitle: DeleteProjectI18N.deleteTitle,
-    dialogText: DeleteProjectI18N.deleteText,
-
-    open: false,
-    onClose: () => dialogContext.setYesNoDialog({ open: false }),
-    onNo: () => dialogContext.setYesNoDialog({ open: false }),
-    onYes: () => dialogContext.setYesNoDialog({ open: false })
-  };
-
-  const isPriority = projectWithDetails.location.priority === 'true';
-
-  const showDeleteErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
-    dialogContext.setErrorDialog({ ...deleteErrorDialogProps, ...textDialogProps, open: true });
-  };
-
-  const deleteErrorDialogProps = {
-    dialogTitle: DeleteProjectI18N.deleteErrorTitle,
-    dialogText: DeleteProjectI18N.deleteErrorText,
-    open: false,
-    onClose: () => {
-      dialogContext.setErrorDialog({ open: false });
-    },
-    onOk: () => {
-      dialogContext.setErrorDialog({ open: false });
-    }
-  };
-
-  const showDeleteProjectDialog = () => {
-    dialogContext.setYesNoDialog({
-      ...defaultYesNoDialogProps,
-      open: true,
-      yesButtonLabel: 'Delete',
-      yesButtonProps: { color: 'secondary' },
-      noButtonLabel: 'Cancel',
-      onYes: () => {
-        deleteProject();
-        dialogContext.setYesNoDialog({ open: false });
-      }
-    });
-  };
-
-  const deleteProject = async () => {
-    if (!projectWithDetails) {
-      return;
-    }
-
-    try {
-      const response = await restorationTrackerApi.project.deleteProject(projectWithDetails.project.project_id);
-
-      if (!response) {
-        showDeleteErrorDialog({ open: true });
-        return;
-      }
-
-      history.push('/admin/user/projects');
-    } catch (error) {
-      const apiError = error as APIError;
-      showDeleteErrorDialog({ dialogText: apiError.message, open: true });
-      return error;
-    }
-  };
-
-  // Full Screen Map Dialog
-  const openMapDialog = () => {
-    setOpenFullScreen(true);
-  };
-
-  const closeMapDialog = () => {
-    setOpenFullScreen(false);
-  };
-
   return (
     <>
-      <Container maxWidth="xl" data-testid="view_project_page_component">
-        <Box mb={5} display="flex" justifyContent="space-between">
+      <Card
+        sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}
+        data-testid="view_project_page_component">
+        <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
           <Box>
-            <Typography variant="h1">{projectWithDetails.project.project_name}</Typography>
-            <Box mt={1.5} display="flex" flexDirection={'row'} alignItems="center">
+            <Typography variant="h1">
+              <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />{' '}
+              {project.project.project_name}
+            </Typography>
+            <Box mt={0.3} display="flex" flexDirection={'row'} alignItems="center">
               <Typography variant="subtitle2" component="span" color="textSecondary">
                 Project Status:
               </Typography>
               <Box ml={1}>
-                <ProjectStatusChip
-                  startDate={projectWithDetails.project.start_date}
-                  endDate={projectWithDetails.project.end_date}
+                <Chip
+                  size="small"
+                  sx={getStatusStyle(project.project.state_code)}
+                  label={getStateLabelFromCode(project.project.state_code)}
                 />
+                <InfoDialog isProject={true} infoContent={'workflow'} />
               </Box>
-              {isPriority && (
-                <Box ml={0.5}>
-                  <ProjectPriorityChip />
-                </Box>
-              )}
+            </Box>
+            <Box mb={1} display="flex" flexDirection={'row'} alignItems="center">
+              <Typography variant="subtitle2" component="span" color="textSecondary">
+                Project Focus:
+              </Typography>
+              <Box ml={1}>
+                {project.project.is_healing_land && (
+                  <Chip size="small" color={'default'} label={focus.HEALING_THE_LAND} />
+                )}
+                {project.project.is_healing_people && (
+                  <Chip size="small" color={'default'} label={focus.HEALING_THE_PEOPLE} />
+                )}
+                {project.project.is_land_initiative && (
+                  <Chip
+                    size="small"
+                    color={'default'}
+                    label={focus.LAND_BASED_RESTORATION_INITIATIVE}
+                  />
+                )}
+                {project.project.is_cultural_initiative && (
+                  <Chip
+                    size="small"
+                    color={'default'}
+                    label={focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE}
+                  />
+                )}
+              </Box>
             </Box>
           </Box>
-          <RoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}>
-            <Box className={classes.titleContainerActions}>
+
+          <ProjectRoleGuard
+            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+            validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+            validProjectPermissions={[]}>
+            <Box
+              mr={1}
+              mt={1}
+              sx={pageStyles.titleContainerActions}
+              display="flex"
+              flexDirection={'row'}
+              alignItems="flex-start">
               <Button
                 aria-label="manage project team"
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiAccountMultipleOutline} size={1} />}
-                onClick={() => history.push('users')}>
-                Project Team
+                onClick={() => history(`/admin/projects/${urlParams['id']}/users`)}>
+                Team
               </Button>
               <Button
+                aria-label="edit project"
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiPencilOutline} size={1} />}
-                onClick={() => history.push(`/admin/projects/${urlParams['id']}/edit`)}>
-                Edit Project
+                onClick={() => history(`/admin/projects/${urlParams['id']}/edit`)}>
+                Edit
               </Button>
-              <RoleGuard
-                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
-                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD]}>
-                <Button
-                  aria-label="delete project"
-                  variant="outlined"
-                  color="primary"
-                  onClick={showDeleteProjectDialog}>
-                  Delete
-                </Button>
-              </RoleGuard>
+              <Button
+                aria-label="print project"
+                variant="outlined"
+                color="primary"
+                startIcon={<Icon path={mdiFilePdfBox} size={1} />}
+                // onClick={showPrintProjectDialog}
+              >
+                Print
+              </Button>
             </Box>
-          </RoleGuard>
+          </ProjectRoleGuard>
         </Box>
 
-        <Box mt={2}>
-          <Grid container spacing={4}>
+        <Box mx={1} mb={1}>
+          <Grid container spacing={1}>
             <Grid item md={8}>
-              {/* Project Objectives */}
-              <Box mb={3}>
+              <Box mb={1}>
                 <Paper elevation={2}>
-                  <Box p={3}>
-                    <Box mb={2}>
-                      <Typography variant="h2">Project Objectives</Typography>
-                    </Box>
-                    <Typography variant="body1" color="textSecondary">
-                      {projectWithDetails.project.objectives}
-                    </Typography>
+                  <Box p={1}>
+                    <ProjectDetails project={project} thumbnailImageUrl={thumbnailImage[0]?.url} />
+
+                    <ProjectObjectives projectViewData={project} />
+                    <ProjectFocalSpecies projectViewData={project} />
                   </Box>
                 </Paper>
               </Box>
-              {/* Treatments */}
-              <Box mb={3}>
+
+              <Box mb={1.2}>
                 <Paper elevation={2}>
-                  <Box px={3}>
-                    <TreatmentSpatialUnits getTreatments={getTreatments} getAttachments={getAttachments} />
-                  </Box>
-                  <Box height="500px" position="relative">
-                    <LocationBoundary
-                      projectForViewData={projectWithDetails}
-                      treatmentList={treatmentList}
-                      refresh={getProject}
-                    />
-                    <Box position="absolute" top="80px" left="10px" zIndex="999">
-                      <IconButton
-                        aria-label="view full screen map"
-                        title="View full screen map"
-                        className={classes.fullScreenBtn}
-                        onClick={openMapDialog}>
-                        <Icon path={mdiFullscreen} size={1} />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  <TreatmentList treatmentList={treatmentList} />
+                  <Accordion defaultExpanded={!!project.location.geometry?.length || false}>
+                    <AccordionSummary
+                      expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                      aria-controls="panel1-content"
+                      id="panel1-header">
+                      <Box
+                        px={2}
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        width={'100%'}>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="h2">Restoration Project Area</Typography>
+                        </Box>
+                        <Box>
+                          <Button
+                            sx={{ height: '2.8rem', width: '10rem' }}
+                            color="primary"
+                            variant="outlined"
+                            onClick={() => exportData([project])}
+                            disableElevation
+                            data-testid="export-project-button"
+                            aria-label={ProjectTableI18N.exportProjectsData}
+                            startIcon={<Icon path={mdiExport} size={1} />}>
+                            {TableI18N.exportData}
+                          </Button>
+
+                          <ProjectRoleGuard
+                            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                            validProjectRoles={[
+                              PROJECT_ROLE.PROJECT_LEAD,
+                              PROJECT_ROLE.PROJECT_EDITOR
+                            ]}
+                            validProjectPermissions={[]}>
+                            <Button
+                              sx={{ height: '2.8rem', width: '10rem', marginLeft: 1 }}
+                              color="primary"
+                              variant="outlined"
+                              disableElevation
+                              data-testid="import-plan-button"
+                              aria-label={PlanTableI18N.importPlanData}
+                              startIcon={<Icon path={mdiImport} size={1} />}>
+                              {TableI18N.importData}
+                            </Button>
+                          </ProjectRoleGuard>
+                        </Box>
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box height="500px" position="relative">
+                        <LocationBoundary locationData={project.location} />
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
                 </Paper>
               </Box>
+
               {/* Documents */}
               <Paper elevation={2}>
-                <ProjectAttachments attachmentsList={attachmentsList} getAttachments={getAttachments} />
+                <ProjectAttachments
+                  attachmentsList={attachmentsList}
+                  getAttachments={getAttachments}
+                />
               </Paper>
             </Grid>
+
             <Grid item md={4}>
               <Paper elevation={2}>
-                <ProjectDetailsPage projectForViewData={projectWithDetails} codes={codes.codes} refresh={getProject} />
+                <ProjectDetailsPage projectForViewData={project} codes={codes.data} />
               </Paper>
             </Grid>
           </Grid>
         </Box>
-      </Container>
-
-      <Dialog fullScreen open={openFullScreen} onClose={closeMapDialog}>
-        <Box pr={3} pl={1} display="flex" alignItems="center">
-          <Box mr={1}>
-            <IconButton onClick={closeMapDialog} aria-label="back to project">
-              <Icon path={mdiArrowLeft} size={1} />
-            </IconButton>
-          </Box>
-          <Box flex="1 1 auto">
-            <TreatmentSpatialUnits getTreatments={getTreatments} getAttachments={getAttachments} />
-          </Box>
-        </Box>
-        <Box display="flex" height="100%" flexDirection="column">
-          <Box flex="1 1 auto">
-            <LocationBoundary
-              projectForViewData={projectWithDetails}
-              treatmentList={treatmentList}
-              refresh={getProject}
-              scrollWheelZoom={true}
-            />
-          </Box>
-          <Box flex="0 0 auto" height="300px">
-            <TreatmentList treatmentList={treatmentList} />
-          </Box>
-        </Box>
-      </Dialog>
+      </Card>
     </>
   );
 };

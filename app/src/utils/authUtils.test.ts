@@ -1,47 +1,20 @@
-import { IKeycloakWrapper } from 'hooks/useKeycloakWrapper';
-import { isAuthenticated } from './authUtils';
+import { SYSTEM_IDENTITY_SOURCE } from 'constants/auth';
+import { coerceIdentitySource, hasAtLeastOneValidValue } from './authUtils';
 
-describe('isAuthenticated', () => {
-  it('returns false when keycloakWrapper is undefined', () => {
-    const keycloakWrapper = undefined;
-
-    expect(isAuthenticated(keycloakWrapper)).toBe(false);
+describe('authUtils', () => {
+  // test coerceIdentitySource
+  it('coerceIdentitySource', () => {
+    expect(coerceIdentitySource(SYSTEM_IDENTITY_SOURCE.BCEID_BASIC)).toEqual('BCEIDBASIC');
+    expect(coerceIdentitySource(SYSTEM_IDENTITY_SOURCE.BCEID_BUSINESS)).toEqual('BCEIDBUSINESS');
+    expect(coerceIdentitySource(SYSTEM_IDENTITY_SOURCE.IDIR)).toEqual('IDIR');
+    expect(coerceIdentitySource('')).toEqual(null);
   });
 
-  it('returns false when keycloakWrapper.keycloak is undefined', () => {
-    const keycloakWrapper = {
-      keycloak: undefined
-    } as IKeycloakWrapper;
-
-    expect(isAuthenticated(keycloakWrapper)).toBe(false);
-  });
-
-  it('returns false when keycloakWrapper.keycloak.authenticated is falsy', () => {
-    const keycloakWrapper = {
-      keycloak: {
-        authenticated: false
-      }
-    } as IKeycloakWrapper;
-
-    expect(isAuthenticated(keycloakWrapper)).toBe(false);
-  });
-
-  it('returns false when keycloakWrapper.hasLoadedAllUserInfo is falsy', () => {
-    const keycloakWrapper = {
-      hasLoadedAllUserInfo: false
-    } as IKeycloakWrapper;
-
-    expect(isAuthenticated(keycloakWrapper)).toBe(false);
-  });
-
-  it('returns true when authenticated', () => {
-    const keycloakWrapper = {
-      hasLoadedAllUserInfo: true,
-      keycloak: {
-        authenticated: true
-      }
-    } as IKeycloakWrapper;
-
-    expect(isAuthenticated(keycloakWrapper)).toBe(true);
+  // test hasAtLeastOneValidValue
+  it('hasAtLeastOneValidValue', () => {
+    expect(hasAtLeastOneValidValue('BCEID_BASIC', 'BCEID_BASIC')).toEqual(true);
+    expect(hasAtLeastOneValidValue('BCEID_BASIC', 'BCEID_BUSINESS')).toEqual(false);
+    expect(hasAtLeastOneValidValue('BCEID_BASIC', '')).toEqual(false);
+    expect(hasAtLeastOneValidValue('', '')).toEqual(true);
   });
 });

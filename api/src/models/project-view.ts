@@ -3,31 +3,51 @@ import { Feature } from 'geojson';
 export type ProjectObject = {
   project: GetProjectData;
   species: GetSpeciesData;
-  iucn: GetIUCNClassificationData;
   contact: GetContactData;
-  permit: GetPermitData;
-  partnerships: GetPartnershipsData;
+  authorization: GetAuthorizationData;
+  partnership: GetPartnershipsData;
+  objective: GetObjectivesData;
   funding: GetFundingData;
   location: GetLocationData;
 };
 
 export class GetProjectData {
   project_id: number;
+  is_project: boolean;
   uuid: string;
   project_name: string;
+  state_code: number;
   start_date: string;
   end_date: string;
-  objectives: string;
+  actual_start_date: string;
+  actual_end_date: string;
+  brief_desc: string;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  people_involved: number;
+  is_project_part_public_plan: boolean;
   publish_date: string;
   revision_count: number;
 
   constructor(projectData?: any) {
     this.project_id = projectData?.project_id || null;
+    this.is_project = projectData?.is_project || null;
     this.uuid = projectData?.uuid || null;
     this.project_name = projectData?.name || '';
+    this.state_code = projectData?.state_code || null;
     this.start_date = projectData?.start_date || null;
     this.end_date = projectData?.end_date || null;
-    this.objectives = projectData?.objectives || '';
+    this.actual_start_date = projectData?.actual_start_date || null;
+    this.actual_end_date = projectData?.actual_end_date || null;
+    this.brief_desc = projectData?.brief_desc || '';
+    this.is_healing_land = projectData?.is_healing_land || null;
+    this.is_healing_people = projectData?.is_healing_people || null;
+    this.is_land_initiative = projectData?.is_land_initiative || null;
+    this.is_cultural_initiative = projectData?.is_cultural_initiative || null;
+    this.people_involved = projectData?.people_involved || null;
+    this.is_project_part_public_plan = projectData?.is_project_part_public_plan || null;
     this.publish_date = projectData?.publish_timestamp || null;
     this.revision_count = projectData?.revision_count ?? 0;
   }
@@ -37,9 +57,11 @@ interface IGetContact {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  organization: string;
+  phone_number: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export class GetContactData {
@@ -53,9 +75,11 @@ export class GetContactData {
             first_name: item.first_name || '',
             last_name: item.last_name || '',
             email_address: item.email_address || '',
-            agency: item.agency || '',
+            organization: item.organization || '',
+            phone_number: item.phone_number || '',
             is_public: item.is_public === 'Y' ? 'true' : 'false',
-            is_primary: item.is_primary === 'Y' ? 'true' : 'false'
+            is_primary: item.is_primary === 'Y' ? 'true' : 'false',
+            is_first_nation: item.is_first_nation || false
           };
         })) ||
       [];
@@ -64,105 +88,108 @@ export class GetContactData {
 
 export class GetSpeciesData {
   focal_species: number[];
-  focal_species_names: string[];
 
   constructor(input?: any[]) {
     this.focal_species = [];
-    this.focal_species_names = [];
     input?.length &&
       input.forEach((item: any) => {
-        this.focal_species.push(Number(item.id));
-        this.focal_species_names.push(item.label);
+        this.focal_species.push(Number(item.itis_tsn));
       });
   }
 }
 
-export interface IGetPermit {
-  permit_number: string;
-  permit_type: string;
+export interface IGetAuthorization {
+  authorization_ref: string;
+  authorization_type: string;
+  authorization_desc: string;
 }
 
-export class GetPermitData {
-  permits: IGetPermit[];
+export class GetAuthorizationData {
+  authorizations: IGetAuthorization[];
 
-  constructor(permitData?: any[]) {
-    this.permits =
-      (permitData?.length &&
-        permitData.map((item: any) => {
+  constructor(authData?: any[]) {
+    this.authorizations =
+      (authData?.length &&
+        authData.map((item: any) => {
           return {
-            permit_number: item.number,
-            permit_type: item.type
+            authorization_ref: item.number,
+            authorization_type: item.type,
+            authorization_desc: item.description
           };
         })) ||
       [];
   }
+}
+
+export interface IGetPartnership {
+  partnership_type: string;
+  partnership_ref: string;
+  partnership_name: string;
+}
+export class GetPartnershipsData {
+  partnerships: IGetPartnership[];
+
+  constructor(partnerships?: any[]) {
+    this.partnerships =
+      (partnerships?.length &&
+        partnerships.map((item: any) => {
+          return {
+            partnership_type: String(item.partnership_type_id),
+            partnership_ref: item.partnerships_id
+              ? String(item.partnerships_id)
+              : item.first_nations_id
+              ? String(item.first_nations_id)
+              : '',
+            partnership_name: item.name || ''
+          };
+        })) ||
+      [];
+  }
+}
+
+export interface IGetObjective {
+  objective: string;
+}
+export class GetObjectivesData {
+  objectives: IGetObjective[];
+
+  constructor(objectives?: any[]) {
+    this.objectives = (objectives?.length && objectives.map((item: IGetObjective) => item)) || [];
+  }
+}
+
+export interface IGetConservationArea {
+  conservationArea: string;
 }
 
 export class GetLocationData {
   geometry?: Feature[];
-  priority?: string;
+  is_within_overlapping?: string;
   region?: number;
-  range?: number;
+  number_sites?: number;
+  size_ha?: number;
+  conservationAreas?: IGetConservationArea[];
 
-  constructor(locationData?: any[], regionData?: any[], rangeData?: any[]) {
+  constructor(locationData?: any[], regionData?: any[], conservationAreaData?: IGetConservationArea[]) {
     const locationDataItem = locationData && locationData.length && locationData[0];
     this.geometry = (locationDataItem?.geojson?.length && locationDataItem.geojson) || [];
-    this.priority =
-      locationData && locationData?.length && locationData[0]?.priority && locationData[0]?.priority === 'Y'
-        ? 'true'
-        : 'false';
-    this.region = (regionData && regionData?.length && regionData[0]?.objectid) || (('' as unknown) as number);
-    this.range =
-      (rangeData && rangeData?.length && rangeData[0]?.caribou_population_unit_id) ||
-      ((undefined as unknown) as number);
-  }
-}
-
-interface IGetIUCN {
-  classification: string;
-  subClassification1: string;
-  subClassification2: string;
-}
-
-export class GetIUCNClassificationData {
-  classificationDetails: IGetIUCN[];
-
-  constructor(iucnClassificationData?: any[]) {
-    this.classificationDetails =
-      (iucnClassificationData &&
-        iucnClassificationData.map((item: any) => {
-          return {
-            classification: item.classification,
-            subClassification1: item.subclassification1,
-            subClassification2: item.subclassification2
-          };
-        })) ||
-      [];
-  }
-}
-export class GetPartnershipsData {
-  indigenous_partnerships: number[];
-  stakeholder_partnerships: string[];
-
-  constructor(indigenous_partnerships?: any[], stakeholder_partnerships?: any[]) {
-    this.indigenous_partnerships =
-      (indigenous_partnerships?.length && indigenous_partnerships.map((item: any) => item.first_nations_id)) || [];
-    this.stakeholder_partnerships =
-      (stakeholder_partnerships?.length && stakeholder_partnerships.map((item: any) => item.name)) || [];
+    this.is_within_overlapping = locationData && locationData?.length && locationData[0]?.is_within_overlapping;
+    this.region = (regionData && regionData?.length && regionData[0]?.objectid) || null;
+    this.number_sites =
+      (locationData && locationData?.length && locationData[0]?.number_sites) || ('' as unknown as number);
+    this.size_ha = (locationData && locationData?.length && locationData[0]?.size_ha) || ('' as unknown as number);
+    this.conservationAreas = (conservationAreaData && conservationAreaData?.length && conservationAreaData) || [];
   }
 }
 
 interface IGetFundingSource {
-  id: number;
-  agency_id: number;
-  investment_action_category: number;
-  investment_action_category_name: string;
-  agency_name: string;
+  organization_name: string;
+  description: string;
+  funding_project_id: string;
   funding_amount: number;
   start_date: string;
   end_date: string;
-  agency_project_id: string;
-  revision_count: number;
+  is_public: string;
 }
 
 export class GetFundingData {
@@ -173,16 +200,13 @@ export class GetFundingData {
       (fundingData &&
         fundingData.map((item: any) => {
           return {
-            id: item.id,
-            agency_id: item.agency_id,
-            investment_action_category: item.investment_action_category,
-            investment_action_category_name: item.investment_action_category_name,
-            agency_name: item.agency_name,
-            funding_amount: item.funding_amount,
+            organization_name: item.organization_name,
+            description: item.description,
+            funding_project_id: item.funding_project_id,
+            funding_amount: Number(item.funding_amount),
             start_date: item.start_date,
             end_date: item.end_date,
-            agency_project_id: item.agency_project_id,
-            revision_count: item.revision_count ?? 0
+            is_public: item.is_public === 'Y' ? 'true' : 'false'
           };
         })) ||
       [];

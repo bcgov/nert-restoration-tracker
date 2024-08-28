@@ -17,6 +17,12 @@ parameters:
   - name: REACT_APP_API_HOST
     description: API host for application backend
     value: ''
+  - name: REACT_APP_OBJECT_STORE_URL
+    description: Object storage service
+    value: ''
+  - name: REACT_APP_OBJECT_STORE_BUCKET_NAME
+    description: Object storage service
+    value: ''
   - name: REACT_APP_SITEMINDER_LOGOUT_URL
     description: Siteminder URL to log out and clear the session for the logged in user
     value: ''
@@ -28,7 +34,7 @@ parameters:
     value: '52428800'
   - name: NODE_ENV
     description: NODE_ENV specification variable
-    value: 'dev'
+    value: 'development'
   - name: REACT_APP_NODE_ENV
     description: NODE_ENV specification variable for React app
     value: 'dev'
@@ -47,6 +53,18 @@ parameters:
   - name: REACT_APP_KEYCLOAK_CLIENT_ID
     description: Client Id for application
     required: true
+  - name: REACT_APP_MAPTILER_SECRET
+    description: Secrets used to read and write to the Maptiler API
+    required: true
+  - name: REACT_APP_MAPTILER_API_KEY
+    description: Maptiler API key
+    required: true
+  - name: REACT_APP_BACKBONE_PUBLIC_API_HOST
+    description: Backbone API host for application frontend
+  - name: REACT_APP_BIOHUB_TAXON_PATH
+    description: Taxon path for biohub
+  - name: REACT_APP_BIOHUB_TAXON_TSN_PATH
+    description: Taxon TSN path for biohub
   - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
@@ -56,14 +74,17 @@ parameters:
   - name: MEMORY_LIMIT
     value: '200Mi'
   - name: REPLICAS
-    value: '1'
+    value: '2'
   - name: REPLICAS_MAX
-    value: '1'
+    value: '2'
+  - name: NAMELINK
+    value: restoration-tracker-api
 objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
       annotations:
+        iconClass: icon-nodejs
         description: Nodejs Runtime Image
       labels:
         shared: 'true'
@@ -79,6 +100,8 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
+        app.openshift.io/connects-to: >-
+          [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"${NAMELINK}${SUFFIX}"}]
         openshift.io/generated-by: OpenShiftWebConsole
       creationTimestamp: null
       generation: 0
@@ -116,6 +139,10 @@ objects:
                   value: ${CHANGE_ID}
                 - name: REACT_APP_API_HOST
                   value: ${REACT_APP_API_HOST}
+                - name: REACT_APP_OBJECT_STORE_URL
+                  value: ${REACT_APP_OBJECT_STORE_URL}
+                - name: REACT_APP_OBJECT_STORE_BUCKET_NAME
+                  value: ${REACT_APP_OBJECT_STORE_BUCKET_NAME}
                 - name: REACT_APP_SITEMINDER_LOGOUT_URL
                   value: ${REACT_APP_SITEMINDER_LOGOUT_URL}
                 - name: REACT_APP_MAX_UPLOAD_NUM_FILES
@@ -134,6 +161,17 @@ objects:
                   value: ${REACT_APP_KEYCLOAK_REALM}
                 - name: REACT_APP_KEYCLOAK_CLIENT_ID
                   value: ${REACT_APP_KEYCLOAK_CLIENT_ID}
+                - name: REACT_APP_MAPTILER_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${REACT_APP_MAPTILER_SECRET}
+                      key: ${REACT_APP_MAPTILER_API_KEY}
+                - name: REACT_APP_BACKBONE_PUBLIC_API_HOST
+                  value: ${REACT_APP_BACKBONE_PUBLIC_API_HOST}
+                - name: REACT_APP_BIOHUB_TAXON_PATH
+                  value: ${REACT_APP_BIOHUB_TAXON_PATH}
+                - name: REACT_APP_BIOHUB_TAXON_TSN_PATH
+                  value: ${REACT_APP_BIOHUB_TAXON_TSN_PATH}
               image: ' '
               imagePullPolicy: Always
               name: app
@@ -235,24 +273,3 @@ objects:
       wildcardPolicy: None
     status:
       ingress: null
-  - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v2beta2
-    metadata:
-      annotations: {}
-      creationTimestamp: null
-      labels: {}
-      name: ${NAME}${SUFFIX}
-    spec:
-      minReplicas: ${{REPLICAS}}
-      maxReplicas: ${{REPLICAS_MAX}}
-      scaleTargetRef:
-        apiVersion: apps.openshift.io/v1
-        kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
-      metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 80

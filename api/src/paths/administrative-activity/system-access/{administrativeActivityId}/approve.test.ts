@@ -2,12 +2,12 @@ import chai, { expect } from 'chai';
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
+import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from '../../../../constants/administrative-activity';
 import * as db from '../../../../database/db';
 import { UserObject } from '../../../../models/user';
+import { AdministrativeActivityService } from '../../../../services/administrative-activity-service';
 import { UserService } from '../../../../services/user-service';
-import { getMockDBConnection, getRequestHandlerMocks } from '../../../../__mocks__/db';
-import { ADMINISTRATIVE_ACTIVITY_STATUS_TYPE } from '../../../administrative-activities';
-import * as administrative_activity from '../../../administrative-activity';
 import * as approve_request from './approve';
 
 chai.use(sinonChai);
@@ -15,6 +15,24 @@ chai.use(sinonChai);
 describe('approveAccessRequest', () => {
   afterEach(() => {
     sinon.restore();
+  });
+
+  it('throws error when identity source is not SYSTEM_IDENTITY_SOURCE', async () => {
+    const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
+
+    mockReq.body = {
+      userIdentifier: 'username',
+      roleIds: [1, 3]
+    };
+
+    const requestHandler = approve_request.approveAccessRequest();
+
+    try {
+      await requestHandler(mockReq, mockRes, mockNext);
+      expect.fail();
+    } catch (error: any) {
+      expect(error.message).to.equal('Invalid user identity source');
+    }
   });
 
   it('re-throws any error that is thrown', async () => {
@@ -27,6 +45,7 @@ describe('approveAccessRequest', () => {
     });
 
     sinon.stub(db, 'getDBConnection').returns(mockDBConnection);
+    sinon.stub(UserService.prototype, 'ensureSystemUser').throws(expectedError);
 
     const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
 
@@ -78,7 +97,10 @@ describe('approveAccessRequest', () => {
 
     const addSystemRolesStub = sinon.stub(UserService.prototype, 'addUserSystemRoles');
 
-    const updateAdministrativeActivityStub = sinon.stub(administrative_activity, 'updateAdministrativeActivity');
+    const updateAdministrativeActivityStub = sinon.stub(
+      AdministrativeActivityService.prototype,
+      'putAdministrativeActivity'
+    );
 
     const requestHandler = approve_request.approveAccessRequest();
 
@@ -88,10 +110,6 @@ describe('approveAccessRequest', () => {
 
     expect(ensureSystemUserStub).to.have.been.calledOnce;
     expect(addSystemRolesStub).to.have.been.calledWith(systemUserId, expectedRoleIdsToAdd);
-    expect(updateAdministrativeActivityStub).to.have.been.calledWith(
-      1,
-      ADMINISTRATIVE_ACTIVITY_STATUS_TYPE.ACTIONED,
-      mockDBConnection
-    );
+    expect(updateAdministrativeActivityStub).to.have.been.calledWith(1, ADMINISTRATIVE_ACTIVITY_STATUS_TYPE.ACTIONED);
   });
 });

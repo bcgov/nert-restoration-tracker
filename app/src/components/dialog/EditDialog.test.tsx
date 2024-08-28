@@ -23,7 +23,11 @@ const SampleFormikForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <CustomTextField name="testField" label="Test Field" other={{ multiline: true, required: true, rows: 4 }} />
+      <CustomTextField
+        name="testField"
+        label="Test Field"
+        other={{ multiline: true, required: true, rows: 4 }}
+      />
     </form>
   );
 };
@@ -66,7 +70,7 @@ describe('EditDialog', () => {
     expect(getByText('this is a test')).toBeVisible();
   });
 
-  it('matches snapshot when open, with error message', () => {
+  it('matches when open, with error message', () => {
     const { getByTestId, getByText } = renderContainer({
       testFieldValue: 'this is a test',
       dialogError: 'This is an error'

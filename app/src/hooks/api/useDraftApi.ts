@@ -1,5 +1,10 @@
 import { AxiosInstance } from 'axios';
-import { IDraftResponse, IGetDraftResponse, IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
+import { S3FileType } from 'constants/attachments';
+import {
+  IDraftResponse,
+  IGetDraftResponse,
+  IGetDraftsListResponse
+} from 'interfaces/useDraftApi.interface';
 
 /**
  * Returns a set of supported api methods for working with drafts.
@@ -11,12 +16,53 @@ const useDraftApi = (axios: AxiosInstance) => {
   /**
    * Create a new draft record.
    *
+   * @param {boolean} draftIsProject
    * @param {string} draftName
    * @param {unknown} draftData
    * @return {*}  {Promise<IDraftResponse>}
    */
-  const createDraft = async (draftName: string, draftData: unknown): Promise<IDraftResponse> => {
-    const { data } = await axios.post('/api/draft', { name: draftName, data: draftData });
+  const createDraft = async (
+    draftIsProject: boolean,
+    draftName: string,
+    draftData: any
+  ): Promise<IDraftResponse> => {
+    //remove the image file off project json
+    const projectImage = draftData.project.project_image;
+    draftData.project.project_image = null;
+
+    const { data } = await axios.post('/api/draft', {
+      is_project: draftIsProject,
+      name: draftName,
+      data: draftData
+    });
+
+    // upload the image file if it exists
+    if (projectImage) {
+      await uploadDraftAttachments(data.id, projectImage, S3FileType.DRAFT);
+    }
+    return data;
+  };
+
+  /**
+   * Upload project attachments.
+   *
+   * @param {number} projectId
+   * @param {File} file
+   * @param {CancelTokenSource} [cancelTokenSource]
+   * @param {(progressEvent: ProgressEvent) => void} [onProgress]
+   * @return {*}  {Promise<string[]>}
+   */
+  const uploadDraftAttachments = async (
+    draftId: number,
+    file: File,
+    fileType: string
+  ): Promise<void> => {
+    const req_message = new FormData();
+
+    req_message.append('media', file);
+    req_message.append('fileType', fileType);
+
+    const { data } = await axios.post(`/api/draft/${draftId}/attachments/upload`, req_message);
 
     return data;
   };
@@ -29,13 +75,25 @@ const useDraftApi = (axios: AxiosInstance) => {
    * @param {unknown} draftData
    * @return {*}  {Promise<IDraftResponse>}
    */
-  const updateDraft = async (id: number, draftName: string, draftData: unknown): Promise<IDraftResponse> => {
+  const updateDraft = async (
+    id: number,
+    draftName: string,
+    draftData: any
+  ): Promise<IDraftResponse> => {
+    //remove the image file off project json
+    const projectImage = draftData.project.project_image;
+    draftData.project.project_image = null;
+
     const { data } = await axios.put('/api/draft', {
       id: id,
       name: draftName,
       data: draftData
     });
 
+    // upload the image file if it exists
+    if (projectImage) {
+      await uploadDraftAttachments(data.id, projectImage, S3FileType.DRAFT);
+    }
     return data;
   };
 
@@ -45,7 +103,7 @@ const useDraftApi = (axios: AxiosInstance) => {
    * @return {*}  {Promise<IGetDraftsListResponse[]>}
    */
   const getDraftsList = async (): Promise<IGetDraftsListResponse[]> => {
-    const { data } = await axios.get(`/api/drafts`);
+    const { data } = await axios.get(`/api/draft`);
 
     return data;
   };

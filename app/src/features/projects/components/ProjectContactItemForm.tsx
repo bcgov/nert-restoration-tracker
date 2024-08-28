@@ -1,15 +1,10 @@
-import Box from '@material-ui/core/Box';
-import Checkbox from '@material-ui/core/Checkbox';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Grid from '@material-ui/core/Grid';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Typography from '@material-ui/core/Typography';
-import AutocompleteFreeSoloField from 'components/fields/AutocompleteFreeSoloField';
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
+import IsPublic from 'components/fields/IsPublic';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import yup from 'utils/YupSchema';
@@ -18,18 +13,22 @@ export interface IProjectContactItemForm {
   first_name: string;
   last_name: string;
   email_address: string;
-  agency: string;
+  phone_number: string;
+  organization: string;
   is_public: string;
   is_primary: string;
+  is_first_nation: boolean;
 }
 
 export const ProjectContactItemInitialValues: IProjectContactItemForm = {
   first_name: '',
   last_name: '',
   email_address: '',
-  agency: '',
-  is_public: 'false',
-  is_primary: 'false'
+  phone_number: '',
+  organization: '',
+  is_public: 'true',
+  is_primary: 'false',
+  is_first_nation: false
 };
 
 export const ProjectContactItemYupSchema = yup.object().shape({
@@ -37,17 +36,17 @@ export const ProjectContactItemYupSchema = yup.object().shape({
   last_name: yup.string().max(50, 'Cannot exceed 50 characters').required('Required'),
   email_address: yup
     .string()
-    .max(500, 'Cannot exceed 500 characters')
+    .max(300, 'Cannot exceed 300 characters')
     .email('Must be a valid email address')
     .required('Required'),
-  agency: yup.string().max(300, 'Cannot exceed 300 characters').required('Required').nullable(),
+  organization: yup
+    .string()
+    .max(100, 'Cannot exceed 100 characters')
+    .required('Required')
+    .nullable(),
   is_public: yup.string().required('Required'),
   is_primary: yup.string().required('Required')
 });
-
-export interface IProjectContactItemFormProps {
-  coordinator_agency: string[];
-}
 
 /*
  * A modal form for a single project contact.
@@ -56,8 +55,9 @@ export interface IProjectContactItemFormProps {
  *
  * @return {*}
  */
-const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) => {
-  const { values, touched, errors, handleChange } = useFormikContext<IProjectContactItemForm>();
+const ProjectContactItemForm: React.FC = () => {
+  const { values, touched, errors, setFieldValue, handleChange } =
+    useFormikContext<IProjectContactItemForm>();
 
   return (
     <form data-testid="contact-item-form">
@@ -94,15 +94,45 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <AutocompleteFreeSoloField
-              id="contact_agency"
-              name="agency"
-              label="Contact Agency"
-              options={props.coordinator_agency}
-              required={true}
+            <CustomTextField name="phone_number" label="Phone Number" />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <CustomTextField
+              name="organization"
+              label="Organization"
+              other={{
+                required: true
+              }}
             />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  id="isFirstNation"
+                  name="is_first_nation"
+                  aria-label="First Nation or Indigenous Governing Body"
+                  checked={values.is_first_nation}
+                  value={values.is_first_nation}
+                  onChange={(value) => {
+                    if (value) {
+                      setFieldValue('is_public', 'true');
+                    } else {
+                      setFieldValue('is_public', 'false');
+                    }
+                    handleChange(value);
+                  }}
+                />
+              }
+              label={
+                <Typography color="textSecondary">
+                  First Nation or Indigenous Governing Body
+                </Typography>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -115,43 +145,23 @@ const ProjectContactItemForm: React.FC<IProjectContactItemFormProps> = (props) =
                   onChange={handleChange}
                 />
               }
-              label={<Typography color="textSecondary">This person is the primary contact for this project</Typography>}
+              label={
+                <Typography color="textSecondary">
+                  This person is the primary contact for this Project
+                </Typography>
+              }
             />
           </Grid>
         </Grid>
       </Box>
-      <Box mt={4}>
-        <FormControl required={true} component="fieldset" error={touched.is_public && Boolean(errors.is_public)}>
-          <Typography id="share_contact_details" component="legend">
-            Share Contact Details
-          </Typography>
-          <Typography color="textSecondary">
-            Do you want this person's contact information visible to the public?
-          </Typography>
-          <Box mt={2} pl={1}>
-            <RadioGroup
-              name="is_public"
-              aria-label="Share Contact Details"
-              value={values.is_public}
-              onChange={handleChange}>
-              <FormControlLabel
-                value="true"
-                control={<Radio required={true} color="primary" size="small" />}
-                label="Yes"
-              />
-              <FormControlLabel
-                value="false"
-                control={<Radio required={true} color="primary" size="small" />}
-                label="No"
-              />
-              <FormHelperText>{errors.is_public}</FormHelperText>
-            </RadioGroup>
-          </Box>
-        </FormControl>
-      </Box>
-      <Box mt={4}>
-        <Divider />
-      </Box>
+      {values.is_first_nation && (
+        <IsPublic
+          touched={touched.is_public}
+          errors={errors.is_public}
+          values={values.is_public}
+          handleChange={(value: string) => setFieldValue('is_public', value)}
+        />
+      )}
     </form>
   );
 };

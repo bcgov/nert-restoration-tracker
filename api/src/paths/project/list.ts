@@ -19,11 +19,11 @@ export const GET: Operation = [
       ]
     };
   }),
-  getProjectList()
+  getProjectsPlansList()
 ];
 
 GET.apiDoc = {
-  description: 'Gets a list of projects based on search parameters if passed in.',
+  description: 'Gets a list of projects and plans based on search parameters if passed in.',
   tags: ['projects'],
   security: [
     {
@@ -144,21 +144,23 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'ranges',
+      name: 'actual_start_date',
       schema: {
-        oneOf: [
-          {
-            type: 'string',
-            nullable: true
-          },
-          {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            nullable: true
-          }
-        ]
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'actual_end_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
       },
       allowEmptyValue: true
     },
@@ -185,7 +187,7 @@ GET.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'Project response object.',
+      description: 'Project Plans response object.',
       content: {
         'application/json': {
           schema: {
@@ -193,12 +195,20 @@ GET.apiDoc = {
             items: {
               title: 'Project get response object, for view purposes',
               type: 'object',
-              required: ['project', 'species', 'permit', 'contact', 'location', 'iucn', 'funding', 'partnerships'],
+              required: ['project', 'species', 'authorization', 'contact', 'location', 'funding'],
               properties: {
                 project: {
                   description: 'Basic project metadata',
                   type: 'object',
-                  required: ['project_id', 'project_name', 'start_date', 'end_date', 'publish_date'],
+                  required: [
+                    'project_id',
+                    'project_name',
+                    'start_date',
+                    'end_date',
+                    'actual_start_date',
+                    'actual_end_date',
+                    'publish_date'
+                  ],
                   properties: {
                     id: {
                       description: 'Project id',
@@ -209,11 +219,22 @@ GET.apiDoc = {
                     },
                     start_date: {
                       oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                      description: 'ISO 8601 date string for the project start date'
+                      description: 'ISO 8601 date string for the project start date',
+                      nullable: true
                     },
                     end_date: {
                       oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
                       description: 'ISO 8601 date string for the project end date',
+                      nullable: true
+                    },
+                    actual_start_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual start date',
+                      nullable: true
+                    },
+                    actual_end_date: {
+                      oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
+                      description: 'ISO 8601 date string for the project actual end date',
                       nullable: true
                     },
                     objectives: {
@@ -232,42 +253,12 @@ GET.apiDoc = {
                 species: {
                   description: 'The project species',
                   type: 'object',
-                  required: ['focal_species', 'focal_species_names'],
+                  required: ['focal_species'],
                   properties: {
                     focal_species: {
                       type: 'array',
                       items: {
                         type: 'number'
-                      }
-                    },
-                    focal_species_names: {
-                      type: 'array',
-                      items: {
-                        type: 'string'
-                      }
-                    }
-                  }
-                },
-                iucn: {
-                  description: 'The International Union for Conservation of Nature number',
-                  type: 'object',
-                  required: ['classificationDetails'],
-                  properties: {
-                    classificationDetails: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          classification: {
-                            type: 'number'
-                          },
-                          subClassification1: {
-                            type: 'number'
-                          },
-                          subClassification2: {
-                            type: 'number'
-                          }
-                        }
                       }
                     }
                   }
@@ -280,7 +271,15 @@ GET.apiDoc = {
                       items: {
                         title: 'Project contact',
                         type: 'object',
-                        required: ['first_name', 'last_name', 'email_address', 'agency', 'is_public'],
+                        required: [
+                          'first_name',
+                          'last_name',
+                          'email_address',
+                          'organization',
+                          'is_public',
+                          'is_primary',
+                          'is_first_nation'
+                        ],
                         properties: {
                           first_name: {
                             type: 'string'
@@ -291,7 +290,10 @@ GET.apiDoc = {
                           email_address: {
                             type: 'string'
                           },
-                          agency: {
+                          organization: {
+                            type: 'string'
+                          },
+                          phone_number: {
                             type: 'string'
                           },
                           is_public: {
@@ -299,28 +301,32 @@ GET.apiDoc = {
                             enum: ['true', 'false']
                           },
                           is_primary: {
-                            type: 'string'
+                            type: 'string',
+                            enum: ['true', 'false']
+                          },
+                          is_first_nation: {
+                            type: 'boolean'
                           }
                         }
                       }
                     }
                   }
                 },
-                permit: {
+                authorization: {
                   type: 'object',
-                  required: ['permits'],
+                  required: ['authorizations'],
                   properties: {
-                    permits: {
+                    authorizations: {
                       type: 'array',
                       items: {
-                        title: 'Project permit',
-                        required: ['permit_number', 'permit_type'],
+                        title: 'Project authorization',
+                        required: ['authorization_ref', 'authorization_type'],
                         type: 'object',
                         properties: {
-                          permit_number: {
+                          authorization_ref: {
                             type: 'string'
                           },
-                          permit_type: {
+                          authorization_type: {
                             type: 'string'
                           }
                         }
@@ -329,75 +335,83 @@ GET.apiDoc = {
                   }
                 },
                 funding: {
-                  description: 'The project funding details',
+                  title: 'Project funding sources',
                   type: 'object',
                   required: ['fundingSources'],
                   properties: {
                     fundingSources: {
                       type: 'array',
                       items: {
+                        title: 'Project funding organization',
                         type: 'object',
-                        required: [
-                          'agency_id',
-                          'funding_amount',
-                          'investment_action_category',
-                          'start_date',
-                          'end_date'
-                        ],
+                        required: ['organization_name', 'funding_amount', 'is_public'],
                         properties: {
-                          id: {
-                            type: 'number'
-                          },
-                          agency_id: {
-                            type: 'number'
-                          },
-                          investment_action_category: {
-                            type: 'number'
-                          },
-                          investment_action_category_name: {
+                          organization_name: {
                             type: 'string'
                           },
-                          agency_name: {
+                          description: {
+                            type: 'string',
+                            nullable: true
+                          },
+                          funding_project_id: {
                             type: 'string'
                           },
                           funding_amount: {
                             type: 'number'
                           },
                           start_date: {
-                            oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                            description: 'ISO 8601 date string for the funding start date'
-                          },
-                          end_date: {
-                            oneOf: [{ type: 'object' }, { type: 'string', format: 'date' }],
-                            description: 'ISO 8601 date string for the funding end_date'
-                          },
-                          agency_project_id: {
                             type: 'string',
+                            description: 'ISO 8601 date string',
                             nullable: true
                           },
-                          revision_count: {
-                            type: 'number'
+                          end_date: {
+                            type: 'string',
+                            description: 'ISO 8601 date string',
+                            nullable: true
+                          },
+                          is_public: {
+                            type: 'string',
+                            enum: ['true', 'false']
                           }
                         }
                       }
                     }
                   }
                 },
-                partnerships: {
-                  description: 'The project partners',
+                partnership: {
+                  description: 'Project partnerships',
                   type: 'object',
-                  required: ['indigenous_partnerships', 'stakeholder_partnerships'],
+                  required: ['partnerships'],
                   properties: {
-                    indigenous_partnerships: {
+                    partnerships: {
                       type: 'array',
                       items: {
-                        type: 'number'
+                        title: 'Project partnerships',
+                        type: 'object',
+                        properties: {
+                          partnership: {
+                            type: 'string'
+                          }
+                        }
                       }
-                    },
-                    stakeholder_partnerships: {
+                    }
+                  }
+                },
+                objective: {
+                  title: 'Project objectives',
+                  type: 'object',
+                  required: ['objectives'],
+                  properties: {
+                    objectives: {
                       type: 'array',
                       items: {
-                        type: 'string'
+                        title: 'Project objectives',
+                        type: 'object',
+                        properties: {
+                          objective: {
+                            type: 'string'
+                          }
+                        }
                       }
                     }
                   }
@@ -413,12 +427,9 @@ GET.apiDoc = {
                         ...(geoJsonFeature as object)
                       }
                     },
-                    range: {
+                    region: {
                       type: 'number',
                       nullable: true
-                    },
-                    region: {
-                      type: 'number'
                     }
                   }
                 }
@@ -451,8 +462,9 @@ GET.apiDoc = {
  *
  * @returns {RequestHandler}
  */
-export function getProjectList(): RequestHandler {
+export function getProjectsPlansList(): RequestHandler {
   return async (req, res) => {
+    defaultLog.debug({ label: 'getProjectsPlansList' });
     const connection = getDBConnection(req['keycloak_token']);
 
     const searchCriteria: ProjectSearchCriteria = req.query || {};
@@ -476,7 +488,7 @@ export function getProjectList(): RequestHandler {
 
       return res.status(200).json(projects);
     } catch (error) {
-      defaultLog.error({ label: 'getProjectList', message: 'error', error });
+      defaultLog.error({ label: 'getProjectsPlansList', message: 'error', error });
       await connection.rollback();
       throw error;
     } finally {

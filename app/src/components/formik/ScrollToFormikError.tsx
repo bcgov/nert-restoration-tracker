@@ -1,5 +1,5 @@
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 import { useFormikContext } from 'formik';
 import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
 import React, { useEffect, useState } from 'react';
@@ -16,9 +16,6 @@ export const ScrollToFormikError: React.FC = () => {
     'project.start_date',
     'project.objectives',
     'species.focal_species',
-    /^iucn\.classificationDetails\.\[\d+]\.classification$/,
-    /^iucn\.classificationDetails\.\[\d+]\.subClassification1$/,
-    /^iucn\.classificationDetails\.\[\d+]\.subClassification2$/,
     /^permit\.permits\.\[\d+]\.permit_number$/,
     /^permit\.permits\.\[\d+]\.permit_type$/,
     'location.region',
@@ -32,7 +29,7 @@ export const ScrollToFormikError: React.FC = () => {
 
     const getAllFieldErrorNames = (obj: object, prefix = '', result: string[] = []) => {
       Object.keys(obj).forEach((key) => {
-        const value = obj[key];
+        const value = (obj as Record<string, any>)[key];
         if (!value) return;
 
         key = Number(key) || key === '0' ? `[${key}]` : key;
@@ -86,8 +83,6 @@ export const ScrollToFormikError: React.FC = () => {
     }
 
     errorElement[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errors]);
 
   return (
