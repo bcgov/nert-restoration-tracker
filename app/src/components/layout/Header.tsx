@@ -245,7 +245,7 @@ const Header: React.FC = () => {
               </Link>
 
               <Box ml={2}>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} data-testid={'title'}>
                   {title}
                 </Typography>
                 <VersionEnvironmentLabel />
@@ -274,7 +274,8 @@ const Header: React.FC = () => {
               aria-label="need help"
               sx={pageStyles.govHeaderIconButton}
               onClick={handleClick}
-              size="large">
+              size="large"
+              data-testid={'help_navbar'}>
               <Icon path={mdiHelpCircle} size={1.12} />
             </IconButton>
             <Menu
@@ -307,10 +308,10 @@ const Header: React.FC = () => {
               ]}
               fallback={
                 <>
-                  <Link to="/projects" id="menu_projects">
+                  <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
                     All Projects/All Plans
                   </Link>
-                  <Link to="/search" id="menu_search">
+                  <Link to="/search" id="menu_search" data-testid={'map_navbar'}>
                     Map
                   </Link>
                   <AuthGuard>

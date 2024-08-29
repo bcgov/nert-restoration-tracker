@@ -39,6 +39,7 @@ const Footer: React.FC = () => {
         variant="dense"
         sx={pageStyles.appFooterToolbar}
         role="navigation"
+        data-testid="footer"
         aria-label="Footer">
         <ul>
           <li>
