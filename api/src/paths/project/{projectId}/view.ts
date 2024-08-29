@@ -15,7 +15,7 @@ export const GET: Operation = [
     return {
       or: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         },
         {
@@ -233,7 +233,13 @@ GET.apiDoc = {
                       title: 'Project partnerships',
                       type: 'object',
                       properties: {
-                        partnership: {
+                        partnership_type: {
+                          type: 'string'
+                        },
+                        partnership_ref: {
+                          type: 'string'
+                        },
+                        partnership_name: {
                           type: 'string'
                         }
                       }

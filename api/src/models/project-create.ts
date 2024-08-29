@@ -140,7 +140,9 @@ export class PostAuthorizationData {
 }
 
 export interface IPostPartnership {
-  partnership: string;
+  partnership_type: string;
+  partnership_ref: string;
+  partnership_name: string;
 }
 
 /**
@@ -159,7 +161,9 @@ export class PostPartnershipsData {
       (obj?.partnerships?.length &&
         obj.partnerships.map((item: any) => {
           return {
-            partnership: item.partnership
+            partnership_type: item.partnership_type,
+            partnership_ref: item.partnership_ref,
+            partnership_name: item.partnership_name
           };
         })) ||
       [];

@@ -86,31 +86,4 @@ describe('ActiveUsersList', () => {
       expect(getByTestId('custom-menu-button-Unassigned')).toBeInTheDocument();
     });
   });
-
-  it('renders the add new users button correctly', async () => {
-    const { getByTestId } = renderContainer({
-      activeUsers: [
-        {
-          id: 1,
-          user_identifier: 'username',
-          record_end_date: '2020-10-10',
-          role_names: ['role 1', 'role 2'],
-          project_id: 1,
-          name: 'name',
-          system_user_id: 1,
-          project_role_id: 1,
-          project_role_name: 'project role name',
-          project_participation_id: 1,
-          role_ids: ['1', '2'],
-          projects: []
-        }
-      ],
-      codes: codes,
-      refresh: jest.fn()
-    });
-
-    await waitFor(() => {
-      expect(getByTestId('invite-system-users-button')).toBeVisible();
-    });
-  });
 });

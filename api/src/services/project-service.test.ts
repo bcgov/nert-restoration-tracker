@@ -282,7 +282,7 @@ describe('ProjectService', () => {
       const result = await projectService.getProjectByIdForEdit(projectId);
 
       expect(result).to.eql({
-        project: { id: 1 },
+        project: { id: 1, image_url: '', image_key: '' },
         species: { id: 1 },
         contact: { id: 1 },
         authorization: { id: 1 },
@@ -623,7 +623,12 @@ describe('ProjectService', () => {
             }
           ]
         },
-        partnership: { partnerships: [{ partnership: 'Canada Nature Fund' }, { partnership: 'BC Parks Living Labs' }] },
+        partnership: {
+          partnerships: [
+            { partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' },
+            { partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' }
+          ]
+        },
         objective: { objectives: [{ objective: 'This is objective 1' }, { objective: 'This is objective 2' }] },
         location: {
           geometry: [{} as unknown as Feature],
@@ -828,11 +833,14 @@ describe('ProjectService', () => {
     it('returns id on success', async () => {
       const mockDBConnection = getMockDBConnection();
 
-      sinon.stub(ProjectRepository.prototype, 'insertPartnership').resolves({ partnership_id: 1 } as any);
+      sinon.stub(ProjectRepository.prototype, 'insertPartnership').resolves({ project_partnership_id: 1 } as any);
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.insertPartnership('string', 1);
+      const result = await projectService.insertPartnership(
+        { partnership_type: 'id', partnership_ref: 'id', partnership_name: 'name' },
+        1
+      );
 
       expect(result).equals(1);
     });

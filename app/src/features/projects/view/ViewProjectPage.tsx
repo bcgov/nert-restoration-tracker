@@ -92,15 +92,6 @@ const ViewProjectPage: React.FC = () => {
       if (attachmentsList.length && !forceFetch) return;
 
       try {
-        const response = await restorationTrackerApi.project.getProjectAttachments(
-          projectId,
-          S3FileType.ATTACHMENTS
-        );
-
-        if (response?.attachmentsList) {
-          setAttachmentsList([...response.attachmentsList]);
-        }
-
         const thumbnailResponse = await restorationTrackerApi.project.getProjectAttachments(
           projectId,
           S3FileType.THUMBNAIL
@@ -108,6 +99,15 @@ const ViewProjectPage: React.FC = () => {
 
         if (thumbnailResponse?.attachmentsList) {
           setThumbnailImage([...thumbnailResponse.attachmentsList]);
+        }
+
+        const response = await restorationTrackerApi.project.getProjectAttachments(
+          projectId,
+          S3FileType.ATTACHMENTS
+        );
+
+        if (response?.attachmentsList) {
+          setAttachmentsList([...response.attachmentsList]);
         }
       } catch (error) {
         return error;
@@ -181,7 +181,7 @@ const ViewProjectPage: React.FC = () => {
           </Box>
 
           <ProjectRoleGuard
-            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR]}
+            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
             validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
             validProjectPermissions={[]}>
             <Box
@@ -264,10 +264,7 @@ const ViewProjectPage: React.FC = () => {
                           </Button>
 
                           <ProjectRoleGuard
-                            validSystemRoles={[
-                              SYSTEM_ROLE.SYSTEM_ADMIN,
-                              SYSTEM_ROLE.DATA_ADMINISTRATOR
-                            ]}
+                            validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                             validProjectRoles={[
                               PROJECT_ROLE.PROJECT_LEAD,
                               PROJECT_ROLE.PROJECT_EDITOR

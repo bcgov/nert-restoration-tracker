@@ -2,7 +2,9 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ColouredRectangleChip from 'components/chips/ColouredRectangleChip';
+import { SystemRoleGuard } from 'components/security/Guards';
 import { getTaxonRankColour, TaxonRankKeys } from 'constants/colours';
+import { SYSTEM_ROLE } from 'constants/roles';
 import { IPartialTaxonomy, ITaxonomy } from 'interfaces/useTaxonomyApi.interface';
 import React from 'react';
 
@@ -38,6 +40,7 @@ const SpeciesCard = (props: ISpeciesCardProps) => {
               <>{taxon.scientificName}</>
             )}
           </Typography>
+
           {taxon?.rank && (
             <ColouredRectangleChip
               sx={{ mx: 1 }}
@@ -50,9 +53,16 @@ const SpeciesCard = (props: ISpeciesCardProps) => {
           {commonNames}
         </Typography>
       </Box>
-      <Typography color="textSecondary" variant="body2" title="Taxonomic Serial Number">
-        {taxon.tsn}
-      </Typography>
+      <SystemRoleGuard
+        validSystemRoles={[
+          SYSTEM_ROLE.SYSTEM_ADMIN,
+          SYSTEM_ROLE.MAINTAINER,
+          SYSTEM_ROLE.PROJECT_CREATOR
+        ]}>
+        <Typography color="textSecondary" variant="body2" title="Taxonomic Serial Number">
+          {taxon.tsn}
+        </Typography>
+      </SystemRoleGuard>
     </Stack>
   );
 };

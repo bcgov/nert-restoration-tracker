@@ -16,6 +16,14 @@ export enum ProjectStatusType {
   DRAFT = 'Draft'
 }
 
+export enum PartnershipTypes {
+  INDIGENOUS_PARTNER = 'Indigenous partner',
+  BC_GOVERNMENT_PARTNER = 'BC Government partner',
+  FEDERAL_GOVERNMENT_PARTNER = 'Federal Government partner',
+  STAKEHOLDER_PROPONENT_PARTNER = 'Stakeholder / Proponent partner',
+  NON_GOVERNMENTAL_ORGANIZATION_PARTNER = 'Non-governmental organization partner'
+}
+
 // Project or Plan focus options
 export const focus = {
   HEALING_THE_LAND: 'Healing the Land',

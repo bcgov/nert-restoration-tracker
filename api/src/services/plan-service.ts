@@ -132,8 +132,14 @@ export class PlanService extends DBService {
     ]);
 
     if (attachmentData.length === 0) {
+      const newProjectData = {
+        ...projectData,
+        image_url: '',
+        image_key: ''
+      };
+
       return {
-        project: projectData,
+        project: newProjectData,
         contact: contactData,
         location: locationData
       };

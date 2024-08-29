@@ -15,7 +15,7 @@ export const POST: Operation = [
     return {
       and: [
         {
-          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.DATA_ADMINISTRATOR, SYSTEM_ROLE.PROJECT_CREATOR],
+          validSystemRoles: [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
           discriminator: 'SystemRole'
         }
       ]
@@ -320,8 +320,16 @@ POST.apiDoc = {
                     title: 'Project partnerships',
                     type: 'object',
                     properties: {
-                      partnership: {
+                      partnership_type: {
                         type: 'string'
+                      },
+                      partnership_ref: {
+                        type: 'string',
+                        nullable: true
+                      },
+                      partnership_name: {
+                        type: 'string',
+                        nullable: true
                       }
                     }
                   }
