@@ -49,7 +49,41 @@ const useProjectPlanTableUtils = function () {
     }
   };
 
-  return { changeStateCode };
+  const deleteDraft = async (isProject: boolean, draftId: number) => {
+    const errorDialogProps = {
+      dialogTitle: isProject ? 'Project: ' : 'Plan: ' + TableI18N.deleteDraftErrorTitle,
+      dialogText: TableI18N.deleteDraftErrorText,
+      open: false,
+      onClose: () => {
+        dialogContext.setErrorDialog({ open: false });
+      },
+      onOk: () => {
+        dialogContext.setErrorDialog({ open: false });
+      }
+    };
+
+    const displayErrorDialog = (textDialogProps?: Partial<IErrorDialogProps>) => {
+      dialogContext.setErrorDialog({ ...errorDialogProps, ...textDialogProps, open: true });
+    };
+
+    try {
+      const response = await restorationTrackerApi.draft.deleteDraft(draftId);
+
+      if (!response) {
+        displayErrorDialog();
+        return;
+      }
+    } catch (error) {
+      displayErrorDialog({
+        dialogTitle: TableI18N.deleteDraftErrorTitle,
+        dialogText: TableI18N.deleteDraftErrorText,
+        dialogError: (error as APIError).message,
+        dialogErrorDetails: (error as APIError).errors
+      });
+    }
+  };
+
+  return { changeStateCode, deleteDraft };
 };
 
 export default useProjectPlanTableUtils;

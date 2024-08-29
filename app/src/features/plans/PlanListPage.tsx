@@ -155,7 +155,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const { changeStateCode } = useProjectPlanTableUtils();
+    const { changeStateCode, deleteDraft } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -241,13 +241,14 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     };
 
     const handleArchiveUnarchive = (id: number) => {
+      const updIndex = rows.findIndex((row) => row.id === id);
       const stateArchiveCode = getStateCodeFromLabel(states.ARCHIVED);
-      if (rows[id].statusCode !== stateArchiveCode) {
-        changeStateCode(false, rows[id].planId, stateArchiveCode);
+      if (rows[updIndex].statusCode !== stateArchiveCode) {
+        changeStateCode(false, rows[updIndex].planId, stateArchiveCode);
 
-        rows[id].statusCode = stateArchiveCode;
-        rows[id].statusLabel = states.ARCHIVED;
-        rows[id].archive = TableI18N.unarchive;
+        rows[updIndex].statusCode = stateArchiveCode;
+        rows[updIndex].statusLabel = states.ARCHIVED;
+        rows[updIndex].archive = TableI18N.unarchive;
         setRows([...rows]);
         setPage(page);
         return;
@@ -255,13 +256,24 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
       const statePlanningCode = getStateCodeFromLabel(states.PLANNING);
 
-      changeStateCode(false, rows[id].planId, statePlanningCode);
+      changeStateCode(false, rows[updIndex].planId, statePlanningCode);
 
-      rows[id].statusCode = statePlanningCode;
-      rows[id].statusLabel = states.PLANNING;
-      rows[id].archive = TableI18N.archive;
+      rows[updIndex].statusCode = statePlanningCode;
+      rows[updIndex].statusLabel = states.PLANNING;
+      rows[updIndex].archive = TableI18N.archive;
       setRows([...rows]);
       setPage(page);
+    };
+
+    const handleDeleteDraft = (id: number) => {
+      const delIndex = rows.findIndex((row) => row.id === id);
+      deleteDraft(false, rows[delIndex].planId);
+
+      setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
+
+      if (0 < page && 1 === visibleRows.length) {
+        setPage(page - 1);
+      }
     };
 
     const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
@@ -408,8 +420,11 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                                   dialogTitleBgColor: '#FFF4EB',
                                   dialogContent: (
                                     <>
-                                      <Typography variant="body1" color="textPrimary">
-                                        <strong>{row.planName}</strong>
+                                      <Typography
+                                        sx={{ fontWeight: 600 }}
+                                        variant="body1"
+                                        color="textPrimary">
+                                        {row.planName}
                                       </Typography>
                                       {archCode !== row.statusCode && (
                                         <>
@@ -453,8 +468,40 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                           </Tooltip>
                         </SystemRoleGuard>
                       ) : (
-                        <Tooltip title={TableI18N.deleteDraft} placement="right">
-                          <IconButton color="error">
+                        <Tooltip title={TableI18N.deleteDraft} placement="top">
+                          <IconButton
+                            onClick={() =>
+                              openYesNoDialog({
+                                dialogTitle:
+                                  TableI18N.deleteDraft + ' ' + PlanTableI18N.planConfirmation,
+                                dialogTitleBgColor: '#FFF4EB',
+                                dialogContent: (
+                                  <>
+                                    <Typography
+                                      sx={{ fontWeight: 600 }}
+                                      variant="body1"
+                                      color="textPrimary">
+                                      {row.planName}
+                                    </Typography>
+                                    <Typography variant="body1" color="textPrimary">
+                                      Deleting this plan draft will permanently remove it from the
+                                      application. All the entered data will be lost.
+                                    </Typography>
+                                    <Typography mt={1} variant="body1" color="textPrimary">
+                                      Are you sure you want to delete this draft?
+                                    </Typography>
+                                  </>
+                                ),
+                                yesButtonLabel: TableI18N.deleteDraft,
+                                yesButtonProps: { color: 'secondary' },
+                                noButtonLabel: 'Cancel',
+                                onYes: () => {
+                                  handleDeleteDraft(row.id);
+                                  dialogContext.setYesNoDialog({ open: false });
+                                }
+                              })
+                            }
+                            color="error">
                             <DeleteForeverIcon />
                           </IconButton>
                         </Tooltip>
