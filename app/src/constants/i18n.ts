@@ -243,7 +243,7 @@ export const TableI18N = {
   importData: 'Import data',
   exportSelected: 'Export selected',
   exportNotSelected: 'Export not selected',
-  deleteDraft: 'Delete draft',
+  deleteDraft: 'Delete Draft',
   archive: 'Archive',
   unarchive: 'Unarchive',
   delete: 'Delete',
@@ -254,7 +254,10 @@ export const TableI18N = {
   noDataToExport: 'No data to export',
   updateStateCodeErrorTitle: 'Error Updating Status',
   updateStateCodeErrorText:
-    'An error has occurred while attempting to update the status. If the error persists, please contact your system administrator.'
+    'An error has occurred while attempting to update the status. If the error persists, please contact your system administrator.',
+  deleteDraftErrorTitle: 'Error Deleting Draft',
+  deleteDraftErrorText:
+    'An error has occurred while attempting to delete this draft. If the error persists, please contact your system administrator.'
 };
 
 export const ProjectTableI18N = {

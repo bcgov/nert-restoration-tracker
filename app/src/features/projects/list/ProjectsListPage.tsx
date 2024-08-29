@@ -145,7 +145,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const { changeStateCode } = useProjectPlanTableUtils();
+    const { changeStateCode, deleteDraft } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -231,14 +231,15 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     };
 
     const handleArchiveUnarchive = (id: number) => {
+      const updIndex = rows.findIndex((row) => row.id === id);
       const stateArchiveCode = getStateCodeFromLabel(states.ARCHIVED);
 
-      if (rows[id].statusCode !== stateArchiveCode) {
-        changeStateCode(true, rows[id].projectId, stateArchiveCode);
+      if (rows[updIndex].statusCode !== stateArchiveCode) {
+        changeStateCode(true, rows[updIndex].projectId, stateArchiveCode);
 
-        rows[id].statusCode = stateArchiveCode;
-        rows[id].statusLabel = states.ARCHIVED;
-        rows[id].archive = TableI18N.unarchive;
+        rows[updIndex].statusCode = stateArchiveCode;
+        rows[updIndex].statusLabel = states.ARCHIVED;
+        rows[updIndex].archive = TableI18N.unarchive;
         setRows([...rows]);
         setPage(page);
         return;
@@ -246,13 +247,24 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
 
       const statePlanningCode = getStateCodeFromLabel(states.PLANNING);
 
-      changeStateCode(true, rows[id].projectId, statePlanningCode);
+      changeStateCode(true, rows[updIndex].projectId, statePlanningCode);
 
-      rows[id].statusCode = statePlanningCode;
-      rows[id].statusLabel = states.PLANNING;
-      rows[id].archive = TableI18N.archive;
+      rows[updIndex].statusCode = statePlanningCode;
+      rows[updIndex].statusLabel = states.PLANNING;
+      rows[updIndex].archive = TableI18N.archive;
       setRows([...rows]);
       setPage(page);
+    };
+
+    const handleDeleteDraft = (id: number) => {
+      const delIndex = rows.findIndex((row) => row.id === id);
+      deleteDraft(true, rows[delIndex].projectId);
+
+      setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
+
+      if (0 < page && 1 === visibleRows.length) {
+        setPage(page - 1);
+      }
     };
 
     const defaultYesNoDialogProps: Partial<IYesNoDialogProps> = {
@@ -404,8 +416,11 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                                   dialogTitleBgColor: '#E9FBFF',
                                   dialogContent: (
                                     <>
-                                      <Typography variant="body1" color="textPrimary">
-                                        <strong>{row.projectName}</strong>
+                                      <Typography
+                                        sx={{ fontWeight: 600 }}
+                                        variant="body1"
+                                        color="textPrimary">
+                                        {row.projectName}
                                       </Typography>
                                       {archCode !== row.statusCode && (
                                         <>
@@ -452,8 +467,42 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                           </Tooltip>
                         </SystemRoleGuard>
                       ) : (
-                        <Tooltip title={TableI18N.deleteDraft} placement="right">
-                          <IconButton color="error">
+                        <Tooltip title={TableI18N.deleteDraft} placement="top">
+                          <IconButton
+                            onClick={() =>
+                              openYesNoDialog({
+                                dialogTitle:
+                                  TableI18N.deleteDraft +
+                                  ' ' +
+                                  ProjectTableI18N.projectConfirmation,
+                                dialogTitleBgColor: '#E9FBFF',
+                                dialogContent: (
+                                  <>
+                                    <Typography
+                                      sx={{ fontWeight: 600 }}
+                                      variant="body1"
+                                      color="textPrimary">
+                                      {row.projectName}
+                                    </Typography>
+                                    <Typography variant="body1" color="textPrimary">
+                                      Deleting this project draft will permanently remove it from
+                                      the application. All the entered data will be lost.
+                                    </Typography>
+                                    <Typography mt={1} variant="body1" color="textPrimary">
+                                      Are you sure you want to delete this draft?
+                                    </Typography>
+                                  </>
+                                ),
+                                yesButtonLabel: TableI18N.deleteDraft,
+                                yesButtonProps: { color: 'secondary' },
+                                noButtonLabel: 'Cancel',
+                                onYes: () => {
+                                  handleDeleteDraft(row.id);
+                                  dialogContext.setYesNoDialog({ open: false });
+                                }
+                              })
+                            }
+                            color="error">
                             <DeleteForeverIcon />
                           </IconButton>
                         </Tooltip>
