@@ -402,6 +402,7 @@ const initializeMap = (
       });
     }
 
+
     /**
      * Add the custom communities layer
      */
@@ -430,15 +431,25 @@ const initializeMap = (
       }
     });
 
+    // // Test out requesting the boundary meta data
+    // fetch('https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/metadata.json').then((response) => {
+    //   console.log('response', response);
+    // }
+    // ).catch((error) => {
+    //   console.error('error', error);
+    // });
+
+
     /* The boundary layer */
-    map.addSource('ne_boundary', {
-      type: 'geojson',
-      data: ne_boundary as FeatureCollection
+    map.addSource('natural_resource_districts', {
+      type: 'vector',
+      tiles: ['https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/{z}/{x}/{y}.pbf'],
     });
     map.addLayer({
       id: 'ne_boundary',
       type: 'line',
-      source: 'ne_boundary',
+      source: 'natural_resource_districts',
+      'source-layer': 'WHSE_ADMIN_BOUNDARIES.ADM_NR_REGIONS_SP',
       layout: {
         'line-join': 'round',
         'line-cap': 'round',
