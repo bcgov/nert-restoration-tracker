@@ -431,14 +431,6 @@ const initializeMap = (
       }
     });
 
-    // // Test out requesting the boundary meta data
-    // fetch('https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/metadata.json').then((response) => {
-    //   console.log('response', response);
-    // }
-    // ).catch((error) => {
-    //   console.error('error', error);
-    // });
-
 
     /* The boundary layer */
     map.addSource('natural_resource_districts', {
