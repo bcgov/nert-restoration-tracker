@@ -328,7 +328,7 @@ const initializeMap = (
     // style: '/styles/bcgov.json',
     // style: '/styles/from_gov_site.json',
     // style: 'styles/hybrid.json',
-    style: '/styles/delme2.json',
+    style: '/styles/delme.json',
     // style: '/styles/from_the_main_page.json', // This has no errors but displays nothing
     center: center,
     // Use transformRequest to set the Referrer Policy to no-referrer-when-downgrade
