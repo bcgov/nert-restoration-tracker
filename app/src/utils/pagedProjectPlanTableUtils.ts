@@ -1,10 +1,5 @@
 import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { focus } from 'constants/misc';
-import { useNertApi } from 'hooks/useNertApi';
-import { DialogContext } from 'contexts/dialogContext';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { useContext } from 'react';
-import { APIError } from 'hooks/api/useAxios';
 
 /**  Project related objects **/
 export interface ProjectData {
@@ -197,6 +192,41 @@ export const planHeadCells: readonly PlanHeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: TableI18N.archive
+  }
+];
+
+// Draft related objects
+export interface DraftData {
+  id: number;
+  draftId: number;
+  draftName: string;
+  statusCode: number;
+  statusLabel: string;
+  deleteDraft: string;
+}
+
+export interface DraftTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof DraftData) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+}
+
+export interface DraftHeadCell {
+  disablePadding: boolean;
+  id: keyof DraftData;
+  label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
+  numeric: boolean;
+}
+
+export const draftHeadCells: readonly DraftHeadCell[] = [
+  {
+    id: 'draftName',
+    numeric: false,
+    disablePadding: true,
+    label: TableI18N.draftName
   }
 ];
 

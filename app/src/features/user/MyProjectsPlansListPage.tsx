@@ -67,7 +67,6 @@ const MyProjectsPlansListPage: React.FC = () => {
     }
   }, [restorationTrackerApi, isLoading, authStateContext]);
 
-  //TODO: add plans loading to list
   return (
     <Container maxWidth="xl">
       <MyProjects projects={projects} drafts={drafts} />

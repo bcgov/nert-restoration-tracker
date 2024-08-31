@@ -6,7 +6,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { codes } from 'test-helpers/code-helpers';
 import { useNertApi } from '../../../hooks/useNertApi';
 import { IGetUserProjectsListResponse } from '../../../interfaces/useProjectApi.interface';
-import UsersDetailProjects from './UsersDetailProjects';
+import UsersDetailProjectsPlans from 'features/admin/users/UsersDetailProjectsPlans';
 import { useCodesContext } from 'hooks/useContext';
 
 jest.mock('../../../hooks/useNertApi');
@@ -31,12 +31,15 @@ const mockUser = {
 } as ISystemUser;
 
 const routes = [
-  { path: '/admin/projects/1/details', element: <UsersDetailProjects userDetails={mockUser} /> }
+  {
+    path: '/admin/projects/1/details',
+    element: <UsersDetailProjectsPlans userDetails={mockUser} />
+  }
 ];
 
 const router = createMemoryRouter(routes, { initialEntries: ['/admin/projects/1/details'] });
 
-describe.skip('UsersDetailProjects', () => {
+describe.skip('UsersDetailProjectsPlans', () => {
   beforeEach(() => {
     // clear mocks before each test
     mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
@@ -52,7 +55,7 @@ describe.skip('UsersDetailProjects', () => {
 
     const { getAllByTestId } = render(
       <RouterProvider router={router}>
-        <UsersDetailProjects userDetails={mockUser} />
+        <UsersDetailProjectsPlans userDetails={mockUser} />
       </RouterProvider>
     );
 
@@ -70,7 +73,7 @@ describe.skip('UsersDetailProjects', () => {
 
     const { getAllByTestId, getAllByText } = render(
       <RouterProvider router={router}>
-        <UsersDetailProjects userDetails={mockUser} />
+        <UsersDetailProjectsPlans userDetails={mockUser} />
       </RouterProvider>
     );
 
@@ -96,7 +99,7 @@ describe.skip('UsersDetailProjects', () => {
 
     const { getAllByTestId, getAllByText } = render(
       <RouterProvider router={router}>
-        <UsersDetailProjects userDetails={mockUser} />
+        <UsersDetailProjectsPlans userDetails={mockUser} />
       </RouterProvider>
     );
 
@@ -129,7 +132,7 @@ describe.skip('UsersDetailProjects', () => {
 
     const { getAllByTestId, getAllByText } = render(
       <RouterProvider router={router}>
-        <UsersDetailProjects userDetails={mockUser} />
+        <UsersDetailProjectsPlans userDetails={mockUser} />
       </RouterProvider>
     );
 
@@ -156,7 +159,7 @@ describe.skip('UsersDetailProjects', () => {
 
     const { getAllByText, getByText } = render(
       <RouterProvider router={router}>
-        <UsersDetailProjects userDetails={mockUser} />
+        <UsersDetailProjectsPlans userDetails={mockUser} />
       </RouterProvider>
     );
 
@@ -188,7 +191,7 @@ describe.skip('UsersDetailProjects', () => {
       const { getAllByText, getByTestId, getByText } = render(
         <DialogContextProvider>
           <RouterProvider router={router}>
-            <UsersDetailProjects userDetails={mockUser} />
+            <UsersDetailProjectsPlans userDetails={mockUser} />
           </RouterProvider>
         </DialogContextProvider>
       );
@@ -235,7 +238,7 @@ describe.skip('UsersDetailProjects', () => {
       const { getAllByText, getByText, getAllByTestId } = render(
         <DialogContextProvider>
           <RouterProvider router={router}>
-            <UsersDetailProjects userDetails={mockUser} />
+            <UsersDetailProjectsPlans userDetails={mockUser} />
           </RouterProvider>
         </DialogContextProvider>
       );
@@ -298,7 +301,7 @@ describe.skip('UsersDetailProjects', () => {
 
       const { getAllByText, getByText } = render(
         <RouterProvider router={router}>
-          <UsersDetailProjects userDetails={mockUser} />
+          <UsersDetailProjectsPlans userDetails={mockUser} />
         </RouterProvider>
       );
 
@@ -343,7 +346,7 @@ describe.skip('UsersDetailProjects', () => {
       const { getAllByText, getByText } = render(
         <DialogContextProvider>
           <RouterProvider router={router}>
-            <UsersDetailProjects userDetails={mockUser} />
+            <UsersDetailProjectsPlans userDetails={mockUser} />
           </RouterProvider>
         </DialogContextProvider>
       );
@@ -403,7 +406,7 @@ describe.skip('UsersDetailProjects', () => {
       const { getAllByText, getByText } = render(
         <DialogContextProvider>
           <RouterProvider router={router}>
-            <UsersDetailProjects userDetails={mockUser} />
+            <UsersDetailProjectsPlans userDetails={mockUser} />
           </RouterProvider>
         </DialogContextProvider>
       );
