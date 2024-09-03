@@ -193,7 +193,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     setInfoOpen(true);
   };
 
-  // This needs to be passed to the map for filtering the region boundary 
+  // This needs to be passed to the map for filtering the region boundary
   const region = props.regions.reduce((acc, region) => {
     if (region.value === values.location.region) {
       return region.label;

@@ -60,7 +60,6 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     return acc;
   }, '');
 
-
   if (!locationData || !locationData.geometry) {
     return null;
   }

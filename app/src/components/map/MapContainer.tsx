@@ -314,7 +314,7 @@ const initializeMap = (
   autoFocus?: boolean,
   nertApi?: any,
   editModeOn?: boolean,
-  region? : string | null
+  region?: string | null
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -405,7 +405,6 @@ const initializeMap = (
       });
     }
 
-
     /**
      * Add the custom communities layer
      */
@@ -434,11 +433,12 @@ const initializeMap = (
       }
     });
 
-
     /* The boundary layer */
     map.addSource('natural_resource_districts', {
       type: 'vector',
-      tiles: ['https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/{z}/{x}/{y}.pbf'],
+      tiles: [
+        'https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/{z}/{x}/{y}.pbf'
+      ]
     });
 
     map.addLayer({
@@ -455,7 +455,7 @@ const initializeMap = (
         'line-color': 'white',
         'line-width': 2
       },
-      ...region && {filter: ['all', ['==', 'REGION_NAME', region]]}
+      ...(region && { filter: ['all', ['==', 'REGION_NAME', region]] })
     });
 
     /*****************Project/Plans********************/
@@ -963,8 +963,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const region = props.region || null;
 
   console.log('region from the map container', region);
-
-
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
