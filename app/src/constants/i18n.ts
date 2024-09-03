@@ -257,7 +257,10 @@ export const TableI18N = {
     'An error has occurred while attempting to update the status. If the error persists, please contact your system administrator.',
   deleteDraftErrorTitle: 'Error Deleting Draft',
   deleteDraftErrorText:
-    'An error has occurred while attempting to delete this draft. If the error persists, please contact your system administrator.'
+    'An error has occurred while attempting to delete this draft. If the error persists, please contact your system administrator.',
+  draftName: 'Draft Name',
+  draft: 'draft',
+  drafts: 'drafts'
 };
 
 export const ProjectTableI18N = {

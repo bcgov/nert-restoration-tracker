@@ -54,7 +54,7 @@ export interface IProjectDetailsProps {
  *
  * @return {*}
  */
-const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
+const UsersDetailProjectsPlans: React.FC<IProjectDetailsProps> = (props) => {
   const { userDetails } = props;
   const restorationTrackerApi = useNertApi();
   const dialogContext = useContext(DialogContext);
@@ -181,7 +181,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
               <TableCell align="center">
                 <Box m={-1}>
                   <IconButton
-                    title="Remove Project Participant"
+                    title="Remove Participant"
                     data-testid={'remove-project-participant-button'}
                     onClick={() =>
                       openYesNoDialog({
@@ -224,7 +224,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
       <TableRow>
         <TableCell colSpan={3}>
           <Box display="flex" justifyContent="center">
-            No Projects
+            No Projects or Plans
           </Box>
         </TableCell>
       </TableRow>
@@ -239,15 +239,15 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
     <Paper>
       <Toolbar sx={pageStyles.projectMembersToolbar}>
         <Typography data-testid="projects_header" variant="h2">
-          Assigned Projects ({assignedProjects?.length})
+          Assigned Projects and Plans ({assignedProjects?.length})
         </Typography>
       </Toolbar>
       <Box>
         <Table sx={pageStyles.projectMembersTable}>
           <TableHead>
             <TableRow>
-              <TableCell>Project Name</TableCell>
-              <TableCell>Project Role</TableCell>
+              <TableCell>Project/Plan Name</TableCell>
+              <TableCell>User Role</TableCell>
               <TableCell width="100px" align="center">
                 Actions
               </TableCell>
@@ -262,7 +262,7 @@ const UsersDetailProjects: React.FC<IProjectDetailsProps> = (props) => {
   );
 };
 
-export default UsersDetailProjects;
+export default UsersDetailProjectsPlans;
 
 export interface IChangeProjectRoleMenuProps {
   row: IGetUserProjectsListResponse;
@@ -299,7 +299,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     newRoleId: number
   ) => {
     dialogContext.setYesNoDialog({
-      dialogTitle: 'Change Project Role?',
+      dialogTitle: 'Change Role?',
       dialogContent: (
         <>
           <Typography color="textPrimary">
