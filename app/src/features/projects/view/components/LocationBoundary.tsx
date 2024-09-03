@@ -4,6 +4,7 @@ import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   mapContainer: {
@@ -49,6 +50,13 @@ export interface ILocationBoundaryProps {
  */
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
+  console.log('locationData', locationData);
+
+  const codes = useCodesContext().codesDataLoader.data;
+  console.log('codes', codes);
+
+
+  // TODO: Get the Region Name 
 
   if (!locationData || !locationData.geometry) {
     return null;
