@@ -62,32 +62,59 @@ const pageStyles = {
 
 export const ProjectAdvancedFiltersInitialValues: IProjectAdvancedFilters = {
   keyword: '',
-  permit_number: '',
+  project_name: '',
+  status: [],
+  region: [],
+  focus: [],
   start_date: '',
   end_date: '',
-  region: '',
-  status: '',
-  focus: ''
+  actual_start_date: '',
+  actual_end_date: '',
+  objectives: '',
+  organizations: '',
+  funding_sources: '',
+  ha_to: '',
+  ha_from: '',
+  authorization: ''
 };
 
 export interface IProjectAdvancedFilters {
+  [key: string]: string | string[] | undefined;
   keyword?: string;
-  permit_number?: string;
+  project_name?: string;
+  status?: string | string[];
+  region?: string | string[];
+  focus?: string | string[];
   start_date?: string;
   end_date?: string;
-  region?: string | string[];
-  status?: string | string[];
-  focus?: string | string[];
+  actual_start_date?: string;
+  actual_end_date?: string;
+  objectives?: string;
+  organizations?: string;
+  funding_sources?: string;
+  ha_to?: string;
+  ha_from?: string;
+  authorization?: string;
 }
 
-export const ProjectAdvancedFiltersKeyLabels = {
+export const ProjectAdvancedFiltersKeyLabels: {
+  [key: string]: { label: string; codeSet?: string };
+} = {
   keyword: { label: 'Keyword' },
-  permit_number: { label: 'Authorization Reference' },
+  project_name: { label: 'Project Name' },
+  status: { label: 'Status', codeSet: 'status' },
+  region: { label: 'Region', codeSet: 'region' },
+  focus: { label: 'Focus', codeSet: 'focus' },
   start_date: { label: 'Start Date' },
   end_date: { label: 'End Date' },
-  region: { label: 'Region', codeSet: 'region' },
-  status: { label: 'Status', codeSet: 'status' },
-  focus: { label: 'Focus', codeSet: 'focus' }
+  actual_start_date: { label: 'Actual Start Date' },
+  actual_end_date: { label: 'Actual End Date' },
+  objectives: { label: 'Objectives' },
+  organizations: { label: 'Organization' },
+  funding_sources: { label: 'Funding Sources' },
+  ha_to: { label: 'Area To' },
+  ha_from: { label: 'Area From' },
+  authorization: { label: 'Authorization Reference' }
 };
 
 export interface IProjectAdvancedFiltersProps {
@@ -95,6 +122,7 @@ export interface IProjectAdvancedFiltersProps {
   region: IMultiAutocompleteFieldOption[];
   status: IMultiAutocompleteFieldOption[];
   focus: IMultiAutocompleteFieldOption[];
+  [key: string]: any; // Add index signature
 }
 
 /**
@@ -114,7 +142,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
   const handleDelete = (key: string, value: string | number) => {
     if (Array.isArray(values[key]) && values[key].length !== 1) {
       //check if chip is part of an array and deletes single array item if true
-      const index = values[key].indexOf(value);
+      const index = values[key].indexOf(String(value));
       values[key].splice(index, 1);
     } else {
       values[key] = ProjectAdvancedFiltersInitialValues[key];
@@ -273,7 +301,8 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                   <Typography variant="h4">Filters </Typography>
                 </Grid>
                 {Object.entries(filterChipParams).map(
-                  ([key, value]) => isFilterValueNotEmpty(value) && getFilterChips(key, value)
+                  ([key, value]) =>
+                    isFilterValueNotEmpty(value) && getFilterChips(key, value as string)
                 )}
                 <Grid item>
                   <Chip label={'Clear all'} onClick={handleFilterReset} />

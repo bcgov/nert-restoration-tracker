@@ -4,7 +4,7 @@ import { getDBConnection } from '../../database/db';
 import { geoJsonFeature } from '../../openapi/schemas/geoJson';
 import { authorizeRequestHandler } from '../../request-handlers/security/authorization';
 import { PlanService } from '../../services/plan-service';
-import { ProjectSearchCriteria, SearchService } from '../../services/search-service';
+import { PlanSearchCriteria, ProjectSearchCriteria, SearchService } from '../../services/search-service';
 import { getLogger } from '../../utils/logger';
 
 const defaultLog = getLogger('paths/plan/list');
@@ -28,6 +28,168 @@ GET.apiDoc = {
   security: [
     {
       Bearer: []
+    }
+  ],
+  parameters: [
+    {
+      in: 'query',
+      name: 'plan_keyword',
+      schema: {
+        type: 'string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_name',
+      schema: {
+        type: 'string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_status',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_region',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_focus',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_start_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_end_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_organizations',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_ha_to',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_ha_from',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
     }
   ],
   responses: {
@@ -178,15 +340,29 @@ export function getPlansList(): RequestHandler {
     defaultLog.debug({ label: 'getPlansList' });
     const connection = getDBConnection(req['keycloak_token']);
 
-    const searchCriteria: ProjectSearchCriteria = req.query || {};
+    const searchCriteria: PlanSearchCriteria = req.query || {};
 
     try {
       await connection.open();
 
       const searchService = new SearchService(connection);
 
+      const projectSearchCriteria: ProjectSearchCriteria = {
+        ...searchCriteria,
+        keyword: searchCriteria.plan_keyword,
+        project_name: searchCriteria.plan_name,
+        status: searchCriteria.plan_status,
+        region: searchCriteria.plan_region,
+        focus: searchCriteria.plan_focus,
+        start_date: searchCriteria.plan_start_date,
+        end_date: searchCriteria.plan_end_date,
+        organizations: searchCriteria.plan_organizations,
+        ha_to: searchCriteria.plan_ha_to,
+        ha_from: searchCriteria.plan_ha_from
+      };
+
       // Fetch all planIds that match the search criteria
-      const planIdsResponse = await searchService.findProjectIdsByCriteria(searchCriteria);
+      const planIdsResponse = await searchService.findProjectIdsByCriteria(projectSearchCriteria);
 
       const planIds = planIdsResponse.map((item) => item.project_id);
 
