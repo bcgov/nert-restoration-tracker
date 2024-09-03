@@ -5,8 +5,10 @@ import { useNertApi } from 'hooks/useNertApi';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import UsersDetailHeader from './UsersDetailHeader';
-import UsersDetailProjects from './UsersDetailProjects';
+import UsersDetailProjectsPlans from 'features/admin/users/UsersDetailProjectsPlans';
 import { ISystemUser } from 'interfaces/useUserApi.interface';
+import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
+import UserDetailDraftsList from './UserDetailDraftsList';
 
 /**
  * Page to display user details.
@@ -16,24 +18,41 @@ import { ISystemUser } from 'interfaces/useUserApi.interface';
 const UsersDetailPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<ISystemUser | null>(null);
+  const [drafts, setDrafts] = useState<IGetDraftsListResponse[]>([]);
 
   const urlParams: Record<string, string | number | undefined> = useParams();
+  const userId = Number(urlParams['id']);
+
   useEffect(() => {
-    if (selectedUser) {
+    if (selectedUser && drafts) {
       return;
     }
 
     const getUser = async () => {
-      const id = Number(urlParams['id']);
-      const user = await restorationTrackerApi.user.getUserById(id);
-      setSelectedUser(user);
+      const user = await restorationTrackerApi.user.getUserById(userId);
+      setSelectedUser(() => {
+        setIsLoading(false);
+        return user;
+      });
     };
 
-    getUser();
-  }, [restorationTrackerApi.user, urlParams, selectedUser]);
+    const getUserDrafts = async () => {
+      const draftsResponse = await restorationTrackerApi.draft.getUserDraftsList(userId);
+      setDrafts(() => {
+        setIsLoading(false);
+        return draftsResponse;
+      });
+    };
 
-  if (!selectedUser) {
+    if (isLoading) {
+      getUser();
+      getUserDrafts();
+    }
+  }, [restorationTrackerApi.user, selectedUser, drafts, isLoading]);
+
+  if (!selectedUser || !drafts) {
     return <CircularProgress data-testid="page-loading" className="pageProgress" size={40} />;
   }
 
@@ -41,8 +60,9 @@ const UsersDetailPage: React.FC = () => {
     <Container maxWidth="xl">
       <UsersDetailHeader userDetails={selectedUser} />
       <Box my={3}>
-        <UsersDetailProjects userDetails={selectedUser} />
+        <UsersDetailProjectsPlans userDetails={selectedUser} />
       </Box>
+      <UserDetailDraftsList drafts={drafts} />
     </Container>
   );
 };

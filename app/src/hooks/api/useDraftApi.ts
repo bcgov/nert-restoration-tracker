@@ -109,6 +109,17 @@ const useDraftApi = (axios: AxiosInstance) => {
   };
 
   /**
+   * Get a user drafts list.
+   *
+   * @return {*}  {Promise<IGetDraftsListResponse[]>}
+   */
+  const getUserDraftsList = async (userId: number): Promise<IGetDraftsListResponse[]> => {
+    const { data } = await axios.get(`/api/draft/${userId}/list`);
+
+    return data;
+  };
+
+  /**
    * Get details for a single draft based on its id.
    *
    * @return {*} {Promise<IGetDraftResponse>}
@@ -134,6 +145,7 @@ const useDraftApi = (axios: AxiosInstance) => {
     createDraft,
     updateDraft,
     getDraftsList,
+    getUserDraftsList,
     getDraft,
     deleteDraft
   };
