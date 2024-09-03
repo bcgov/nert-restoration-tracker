@@ -50,13 +50,16 @@ export interface ILocationBoundaryProps {
  */
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
-  console.log('locationData', locationData);
 
   const codes = useCodesContext().codesDataLoader.data;
-  console.log('codes', codes);
 
+  const region = codes?.regions.reduce((acc, region) => {
+    if (region.id === locationData.region) {
+      acc = region.name;
+    }
+    return acc;
+  }, '');
 
-  // TODO: Get the Region Name 
 
   if (!locationData || !locationData.geometry) {
     return null;
@@ -99,6 +102,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
         features={locationData.geometry}
         bounds={bounds}
         layerVisibility={layerVisibility}
+        region={region}
       />
       <Box sx={pageStyles.layerSwitcherContainer}>
         <LayerSwitcher layerVisibility={layerVisibility} open={false} hideProjects={true} />
