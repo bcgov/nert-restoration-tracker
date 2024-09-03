@@ -10,6 +10,7 @@ import ProjectsLayout from 'layouts/ProjectsLayout';
 import { RedirectURL } from 'utils/AppRoutesUtils';
 import { ProjectAuthStateContextProvider } from 'contexts/projectAuthStateContext';
 import { ProjectRoleGuard } from 'components/security/Guards';
+import PublicProjectPlanView from 'pages/public/PublicProjectPlanView';
 
 /**
  * Router for all `/admin/project/*` pages.
@@ -47,16 +48,13 @@ const ProjectsRouter: React.FC = () => {
           element={
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
-                validSystemRoles={[
-                  SYSTEM_ROLE.SYSTEM_ADMIN,
-                  SYSTEM_ROLE.MAINTAINER,
-                  SYSTEM_ROLE.PROJECT_CREATOR
-                ]}
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                 validProjectRoles={[
                   PROJECT_ROLE.PROJECT_LEAD,
                   PROJECT_ROLE.PROJECT_EDITOR,
                   PROJECT_ROLE.PROJECT_VIEWER
-                ]}>
+                ]}
+                fallback={<PublicProjectPlanView />}>
                 <ViewProjectPage />
               </ProjectRoleGuard>
             </ProjectAuthStateContextProvider>
