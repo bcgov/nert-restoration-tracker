@@ -324,8 +324,6 @@ const initializeMap = (
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
-  console.log('region in the initializeMap', region);
-
   map = new Map({
     container: mapId,
     style: '/styles/hybrid.json',
@@ -587,8 +585,6 @@ const initializeMap = (
 
     // Clicking polygons show the thumbnail
     map.on('click', 'markerPolygon', async (e: any) => {
-      console.log('e.features[0]', e.features[0]);
-      console.log('e', e);
       const prop = e.features[0].properties;
       const id = prop.id;
       const name = prop.siteName || '';
@@ -961,8 +957,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const editModeOn = props.editModeOn || false;
 
   const region = props.region || null;
-
-  console.log('region from the map container', region);
 
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
