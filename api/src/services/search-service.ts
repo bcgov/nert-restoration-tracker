@@ -3,6 +3,7 @@ import { getKnex } from '../database/db';
 import { DBService } from './service';
 
 export type ProjectSearchCriteria = {
+  is_public?: boolean;
   keyword?: string;
   project_name?: string;
   status?: string | string[];
@@ -42,7 +43,6 @@ export class SearchService extends DBService {
    * @memberof SearchService
    */
   async findProjectIdsByCriteria(criteria: ProjectSearchCriteria): Promise<{ project_id: number }[]> {
-    console.log('criteria', criteria);
     // track which tables we have joined with already
     const joins: string[] = [];
 
@@ -104,9 +104,17 @@ export class SearchService extends DBService {
         this.or.whereILike('permit.number', `%${criteria.keyword}%`);
         this.or.whereILike('permit.description', `%${criteria.keyword}%`);
 
-        this.or.whereILike('project_contact.first_name', `%${criteria.keyword}%`);
-        this.or.whereILike('project_contact.last_name', `%${criteria.keyword}%`);
-        this.or.whereILike('project_contact.organization', `%${criteria.keyword}%`);
+        this.or.where(function () {
+          this.or.where(function () {
+            this.or.whereILike('project_contact.first_name', `%${criteria.keyword}%`);
+            this.or.whereILike('project_contact.last_name', `%${criteria.keyword}%`);
+            this.or.whereILike('project_contact.organization', `%${criteria.keyword}%`);
+          });
+
+          if (criteria.is_public) {
+            this.and.where('project_contact.is_public', true);
+          }
+        });
 
         this.or.whereILike('partnership_type.name', `%${criteria.keyword}%`);
         this.or.whereILike('partnerships.name', `%${criteria.keyword}%`);
@@ -116,8 +124,16 @@ export class SearchService extends DBService {
 
         this.or.whereILike('objective.objective', `%${criteria.keyword}%`);
 
-        this.or.whereILike('project_funding_source.organization_name', `%${criteria.keyword}%`);
-        this.or.whereILike('project_funding_source.description', `%${criteria.keyword}%`);
+        this.or.where(function () {
+          this.or.where(function () {
+            this.or.whereILike('project_funding_source.organization_name', `%${criteria.keyword}%`);
+            this.or.whereILike('project_funding_source.description', `%${criteria.keyword}%`);
+          });
+
+          if (criteria.is_public) {
+            this.and.where('project_funding_source.is_public', true);
+          }
+        });
 
         this.or.whereILike('conservation_area.conservation_area', `%${criteria.keyword}%`);
       });
@@ -137,6 +153,7 @@ export class SearchService extends DBService {
     if (criteria.region) {
       !joins.includes('nrm_region') &&
         queryBuilder.leftJoin('nrm_region', 'project.project_id', 'nrm_region.project_id');
+
       queryBuilder.and.whereIn(
         'nrm_region.name',
         (Array.isArray(criteria.region) && criteria.region) || [criteria.region]
@@ -193,9 +210,10 @@ export class SearchService extends DBService {
 
     if (criteria.objectives) {
       !joins.includes('objective') && queryBuilder.leftJoin('objective', 'project.project_id', 'objective.project_id');
-      joins.push('objective');
 
       queryBuilder.and.whereILike('objective.objective', `%${criteria.objectives}%`);
+
+      joins.push('objective');
     }
 
     if (criteria.organizations) {
@@ -219,7 +237,18 @@ export class SearchService extends DBService {
         );
 
       queryBuilder.and.where(function () {
-        this.or.whereILike('project_contact.organization', `%${criteria.organizations}%`);
+        this.or.where(function () {
+          this.or.where(function () {
+            this.or.whereILike('project_contact.first_name', `%${criteria.organizations}%`);
+            this.or.whereILike('project_contact.last_name', `%${criteria.organizations}%`);
+            this.or.whereILike('project_contact.organization', `%${criteria.organizations}%`);
+          });
+
+          if (criteria.is_public) {
+            this.and.where('project_contact.is_public', true);
+          }
+        });
+
         this.or.whereILike('partnership_type.name', `%${criteria.organizations}%`);
         this.or.whereILike('project_partnership.name', `%${criteria.organizations}%`);
         this.or.whereILike('partnerships.name', `%${criteria.organizations}%`);
@@ -232,9 +261,18 @@ export class SearchService extends DBService {
     if (criteria.funding_sources) {
       !joins.includes('project_funding_source') &&
         queryBuilder.leftJoin('project_funding_source', 'project.project_id', 'project_funding_source.project_id');
-      joins.push('project_funding_source');
 
-      queryBuilder.and.whereILike('project_funding_source.organization_name', `%${criteria.funding_sources}%`);
+      queryBuilder.and.where(function () {
+        this.or.where(function () {
+          this.or.whereILike('project_funding_source.organization_name', `%${criteria.funding_sources}%`);
+          this.or.whereILike('project_funding_source.description', `%${criteria.funding_sources}%`);
+        });
+        if (criteria.is_public) {
+          this.and.where('project_funding_source.is_public', true);
+        }
+      });
+
+      joins.push('project_funding_source');
     }
 
     if (criteria.ha_from) {
@@ -244,9 +282,10 @@ export class SearchService extends DBService {
           'project.project_id',
           'project_spatial_component.project_id'
         );
-      joins.push('project_spatial_component');
 
       queryBuilder.and.where('project_spatial_component.size_ha', '>=', criteria.ha_from);
+
+      joins.push('project_spatial_component');
     }
 
     if (criteria.ha_to) {
@@ -256,20 +295,21 @@ export class SearchService extends DBService {
           'project.project_id',
           'project_spatial_component.project_id'
         );
-      joins.push('project_spatial_component');
 
       queryBuilder.and.where('project_spatial_component.size_ha', '<=', criteria.ha_to);
+
+      joins.push('project_spatial_component');
     }
 
     if (criteria.authorization) {
       !joins.includes('permit') && queryBuilder.leftJoin('permit', 'project.project_id', 'permit.project_id');
-      joins.push('permit');
 
       queryBuilder.and.whereILike('permit.description', `%${criteria.authorization}%`);
+
+      joins.push('permit');
     }
 
     queryBuilder.groupBy('project.project_id');
-    console.log('queryBuilder', queryBuilder.toSQL());
 
     const response = await this.connection.knex<{ project_id: number }>(queryBuilder);
 

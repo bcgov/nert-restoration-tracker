@@ -564,7 +564,7 @@ export function getProjectsPlansList(): RequestHandler {
       const searchService = new SearchService(connection);
 
       // Fetch all projectIds that match the search criteria
-      const projectIdsResponse = await searchService.findProjectIdsByCriteria(searchCriteria);
+      const projectIdsResponse = await searchService.findProjectIdsByCriteria({ ...searchCriteria, is_public: false });
 
       const projectIds = projectIdsResponse.map((item) => item.project_id);
 

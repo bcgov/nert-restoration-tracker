@@ -349,6 +349,7 @@ export function getPlansList(): RequestHandler {
 
       const projectSearchCriteria: ProjectSearchCriteria = {
         ...searchCriteria,
+        is_public: false,
         keyword: searchCriteria.plan_keyword,
         project_name: searchCriteria.plan_name,
         status: searchCriteria.plan_status,
@@ -361,6 +362,7 @@ export function getPlansList(): RequestHandler {
         ha_from: searchCriteria.plan_ha_from
       };
 
+      console.log('projectSearchCriteria', projectSearchCriteria);
       // Fetch all planIds that match the search criteria
       const planIdsResponse = await searchService.findProjectIdsByCriteria(projectSearchCriteria);
 
