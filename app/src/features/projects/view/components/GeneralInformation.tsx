@@ -33,10 +33,12 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
 
   return (
     <Box data-testid="general_info_component">
-      <Typography variant="body2" component="dt" color="textSecondary">
-        Region:
-      </Typography>
-      {location.region ? getRegionName(location.region) : ''}
+      <Box>
+        <Typography variant="body2" component="dt" color="textSecondary">
+          Region:
+        </Typography>
+        {location.region ? getRegionName(location.region) : ''}
+      </Box>
 
       <Typography variant="body2" component="dt" color="textSecondary">
         Brief Description:
