@@ -76,7 +76,7 @@ const phases = {
     suffix: `-dev-${deployChangeId}`,
     instance: `${name}-dev-${deployChangeId}`,
     version: `${deployChangeId}-${changeId}`,
-    tag: `dev-${version}`,
+    tag: `dev-${version}-${deployChangeId}`,
     host: (isStaticDeployment && staticUrls.dev) || `${name}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     apiHost:
       (isStaticDeployment && staticUrlsAPI.dev) || `${apiName}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
