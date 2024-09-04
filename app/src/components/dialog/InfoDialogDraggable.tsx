@@ -59,9 +59,13 @@ interface IInfoDialogDraggableProps {
 }
 
 function PaperComponent(props: PaperProps) {
+  const nodeRef = React.useRef(null);
   return (
-    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
-      <Paper {...props} />
+    <Draggable
+      nodeRef={nodeRef}
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}>
+      <Paper ref={nodeRef} {...props} />
     </Draggable>
   );
 }
