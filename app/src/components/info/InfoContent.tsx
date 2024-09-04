@@ -553,7 +553,7 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
                     </TableCell>
                   </TableRow>
                   <TableRow hover role="checkbox" tabIndex={-1}>
-                    <TableCell align="left">{focus.LAND_BASED_RESTOTRATION_INITIATIVE}</TableCell>
+                    <TableCell align="left">{focus.LAND_BASED_RESTORATION_INITIATIVE}</TableCell>
                     <TableCell align="left">
                       Plans or activities with a primary focus in repairing / rejuvenating /
                       restoring ecosystems, plant and animal communities and the physical

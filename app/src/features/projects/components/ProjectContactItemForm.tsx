@@ -160,6 +160,7 @@ const ProjectContactItemForm: React.FC = () => {
           errors={errors.is_public}
           values={values.is_public}
           handleChange={(value: string) => setFieldValue('is_public', value)}
+          customizeFor={'Contact'}
         />
       )}
     </form>

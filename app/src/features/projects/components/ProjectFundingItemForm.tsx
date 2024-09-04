@@ -105,6 +105,7 @@ const ProjectFundingItemForm: React.FC = () => {
               errors={errors.is_public}
               values={values.is_public}
               handleChange={(value: string) => setFieldValue('is_public', value)}
+              customizeFor={'Funding'}
             />
           </Grid>
         </Grid>
