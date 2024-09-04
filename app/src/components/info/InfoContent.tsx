@@ -40,13 +40,13 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
         infoContent = (
           <>
             <Typography m={2} p={2}>
-              Project size in Hectares, the size is autocalcutlated by the app when geoJSON files
-              are uploaded. The autocalculation includes all the sites areas excluding any overlap.
+              Project size in Hectares, the size is autocalculated by the app when geoJSON files are
+              uploaded. The autocalculation includes all the sites areas excluding any overlap.
             </Typography>
             <Typography m={2} p={2}>
               Number of sites is the number of sub geographical areas within the project where
               specific restoration activities are, were or will take place. This number is
-              autocalcutlated by the app when geoJSON files are uploaded.
+              autocalculated by the app when geoJSON files are uploaded.
             </Typography>
           </>
         );
@@ -442,13 +442,13 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
         infoContent = (
           <>
             <Typography m={2} p={2}>
-              Plan size in Hectares, the size is autocalcutlated by the app when geoJSON files are
+              Plan size in Hectares, the size is autocalculated by the app when geoJSON files are
               uploaded. The autocalculation includes all the sites areas excluding any overlap.
             </Typography>
             <Typography m={2} p={2}>
               Plan number of sites is the number of sub geographical areas within the plan where
               specific restoration activities are, were or will take place. This number is
-              autocalcutlated by the app when geoJSON files are uploaded.
+              autocalculated by the app when geoJSON files are uploaded.
             </Typography>
           </>
         );
