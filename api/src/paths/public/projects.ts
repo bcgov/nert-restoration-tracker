@@ -297,7 +297,8 @@ GET.apiDoc = {
                             nullable: true
                           },
                           funding_project_id: {
-                            type: 'string'
+                            type: 'string',
+                            nullable: true
                           },
                           funding_amount: {
                             type: 'number'
@@ -389,7 +390,7 @@ GET.apiDoc = {
       $ref: '#/components/responses/401'
     },
     403: {
-      $ref: '#/components/responses/401'
+      $ref: '#/components/responses/403'
     },
     500: {
       $ref: '#/components/responses/500'

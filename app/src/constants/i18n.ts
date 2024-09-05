@@ -30,6 +30,14 @@ export const CreatePlanI18N = {
     'An error has occurred while attempting to create your Plan, please try again. If the error persists, please contact your system administrator.'
 };
 
+export const ViewProjectI18N = {
+  sizeAndSites: 'Size and Number of Sites'
+};
+
+export const ViewPlanI18N = {
+  sizeAndSites: 'Size and Number of Sites'
+};
+
 export const EditProjectI18N = {
   cancelTitle: 'Cancel Edit Project',
   cancelText: 'Are you sure you want to cancel?',

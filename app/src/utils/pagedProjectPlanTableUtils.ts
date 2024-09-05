@@ -297,6 +297,29 @@ export const authStyles = {
   }
 };
 
+export const fundingSrcStyles = {
+  fundChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  noFundChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  fundLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
 export const orgStyles = {
   orgProjectChip: {
     backgroundColor: '#E9FBFF',
