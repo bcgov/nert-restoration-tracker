@@ -300,6 +300,10 @@ const checkFeatureState = (featureState: any) => {
   hoverStateMarkerPolygon = featureState[0] || false;
 };
 
+/**
+ * TODO: Add the following layers
+ * - Parks https://openmaps.gov.bc.ca/geo/pub/WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW/ows?service=WMS&request=GetCapabilities
+ */
 const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
