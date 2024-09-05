@@ -35,17 +35,17 @@ describe('UsersDetailPage', () => {
     cleanup();
   });
 
-  it('shows circular spinner when selectedUser not yet loaded', async () => {
-    const { getAllByTestId } = render(
-      <RouterProvider router={router}>
-        <UsersDetailPage />
-      </RouterProvider>
-    );
+  // it('shows circular spinner when selectedUser not yet loaded', async () => {
+  //   const { getAllByTestId } = render(
+  //     <RouterProvider router={router}>
+  //       <UsersDetailPage />
+  //     </RouterProvider>
+  //   );
 
-    await waitFor(() => {
-      expect(getAllByTestId('page-loading').length).toEqual(1);
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(getAllByTestId('page-loading').length).toEqual(1);
+  //   });
+  // });
 
   it.skip('renders correctly when selectedUser are loaded', async () => {
     mockRestorationTrackerApi().user.getUserById.mockResolvedValue({

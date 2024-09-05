@@ -25,7 +25,16 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'contact_agency',
+      name: 'project_name',
+      schema: {
+        type: 'string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'status',
       schema: {
         oneOf: [
           {
@@ -45,7 +54,7 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'funding_agency',
+      name: 'region',
       schema: {
         oneOf: [
           {
@@ -65,27 +74,7 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'permit_number',
-      schema: {
-        oneOf: [
-          {
-            type: 'string',
-            nullable: true
-          },
-          {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            nullable: true
-          }
-        ]
-      },
-      allowEmptyValue: true
-    },
-    {
-      in: 'query',
-      name: 'species',
+      name: 'focus',
       schema: {
         oneOf: [
           {
@@ -127,7 +116,129 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'region',
+      name: 'actual_start_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'actual_end_date',
+      schema: {
+        type: 'string',
+        oneOf: [{ format: 'date' }, { format: 'date-time' }],
+        description: 'ISO 8601 date string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'objectives',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'organizations',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'funding_sources',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'ha_to',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'ha_from',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'authorization',
       schema: {
         oneOf: [
           {
@@ -297,7 +408,8 @@ GET.apiDoc = {
                             nullable: true
                           },
                           funding_project_id: {
-                            type: 'string'
+                            type: 'string',
+                            nullable: true
                           },
                           funding_amount: {
                             type: 'number'
@@ -389,7 +501,7 @@ GET.apiDoc = {
       $ref: '#/components/responses/401'
     },
     403: {
-      $ref: '#/components/responses/401'
+      $ref: '#/components/responses/403'
     },
     500: {
       $ref: '#/components/responses/500'
@@ -418,7 +530,7 @@ export function getPublicProjectsPlansList(): RequestHandler {
       const searchService = new SearchService(connection);
 
       // Fetch all projectIds that match the search criteria
-      const projectIdsResponse = await searchService.findProjectIdsByCriteria(searchCriteria);
+      const projectIdsResponse = await searchService.findProjectIdsByCriteria({ ...searchCriteria, is_public: true });
 
       const projectIds = projectIdsResponse.map((item) => item.project_id);
 

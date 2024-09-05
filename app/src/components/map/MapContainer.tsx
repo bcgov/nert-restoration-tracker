@@ -5,7 +5,6 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import ReactDomServer from 'react-dom/server';
 import React, { useEffect, useState } from 'react';
 import communities from './layers/communities.json';
-import ne_boundary from './layers/north_east_boundary.json';
 import './mapContainer.css'; // Custom styling
 import MapPopup from './components/Popup';
 import { useNertApi } from 'hooks/useNertApi';
@@ -31,6 +30,7 @@ export interface IMapContainerProps {
   activeFeatureState?: any; // Store which feature is active
   autoFocus?: boolean;
   editModeOn?: boolean; // This activates things like mask drawing
+  region?: string | null; // The region to filter by.. or null for all
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -313,7 +313,8 @@ const initializeMap = (
   bounds?: any,
   autoFocus?: boolean,
   nertApi?: any,
-  editModeOn?: boolean
+  editModeOn?: boolean,
+  region?: string | null
 ) => {
   const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
 
@@ -431,14 +432,18 @@ const initializeMap = (
     });
 
     /* The boundary layer */
-    map.addSource('ne_boundary', {
-      type: 'geojson',
-      data: ne_boundary as FeatureCollection
+    map.addSource('natural_resource_districts', {
+      type: 'vector',
+      tiles: [
+        'https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/{z}/{x}/{y}.pbf'
+      ]
     });
+
     map.addLayer({
-      id: 'ne_boundary',
+      id: 'region_boundary',
       type: 'line',
-      source: 'ne_boundary',
+      source: 'natural_resource_districts',
+      'source-layer': 'WHSE_ADMIN_BOUNDARIES.ADM_NR_REGIONS_SP',
       layout: {
         'line-join': 'round',
         'line-cap': 'round',
@@ -447,7 +452,8 @@ const initializeMap = (
       paint: {
         'line-color': 'white',
         'line-width': 2
-      }
+      },
+      ...(region && { filter: ['all', ['==', 'REGION_NAME', region]] })
     });
 
     /*****************Project/Plans********************/
@@ -579,8 +585,6 @@ const initializeMap = (
 
     // Clicking polygons show the thumbnail
     map.on('click', 'markerPolygon', async (e: any) => {
-      console.log('e.features[0]', e.features[0]);
-      console.log('e', e);
       const prop = e.features[0].properties;
       const id = prop.id;
       const name = prop.siteName || '';
@@ -844,8 +848,8 @@ const checkLayerVisibility = (layers: any, features: any) => {
 
   Object.keys(layers).forEach((layer) => {
     // The boundary layer is simple enough.
-    if (layer === 'boundary' && map.getLayer('ne_boundary')) {
-      map.setLayoutProperty('ne_boundary', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    if (layer === 'boundary' && map.getLayer('region_boundary')) {
+      map.setLayoutProperty('region_boundary', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
 
     // Wells is a group of three different point layers
@@ -952,6 +956,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const editModeOn = props.editModeOn || false;
 
+  const region = props.region || null;
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -1001,9 +1007,10 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       bounds,
       autoFocus,
       nertApi,
-      editModeOn
+      editModeOn,
+      region
     );
-  }, []);
+  }, [region]);
 
   // Listen to layer changes
   useEffect(() => {

@@ -42,12 +42,20 @@ export default function PublicProjects() {
       const urlParams = qs.parse(location.search.replace('?', ''));
       const values = {
         keyword: urlParams.keyword,
-        permit_number: urlParams.permit_number,
+        project_name: urlParams.project_name,
+        status: urlParams.status,
+        region: urlParams.region,
+        focus: urlParams.focus,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
-        region: urlParams.region,
-        status: urlParams.status,
-        focus: urlParams.focus
+        actual_start_date: urlParams.actual_start_date,
+        actual_end_date: urlParams.actual_end_date,
+        objectives: urlParams.objectives,
+        organizations: urlParams.organizations,
+        funding_sources: urlParams.funding_sources,
+        ha_to: urlParams.ha_to,
+        ha_from: urlParams.ha_from,
+        authorization: urlParams.authorization
       } as IProjectAdvancedFilters;
 
       return values;

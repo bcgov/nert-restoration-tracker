@@ -164,6 +164,14 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     setInfoOpen(true);
   };
 
+  // This needs to be passed to the map for filtering the region boundary
+  const region = props.regions.reduce((acc, region) => {
+    if (region.value === values.location.region) {
+      return region.label;
+    }
+    return acc;
+  }, '');
+
   return (
     <>
       <InfoDialogDraggable
@@ -267,6 +275,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             activeFeatureState={[activeFeature, setActiveFeature]}
             autoFocus={true}
             editModeOn={true}
+            region={region}
           />
         </Box>
         {errors?.location?.geometry && (

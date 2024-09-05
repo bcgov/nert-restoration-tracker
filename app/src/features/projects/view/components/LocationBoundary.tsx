@@ -4,6 +4,7 @@ import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import { IGetProjectForViewResponseLocation } from 'interfaces/useProjectApi.interface';
 import React, { useState } from 'react';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
+import { useCodesContext } from 'hooks/useContext';
 
 const pageStyles = {
   mapContainer: {
@@ -50,6 +51,15 @@ export interface ILocationBoundaryProps {
 const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const { locationData } = props;
 
+  const codes = useCodesContext().codesDataLoader.data;
+
+  const region = codes?.regions.reduce((acc, region) => {
+    if (region.id === locationData.region) {
+      acc = region.name;
+    }
+    return acc;
+  }, '');
+
   if (!locationData || !locationData.geometry) {
     return null;
   }
@@ -91,6 +101,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
         features={locationData.geometry}
         bounds={bounds}
         layerVisibility={layerVisibility}
+        region={region}
       />
       <Box sx={pageStyles.layerSwitcherContainer}>
         <LayerSwitcher layerVisibility={layerVisibility} open={false} hideProjects={true} />
