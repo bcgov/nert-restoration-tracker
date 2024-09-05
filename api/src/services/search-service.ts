@@ -112,7 +112,7 @@ export class SearchService extends DBService {
           });
 
           if (criteria.is_public) {
-            this.and.where('project_contact.is_public', true);
+            this.and.where('project_contact.is_public', 'Y');
           }
         });
 
@@ -245,7 +245,7 @@ export class SearchService extends DBService {
           });
 
           if (criteria.is_public) {
-            this.and.where('project_contact.is_public', true);
+            this.and.where('project_contact.is_public', 'Y');
           }
         });
 
