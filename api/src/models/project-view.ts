@@ -203,10 +203,11 @@ export class GetFundingData {
             organization_name: item.organization_name,
             description: item.description,
             funding_project_id: item.funding_project_id,
-            funding_amount: Number(item.funding_amount),
+            // When funding amount -1 that means it is not for public view
+            funding_amount: item.funding_amount ? Number(item.funding_amount) : -1,
             start_date: item.start_date,
             end_date: item.end_date,
-            is_public: item.is_public === 'Y' ? 'true' : 'false'
+            is_public: item.is_public
           };
         })) ||
       [];

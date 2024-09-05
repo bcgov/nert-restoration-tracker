@@ -28,16 +28,6 @@ const pageStyles = {
     justifyContent: 'left'
   },
   projectMetadata: {
-    '& dl, ul': {
-      marginTop: '0.5rem',
-      marginBottom: 0,
-      borderTop: '1px solid #dddddd'
-    },
-    '& dl div, li': {
-      paddingTop: '0.5rem',
-      paddingBottom: '0.5rem',
-      borderBottom: '1px solid #dddddd'
-    },
     '& dd, dt': {
       display: 'inline-block',
       verticalAlign: 'top'
@@ -55,9 +45,6 @@ const pageStyles = {
       listStyleType: 'none',
       '& dl': {
         marginTop: 0
-      },
-      '& dl div:last-child': {
-        borderBottom: 'none'
       }
     }
   }

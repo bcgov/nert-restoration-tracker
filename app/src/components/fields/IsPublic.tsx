@@ -11,25 +11,29 @@ export interface IIsPublicProps {
   touched?: boolean;
   errors?: string;
   values: string;
+  customizeFor: string;
   handleChange: (value: string) => void;
 }
 
 /*
- * A modal form for a single project contact.
+ * A modal form for a single project contact or single project funding source.
  *
  * @See ProjectContactForm.tsx
+ * @See ProjectFundingItemForm.tsx
  *
  * @return {*}
  */
 const IsPublic: React.FC<IIsPublicProps> = (props) => {
-  const { values, touched, errors, handleChange } = props;
+  const { values, touched, errors, customizeFor, handleChange } = props;
 
   return (
     <Box mt={4}>
       <FormControl required={true} component="fieldset" error={touched && Boolean(errors)}>
         <Typography color="textSecondary">
-          If you are a First Nation or an Indigenous Governing Body, you can hide the contact
-          details information from the public. Do you wish to hide these details from the public?
+          {'Contact' === customizeFor &&
+            'If you are a First Nation or an Indigenous Governing Body, you can hide the contact details information from the public. Do you wish to hide these details from the public?'}
+          {'Funding' === customizeFor &&
+            'If you are a First Nation or an Indigenous Governing Body, you can hide the project funding amount from the public. Do you wish to hide this detail from the public?'}
         </Typography>
         <Box mt={2} pl={1}>
           <RadioGroup
