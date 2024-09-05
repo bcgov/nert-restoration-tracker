@@ -90,3 +90,89 @@ describe("Home Page", () => {
     });
   });
 });
+
+describe("Project List Page", () => {
+  it("renders the page and Title", () => {
+    cy.visit("localhost:7100/projects");
+
+    const title = cy.get("h1").should("exist");
+    title.should("include.text", "Projects");
+  });
+
+  it("renders the project list", () => {
+    cy.visit("localhost:7100/projects");
+
+    const projectList = cy.get('[data-testid="project_list"]').should("exist");
+    projectList.should("have.length", 1);
+
+    const dropdown = cy
+      .get('[data-testid="hide-projects-list-button"]')
+      .should("exist");
+    dropdown.click();
+
+    const project = cy.get('[data-testid="project_1"]').should("exist");
+    project.should("have.length", 1);
+  });
+
+  it("renders the project details page on project click", () => {
+    cy.visit("localhost:7100/projects");
+
+    const projectList = cy.get('[data-testid="project_list"]').should("exist");
+    projectList.should("have.length", 1);
+
+    const dropdown = cy
+      .get('[data-testid="hide-projects-list-button"]')
+      .should("exist");
+    dropdown.click();
+
+    const project = cy.get('[data-testid="project_1"]').should("exist");
+    project.should("have.length", 1);
+
+    project.click();
+
+    cy.location("pathname").should("include", "/projects/");
+  });
+});
+
+describe("Plan List Page", () => {
+  it("renders the page and Title", () => {
+    cy.visit("localhost:7100/plans");
+
+    const title = cy.get("h1").should("exist");
+    title.should("include.text", "Plans");
+  });
+
+  it("renders the plan list", () => {
+    cy.visit("localhost:7100/plans");
+
+    const planList = cy.get('[data-testid="plan_list"]').should("exist");
+    planList.should("have.length", 1);
+
+    const dropdown = cy
+      .get('[data-testid="hide-plans-list-button"]')
+      .should("exist");
+    dropdown.click();
+
+    const plan = cy.get('[data-testid="plan_1"]').should("exist");
+    plan.should("have.length", 1);
+  });
+
+  it("renders the plan details page on plan click", () => {
+    cy.visit("localhost:7100/plans");
+
+    const planList = cy.get('[data-testid="plan_list"]').should("exist");
+    planList.should("have.length", 1);
+
+    const dropdown = cy
+      .get('[data-testid="hide-plans-list-button"]')
+      .should("exist");
+    dropdown.click();
+
+    const plan = cy.get('[data-testid="plan_1"]').should("exist");
+    plan.should("have.length", 1);
+
+    plan.click();
+
+    cy.location("pathname").should("include", "/plans/");
+  });
+});

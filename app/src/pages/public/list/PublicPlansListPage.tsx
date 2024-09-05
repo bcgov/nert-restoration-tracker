@@ -315,7 +315,8 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}>
+            size={dense ? 'small' : 'medium'}
+            data-testid={'plan_list'}>
             <PlansTableHead
               numSelected={selected.length}
               order={order}
@@ -340,7 +341,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                     sx={{ cursor: 'pointer' }}>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       <Link
-                        data-testid={row.planName}
+                        data-testid={`plan_${row.id}`}
                         underline="always"
                         component="button"
                         sx={{ textAlign: 'left' }}
