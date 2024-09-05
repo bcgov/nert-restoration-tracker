@@ -61,33 +61,45 @@ const pageStyles = {
 };
 
 export const PlanAdvancedFiltersInitialValues: IPlanAdvancedFilters = {
-  keyword: '',
-  permit_number: '',
-  start_date: '',
-  end_date: '',
-  region: '',
-  status: '',
-  focus: ''
+  plan_keyword: '',
+  plan_name: '',
+  plan_status: [],
+  plan_region: [],
+  plan_focus: [],
+  plan_start_date: '',
+  plan_end_date: '',
+  plan_organizations: '',
+  plan_ha_to: '',
+  plan_ha_from: ''
 };
 
 export interface IPlanAdvancedFilters {
-  keyword?: string;
-  permit_number?: string;
-  start_date?: string;
-  end_date?: string;
-  region?: string | string[];
-  status?: string | string[];
-  focus?: string | string[];
+  [key: string]: string | string[] | undefined;
+  plan_keyword?: string;
+  plan_name?: string;
+  plan_status?: string | string[];
+  plan_region?: string | string[];
+  plan_focus?: string | string[];
+  plan_start_date?: string;
+  plan_end_date?: string;
+  plan_organizations?: string;
+  plan_ha_to?: string;
+  plan_ha_from?: string;
 }
 
-export const PlanAdvancedFiltersKeyLabels = {
-  keyword: { label: 'Keyword' },
-  permit_number: { label: 'Permit Number' },
-  start_date: { label: 'Start Date' },
-  end_date: { label: 'End Date' },
-  region: { label: 'Region', codeSet: 'region' },
-  status: { label: 'Status', codeSet: 'status' },
-  focus: { label: 'Focus', codeSet: 'focus' }
+export const PlanAdvancedFiltersKeyLabels: {
+  [key: string]: { label: string; codeSet?: string };
+} = {
+  plan_keyword: { label: 'Keyword' },
+  plan_name: { label: 'Plan Name' },
+  plan_status: { label: 'Status', codeSet: 'status' },
+  plan_region: { label: 'Region', codeSet: 'region' },
+  plan_focus: { label: 'Focus', codeSet: 'focus' },
+  plan_start_date: { label: 'Start Date' },
+  plan_end_date: { label: 'End Date' },
+  plan_organizations: { label: 'Organization' },
+  plan_ha_to: { label: 'Area To' },
+  plan_ha_from: { label: 'Area From' }
 };
 
 export interface IPlanAdvancedFiltersProps {
@@ -95,6 +107,7 @@ export interface IPlanAdvancedFiltersProps {
   region: IMultiAutocompleteFieldOption[];
   status: IMultiAutocompleteFieldOption[];
   focus: IMultiAutocompleteFieldOption[];
+  [key: string]: any; // Add index signature
 }
 
 /**
@@ -114,7 +127,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
   const handleDelete = (key: string, value: string | number) => {
     if (Array.isArray(values[key]) && values[key].length !== 1) {
       //check if chip is part of an array and deletes single array item if true
-      const index = values[key].indexOf(value);
+      const index = values[key].indexOf(String(value));
       values[key].splice(index, 1);
     } else {
       values[key] = PlanAdvancedFiltersInitialValues[key];
@@ -225,7 +238,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
               <Input
                 tabIndex={0}
                 sx={pageStyles.keywordSearch}
-                name="keyword"
+                name="plan_keyword"
                 fullWidth
                 startAdornment={
                   <InputAdornment position="start">
@@ -275,7 +288,8 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   <Typography variant="h4">Filters </Typography>
                 </Grid>
                 {Object.entries(filterChipParams).map(
-                  ([key, value]) => isFilterValueNotEmpty(value) && getFilterChips(key, value)
+                  ([key, value]) =>
+                    isFilterValueNotEmpty(value) && getFilterChips(key, value as string)
                 )}
                 <Grid item>
                   <Chip label={'Clear all'} onClick={handleFilterReset} />
