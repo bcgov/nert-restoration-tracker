@@ -297,7 +297,8 @@ GET.apiDoc = {
                             nullable: true
                           },
                           funding_project_id: {
-                            type: 'string'
+                            type: 'string',
+                            nullable: true
                           },
                           funding_amount: {
                             type: 'number'
