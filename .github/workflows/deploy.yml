@@ -530,7 +530,7 @@ jobs:
           wait-on-timeout: 120
           record: true
           working-directory: testing/e2e
-          spec: cypress/integration/smoke*.spec.ts
+          spec: cypress/e2e/*.cy.ts
           browser: chrome
           ci-build-id: ${{ github.event.number }}
 

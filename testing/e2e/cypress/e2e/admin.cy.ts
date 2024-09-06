@@ -29,11 +29,13 @@ describe("Home Page", () => {
     cy.visit("localhost:7100");
 
     const button = cy
-      .get('[data-testid="all_project_plan_toolbar"]')
-      .should("exist");
-    button.click();
+    .get('[data-testid="all_project_plan_navbar"]')
+    .should("exist");
+  button.click();
 
-    const title = cy.get("h1").should("exist");
-    title.should("include.text", "Projects");
+  const title = cy.get("h1").should("exist");
+  title.should("include.text", "Projects");
+
+  cy.location("pathname").should("eq", "/projects");
   });
 });
