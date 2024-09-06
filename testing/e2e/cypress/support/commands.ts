@@ -26,24 +26,54 @@
 
 // import "cypress-keycloak";
 
-// Hydrate baseUrl from the environment variables
-Cypress.config("baseUrl", Cypress.env("CYPRESS_BASE_URL"));
-
 // Cypress.Commands.overwrite("login", (originalFn) => {
-//   originalFn({
-//     root: Cypress.env("authUrl"),
-//     realm: Cypress.env("authRealm"),
-//     username: Cypress.env("username"),
-//     password: Cypress.env("password"),
-//     client_id: Cypress.env("authClientId"),
-//     redirect_uri: Cypress.env("redirectUri"),
+//     originalFn({
+//       root: Cypress.env("authUrl"),
+//       realm: Cypress.env("authRealm"),
+//       username: Cypress.env("username"),
+//       password: Cypress.env("password"),
+//       client_id: Cypress.env("authClientId"),
+//       redirect_uri: Cypress.env("redirectUri"),
+//     });
 //   });
-// });
 
-// Cypress.Commands.overwrite("logout", (originalFn) => {
-//   originalFn({
-//     root: Cypress.env("logoutUrl"),
-//     realm: Cypress.env("authRealm"),
-//     post_logout_redirect_uri: Cypress.env("redirectUri"),
+//   Cypress.Commands.overwrite("logout", (originalFn) => {
+//     originalFn({
+//       root: Cypress.env("logoutUrl"),
+//       realm: Cypress.env("authRealm"),
+//       post_logout_redirect_uri: Cypress.env("redirectUri"),
+//     });
 //   });
-// });
+
+// Hydrate baseUrl from the environment variables
+Cypress.config("baseUrl", Cypress.env("BASE_URL"));
+
+Cypress.Commands.add("stubAuth", () => {
+  cy.stub();
+});
+
+Cypress.Commands.add("stubToken", () => {
+  cy.intercept(
+    "POST",
+    "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/token",
+    {
+      fixtures: "auth/token.env.json",
+    }
+  );
+});
+
+Cypress.Commands.add("stubUserInfo", () => {
+  cy.intercept(
+    "GET",
+    "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/userinfo",
+    {
+      fixtures: "auth/userinfo.env.json",
+    }
+  );
+});
+
+Cypress.Commands.add("stubSelf", () => {
+  cy.intercept("GET", "/api/user/self", {
+    fixtures: "auth/self.env.json",
+  });
+});

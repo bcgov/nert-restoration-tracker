@@ -1,5 +1,12 @@
 describe("Home Page", () => {
-  beforeEach(() => {});
+  beforeEach(() => {
+    cy.clearLocalStorage();
+    cy.clearCookies();
+    
+    cy.stubToken();
+    cy.stubUserInfo();
+    cy.stubSelf();
+  });
 
   it("renders the home page", () => {
     cy.visit("/");
