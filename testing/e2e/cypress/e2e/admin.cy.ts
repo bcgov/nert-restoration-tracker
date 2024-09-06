@@ -1,8 +1,6 @@
 describe("Home Page", () => {
-  console.log("Cypress.env.baseUrl", Cypress.env("BASE_URL"));
-  console.log("Cypress.env", JSON.stringify(Cypress.env()));
   before(() => {
-    cy.visit(Cypress.env("BASE_URL"));
+    cy.visit("/");
 
     const button = cy.get('[data-testid="menu_log_in"]').should("exist");
     button.click();
