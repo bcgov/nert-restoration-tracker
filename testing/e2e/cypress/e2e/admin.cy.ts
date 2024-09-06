@@ -1,4 +1,6 @@
 describe("Home Page", () => {
+  console.log("Cypress.env.baseUrl", Cypress.env("BASE_URL"));
+  console.log("Cypress.env", JSON.stringify(Cypress.env()));
   before(() => {
     cy.login();
   });
