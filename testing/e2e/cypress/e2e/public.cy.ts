@@ -1,6 +1,6 @@
 describe("Home Page", () => {
   it("renders the page and Title", () => {
-    cy.visit("localhost:7100");
+    cy.visit("/");
 
     const title = cy.get('[data-testid="title"]').should("exist");
     title.should("include.text", "NERT Restoration Tracker");
@@ -8,7 +8,7 @@ describe("Home Page", () => {
 
   describe("Header", () => {
     it("renders project list page on nav click", () => {
-      cy.visit("localhost:7100");
+      cy.visit("/");
 
       const button = cy
         .get('[data-testid="all_project_plan_navbar"]')
@@ -22,7 +22,7 @@ describe("Home Page", () => {
     });
 
     it("renders map page on nav click", () => {
-      cy.visit("localhost:7100");
+      cy.visit("/");
 
       const button = cy.get('[data-testid="map_navbar"]').should("exist");
       button.click();
@@ -31,7 +31,7 @@ describe("Home Page", () => {
     });
 
     it("renders ? button on header", () => {
-      cy.visit("localhost:7100");
+      cy.visit("/");
 
       const button = cy.get('[data-testid="help_navbar"]').should("exist");
       button.click();
@@ -54,7 +54,7 @@ describe("Home Page", () => {
 
   describe("Footer", () => {
     it("renders the footer", () => {
-      cy.visit("localhost:7100");
+      cy.visit("/");
 
       const footer = cy.get('[data-testid="footer"]').should("exist");
       footer.should("include.text", "Disclaimer");
@@ -64,7 +64,7 @@ describe("Home Page", () => {
     });
 
     it("renders footer links", () => {
-      cy.visit("localhost:7100");
+      cy.visit("/");
 
       const disclaimer = cy
         .get('a[href="https://www2.gov.bc.ca/gov/content/home/disclaimer"]')
@@ -93,14 +93,14 @@ describe("Home Page", () => {
 
 describe("Project List Page", () => {
   it("renders the page and Title", () => {
-    cy.visit("localhost:7100/projects");
+    cy.visit("projects");
 
     const title = cy.get("h1").should("exist");
     title.should("include.text", "Projects");
   });
 
   it("renders the project list", () => {
-    cy.visit("localhost:7100/projects");
+    cy.visit("projects");
 
     const projectList = cy.get('[data-testid="project_list"]').should("exist");
     projectList.should("have.length", 1);
@@ -115,7 +115,7 @@ describe("Project List Page", () => {
   });
 
   it("renders the project details page on project click", () => {
-    cy.visit("localhost:7100/projects");
+    cy.visit("projects");
 
     const projectList = cy.get('[data-testid="project_list"]').should("exist");
     projectList.should("have.length", 1);
@@ -136,14 +136,14 @@ describe("Project List Page", () => {
 
 describe("Plan List Page", () => {
   it("renders the page and Title", () => {
-    cy.visit("localhost:7100/plans");
+    cy.visit("plans");
 
     const title = cy.get("h1").should("exist");
     title.should("include.text", "Plans");
   });
 
   it("renders the plan list", () => {
-    cy.visit("localhost:7100/plans");
+    cy.visit("plans");
 
     const planList = cy.get('[data-testid="plan_list"]').should("exist");
     planList.should("have.length", 1);
@@ -158,7 +158,7 @@ describe("Plan List Page", () => {
   });
 
   it("renders the plan details page on plan click", () => {
-    cy.visit("localhost:7100/plans");
+    cy.visit("plans");
 
     const planList = cy.get('[data-testid="plan_list"]').should("exist");
     planList.should("have.length", 1);

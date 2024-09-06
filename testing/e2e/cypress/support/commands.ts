@@ -24,23 +24,26 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import "cypress-keycloak";
+// import "cypress-keycloak";
 
-Cypress.Commands.overwrite("login", (originalFn) => {
-  originalFn({
-    root: Cypress.env("authUrl"),
-    realm: Cypress.env("authRealm"),
-    username: Cypress.env("username"),
-    password: Cypress.env("password"),
-    client_id: Cypress.env("authClientId"),
-    redirect_uri: Cypress.env("redirectUri"),
-  });
-});
+// Hydrate baseUrl from the environment variables
+Cypress.config("baseUrl", Cypress.env("CYPRESS_BASE_URL"));
 
-Cypress.Commands.overwrite("logout", (originalFn) => {
-  originalFn({
-    root: Cypress.env("logoutUrl"),
-    realm: Cypress.env("authRealm"),
-    post_logout_redirect_uri: Cypress.env("redirectUri"),
-  });
-});
+// Cypress.Commands.overwrite("login", (originalFn) => {
+//   originalFn({
+//     root: Cypress.env("authUrl"),
+//     realm: Cypress.env("authRealm"),
+//     username: Cypress.env("username"),
+//     password: Cypress.env("password"),
+//     client_id: Cypress.env("authClientId"),
+//     redirect_uri: Cypress.env("redirectUri"),
+//   });
+// });
+
+// Cypress.Commands.overwrite("logout", (originalFn) => {
+//   originalFn({
+//     root: Cypress.env("logoutUrl"),
+//     realm: Cypress.env("authRealm"),
+//     post_logout_redirect_uri: Cypress.env("redirectUri"),
+//   });
+// });
