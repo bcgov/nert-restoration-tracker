@@ -25,21 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // import "cypress-keycloak";
-import "cypress-localstorage-commands";
-
-Cypress.Commands.add("login", () => {
-  cy.visit("/");
-
-  const button = cy.get('[data-testid="menu_log_in"]').should("exist");
-  button.click();
-
-  cy.get('[id="social-bceidbasic"]').click();
-
-  cy.get('[id="user"]').type(Cypress.env("username"));
-  cy.get('[id="password"]').type(Cypress.env("password"));
-
-  cy.get('[type="submit"]').click();
-});
+// import "cypress-localstorage-commands";
 
 //   Cypress.Commands.overwrite("logout", (originalFn: any) => {
 //     originalFn({
@@ -52,32 +38,32 @@ Cypress.Commands.add("login", () => {
 // Hydrate baseUrl from the environment variables
 Cypress.config("baseUrl", Cypress.env("BASE_URL"));
 
-Cypress.Commands.add("stubAuth", () => {
-  cy.stub();
-});
+// Cypress.Commands.add("stubAuth", () => {
+//   cy.stub();
+// });
 
-Cypress.Commands.add("stubToken", () => {
-  cy.intercept(
-    "POST",
-    "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/token",
-    {
-      fixtures: "auth/token.env.json",
-    }
-  );
-});
+// Cypress.Commands.add("stubToken", () => {
+//   cy.intercept(
+//     "POST",
+//     "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/token",
+//     {
+//       fixtures: "auth/token.env.json",
+//     }
+//   );
+// });
 
-Cypress.Commands.add("stubUserInfo", () => {
-  cy.intercept(
-    "GET",
-    "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/userinfo",
-    {
-      fixtures: "auth/userinfo.env.json",
-    }
-  );
-});
+// Cypress.Commands.add("stubUserInfo", () => {
+//   cy.intercept(
+//     "GET",
+//     "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/userinfo",
+//     {
+//       fixtures: "auth/userinfo.env.json",
+//     }
+//   );
+// });
 
-Cypress.Commands.add("stubSelf", () => {
-  cy.intercept("GET", "/api/user/self", {
-    fixtures: "auth/self.env.json",
-  });
-});
+// Cypress.Commands.add("stubSelf", () => {
+//   cy.intercept("GET", "/api/user/self", {
+//     fixtures: "auth/self.env.json",
+//   });
+// });

@@ -2,7 +2,17 @@ describe("Home Page", () => {
   console.log("Cypress.env.baseUrl", Cypress.env("BASE_URL"));
   console.log("Cypress.env", JSON.stringify(Cypress.env()));
   before(() => {
-    cy.login();
+    cy.visit(Cypress.env("BASE_URL"));
+
+    const button = cy.get('[data-testid="menu_log_in"]').should("exist");
+    button.click();
+
+    cy.get('[id="social-bceidbasic"]').click();
+
+    cy.get('[id="user"]').type(Cypress.env("username"));
+    cy.get('[id="password"]').type(Cypress.env("password"));
+
+    cy.get('[type="submit"]').click();
   });
 
   it("renders the home page", () => {
