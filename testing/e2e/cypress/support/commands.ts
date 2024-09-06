@@ -36,7 +36,7 @@
 //   });
 
 // Hydrate baseUrl from the environment variables
-Cypress.config("baseUrl", Cypress.env("BASE_URL"));
+// Cypress.config("baseUrl", Cypress.env("baseUrl"));
 
 // Cypress.Commands.add("stubAuth", () => {
 //   cy.stub();
