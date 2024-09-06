@@ -501,8 +501,8 @@ jobs:
     steps:
       # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v4
+
       - name: Wait for API response
         uses: nev7n/wait_for_response@v1.0.1
         with:
@@ -541,7 +541,7 @@ jobs:
           # record: true
           working-directory: testing/e2e
           spec: cypress/e2e/*.cy.ts
-          browser: chrome
+          browser: electron
           ci-build-id: ${{ github.event.number }}
 
       
