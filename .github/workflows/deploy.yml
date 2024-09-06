@@ -480,19 +480,9 @@ jobs:
           DEBUG=* npm run deploy -- --pr=$PR_NUMBER --env=dev
 
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on:  ubuntu-22.04
     timeout-minutes: 20
     if: ${{ github.event.pull_request.merged == false && github.event.pull_request.draft == false && github.base_ref != 'prod' }}
-    env:
-      CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
-      CYPRESS_username: ${{ secrets.CYPRESS_USER_NAME }}
-      CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
-      CYPRESS_BASE_URL: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
-      CYPRESS_host: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
-      CYPRESS_ENVIRONMENT: ${{ github.base_ref }}
-      CYPRESS_authRealm: 'standard'
-      CYPRESS_authClientId: 'nert-public-5352'
-      CYPRESS_authUrl: 'https://dev.loginproxy.gov.bc.ca'
     needs:
       - deployDatabase
       - deployDatabaseSetup
@@ -519,6 +509,30 @@ jobs:
           timeout: 120000
           interval: 500
 
+      - name: E2E Smoke tests
+        uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
+          CYPRESS_username: ${{ secrets.CYPRESS_USER_NAME }}
+          CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
+          CYPRESS_BASE_URL: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
+          CYPRESS_host: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
+          CYPRESS_ENVIRONMENT: ${{ github.base_ref }}
+          CYPRESS_authRealm: 'standard'
+          CYPRESS_authClientId: 'nert-public-5352'
+          CYPRESS_authUrl: 'https://dev.loginproxy.gov.bc.ca'
+        # let's give this action an ID so we can refer
+        # to its output values later
+        id: e2e
+        # continue-on-error: false
+        with:
+          wait-on: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
+          wait-on-timeout: 120
+          # record: true
+          working-directory: testing/e2e
+          spec: cypress/e2e/*.cy.ts
+          ci-build-id: ${{ github.event.number }}
+
       - name: Print Env Vars
         run: |
           echo Git Base Ref: ${{ github.base_ref }}
@@ -528,20 +542,5 @@ jobs:
           echo $CYPRESS_authRealm
           echo $CYPRESS_authClientId
           echo $CYPRESS_authUrl
-
-      - name: E2E Smoke tests
-        uses: cypress-io/github-action@v6
-        # let's give this action an ID so we can refer
-        # to its output values later
-        id: smoke
-        continue-on-error: false
-        with:
-          wait-on: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
-          wait-on-timeout: 120
-          # record: true
-          working-directory: testing/e2e
-          spec: cypress/e2e/*.cy.ts
-          browser: electron
-          ci-build-id: ${{ github.event.number }}
 
       
