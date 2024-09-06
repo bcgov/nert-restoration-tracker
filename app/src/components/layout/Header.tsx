@@ -321,7 +321,10 @@ const Header: React.FC = () => {
                   </AuthGuard>
                 </>
               }>
-              <Link to="/admin/projects" id="menu_projects">
+              <Link
+                to="/admin/projects"
+                id="menu_projects"
+                data-testid={'admin_project_plan_navbar'}>
                 All Projects/All Plans
               </Link>
               <Link to="/admin/user/projects" id="menu_user_projects">

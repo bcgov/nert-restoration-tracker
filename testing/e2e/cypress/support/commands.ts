@@ -25,19 +25,23 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // import "cypress-keycloak";
+import "cypress-localstorage-commands";
 
-// Cypress.Commands.overwrite("login", (originalFn) => {
-//     originalFn({
-//       root: Cypress.env("authUrl"),
-//       realm: Cypress.env("authRealm"),
-//       username: Cypress.env("username"),
-//       password: Cypress.env("password"),
-//       client_id: Cypress.env("authClientId"),
-//       redirect_uri: Cypress.env("redirectUri"),
-//     });
-//   });
+Cypress.Commands.add("login", () => {
+  cy.visit("/");
 
-//   Cypress.Commands.overwrite("logout", (originalFn) => {
+  const button = cy.get('[data-testid="menu_log_in"]').should("exist");
+  button.click();
+
+  cy.get('[id="social-bceidbasic"]').click();
+
+  cy.get('[id="user"]').type(Cypress.env("username"));
+  cy.get('[id="password"]').type(Cypress.env("password"));
+
+  cy.get('[type="submit"]').click();
+});
+
+//   Cypress.Commands.overwrite("logout", (originalFn: any) => {
 //     originalFn({
 //       root: Cypress.env("logoutUrl"),
 //       realm: Cypress.env("authRealm"),

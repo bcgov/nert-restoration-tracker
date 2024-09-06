@@ -1,31 +1,22 @@
 describe("Home Page", () => {
-  beforeEach(() => {
-    cy.clearLocalStorage();
-    cy.clearCookies();
-    
-    cy.stubToken();
-    cy.stubUserInfo();
-    cy.stubSelf();
+  before(() => {
+    cy.login();
   });
 
   it("renders the home page", () => {
-    cy.visit("/");
+    // cy.visit("/");
 
     const title = cy.get('[data-testid="title"]').should("exist");
     title.should("include.text", "NERT Restoration Tracker");
-  });
-
-  it("renders project list page on click", () => {
-    cy.visit("/");
 
     const button = cy
-      .get('[data-testid="all_project_plan_navbar"]')
+      .get('[data-testid="admin_project_plan_navbar"]')
       .should("exist");
     button.click();
 
-    const title = cy.get("h1").should("exist");
-    title.should("include.text", "Projects");
+    const title1 = cy.get("h1").should("exist");
+    title1.should("include.text", "Projects");
 
-    cy.location("pathname").should("eq", "/projects");
+    cy.location("pathname").should("eq", "/admin/projects");
   });
 });

@@ -15,5 +15,8 @@
     "cypress": "^13.14.0",
     "cypress-keycloak": "^2.0.2",
     "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "cypress-localstorage-commands": "^2.2.6"
   }
 }
