@@ -1,0 +1,12 @@
+{
+  "_comment": "This is an example of a token response from the OIDC server",
+  "access_token": "",
+  "expires_in": 300,
+  "refresh_expires_in": 1800,
+  "refresh_token": "",
+  "token_type": "Bearer",
+  "id_token": "",
+  "not-before-policy": 0,
+  "session_state": "",
+  "scope": "openid idir bceidbusiness email profile bceidbasic"
+}

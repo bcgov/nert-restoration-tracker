@@ -1,19 +1,17 @@
 describe("Home Page", () => {
   beforeEach(() => {
+    cy.logout({
+      root: Cypress.env("logoutUrl"),
+      realm: Cypress.env("authRealm"),
+      redirect_uri: Cypress.env("redirectUri"),
+    });
+
     cy.login({
       root: Cypress.env("authUrl"),
       realm: Cypress.env("authRealm"),
       username: Cypress.env("username"),
       password: Cypress.env("password"),
       client_id: Cypress.env("authClientId"),
-      redirect_uri: Cypress.env("redirectUri"),
-    });
-  });
-
-  afterEach(() => {
-    cy.logout({
-      root: Cypress.env("logoutUrl"),
-      realm: Cypress.env("authRealm"),
       redirect_uri: Cypress.env("redirectUri"),
     });
   });
@@ -29,13 +27,13 @@ describe("Home Page", () => {
     cy.visit("localhost:7100");
 
     const button = cy
-    .get('[data-testid="all_project_plan_navbar"]')
-    .should("exist");
-  button.click();
+      .get('[data-testid="all_project_plan_navbar"]')
+      .should("exist");
+    button.click();
 
-  const title = cy.get("h1").should("exist");
-  title.should("include.text", "Projects");
+    const title = cy.get("h1").should("exist");
+    title.should("include.text", "Projects");
 
-  cy.location("pathname").should("eq", "/projects");
+    cy.location("pathname").should("eq", "/projects");
   });
 });

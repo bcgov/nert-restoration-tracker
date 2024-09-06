@@ -528,7 +528,7 @@ jobs:
         with:
           wait-on: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
           wait-on-timeout: 120
-          record: true
+          # record: true
           working-directory: testing/e2e
           spec: cypress/e2e/*.cy.ts
           browser: chrome
