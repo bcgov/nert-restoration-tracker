@@ -31,6 +31,7 @@ export interface IMapContainerProps {
   autoFocus?: boolean;
   editModeOn?: boolean; // This activates things like mask drawing
   region?: string | null; // The region to filter by.. or null for all
+  children?: React.ReactNode;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -948,7 +949,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, features, centroids, layerVisibility } = props;
+  const { mapId, center, zoom, features, centroids, layerVisibility, children } = props;
 
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
@@ -1043,6 +1044,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
         style={{ left: tooltipX, top: tooltipY }}>
         {tooltip}
       </div>
+      {children}
     </div>
   );
 };

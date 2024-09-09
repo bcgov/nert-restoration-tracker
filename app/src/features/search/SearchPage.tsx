@@ -2,8 +2,9 @@ import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
 import LayerSwitcher from 'components/map/components/LayerSwitcher';
+import LayerSwitcherInline from 'components/map/components/LayerSwitcherInline';
 import MapContainer from 'components/map/MapContainer';
-import SideBar, {ISideBarProps} from 'components/map/components/SideBar';
+import SideBar from 'components/map/components/SideBar';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
@@ -83,8 +84,11 @@ const SearchPage: React.FC = () => {
     }
   }, [performSearch, getSearchResults]);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // setTimeout(() => {
+  //   setSidebarOpen(false);
+  // },3000);
 
   /**
    * Reactive state to share between the layer picker and the map
@@ -111,15 +115,18 @@ const SearchPage: React.FC = () => {
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Box sx={{ height: '100%'}}>
-      <SideBar sidebarOpen={sidebarOpen}/>
+    <Box sx={{ height: '100%', position: 'relative'}}>
       <MapContainer
         mapId="search_boundary_map"
         features={geometries}
         layerVisibility={layerVisibility}
         // bounds={projectBoundary}
         centroids={true}
-      />
+      >
+        <SideBar sidebarOpen={sidebarOpen}>
+          <LayerSwitcherInline layerVisibility={layerVisibility} />
+        </SideBar>
+      </MapContainer>
       <LayerSwitcher layerVisibility={layerVisibility} open={true} />
     </Box>
   );
