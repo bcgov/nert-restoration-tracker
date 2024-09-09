@@ -126,7 +126,9 @@ const Header: React.FC = () => {
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
   const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  console.log('***verString', mmm);
   const nert_version = mmm ?? '0.0.0.NA';
+  console.log('***nert_version', nert_version);
   const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
   const authStateContext = useAuthStateContext();

@@ -1,6 +1,7 @@
 import Container from '@mui/material/Container';
 import MyPlans from 'features/user/MyPlans';
 import MyProjects from 'features/user/MyProjects';
+import { SYSTEM_ROLE } from 'constants/roles';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import { useNertApi } from 'hooks/useNertApi';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
@@ -16,6 +17,12 @@ const MyProjectsPlansListPage: React.FC = () => {
   const [plans, setPlans] = useState<IGetPlanForViewResponse[]>([]);
   const [drafts, setDrafts] = useState<IGetDraftsListResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const isUserCreator =
+    authStateContext.nertUserWrapper.roleNames &&
+    authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.PROJECT_CREATOR)
+      ? true
+      : false;
 
   //projects and drafts
   useEffect(() => {
@@ -69,8 +76,8 @@ const MyProjectsPlansListPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl">
-      <MyProjects projects={projects} drafts={drafts} />
-      <MyPlans plans={plans} drafts={drafts} />
+      <MyProjects projects={projects} drafts={drafts} isUserCreator={isUserCreator} />
+      <MyPlans plans={plans} drafts={drafts} isUserCreator={isUserCreator} />
     </Container>
   );
 };
