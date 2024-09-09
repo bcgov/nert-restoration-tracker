@@ -8,7 +8,8 @@ import {
   FormControlLabel,
   FormGroup,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Typography
 } from '@mui/material';
 import React from 'react';
 
@@ -50,7 +51,7 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
         <Box>
           {props.hideProjects !== true && (
             <Box>
-              <b>Projects & Plans</b>
+              <Typography variant="h6">Projects & Plans</Typography>
               <FormGroup>
                 <FormControlLabel
                   control={
@@ -84,7 +85,7 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
               <hr />
             </Box>
           )}
-          <b>Context Layers</b>
+          <Typography variant="h6">Context Layers</Typography>
           <FormGroup>
             <FormControlLabel
               control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
@@ -106,7 +107,7 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             />
           </FormGroup>
           <hr />
-          <b>Base Layers</b>
+          <Typography variant="h6">Base Layers</Typography>
           <RadioGroup value={baselayer[0]} onChange={basemapChanged}>
             <FormControlLabel value="hybrid" control={<Radio />} label="Satellite" />
             <FormControlLabel value="terrain" control={<Radio />} label="Terrain" />

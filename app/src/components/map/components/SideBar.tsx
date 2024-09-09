@@ -18,11 +18,10 @@ const SideBar = (props: ISideBarProps) => {
       variant="persistent"
       sx={{
         '& .MuiDrawer-root': { position: 'absolute' },
-        '& .MuiDrawer-paper': { position: 'absolute' }
+        '& .MuiDrawer-paper': { position: 'absolute' },
       }}>
-      <Box sx={{width: '240px'}}>
+      <Box sx={{width: '240px', padding: '10px', margin: '10px'}}>
         {props.children}
-        <h2>SideBar Testing</h2>
       </Box>
     </Drawer>
   );
