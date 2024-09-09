@@ -204,6 +204,10 @@ const EditProjectPage: React.FC = () => {
     values.project.is_project_part_public_plan =
       values.restoration_plan.is_project_part_public_plan;
 
+    // Make sure people_involved is a number or null
+    values.focus.people_involved =
+      values.focus.people_involved !== 0 ? Number(values.focus.people_involved) : null;
+
     try {
       const response = await restorationTrackerApi.project.updateProject(projectId, values);
 
