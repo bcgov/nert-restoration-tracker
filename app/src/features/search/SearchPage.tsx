@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import LayerSwitcher from 'components/map/components/LayerSwitcher';
 import LayerSwitcherInline from 'components/map/components/LayerSwitcherInline';
 import { IconButton } from '@mui/material';
 import MapContainer from 'components/map/MapContainer';
@@ -89,10 +88,6 @@ const SearchPage: React.FC = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // setTimeout(() => {
-  //   setSidebarOpen(false);
-  // },3000);
-
   /**
    * Reactive state to share between the layer picker and the map
    */
@@ -148,7 +143,6 @@ const SearchPage: React.FC = () => {
         </IconButton>
 
       </MapContainer>
-      <LayerSwitcher layerVisibility={layerVisibility} open={true} />
     </Box>
   );
 };
