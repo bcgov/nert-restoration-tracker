@@ -25,4 +25,4 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // Hydrate baseUrl from the environment variables
-Cypress.config("baseUrl", Cypress.env("baseUrl"));
+// Cypress.config("baseUrl", Cypress.env("baseUrl"));
