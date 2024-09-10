@@ -317,7 +317,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, protectedAreas, indigenous } = layerVisibility;
+  const { boundary, wells, projects, plans, protectedAreas } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -456,6 +456,30 @@ const initializeMap = (
       },
       ...(region && { filter: ['all', ['==', 'REGION_NAME', region]] })
     });
+
+    /* The Seismic Line layer */
+    map.addSource('seismic_lines', {
+      type: 'vector',
+      tiles: ['https://nrs.objectstore.gov.bc.ca/nerdel/tiles/legacy_2d_seismic_lines_with_ecology/{z}/{x}/{y}.pbf']
+    });
+
+    map.addLayer({
+      id: 'seismic_lines',
+      type: 'line',
+      source: 'WHSE_ADMIN_BOUNDARIES.ADM_NR_REGIONS_SP',
+      'source-layer': 'seismic_lines',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+        visibility: 'visible'
+        // visibility: boundary[0] ? 'visible' : 'none'
+      },
+      paint: {
+        'line-color': 'white',
+        'line-width': 2
+      }
+    });
+    
 
     /*****************Project/Plans********************/
     map.addSource('markers', {
@@ -778,10 +802,10 @@ const initializeMap = (
     map.addSource('protected-areas', {
       type: 'raster',
       tiles: [
-        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY,WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW'
+        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY,WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW,WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW'
       ],
       tileSize: 256,
-      minzoom: 10
+      minzoom: 6 
     });
     map.addLayer({
       id: 'wms-protected-areas',
@@ -795,26 +819,6 @@ const initializeMap = (
       }
     });
 
-    /* Indigenous Areas as WMS layers from the BCGW */
-    map.addSource('indigenous-areas', {
-      type: 'raster',
-      tiles: [
-        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW'
-      ],
-      tileSize: 256,
-      minzoom: 4
-    });
-    map.addLayer({
-      id: 'wms-indigenous-areas',
-      type: 'raster',
-      source: 'indigenous-areas',
-      layout: {
-        visibility: indigenous[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'raster-opacity': 0.5
-      }
-    });
     // Add the well layers
     drawWells(map, wells);
 
@@ -876,15 +880,6 @@ const checkLayerVisibility = (layers: any, features: any) => {
     if (layer === 'protectedAreas' && map.getLayer('wms-protected-areas')) {
       map.setLayoutProperty(
         'wms-protected-areas',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
-    }
-
-    // This will be extended to include indigenous community point locations
-    if (layer === 'indigenous' && map.getLayer('wms-indigenous-areas')) {
-      map.setLayoutProperty(
-        'wms-indigenous-areas',
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );

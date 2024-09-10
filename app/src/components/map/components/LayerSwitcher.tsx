@@ -22,7 +22,6 @@ export interface ILayerSwitcherProps {
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     protectedAreas: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
   open?: boolean;
@@ -66,7 +65,7 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, protectedAreas, indigenous, baselayer } =
+  const { boundary, wells, projects, plans, protectedAreas, baselayer } =
     props.layerVisibility;
 
   const [switcherOpen, setSwitcherOpen] = useState(props.open ? true : false);
@@ -141,12 +140,6 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
             <FormControlLabel
               control={<Checkbox checked={protectedAreas[0]} onClick={() => protectedAreas[1](!protectedAreas[0])} />}
               label="Protected Areas"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox checked={indigenous[0]} onClick={() => indigenous[1](!indigenous[0])} />
-              }
-              label="MKMA"
             />
           </FormGroup>
           <hr />

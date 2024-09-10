@@ -7,7 +7,6 @@ export interface IMapState {
     projects: boolean;
     plans: boolean;
     protectedAreas: boolean;
-    indigenous: boolean;
     baselayer: string;
   };
 }
@@ -17,7 +16,6 @@ export const layerVisibilityDefault = {
   projects: false,
   plans: true,
   protectedAreas: false,
-  indigenous: false,
   baselayer: 'hybrid'
 };
 
