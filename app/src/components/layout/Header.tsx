@@ -144,7 +144,9 @@ const Header: React.FC = () => {
     return (
       <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
         <Icon path={mdiAccountCircle} size={1.12} />
-        <Box ml={1}>{formattedUsername}</Box>
+        <Box data-testid="username" ml={1}>
+          {formattedUsername}
+        </Box>
         <Box px={2}>
           <Divider orientation="vertical" />
         </Box>
@@ -334,7 +336,7 @@ const Header: React.FC = () => {
                 Map
               </Link>
               <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-                <Link to="/admin/users" id="menu_admin_users">
+                <Link to="/admin/users" id="menu_admin_users" data-testid="manage_users">
                   Manage Users
                 </Link>
               </SystemRoleGuard>

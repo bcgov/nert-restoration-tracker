@@ -513,7 +513,9 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
-          CYPRESS_username: ${{ secrets.CYPRESS_USER_NAME }}
+          CYPRESS_creatorUser: ${{ secrets.CYPRESS_CREATOR }}
+          CYPRESS_maintainerUser: ${{ secrets.CYPRESS_MAINTAINER }}
+          CYPRESS_adminUser: ${{ secrets.CYPRESS_ADMIN }}
           CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
           CYPRESS_baseUrl: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
           CYPRESS_host: 'https://restoration-tracker-app-${{ github.event.number }}-d83219-dev.apps.silver.devops.gov.bc.ca'
