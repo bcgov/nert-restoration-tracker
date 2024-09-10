@@ -484,7 +484,7 @@ describe('UserService', () => {
       try {
         await userService.handleDeleteProjectParticipant(1, 1);
       } catch (err: any) {
-        expect(err.message).to.equal('Cannot delete project user. User is the only Project Lead for the project.');
+        expect(err.message).to.equal('Cannot delete project user. User is the only Lead Editor for the project.');
       }
     });
   });
@@ -506,7 +506,7 @@ describe('UserService', () => {
       try {
         await userService.handleUpdateProjectParticipantRole(1, 1, 1);
       } catch (err: any) {
-        expect(err.message).to.equal('Failed to update project participant role');
+        expect(err.message).to.equal('Failed to update project or plan participant role');
       }
     });
 
@@ -559,7 +559,7 @@ describe('UserService', () => {
       try {
         await userService.handleUpdateProjectParticipantRole(1, 1, 1);
       } catch (err: any) {
-        expect(err.message).to.equal('Cannot delete project user. User is the only Project Lead for the project.');
+        expect(err.message).to.equal('Cannot delete project user. User is the only Lead Editor for the project.');
       }
     });
   });

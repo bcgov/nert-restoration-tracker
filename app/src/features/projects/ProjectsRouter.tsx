@@ -49,11 +49,7 @@ const ProjectsRouter: React.FC = () => {
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
                 validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
-                validProjectRoles={[
-                  PROJECT_ROLE.PROJECT_LEAD,
-                  PROJECT_ROLE.PROJECT_EDITOR,
-                  PROJECT_ROLE.PROJECT_VIEWER
-                ]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
                 fallback={<PublicProjectPlanView />}>
                 <ViewProjectPage />
               </ProjectRoleGuard>

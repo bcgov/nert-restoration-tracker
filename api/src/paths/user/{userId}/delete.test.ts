@@ -33,7 +33,7 @@ describe('removeSystemUser', () => {
     }
   });
 
-  it('should throw a 400 error if the user is the only Project Lead role on one or more projects', async () => {
+  it('should throw a 400 error if the user is the only Lead Editor role on one or more projects', async () => {
     const dbConnectionObj = getMockDBConnection();
 
     const { mockReq, mockRes, mockNext } = getRequestHandlerMocks();
@@ -51,7 +51,7 @@ describe('removeSystemUser', () => {
         new HTTPError(
           HTTPErrorType.BAD_REQUEST,
           400,
-          'Cannot remove user. User is the only Project Lead for one or more projects.'
+          'Cannot remove user. User is the only Lead Editor for one or more projects.'
         )
       );
 
@@ -63,7 +63,7 @@ describe('removeSystemUser', () => {
     } catch (actualError) {
       expect((actualError as HTTPError).status).to.equal(400);
       expect((actualError as HTTPError).message).to.equal(
-        'Cannot remove user. User is the only Project Lead for one or more projects.'
+        'Cannot remove user. User is the only Lead Editor for one or more projects.'
       );
     }
   });
