@@ -177,7 +177,7 @@ describe('ProjectService', () => {
       expect(getParticipantsFromAllSystemUsersProjectsStub).to.have.been.calledOnce;
     });
 
-    it('should throw error if user is not the only project lead', async () => {
+    it('should throw error if user is not the only Lead Editor', async () => {
       const mockDBConnection = getMockDBConnection();
 
       const getParticipantsFromAllSystemUsersProjectsStub = sinon
@@ -195,13 +195,13 @@ describe('ProjectService', () => {
       } catch (actualError: any) {
         expect((actualError as HTTPError).status).to.equal(400);
         expect(actualError.message).to.equal(
-          'Cannot remove user. User is the only Project Lead for one or more projects.'
+          'Cannot remove user. User is the only Lead Editor for one or more projects.'
         );
         expect(getParticipantsFromAllSystemUsersProjectsStub).to.have.been.calledOnce;
       }
     });
 
-    it('should return undefined if user is not the only project lead', async () => {
+    it('should return undefined if user is not the only Lead Editor', async () => {
       const mockDBConnection = getMockDBConnection();
 
       const getParticipantsFromAllSystemUsersProjectsStub = sinon

@@ -42,7 +42,7 @@ describe('ProjectParticipantObject', () => {
       project_id: 1,
       project_name: 'name',
       system_user_id: 2,
-      project_role_id: 3,
+      project_role_id: 2,
       project_role_name: 'role',
       project_participation_id: 4
     };
@@ -64,7 +64,7 @@ describe('ProjectParticipantObject', () => {
     });
 
     it('sets project_role_id', function () {
-      expect(data.project_role_id).to.equal(3);
+      expect(data.project_role_id).to.equal(2);
     });
 
     it('sets project_role_name', function () {

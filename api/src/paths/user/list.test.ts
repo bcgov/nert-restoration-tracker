@@ -30,7 +30,7 @@ describe('users', () => {
           identity_source: 'identitysource',
           record_end_date: '',
           role_ids: [1, 2],
-          role_names: ['System Admin', 'Project Lead']
+          role_names: ['System Admin', 'Lead Editor']
         }
       ];
 
