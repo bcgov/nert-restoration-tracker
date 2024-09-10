@@ -117,6 +117,7 @@ export interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
   drafts?: IGetDraftsListResponse[];
   myproject?: boolean;
+  isUserCreator?: boolean;
 }
 
 /**
