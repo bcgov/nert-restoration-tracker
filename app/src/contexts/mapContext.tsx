@@ -6,7 +6,7 @@ export interface IMapState {
     wells: boolean;
     projects: boolean;
     plans: boolean;
-    wildlife: boolean;
+    protectedAreas: boolean;
     indigenous: boolean;
     baselayer: string;
   };
@@ -16,7 +16,7 @@ export const layerVisibilityDefault = {
   wells: false,
   projects: false,
   plans: true,
-  wildlife: false,
+  protectedAreas: false,
   indigenous: false,
   baselayer: 'hybrid'
 };

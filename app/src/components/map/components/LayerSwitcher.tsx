@@ -21,7 +21,7 @@ export interface ILayerSwitcherProps {
     wells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    protectedAreas: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
@@ -66,7 +66,7 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
+  const { boundary, wells, projects, plans, protectedAreas, indigenous, baselayer } =
     props.layerVisibility;
 
   const [switcherOpen, setSwitcherOpen] = useState(props.open ? true : false);
@@ -139,8 +139,8 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               label="Wells"
             />
             <FormControlLabel
-              control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
-              label="Wildlife"
+              control={<Checkbox checked={protectedAreas[0]} onClick={() => protectedAreas[1](!protectedAreas[0])} />}
+              label="Protected Areas"
             />
             <FormControlLabel
               control={

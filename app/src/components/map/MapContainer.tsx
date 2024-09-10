@@ -301,10 +301,6 @@ const checkFeatureState = (featureState: any) => {
   hoverStateMarkerPolygon = featureState[0] || false;
 };
 
-/**
- * TODO: Add the following layers
- * - Parks https://openmaps.gov.bc.ca/geo/pub/WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW/ows?service=WMS&request=GetCapabilities
- */
 const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
@@ -321,7 +317,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
+  const { boundary, wells, projects, plans, protectedAreas, indigenous } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -779,20 +775,20 @@ const initializeMap = (
     /**************************************************/
 
     /* Protected Areas as WMS layers from the BCGW */
-    map.addSource('wildlife-areas', {
+    map.addSource('protected-areas', {
       type: 'raster',
       tiles: [
-        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY'
+        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY,WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW'
       ],
       tileSize: 256,
       minzoom: 10
     });
     map.addLayer({
-      id: 'wms-wildlife-areas',
+      id: 'wms-protected-areas',
       type: 'raster',
-      source: 'wildlife-areas',
+      source: 'protected-areas',
       layout: {
-        visibility: wildlife[0] ? 'visible' : 'none'
+        visibility: protectedAreas[0] ? 'visible' : 'none'
       },
       paint: {
         'raster-opacity': 0.5
@@ -876,9 +872,10 @@ const checkLayerVisibility = (layers: any, features: any) => {
     }
 
     // This is a concatenated (server side) WMS layer from the BCGW
-    if (layer === 'wildlife' && map.getLayer('wms-wildlife-areas')) {
+    console.log('layer', layer);
+    if (layer === 'protectedAreas' && map.getLayer('wms-protected-areas')) {
       map.setLayoutProperty(
-        'wms-wildlife-areas',
+        'wms-protected-areas',
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );

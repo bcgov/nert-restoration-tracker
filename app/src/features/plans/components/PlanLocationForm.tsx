@@ -94,7 +94,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const wells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
+  const protectedAreas = useState<boolean>(false);
   const indigenous = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
@@ -103,7 +103,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     wells,
     projects,
     plans,
-    wildlife,
+    protectedAreas,
     indigenous,
     baselayer
   };
