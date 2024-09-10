@@ -466,8 +466,8 @@ const initializeMap = (
     map.addLayer({
       id: 'seismic_lines',
       type: 'line',
-      source: 'WHSE_ADMIN_BOUNDARIES.ADM_NR_REGIONS_SP',
-      'source-layer': 'seismic_lines',
+      source: 'seismic_lines',
+      'source-layer': 'GEO_LEGACY_2D_TRIM_ECOLOGY_LN',
       layout: {
         'line-join': 'round',
         'line-cap': 'round',
