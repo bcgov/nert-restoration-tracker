@@ -22,6 +22,7 @@ export interface ILayerSwitcherProps {
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     protectedAreas: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    seismic: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
   open?: boolean;
@@ -65,7 +66,7 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, protectedAreas, baselayer } =
+  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } =
     props.layerVisibility;
 
   const [switcherOpen, setSwitcherOpen] = useState(props.open ? true : false);
@@ -140,6 +141,10 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
             <FormControlLabel
               control={<Checkbox checked={protectedAreas[0]} onClick={() => protectedAreas[1](!protectedAreas[0])} />}
               label="Protected Areas"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
+              label="Seismic Lines"
             />
           </FormGroup>
           <hr />

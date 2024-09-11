@@ -317,7 +317,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, protectedAreas } = layerVisibility;
+  const { boundary, wells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -460,7 +460,11 @@ const initializeMap = (
     /* The Seismic Line layer */
     map.addSource('seismic_lines', {
       type: 'vector',
-      tiles: ['https://nrs.objectstore.gov.bc.ca/nerdel/tiles/legacy_2d_seismic_lines_with_ecology/{z}/{x}/{y}.pbf']
+      tiles: [
+        'https://nrs.objectstore.gov.bc.ca/nerdel/tiles/legacy_2d_seismic_lines_with_ecology/{z}/{x}/{y}.pbf'
+      ],
+      minzoom: 11,
+      promoteId: 'OBJECTID'
     });
 
     map.addLayer({
@@ -471,15 +475,71 @@ const initializeMap = (
       layout: {
         'line-join': 'round',
         'line-cap': 'round',
-        visibility: 'visible'
-        // visibility: boundary[0] ? 'visible' : 'none'
+        visibility: seismic[0] ? 'visible' : 'none'
       },
       paint: {
-        'line-color': 'white',
-        'line-width': 2
+        // change line colour based on the PROJ_AGE_1 age in years from 0 to 1000 and greater
+        'line-color': [
+          'case',
+          ['<', ['get', 'PROJ_AGE_1'], 100],
+          'rgba(235, 168, 50, 1)',
+          'rgba(97, 255, 0, 1)'
+        ],
+        'line-width': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          11,
+          ['case', ['boolean', ['feature-state', 'hover'], false], 4, 1],
+          14,
+          ['case', ['boolean', ['feature-state', 'hover'], false], 12, 4]
+        ]
       }
     });
-    
+
+    let hoverStateSeismic: boolean | any = false;
+    // Display the asset type on mouse hover
+    map.on('mouseenter', 'seismic_lines', (e: any) => {
+      map.getCanvas().style.cursor = 'pointer';
+
+      const feature = e.features[0];
+
+      const tooltip = feature.properties.FULL_LABEL;
+
+      setTooltipVisible(true);
+
+      hoverStateSeismic = feature.id;
+
+      setTooltipX(e.point.x + 10);
+      setTooltipY(e.point.y - 34);
+      setTooltip(tooltip);
+
+      map.setFeatureState(
+        {
+          source: 'seismic_lines',
+          sourceLayer: 'GEO_LEGACY_2D_TRIM_ECOLOGY_LN',
+          id: hoverStateSeismic
+        },
+        {
+          hover: true
+        }
+      );
+    });
+    map.on('mouseleave', 'seismic_lines', () => {
+      map.getCanvas().style.cursor = '';
+      setTooltipVisible(false);
+
+      map.setFeatureState(
+        {
+          source: 'seismic_lines',
+          sourceLayer: 'GEO_LEGACY_2D_TRIM_ECOLOGY_LN',
+          id: hoverStateSeismic
+        },
+        {
+          hover: false
+        }
+      );
+    });
 
     /*****************Project/Plans********************/
     map.addSource('markers', {
@@ -805,7 +865,7 @@ const initializeMap = (
         'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY,WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW,WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW'
       ],
       tileSize: 256,
-      minzoom: 6 
+      minzoom: 6
     });
     map.addLayer({
       id: 'wms-protected-areas',
@@ -876,7 +936,6 @@ const checkLayerVisibility = (layers: any, features: any) => {
     }
 
     // This is a concatenated (server side) WMS layer from the BCGW
-    console.log('layer', layer);
     if (layer === 'protectedAreas' && map.getLayer('wms-protected-areas')) {
       map.setLayoutProperty(
         'wms-protected-areas',
@@ -884,6 +943,12 @@ const checkLayerVisibility = (layers: any, features: any) => {
         layers[layer][0] ? 'visible' : 'none'
       );
     }
+
+    // Seismic
+    if (layer === 'seismic' && map.getLayer('seismic_lines')) {
+      map.setLayoutProperty('seismic_lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
+    }
+
 
     // Projects
     if (layer === 'projects' && map.getLayer('markerProjects.points')) {

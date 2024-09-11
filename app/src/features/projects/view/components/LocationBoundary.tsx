@@ -81,6 +81,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const projects = useState<boolean>(false);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(false);
+  const seismic = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
   const layerVisibility = {
@@ -89,6 +90,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
     projects,
     plans,
     protectedAreas,
+    seismic,
     baselayer
   };
 

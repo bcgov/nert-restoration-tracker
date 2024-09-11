@@ -95,7 +95,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
+  const seismic = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
   const layerVisibility = {
@@ -104,7 +104,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     projects,
     plans,
     protectedAreas,
-    indigenous,
+    seismic,
     baselayer
   };
 

@@ -7,6 +7,7 @@ export interface IMapState {
     projects: boolean;
     plans: boolean;
     protectedAreas: boolean;
+    seismic: boolean;
     baselayer: string;
   };
 }
@@ -16,6 +17,7 @@ export const layerVisibilityDefault = {
   projects: false,
   plans: true,
   protectedAreas: false,
+  seismic: false,
   baselayer: 'hybrid'
 };
 
