@@ -1,20 +1,13 @@
+import { projectData } from "cypress/fixtures/project";
+
 describe("Admin User", () => {
   const username = String(Cypress.env("adminUser"));
   const creator = String(Cypress.env("creatorUser"));
   const password = Cypress.env("password");
 
   beforeEach(() => {
+    cy.login(username, password);
     cy.visit("/");
-
-    const button = cy.get('[data-testid="menu_log_in"]').should("exist");
-    button.click();
-
-    cy.get('[id="social-bceidbasic"]').click();
-
-    cy.get('[id="user"]').type(username);
-    cy.get('[id="password"]').type(password);
-
-    cy.get('[type="submit"]').click();
   });
 
   it("renders the home page and username", () => {
@@ -24,7 +17,7 @@ describe("Admin User", () => {
     cy.get('[data-testid="username"]').contains(username.toLowerCase());
   });
 
-  it("renders the Manage User Page and updates User role", () => {
+  it("renders the Manage User Page, updates User role, Checks user Details Page", () => {
     const button = cy.get('[data-testid="manage_users"]').should("exist");
     button.click();
 
@@ -89,5 +82,55 @@ describe("Admin User", () => {
       .contains(creator.toLowerCase());
 
     cy.get('[data-testid="user-role-chip"]').contains("Creator");
+  });
+
+  it("renders My Projects/Plans Page", () => {
+    const button = cy.get('[data-testid="my_projects_plans"]').should("exist");
+    button.click();
+
+    const header = cy.get('[data-testid="my_projects_header"]').should("exist");
+    header.should("include.text", "My Projects");
+
+    header.within(($header) => {
+      const createButton = cy
+        .get('[data-testid="create-project-button"]')
+        .should("exist");
+      createButton.click();
+    });
+
+    describe("renders the Create Project Page", () => {
+      const header = cy
+        .get('[data-testid="create_project_header"]')
+        .should("exist");
+      header.should("include.text", "Create Restoration Project");
+
+      cy.get('input[name="project.project_name"]').type(
+        projectData.project.project_name
+      );
+
+      cy.get('textarea[name="project.brief_desc"]').type(
+        projectData.project.brief_desc
+      );
+
+      cy.get('input[name="project.start_date"]').type(
+        projectData.project.start_date
+      );
+
+      cy.get('input[name="project.end_date"]').type(
+        projectData.project.end_date
+      );
+
+      cy.get('input[name="project.actual_start_date"]').type(
+        projectData.project.actual_start_date
+      );
+
+      cy.get('input[name="project.actual_end_date"]').type(
+        projectData.project.actual_end_date
+      );
+
+      cy.get('input[name="objective.objectives.[0].objective"]').type(
+        projectData.objective.objectives[0].objective
+      );
+    });
   });
 });

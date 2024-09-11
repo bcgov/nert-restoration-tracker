@@ -331,7 +331,10 @@ const Header: React.FC = () => {
                 data-testid={'admin_project_plan_navbar'}>
                 All Projects/All Plans
               </Link>
-              <Link to="/admin/user/projects" id="menu_user_projects">
+              <Link
+                to="/admin/user/projects"
+                id="menu_user_projects"
+                data-testid="my_projects_plans">
                 My Projects/My Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
