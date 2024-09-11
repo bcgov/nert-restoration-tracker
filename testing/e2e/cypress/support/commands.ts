@@ -25,4 +25,5 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // Hydrate baseUrl from the environment variables
+// UNCOMMENT THIS BLOCK TO USE ENVIRONMENT VARIABLES for LOCAL TESTING
 // Cypress.config("baseUrl", Cypress.env("baseUrl"));
