@@ -949,7 +949,6 @@ const checkLayerVisibility = (layers: any, features: any) => {
       map.setLayoutProperty('seismic_lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
 
-
     // Projects
     if (layer === 'projects' && map.getLayer('markerProjects.points')) {
       map.setLayoutProperty(

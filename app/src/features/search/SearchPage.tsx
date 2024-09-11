@@ -118,9 +118,9 @@ const SearchPage: React.FC = () => {
     transition: 'left 225ms cubic-bezier(0, 0, 0.2, 1)',
     ':hover': {
       transform: 'scale(1.1)',
-      backgroundColor: 'white',
+      backgroundColor: 'white'
     },
-    borderRadius: '0 20% 20% 0',
+    borderRadius: '0 20% 20% 0'
   };
 
   /**
@@ -141,7 +141,6 @@ const SearchPage: React.FC = () => {
         <IconButton onClick={() => setSidebarOpen(!sidebarOpen)} sx={sidebarButtonStyle}>
           {sidebarOpen ? <ArrowBack /> : <LayersIcon />}
         </IconButton>
-
       </MapContainer>
     </Box>
   );
