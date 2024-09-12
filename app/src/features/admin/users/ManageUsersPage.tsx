@@ -98,6 +98,7 @@ const ManageUsersPage: React.FC = () => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
+        data-testid="manage_users_header"
         sx={{ paddingTop: '20px' }}>
         <Typography variant="h1">Manage Users</Typography>
       </Box>

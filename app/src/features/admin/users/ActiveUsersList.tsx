@@ -222,57 +222,56 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
               </TableRow>
             )}
             {activeUsers.length > 0 &&
-              activeUsers
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
-                  <TableRow data-testid={`active-user-row-${index}`} key={row.id}>
-                    <TableCell>
-                      <strong>{row.user_identifier || 'Not Applicable'}</strong>
-                    </TableCell>
-                    <TableCell>
-                      <Box m={-1}>
-                        <CustomMenuButton
-                          buttonLabel={row.role_names.join(', ') || 'Unassigned'}
-                          buttonTitle={'Change User Permissions'}
-                          buttonProps={{ variant: 'text' }}
-                          menuItems={codes.system_roles
-                            .sort((item1, item2) => {
-                              return item1.name.localeCompare(item2.name);
-                            })
-                            .map((item) => {
-                              return {
-                                menuLabel: item.name,
-                                menuOnClick: () =>
-                                  handleChangeUserPermissionsClick(row, item.name, item.id)
-                              };
-                            })}
-                          buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
-                        />
-                      </Box>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box my={-1}>
-                        <CustomMenuIconButton
-                          buttonTitle="Actions"
-                          buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
-                          menuItems={[
-                            {
-                              menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
-                              menuLabel: 'User Details',
+              activeUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                <TableRow data-testid={`active-user-row-${row.user_identifier}`} key={row.id}>
+                  <TableCell>
+                    <strong>{row.user_identifier || 'Not Applicable'}</strong>
+                  </TableCell>
+                  <TableCell>
+                    <Box m={-1}>
+                      <CustomMenuButton
+                        data-testid={'role-dropdown'}
+                        buttonLabel={row.role_names.join(', ') || 'Unassigned'}
+                        buttonTitle={'Change User Permissions'}
+                        buttonProps={{ variant: 'text' }}
+                        menuItems={codes.system_roles
+                          .sort((item1, item2) => {
+                            return item1.name.localeCompare(item2.name);
+                          })
+                          .map((item) => {
+                            return {
+                              menuLabel: item.name,
                               menuOnClick: () =>
-                                history(`/admin/users/${row.id}/details`, { state: row })
-                            },
-                            {
-                              menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
-                              menuLabel: 'Remove User',
-                              menuOnClick: () => handleRemoveUserClick(row)
-                            }
-                          ]}
-                        />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                                handleChangeUserPermissionsClick(row, item.name, item.id)
+                            };
+                          })}
+                        buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
+                      />
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box my={-1}>
+                      <CustomMenuIconButton
+                        buttonTitle="Actions"
+                        buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
+                        menuItems={[
+                          {
+                            menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
+                            menuLabel: 'User Details',
+                            menuOnClick: () =>
+                              history(`/admin/users/${row.id}/details`, { state: row })
+                          },
+                          {
+                            menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
+                            menuLabel: 'Remove User',
+                            menuOnClick: () => handleRemoveUserClick(row)
+                          }
+                        ]}
+                      />
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

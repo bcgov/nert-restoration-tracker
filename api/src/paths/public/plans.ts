@@ -3,7 +3,7 @@ import { Operation } from 'express-openapi';
 import { getAPIUserDBConnection } from '../../database/db';
 import { geoJsonFeature } from '../../openapi/schemas/geoJson';
 import { PlanService } from '../../services/plan-service';
-import { ProjectSearchCriteria, SearchService } from '../../services/search-service';
+import { PlanSearchCriteria, ProjectSearchCriteria, SearchService } from '../../services/search-service';
 import { getLogger } from '../../utils/logger';
 
 const defaultLog = getLogger('paths/public/plans');
@@ -16,7 +16,7 @@ GET.apiDoc = {
   parameters: [
     {
       in: 'query',
-      name: 'keyword',
+      name: 'plan_keyword',
       schema: {
         type: 'string',
         nullable: true
@@ -25,7 +25,16 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'contact_agency',
+      name: 'plan_name',
+      schema: {
+        type: 'string',
+        nullable: true
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_status',
       schema: {
         oneOf: [
           {
@@ -45,7 +54,47 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'start_date',
+      name: 'plan_region',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_focus',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_start_date',
       schema: {
         type: 'string',
         oneOf: [{ format: 'date' }, { format: 'date-time' }],
@@ -56,7 +105,7 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'end_date',
+      name: 'plan_end_date',
       schema: {
         type: 'string',
         oneOf: [{ format: 'date' }, { format: 'date-time' }],
@@ -67,7 +116,47 @@ GET.apiDoc = {
     },
     {
       in: 'query',
-      name: 'region',
+      name: 'plan_organizations',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_ha_to',
+      schema: {
+        oneOf: [
+          {
+            type: 'string',
+            nullable: true
+          },
+          {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            nullable: true
+          }
+        ]
+      },
+      allowEmptyValue: true
+    },
+    {
+      in: 'query',
+      name: 'plan_ha_from',
       schema: {
         oneOf: [
           {
@@ -233,15 +322,30 @@ export function getPublicPlansList(): RequestHandler {
     defaultLog.debug({ label: 'getPublicPlansList' });
     const connection = getAPIUserDBConnection();
 
-    const searchCriteria: ProjectSearchCriteria = req.query || {};
+    const searchCriteria: PlanSearchCriteria = req.query || {};
 
     try {
       await connection.open();
 
       const searchService = new SearchService(connection);
 
+      const projectSearchCriteria: ProjectSearchCriteria = {
+        ...searchCriteria,
+        is_public: true,
+        keyword: searchCriteria.plan_keyword,
+        project_name: searchCriteria.plan_name,
+        status: searchCriteria.plan_status,
+        region: searchCriteria.plan_region,
+        focus: searchCriteria.plan_focus,
+        start_date: searchCriteria.plan_start_date,
+        end_date: searchCriteria.plan_end_date,
+        organizations: searchCriteria.plan_organizations,
+        ha_to: searchCriteria.plan_ha_to,
+        ha_from: searchCriteria.plan_ha_from
+      };
+
       // Fetch all projectIds that match the search criteria
-      const projectIdsResponse = await searchService.findProjectIdsByCriteria(searchCriteria);
+      const projectIdsResponse = await searchService.findProjectIdsByCriteria(projectSearchCriteria);
 
       const projectIds = projectIdsResponse.map((item) => item.project_id);
 

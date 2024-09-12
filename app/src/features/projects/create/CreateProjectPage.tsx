@@ -304,6 +304,12 @@ const CreateProjectPage: React.FC = () => {
         ? projectPostObject.location.size_ha
         : 0;
 
+      // Make sure people_involved is a number or null
+      projectPostObject.focus.people_involved =
+        projectPostObject.focus.people_involved !== 0
+          ? Number(projectPostObject.focus.people_involved)
+          : null;
+
       // Set the state code to the correct value for a project being created
       projectPostObject.project.state_code = getStateCodeFromLabel(
         StateMachine(true, states.DRAFT, events.creating)

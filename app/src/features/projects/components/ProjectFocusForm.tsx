@@ -3,7 +3,6 @@ import InfoIcon from '@mui/icons-material/Info';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
-import IntegerSingleField from 'components/fields/IntegerSingleField';
 import MultiAutocompleteFieldVariableSize, {
   IMultiAutocompleteFieldOption
 } from 'components/fields/MultiAutocompleteFieldVariableSize';
@@ -14,6 +13,9 @@ import yup from 'utils/YupSchema';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import InfoContent from 'components/info/InfoContent';
 import { CreateProjectI18N } from 'constants/i18n';
+import get from 'lodash-es/get';
+import RangeSelectField from 'components/fields/RangeSelectField';
+import { MenuItem, TextField } from '@mui/material';
 
 export interface IProjectFocusForm {
   focus: {
@@ -34,9 +36,11 @@ export const ProjectFocusFormYupSchema = yup.object().shape({
     focuses: yup.array().min(1, 'You must select at least one option').required('Required'),
     people_involved: yup
       .number()
+      .typeError('Number of People must be a number type.')
+      .positive('Number of People must be provided and must be greater than 0.')
       .nullable()
       .isNumberOfPeopleInvolvedRequired(
-        'People Involved is required when Healing the People is selected'
+        'Required when "Healing the People" and/or "Cultural or Community Investment Initiative" is selected.'
       )
   })
 });
@@ -58,6 +62,8 @@ const ProjectFocusForm: React.FC = () => {
     setInfoTitle(indexContent ? indexContent : '');
     setInfoOpen(true);
   };
+
+  const peopleInvolvedFormName = 'focus.people_involved';
 
   return (
     <>
@@ -88,25 +94,49 @@ const ProjectFocusForm: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <IntegerSingleField
-              name="focus.people_involved"
+            <TextField
+              size="small"
+              name={peopleInvolvedFormName}
               label={CreateProjectI18N.numberOfPeopleInvolved}
+              select={true}
               required={
                 values.focus &&
                 values.focus.focuses.some((values) => {
-                  return values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE);
+                  return (
+                    values == getFocusCodeFromLabel(focus.HEALING_THE_PEOPLE) ||
+                    values ==
+                      getFocusCodeFromLabel(focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE)
+                  );
                 })
                   ? true
                   : false
               }
-              adornment={
-                <IconButton
-                  edge="end"
-                  onClick={() => handleClickOpen(CreateProjectI18N.numberOfPeopleInvolved)}>
-                  <InfoIcon color="info" />
-                </IconButton>
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <RangeSelectField
+                    formikProps={formikProps}
+                    formFieldName={peopleInvolvedFormName}
+                  />
+                ),
+                endAdornment: (
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleClickOpen(CreateProjectI18N.numberOfPeopleInvolved)}>
+                    <InfoIcon color="info" />
+                  </IconButton>
+                )
+              }}
+              error={
+                get(formikProps.touched, peopleInvolvedFormName) &&
+                Boolean(get(formikProps.errors, peopleInvolvedFormName))
               }
-            />
+              helperText={
+                get(formikProps.touched, peopleInvolvedFormName) &&
+                (get(formikProps.errors, peopleInvolvedFormName) as string)
+              }>
+              <MenuItem></MenuItem>
+            </TextField>
           </Grid>
         </Grid>
       </Box>

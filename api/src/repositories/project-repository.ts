@@ -286,30 +286,28 @@ export class ProjectRepository extends BaseRepository {
           SELECT
             pfs.project_funding_source_id as id,
             pfs.organization_name,
-            pfs.funding_amount::numeric::int,
+            CASE pfs.is_public WHEN true THEN pfs.funding_amount::numeric::int ELSE -1 END as funding_amount,
             pfs.funding_start_date as start_date,
             pfs.funding_end_date as end_date,
             pfs.description as description,
-            pfs.is_public as is_public,
+            CASE WHEN pfs.is_public THEN 'true' ELSE 'false' END as is_public,
             pfs.funding_project_id,
             pfs.revision_count as revision_count
           FROM
             project_funding_source as pfs
           WHERE
-            pfs.project_id = ${projectId}
-          AND
-            pfs.is_public = true;
+            pfs.project_id = ${projectId};
         `);
       } else {
         sqlStatement.append(SQL`
           SELECT
             pfs.project_funding_source_id as id,
             pfs.organization_name,
-            pfs.funding_amount::numeric::int,
+            pfs.funding_amount::numeric::int as funding_amount,
             pfs.funding_start_date as start_date,
             pfs.funding_end_date as end_date,
-            pfs.description,
-            pfs.is_public,
+            pfs.description as description,
+            CASE WHEN pfs.is_public THEN 'true' ELSE 'false' END as is_public,
             pfs.funding_project_id,
             pfs.revision_count as revision_count
           FROM

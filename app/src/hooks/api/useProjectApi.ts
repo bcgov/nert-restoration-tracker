@@ -1,6 +1,9 @@
 import { AxiosInstance, CancelTokenSource } from 'axios';
 import { S3FileType } from 'constants/attachments';
-import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
+import {
+  IGetPlanForViewResponse,
+  IPlanAdvancedFilterRequest
+} from 'interfaces/usePlanApi.interface';
 import {
   IAddProjectParticipant,
   ICreateProjectRequest,
@@ -392,11 +395,11 @@ export const usePublicProjectApi = (axios: AxiosInstance) => {
   /**
    * Get plans list (potentially based on filter criteria).
    *
-   * @param {IProjectAdvancedFilterRequest} filterFieldData
+   * @param {IPlanAdvancedFilterRequest} filterFieldData
    * @return {*}  {Promise<IGetProjectForViewResponse[]>}
    */
   const getPlansList = async (
-    filterFieldData?: IProjectAdvancedFilterRequest
+    filterFieldData?: IPlanAdvancedFilterRequest
   ): Promise<IGetPlanForViewResponse[]> => {
     const { data } = await axios.get(`/api/public/plans`, {
       params: filterFieldData,

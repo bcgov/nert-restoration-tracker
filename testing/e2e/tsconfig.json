@@ -14,15 +14,11 @@
     "resolveJsonModule": true,
     "types": [
       "cypress",
-      "cypress-file-upload"
-    ],
-    "typeRoots": [
-      "node_modules/@types",
-      "./cypress/typings"
+      "node"
     ],
     "lib": [
-      "es2015",
+      "es5",
       "dom"
-    ]
+    ],
   }
 }

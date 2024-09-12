@@ -12,11 +12,16 @@ import { IMultiAutocompleteFieldOption } from 'components/fields/MultiAutocomple
 
 // [OI] TODO This will need to be updated with Plan data model
 export interface IPlanAdvancedFilterRequest {
-  keyword?: string;
-  permit_number?: string;
-  species?: number | number[];
-  start_date?: string;
-  end_date?: string;
+  plan_keyword?: string;
+  plan_name?: string;
+  plan_status?: string | string[];
+  plan_region?: string | string[];
+  plan_focus?: string | string[];
+  plan_start_date?: string;
+  plan_end_date?: string;
+  plan_organizations?: string;
+  plan_ha_to?: string;
+  plan_ha_from?: string;
 }
 
 export interface ICreatePlanRequest

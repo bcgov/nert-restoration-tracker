@@ -41,13 +41,16 @@ export default function PublicPlans() {
     if (location.search) {
       const urlParams = qs.parse(location.search.replace('?', ''));
       const values = {
-        keyword: urlParams.keyword,
-        permit_number: urlParams.permit_number,
-        start_date: urlParams.start_date,
-        end_date: urlParams.end_date,
-        region: urlParams.region,
-        status: urlParams.status,
-        focus: urlParams.focus
+        plan_keyword: urlParams.plan_keyword,
+        plan_name: urlParams.plan_name,
+        plan_status: urlParams.plan_status,
+        plan_region: urlParams.plan_region,
+        plan_focus: urlParams.plan_focus,
+        plan_start_date: urlParams.plan_start_date,
+        plan_end_date: urlParams.plan_end_date,
+        plan_organizations: urlParams.plan_organizations,
+        plan_ha_to: urlParams.plan_ha_to,
+        plan_ha_from: urlParams.plan_ha_from
       } as IPlanAdvancedFilters;
 
       return values;

@@ -92,7 +92,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
         project_id: 2,
         name: 'projectName',
         system_user_id: 1,
-        project_role_id: 3,
+        project_role_id: 2,
         project_participation_id: 4
       }
     ]);
@@ -118,7 +118,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
         project_id: 1,
         name: 'projectName',
         system_user_id: 2,
-        project_role_id: 3,
+        project_role_id: 2,
         project_participation_id: 4
       },
       {
@@ -152,7 +152,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
         project_id: 1,
         name: 'projectName',
         system_user_id: 2,
-        project_role_id: 3,
+        project_role_id: 2,
         project_participation_id: 4
       }
     ]);
@@ -183,7 +183,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
           project_id: 1,
           name: 'projectName',
           system_user_id: 2,
-          project_role_id: 3,
+          project_role_id: 2,
           project_participation_id: 4
         }
       ]);
@@ -223,7 +223,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
           project_id: 1,
           name: 'projectName',
           system_user_id: 2,
-          project_role_id: 3,
+          project_role_id: 2,
           project_participation_id: 4
         },
         {
@@ -280,9 +280,8 @@ describe.skip('UsersDetailProjectsPlans', () => {
         codes: {
           ...codes,
           project_roles: [
-            { id: 1, name: 'Project Lead' },
-            { id: 2, name: 'Editor' },
-            { id: 3, name: 'Viewer' }
+            { id: 1, name: 'Lead Editor' },
+            { id: 2, name: 'Editor' }
           ]
         },
         isLoading: false,
@@ -294,7 +293,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
           project_id: 2,
           name: 'projectName',
           system_user_id: 1,
-          project_role_id: 3,
+          project_role_id: 2,
           project_participation_id: 4
         }
       ]);
@@ -310,12 +309,10 @@ describe.skip('UsersDetailProjectsPlans', () => {
         expect(getAllByText('projectName').length).toEqual(1);
       });
 
-      fireEvent.click(getByText('Viewer'));
+      fireEvent.click(getByText('Editor'));
 
       await waitFor(() => {
-        expect(getAllByText('Project Lead').length).toEqual(1);
-        expect(getAllByText('Editor').length).toEqual(1);
-        expect(getAllByText('Viewer').length).toEqual(2);
+        expect(getAllByText('Lead Editor').length).toEqual(1);
       });
     });
 
@@ -324,9 +321,8 @@ describe.skip('UsersDetailProjectsPlans', () => {
         codes: {
           ...codes,
           project_roles: [
-            { id: 1, name: 'Project Lead' },
-            { id: 2, name: 'Editor' },
-            { id: 3, name: 'Viewer' }
+            { id: 1, name: 'Lead Editor' },
+            { id: 2, name: 'Editor' }
           ]
         },
         isLoading: false,
@@ -338,7 +334,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
           project_id: 2,
           name: 'projectName',
           system_user_id: 1,
-          project_role_id: 3,
+          project_role_id: 2,
           project_participation_id: 4
         }
       ]);
@@ -356,12 +352,10 @@ describe.skip('UsersDetailProjectsPlans', () => {
         expect(getAllByText('projectName').length).toEqual(1);
       });
 
-      fireEvent.click(getByText('Viewer'));
+      fireEvent.click(getByText('Lead Editor'));
 
       await waitFor(() => {
-        expect(getAllByText('Project Lead').length).toEqual(1);
         expect(getAllByText('Editor').length).toEqual(1);
-        expect(getAllByText('Viewer').length).toEqual(2);
       });
 
       fireEvent.click(getByText('Editor'));
@@ -382,9 +376,8 @@ describe.skip('UsersDetailProjectsPlans', () => {
         codes: {
           ...codes,
           project_roles: [
-            { id: 1, name: 'Project Lead' },
-            { id: 2, name: 'Editor' },
-            { id: 3, name: 'Viewer' }
+            { id: 1, name: 'Lead Editor' },
+            { id: 2, name: 'Editor' }
           ]
         },
         isLoading: false,
@@ -396,7 +389,7 @@ describe.skip('UsersDetailProjectsPlans', () => {
           project_id: 2,
           name: 'projectName',
           system_user_id: 1,
-          project_role_id: 3,
+          project_role_id: 2,
           project_participation_id: 4
         }
       ]);
@@ -416,12 +409,10 @@ describe.skip('UsersDetailProjectsPlans', () => {
         expect(getAllByText('projectName').length).toEqual(1);
       });
 
-      fireEvent.click(getByText('Viewer'));
+      fireEvent.click(getByText('Lead Editor'));
 
       await waitFor(() => {
-        expect(getAllByText('Project Lead').length).toEqual(1);
         expect(getAllByText('Editor').length).toEqual(1);
-        expect(getAllByText('Viewer').length).toEqual(2);
       });
 
       fireEvent.click(getByText('Editor'));

@@ -125,7 +125,9 @@ const Header: React.FC = () => {
 
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
 
-  const mmm = config?.VERSION ? config.VERSION.split('-')[1] : '0.0.0';
+  const mmm = config?.VERSION
+    ? config.VERSION.split('-')[1] + '.' + config?.CHANGE_VERSION
+    : '0.0.0';
   const nert_version = mmm ?? '0.0.0.NA';
   const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
@@ -144,7 +146,9 @@ const Header: React.FC = () => {
     return (
       <Box display="flex" sx={pageStyles.userProfile} my="auto" alignItems="center">
         <Icon path={mdiAccountCircle} size={1.12} />
-        <Box ml={1}>{formattedUsername}</Box>
+        <Box data-testid="username" ml={1}>
+          {formattedUsername}
+        </Box>
         <Box px={2}>
           <Divider orientation="vertical" />
         </Box>
@@ -245,7 +249,7 @@ const Header: React.FC = () => {
               </Link>
 
               <Box ml={2}>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} data-testid={'title'}>
                   {title}
                 </Typography>
                 <VersionEnvironmentLabel />
@@ -274,7 +278,8 @@ const Header: React.FC = () => {
               aria-label="need help"
               sx={pageStyles.govHeaderIconButton}
               onClick={handleClick}
-              size="large">
+              size="large"
+              data-testid={'help_navbar'}>
               <Icon path={mdiHelpCircle} size={1.12} />
             </IconButton>
             <Menu
@@ -307,10 +312,10 @@ const Header: React.FC = () => {
               ]}
               fallback={
                 <>
-                  <Link to="/projects" id="menu_projects">
-                    All Projects/All Plans
+                  <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
+                    Published Projects/Plans
                   </Link>
-                  <Link to="/search" id="menu_search">
+                  <Link to="/search" id="menu_search" data-testid={'map_navbar'}>
                     Map
                   </Link>
                   <AuthGuard>
@@ -320,17 +325,30 @@ const Header: React.FC = () => {
                   </AuthGuard>
                 </>
               }>
-              <Link to="/admin/projects" id="menu_projects">
-                All Projects/All Plans
-              </Link>
+              <SystemRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                fallback={
+                  <>
+                    <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
+                      Published Projects/Plans
+                    </Link>
+                  </>
+                }>
+                <Link
+                  to="/admin/projects"
+                  id="menu_projects"
+                  data-testid={'admin_project_plan_navbar'}>
+                  All Projects/Plans
+                </Link>
+              </SystemRoleGuard>
               <Link to="/admin/user/projects" id="menu_user_projects">
-                My Projects/My Plans
+                My Projects/Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
                 Map
               </Link>
               <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-                <Link to="/admin/users" id="menu_admin_users">
+                <Link to="/admin/users" id="menu_admin_users" data-testid="manage_users">
                   Manage Users
                 </Link>
               </SystemRoleGuard>

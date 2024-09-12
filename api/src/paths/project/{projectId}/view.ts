@@ -19,7 +19,7 @@ export const GET: Operation = [
           discriminator: 'SystemRole'
         },
         {
-          validProjectRoles: [PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR, PROJECT_ROLE.PROJECT_VIEWER],
+          validProjectRoles: [PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR],
           projectId: Number(req.params.projectId),
           discriminator: 'ProjectRole'
         }
@@ -198,7 +198,8 @@ GET.apiDoc = {
                           nullable: true
                         },
                         funding_project_id: {
-                          type: 'string'
+                          type: 'string',
+                          nullable: true
                         },
                         funding_amount: {
                           type: 'number'

@@ -128,7 +128,7 @@ export class ProjectService extends DBService {
   }
 
   /**
-   * Check if a user is the only project lead on any project.
+   * Check if a user is the only Lead Editor on any project.
    *
    * @param {number} userId
    * @return {*}  {Promise<void>}
@@ -144,7 +144,7 @@ export class ProjectService extends DBService {
     const onlyProjectLead = doAllProjectsHaveAProjectLeadIfUserIsRemoved(allParticipants, userId);
 
     if (!onlyProjectLead) {
-      throw new HTTP400('Cannot remove user. User is the only Project Lead for one or more projects.');
+      throw new HTTP400('Cannot remove user. User is the only Lead Editor for one or more projects.');
     }
   }
 
@@ -469,7 +469,7 @@ export class ProjectService extends DBService {
 
     await Promise.all(promises);
 
-    // The user that creates a project is automatically assigned a project lead role, for this project
+    // The user that creates a project is automatically assigned a Lead Editor role, for this project
     await this.insertProjectParticipantRole(projectId, PROJECT_ROLE.PROJECT_LEAD);
 
     return projectId;
