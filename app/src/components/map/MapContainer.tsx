@@ -872,7 +872,8 @@ const initializeMap = (
       type: 'raster',
       source: 'protected-areas',
       layout: {
-        visibility: protectedAreas[0] ? 'visible' : 'none'
+        // visibility: protectedAreas[0] ? 'visible' : 'none'
+        visibility: 'visible'
       },
       paint: {
         'raster-opacity': 0.5
@@ -940,7 +941,8 @@ const checkLayerVisibility = (layers: any, features: any) => {
       map.setLayoutProperty(
         'wms-protected-areas',
         'visibility',
-        layers[layer][0] ? 'visible' : 'none'
+        // layers[layer][0] ? 'visible' : 'none'
+        'visible'
       );
     }
 
