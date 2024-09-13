@@ -341,7 +341,10 @@ const Header: React.FC = () => {
                   All Projects/Plans
                 </Link>
               </SystemRoleGuard>
-              <Link to="/admin/user/projects" id="menu_user_projects">
+              <Link
+                to="/admin/user/projects"
+                data-testid="my_projects_plans"
+                id="menu_user_projects">
                 My Projects/Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
