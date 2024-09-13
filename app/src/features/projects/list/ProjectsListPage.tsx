@@ -31,7 +31,7 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import { IGetProjectForViewResponse, IProjectsListProps } from 'interfaces/useProjectApi.interface';
 import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -53,13 +53,14 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   // using state for table row changes
   const [rows, setRows] = useState<utils.ProjectData[]>([]);
 
-  const projectAuthStateContext = useContext(ProjectAuthStateContext);
-  const isUserAdmin = projectAuthStateContext.hasSystemRole([
-    SYSTEM_ROLE.SYSTEM_ADMIN,
-    SYSTEM_ROLE.MAINTAINER
-  ])
-    ? true
-    : false;
+  const authStateContext = useAuthStateContext();
+
+  const isUserAdmin =
+    authStateContext.nertUserWrapper.roleNames &&
+    (authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.SYSTEM_ADMIN) ||
+      authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.MAINTAINER))
+      ? true
+      : false;
 
   const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
@@ -71,7 +72,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     drafts?: IGetDraftsListResponse[]
   ): utils.ProjectData[] {
     let rowsProjectFilterOutArchived = projects;
-    if (rowsProjectFilterOutArchived && isUserAdmin) {
+    if (rowsProjectFilterOutArchived && !isUserAdmin) {
       rowsProjectFilterOutArchived = projects.filter(
         (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
       );

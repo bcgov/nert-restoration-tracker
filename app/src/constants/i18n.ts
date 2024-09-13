@@ -5,6 +5,7 @@ export const CreateProjectI18N = {
   locationRegion: 'Region',
   partnership: 'Partnerships',
   fundingSource: 'Funding Sources',
+  fundingAmount: 'Funding Amount',
   authorization: 'Authorizations',
   numberOfPeopleInvolved: 'Number of People Involved',
   focus: 'Focuses',
@@ -31,7 +32,7 @@ export const CreatePlanI18N = {
 };
 
 export const ViewProjectI18N = {
-  sizeAndSites: 'Size and Number of Sites'
+  detailsInfo: 'Details Information'
 };
 
 export const ViewPlanI18N = {

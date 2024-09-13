@@ -31,24 +31,22 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
 import PlansTableHead from 'features/plans/components/PlansTableHead';
 import PlansTableToolbar from 'features/plans/components/PlansTableToolbar';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { maxWidth } from '@mui/system';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
   const history = useNavigate();
-  const projectAuthStateContext = useContext(ProjectAuthStateContext);
 
   const [selected, setSelected] = useState<readonly number[]>([]);
   const [selectedPlans, setSelectedPlans] = useState<any[]>([]);
@@ -56,12 +54,14 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   // using state for table row changes
   const [rows, setRows] = useState<utils.PlanData[]>([]);
 
-  const isUserAdmin = projectAuthStateContext.hasSystemRole([
-    SYSTEM_ROLE.SYSTEM_ADMIN,
-    SYSTEM_ROLE.MAINTAINER
-  ])
-    ? true
-    : false;
+  const authStateContext = useAuthStateContext();
+
+  const isUserAdmin =
+    authStateContext.nertUserWrapper.roleNames &&
+    (authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.SYSTEM_ADMIN) ||
+      authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.MAINTAINER))
+      ? true
+      : false;
 
   const myPlan = myplan && true === myplan ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
@@ -73,7 +73,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     drafts?: IGetDraftsListResponse[]
   ): utils.PlanData[] {
     let rowsPlanFilterOutArchived = plans;
-    if (rowsPlanFilterOutArchived && isUserAdmin) {
+    if (rowsPlanFilterOutArchived && !isUserAdmin) {
       rowsPlanFilterOutArchived = plans.filter(
         (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
       );

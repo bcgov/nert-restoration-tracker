@@ -143,7 +143,7 @@ export class ProjectRepository extends BaseRepository {
         ...response[0].rows,
         ...response[1].rows.map(() => {
           return {
-            organization: 'First Nation'
+            organization: 'Not Public'
           };
         })
       ];
