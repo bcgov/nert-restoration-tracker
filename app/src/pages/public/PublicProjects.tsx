@@ -176,7 +176,8 @@ export default function PublicProjects() {
     <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography ml={1} variant="h1">
-          <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> Projects
+          <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />
+          Projects
         </Typography>
         <Box my={1} mx={1}>
           <Button

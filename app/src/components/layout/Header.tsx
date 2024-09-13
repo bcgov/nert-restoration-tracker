@@ -313,7 +313,7 @@ const Header: React.FC = () => {
               fallback={
                 <>
                   <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
-                    All Projects/All Plans
+                    Published Projects/Plans
                   </Link>
                   <Link to="/search" id="menu_search" data-testid={'map_navbar'}>
                     Map
@@ -325,17 +325,24 @@ const Header: React.FC = () => {
                   </AuthGuard>
                 </>
               }>
-              <Link
-                to="/admin/projects"
-                id="menu_projects"
-                data-testid={'admin_project_plan_navbar'}>
-                All Projects/All Plans
-              </Link>
-              <Link
-                to="/admin/user/projects"
-                id="menu_user_projects"
-                data-testid="my_projects_plans">
-                My Projects/My Plans
+              <SystemRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                fallback={
+                  <>
+                    <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
+                      Published Projects/Plans
+                    </Link>
+                  </>
+                }>
+                <Link
+                  to="/admin/projects"
+                  id="menu_projects"
+                  data-testid={'admin_project_plan_navbar'}>
+                  All Projects/Plans
+                </Link>
+              </SystemRoleGuard>
+              <Link to="/admin/user/projects" id="menu_user_projects">
+                My Projects/Plans
               </Link>
               <Link to="/admin/search" id="menu_search">
                 Map
