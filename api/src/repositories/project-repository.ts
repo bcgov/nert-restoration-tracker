@@ -1242,24 +1242,12 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<boolean>}
    * @memberof ProjectRepository
    */
-  async deleteProject(projectId: number): Promise<boolean> {
+  async deleteProject(projectId: number): Promise<void> {
     defaultLog.debug({ label: 'deleteProject', message: 'params', projectId });
 
     try {
       const sqlStatement = SQL`call api_delete_project(${projectId})`;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to delete Project', [
-          'ProjectRepository->deleteProject',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      const result = (response && response.rows && response.rows[0]) || null;
-
-      return result;
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProject', message: 'error', error });
       throw error;

@@ -31,7 +31,7 @@ export const DELETE: Operation = [
 ];
 
 DELETE.apiDoc = {
-  description: 'Delete a project.',
+  description: 'Delete a project/plan.',
   tags: ['project'],
   security: [
     {

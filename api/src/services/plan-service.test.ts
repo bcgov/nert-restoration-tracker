@@ -7,7 +7,6 @@ import { PlanRepository } from '../repositories/plan-repository';
 import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import * as file_utils from '../utils/file-utils';
-import { AttachmentService } from './attachment-service';
 import { PlanService } from './plan-service';
 import { ProjectService } from './project-service';
 
@@ -240,18 +239,6 @@ describe('PlanService', () => {
       const response = await planService.updatePlan(1, obj);
 
       expect(response).to.eql({ project_id: 1 });
-    });
-  });
-
-  describe('deletePlan', () => {
-    it('should delete all s3 attachments and then delete plan', async () => {
-      const connection = getMockDBConnection();
-      const planService = new PlanService(connection);
-
-      sinon.stub(AttachmentService.prototype, 'deleteAllS3Attachments').resolves();
-      sinon.stub(ProjectRepository.prototype, 'deleteProject').resolves();
-
-      await planService.deletePlan(1);
     });
   });
 });

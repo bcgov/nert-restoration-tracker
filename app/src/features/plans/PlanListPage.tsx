@@ -43,6 +43,7 @@ import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
 import PlansTableHead from 'features/plans/components/PlansTableHead';
 import PlansTableToolbar from 'features/plans/components/PlansTableToolbar';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
+import { maxWidth } from '@mui/system';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
@@ -155,7 +156,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const { changeStateCode, deleteDraft } = useProjectPlanTableUtils();
+    const { changeStateCode, deleteDraft, deleteProjectOrPlan } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -268,6 +269,17 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const handleDeleteDraft = (id: number) => {
       const delIndex = rows.findIndex((row) => row.id === id);
       deleteDraft(false, rows[delIndex].planId);
+
+      setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
+
+      if (0 < page && 1 === visibleRows.length) {
+        setPage(page - 1);
+      }
+    };
+
+    const handleDeletePlan = (id: number) => {
+      const delIndex = rows.findIndex((row) => row.id === id);
+      deleteProjectOrPlan(false, rows[delIndex].planId);
 
       setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
 
@@ -399,7 +411,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         label={row.statusLabel}
                       />
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell sx={{ maxWidth: 50 }} align="left">
                       {draftCode !== row.statusCode ? (
                         <SystemRoleGuard
                           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
@@ -409,6 +421,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                             }
                             placement="top">
                             <IconButton
+                              sx={{ py: 0 }}
                               onClick={() =>
                                 openYesNoDialog({
                                   dialogTitle:
@@ -464,6 +477,43 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                               }
                               color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={TableI18N.delete} placement="bottom">
+                            <IconButton
+                              sx={{ py: 0 }}
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    TableI18N.delete + ' ' + PlanTableI18N.planConfirmation,
+                                  dialogTitleBgColor: '#FFF4EB',
+                                  dialogContent: (
+                                    <>
+                                      <Typography
+                                        sx={{ fontWeight: 600 }}
+                                        variant="body1"
+                                        color="textPrimary">
+                                        {row.planName}
+                                      </Typography>
+                                      <Typography variant="body1" color="textPrimary">
+                                        {PlanTableI18N.deleteText}
+                                      </Typography>
+                                      <Typography mt={1} variant="body1" color="textPrimary">
+                                        {PlanTableI18N.deleteWarning}
+                                      </Typography>
+                                    </>
+                                  ),
+                                  yesButtonLabel: PlanTableI18N.deletePlan,
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleDeletePlan(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color="error">
+                              <DeleteForeverIcon />
                             </IconButton>
                           </Tooltip>
                         </SystemRoleGuard>
