@@ -15,6 +15,8 @@ module.exports = defineConfig({
     viewportWidth: 1440,
     // baseUrl: "http://localhost:7100",
     setupNodeEvents(on, config) {
+      require("cypress-localstorage-commands/plugin")(on, config);
+      return config;
       // implement node event listeners here
     },
   },

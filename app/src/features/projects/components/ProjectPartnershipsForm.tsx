@@ -311,6 +311,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                     .partnership_type ||
                     values.partnership.partnerships.length >= 5)
                 }
+                data-testid="add-partnership-button"
                 type="button"
                 variant="outlined"
                 color="primary"
