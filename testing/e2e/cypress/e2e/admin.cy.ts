@@ -84,7 +84,7 @@ describe("Admin User", () => {
     cy.get('[data-testid="user-role-chip"]').contains("Creator");
   });
 
-  it("renders My Projects/Plans Page", () => {
+  it("renders My Projects/Plans Page, then Creates a Project", () => {
     const button = cy.get('[data-testid="my_projects_plans"]').should("exist");
     button.click();
 
