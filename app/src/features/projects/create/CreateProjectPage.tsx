@@ -463,7 +463,7 @@ const CreateProjectPage: React.FC = () => {
 
       <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
-          <Box mb={0.5} mt={0.9}>
+          <Box mb={0.5} mt={0.9} data-testid="create_project_header">
             <Typography variant="h1">
               <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> Create
               Restoration Project

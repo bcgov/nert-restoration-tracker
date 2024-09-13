@@ -31,13 +31,13 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
 import PlansTableHead from 'features/plans/components/PlansTableHead';
@@ -47,7 +47,6 @@ import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
   const history = useNavigate();
-  const projectAuthStateContext = useContext(ProjectAuthStateContext);
 
   const [selected, setSelected] = useState<readonly number[]>([]);
   const [selectedPlans, setSelectedPlans] = useState<any[]>([]);
@@ -55,12 +54,14 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   // using state for table row changes
   const [rows, setRows] = useState<utils.PlanData[]>([]);
 
-  const isUserAdmin = projectAuthStateContext.hasSystemRole([
-    SYSTEM_ROLE.SYSTEM_ADMIN,
-    SYSTEM_ROLE.MAINTAINER
-  ])
-    ? true
-    : false;
+  const authStateContext = useAuthStateContext();
+
+  const isUserAdmin =
+    authStateContext.nertUserWrapper.roleNames &&
+    (authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.SYSTEM_ADMIN) ||
+      authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.MAINTAINER))
+      ? true
+      : false;
 
   const myPlan = myplan && true === myplan ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
@@ -72,7 +73,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     drafts?: IGetDraftsListResponse[]
   ): utils.PlanData[] {
     let rowsPlanFilterOutArchived = plans;
-    if (rowsPlanFilterOutArchived && isUserAdmin) {
+    if (rowsPlanFilterOutArchived && !isUserAdmin) {
       rowsPlanFilterOutArchived = plans.filter(
         (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
       );
@@ -155,7 +156,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const { changeStateCode, deleteDraft } = useProjectPlanTableUtils();
+    const { changeStateCode, deleteDraft, deleteProjectOrPlan } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -268,6 +269,17 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const handleDeleteDraft = (id: number) => {
       const delIndex = rows.findIndex((row) => row.id === id);
       deleteDraft(false, rows[delIndex].planId);
+
+      setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
+
+      if (0 < page && 1 === visibleRows.length) {
+        setPage(page - 1);
+      }
+    };
+
+    const handleDeletePlan = (id: number) => {
+      const delIndex = rows.findIndex((row) => row.id === id);
+      deleteProjectOrPlan(false, rows[delIndex].planId);
 
       setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
 
@@ -399,7 +411,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         label={row.statusLabel}
                       />
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell sx={{ maxWidth: 50 }} align="left">
                       {draftCode !== row.statusCode ? (
                         <SystemRoleGuard
                           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
@@ -409,6 +421,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                             }
                             placement="top">
                             <IconButton
+                              sx={{ py: 0 }}
                               onClick={() =>
                                 openYesNoDialog({
                                   dialogTitle:
@@ -464,6 +477,43 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                               }
                               color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={TableI18N.delete} placement="bottom">
+                            <IconButton
+                              sx={{ py: 0 }}
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    TableI18N.delete + ' ' + PlanTableI18N.planConfirmation,
+                                  dialogTitleBgColor: '#FFF4EB',
+                                  dialogContent: (
+                                    <>
+                                      <Typography
+                                        sx={{ fontWeight: 600 }}
+                                        variant="body1"
+                                        color="textPrimary">
+                                        {row.planName}
+                                      </Typography>
+                                      <Typography variant="body1" color="textPrimary">
+                                        {PlanTableI18N.deleteText}
+                                      </Typography>
+                                      <Typography mt={1} variant="body1" color="textPrimary">
+                                        {PlanTableI18N.deleteWarning}
+                                      </Typography>
+                                    </>
+                                  ),
+                                  yesButtonLabel: PlanTableI18N.deletePlan,
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleDeletePlan(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color="error">
+                              <DeleteForeverIcon />
                             </IconButton>
                           </Tooltip>
                         </SystemRoleGuard>

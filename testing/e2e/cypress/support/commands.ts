@@ -27,3 +27,21 @@
 // Hydrate baseUrl from the environment variables
 // UNCOMMENT THIS BLOCK TO USE ENVIRONMENT VARIABLES for LOCAL TESTING
 // Cypress.config("baseUrl", Cypress.env("baseUrl"));
+
+Cypress.Commands.add("login", (username, password) => {
+  cy.session([username, password], () => {
+    cy.visit("/");
+
+    const button = cy.get('[data-testid="menu_log_in"]').should("exist");
+    button.click();
+
+    cy.get('[id="social-bceidbasic"]').click();
+
+    cy.get('[id="user"]').type(username);
+    cy.get('[id="password"]').type(password);
+
+    cy.get('[type="submit"]').click();
+
+    cy.url().should("contain", "/search");
+  });
+});

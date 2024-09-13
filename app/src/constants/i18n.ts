@@ -5,6 +5,7 @@ export const CreateProjectI18N = {
   locationRegion: 'Region',
   partnership: 'Partnerships',
   fundingSource: 'Funding Sources',
+  fundingAmount: 'Funding Amount',
   authorization: 'Authorizations',
   numberOfPeopleInvolved: 'Number of People Involved',
   focus: 'Focuses',
@@ -31,7 +32,7 @@ export const CreatePlanI18N = {
 };
 
 export const ViewProjectI18N = {
-  sizeAndSites: 'Size and Number of Sites'
+  detailsInfo: 'Details Information'
 };
 
 export const ViewPlanI18N = {
@@ -171,23 +172,6 @@ export const ReviewAccessRequestI18N = {
     'An error has occurred while attempting to review this access request, please try again. If the error persists, please contact your system administrator.'
 };
 
-export const DeleteProjectI18N = {
-  deleteTitle: 'Delete Project',
-  deleteText:
-    'Are you sure you want to delete this project, its attachments and associated surveys/observations?',
-  deleteErrorTitle: 'Error Deleting Project',
-  deleteErrorText:
-    'An error has occurred while attempting to delete this project, its attachments and associated surveys/observations, please try again. If the error persists, please contact your system administrator.'
-};
-
-export const DeletePlanI18N = {
-  deleteTitle: 'Delete Plan',
-  deleteText: 'Are you sure you want to delete this plan?',
-  deleteErrorTitle: 'Error Deleting Plan',
-  deleteErrorText:
-    'An error has occurred while attempting to delete this plan, please try again. If the error persists, please contact your system administrator.'
-};
-
 export const AddSystemUserI18N = {
   addUserErrorTitle: 'Error Adding System User',
   addUserErrorText:
@@ -234,12 +218,6 @@ export const SystemUserI18N = {
   removeUserErrorTitle: 'Error Removing User From Team',
   removeUserErrorText:
     'An error has occurred while attempting to remove the user from the team, please try again. If the error persists, please contact your system administrator.'
-};
-
-export const DownloadEMLI18N = {
-  errorTitle: 'Error Downloading Project EML',
-  errorText:
-    'An error has occurred while attempting to download the project EML. Please try again, if the error persists please contact your system administrator.'
 };
 
 export const TableI18N = {
@@ -297,7 +275,15 @@ export const ProjectTableI18N = {
     'When project activities end, inclusive of any site monitoring and initial reporting.',
   statusTooltip: 'Current status, within project workflow.',
   statusInfo: 'Status',
-  projectConfirmation: 'project confirmation'
+  projectConfirmation: 'project confirmation',
+  deleteProject: 'Delete Project',
+  deleteText:
+    'Deleting this project will permanently remove it from the application. All the entered data will be lost.',
+  deleteWarning:
+    'Are you sure you want to delete this project, its attachments and associated map features?',
+  deleteErrorTitle: 'Error Deleting Project',
+  deleteErrorText:
+    'An error has occurred while attempting to delete this project, its attachments and associated map features, please try again. If the error persists, please contact your system administrator.'
 };
 
 export const PlanTableI18N = {
@@ -323,5 +309,12 @@ export const PlanTableI18N = {
   multiYear: 'Multi-Year',
   annual: 'Annual',
   statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".',
-  planConfirmation: 'plan confirmation'
+  planConfirmation: 'plan confirmation',
+  deletePlan: 'Delete Plan',
+  deleteText:
+    'Deleting this plan will permanently remove it from the application. All the entered data will be lost.',
+  deleteWarning: 'Are you sure you want to delete this plan and associated map features?',
+  deleteErrorTitle: 'Error Deleting Plan',
+  deleteErrorText:
+    'An error has occurred while attempting to delete this plan, please try again. If the error persists, please contact your system administrator.'
 };

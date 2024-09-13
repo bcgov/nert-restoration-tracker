@@ -31,7 +31,7 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
-import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import { IGetProjectForViewResponse, IProjectsListProps } from 'interfaces/useProjectApi.interface';
 import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -53,13 +53,14 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
   // using state for table row changes
   const [rows, setRows] = useState<utils.ProjectData[]>([]);
 
-  const projectAuthStateContext = useContext(ProjectAuthStateContext);
-  const isUserAdmin = projectAuthStateContext.hasSystemRole([
-    SYSTEM_ROLE.SYSTEM_ADMIN,
-    SYSTEM_ROLE.MAINTAINER
-  ])
-    ? true
-    : false;
+  const authStateContext = useAuthStateContext();
+
+  const isUserAdmin =
+    authStateContext.nertUserWrapper.roleNames &&
+    (authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.SYSTEM_ADMIN) ||
+      authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.MAINTAINER))
+      ? true
+      : false;
 
   const myProject = myproject && true === myproject ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
@@ -71,7 +72,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     drafts?: IGetDraftsListResponse[]
   ): utils.ProjectData[] {
     let rowsProjectFilterOutArchived = projects;
-    if (rowsProjectFilterOutArchived && isUserAdmin) {
+    if (rowsProjectFilterOutArchived && !isUserAdmin) {
       rowsProjectFilterOutArchived = projects.filter(
         (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
       );
@@ -145,7 +146,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const { changeStateCode, deleteDraft } = useProjectPlanTableUtils();
+    const { changeStateCode, deleteDraft, deleteProjectOrPlan } = useProjectPlanTableUtils();
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
@@ -259,6 +260,17 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const handleDeleteDraft = (id: number) => {
       const delIndex = rows.findIndex((row) => row.id === id);
       deleteDraft(true, rows[delIndex].projectId);
+
+      setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
+
+      if (0 < page && 1 === visibleRows.length) {
+        setPage(page - 1);
+      }
+    };
+
+    const handleDeleteProject = (id: number) => {
+      const delIndex = rows.findIndex((row) => row.id === id);
+      deleteProjectOrPlan(true, rows[delIndex].projectId);
 
       setRows((filterRows) => filterRows.filter((_, index) => index !== delIndex));
 
@@ -388,14 +400,14 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     <TableCell align="left">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualEndDate)}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell sx={{ p: 0 }} align="left">
                       <Chip
                         size="small"
                         sx={getStatusStyle(row.statusCode)}
                         label={row.statusLabel}
                       />
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell sx={{ maxWidth: 50 }} align="left">
                       {draftCode !== row.statusCode ? (
                         <SystemRoleGuard
                           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
@@ -405,6 +417,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                             }
                             placement="top">
                             <IconButton
+                              sx={{ py: 0 }}
                               onClick={() =>
                                 openYesNoDialog({
                                   dialogTitle:
@@ -463,6 +476,43 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                               }
                               color={archCode !== row.statusCode ? 'info' : 'warning'}>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={TableI18N.delete} placement="bottom">
+                            <IconButton
+                              sx={{ py: 0 }}
+                              onClick={() =>
+                                openYesNoDialog({
+                                  dialogTitle:
+                                    TableI18N.delete + ' ' + ProjectTableI18N.projectConfirmation,
+                                  dialogTitleBgColor: '#E9FBFF',
+                                  dialogContent: (
+                                    <>
+                                      <Typography
+                                        sx={{ fontWeight: 600 }}
+                                        variant="body1"
+                                        color="textPrimary">
+                                        {row.projectName}
+                                      </Typography>
+                                      <Typography variant="body1" color="textPrimary">
+                                        {ProjectTableI18N.deleteText}
+                                      </Typography>
+                                      <Typography mt={1} variant="body1" color="textPrimary">
+                                        {ProjectTableI18N.deleteWarning}
+                                      </Typography>
+                                    </>
+                                  ),
+                                  yesButtonLabel: ProjectTableI18N.deleteProject,
+                                  yesButtonProps: { color: 'secondary' },
+                                  noButtonLabel: 'Cancel',
+                                  onYes: () => {
+                                    handleDeleteProject(row.id);
+                                    dialogContext.setYesNoDialog({ open: false });
+                                  }
+                                })
+                              }
+                              color="error">
+                              <DeleteForeverIcon />
                             </IconButton>
                           </Tooltip>
                         </SystemRoleGuard>

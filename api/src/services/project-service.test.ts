@@ -1451,7 +1451,7 @@ describe('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      sinon.stub(ProjectRepository.prototype, 'deleteProject').resolves(true);
+      sinon.stub(ProjectRepository.prototype, 'deleteProject').resolves();
 
       const response = await projectService.deleteProject(1);
 

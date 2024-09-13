@@ -382,6 +382,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
+            name: 'project-boundary-upload',
             acceptedFileExtensions: {
               'application/json': ['.json', '.geojson']
             }

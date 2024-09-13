@@ -35,9 +35,9 @@ const ProjectDetails: React.FC<IProjectDetails> = (props) => {
       <InfoDialogDraggable
         isProject={true}
         open={infoOpen}
-        dialogTitle={ViewProjectI18N.sizeAndSites}
+        dialogTitle={ViewProjectI18N.detailsInfo}
         onClose={() => setInfoOpen(false)}>
-        <InfoContent isProject={true} contentIndex={ViewProjectI18N.sizeAndSites} />
+        <InfoContent isProject={true} contentIndex={ViewProjectI18N.detailsInfo} />
       </InfoDialogDraggable>
 
       <Grid container spacing={2}>
@@ -64,7 +64,7 @@ const ProjectDetails: React.FC<IProjectDetails> = (props) => {
                 color="textPrimary">
                 {project.location.size_ha}
               </Typography>
-              <Tooltip title={ViewProjectI18N.sizeAndSites} placement="right">
+              <Tooltip title={ViewProjectI18N.detailsInfo} placement="right">
                 <IconButton
                   sx={{ float: 'right' }}
                   edge="end"

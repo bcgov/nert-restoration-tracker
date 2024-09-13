@@ -138,7 +138,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.getContactData(1, true);
 
-      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'First Nation' }]));
+      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'Not Public' }]));
     });
 
     it('should return array in rows with isPublic = false', async () => {
@@ -1550,7 +1550,7 @@ describe('ProjectRepository', () => {
       sinon.restore();
     });
 
-    it('should delete project and return true on success', async () => {
+    it('should delete project', async () => {
       const mockQueryResponse = { rowCount: 1, rows: [true] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
@@ -1562,7 +1562,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.deleteProject(1);
 
-      expect(response).to.eql(true);
+      expect(response).to.eql(undefined);
     });
 
     it('catches errors and throws', async () => {
