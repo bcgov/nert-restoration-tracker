@@ -21,8 +21,8 @@ export interface ILayerSwitcherProps {
     wells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    wildlife: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    indigenous: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    protectedAreas: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    seismic: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
   open?: boolean;
@@ -66,7 +66,7 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcher = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, wildlife, indigenous, baselayer } =
+  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } =
     props.layerVisibility;
 
   const [switcherOpen, setSwitcherOpen] = useState(props.open ? true : false);
@@ -132,21 +132,24 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
           <FormGroup>
             <FormControlLabel
               control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
-              label="Region Boundaries"
+              label="Natural Resource Mgmt. Boundaries"
             />
             <FormControlLabel
               control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
               label="Wells"
             />
-            <FormControlLabel
-              control={<Checkbox checked={wildlife[0]} onClick={() => wildlife[1](!wildlife[0])} />}
-              label="Wildlife"
-            />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
-                <Checkbox checked={indigenous[0]} onClick={() => indigenous[1](!indigenous[0])} />
+                <Checkbox
+                  checked={protectedAreas[0]}
+                  onClick={() => protectedAreas[1](!protectedAreas[0])}
+                />
               }
-              label="MKMA"
+              label="Protected Areas"
+            /> */}
+            <FormControlLabel
+              control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
+              label="Seismic Lines"
             />
           </FormGroup>
           <hr />
