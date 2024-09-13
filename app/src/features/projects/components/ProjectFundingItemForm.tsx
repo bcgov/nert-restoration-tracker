@@ -10,6 +10,7 @@ import React from 'react';
 import yup from 'utils/YupSchema';
 import StartEndDateFields from 'components/fields/PlanStartEndDateFields';
 import IsPublic from 'components/fields/IsPublic';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectFundingFormArrayItem {
   organization_name: string;
@@ -87,7 +88,7 @@ const ProjectFundingItemForm: React.FC = () => {
               required={true}
               id="funding_amount"
               name="funding_amount"
-              label="Funding Amount"
+              label={CreateProjectI18N.fundingAmount}
             />
           </Grid>
           <Grid item xs={12}>

@@ -36,17 +36,44 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
   let infoContent = null;
   if (isProject) {
     switch (contentIndex) {
-      case ViewProjectI18N.sizeAndSites:
+      case CreateProjectI18N.fundingAmount:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Provide the best estimate of overall project budget.
+          </Typography>
+        );
+        break;
+      case ViewProjectI18N.detailsInfo:
         infoContent = (
           <>
-            <Typography m={2} p={2}>
-              Project size in Hectares, the size is autocalculated by the app when geoJSON files are
-              uploaded. The autocalculation includes all the sites areas excluding any overlap.
+            <Typography m={1} px={2} py={1}>
+              <strong>Project size in Hectares</strong>, the size is autocalculated by the app when
+              geoJSON files are uploaded. The autocalculation includes all the sites areas excluding
+              any overlap.
             </Typography>
-            <Typography m={2} p={2}>
-              Number of sites is the number of sub geographical areas within the project where
-              specific restoration activities are, were or will take place. This number is
-              autocalculated by the app when geoJSON files are uploaded.
+            <Typography m={1} px={2} py={1}>
+              <strong>Number of Sites</strong> is the number of sub geographical areas within the
+              project where specific restoration activities are, were or will take place. This
+              number is autocalculated by the app when geoJSON files are uploaded.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>Number of People Involved</strong>, it's an estimate of how many people will
+              be directly involved or benefit from the project.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>Project part of a publicly available restoration plan</strong>, if yes there
+              is a corresponding restoration plan in the restoration tracker.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>
+                Project within or overlapping known area of cultural or conservation priority
+              </strong>
+              , if yes a cultural or conservation area is part of the project. A cultural or
+              conservation area includes mapped geographic areas like provincial parks and protected
+              areas, and areas formally designed for conservation, such as in a
+              government-to-government agreement, but the designation process is not yet complete.
+              It could also include an area of cultural importance publicly identified by a First
+              Nation.
             </Typography>
           </>
         );
@@ -441,14 +468,15 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
       case ViewPlanI18N.sizeAndSites:
         infoContent = (
           <>
-            <Typography m={2} p={2}>
-              Plan size in Hectares, the size is autocalculated by the app when geoJSON files are
-              uploaded. The autocalculation includes all the sites areas excluding any overlap.
+            <Typography m={1} p={1}>
+              <strong>Plan size in Hectares</strong>, the size is autocalculated by the app when
+              geoJSON files are uploaded. The autocalculation includes all the sites areas excluding
+              any overlap.
             </Typography>
-            <Typography m={2} p={2}>
-              Plan number of sites is the number of sub geographical areas within the plan where
-              specific restoration activities are, were or will take place. This number is
-              autocalculated by the app when geoJSON files are uploaded.
+            <Typography m={1} p={1}>
+              <strong>Plan number of Sites</strong> is the number of sub geographical areas within
+              the plan where specific restoration activities are, were or will take place. This
+              number is autocalculated by the app when geoJSON files are uploaded.
             </Typography>
           </>
         );
