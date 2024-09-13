@@ -124,14 +124,14 @@ export const projectData: IProject = {
     project_id: 1,
     is_project: true,
     uuid: "0f7b4f58-0b64-4f83-933c-83bbee63f397",
-    project_name: "Seed Project 1",
+    project_name: "Cypress Test",
     state_code: 1,
     start_date: "2003-09-15",
     end_date: "2028-09-09",
     actual_start_date: "2002-01-17",
     actual_end_date: "2027-11-07",
     brief_desc:
-      "Aequitas.",
+      "cypress.",
     is_healing_land: true,
     is_healing_people: true,
     is_land_initiative: true,
@@ -145,10 +145,10 @@ export const projectData: IProject = {
   contact: {
     contacts: [
       {
-        first_name: "John",
-        last_name: "Doe",
-        email_address: "john@email.com",
-        organization: "Ministry of Forests",
+        first_name: "cypress",
+        last_name: "cypress",
+        email_address: "cypress@email.com",
+        organization: "Ministry of Cypress",
         phone_number: "250-555-5555",
         is_public: "true",
         is_primary: "true",
@@ -195,9 +195,9 @@ export const projectData: IProject = {
   funding: {
     fundingSources: [
       {
-        organization_name: "kj funding",
-        description: "kj",
-        funding_project_id: "kj funding project id",
+        organization_name: "cypress funding",
+        description: "cypress",
+        funding_project_id: "cypress funding project id",
         funding_amount: 12345,
         start_date: "2024-09-01",
         end_date: "2024-09-27",
