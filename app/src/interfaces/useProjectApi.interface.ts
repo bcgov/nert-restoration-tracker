@@ -208,6 +208,7 @@ export interface IGetProjectForViewResponsePermit {
 
 export interface IGetProjectForViewResponseConservationAreas {
   conservationArea: string;
+  isPublic: boolean;
 }
 
 export interface IGetProjectForViewResponseLocation {

@@ -64,7 +64,7 @@ export class PlanService extends DBService {
     const [projectData, contactData, locationData] = await Promise.all([
       this.projectRepository.getProjectData(id),
       this.projectRepository.getContactData(id, isPublic),
-      this.projectService.getLocationData(id)
+      this.projectService.getLocationData(id, isPublic)
     ]);
 
     return {
@@ -126,7 +126,7 @@ export class PlanService extends DBService {
     const [projectData, contactData, locationData, attachmentData] = await Promise.all([
       this.projectRepository.getProjectData(id),
       this.projectRepository.getContactData(id, isPublic),
-      this.projectService.getLocationData(id),
+      this.projectService.getLocationData(id, isPublic),
       this.attachmentRepository.getProjectAttachmentsByType(id, 'thumbnail')
     ]);
 

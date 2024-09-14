@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import {
   PostAuthorizationData,
-  PostConservationAreasData,
   PostContactData,
   PostEditPlanObject,
   PostFocusData,
@@ -623,34 +622,6 @@ describe('PostObjectivesData', () => {
   });
 });
 
-describe('PostConservationAreasData', () => {
-  describe('No values provided', () => {
-    let projectConservationAreasData: PostConservationAreasData;
-
-    before(() => {
-      projectConservationAreasData = new PostConservationAreasData(null);
-    });
-
-    it('sets conservationAreas', function () {
-      expect(projectConservationAreasData.conservationAreas).to.eql([]);
-    });
-  });
-
-  describe('All values provided', () => {
-    let projectConservationAreasData: PostConservationAreasData;
-
-    const obj = { conservationAreas: [{ conservationArea: '1' }, { conservationArea: '2' }] };
-
-    before(() => {
-      projectConservationAreasData = new PostConservationAreasData(obj);
-    });
-
-    it('sets conservationAreas', function () {
-      expect(projectConservationAreasData.conservationAreas).to.eql(obj.conservationAreas);
-    });
-  });
-});
-
 describe('PostFundingSource', () => {
   describe('No values provided', () => {
     let projectFundingData: PostFundingSource;
@@ -787,7 +758,7 @@ describe('PostLocationData', () => {
       region: 1,
       number_sites: 1,
       size_ha: 1,
-      conservationAreas: [{ conservationArea: 'string' }]
+      conservationAreas: [{ conservationArea: 'string', isPublic: 'true' }]
     };
 
     before(() => {

@@ -12,6 +12,7 @@ import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
 import React from 'react';
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 const pageStyles = {
   customListItem: {
@@ -24,11 +25,13 @@ const pageStyles = {
 
 export interface IProjectLocationConservationAreasArrayItem {
   conservationArea: string;
+  isPublic: boolean;
 }
 
 export const ProjectLocationConservationAreasFormArrayItemInitialValues: IProjectLocationConservationAreasArrayItem =
   {
-    conservationArea: '' as unknown as string
+    conservationArea: '' as unknown as string,
+    isPublic: false
   };
 
 /**
@@ -58,7 +61,7 @@ const ProjectLocationConservationAreas: React.FC = () => {
                       <List>
                         <ListItem sx={pageStyles.customListItem}>
                           <Grid container spacing={3}>
-                            <Grid item xs={12} md={10.5}>
+                            <Grid item xs={6} md={8}>
                               <CustomTextField
                                 name={`location.conservationAreas.[${index}].conservationArea`}
                                 label="Conservation Area"
@@ -73,6 +76,29 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                   helperText:
                                     conservationAreaMeta.touched && conservationAreaMeta.error
                                 }}
+                              />
+                            </Grid>
+                            <Grid item xs={4}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    color="primary"
+                                    id="isPublic"
+                                    name="isPublic"
+                                    aria-label="isPublic"
+                                    checked={!conservationArea.isPublic}
+                                    value={conservationArea.isPublic}
+                                    onChange={() => {
+                                      arrayHelpers.replace(index, {
+                                        ...conservationArea,
+                                        isPublic: !conservationArea.isPublic
+                                      });
+                                    }}
+                                  />
+                                }
+                                label={
+                                  <Typography color="textSecondary">Hidden from Public?</Typography>
+                                }
                               />
                             </Grid>
                           </Grid>

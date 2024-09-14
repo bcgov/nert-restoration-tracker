@@ -279,6 +279,9 @@ GET.apiDoc = {
                       properties: {
                         conservationArea: {
                           type: 'string'
+                        },
+                        isPublic: {
+                          type: 'boolean'
                         }
                       }
                     }

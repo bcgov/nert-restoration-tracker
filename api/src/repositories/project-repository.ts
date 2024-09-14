@@ -243,24 +243,43 @@ export class ProjectRepository extends BaseRepository {
    * Get Conservation Areas Data
    *
    * @param {number} projectId
-   * @return {*}  {Promise<any>}
+   * @return {*}  {Promise<IGetConservationArea[]>}
    * @memberof ProjectRepository
    */
-  async getConservationAreasData(projectId: number): Promise<IGetConservationArea[]> {
+  async getConservationAreasData(projectId: number, isPublic: boolean): Promise<IGetConservationArea[]> {
     try {
-      const sqlStatement = SQL`
+      const sqlStatement = SQL``;
+
+      if (isPublic) {
+        sqlStatement.append(SQL`
         SELECT
-        conservation_area
+        conservation_area,
+        is_public
         FROM
         conservation_area
         WHERE
-          project_id = ${projectId};
-      `;
+          project_id = ${projectId}
+          AND
+          is_public = ${isPublic}
+          ;
+      `);
+      } else {
+        sqlStatement.append(SQL`
+          SELECT
+          conservation_area,
+          is_public
+          FROM
+          conservation_area
+          WHERE
+            project_id = ${projectId}
+            ;
+        `);
+      }
 
       const response = await this.connection.sql(sqlStatement);
 
-      const conservationAreas = response.rows.map((row: { conservation_area: string }) => {
-        return { conservationArea: row.conservation_area };
+      const conservationAreas = response.rows.map((row: { conservation_area: string; is_public: boolean }) => {
+        return { conservationArea: row.conservation_area, isPublic: row.is_public };
       });
 
       return conservationAreas;
@@ -836,17 +855,23 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<{ conservationArea_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertConservationArea(conservationArea: string, projectId: number): Promise<{ conservation_area_id: number }> {
+  async insertConservationArea(
+    conservationArea: string,
+    isPublic: boolean,
+    projectId: number
+  ): Promise<{ conservation_area_id: number }> {
     defaultLog.debug({ label: 'insertConservationArea', message: 'params', conservationArea });
 
     try {
       const sqlStatement = SQL`
       INSERT INTO conservation_area (
         project_id,
-        conservation_area
+        conservation_area,
+        is_public
       ) VALUES (
         ${projectId},
-        ${conservationArea}
+        ${conservationArea},
+        ${isPublic}
       )
       RETURNING
       conservation_area_id;
