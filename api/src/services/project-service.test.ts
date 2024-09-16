@@ -503,7 +503,7 @@ describe('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.getLocationData(projectId);
+      const result = await projectService.getLocationData(projectId, false);
 
       expect(result).to.deep.include(new projectViewModels.GetLocationData());
     });
@@ -637,7 +637,7 @@ describe('ProjectService', () => {
           number_sites: 123,
           size_ha: 123,
           name_area_conservation_priority: ['string'],
-          conservationAreas: [{ conservationArea: 'string' }]
+          conservationAreas: [{ conservationArea: 'string', isPublic: false }]
         },
         authorization: {
           authorizations: [
@@ -876,7 +876,7 @@ describe('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.insertConservationArea('string', 1);
+      const result = await projectService.insertConservationArea('string', false, 1);
 
       expect(result).equals(1);
     });

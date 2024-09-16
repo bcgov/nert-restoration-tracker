@@ -758,7 +758,7 @@ describe('PostLocationData', () => {
       region: 1,
       number_sites: 1,
       size_ha: 1,
-      conservationAreas: [{ conservationArea: 'string', isPublic: 'true' }]
+      conservationAreas: [{ conservationArea: 'string', isPublic: true }]
     };
 
     before(() => {
