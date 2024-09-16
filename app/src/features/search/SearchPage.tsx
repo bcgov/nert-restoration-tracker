@@ -65,7 +65,7 @@ const SearchPage: React.FC = () => {
           .geometryCollection[0];
 
         // Filter out archived projects/plans
-        if ( archCode != result.state_code) {
+        if (archCode != result.state_code) {
           clusteredPointGeometries.push({
             position: centroid(feature as any).geometry.coordinates as LatLngTuple,
             feature: result
