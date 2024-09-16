@@ -45,18 +45,6 @@ const usePlanApi = (axios: AxiosInstance) => {
   };
 
   /**
-   * Delete Plan based on Plan ID
-   *
-   * @param {number} planId
-   * @returns {*} {Promise<boolean>}
-   */
-  const deletePlan = async (planId: number): Promise<boolean> => {
-    const { data } = await axios.delete(`/api/plan/${planId}/delete`);
-
-    return data;
-  };
-
-  /**
    * Get plans list (potentially based on filter criteria).
    *
    * @param {IPlansAdvancedFilterRequest} filterFieldData
@@ -226,7 +214,6 @@ const usePlanApi = (axios: AxiosInstance) => {
     getPlanById,
     getPlanByIdForUpdate,
     updatePlan,
-    deletePlan,
     getUserPlansList,
     uploadPlanAttachments,
     deletePlanThumbnail,

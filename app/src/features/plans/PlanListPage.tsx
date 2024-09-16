@@ -31,24 +31,22 @@ import {
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { PlanTableI18N, TableI18N } from 'constants/i18n';
 import { SYSTEM_ROLE } from 'constants/roles';
+import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import React, { Fragment, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import { getDateDiffInMonths, getFormattedDate } from 'utils/Utils';
 import { IPlansListProps } from '../user/MyPlans';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import { ProjectAuthStateContext } from 'contexts/projectAuthStateContext';
 import { calculateSelectedProjectsPlans } from 'utils/dataTransfer';
 import useProjectPlanTableUtils from 'hooks/useProjectPlanTable';
 import PlansTableHead from 'features/plans/components/PlansTableHead';
 import PlansTableToolbar from 'features/plans/components/PlansTableToolbar';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
-import { maxWidth } from '@mui/system';
 
 const PlanListPage: React.FC<IPlansListProps> = (props) => {
   const { plans, drafts, myplan } = props;
   const history = useNavigate();
-  const projectAuthStateContext = useContext(ProjectAuthStateContext);
 
   const [selected, setSelected] = useState<readonly number[]>([]);
   const [selectedPlans, setSelectedPlans] = useState<any[]>([]);
@@ -56,12 +54,14 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
   // using state for table row changes
   const [rows, setRows] = useState<utils.PlanData[]>([]);
 
-  const isUserAdmin = projectAuthStateContext.hasSystemRole([
-    SYSTEM_ROLE.SYSTEM_ADMIN,
-    SYSTEM_ROLE.MAINTAINER
-  ])
-    ? true
-    : false;
+  const authStateContext = useAuthStateContext();
+
+  const isUserAdmin =
+    authStateContext.nertUserWrapper.roleNames &&
+    (authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.SYSTEM_ADMIN) ||
+      authStateContext.nertUserWrapper.roleNames.includes(SYSTEM_ROLE.MAINTAINER))
+      ? true
+      : false;
 
   const myPlan = myplan && true === myplan ? true : false;
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
@@ -73,7 +73,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     drafts?: IGetDraftsListResponse[]
   ): utils.PlanData[] {
     let rowsPlanFilterOutArchived = plans;
-    if (rowsPlanFilterOutArchived && isUserAdmin) {
+    if (rowsPlanFilterOutArchived && !isUserAdmin) {
       rowsPlanFilterOutArchived = plans.filter(
         (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
       );
@@ -102,14 +102,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
           statusCode: row.project.state_code,
           statusLabel: getStateLabelFromCode(row.project.state_code),
           statusStyle: getStatusStyle(row.project.state_code),
-          archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive,
-          export:
-            row.project.is_healing_people &&
-            !row.project.is_healing_land &&
-            !row.project.is_cultural_initiative &&
-            !row.project.is_land_initiative
-              ? ''
-              : 'Yes'
+          archive: row.project.state_code !== archCode ? TableI18N.archive : TableI18N.unarchive
         } as utils.PlanData;
       });
 
@@ -129,8 +122,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
               statusCode: draftCode,
               statusLabel: states.DRAFT,
               statusStyle: draftStatusStyle,
-              archive: '',
-              export: ''
+              archive: ''
             } as utils.PlanData;
           })
       : [];
@@ -169,7 +161,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.checked) {
-        const newSelected = rows.filter((item) => item.export).map((n) => n.id);
+        const newSelected = rows.map((n) => n.id);
         setSelected(newSelected);
         return;
       }
@@ -559,36 +551,20 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                     </TableCell>
                     {!myPlan ? (
                       <TableCell padding="checkbox">
-                        {row.export ? (
-                          <Tooltip
-                            title={
-                              isItemSelected
-                                ? TableI18N.exportSelected
-                                : TableI18N.exportNotSelected
-                            }
-                            placement="right">
-                            <Checkbox
-                              color="primary"
-                              checked={isItemSelected}
-                              inputProps={{
-                                'aria-labelledby': labelId
-                              }}
-                              onClick={(event) => handleClick(event, row.id)}
-                            />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip title={TableI18N.noDataToExport} placement="right">
-                            <span>
-                              <Checkbox
-                                disabled={true}
-                                color="primary"
-                                inputProps={{
-                                  'aria-labelledby': labelId
-                                }}
-                              />
-                            </span>
-                          </Tooltip>
-                        )}
+                        <Tooltip
+                          title={
+                            isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
+                          }
+                          placement="right">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId
+                            }}
+                            onClick={(event) => handleClick(event, row.id)}
+                          />
+                        </Tooltip>
                       </TableCell>
                     ) : (
                       <></>

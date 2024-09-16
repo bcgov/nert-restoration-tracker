@@ -165,8 +165,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
   const wells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
+  const protectedAreas = useState<boolean>(false);
+  const seismic = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
   const layerVisibility = {
@@ -174,8 +174,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
     wells,
     projects,
     plans,
-    wildlife,
-    indigenous,
+    protectedAreas,
+    seismic,
     baselayer
   };
 
@@ -382,6 +382,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
+            name: 'project-boundary-upload',
             acceptedFileExtensions: {
               'application/json': ['.json', '.geojson']
             }

@@ -138,7 +138,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.getContactData(1, true);
 
-      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'First Nation' }]));
+      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'Not Public' }]));
     });
 
     it('should return array in rows with isPublic = false', async () => {

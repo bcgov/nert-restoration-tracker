@@ -2,18 +2,9 @@ describe("Home Page", () => {
   const username = String(Cypress.env("maintainerUser"));
   const password = Cypress.env("password");
 
-  before(() => {
+  beforeEach(() => {
+    cy.login(username, password);
     cy.visit("/");
-
-    const button = cy.get('[data-testid="menu_log_in"]').should("exist");
-    button.click();
-
-    cy.get('[id="social-bceidbasic"]').click();
-
-    cy.get('[id="user"]').type(username);
-    cy.get('[id="password"]').type(password);
-
-    cy.get('[type="submit"]').click();
   });
 
   it("renders the home page and username", () => {

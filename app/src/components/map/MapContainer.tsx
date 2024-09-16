@@ -31,6 +31,7 @@ export interface IMapContainerProps {
   autoFocus?: boolean;
   editModeOn?: boolean; // This activates things like mask drawing
   region?: string | null; // The region to filter by.. or null for all
+  children?: React.ReactNode;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -316,7 +317,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, wildlife, indigenous } = layerVisibility;
+  const { boundary, wells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -454,6 +455,90 @@ const initializeMap = (
         'line-width': 2
       },
       ...(region && { filter: ['all', ['==', 'REGION_NAME', region]] })
+    });
+
+    /* The Seismic Line layer */
+    map.addSource('seismic_lines', {
+      type: 'vector',
+      tiles: [
+        'https://nrs.objectstore.gov.bc.ca/nerdel/tiles/legacy_2d_seismic_lines_with_ecology/{z}/{x}/{y}.pbf'
+      ],
+      minzoom: 11,
+      promoteId: 'OBJECTID'
+    });
+
+    map.addLayer({
+      id: 'seismic_lines',
+      type: 'line',
+      source: 'seismic_lines',
+      'source-layer': 'GEO_LEGACY_2D_TRIM_ECOLOGY_LN',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+        visibility: seismic[0] ? 'visible' : 'none'
+      },
+      paint: {
+        // change line colour based on the PROJ_AGE_1 age in years from 0 to 1000 and greater
+        'line-color': [
+          'case',
+          ['<', ['get', 'PROJ_AGE_1'], 100],
+          'rgba(235, 168, 50, 1)',
+          'rgba(97, 255, 0, 1)'
+        ],
+        'line-width': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          11,
+          ['case', ['boolean', ['feature-state', 'hover'], false], 4, 1],
+          14,
+          ['case', ['boolean', ['feature-state', 'hover'], false], 12, 4]
+        ]
+      }
+    });
+
+    let hoverStateSeismic: boolean | any = false;
+    // Display the asset type on mouse hover
+    map.on('mouseenter', 'seismic_lines', (e: any) => {
+      map.getCanvas().style.cursor = 'pointer';
+
+      const feature = e.features[0];
+
+      const tooltip = feature.properties.FULL_LABEL;
+
+      setTooltipVisible(true);
+
+      hoverStateSeismic = feature.id;
+
+      setTooltipX(e.point.x + 10);
+      setTooltipY(e.point.y - 34);
+      setTooltip(tooltip);
+
+      map.setFeatureState(
+        {
+          source: 'seismic_lines',
+          sourceLayer: 'GEO_LEGACY_2D_TRIM_ECOLOGY_LN',
+          id: hoverStateSeismic
+        },
+        {
+          hover: true
+        }
+      );
+    });
+    map.on('mouseleave', 'seismic_lines', () => {
+      map.getCanvas().style.cursor = '';
+      setTooltipVisible(false);
+
+      map.setFeatureState(
+        {
+          source: 'seismic_lines',
+          sourceLayer: 'GEO_LEGACY_2D_TRIM_ECOLOGY_LN',
+          id: hoverStateSeismic
+        },
+        {
+          hover: false
+        }
+      );
     });
 
     /*****************Project/Plans********************/
@@ -774,46 +859,27 @@ const initializeMap = (
     /**************************************************/
 
     /* Protected Areas as WMS layers from the BCGW */
-    map.addSource('wildlife-areas', {
+    map.addSource('protected-areas', {
       type: 'raster',
       tiles: [
-        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY'
+        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP,WHSE_WILDLIFE_MANAGEMENT.WCP_WILDLIFE_HABITAT_AREA_POLY,WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW,WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW'
       ],
       tileSize: 256,
-      minzoom: 10
+      minzoom: 6
     });
     map.addLayer({
-      id: 'wms-wildlife-areas',
+      id: 'wms-protected-areas',
       type: 'raster',
-      source: 'wildlife-areas',
+      source: 'protected-areas',
       layout: {
-        visibility: wildlife[0] ? 'visible' : 'none'
+        // visibility: protectedAreas[0] ? 'visible' : 'none'
+        visibility: 'visible'
       },
       paint: {
         'raster-opacity': 0.5
       }
     });
 
-    /* Indigenous Areas as WMS layers from the BCGW */
-    map.addSource('indigenous-areas', {
-      type: 'raster',
-      tiles: [
-        'https://openmaps.gov.bc.ca/geo/ows?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&raster-opacity=0.5&layers=WHSE_TANTALIS.TA_MGMT_AREAS_SPATIAL_SVW'
-      ],
-      tileSize: 256,
-      minzoom: 4
-    });
-    map.addLayer({
-      id: 'wms-indigenous-areas',
-      type: 'raster',
-      source: 'indigenous-areas',
-      layout: {
-        visibility: indigenous[0] ? 'visible' : 'none'
-      },
-      paint: {
-        'raster-opacity': 0.5
-      }
-    });
     // Add the well layers
     drawWells(map, wells);
 
@@ -871,21 +937,18 @@ const checkLayerVisibility = (layers: any, features: any) => {
     }
 
     // This is a concatenated (server side) WMS layer from the BCGW
-    if (layer === 'wildlife' && map.getLayer('wms-wildlife-areas')) {
+    if (layer === 'protectedAreas' && map.getLayer('wms-protected-areas')) {
       map.setLayoutProperty(
-        'wms-wildlife-areas',
+        'wms-protected-areas',
         'visibility',
-        layers[layer][0] ? 'visible' : 'none'
+        // layers[layer][0] ? 'visible' : 'none'
+        'visible'
       );
     }
 
-    // This will be extended to include indigenous community point locations
-    if (layer === 'indigenous' && map.getLayer('wms-indigenous-areas')) {
-      map.setLayoutProperty(
-        'wms-indigenous-areas',
-        'visibility',
-        layers[layer][0] ? 'visible' : 'none'
-      );
+    // Seismic
+    if (layer === 'seismic' && map.getLayer('seismic_lines')) {
+      map.setLayoutProperty('seismic_lines', 'visibility', layers[layer][0] ? 'visible' : 'none');
     }
 
     // Projects
@@ -944,7 +1007,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 };
 
 const MapContainer: React.FC<IMapContainerProps> = (props) => {
-  const { mapId, center, zoom, features, centroids, layerVisibility } = props;
+  const { mapId, center, zoom, features, centroids, layerVisibility, children } = props;
 
   const maskState = props.maskState || [];
   const mask = props.mask || 0;
@@ -1039,6 +1102,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
         style={{ left: tooltipX, top: tooltipY }}>
         {tooltip}
       </div>
+      {children}
     </div>
   );
 };

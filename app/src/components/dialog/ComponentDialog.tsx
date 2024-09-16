@@ -65,7 +65,12 @@ const ComponentDialog: React.FC<IComponentDialogProps & React.PropsWithChildren>
       <DialogTitle id="component-dialog-title">{props.dialogTitle}</DialogTitle>
       <DialogContent>{props.children}</DialogContent>
       <DialogActions>
-        <Button onClick={props.onClose} color="primary" variant="contained" autoFocus>
+        <Button
+          data-testid="close_button"
+          onClick={props.onClose}
+          color="primary"
+          variant="contained"
+          autoFocus>
           Close
         </Button>
       </DialogActions>

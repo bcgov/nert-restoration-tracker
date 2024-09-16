@@ -115,7 +115,6 @@ export interface PlanData {
   statusCode: number;
   statusLabel: string;
   archive: string;
-  export: string;
 }
 
 export interface PlansTableProps {

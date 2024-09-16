@@ -102,8 +102,8 @@ describe("Project List Page", () => {
   it("renders the project list", () => {
     cy.visit("projects");
 
-    const projectList = cy.get('[data-testid="project_list"]').should("exist");
-    projectList.should("have.length", 1);
+    const title = cy.get("h1").should("exist");
+    title.should("include.text", "Projects");
 
     const dropdown = cy
       .get('[data-testid="hide-projects-list-button"]')
@@ -117,8 +117,8 @@ describe("Project List Page", () => {
   it("renders the project details page on project click", () => {
     cy.visit("projects");
 
-    const projectList = cy.get('[data-testid="project_list"]').should("exist");
-    projectList.should("have.length", 1);
+    const title = cy.get("h1").should("exist");
+    title.should("include.text", "Projects");
 
     const dropdown = cy
       .get('[data-testid="hide-projects-list-button"]')

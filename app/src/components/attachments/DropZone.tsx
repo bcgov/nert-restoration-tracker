@@ -35,6 +35,7 @@ export interface IDropZoneProps {
 }
 
 export interface IDropZoneConfigProps {
+  name?: string;
   /**
    * Maximum file size allowed (in bytes).
    *
@@ -117,7 +118,7 @@ export const DropZone: React.FC<IDropZoneProps & IDropZoneConfigProps> = (props)
         accept={props.acceptedFileExtensions}>
         {({ getRootProps, getInputProps }) => (
           <Box {...getRootProps()}>
-            <input {...getInputProps()} data-testid="drop-zone-input" />
+            <input {...getInputProps()} data-testid={props.name ? props.name : 'drop-zone-input'} />
             <Box p={2} display="flex" flexDirection="column" alignItems="center">
               <Icon color={pageStyles.dropZoneIcon.color} path={mdiTrayArrowUp} size={1.5} />
               <Box mt={0.5} sx={pageStyles.dropZoneTitle}>
