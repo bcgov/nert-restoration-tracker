@@ -13,6 +13,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import LayersIcon from '@mui/icons-material/Layers';
+import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
 
 /**
  * Page to search for and display a list of records spatially.
@@ -45,6 +46,7 @@ const SearchPage: React.FC = () => {
     },
     [dialogContext]
   );
+  const archCode = getStateCodeFromLabel(states.ARCHIVED);
   const getSearchResults = useCallback(async () => {
     try {
       const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
@@ -62,10 +64,13 @@ const SearchPage: React.FC = () => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
           .geometryCollection[0];
 
-        clusteredPointGeometries.push({
-          position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          feature: result
-        });
+        // Filter out archived projects/plans
+        if (archCode != result.state_code) {
+          clusteredPointGeometries.push({
+            position: centroid(feature as any).geometry.coordinates as LatLngTuple,
+            feature: result
+          });
+        }
       });
 
       setPerformSearch(false);
