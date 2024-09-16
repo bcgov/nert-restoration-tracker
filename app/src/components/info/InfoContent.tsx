@@ -98,6 +98,14 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
           </Typography>
         );
         break;
+      case CreateProjectI18N.locationConservationAreaHidden:
+        infoContent = (
+          <Typography m={2} p={2}>
+            If you are a First Nation or an Indigenous Governing Body, you can hide the Conservation
+            Area information from the public. Do you wish to hide these details from the public?
+          </Typography>
+        );
+        break;
       case CreateProjectI18N.locationRegion:
         infoContent = (
           <Typography m={2} p={2}>
