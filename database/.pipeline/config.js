@@ -21,10 +21,6 @@ const tag = (branch && `build-${version}-${changeId}-${branch}`) || `build-${ver
 
 // Default: run both seeding and migrations
 let dbSetupDockerfilePath = './.docker/db/Dockerfile.setup';
-if (isStaticDeployment && options.branch === 'prod') {
-  // If this is static build to prod, then only run the migrations
-  dbSetupDockerfilePath = './.docker/db/Dockerfile.migrate';
-}
 
 const processOptions = (options) => {
   const result = { ...options };
