@@ -9,19 +9,17 @@
     "url": "https://github.com/bcgov/nert-restoration-tracker.git"
   },
   "scripts": {
-    "start": "NODE_OPTIONS='--max-old-space-size=2000' ts-node src/app",
-    "clean": "gulp clean",
-    "build": "gulp build",
+    "start": "ts-node src/app",
+    "build": "tsc --project tsconfig.production.json",
     "start-reload": "./node_modules/.bin/nodemon src/app.ts --exec ts-node",
-    "migrate-latest": "knex migrate:latest",
-    "migrate-rollback": "knex migrate:rollback",
     "test": "mocha",
     "test-watch": "mocha --watch",
     "coverage": "nyc mocha",
     "lint": "eslint . --ignore-pattern 'node_modules' --ext .ts",
     "lint-fix": "eslint . --fix --ignore-pattern 'node_modules' --ext .ts",
-    "format": "prettier --check \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
-    "format-fix": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
+    "format": "prettier --loglevel=warn --check \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
+    "format-fix": "prettier --loglevel=warn --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss}\"",
+    "fix": "npm-run-all -l -s lint-fix format-fix"
   },
   "engines": {
     "node": ">= 20.0.0",

@@ -74,9 +74,9 @@ parameters:
   - name: MEMORY_LIMIT
     value: '200Mi'
   - name: REPLICAS
-    value: '2'
+    value: '1'
   - name: REPLICAS_MAX
-    value: '2'
+    value: '1'
   - name: NAMELINK
     value: restoration-tracker-api
 objects:

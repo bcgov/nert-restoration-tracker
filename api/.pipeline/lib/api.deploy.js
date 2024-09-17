@@ -31,6 +31,7 @@ const apiDeploy = async (settings) => {
         HOST: phases[phase].host,
         CHANGE_ID: phases.build.changeId || changeId,
         NODE_ENV: phases[phase].env || 'dev',
+        NODE_OPTIONS: phases[phase].nodeOptions,
         S3_KEY_PREFIX: phases[phase].s3KeyPrefix,
         TZ: phases[phase].tz,
         KEYCLOAK_ADMIN_USERNAME: phases[phase].sso.adminUserName,

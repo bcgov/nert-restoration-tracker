@@ -60,9 +60,9 @@ const phases = {
     env: 'build',
     tz: config.timezone.api,
     branch: branch,
-    cpuRequest: '100m',
-    cpuLimit: '1250m',
-    memoryRequest: '512Mi',
+    cpuRequest: '50m',
+    cpuLimit: '1000m',
+    memoryRequest: '100Mi',
     memoryLimit: '3Gi'
   },
   dev: {
@@ -77,18 +77,17 @@ const phases = {
     tag: `dev-${version}-${deployChangeId}`,
     host: (isStaticDeployment && staticUrlsAPI.dev) || `${name}-${changeId}-d83219-dev.apps.silver.devops.gov.bc.ca`,
     env: 'dev',
-    elasticsearchURL: 'http://es01.a0ec71-prod:9200',
-    elasticsearchTaxonomyIndex: 'taxonomy_3.0.0',
     s3KeyPrefix: (isStaticDeployment && 'restoration') || `local/${deployChangeId}/restoration`,
     tz: config.timezone.api,
     sso: config.sso.dev,
     logLevel: 'info',
-    cpuRequest: '100m',
-    cpuLimit: '500m',
-    memoryRequest: '512Mi',
-    memoryLimit: '1.6Gi',
+    nodeOptions: '--max_old_space_size=3000', // 75% of memoryLimit (bytes)
+    cpuRequest: '50m',
+    cpuLimit: '600m',
+    memoryRequest: '100Mi',
+    memoryLimit: '4Gi',
     replicas: '1',
-    replicasMax: (isStaticDeployment && '2') || '1'
+    replicasMax: '1'
   },
   test: {
     namespace: 'd83219-test',
@@ -102,18 +101,17 @@ const phases = {
     tag: `test-${version}`,
     host: staticUrlsAPI.test,
     env: 'test',
-    elasticsearchURL: 'http://es01.a0ec71-prod:9200',
-    elasticsearchTaxonomyIndex: 'taxonomy_3.0.0',
     s3KeyPrefix: 'restoration',
     tz: config.timezone.api,
     sso: config.sso.test,
     logLevel: 'warn',
-    cpuRequest: '200m',
+    nodeOptions: '--max_old_space_size=3000', // 75% of memoryLimit (bytes)
+    cpuRequest: '50m',
     cpuLimit: '1000m',
-    memoryRequest: '512Mi',
-    memoryLimit: '2Gi',
+    memoryRequest: '100Mi',
+    memoryLimit: '4Gi',
     replicas: '2',
-    replicasMax: '3'
+    replicasMax: '2'
   },
   prod: {
     namespace: 'd83219-prod',
@@ -127,18 +125,17 @@ const phases = {
     tag: `prod-${version}`,
     host: staticUrlsAPI.prod,
     env: 'prod',
-    elasticsearchURL: 'http://es01.a0ec71-prod:9200',
-    elasticsearchTaxonomyIndex: 'taxonomy_3.0.0',
     s3KeyPrefix: 'restoration',
     tz: config.timezone.api,
     sso: config.sso.prod,
-    logLevel: 'warn',
-    cpuRequest: '200m',
-    cpuLimit: '1000m',
-    memoryRequest: '512Mi',
-    memoryLimit: '2Gi',
+    logLevel: 'silent',
+    nodeOptions: '--max_old_space_size=6000', // 75% of memoryLimit (bytes)
+    cpuRequest: '50m',
+    cpuLimit: '2000m',
+    memoryRequest: '100Mi',
+    memoryLimit: '8Gi',
     replicas: '2',
-    replicasMax: '3'
+    replicasMax: '2'
   }
 };
 

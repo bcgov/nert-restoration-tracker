@@ -28,7 +28,6 @@ COPY package*.json ./
 # Install all dependencies
 RUN npm ci --include=dev
 
-
 # Copy the rest of the files
 COPY . ./
 
