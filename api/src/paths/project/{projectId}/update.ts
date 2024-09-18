@@ -371,6 +371,9 @@ PUT.apiDoc = {
                     properties: {
                       conservationArea: {
                         type: 'string'
+                      },
+                      isPublic: {
+                        type: 'boolean'
                       }
                     }
                   }
@@ -723,6 +726,9 @@ GET.apiDoc = {
                       properties: {
                         conservationArea: {
                           type: 'string'
+                        },
+                        isPublic: {
+                          type: 'boolean'
                         }
                       }
                     }

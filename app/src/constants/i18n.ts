@@ -2,6 +2,7 @@ export const CreateProjectI18N = {
   locationArea: 'Project Areas',
   locationGeoJSONProperties: 'GeoJSON Properties Information',
   locationConservationArea: 'Conservation Area',
+  locationConservationAreaHidden: 'Conservation Area Hidden from Public',
   locationRegion: 'Region',
   partnership: 'Partnerships',
   fundingSource: 'Funding Sources',

@@ -363,6 +363,9 @@ POST.apiDoc = {
                     properties: {
                       conservationArea: {
                         type: 'string'
+                      },
+                      isPublic: {
+                        type: 'boolean'
                       }
                     }
                   }
