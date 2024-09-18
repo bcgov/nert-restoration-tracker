@@ -9,7 +9,12 @@ import {
   FormGroup,
   Radio,
   RadioGroup,
-  Typography
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  ListItemButton
 } from '@mui/material';
 import React from 'react';
 import LayerControl from './LayerControl';
@@ -24,6 +29,7 @@ export interface ILayerSwitcherProps {
     seismic: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
+  legend?: any;
   hideProjects?: boolean;
 }
 
@@ -108,7 +114,18 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
           <LayerControl
             title="Protected Areas"
             subTitle="Parks, Conservancies and areas of special consideration.">
-            <Box>Testing 1 2 3 Testing 4 5 6</Box>
+            {/* Conditional rendering of legend */}
+            {props.legend.protectedAreas && (
+              <List dense>
+                {props.legend.protectedAreas.map((area: any) => {
+                  return (
+                    <ListItem key={area.label}>
+                      <ListItemText primary={area.label} />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            )}
           </LayerControl>
 
           <FormControlLabel

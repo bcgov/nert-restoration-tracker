@@ -12,10 +12,17 @@ const layerControlStyle = {
     marginLeft: '-10px',
     gridTemplateColumns: 'auto auto 1fr auto'
   },
+  title: {
+    textoverflow: 'ellipsis',
+    fontWeight: 'bold',
+    fontSize: '1.3em',
+    marginTop: '10px'
+  },
   drawer: {
-    gridColumn: '1 / 5',
+    gridColumn: '1 / 4',
     textWrap: 'pretty',
-    wordBreak: 'break-all'
+    wordBreak: 'break-all',
+    margin: '3px 15px 3px 25px',
   }
 };
 
@@ -24,6 +31,7 @@ export interface ILayerControlProps {
   subTitle?: string;
   children?: React.ReactNode;
 }
+
 
 const LayerControl = (props: ILayerControlProps) => {
   const { title } = props;
@@ -48,7 +56,7 @@ const LayerControl = (props: ILayerControlProps) => {
           <CardMedia />
         </Box>
         <Box>
-          <Box>{title}</Box>
+          <Box sx={layerControlStyle.title}>{title}</Box>
           <Box>{subTitle}</Box>
         </Box>
         <Box>

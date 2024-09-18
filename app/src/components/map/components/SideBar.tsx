@@ -20,7 +20,7 @@ const SideBar = (props: ISideBarProps) => {
         '& .MuiDrawer-root': { position: 'absolute' },
         '& .MuiDrawer-paper': { position: 'absolute' }
       }}>
-      <Box sx={{ width: '240px', padding: '10px', margin: '10px' }}>{props.children}</Box>
+      <Box sx={{ width: '340px', padding: '10px', margin: '10px' }}>{props.children}</Box>
     </Drawer>
   );
 };

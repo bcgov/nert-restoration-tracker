@@ -114,10 +114,17 @@ const SearchPage: React.FC = () => {
     baselayer
   };
 
+  const legend = {
+    protectedAreas: [
+      { label: 'Provincial Park', visible: true, allowToggle: true, color: '#ff0000' },
+      { label: 'Federal Park', visible: true, allowToggle: true, color: '#fff000' }
+    ]
+  };
+
   const sidebarButtonStyle = {
     position: 'absolute',
     top: '40px',
-    left: sidebarOpen ? '260px' : '0px',
+    left: sidebarOpen ? '360px' : '0px',
     zIndex: 1000,
     backgroundColor: 'white',
     transition: 'left 225ms cubic-bezier(0, 0, 0.2, 1)',
@@ -139,7 +146,7 @@ const SearchPage: React.FC = () => {
         layerVisibility={layerVisibility}
         centroids={true}>
         <SideBar sidebarOpen={sidebarOpen}>
-          <LayerSwitcherInline layerVisibility={layerVisibility} />
+          <LayerSwitcherInline layerVisibility={layerVisibility} legend={legend}/>
         </SideBar>
 
         {/* button that opens and closes the sidebar */}
