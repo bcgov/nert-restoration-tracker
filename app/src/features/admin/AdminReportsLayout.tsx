@@ -7,8 +7,8 @@ import { Outlet } from 'react-router-dom';
  * @param {*} props
  * @return {*}
  */
-const AdminUsersLayout = (props: any) => {
+const AdminReportsLayout = (props: any) => {
   return <Outlet />;
 };
 
-export default AdminUsersLayout;
+export default AdminReportsLayout;

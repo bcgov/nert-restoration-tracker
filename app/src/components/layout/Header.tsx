@@ -355,6 +355,12 @@ const Header: React.FC = () => {
                   Manage Users
                 </Link>
               </SystemRoleGuard>
+              <SystemRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
+                <Link to="/admin/reports" id="menu_admin_reports" data-testid="generate_reports">
+                  Reports
+                </Link>
+              </SystemRoleGuard>
             </SystemRoleGuard>
           </Toolbar>
         </Box>
