@@ -51,9 +51,7 @@ const LayerControl = (props: ILayerControlProps) => {
         <Box>
           <Checkbox checked={layerState[0]} onClick={() => layerState[1](!layerState[0])} />
         </Box>
-        <Box>
-          {/* <CardMedia /> */}
-        </Box>
+        <Box>{/* <CardMedia /> */}</Box>
         <Box>
           <Box sx={layerControlStyle.title}>{title}</Box>
           <Box>{subTitle}</Box>
