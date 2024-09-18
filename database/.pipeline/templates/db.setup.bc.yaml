@@ -93,7 +93,7 @@ objects:
           kind: ImageStreamTag
           name: '${NAME}:${VERSION}'
       postCommit: {}
-     resources:
+      resources:
         requests:
           cpu: ${CPU_REQUEST}
           memory: ${MEMORY_REQUEST}

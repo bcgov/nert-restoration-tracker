@@ -17,7 +17,7 @@ WORKDIR $HOME
 
 COPY . ./
 
-RUN npm ci --also=dev
+RUN npm ci --include=dev
 
 USER 1001
 
