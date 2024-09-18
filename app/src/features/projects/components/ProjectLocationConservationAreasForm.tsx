@@ -10,8 +10,13 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import Typography from '@mui/material/Typography';
 import CustomTextField from 'components/fields/CustomTextField';
 import { FieldArray, useFormikContext } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import { IProjectLocationForm } from 'features/projects/components/ProjectLocationForm';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { CreateProjectI18N } from 'constants/i18n';
+import InfoIcon from '@mui/icons-material/Info';
 
 const pageStyles = {
   customListItem: {
@@ -24,11 +29,13 @@ const pageStyles = {
 
 export interface IProjectLocationConservationAreasArrayItem {
   conservationArea: string;
+  isPublic: boolean;
 }
 
 export const ProjectLocationConservationAreasFormArrayItemInitialValues: IProjectLocationConservationAreasArrayItem =
   {
-    conservationArea: '' as unknown as string
+    conservationArea: '' as unknown as string,
+    isPublic: false
   };
 
 /**
@@ -39,8 +46,24 @@ export const ProjectLocationConservationAreasFormArrayItemInitialValues: IProjec
 const ProjectLocationConservationAreas: React.FC = () => {
   const { values, getFieldMeta, errors } = useFormikContext<IProjectLocationForm>();
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState('');
+
+  const handleClickOpen = (indexContent: string) => {
+    setInfoTitle(indexContent ? indexContent : '');
+    setInfoOpen(true);
+  };
+
   return (
     <>
+      <InfoDialogDraggable
+        isProject={true}
+        open={infoOpen}
+        dialogTitle={infoTitle}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={true} contentIndex={infoTitle} />
+      </InfoDialogDraggable>
+
       <FieldArray
         name="location.conservationAreas"
         render={(arrayHelpers) => {
@@ -58,7 +81,7 @@ const ProjectLocationConservationAreas: React.FC = () => {
                       <List>
                         <ListItem sx={pageStyles.customListItem}>
                           <Grid container spacing={3}>
-                            <Grid item xs={12} md={10.5}>
+                            <Grid item xs={6} md={8}>
                               <CustomTextField
                                 name={`location.conservationAreas.[${index}].conservationArea`}
                                 label="Conservation Area"
@@ -73,6 +96,40 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                   helperText:
                                     conservationAreaMeta.touched && conservationAreaMeta.error
                                 }}
+                              />
+                            </Grid>
+                            <Grid item xs={4}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    color="primary"
+                                    id="isPublic"
+                                    name="isPublic"
+                                    aria-label="isPublic"
+                                    checked={!conservationArea.isPublic}
+                                    value={conservationArea.isPublic}
+                                    onChange={() => {
+                                      arrayHelpers.replace(index, {
+                                        ...conservationArea,
+                                        isPublic: !conservationArea.isPublic
+                                      });
+                                    }}
+                                  />
+                                }
+                                label={
+                                  <Typography color="textSecondary">
+                                    Hidden from Public?{' '}
+                                    <IconButton
+                                      edge="end"
+                                      onClick={() =>
+                                        handleClickOpen(
+                                          CreateProjectI18N.locationConservationAreaHidden
+                                        )
+                                      }>
+                                      <InfoIcon color="info" />
+                                    </IconButton>
+                                  </Typography>
+                                }
                               />
                             </Grid>
                           </Grid>

@@ -160,6 +160,7 @@ export class GetObjectivesData {
 
 export interface IGetConservationArea {
   conservationArea: string;
+  isPublic: boolean;
 }
 
 export class GetLocationData {

@@ -154,7 +154,7 @@ describe('PlanService', () => {
           region: 1,
           number_sites: 1,
           size_ha: 1,
-          conservationAreas: [{ conservationArea: 'string' }]
+          conservationAreas: [{ conservationArea: 'string', isPublic: false }]
         },
         focus: { focuses: [1, 2], people_involved: 2 }
       };
@@ -231,7 +231,7 @@ describe('PlanService', () => {
           region: 1,
           number_sites: 1,
           size_ha: 1,
-          conservationAreas: [{ conservationArea: 'string' }]
+          conservationAreas: [{ conservationArea: 'string', isPublic: false }]
         },
         focus: { focuses: [1, 2], people_involved: 2 }
       };
