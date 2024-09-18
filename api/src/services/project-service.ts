@@ -175,7 +175,7 @@ export class ProjectService extends DBService {
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
       this.getFundingData(projectId, isPublic),
-      this.getLocationData(projectId)
+      this.getLocationData(projectId, isPublic)
     ]);
 
     return {
@@ -215,7 +215,7 @@ export class ProjectService extends DBService {
       this.getPartnershipsData(projectId),
       this.getObjectivesData(projectId),
       this.getFundingData(projectId, false),
-      this.getLocationData(projectId),
+      this.getLocationData(projectId, false),
       this.getAuthorizationData(projectId),
       this.attachmentRepository.getProjectAttachmentsByType(projectId, 'thumbnail')
     ]);
@@ -346,11 +346,11 @@ export class ProjectService extends DBService {
    * @return {*}  {Promise<GetLocationData>}
    * @memberof ProjectService
    */
-  async getLocationData(projectId: number): Promise<GetLocationData> {
+  async getLocationData(projectId: number, isPublic: boolean): Promise<GetLocationData> {
     const [geometryRows, regionRows, conservationAreaRows] = await Promise.all([
       this.projectRepository.getGeometryData(projectId),
       this.projectRepository.getRegionData(projectId),
-      this.projectRepository.getConservationAreasData(projectId)
+      this.projectRepository.getConservationAreasData(projectId, isPublic)
     ]);
 
     return new GetLocationData(geometryRows, regionRows, conservationAreaRows);
@@ -430,7 +430,7 @@ export class ProjectService extends DBService {
     promises.push(
       Promise.all(
         postProjectData.location.conservationAreas?.map((conservationArea: IPostConservationArea) =>
-          this.insertConservationArea(conservationArea.conservationArea, projectId)
+          this.insertConservationArea(conservationArea.conservationArea, conservationArea.isPublic, projectId)
         ) || []
       )
     );
@@ -511,10 +511,6 @@ export class ProjectService extends DBService {
    * @memberof ProjectService
    */
   async insertProjectSpatial(locationData: PostLocationData, project_id: number): Promise<number | undefined> {
-    if (!locationData.geometry.length) {
-      return;
-    }
-
     const response = await this.projectRepository.insertProjectLocation(locationData, project_id);
 
     return response.project_spatial_component_id;
@@ -616,8 +612,8 @@ export class ProjectService extends DBService {
    * @return {*}  {Promise<number>}
    * @memberof ProjectService
    */
-  async insertConservationArea(conservationArea: string, projectId: number): Promise<number> {
-    const response = await this.projectRepository.insertConservationArea(conservationArea, projectId);
+  async insertConservationArea(conservationArea: string, isPublic: boolean, projectId: number): Promise<number> {
+    const response = await this.projectRepository.insertConservationArea(conservationArea, isPublic, projectId);
 
     return response.conservation_area_id;
   }
@@ -853,11 +849,6 @@ export class ProjectService extends DBService {
   async updateProjectSpatialData(projectId: number, location: PostLocationData): Promise<void> {
     await this.projectRepository.deleteProjectLocation(projectId);
 
-    if (!location?.geometry.length) {
-      // No spatial data to insert
-      return;
-    }
-
     await this.insertProjectSpatial(location, projectId);
   }
 
@@ -889,7 +880,7 @@ export class ProjectService extends DBService {
 
     await Promise.all(
       location?.conservationAreas.map((conservationArea: IPostConservationArea) =>
-        this.insertConservationArea(conservationArea.conservationArea, projectId)
+        this.insertConservationArea(conservationArea.conservationArea, conservationArea.isPublic, projectId)
       )
     );
   }

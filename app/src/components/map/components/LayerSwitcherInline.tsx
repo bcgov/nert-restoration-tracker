@@ -9,9 +9,16 @@ import {
   FormGroup,
   Radio,
   RadioGroup,
-  Typography
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar
 } from '@mui/material';
 import React from 'react';
+import LayerControl from './LayerControl';
+import './LayerSwitcherInline.css';
 
 export interface ILayerSwitcherProps {
   layerVisibility: {
@@ -23,6 +30,7 @@ export interface ILayerSwitcherProps {
     seismic: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     baselayer: [string, React.Dispatch<React.SetStateAction<string>>];
   };
+  legend?: any;
   hideProjects?: boolean;
 }
 
@@ -93,15 +101,44 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
             label="Wells"
           />
-          {/* <FormControlLabel
-            control={
-              <Checkbox
-                checked={protectedAreas[0]}
-                onClick={() => protectedAreas[1](!protectedAreas[0])}
-              />
-            }
-            label="Protected Areas"
-          /> */}
+
+          <LayerControl
+            title="Protected Areas"
+            subTitle="Parks, Conservancies and areas of special consideration."
+            layerState={protectedAreas}>
+            {/* Conditional rendering of legend */}
+            {props.legend.protectedAreas && (
+              <List dense>
+                {props.legend.protectedAreas.map((area: any) => {
+                  return (
+                    <ListItem
+                      key={area.label}
+                      secondaryAction={
+                        // Only show the checkbox if the area allows toggling
+                        area.allowToggle && (
+                          <Checkbox
+                            edge="end"
+                            checked={area.visible}
+                            onClick={() => (area.visible = !area.visible)}
+                          />
+                        )
+                      }>
+                      <ListItemAvatar>
+                        <Avatar
+                          src={area.image}
+                          style={{ backgroundColor: area.color, borderColor: area.outlineColor }}
+                          className={area.outlineColor ? 'outlined' : ''}>
+                          &nbsp;
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={area.label} />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            )}
+          </LayerControl>
+
           <FormControlLabel
             control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
             label="Seismic Lines"

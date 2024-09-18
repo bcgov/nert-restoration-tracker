@@ -16,7 +16,7 @@ export const layerVisibilityDefault = {
   wells: false,
   projects: false,
   plans: true,
-  protectedAreas: false,
+  protectedAreas: true,
   seismic: false,
   baselayer: 'hybrid'
 };
