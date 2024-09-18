@@ -15,9 +15,9 @@ RUN chgrp -R 0 $HOME && \
 
 WORKDIR $HOME
 
-COPY . .
+COPY . ./
 
-RUN npm ci --include=dev
+RUN npm ci --also=dev
 
 USER 1001
 
