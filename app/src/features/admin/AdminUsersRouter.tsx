@@ -3,7 +3,6 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ManageUsersPage from './users/ManageUsersPage';
 import UsersDetailPage from './users/UsersDetailPage';
-import { RedirectURL } from 'utils/AppRoutesUtils';
 
 /**
  * Router for all `/admin/users/*` pages.
