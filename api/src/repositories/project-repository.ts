@@ -1077,24 +1077,30 @@ export class ProjectRepository extends BaseRepository {
           (SELECT project_spatial_component_type_id from project_spatial_component_type WHERE name = ${componentTypeName}),
           ${componentName},
           ${location.is_within_overlapping === 'false' ? 'N' : location.is_within_overlapping === 'true' ? 'Y' : 'D'},
-          ${location.number_sites},
-          ${location.size_ha},
-          ${JSON.stringify(location.geometry)}
+          ${location.number_sites || 0},
+          ${location.size_ha || 0},
       `;
 
-      const geometryCollectionSQL = generateGeometryCollectionSQL(location.geometry);
+      if (!location.geometry.length) {
+        sqlStatement.append(SQL`
+          null, 
+          null`);
+      } else {
+        const geometryCollectionSQL = generateGeometryCollectionSQL(location.geometry);
 
-      sqlStatement.append(SQL`
-        ,public.geography(
+        sqlStatement.append(SQL`
+        ${JSON.stringify(location.geometry)},
+        public.geography(
           public.ST_Force2D(
             public.ST_SetSRID(
       `);
 
-      sqlStatement.append(geometryCollectionSQL);
+        sqlStatement.append(geometryCollectionSQL);
 
-      sqlStatement.append(SQL`
+        sqlStatement.append(SQL`
         , 4326)))
       `);
+      }
 
       sqlStatement.append(SQL`
         )

@@ -718,18 +718,6 @@ describe('ProjectService', () => {
       sinon.restore();
     });
 
-    it('returns undefined if no geometry is provided', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      const data = new projectCreateModels.PostLocationData();
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.insertProjectSpatial(data, 1);
-
-      expect(result).equals(undefined);
-    });
-
     it('returns project id on success', async () => {
       const mockDBConnection = getMockDBConnection();
 
