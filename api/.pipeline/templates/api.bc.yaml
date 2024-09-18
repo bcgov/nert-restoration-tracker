@@ -36,7 +36,7 @@ parameters:
   - name: SOURCE_IMAGE_TAG
     required: true
     value: 1-41.1712567743
-   - name: CPU_REQUEST
+  - name: CPU_REQUEST
     value: '50m'
   - name: CPU_LIMIT
     value: '1000m'
