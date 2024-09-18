@@ -116,8 +116,11 @@ const SearchPage: React.FC = () => {
 
   const legend = {
     protectedAreas: [
-      { label: 'Provincial Park', visible: true, allowToggle: true, color: '#ff0000' },
-      { label: 'Federal Park', visible: true, allowToggle: true, color: '#fff000' }
+      { label: 'Provincial or Federal Park', visible: true, allowToggle: false, color: '#B8D797' },
+      { label: 'Provincial Conservancy', visible: true, allowToggle: false, color: '#cce4cc' },
+      { label: 'Wildlife Habitat Area', visible: true, allowToggle: false, color: '#f3e5c0', outlineColor: '#f9766f' },
+      { label: 'MUSKWA-KECHIKA Management Area', visible: true, allowToggle: false, color: '#e4c1bb', outlineColor: '#b4aaa3' },
+      { label: 'Ungulate Winter Range', visible: true, allowToggle: false, image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/icon-uwr.png' },
     ]
   };
 

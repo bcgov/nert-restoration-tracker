@@ -14,10 +14,12 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  ListItemButton
+  ListItemButton,
+  Avatar
 } from '@mui/material';
 import React from 'react';
 import LayerControl from './LayerControl';
+import './LayerSwitcherInline.css';
 
 export interface ILayerSwitcherProps {
   layerVisibility: {
@@ -113,13 +115,33 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
 
           <LayerControl
             title="Protected Areas"
-            subTitle="Parks, Conservancies and areas of special consideration.">
+            subTitle="Parks, Conservancies and areas of special consideration."
+            layerState={protectedAreas}>
             {/* Conditional rendering of legend */}
             {props.legend.protectedAreas && (
               <List dense>
                 {props.legend.protectedAreas.map((area: any) => {
                   return (
-                    <ListItem key={area.label}>
+                    <ListItem
+                      key={area.label}
+                      secondaryAction={
+                        // Only show the checkbox if the area allows toggling
+                        area.allowToggle && (
+                          <Checkbox
+                            edge="end"
+                            checked={area.visible}
+                            onClick={() => (area.visible = !area.visible)}
+                          />
+                        )
+                      }>
+                      <ListItemAvatar>
+                        <Avatar
+                          src={area.image}
+                          style={{ backgroundColor: area.color, borderColor: area.outlineColor }}
+                          className={area.outlineColor ? 'outlined' : ''}>
+                          &nbsp;
+                        </Avatar>
+                      </ListItemAvatar>
                       <ListItemText primary={area.label} />
                     </ListItem>
                   );

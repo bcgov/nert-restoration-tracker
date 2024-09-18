@@ -21,12 +21,12 @@ const layerControlStyle = {
   drawer: {
     gridColumn: '1 / 4',
     textWrap: 'pretty',
-    wordBreak: 'break-all',
     margin: '3px 15px 3px 25px',
   }
 };
 
 export interface ILayerControlProps {
+  layerState: any;
   title: string;
   subTitle?: string;
   children?: React.ReactNode;
@@ -34,7 +34,7 @@ export interface ILayerControlProps {
 
 
 const LayerControl = (props: ILayerControlProps) => {
-  const { title } = props;
+  const {layerState, title } = props;
   const subTitle = props.subTitle || '';
   const children = props.children || null;
   const [infoOpen, setInfoOpen] = useState(false);
@@ -50,7 +50,7 @@ const LayerControl = (props: ILayerControlProps) => {
       />
       <Box sx={layerControlStyle.container}>
         <Box>
-          <Checkbox />
+          <Checkbox checked={layerState[0]} onClick={() => layerState[1](!layerState[0])}/>
         </Box>
         <Box>
           <CardMedia />
