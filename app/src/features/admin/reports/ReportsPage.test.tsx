@@ -1,0 +1,73 @@
+import { cleanup, render, waitFor } from '@testing-library/react';
+import { useNertApi } from 'hooks/useNertApi';
+import React from 'react';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { codes } from 'test-helpers/code-helpers';
+import { useCodesContext } from 'hooks/useContext';
+import ReportsPage from './ReportsPage';
+
+const renderContainer = () => {
+  const routes = [{ path: '/123', element: <ReportsPage /> }];
+
+  const router = createMemoryRouter(routes, { initialEntries: ['/123'] });
+
+  return render(
+    <RouterProvider router={router}>
+      <ReportsPage />
+    </RouterProvider>
+  );
+};
+
+jest.mock('../../../hooks/useNertApi');
+
+const mockRestorationTrackerApi = useNertApi as jest.Mock;
+
+const mockUseApi = {
+  admin: {
+    getAdministrativeActivities: jest.fn()
+  },
+  user: {
+    getUsersList: jest.fn()
+  }
+};
+
+jest.mock('../../../hooks/useContext');
+const mockUseCodes = useCodesContext as unknown as jest.MockedFunction<typeof useCodesContext>;
+
+describe.skip('ManageUsersPage', () => {
+  beforeEach(() => {
+    // clear mocks before each test
+    mockRestorationTrackerApi.mockImplementation(() => mockUseApi);
+    mockUseCodes.mockClear();
+
+    // mock code set response
+    mockUseCodes.mockReturnValue({ codes: codes, isLoading: false, isReady: true });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('renders the main page content correctly', async () => {
+    mockRestorationTrackerApi().admin.getAdministrativeActivities.mockReturnValue([]);
+    mockRestorationTrackerApi().user.getUsersList.mockReturnValue([]);
+
+    const { getByText } = renderContainer();
+
+    await waitFor(() => {
+      expect(getByText('Manage Users')).toBeVisible();
+    });
+  });
+
+  it('renders the access requests and active users component', async () => {
+    mockRestorationTrackerApi().admin.getAdministrativeActivities.mockReturnValue([]);
+    mockRestorationTrackerApi().user.getUsersList.mockReturnValue([]);
+
+    const { getByText } = renderContainer();
+
+    await waitFor(() => {
+      expect(getByText('No Access Requests')).toBeVisible();
+      expect(getByText('No Active Users')).toBeVisible();
+    });
+  });
+});
