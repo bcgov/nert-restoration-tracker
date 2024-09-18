@@ -110,7 +110,13 @@ const InfoDialogDraggable: React.FC<IInfoDialogDraggableProps & React.PropsWithC
         id="draggable-dialog-title">
         <Box display="flex" flexDirection={'row'}>
           {/* if item.typeIcon is null, don't render CardMedia */}
-          {item.typeIcon && <CardMedia sx={{ width: 20, height: 32 }} image={item.typeIcon} title={item.typeLabel} />}
+          {item.typeIcon && (
+            <CardMedia
+              sx={{ width: 20, height: 32 }}
+              image={item.typeIcon}
+              title={item.typeLabel}
+            />
+          )}
           {/* <CardMedia sx={{ width: 20, height: 32 }} image={item.typeIcon} title={item.typeLabel} /> */}
           <Typography sx={{ mt: 1, ml: 1, fontWeight: 550 }}>
             {item.typeLabel} {props.dialogTitle}

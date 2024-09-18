@@ -14,7 +14,6 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  ListItemButton,
   Avatar
 } from '@mui/material';
 import React from 'react';
@@ -101,16 +100,6 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
           <FormControlLabel
             control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
             label="Wells"
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={protectedAreas[0]}
-                onClick={() => protectedAreas[1](!protectedAreas[0])}
-              />
-            }
-            label="Protected Areas"
           />
 
           <LayerControl

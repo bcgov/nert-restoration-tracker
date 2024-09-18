@@ -118,9 +118,26 @@ const SearchPage: React.FC = () => {
     protectedAreas: [
       { label: 'Provincial or Federal Park', visible: true, allowToggle: false, color: '#B8D797' },
       { label: 'Provincial Conservancy', visible: true, allowToggle: false, color: '#cce4cc' },
-      { label: 'Wildlife Habitat Area', visible: true, allowToggle: false, color: '#f3e5c0', outlineColor: '#f9766f' },
-      { label: 'MUSKWA-KECHIKA Management Area', visible: true, allowToggle: false, color: '#e4c1bb', outlineColor: '#b4aaa3' },
-      { label: 'Ungulate Winter Range', visible: true, allowToggle: false, image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/icon-uwr.png' },
+      {
+        label: 'Wildlife Habitat Area',
+        visible: true,
+        allowToggle: false,
+        color: '#f3e5c0',
+        outlineColor: '#f9766f'
+      },
+      {
+        label: 'MUSKWA-KECHIKA Management Area',
+        visible: true,
+        allowToggle: false,
+        color: '#e4c1bb',
+        outlineColor: '#b4aaa3'
+      },
+      {
+        label: 'Ungulate Winter Range',
+        visible: true,
+        allowToggle: false,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/icon-uwr.png'
+      }
     ]
   };
 
@@ -149,7 +166,7 @@ const SearchPage: React.FC = () => {
         layerVisibility={layerVisibility}
         centroids={true}>
         <SideBar sidebarOpen={sidebarOpen}>
-          <LayerSwitcherInline layerVisibility={layerVisibility} legend={legend}/>
+          <LayerSwitcherInline layerVisibility={layerVisibility} legend={legend} />
         </SideBar>
 
         {/* button that opens and closes the sidebar */}
