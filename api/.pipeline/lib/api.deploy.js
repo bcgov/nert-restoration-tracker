@@ -30,7 +30,7 @@ const apiDeploy = async (settings) => {
         VERSION: phases[phase].tag,
         HOST: phases[phase].host,
         CHANGE_ID: phases.build.changeId || changeId,
-        NODE_ENV: phases[phase].env || 'dev',
+        NODE_ENV: phases[phase].nodeEnv,
         NODE_OPTIONS: phases[phase].nodeOptions,
         S3_KEY_PREFIX: phases[phase].s3KeyPrefix,
         TZ: phases[phase].tz,

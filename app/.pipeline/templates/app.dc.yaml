@@ -37,7 +37,7 @@ parameters:
     value: 'development'
   - name: REACT_APP_NODE_ENV
     description: NODE_ENV specification variable for React app
-    value: 'dev'
+    value: 'development'
   - name: APP_PORT_DEFAULT
     description: Application default port
     value: '7100'
