@@ -25,10 +25,10 @@ interface IInfoDialogDraggableProps {
   /**
    * The dialog window is for project or plan.
    *
-   * @type {boolean}
+   * @type {boolean | null}
    * @memberof IInfoDialogDraggableProps
    */
-  isProject: boolean;
+  isProject: boolean | null;
   /**
    * The dialog window title text.
    *
@@ -83,9 +83,13 @@ const InfoDialogDraggable: React.FC<IInfoDialogDraggableProps & React.PropsWithC
 ) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const item: ITypeItem = !props.isProject
+  let item: ITypeItem = !props.isProject
     ? { typeLabel: 'Plan', typeIcon: ICONS.PLAN_ICON, typeBgColor: '#FFF4EB' }
     : { typeLabel: 'Project', typeIcon: ICONS.PROJECT_ICON, typeBgColor: '#E9FBFF' };
+
+  if (props.isProject === null) {
+    item = { typeLabel: '', typeIcon: null, typeBgColor: '#e8ffee' };
+  }
 
   if (!props.open) {
     return <></>;
@@ -105,7 +109,9 @@ const InfoDialogDraggable: React.FC<IInfoDialogDraggableProps & React.PropsWithC
         style={{ cursor: 'move' }}
         id="draggable-dialog-title">
         <Box display="flex" flexDirection={'row'}>
-          <CardMedia sx={{ width: 20, height: 32 }} image={item.typeIcon} title={item.typeLabel} />
+          {/* if item.typeIcon is null, don't render CardMedia */}
+          {item.typeIcon && <CardMedia sx={{ width: 20, height: 32 }} image={item.typeIcon} title={item.typeLabel} />}
+          {/* <CardMedia sx={{ width: 20, height: 32 }} image={item.typeIcon} title={item.typeLabel} /> */}
           <Typography sx={{ mt: 1, ml: 1, fontWeight: 550 }}>
             {item.typeLabel} {props.dialogTitle}
           </Typography>

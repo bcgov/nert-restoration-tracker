@@ -12,6 +12,7 @@ import {
   Typography
 } from '@mui/material';
 import React from 'react';
+import LayerControl from './LayerControl';
 
 export interface ILayerSwitcherProps {
   layerVisibility: {
@@ -93,6 +94,7 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
             label="Wells"
           />
+
           <FormControlLabel
             control={
               <Checkbox
@@ -102,6 +104,13 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             }
             label="Protected Areas"
           />
+
+          <LayerControl
+            title="Protected Areas"
+            subTitle="Parks, Conservancies and areas of special consideration.">
+            <Box>Testing 1 2 3 Testing 4 5 6</Box>
+          </LayerControl>
+
           <FormControlLabel
             control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
             label="Seismic Lines"
