@@ -45,8 +45,9 @@ const LayerControl = (props: ILayerControlProps) => {
         dialogTitle={title}
         open={infoOpen}
         onClose={() => setInfoOpen(false)}
-        isProject={null}
-      />
+        isProject={null}>
+        Content coming soon
+      </InfoDialogDraggable>
       <Box sx={layerControlStyle.container}>
         <Box>
           <Checkbox checked={layerState[0]} onClick={() => layerState[1](!layerState[0])} />
@@ -64,6 +65,7 @@ const LayerControl = (props: ILayerControlProps) => {
           </Box>
           <Box>
             <IconButton
+              title="Filter and/or legend"
               ariel-label="Filter and/or legend"
               onClick={() => setFilterOpen(!filterOpen)}
               className={filterOpen ? 'filter button open' : 'filter button closed'}>
