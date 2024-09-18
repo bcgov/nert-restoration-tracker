@@ -1,5 +1,4 @@
 import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
-import PeopleIcon from '@mui/icons-material/People';
 
 export enum AdministrativeActivityType {
   SYSTEM_ACCESS = 'System Access'
