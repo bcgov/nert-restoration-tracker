@@ -127,7 +127,8 @@ export const planStatusOptions = [
 
 export const ICONS = {
   PLAN_ICON: require('assets/images/planIcon.png'),
-  PROJECT_ICON: require('assets/images/projectIcon.png')
+  PROJECT_ICON: require('assets/images/projectIcon.png'),
+  USER_ICON: require('assets/images/userIcon.png')
 };
 
 export enum AREA_SIZE_MIN_MAX {
