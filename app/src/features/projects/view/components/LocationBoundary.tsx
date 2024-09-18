@@ -80,7 +80,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   const wells = useState<boolean>(false);
   const projects = useState<boolean>(false);
   const plans = useState<boolean>(true);
-  const protectedAreas = useState<boolean>(false);
+  const protectedAreas = useState<boolean>(true);
   const seismic = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
