@@ -33,32 +33,23 @@ parameters:
     required: true
     value: 'development'
   - name: CPU_REQUEST
-    value: '10m'
+    value: '50m'
   - name: CPU_LIMIT
-    value: '200m'
+    value: '1000m'
   - name: MEMORY_REQUEST
-    value: '512Mi'
+    value: '100Mi'
   - name: MEMORY_LIMIT
-    value: '2Gi'
+    value: '1.5Gi'
 objects:
   - kind: Pod
     apiVersion: v1
     metadata:
       name: '${NAME}'
-      creationTimestamp:
       labels:
         role: setup
     spec:
       containers:
-        - name: test
-          image: '${IMAGE}'
-          resources:
-            limits:
-              cpu: '1'
-              memory: 1.5Gi
-            requests:
-              cpu: 100m
-              memory: 512Mi
+        - name: postgresql-setup
           env:
             - name: DB_HOST
               value: ${DB_SERVICE_NAME}
@@ -99,8 +90,15 @@ objects:
               value: ${DB_SCHEMA}
             - name: DB_SCHEMA_DAPI_V1
               value: ${DB_SCHEMA_DAPI_V1}
+          image: '${IMAGE}'
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
       restartPolicy: Never
       activeDeadlineSeconds: 900
       dnsPolicy: ClusterFirst
-    status: {}
