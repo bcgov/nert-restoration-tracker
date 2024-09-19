@@ -27,8 +27,9 @@ import PlanGeneralInformationForm, {
 import PlanLocationForm, { PlanLocationFormYupSchema } from '../components/PlanLocationForm';
 import { PlanFormInitialValues } from '../create/CreatePlanPage';
 import PlanFocusForm from '../components/PlanFocusForm';
-import { handleFocusFormValues } from 'utils/Utils';
+import { checkFormikErrors, handleFocusFormValues } from 'utils/Utils';
 import { useCodesContext } from 'hooks/useContext';
+import YesNoDialog from 'components/dialog/YesNoDialog';
 
 const pageStyles = {
   actionButton: {
@@ -75,6 +76,9 @@ const EditPlanPage: React.FC = () => {
 
   const [hasLoadedDraftData, setHasLoadedDraftData] = useState(false);
 
+  // Whether or not to show the creation confirmation Yes/No dialog
+  const [openYesNoDialog, setOpenYesNoDialog] = useState(false);
+
   // Reference to pass to the formik component in order to access its state at any time
   // Used by the draft logic to fetch the values of a step form that has not been validated/completed
   const formikRef = useRef<FormikProps<IEditPlanRequest>>(null);
@@ -112,6 +116,10 @@ const EditPlanPage: React.FC = () => {
 
     getEditPlanFields();
   }, [hasLoadedDraftData, restorationTrackerApi.plan, urlParams]);
+
+  const handleCancelConfirmation = () => {
+    setOpenYesNoDialog(false);
+  };
 
   /**
    * Handle project edits.
@@ -186,6 +194,51 @@ const EditPlanPage: React.FC = () => {
 
   return (
     <>
+      <YesNoDialog
+        dialogTitle="Save Plan Confirmation"
+        dialogText=""
+        dialogTitleBgColor="#E9FBFF"
+        dialogContent={
+          <>
+            <Typography variant="body1" color="textPrimary">
+              Please make sure there is no Private Information (PI) in the data. Saving a plan means
+              it will be published (publicly available). See the{' '}
+              <Link
+                href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
+                color="primary">
+                BC Government PI
+              </Link>{' '}
+              page for more information.
+            </Typography>
+            <Typography variant="body1" mt={1} color="textPrimary">
+              Are you sure you want to save the plan?
+            </Typography>
+          </>
+        }
+        open={openYesNoDialog}
+        onClose={handleCancelConfirmation}
+        onNo={handleCancelConfirmation}
+        onYes={() => {
+          setOpenYesNoDialog(false);
+          formikRef.current?.validateForm().then((errors) => {
+            const errorsText: string[] = checkFormikErrors(errors);
+
+            if (errorsText.length) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Error Saving Plan',
+                dialogText: 'Please correct the errors in the form before submitting.',
+                dialogError: 'The following errors were found:',
+                dialogErrorDetails: errorsText,
+                ...defaultErrorDialogProps,
+                open: true
+              });
+            }
+          });
+
+          formikRef.current?.submitForm();
+        }}
+      />
+
       <Box mb={1} ml={3}>
         <Breadcrumbs>
           <Link
@@ -278,7 +331,7 @@ const EditPlanPage: React.FC = () => {
                   color="primary"
                   size="large"
                   type="submit"
-                  onClick={() => formikRef.current?.submitForm()}
+                  onClick={() => setOpenYesNoDialog(true)}
                   data-testid="plan-save-button">
                   Save Plan
                 </Button>
