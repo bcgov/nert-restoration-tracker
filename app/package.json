@@ -8,8 +8,8 @@
     "url": "https://github.com/bcgov/nert-restoration-tracker.git"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "test": "react-scripts test --ci --watchAll=false --runInBand",
     "test-watch": "react-scripts test",
     "coverage": "react-scripts test --ci --coverage --testResultsProcessor jest-sonar-reporter --watchAll=false --runInBand",
@@ -53,6 +53,7 @@
     "oidc-client-ts": "^3.0.1",
     "qs": "~6.11.2",
     "react": "~18.3.1",
+    "react-app-rewired": "^2.2.1",
     "react-collapsed": "^4.1.2",
     "react-dom": "~18.3.1",
     "react-draggable": "~4.4.6",
