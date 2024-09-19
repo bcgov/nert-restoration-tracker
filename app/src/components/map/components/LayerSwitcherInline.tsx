@@ -32,6 +32,7 @@ export interface ILayerSwitcherProps {
   };
   legend?: any;
   hideProjects?: boolean;
+  filterState?: any;
 }
 
 const iconLegendStyle = {
@@ -45,9 +46,7 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } =
-    props.layerVisibility;
-
+  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } = props.layerVisibility;
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
   };
@@ -93,10 +92,29 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
         )}
         <Typography variant="h6">Context Layers</Typography>
         <FormGroup>
-          <FormControlLabel
-            control={<Checkbox checked={boundary[0]} onClick={() => boundary[1](!boundary[0])} />}
-            label="Natural Resource Mgmt. Boundaries"
-          />
+          {/* Natural Resource Mgmt. Boundaries */}
+          {/* TODO: Convert this to a LayerControl */}
+          
+          <LayerControl
+            title="Management Boundaries"
+            subTitle="Natural resource management boundaries"
+            layerState={boundary}>
+            {props.legend.boundary && (
+              <List dense>
+                {props.legend.boundary.map((item: any) => (
+                  <ListItem key={item.label}>
+                    <ListItemAvatar>
+                      <Avatar style={{ backgroundColor: item.color }}>
+                        &nbsp;
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={item.label} />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </LayerControl>
+
           <FormControlLabel
             control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
             label="Wells"

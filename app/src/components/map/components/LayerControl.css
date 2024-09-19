@@ -17,3 +17,6 @@
 .filter.button.open {
   transform: rotate(-90deg);
 }
+.filter.button.closed {
+  padding-bottom: 0;
+}

@@ -138,8 +138,39 @@ const SearchPage: React.FC = () => {
         allowToggle: false,
         image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/icon-uwr.png'
       }
+    ],
+    boundary: [
+      { label: 'West Coast Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'South Coast Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'Thompson-Okanagan Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'Kootenay-Boundary Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'Northeast Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'Omineca Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'Skeena Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
+      { label: 'Cariboo Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' }
+
     ]
   };
+
+  /**
+   * Filter state to share between the layer picker and the map
+   * 
+   */
+  const boundaryState = {
+    'West Coast Natural Resource Region': useState<boolean>(true),
+    'South Coast Natural Resource Region': useState<boolean>(true),
+    'Thompson-Okanagan Natural Resource Region': useState<boolean>(true),
+    'Kootenay-Boundary Natural Resource Region': useState<boolean>(true),
+    'Northeast Natural Resource Region': useState<boolean>(true),
+    'Omineca Natural Resource Region': useState<boolean>(true),
+    'Skeena Natural Resource Region': useState<boolean>(true),
+    'Cariboo Natural Resource Region': useState<boolean>(true)
+  }
+
+  const filterState = {
+    boundary: boundaryState
+  }
+
 
   const sidebarButtonStyle = {
     position: 'absolute',
@@ -164,9 +195,10 @@ const SearchPage: React.FC = () => {
         mapId="search_boundary_map"
         features={geometries}
         layerVisibility={layerVisibility}
+        filterState={filterState}
         centroids={true}>
         <SideBar sidebarOpen={sidebarOpen}>
-          <LayerSwitcherInline layerVisibility={layerVisibility} legend={legend} />
+          <LayerSwitcherInline layerVisibility={layerVisibility} legend={legend} filterState={filterState}/>
         </SideBar>
 
         {/* button that opens and closes the sidebar */}
