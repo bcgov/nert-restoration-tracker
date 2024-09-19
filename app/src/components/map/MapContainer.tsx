@@ -303,9 +303,19 @@ const checkFeatureState = (featureState: any) => {
 };
 
 const checkBoundaryState = (boundaryState: any) => {
-  if (!map.getSource('natural_resource_districts')) return;
+  if (!map.getLayer('region_boundary')) return;
 
-  console.log('boundaryState', boundaryState);
+  // ...(region && { filter: ['all', ['==', 'REGION_NAME', region]] })
+  // Use map.setFilter to set the filter
+  // map.setFilter('region_boundary', ['any', ['==', 'REGION_NAME', 'Cariboo Natural Resource Region'], ['==', 'REGION_NAME', 'Northeast Natural Resource Region']]);
+
+  const boundaries = Object.keys(boundaryState)
+  // console.log('boundaries', boundaries);
+  const visibleBoundaries = boundaries.filter((boundary: any) => boundaryState[boundary][0]);
+  const filter = ['any', [...visibleBoundaries.map((boundary: any) => ['==', 'REGION_NAME', boundary])]];
+  // console.log('visibleBoundaries', visibleBoundaries);
+  map.setFilter('region_boundary', filter);
+  console.log('filter', filter);  
 };
 
 const initializeMap = (
