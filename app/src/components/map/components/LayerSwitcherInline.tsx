@@ -102,7 +102,13 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             {props.legend.boundary && (
               <List dense>
                 {props.legend.boundary.map((item: any) => (
-                  <ListItem key={item.label}>
+                  <ListItem key={item.label} secondaryAction={
+                    <Checkbox
+                      edge="end"
+                      checked={item.visible}
+                      onChange={() => item.visible = !item.visible}
+                    />
+                  }>
                     <ListItemAvatar>
                       <Avatar style={{ backgroundColor: item.color }}>
                         &nbsp;
