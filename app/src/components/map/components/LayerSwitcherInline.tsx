@@ -51,6 +51,8 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
     baselayer[1](event.target.value);
   };
 
+  const boundaryFilter = props.filterState?.boundary;
+
   return (
     <div>
       <Box>
@@ -105,15 +107,15 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
                   <ListItem key={item.label} secondaryAction={
                     <Checkbox
                       edge="end"
-                      checked={item.visible}
-                      onChange={() => item.visible = !item.visible}
+                      checked={boundaryFilter[item.label][0]}
+                      onChange={() => boundaryFilter[item.label][1](!boundaryFilter[item.label][0])}
                     />
                   }>
-                    <ListItemAvatar>
+                    {/* <ListItemAvatar>
                       <Avatar style={{ backgroundColor: item.color }}>
                         &nbsp;
                       </Avatar>
-                    </ListItemAvatar>
+                    </ListItemAvatar> */}
                     <ListItemText primary={item.label} />
                   </ListItem>
                 ))}

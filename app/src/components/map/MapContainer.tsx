@@ -302,6 +302,12 @@ const checkFeatureState = (featureState: any) => {
   hoverStateMarkerPolygon = featureState[0] || false;
 };
 
+const checkBoundaryState = (boundaryState: any) => {
+  if (!map.getSource('natural_resource_districts')) return;
+
+  console.log('boundaryState', boundaryState);
+};
+
 const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
@@ -1021,6 +1027,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const region = props.region || null;
 
+  const filterState = props.filterState || [];
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -1093,6 +1101,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkFeatureState(activeFeatureState);
   }, [activeFeatureState]);
+
+  // Listen for filter changes
+  useEffect(() => {
+    checkBoundaryState(filterState.boundary);
+  }, [filterState.boundary]);
 
   return (
     <div id={mapId} style={pageStyle}>
