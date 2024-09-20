@@ -18,16 +18,17 @@
     "seed": "knex seed:run --knexfile ./src/knexfile.ts",
     "lint": "eslint src/ --ext .js,.ts",
     "lint-fix": "npm run lint -- --fix",
-    "format": "prettier --check \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
-    "format-fix": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
+    "format": "prettier --loglevel=warn --check \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
+    "format-fix": "prettier --loglevel=warn --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss}\"",
+    "fix": "npm-run-all -l -s lint-fix format-fix"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.4.1",
-    "faker-js": "^1.0.0",
     "knex": "^3.1.0",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.0.1",
     "@types/node": "^20.11.19",
     "@types/pg": "^8.11.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -38,7 +39,6 @@
     "npm-run-all": "~4.1.5",
     "prettier": "~3.2.5",
     "prettier-plugin-organize-imports": "~3.2.4",
-    "ts-node": "~10.9.0",
-    "typescript": "^5.4.5"
+    "ts-node": "~10.9.0"
   }
 }

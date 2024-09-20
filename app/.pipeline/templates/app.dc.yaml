@@ -37,7 +37,7 @@ parameters:
     value: 'development'
   - name: REACT_APP_NODE_ENV
     description: NODE_ENV specification variable for React app
-    value: 'dev'
+    value: 'development'
   - name: APP_PORT_DEFAULT
     description: Application default port
     value: '7100'
@@ -74,9 +74,9 @@ parameters:
   - name: MEMORY_LIMIT
     value: '200Mi'
   - name: REPLICAS
-    value: '2'
+    value: '1'
   - name: REPLICAS_MAX
-    value: '2'
+    value: '1'
   - name: NAMELINK
     value: restoration-tracker-api
 objects:
