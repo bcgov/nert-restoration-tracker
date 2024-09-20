@@ -66,7 +66,7 @@ const dbSetupDeploy = async (settings) => {
         SUFFIX: phases[phase].suffix,
         VERSION: phases[phase].tag,
         CHANGE_ID: changeId,
-        NODE_ENV: phases[phase].env || 'dev',
+        NODE_ENV: phases[phase].nodeEnv,
         DB_SERVICE_NAME: dbName,
         DB_SCHEMA: 'restoration',
         DB_SCHEMA_DAPI_V1: 'restoration_dapi_v1',
