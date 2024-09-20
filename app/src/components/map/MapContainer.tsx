@@ -32,6 +32,7 @@ export interface IMapContainerProps {
   editModeOn?: boolean; // This activates things like mask drawing
   region?: string | null; // The region to filter by.. or null for all
   children?: React.ReactNode;
+  filterState?: any;
 }
 
 const MAPTILER_API_KEY = process.env.REACT_APP_MAPTILER_API_KEY;
@@ -299,6 +300,18 @@ const checkFeatureState = (featureState: any) => {
   }
 
   hoverStateMarkerPolygon = featureState[0] || false;
+};
+
+const checkBoundaryState = (boundaryState: any) => {
+  if (!map.getLayer('region_boundary')) return;
+
+  const boundaries = Object.keys(boundaryState);
+  const visibleBoundaries = boundaries.filter((boundary: any) => boundaryState[boundary][0]);
+  const filter = [
+    'any',
+    ...visibleBoundaries.map((boundary: any) => ['==', 'REGION_NAME', boundary])
+  ];
+  map.setFilter('region_boundary', filter as any);
 };
 
 const initializeMap = (
@@ -1020,6 +1033,8 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   const region = props.region || null;
 
+  const filterState = props.filterState || [];
+
   // Tooltip variables
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [tooltip, setTooltip] = useState('');
@@ -1092,6 +1107,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkFeatureState(activeFeatureState);
   }, [activeFeatureState]);
+
+  // Listen for filter changes
+  useEffect(() => {
+    checkBoundaryState(filterState.boundary);
+  }, [filterState.boundary]);
 
   return (
     <div id={mapId} style={pageStyle}>
