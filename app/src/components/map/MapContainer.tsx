@@ -46,18 +46,20 @@ const pageStyle = {
  * This function draws the wells on the map
  * @param map - the map object
  */
-const drawWells = (map: maplibre.Map, wells: any) => {
+const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
   /* The following are the URLs to the geojson data */
   const orphanedSitesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const orphanedActivitiesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
 
+  const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
+
   /**
    * Another layer to display is Dormant Wells
    * Example of display is seen here https://geoweb-ags.bc-er.ca/portal/apps/webappviewer/index.html?id=b8a2b40512a8493284fc3c322077e677
    * This layer is around 2.4Mg in size and should possibly be consumed as a vector tile
-   * 
+   *
    * const dormantWellsURL = 'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
    * You can trim down the request by specifying the fields you need
    * - objectid
@@ -100,6 +102,49 @@ const drawWells = (map: maplibre.Map, wells: any) => {
         'black'
       ]
     }
+  });
+
+  // Mouse over well to send attributes to the console
+  map.on('mouseenter', 'orphanedWellsLayer', (e: any) => {
+    const feature = e.features[0];
+
+    map.getCanvas().style.cursor = 'pointer';
+
+    const tooltip = feature.properties.SITE_NAME;
+
+    setTooltipVisible(true);
+    setTooltipX(e.point.x + 10);
+    setTooltipY(e.point.y - 34);
+    setTooltip(tooltip);
+  });
+
+  map.on('mouseleave', 'orphanedWellsLayer', () => {
+    map.getCanvas().style.cursor = '';
+    setTooltipVisible(false);
+  });
+
+  map.on('click', 'orphanedWellsLayer', (e: any) => {
+    const feature = e.features[0];
+    console.log(feature.properties);
+    const html = `
+    <div>
+      <h3>${feature.properties.SITE_NAME}</h3>
+      Well Authorization: ${feature.properties.WELL_AUTHORIZATION}</br>
+      Land Type: ${feature.properties.LAND_TYPE}</br>
+      Site ID: ${feature.properties.SITE_ID}</br>
+      Site Status: ${feature.properties.SITE_STATUS}</br>
+      Site Type: ${feature.properties.SITE_TYPE}</br>
+      Surface Location: ${feature.properties.SURFACE_LOCATION}</br>
+      </div>
+    `;
+
+    // Add the attributes to the popup
+    const popup = new Popup({
+      closeButton: false,
+      closeOnClick: false
+    });
+
+    popup.setLngLat(feature.geometry.coordinates).setHTML(html).addTo(map);
   });
 
   // Orphaned activities - These are called "Activities" on the BCER site
@@ -904,7 +949,7 @@ const initializeMap = (
     });
 
     // Add the well layers
-    drawWells(map, wells);
+    drawWells(map, wells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {
