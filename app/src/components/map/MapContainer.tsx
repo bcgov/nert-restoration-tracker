@@ -114,7 +114,7 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
 
     setTooltipVisible(true);
     setTooltipX(e.point.x + 10);
-    setTooltipY(e.point.y - 34);
+    setTooltipY(e.point.y - 24);
     setTooltip(tooltip);
   });
 
@@ -125,7 +125,6 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
 
   map.on('click', 'orphanedWellsLayer', (e: any) => {
     const feature = e.features[0];
-    console.log(feature.properties);
     const html = `
     <div>
       <h3>${feature.properties.SITE_NAME}</h3>
@@ -140,8 +139,8 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
 
     // Add the attributes to the popup
     const popup = new Popup({
-      closeButton: false,
-      closeOnClick: false
+      closeButton: true,
+      closeOnClick: true
     });
 
     popup.setLngLat(feature.geometry.coordinates).setHTML(html).addTo(map);
@@ -197,6 +196,42 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
         'black'
       ]
     }
+  });
+  map.on('click', 'orphanedActivitiesLayer', (e: any) => {
+    const feature = e.features[0];
+    const html = `
+    <div>
+      <h3>${feature.properties.SITE_NAME}</h3>
+      Workstream: ${feature.properties.WORKSTREAM_SHORT}</br>
+      Site ID: ${feature.properties.SITE_ID}</br>
+      Site Status: ${feature.properties.SITE_STATUS}</br>
+      Site Type: ${feature.properties.SITE_TYPE}</br>
+      Surface Location: ${feature.properties.SURFACE_LOCATION}</br>
+      Land Type: ${feature.properties.LAND_TYPE}</br>
+    </div>
+    `;
+
+    const popup = new Popup({
+      closeButton: true,
+      closeOnClick: true
+    });
+
+    popup.setLngLat(feature.geometry.coordinates).setHTML(html).addTo(map);
+  });
+
+  map.on('mouseenter', 'orphanedActivitiesLayer', (e: any) => {
+    const feature = e.features[0];
+    map.getCanvas().style.cursor = 'pointer';
+    const tooltip = feature.properties.SITE_NAME;
+    setTooltipVisible(true);
+    setTooltipX(e.point.x + 10);
+    setTooltipY(e.point.y - 24);
+    setTooltip(tooltip);
+  });
+
+  map.on('mouseleave', 'orphanedActivitiesLayer', () => {
+    map.getCanvas().style.cursor = '';
+    setTooltipVisible(false);
   });
 };
 
