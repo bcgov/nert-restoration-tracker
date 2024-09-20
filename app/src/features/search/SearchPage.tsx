@@ -140,21 +140,60 @@ const SearchPage: React.FC = () => {
       }
     ],
     boundary: [
-      { label: 'West Coast Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'South Coast Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'Thompson-Okanagan Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'Kootenay-Boundary Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'Northeast Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'Omineca Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'Skeena Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' },
-      { label: 'Cariboo Natural Resource Region', visible: true, allowToggle: true, color: '#B8D797' }
-
+      {
+        label: 'West Coast Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/west.png'
+      },
+      {
+        label: 'South Coast Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/south.png'
+      },
+      {
+        label: 'Thompson-Okanagan Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/thompson-okanagan.png'
+      },
+      {
+        label: 'Kootenay-Boundary Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/kootenay-boundary.png'
+      },
+      {
+        label: 'Northeast Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/northeast.png'
+      },
+      {
+        label: 'Omineca Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/omineca.png'
+      },
+      {
+        label: 'Skeena Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/skeena.png'
+      },
+      {
+        label: 'Cariboo Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/cariboo.png'
+      }
     ]
   };
 
   /**
    * Filter state to share between the layer picker and the map
-   * 
+   *
    */
   const boundaryState = {
     'West Coast Natural Resource Region': useState<boolean>(true),
@@ -165,12 +204,11 @@ const SearchPage: React.FC = () => {
     'Omineca Natural Resource Region': useState<boolean>(true),
     'Skeena Natural Resource Region': useState<boolean>(true),
     'Cariboo Natural Resource Region': useState<boolean>(true)
-  }
+  };
 
   const filterState = {
     boundary: boundaryState
-  }
-
+  };
 
   const sidebarButtonStyle = {
     position: 'absolute',
@@ -198,7 +236,11 @@ const SearchPage: React.FC = () => {
         filterState={filterState}
         centroids={true}>
         <SideBar sidebarOpen={sidebarOpen}>
-          <LayerSwitcherInline layerVisibility={layerVisibility} legend={legend} filterState={filterState}/>
+          <LayerSwitcherInline
+            layerVisibility={layerVisibility}
+            legend={legend}
+            filterState={filterState}
+          />
         </SideBar>
 
         {/* button that opens and closes the sidebar */}

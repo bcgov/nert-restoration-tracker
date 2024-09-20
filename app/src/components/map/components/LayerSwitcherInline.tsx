@@ -46,7 +46,8 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } = props.layerVisibility;
+  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } =
+    props.layerVisibility;
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
   };
@@ -94,9 +95,6 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
         )}
         <Typography variant="h6">Context Layers</Typography>
         <FormGroup>
-          {/* Natural Resource Mgmt. Boundaries */}
-          {/* TODO: Convert this to a LayerControl */}
-          
           <LayerControl
             title="Management Boundaries"
             subTitle="Natural resource management boundaries"
@@ -104,29 +102,31 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             {props.legend.boundary && (
               <List dense>
                 {props.legend.boundary.map((item: any) => (
-                  <ListItem key={item.label} secondaryAction={
-                    <Checkbox
-                      edge="end"
-                      checked={boundaryFilter[item.label][0]}
-                      onChange={() => boundaryFilter[item.label][1](!boundaryFilter[item.label][0])}
-                    />
-                  }>
-                    {/* <ListItemAvatar>
-                      <Avatar style={{ backgroundColor: item.color }}>
+                  <ListItem
+                    key={item.label}
+                    secondaryAction={
+                      <Checkbox
+                        edge="end"
+                        checked={boundaryFilter[item.label][0]}
+                        onChange={() =>
+                          boundaryFilter[item.label][1](!boundaryFilter[item.label][0])
+                        }
+                      />
+                    }>
+                    <ListItemAvatar>
+                      <Avatar
+                        src={item.image}
+                        style={{ backgroundColor: item.color, borderColor: item.outlineColor }}
+                        className={item.outlineColor ? 'outlined' : ''}>
                         &nbsp;
                       </Avatar>
-                    </ListItemAvatar> */}
+                    </ListItemAvatar>
                     <ListItemText primary={item.label} />
                   </ListItem>
                 ))}
               </List>
             )}
           </LayerControl>
-
-          <FormControlLabel
-            control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
-            label="Wells"
-          />
 
           <LayerControl
             title="Protected Areas"
@@ -164,6 +164,11 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
               </List>
             )}
           </LayerControl>
+
+          <FormControlLabel
+            control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
+            label="Wells"
+          />
 
           <FormControlLabel
             control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}

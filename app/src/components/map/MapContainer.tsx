@@ -305,9 +305,12 @@ const checkFeatureState = (featureState: any) => {
 const checkBoundaryState = (boundaryState: any) => {
   if (!map.getLayer('region_boundary')) return;
 
-  const boundaries = Object.keys(boundaryState)
+  const boundaries = Object.keys(boundaryState);
   const visibleBoundaries = boundaries.filter((boundary: any) => boundaryState[boundary][0]);
-  const filter = ['any', ...visibleBoundaries.map((boundary: any) => ['==', 'REGION_NAME', boundary])];
+  const filter = [
+    'any',
+    ...visibleBoundaries.map((boundary: any) => ['==', 'REGION_NAME', boundary])
+  ];
   map.setFilter('region_boundary', filter as any);
 };
 

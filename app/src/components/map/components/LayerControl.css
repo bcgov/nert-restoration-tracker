@@ -10,6 +10,8 @@
 .filter.drawer.open {
   height: 100%;
   opacity: 1;
+  margin-bottom: 1rem;
+  margin-top: -1rem;
 }
 .filter.button {
   transition: transform 0.3s ease;
