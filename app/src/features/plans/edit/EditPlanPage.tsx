@@ -26,7 +26,7 @@ import PlanGeneralInformationForm, {
 } from '../components/PlanGeneralInformationForm';
 import PlanLocationForm, { PlanLocationFormYupSchema } from '../components/PlanLocationForm';
 import { PlanFormInitialValues } from '../create/CreatePlanPage';
-import PlanFocusForm from '../components/PlanFocusForm';
+import PlanFocusForm, { PlanFocusFormYupSchema } from '../components/PlanFocusForm';
 import { checkFormikErrors, handleFocusFormValues } from 'utils/Utils';
 import { useCodesContext } from 'hooks/useContext';
 import YesNoDialog from 'components/dialog/YesNoDialog';
@@ -56,6 +56,7 @@ const pageStyles = {
 export const PlanEditFormYupSchema = yup
   .object()
   .concat(PlanGeneralInformationFormYupSchema)
+  .concat(PlanFocusFormYupSchema)
   .concat(PlanContactYupSchema)
   .concat(PlanLocationFormYupSchema);
 
