@@ -560,84 +560,10 @@ jobs:
       # Clean the reamaining build/deployment artifacts
       - name: Clean remaining Artifacts
         env:
-          POD_SELECTOR: biohubbc
+          POD_SELECTOR: restoration-tracker
         run: |
           oc --namespace d83219-dev   get all,pvc,secret,pods,ReplicationController,DeploymentConfig,HorizontalPodAutoscaler,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found " $1}' | bash
           oc --namespace d83219-tools get all,pvc,secret,pods,ReplicationController,DeploymentConfig,HorizontalPodAutoscaler,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found " $1}' | bash
-
-    name: Clean Build/Deployment Artifacts
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    if: ${{ github.event.pull_request.merged == true }}
-    needs:
-      - deployAPP
-      - deployAPI
-      - deployDatabaseSetup
-    env:
-      PR_NUMBER: ${{ github.event.number }}
-      BRANCH: ${{ github.base_ref }}
-    steps:
-      # Checkout the PR branch
-      - name: Checkout Target Branch
-        uses: actions/checkout@v3
-
-      # Install Node - for `node` and `npm` commands
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      # Cache Node modules
-      - name: Cache node modules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      # Log in to OpenShift.
-      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
-      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
-      - name: Log in to OpenShift
-        run: oc login --token=${{ secrets.TOOLS_SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-
-      # Clean the database build/deployment artifacts
-      - name: Clean Database Artifacts
-        working-directory: "./database/.pipeline/"
-        run: |
-          npm ci
-          DEBUG=* npm run clean -- --pr=$PR_NUMBER --env=build
-          DEBUG=* npm run clean -- --pr=$PR_NUMBER --env=dev
-
-      # Clean the api build/deployment artifacts
-      - name: Clean API Artifacts
-        working-directory: "./api/.pipeline/"
-        run: |
-          npm ci
-          DEBUG=* npm run clean -- --pr=$PR_NUMBER --env=build
-          DEBUG=* npm run clean -- --pr=$PR_NUMBER --env=dev
-
-      # Clean the app build/deployment artifacts
-      - name: Clean APP Artifacts
-        working-directory: "./app/.pipeline/"
-        run: |
-          npm ci
-          DEBUG=* npm run clean -- --pr=$PR_NUMBER --env=build
-          DEBUG=* npm run clean -- --pr=$PR_NUMBER --env=dev
-
-      # Clean the reamaining build/deployment artifacts
-      - name: Clean remaining Artifacts
-        env:
-          POD_SELECTOR: restoration-tracker
-        run: |
-          oc --namespace d83219-dev   get all,pvc,secret,pods,ReplicationController,DeploymentConfig,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found " $1}' | bash
-          oc --namespace d83219-tools get all,pvc,secret,pods,ReplicationController,DeploymentConfig,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found " $1}' | bash
 
   # cypress-run:
   #   runs-on: ubuntu-latest

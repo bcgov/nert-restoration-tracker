@@ -70,7 +70,11 @@ const dbSetupDeploy = async (settings) => {
         DB_SERVICE_NAME: dbName,
         DB_SCHEMA: 'restoration',
         DB_SCHEMA_DAPI_V1: 'restoration_dapi_v1',
-        IMAGE: dbSetupImageStream.image.dockerImageReference
+        IMAGE: dbSetupImageStream.image.dockerImageReference,
+        CPU_REQUEST: '50m',
+        CPU_LIMIT: '1000m',
+        MEMORY_REQUEST: '100Mi',
+        MEMORY_LIMIT: '1.5Gi'
       }
     })
   );

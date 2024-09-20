@@ -19,7 +19,7 @@ const layerControlStyle = {
     marginTop: '10px'
   },
   drawer: {
-    gridColumn: '1 / 4',
+    gridColumn: '1 / 5',
     textWrap: 'pretty',
     margin: '3px 15px 3px 25px'
   }
