@@ -55,3 +55,39 @@ export interface IgcNotifyRecipient {
   phoneNumber: string;
   userId: number;
 }
+
+interface IGetReportProjectData {
+  published_projects: number;
+  draft_projects: number;
+  archived_projects: number;
+}
+
+interface IGetReportPlanData {
+  published_plans: number;
+  draft_plans: number;
+  archived_plans: number;
+}
+
+interface IGetReportUserData {
+  admins: number;
+  maintainers: number;
+  creators: number;
+}
+
+interface IGetReportLast {
+  id: number;
+  name: string;
+  datetime: string;
+}
+
+interface IGetReportLastData {
+  project: IGetReportLast;
+  plan: IGetReportLast;
+}
+export interface IGetReport {
+  project: IGetReportProjectData;
+  plan: IGetReportPlanData;
+  user: IGetReportUserData;
+  last_created: IGetReportLastData;
+  last_updated: IGetReportLastData;
+}
