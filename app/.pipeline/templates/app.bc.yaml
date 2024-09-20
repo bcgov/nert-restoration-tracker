@@ -37,11 +37,11 @@ parameters:
     required: true
     value: 1-41.1712567743
   - name: CPU_REQUEST
-    value: '100m'
+    value: '50m'
   - name: CPU_LIMIT
     value: '1000m'
   - name: MEMORY_REQUEST
-    value: '512Mi'
+    value: '100Mi'
   - name: MEMORY_LIMIT
     value: '5Gi'
   - name: REACT_APP_MAPTILER_SECRET

@@ -58,8 +58,8 @@ describe('getUser', () => {
         project_id: 1,
         project_name: 'project name',
         system_user_id: 1,
-        project_role_id: 3,
-        project_role_name: 'role 3',
+        project_role_id: 2,
+        project_role_name: 'role 2',
         project_participation_id: 1
       })
     ];

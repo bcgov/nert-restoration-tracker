@@ -117,6 +117,7 @@ export interface IProjectsListProps {
   projects: IGetProjectForViewResponse[];
   drafts?: IGetDraftsListResponse[];
   myproject?: boolean;
+  isUserCreator?: boolean;
 }
 
 /**
@@ -207,6 +208,7 @@ export interface IGetProjectForViewResponsePermit {
 
 export interface IGetProjectForViewResponseConservationAreas {
   conservationArea: string;
+  isPublic: boolean;
 }
 
 export interface IGetProjectForViewResponseLocation {

@@ -43,8 +43,8 @@ const request = require('request');
       REACT_APP_OBJECT_STORE_URL: process.env.REACT_APP_OBJECT_STORE_URL,
       REACT_APP_OBJECT_STORE_BUCKET_NAME: process.env.REACT_APP_OBJECT_STORE_BUCKET_NAME,
       CHANGE_VERSION: process.env.CHANGE_VERSION || 'NA',
-      NODE_ENV: process.env.NODE_ENV || 'development',
-      REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV || 'dev',
+      NODE_ENV: process.env.NODE_ENV,
+      REACT_APP_NODE_ENV: process.env.REACT_APP_NODE_ENV,
       VERSION: `${process.env.VERSION || 'NA'}(build #${process.env.CHANGE_VERSION || 'NA'})`,
       KEYCLOAK_CONFIG: {
         url: process.env.REACT_APP_KEYCLOAK_HOST,

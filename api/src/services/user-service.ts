@@ -223,7 +223,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async handleDeleteProjectParticipant(projectParticipationId: number, projectId: number) {
-    // Check project lead roles before deleting user
+    // Check Lead Editor roles before deleting user
     const projectParticipantsResponse1 = await this.projectService.getProjectParticipants(Number(projectId));
     const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
 
@@ -234,14 +234,14 @@ export class UserService extends DBService {
       throw new HTTP500('Failed to delete project participant');
     }
 
-    // If Project Lead roles are invalide skip check to prevent removal of only Project Lead of project
-    // (Project is already missing Project Lead and is in a bad state)
+    // If Lead Editor roles are invalide skip check to prevent removal of only Lead Editor of project
+    // (Project is already missing Lead Editor and is in a bad state)
     if (projectHasLeadResponse1) {
       const projectParticipantsResponse2 = await this.projectService.getProjectParticipants(Number(projectId));
       const projectHasLeadResponse2 = doAllProjectsHaveAProjectLead(projectParticipantsResponse2);
 
       if (!projectHasLeadResponse2) {
-        throw new HTTP400('Cannot delete project user. User is the only Project Lead for the project.');
+        throw new HTTP400('Cannot delete project user. User is the only Lead Editor for the project.');
       }
     }
   }
@@ -255,7 +255,7 @@ export class UserService extends DBService {
    * @memberof UserService
    */
   async handleUpdateProjectParticipantRole(projectParticipationId: number, projectId: number, roleId: number) {
-    // Check project lead roles before updating user
+    // Check Lead Editor roles before updating user
     const projectParticipantsResponse1 = await this.projectService.getProjectParticipants(projectId);
     const projectHasLeadResponse1 = doAllProjectsHaveAProjectLead(projectParticipantsResponse1);
 
@@ -264,19 +264,19 @@ export class UserService extends DBService {
 
     if (!result || !result.system_user_id) {
       // The delete result is missing necessary data, fail the request
-      throw new HTTP500('Failed to update project participant role');
+      throw new HTTP500('Failed to update project or plan participant role');
     }
 
     await this.projectService.addProjectParticipant(projectId, result.system_user_id, roleId);
 
-    // If Project Lead roles are invalid skip check to prevent removal of only Project Lead of project
-    // (Project is already missing Project Lead and is in a bad state)
+    // If Lead Editor roles are invalid skip check to prevent removal of only Lead Editor of project
+    // (Project is already missing Lead Editor and is in a bad state)
     if (projectHasLeadResponse1) {
       const projectParticipantsResponse2 = await this.projectService.getProjectParticipants(projectId);
       const projectHasLeadResponse2 = doAllProjectsHaveAProjectLead(projectParticipantsResponse2);
 
       if (!projectHasLeadResponse2) {
-        throw new HTTP400('Cannot update project user. User is the only Project Lead for the project.');
+        throw new HTTP400('Cannot update project user. User is the only Lead Editor for the project or plan.');
       }
     }
   }

@@ -1,26 +1,15 @@
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import React from 'react';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import React, { useState } from 'react';
 import ThumbnailImageCard from 'components/attachments/ThumbnailImageCard';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-
-const pageStyles = {
-  conservationAreChip: {
-    marginBottom: '2px',
-    justifyContent: 'left'
-  },
-  conservAreaLabel: {
-    color: '#545454',
-    fontSize: '0.78rem',
-    fontWeight: 500,
-    textTransform: 'none',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  }
-};
-
+import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
+import InfoContent from 'components/info/InfoContent';
+import { ViewPlanI18N } from 'constants/i18n';
 export interface IPlanDetails {
   plan: IGetPlanForViewResponse;
   thumbnailImageUrl: string;
@@ -34,49 +23,73 @@ export interface IPlanDetails {
 const PlanDetails: React.FC<IPlanDetails> = (props) => {
   const { plan, thumbnailImageUrl } = props;
 
+  const [infoOpen, setInfoOpen] = useState(false);
+  const handleClickOpen = () => {
+    setInfoOpen(true);
+  };
+
   return (
-    <Grid container spacing={2}>
-      {
-        // Plan Image
-        thumbnailImageUrl && (
-          <Grid item xs={4}>
-            <ThumbnailImageCard image={thumbnailImageUrl} />
-          </Grid>
-        )
-      }
+    <>
+      <InfoDialogDraggable
+        isProject={false}
+        open={infoOpen}
+        dialogTitle={ViewPlanI18N.sizeAndSites}
+        onClose={() => setInfoOpen(false)}>
+        <InfoContent isProject={false} contentIndex={ViewPlanI18N.sizeAndSites} />
+      </InfoDialogDraggable>
 
-      <Grid item xs={8}>
-        <Box ml={1}>
-          <Box>
-            <Typography variant="subtitle2" component="span" color="textSecondary" noWrap>
-              Plan Size (Ha):
-            </Typography>
-            <Typography
-              ml={1}
-              sx={{ fontWeight: 'bold' }}
-              variant="subtitle2"
-              component="span"
-              color="textPrimary">
-              {plan.location.size_ha}
-            </Typography>
-          </Box>
+      <Grid container spacing={2}>
+        {
+          // Plan Image
+          thumbnailImageUrl && (
+            <Grid item xs={4}>
+              <ThumbnailImageCard image={thumbnailImageUrl} />
+            </Grid>
+          )
+        }
 
-          <Box mt={-0.6}>
-            <Typography variant="subtitle2" component="span" color="textSecondary">
-              Number of Sites:
-            </Typography>
-            <Typography
-              ml={1}
-              sx={{ fontWeight: 'bold' }}
-              variant="subtitle2"
-              component="span"
-              color="textPrimary">
-              {plan.location.number_sites}
-            </Typography>
+        <Grid item xs={8}>
+          <Box ml={1}>
+            <Box>
+              <Typography variant="subtitle2" component="span" color="textSecondary" noWrap>
+                Plan Size (Ha):
+              </Typography>
+              <Typography
+                ml={1}
+                sx={{ fontWeight: 'bold' }}
+                variant="subtitle2"
+                component="span"
+                color="textPrimary">
+                {plan.location.size_ha}
+              </Typography>
+              <Tooltip title={ViewPlanI18N.sizeAndSites} placement="right">
+                <IconButton
+                  sx={{ float: 'right' }}
+                  edge="end"
+                  onClick={handleClickOpen}
+                  aria-label="Information">
+                  <InfoIcon color="info" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            <Box mt={-0.6}>
+              <Typography variant="subtitle2" component="span" color="textSecondary">
+                Number of Sites:
+              </Typography>
+              <Typography
+                ml={1}
+                sx={{ fontWeight: 'bold' }}
+                variant="subtitle2"
+                component="span"
+                color="textPrimary">
+                {plan.location.number_sites}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 

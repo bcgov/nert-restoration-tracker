@@ -58,8 +58,8 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
             <Grid item xs={12}>
               <ProjectStartEndDateFields
                 formikProps={formikProps}
-                plannedStartName={'planned_start_date'}
-                plannedEndName={'planned_end_date'}
+                plannedStartName={'start_date'}
+                plannedEndName={'end_date'}
                 plannedStartRequired={false}
                 plannedEndRequired={false}
                 actualStartName={'actual_start_date'}
@@ -69,13 +69,13 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
               />
             </Grid>
             <Grid item xs={12}>
-              <CustomTextField name="project_objectives" label="Objectives" />
+              <CustomTextField name="objectives" label="Objectives" />
             </Grid>
             <Grid item xs={12}>
-              <CustomTextField name="project_organizations" label="Organizations" />
+              <CustomTextField name="organizations" label="Organizations" />
             </Grid>
             <Grid item xs={12}>
-              <CustomTextField name="project_funding_organizations" label="Funding Organizations" />
+              <CustomTextField name="funding_sources" label="Funding Organizations" />
             </Grid>
             <Grid item xs={12}>
               <MultiAutocompleteFieldVariableSize
@@ -92,8 +92,8 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
               </Typography>
               <AreaSizeFields
                 formikProps={formikProps}
-                minName={'from'}
-                maxName={'to'}
+                minName={'ha_from'}
+                maxName={'ha_to'}
                 minRequired={false}
                 maxRequired={false}
               />
@@ -113,7 +113,7 @@ const ProjectAdvancedFilters: React.FC<IProjectAdvancedFiltersProps> = (props) =
           </Typography>
         </Grid>
         <Grid item xs={12} md={10}>
-          <CustomTextField name="permit_number" label="Authorization Reference" />
+          <CustomTextField name="authorization" label="Authorization Reference" />
         </Grid>
       </Grid>
     </Box>

@@ -21,10 +21,6 @@ const tag = (branch && `build-${version}-${changeId}-${branch}`) || `build-${ver
 
 // Default: run both seeding and migrations
 let dbSetupDockerfilePath = './.docker/db/Dockerfile.setup';
-if (isStaticDeployment && options.branch === 'prod') {
-  // If this is static build to prod, then only run the migrations
-  dbSetupDockerfilePath = './.docker/db/Dockerfile.migrate';
-}
 
 const processOptions = (options) => {
   const result = { ...options };
@@ -74,14 +70,14 @@ const phases = {
     instance: `${name}-dev-${deployChangeId}`,
     version: `${deployChangeId}-${changeId}`,
     tag: `dev-${version}-${deployChangeId}`,
-    env: 'dev',
+    nodeEnv: 'development',
     tz: config.timezone.db,
     dbSetupDockerfilePath: dbSetupDockerfilePath,
     volumeCapacity: (isStaticDeployment && '3Gi') || '500Mi',
     cpuRequest: '50m',
-    cpuLimit: '200m',
-    memoryRequest: '512Mi',
-    memoryLimit: '2Gi',
+    cpuLimit: '600m',
+    memoryRequest: '100Mi',
+    memoryLimit: '4Gi',
     replicas: '1'
   },
   test: {
@@ -93,14 +89,14 @@ const phases = {
     instance: `${name}-test`,
     version: `${version}`,
     tag: `test-${version}`,
-    env: 'test',
+    nodeEnv: 'production',
     tz: config.timezone.db,
     dbSetupDockerfilePath: dbSetupDockerfilePath,
     volumeCapacity: '3Gi',
-    cpuRequest: '100m',
-    cpuLimit: '500m',
-    memoryRequest: '512Mi',
-    memoryLimit: '3Gi',
+    cpuRequest: '50m',
+    cpuLimit: '2000m',
+    memoryRequest: '100Mi',
+    memoryLimit: '5Gi',
     replicas: '1'
   },
   prod: {
@@ -112,14 +108,14 @@ const phases = {
     instance: `${name}-prod`,
     version: `${version}`,
     tag: `prod-${version}`,
-    env: 'prod',
+    nodeEnv: 'production',
     tz: config.timezone.db,
     dbSetupDockerfilePath: dbSetupDockerfilePath,
     volumeCapacity: '5Gi',
-    cpuRequest: '100m',
-    cpuLimit: '500m',
-    memoryRequest: '512Mi',
-    memoryLimit: '3Gi',
+    cpuRequest: '50m',
+    cpuLimit: '4000m',
+    memoryRequest: '100Mi',
+    memoryLimit: '10Gi',
     replicas: '1'
   }
 };

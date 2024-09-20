@@ -10,6 +10,8 @@ import ProjectsLayout from 'layouts/ProjectsLayout';
 import { RedirectURL } from 'utils/AppRoutesUtils';
 import { ProjectAuthStateContextProvider } from 'contexts/projectAuthStateContext';
 import { ProjectRoleGuard } from 'components/security/Guards';
+import PublicProjectPlanView from 'pages/public/PublicProjectPlanView';
+import PublicProjectsPlansListPage from 'pages/public/PublicProjectsPlansListPage';
 
 /**
  * Router for all `/admin/project/*` pages.
@@ -21,7 +23,19 @@ const ProjectsRouter: React.FC = () => {
     <Routes>
       <Route element={<ProjectsLayout />}>
         {/*  Redirect any unknown routes to the projects page */}
-        <Route path="/" element={<ProjectsPlansListPage />} />
+
+        <Route
+          path="/"
+          element={
+            <ProjectAuthStateContextProvider>
+              <ProjectRoleGuard
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                fallback={<PublicProjectsPlansListPage />}>
+                <ProjectsPlansListPage />
+              </ProjectRoleGuard>
+            </ProjectAuthStateContextProvider>
+          }
+        />
         <Route path=":id" element={<RedirectURL basePath="/admin/projects" />} />
         {/* Create */}
         <Route path="/create" element={<CreateProjectPage />} />
@@ -47,16 +61,9 @@ const ProjectsRouter: React.FC = () => {
           element={
             <ProjectAuthStateContextProvider>
               <ProjectRoleGuard
-                validSystemRoles={[
-                  SYSTEM_ROLE.SYSTEM_ADMIN,
-                  SYSTEM_ROLE.MAINTAINER,
-                  SYSTEM_ROLE.PROJECT_CREATOR
-                ]}
-                validProjectRoles={[
-                  PROJECT_ROLE.PROJECT_LEAD,
-                  PROJECT_ROLE.PROJECT_EDITOR,
-                  PROJECT_ROLE.PROJECT_VIEWER
-                ]}>
+                validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
+                validProjectRoles={[PROJECT_ROLE.PROJECT_LEAD, PROJECT_ROLE.PROJECT_EDITOR]}
+                fallback={<PublicProjectPlanView />}>
                 <ViewProjectPage />
               </ProjectRoleGuard>
             </ProjectAuthStateContextProvider>

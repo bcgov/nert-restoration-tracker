@@ -1,13 +1,9 @@
 # Clean out all deployment artifacts when a PR is closed, but not merged.
 # Will attempt to remove all artifacts from any PR that was opened against any branch (and then closed (not merged)), except for test and prod.
-name: Clean out Dev from closed PR Artifacts
+name: Clean Closed PR Artifacts
 
 on:
   pull_request:
-    branches:
-      - "*"
-      - "!test"
-      - "!prod"
     types: [closed]
 
 jobs:
@@ -22,13 +18,13 @@ jobs:
       # Install Node - for `node` and `npm` commands
       # Note: This already uses actions/cache internally, so repeat calls in subsequent jobs are not a performance hit
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       # Load repo from cache
       - name: Cache repo
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cache-repo
         env:
           cache-name: cache-repo
@@ -39,7 +35,7 @@ jobs:
       # Checkout the branch if not restored via cache
       - name: Checkout Target Branch
         if: steps.cache-repo.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
@@ -78,5 +74,5 @@ jobs:
         env:
           POD_SELECTOR: restoration-tracker
         run: |
-          oc --namespace d83219-dev   get all,pvc,secret,pods,ReplicationController,DeploymentConfig,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found" $1}' | bash
-          oc --namespace d83219-tools get all,pvc,secret,pods,ReplicationController,DeploymentConfig,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found" $1}' | bash
+          oc --namespace d83219-dev   get all,pvc,secret,pods,ReplicationController,DeploymentConfig,HorizontalPodAutoscaler,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found " $1}' | bash
+          oc --namespace d83219-tools get all,pvc,secret,pods,ReplicationController,DeploymentConfig,HorizontalPodAutoscaler,imagestreamtag -o name | grep $POD_SELECTOR | grep $PR_NUMBER | awk '{print "oc delete --ignore-not-found " $1}' | bash

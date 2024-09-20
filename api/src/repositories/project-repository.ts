@@ -143,7 +143,7 @@ export class ProjectRepository extends BaseRepository {
         ...response[0].rows,
         ...response[1].rows.map(() => {
           return {
-            organization: 'First Nation'
+            organization: 'Not Public'
           };
         })
       ];
@@ -243,24 +243,43 @@ export class ProjectRepository extends BaseRepository {
    * Get Conservation Areas Data
    *
    * @param {number} projectId
-   * @return {*}  {Promise<any>}
+   * @return {*}  {Promise<IGetConservationArea[]>}
    * @memberof ProjectRepository
    */
-  async getConservationAreasData(projectId: number): Promise<IGetConservationArea[]> {
+  async getConservationAreasData(projectId: number, isPublic: boolean): Promise<IGetConservationArea[]> {
     try {
-      const sqlStatement = SQL`
+      const sqlStatement = SQL``;
+
+      if (isPublic) {
+        sqlStatement.append(SQL`
         SELECT
-        conservation_area
+        conservation_area,
+        is_public
         FROM
         conservation_area
         WHERE
-          project_id = ${projectId};
-      `;
+          project_id = ${projectId}
+          AND
+          is_public = ${isPublic}
+          ;
+      `);
+      } else {
+        sqlStatement.append(SQL`
+          SELECT
+          conservation_area,
+          is_public
+          FROM
+          conservation_area
+          WHERE
+            project_id = ${projectId}
+            ;
+        `);
+      }
 
       const response = await this.connection.sql(sqlStatement);
 
-      const conservationAreas = response.rows.map((row: { conservation_area: string }) => {
-        return { conservationArea: row.conservation_area };
+      const conservationAreas = response.rows.map((row: { conservation_area: string; is_public: boolean }) => {
+        return { conservationArea: row.conservation_area, isPublic: row.is_public };
       });
 
       return conservationAreas;
@@ -286,30 +305,28 @@ export class ProjectRepository extends BaseRepository {
           SELECT
             pfs.project_funding_source_id as id,
             pfs.organization_name,
-            pfs.funding_amount::numeric::int,
+            CASE pfs.is_public WHEN true THEN pfs.funding_amount::numeric::int ELSE -1 END as funding_amount,
             pfs.funding_start_date as start_date,
             pfs.funding_end_date as end_date,
             pfs.description as description,
-            pfs.is_public as is_public,
+            CASE WHEN pfs.is_public THEN 'true' ELSE 'false' END as is_public,
             pfs.funding_project_id,
             pfs.revision_count as revision_count
           FROM
             project_funding_source as pfs
           WHERE
-            pfs.project_id = ${projectId}
-          AND
-            pfs.is_public = true;
+            pfs.project_id = ${projectId};
         `);
       } else {
         sqlStatement.append(SQL`
           SELECT
             pfs.project_funding_source_id as id,
             pfs.organization_name,
-            pfs.funding_amount::numeric::int,
+            pfs.funding_amount::numeric::int as funding_amount,
             pfs.funding_start_date as start_date,
             pfs.funding_end_date as end_date,
-            pfs.description,
-            pfs.is_public,
+            pfs.description as description,
+            CASE WHEN pfs.is_public THEN 'true' ELSE 'false' END as is_public,
             pfs.funding_project_id,
             pfs.revision_count as revision_count
           FROM
@@ -838,17 +855,23 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<{ conservationArea_id: number }>}
    * @memberof ProjectRepository
    */
-  async insertConservationArea(conservationArea: string, projectId: number): Promise<{ conservation_area_id: number }> {
+  async insertConservationArea(
+    conservationArea: string,
+    isPublic: boolean,
+    projectId: number
+  ): Promise<{ conservation_area_id: number }> {
     defaultLog.debug({ label: 'insertConservationArea', message: 'params', conservationArea });
 
     try {
       const sqlStatement = SQL`
       INSERT INTO conservation_area (
         project_id,
-        conservation_area
+        conservation_area,
+        is_public
       ) VALUES (
         ${projectId},
-        ${conservationArea}
+        ${conservationArea},
+        ${isPublic}
       )
       RETURNING
       conservation_area_id;
@@ -1054,24 +1077,30 @@ export class ProjectRepository extends BaseRepository {
           (SELECT project_spatial_component_type_id from project_spatial_component_type WHERE name = ${componentTypeName}),
           ${componentName},
           ${location.is_within_overlapping === 'false' ? 'N' : location.is_within_overlapping === 'true' ? 'Y' : 'D'},
-          ${location.number_sites},
-          ${location.size_ha},
-          ${JSON.stringify(location.geometry)}
+          ${location.number_sites || 0},
+          ${location.size_ha || 0},
       `;
 
-      const geometryCollectionSQL = generateGeometryCollectionSQL(location.geometry);
+      if (!location.geometry.length) {
+        sqlStatement.append(SQL`
+          null, 
+          null`);
+      } else {
+        const geometryCollectionSQL = generateGeometryCollectionSQL(location.geometry);
 
-      sqlStatement.append(SQL`
-        ,public.geography(
+        sqlStatement.append(SQL`
+        ${JSON.stringify(location.geometry)},
+        public.geography(
           public.ST_Force2D(
             public.ST_SetSRID(
       `);
 
-      sqlStatement.append(geometryCollectionSQL);
+        sqlStatement.append(geometryCollectionSQL);
 
-      sqlStatement.append(SQL`
+        sqlStatement.append(SQL`
         , 4326)))
       `);
+      }
 
       sqlStatement.append(SQL`
         )
@@ -1244,24 +1273,12 @@ export class ProjectRepository extends BaseRepository {
    * @return {*}  {Promise<boolean>}
    * @memberof ProjectRepository
    */
-  async deleteProject(projectId: number): Promise<boolean> {
+  async deleteProject(projectId: number): Promise<void> {
     defaultLog.debug({ label: 'deleteProject', message: 'params', projectId });
 
     try {
       const sqlStatement = SQL`call api_delete_project(${projectId})`;
-
-      const response = await this.connection.sql(sqlStatement);
-
-      if (response.rowCount !== 1) {
-        throw new ApiExecuteSQLError('Failed to delete Project', [
-          'ProjectRepository->deleteProject',
-          'rowCount was null or undefined, expected rowCount = 1'
-        ]);
-      }
-
-      const result = (response && response.rows && response.rows[0]) || null;
-
-      return result;
+      await this.connection.sql(sqlStatement);
     } catch (error) {
       defaultLog.debug({ label: 'deleteProject', message: 'error', error });
       throw error;

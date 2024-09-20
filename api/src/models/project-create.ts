@@ -197,33 +197,6 @@ export class PostObjectivesData {
   }
 }
 
-export interface IPostConservationArea {
-  conservationArea: string;
-}
-
-/**
- * Processes POST /project conservationAreas data
- *
- * @export
- * @class PostConservationAreasData
- */
-export class PostConservationAreasData {
-  conservationAreas: IPostConservationArea[];
-
-  constructor(obj?: any) {
-    defaultLog.debug({ label: 'PostConservationAreasData', message: 'params', obj });
-
-    this.conservationAreas =
-      (obj?.conservationAreas?.length &&
-        obj.conservationAreas.map((item: any) => {
-          return {
-            conservationArea: item.conservationArea
-          };
-        })) ||
-      [];
-  }
-}
-
 /**
  * Processes POST /project project data.
  *
@@ -318,6 +291,7 @@ export class PostSpeciesData {
 
 export interface IPostConservationArea {
   conservationArea: string;
+  isPublic: boolean;
 }
 
 /**
@@ -346,7 +320,8 @@ export class PostLocationData {
       (obj?.conservationAreas?.length &&
         obj.conservationAreas.map((item: any) => {
           return {
-            conservationArea: item.conservationArea
+            conservationArea: item.conservationArea,
+            isPublic: item.isPublic
           };
         })) ||
       [];

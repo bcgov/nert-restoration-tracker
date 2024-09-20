@@ -65,7 +65,7 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
   partnership: yup.object().shape({
     partnerships: yup.array().of(
       yup.object().shape({
-        partnership_type: yup.string().required('Partnership Type is required.'),
+        partnership_type: yup.string(),
         partnership_ref: yup
           .string()
           .test(
@@ -79,8 +79,12 @@ export const ProjectPartnershipFormYupSchema = yup.object().shape({
                 return true;
               }
 
-              if (this.parent.partnership_type === null) {
-                return false;
+              if (
+                this.parent.partnership_type === null ||
+                this.parent.partnership_type === '' ||
+                this.parent.partnership_type === undefined
+              ) {
+                return true;
               }
 
               return value !== undefined && value.trim() !== '';
@@ -307,6 +311,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                     .partnership_type ||
                     values.partnership.partnerships.length >= 5)
                 }
+                data-testid="add-partnership-button"
                 type="button"
                 variant="outlined"
                 color="primary"
