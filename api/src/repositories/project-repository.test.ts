@@ -138,7 +138,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.getContactData(1, true);
 
-      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'First Nation' }]));
+      expect(response).to.deep.equal(new GetContactData([mockObject, { organization: 'Not Public' }]));
     });
 
     it('should return array in rows with isPublic = false', async () => {
@@ -292,9 +292,10 @@ describe('ProjectRepository', () => {
     });
 
     it('should return array in rows', async () => {
-      const mockQueryResponse = { rowCount: 0, rows: [{ conservation_area: 'string' }] } as any as Promise<
-        QueryResult<any>
-      >;
+      const mockQueryResponse = {
+        rowCount: 0,
+        rows: [{ conservation_area: 'string', is_public: false }]
+      } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
         sql: async () => {
@@ -304,9 +305,9 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.getConservationAreasData(1);
+      const response = await projectRepository.getConservationAreasData(1, false);
 
-      expect(response).to.deep.equal([{ conservationArea: 'string' }]);
+      expect(response).to.deep.equal([{ conservationArea: 'string', isPublic: false }]);
     });
 
     it('catches errors and throws', async () => {
@@ -319,7 +320,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.getConservationAreasData(1);
+        await projectRepository.getConservationAreasData(1, false);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1086,7 +1087,7 @@ describe('ProjectRepository', () => {
 
       const projectRepository = new ProjectRepository(mockDBConnection);
 
-      const response = await projectRepository.insertConservationArea('string', 1);
+      const response = await projectRepository.insertConservationArea('string', false, 1);
 
       expect(response).to.eql({ conservation_area_id: 1 });
     });
@@ -1103,7 +1104,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertConservationArea('string', 1);
+        await projectRepository.insertConservationArea('string', false, 1);
       } catch (error: any) {
         expect(error.message).to.equal('Failed to insert project conservation area');
       }
@@ -1119,7 +1120,7 @@ describe('ProjectRepository', () => {
       const projectRepository = new ProjectRepository(mockDBConnection);
 
       try {
-        await projectRepository.insertConservationArea('string', 1);
+        await projectRepository.insertConservationArea('string', false, 1);
       } catch (error: any) {
         expect(error.message).to.equal('error');
       }
@@ -1550,7 +1551,7 @@ describe('ProjectRepository', () => {
       sinon.restore();
     });
 
-    it('should delete project and return true on success', async () => {
+    it('should delete project', async () => {
       const mockQueryResponse = { rowCount: 1, rows: [true] } as any as Promise<QueryResult<any>>;
 
       const mockDBConnection = getMockDBConnection({
@@ -1562,7 +1563,7 @@ describe('ProjectRepository', () => {
 
       const response = await projectRepository.deleteProject(1);
 
-      expect(response).to.eql(true);
+      expect(response).to.eql(undefined);
     });
 
     it('catches errors and throws', async () => {

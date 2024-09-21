@@ -14,7 +14,14 @@ import ListItem from '@mui/material/ListItem';
 import Chip from '@mui/material/Chip';
 import { Divider } from '@mui/material';
 import React, { Fragment } from 'react';
-import { ProjectTableI18N, PlanTableI18N, CreateProjectI18N, CreatePlanI18N } from 'constants/i18n';
+import {
+  ProjectTableI18N,
+  PlanTableI18N,
+  CreateProjectI18N,
+  CreatePlanI18N,
+  ViewProjectI18N,
+  ViewPlanI18N
+} from 'constants/i18n';
 import { getStateCodeFromLabel, getStatusStyle, states } from 'components/workflow/StateMachine';
 import { focus } from 'constants/misc';
 
@@ -29,6 +36,48 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
   let infoContent = null;
   if (isProject) {
     switch (contentIndex) {
+      case CreateProjectI18N.fundingAmount:
+        infoContent = (
+          <Typography m={2} p={2}>
+            Provide the best estimate of overall project budget.
+          </Typography>
+        );
+        break;
+      case ViewProjectI18N.detailsInfo:
+        infoContent = (
+          <>
+            <Typography m={1} px={2} py={1}>
+              <strong>Project size in Hectares</strong>, the size is autocalculated by the app when
+              geoJSON files are uploaded. The autocalculation includes all the sites areas excluding
+              any overlap.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>Number of Sites</strong> is the number of sub geographical areas within the
+              project where specific restoration activities are, were or will take place. This
+              number is autocalculated by the app when geoJSON files are uploaded.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>Number of People Involved</strong>, it's an estimate of how many people will
+              be directly involved or benefit from the project.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>Project part of a publicly available restoration plan</strong>, if yes there
+              is a corresponding restoration plan in the restoration tracker.
+            </Typography>
+            <Typography m={1} px={2} py={1}>
+              <strong>
+                Project within or overlapping known area of cultural or conservation priority
+              </strong>
+              , if yes a cultural or conservation area is part of the project. A cultural or
+              conservation area includes mapped geographic areas like provincial parks and protected
+              areas, and areas formally designed for conservation, such as in a
+              government-to-government agreement, but the designation process is not yet complete.
+              It could also include an area of cultural importance publicly identified by a First
+              Nation.
+            </Typography>
+          </>
+        );
+        break;
       case CreateProjectI18N.locationArea:
         infoContent = (
           <Typography m={2} p={2}>
@@ -73,6 +122,14 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
             and protected areas, and areas formally designed for conservation, such as in a
             government-to-government agreement, but the designation process is not yet complete. It
             could also include an area of cultural importance publicly identified by a First Nation.
+          </Typography>
+        );
+        break;
+      case CreateProjectI18N.locationConservationAreaHidden:
+        infoContent = (
+          <Typography m={2} p={2}>
+            If you are a First Nation or an Indigenous Governing Body, you can hide the Conservation
+            Area information from the public. Do you wish to hide these details from the public?
           </Typography>
         );
         break;
@@ -176,7 +233,7 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
                     </TableCell>
                   </TableRow>
                   <TableRow hover role="checkbox" tabIndex={-1}>
-                    <TableCell align="left">{focus.LAND_BASED_RESTOTRATION_INITIATIVE}</TableCell>
+                    <TableCell align="left">{focus.LAND_BASED_RESTORATION_INITIATIVE}</TableCell>
                     <TableCell align="left">
                       Projects or activities with a primary focus in repairing / rejuvenating /
                       restoring ecosystems, plant and animal communities and the physical
@@ -416,6 +473,22 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
   } // info for Plan
   else {
     switch (contentIndex) {
+      case ViewPlanI18N.sizeAndSites:
+        infoContent = (
+          <>
+            <Typography m={1} p={1}>
+              <strong>Plan size in Hectares</strong>, the size is autocalculated by the app when
+              geoJSON files are uploaded. The autocalculation includes all the sites areas excluding
+              any overlap.
+            </Typography>
+            <Typography m={1} p={1}>
+              <strong>Plan number of Sites</strong> is the number of sub geographical areas within
+              the plan where specific restoration activities are, were or will take place. This
+              number is autocalculated by the app when geoJSON files are uploaded.
+            </Typography>
+          </>
+        );
+        break;
       case CreatePlanI18N.locationArea:
         infoContent = (
           <Typography m={2} p={2}>
@@ -516,7 +589,7 @@ const InfoContent: React.FC<IInfoContentProps> = (props) => {
                     </TableCell>
                   </TableRow>
                   <TableRow hover role="checkbox" tabIndex={-1}>
-                    <TableCell align="left">{focus.LAND_BASED_RESTOTRATION_INITIATIVE}</TableCell>
+                    <TableCell align="left">{focus.LAND_BASED_RESTORATION_INITIATIVE}</TableCell>
                     <TableCell align="left">
                       Plans or activities with a primary focus in repairing / rejuvenating /
                       restoring ecosystems, plant and animal communities and the physical

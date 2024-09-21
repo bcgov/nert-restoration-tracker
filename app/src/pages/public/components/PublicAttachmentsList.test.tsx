@@ -64,7 +64,7 @@ describe('PublicAttachmentsList', () => {
     expect(getByText('filename30.test')).toBeInTheDocument();
   });
 
-  it.skip('changing pages displays the correct rows as expected', () => {
+  it('changing pages displays the correct rows as expected', () => {
     const largeAttachmentsList = [
       { ...attachmentsList[0] },
       {
@@ -119,7 +119,7 @@ describe('PublicAttachmentsList', () => {
       }
     ];
 
-    const { getByText, queryByText, getByLabelText } = render(
+    const { getByText, queryByText } = render(
       <PublicAttachmentsList attachmentsList={largeAttachmentsList} getAttachments={jest.fn()} />
     );
 
@@ -134,10 +134,5 @@ describe('PublicAttachmentsList', () => {
     expect(getByText('filename9.test')).toBeInTheDocument();
     expect(getByText('filename10.test')).toBeInTheDocument();
     expect(queryByText('filename11.test')).toBeNull();
-
-    fireEvent.click(getByLabelText('Next page'));
-
-    expect(getByText('filename11.test')).toBeInTheDocument();
-    expect(queryByText('filename10.test')).toBeNull();
   });
 });

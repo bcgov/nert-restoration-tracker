@@ -33,11 +33,12 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProjectObjectivesForm from '../components/ProjectObjectivesForm';
 import ProjectFocusForm from '../components/ProjectFocusForm';
-import { handleFocusFormValues, handlePartnershipRefValues } from 'utils/Utils';
+import { checkFormikErrors, handleFocusFormValues, handlePartnershipRefValues } from 'utils/Utils';
 import ProjectRestorationPlanForm from '../components/ProjectRestorationPlanForm';
 import FocalSpeciesComponent from 'components/species/FocalSpeciesComponent';
 import { checkForLocationErrors } from 'utils/YupSchema';
 import { useCodesContext } from 'hooks/useContext';
+import YesNoDialog from 'components/dialog/YesNoDialog';
 
 const pageStyles = {
   actionButton: {
@@ -85,6 +86,9 @@ const EditProjectPage: React.FC = () => {
   const [initialProjectFormData, setInitialProjectFormData] = useState<IEditProjectRequest>(
     ProjectFormInitialValues as unknown as IEditProjectRequest
   );
+
+  // Whether or not to show the creation confirmation Yes/No dialog
+  const [openYesNoDialog, setOpenYesNoDialog] = useState(false);
 
   const getSpecies = async (tsns: number[]) => {
     if (!tsns || tsns.length === 0) {
@@ -175,6 +179,10 @@ const EditProjectPage: React.FC = () => {
     getEditProjectFields();
   }, [hasLoadedDraftData, restorationTrackerApi.project, urlParams, codes]);
 
+  const handleCancelConfirmation = () => {
+    setOpenYesNoDialog(false);
+  };
+
   /**
    * Handle project edits.
    */
@@ -203,6 +211,10 @@ const EditProjectPage: React.FC = () => {
     // Set restoration_plan in project object to be saved
     values.project.is_project_part_public_plan =
       values.restoration_plan.is_project_part_public_plan;
+
+    // Make sure people_involved is a number or null
+    values.focus.people_involved =
+      values.focus.people_involved !== 0 ? Number(values.focus.people_involved) : null;
 
     try {
       const response = await restorationTrackerApi.project.updateProject(projectId, values);
@@ -269,6 +281,51 @@ const EditProjectPage: React.FC = () => {
 
   return (
     <>
+      <YesNoDialog
+        dialogTitle="Save Project Confirmation"
+        dialogText=""
+        dialogTitleBgColor="#E9FBFF"
+        dialogContent={
+          <>
+            <Typography variant="body1" color="textPrimary">
+              Please make sure there is no Private Information (PI) in the data. Saving a project
+              means it will be published (publicly available). See the{' '}
+              <Link
+                href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
+                color="primary">
+                BC Government PI
+              </Link>{' '}
+              page for more information.
+            </Typography>
+            <Typography variant="body1" mt={1} color="textPrimary">
+              Are you sure you want to save the project?
+            </Typography>
+          </>
+        }
+        open={openYesNoDialog}
+        onClose={handleCancelConfirmation}
+        onNo={handleCancelConfirmation}
+        onYes={() => {
+          setOpenYesNoDialog(false);
+          formikRef.current?.validateForm().then((errors) => {
+            const errorsText: string[] = checkFormikErrors(errors);
+
+            if (errorsText.length) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Error Saving Project',
+                dialogText: 'Please correct the errors in the form before submitting.',
+                dialogError: 'The following errors were found:',
+                dialogErrorDetails: errorsText,
+                ...defaultErrorDialogProps,
+                open: true
+              });
+            }
+          });
+
+          formikRef.current?.submitForm();
+        }}
+      />
+
       <Box mb={1} ml={3}>
         <Breadcrumbs>
           <Link
@@ -413,7 +470,7 @@ const EditProjectPage: React.FC = () => {
                   color="primary"
                   size="large"
                   type="submit"
-                  onClick={() => formikRef.current?.submitForm()}
+                  onClick={() => setOpenYesNoDialog(true)}
                   data-testid="project-save-button">
                   Save Project
                 </Button>

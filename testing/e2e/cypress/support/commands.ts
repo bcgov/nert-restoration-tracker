@@ -7,27 +7,41 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
+//
+//
+// -- This is a parent command --
+// Cypress.Commands.add('login', (email, password) => { ... })
+//
+//
+// -- This is a child command --
+// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
+//
+//
+// -- This is a dual command --
+// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
+//
+//
+// -- This will overwrite an existing command --
+// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import "cypress-file-upload";
-import "cypress-keycloak-commands";
-import "cypress-localstorage-commands";
-import "./keycloak.js";
+// Hydrate baseUrl from the environment variables
+// UNCOMMENT THIS BLOCK TO USE ENVIRONMENT VARIABLES for LOCAL TESTING
+// Cypress.config("baseUrl", Cypress.env("baseUrl"));
 
-Cypress.Commands.overwrite("login", (originalFn: any) => {
-  originalFn({
-    root: Cypress.env("authUrl"),
-    realm: Cypress.env("authRealm"),
-    username: Cypress.env("username"),
-    password: Cypress.env("password"),
-    client_id: Cypress.env("authClientId"),
-    redirect_uri: Cypress.env("host")
-  });
-});
+Cypress.Commands.add("login", (username, password) => {
+  cy.session([username, password], () => {
+    cy.visit("/");
 
-Cypress.Commands.overwrite("logout", (originalFn: any) => {
-  originalFn({
-    root: Cypress.env("authUrl"),
-    realm: Cypress.env("authRealm"),
-    redirect_uri: Cypress.env("host")
+    const button = cy.get('[data-testid="menu_log_in"]').should("exist");
+    button.click();
+
+    cy.get('[id="social-bceidbasic"]').click();
+
+    cy.get('[id="user"]').type(username);
+    cy.get('[id="password"]').type(password);
+
+    cy.get('[type="submit"]').click();
+
+    cy.url().should("contain", "/search");
   });
 });

@@ -177,7 +177,7 @@ describe('ProjectService', () => {
       expect(getParticipantsFromAllSystemUsersProjectsStub).to.have.been.calledOnce;
     });
 
-    it('should throw error if user is not the only project lead', async () => {
+    it('should throw error if user is not the only Lead Editor', async () => {
       const mockDBConnection = getMockDBConnection();
 
       const getParticipantsFromAllSystemUsersProjectsStub = sinon
@@ -195,13 +195,13 @@ describe('ProjectService', () => {
       } catch (actualError: any) {
         expect((actualError as HTTPError).status).to.equal(400);
         expect(actualError.message).to.equal(
-          'Cannot remove user. User is the only Project Lead for one or more projects.'
+          'Cannot remove user. User is the only Lead Editor for one or more projects.'
         );
         expect(getParticipantsFromAllSystemUsersProjectsStub).to.have.been.calledOnce;
       }
     });
 
-    it('should return undefined if user is not the only project lead', async () => {
+    it('should return undefined if user is not the only Lead Editor', async () => {
       const mockDBConnection = getMockDBConnection();
 
       const getParticipantsFromAllSystemUsersProjectsStub = sinon
@@ -503,7 +503,7 @@ describe('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.getLocationData(projectId);
+      const result = await projectService.getLocationData(projectId, false);
 
       expect(result).to.deep.include(new projectViewModels.GetLocationData());
     });
@@ -637,7 +637,7 @@ describe('ProjectService', () => {
           number_sites: 123,
           size_ha: 123,
           name_area_conservation_priority: ['string'],
-          conservationAreas: [{ conservationArea: 'string' }]
+          conservationAreas: [{ conservationArea: 'string', isPublic: false }]
         },
         authorization: {
           authorizations: [
@@ -716,18 +716,6 @@ describe('ProjectService', () => {
   describe('insertProjectSpatial', () => {
     afterEach(() => {
       sinon.restore();
-    });
-
-    it('returns undefined if no geometry is provided', async () => {
-      const mockDBConnection = getMockDBConnection();
-
-      const data = new projectCreateModels.PostLocationData();
-
-      const projectService = new ProjectService(mockDBConnection);
-
-      const result = await projectService.insertProjectSpatial(data, 1);
-
-      expect(result).equals(undefined);
     });
 
     it('returns project id on success', async () => {
@@ -876,7 +864,7 @@ describe('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      const result = await projectService.insertConservationArea('string', 1);
+      const result = await projectService.insertConservationArea('string', false, 1);
 
       expect(result).equals(1);
     });
@@ -1451,7 +1439,7 @@ describe('ProjectService', () => {
 
       const projectService = new ProjectService(mockDBConnection);
 
-      sinon.stub(ProjectRepository.prototype, 'deleteProject').resolves(true);
+      sinon.stub(ProjectRepository.prototype, 'deleteProject').resolves();
 
       const response = await projectService.deleteProject(1);
 

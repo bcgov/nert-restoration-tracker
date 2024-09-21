@@ -17,9 +17,8 @@ export enum SYSTEM_ROLE {
  * @enum {number}
  */
 export enum PROJECT_ROLE {
-  PROJECT_LEAD = 'Project Lead',
-  PROJECT_EDITOR = 'Project Reviewer',
-  PROJECT_VIEWER = 'Project Team Member'
+  PROJECT_LEAD = 'Lead Editor',
+  PROJECT_EDITOR = 'Team Member Editor'
 }
 
 /**
@@ -29,7 +28,6 @@ export enum PROJECT_ROLE {
  * @enum {string}
  */
 export enum PROJECT_PERMISSION {
-  PROJECT_LEAD = 'Project Lead',
-  PROJECT_EDITOR = 'Project Reviewer',
-  PROJECT_VIEWER = 'Project Team Member'
+  PROJECT_LEAD = 'Lead Editor',
+  PROJECT_EDITOR = 'Team Member Editor'
 }

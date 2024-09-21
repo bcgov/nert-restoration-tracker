@@ -132,6 +132,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
 
           <Box my={1.5}>
             <Chip
+              data-testid="user-role-chip"
               sx={pageStyles.roleChip}
               size="small"
               label={userDetails.role_names[0] || 'Unassigned'}></Chip>

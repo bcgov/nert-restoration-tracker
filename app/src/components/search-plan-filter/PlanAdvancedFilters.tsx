@@ -39,7 +39,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             </Grid>
             <Grid item xs={6}>
               <MultiAutocompleteFieldVariableSize
-                id="status"
+                id="plan_status"
                 data-testid="status"
                 label="Status"
                 options={props.status}
@@ -48,7 +48,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             </Grid>
             <Grid item xs={6}>
               <MultiAutocompleteFieldVariableSize
-                id="region"
+                id="plan_region"
                 data-testid="region"
                 label="Region"
                 options={props.region}
@@ -58,8 +58,8 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             <Grid item xs={12}>
               <PlanStartEndDateFields
                 formikProps={formikProps}
-                startName={'start_date'}
-                endName={'end_date'}
+                startName={'plan_start_date'}
+                endName={'plan_end_date'}
                 startRequired={false}
                 endRequired={false}
               />
@@ -69,7 +69,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             </Grid>
             <Grid item xs={12}>
               <MultiAutocompleteFieldVariableSize
-                id="focus"
+                id="plan_focus"
                 data-testid="focus"
                 label="Focus"
                 options={props.focus}
@@ -82,8 +82,8 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
               </Typography>
               <AreaSizeFields
                 formikProps={formikProps}
-                minName={'from'}
-                maxName={'to'}
+                minName={'plan_ha_from'}
+                maxName={'plan_ha_to'}
                 minRequired={false}
                 maxRequired={false}
               />

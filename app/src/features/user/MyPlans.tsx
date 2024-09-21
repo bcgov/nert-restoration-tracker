@@ -1,30 +1,38 @@
-import { mdiArrowCollapseVertical, mdiArrowExpandVertical, mdiPlus } from '@mdi/js';
+import React from 'react';
 import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
+import { mdiArrowCollapseVertical, mdiArrowExpandVertical, mdiPlus } from '@mdi/js';
+import { Box, Button, Card, Typography } from '@mui/material';
 import { SystemRoleGuard } from 'components/security/Guards';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
 import PlanListPage from 'features/plans/PlanListPage';
 import { IGetDraftsListResponse } from 'interfaces/useDraftApi.interface';
 import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
-import React from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useNavigate } from 'react-router-dom';
 import { PlanTableI18N } from 'constants/i18n';
+import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
 
 export interface IPlansListProps {
   plans: IGetPlanForViewResponse[];
   drafts?: IGetDraftsListResponse[];
   myplan?: boolean;
+  isUserCreator?: boolean;
 }
 
 const MyPlans: React.FC<IPlansListProps> = (props) => {
-  const { plans, drafts } = props;
+  const { plans, drafts, isUserCreator } = props;
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
   const history = useNavigate();
+
+  let rowsPlanFilterOutArchived = plans;
+  if (isUserCreator) {
+    if (rowsPlanFilterOutArchived && isUserCreator) {
+      rowsPlanFilterOutArchived = plans.filter(
+        (plan) => plan.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+      );
+    }
+  }
 
   return (
     <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
@@ -76,7 +84,7 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
 
       <Box {...getCollapseProps()}>
         <Box m={1}>
-          <PlanListPage plans={plans} drafts={drafts} myplan={true} />
+          <PlanListPage plans={rowsPlanFilterOutArchived} drafts={drafts} myplan={true} />
         </Box>
       </Box>
     </Card>

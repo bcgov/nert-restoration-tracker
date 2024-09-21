@@ -63,7 +63,7 @@ function ProjectsTableHead(props: ProjectsTableProps) {
           </Tooltip>
 
           {headCell.infoButton ? (
-            <IconButton onClick={() => handleClickOpen(headCell)}>
+            <IconButton sx={{ p: 0 }} onClick={() => handleClickOpen(headCell)}>
               <InfoIcon color="info" />
             </IconButton>
           ) : null}
@@ -85,14 +85,10 @@ function ProjectsTableHead(props: ProjectsTableProps) {
           {projectRows}
           <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
             <TableCell>
-              {!myProject ? (
+              <>
                 <Typography variant="inherit">{TableI18N.archive}</Typography>
-              ) : (
-                <>
-                  <Typography variant="inherit">{TableI18N.archive}</Typography>
-                  <Typography variant="inherit">{TableI18N.delete}</Typography>
-                </>
-              )}
+                <Typography variant="inherit">{TableI18N.delete}</Typography>
+              </>
             </TableCell>
           </SystemRoleGuard>
           <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.PROJECT_CREATOR]}>

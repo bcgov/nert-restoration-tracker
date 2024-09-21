@@ -297,7 +297,7 @@ yup.addMethod(
   'isConservationAreasRequired',
   function (booleanName: string, message: string) {
     return this.test('is-conservation-areas-required', message, function (value) {
-      if (this.parent[booleanName] === 'false') {
+      if (this.parent[booleanName] === 'false' || this.parent[booleanName] === 'dont_know') {
         return true;
       }
 

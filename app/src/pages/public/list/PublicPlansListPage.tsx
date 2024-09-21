@@ -75,14 +75,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         statusCode: row.project.state_code,
         statusLabel: getStateLabelFromCode(row.project.state_code),
         statusStyle: getStatusStyle(row.project.state_code),
-        archive: '',
-        export:
-          row.project.is_healing_people &&
-          !row.project.is_healing_land &&
-          !row.project.is_cultural_initiative &&
-          !row.project.is_land_initiative
-            ? ''
-            : 'Yes'
+        archive: ''
       } as utils.PlanData;
     });
 
@@ -119,7 +112,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
         <TableHead>
           <TableRow>
             {utils.planHeadCells.map((headCell) => {
-              if ('archive' !== headCell.id && 'export' !== headCell.id)
+              if ('archive' !== headCell.id)
                 return (
                   <TableCell
                     key={headCell.id}
@@ -236,7 +229,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.checked) {
-        const newSelected = rows.filter((item) => item.export).map((n) => n.id);
+        const newSelected = rows.map((n) => n.id);
         setSelected(newSelected);
         return;
       }
@@ -315,7 +308,8 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}>
+            size={dense ? 'small' : 'medium'}
+            data-testid={'plan_list'}>
             <PlansTableHead
               numSelected={selected.length}
               order={order}
@@ -340,7 +334,7 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                     sx={{ cursor: 'pointer' }}>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       <Link
-                        data-testid={row.planName}
+                        data-testid={`plan_${row.id}`}
                         underline="always"
                         component="button"
                         sx={{ textAlign: 'left' }}
@@ -410,34 +404,20 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                       />
                     </TableCell>
                     <TableCell padding="checkbox">
-                      {row.export ? (
-                        <Tooltip
-                          title={
-                            isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
-                          }
-                          placement="top">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId
-                            }}
-                            onClick={(event) => handleClick(event, row.id)}
-                          />
-                        </Tooltip>
-                      ) : (
-                        <Tooltip title={TableI18N.noDataToExport} placement="top">
-                          <span>
-                            <Checkbox
-                              disabled={true}
-                              color="primary"
-                              inputProps={{
-                                'aria-labelledby': labelId
-                              }}
-                            />
-                          </span>
-                        </Tooltip>
-                      )}
+                      <Tooltip
+                        title={
+                          isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
+                        }
+                        placement="top">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                          onClick={(event) => handleClick(event, row.id)}
+                        />
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );

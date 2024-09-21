@@ -42,12 +42,20 @@ export default function PublicProjects() {
       const urlParams = qs.parse(location.search.replace('?', ''));
       const values = {
         keyword: urlParams.keyword,
-        permit_number: urlParams.permit_number,
+        project_name: urlParams.project_name,
+        status: urlParams.status,
+        region: urlParams.region,
+        focus: urlParams.focus,
         start_date: urlParams.start_date,
         end_date: urlParams.end_date,
-        region: urlParams.region,
-        status: urlParams.status,
-        focus: urlParams.focus
+        actual_start_date: urlParams.actual_start_date,
+        actual_end_date: urlParams.actual_end_date,
+        objectives: urlParams.objectives,
+        organizations: urlParams.organizations,
+        funding_sources: urlParams.funding_sources,
+        ha_to: urlParams.ha_to,
+        ha_from: urlParams.ha_from,
+        authorization: urlParams.authorization
       } as IProjectAdvancedFilters;
 
       return values;
@@ -168,7 +176,8 @@ export default function PublicProjects() {
     <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography ml={1} variant="h1">
-          <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> Projects
+          <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />
+          Projects
         </Typography>
         <Box my={1} mx={1}>
           <Button

@@ -2,9 +2,11 @@ export const CreateProjectI18N = {
   locationArea: 'Project Areas',
   locationGeoJSONProperties: 'GeoJSON Properties Information',
   locationConservationArea: 'Conservation Area',
+  locationConservationAreaHidden: 'Conservation Area Hidden from Public',
   locationRegion: 'Region',
   partnership: 'Partnerships',
   fundingSource: 'Funding Sources',
+  fundingAmount: 'Funding Amount',
   authorization: 'Authorizations',
   numberOfPeopleInvolved: 'Number of People Involved',
   focus: 'Focuses',
@@ -28,6 +30,14 @@ export const CreatePlanI18N = {
   createErrorTitle: 'Error Creating Plan',
   createErrorText:
     'An error has occurred while attempting to create your Plan, please try again. If the error persists, please contact your system administrator.'
+};
+
+export const ViewProjectI18N = {
+  detailsInfo: 'Details Information'
+};
+
+export const ViewPlanI18N = {
+  sizeAndSites: 'Size and Number of Sites'
 };
 
 export const EditProjectI18N = {
@@ -163,23 +173,6 @@ export const ReviewAccessRequestI18N = {
     'An error has occurred while attempting to review this access request, please try again. If the error persists, please contact your system administrator.'
 };
 
-export const DeleteProjectI18N = {
-  deleteTitle: 'Delete Project',
-  deleteText:
-    'Are you sure you want to delete this project, its attachments and associated surveys/observations?',
-  deleteErrorTitle: 'Error Deleting Project',
-  deleteErrorText:
-    'An error has occurred while attempting to delete this project, its attachments and associated surveys/observations, please try again. If the error persists, please contact your system administrator.'
-};
-
-export const DeletePlanI18N = {
-  deleteTitle: 'Delete Plan',
-  deleteText: 'Are you sure you want to delete this plan?',
-  deleteErrorTitle: 'Error Deleting Plan',
-  deleteErrorText:
-    'An error has occurred while attempting to delete this plan, please try again. If the error persists, please contact your system administrator.'
-};
-
 export const AddSystemUserI18N = {
   addUserErrorTitle: 'Error Adding System User',
   addUserErrorText:
@@ -215,23 +208,17 @@ export const ProjectParticipantsI18N = {
 };
 
 export const SystemUserI18N = {
-  deleteProjectLeadErrorTitle: 'Error Deleting Project Lead',
+  deleteProjectLeadErrorTitle: 'Error Deleting Lead Editor',
   deleteProjectLeadErrorText:
-    'An error has occurred while attempting to delete the project lead, please assign a different project lead before removing. Please try again, if the error persists please contact your system administrator.',
-  updateProjectLeadRoleErrorTitle: 'Error Updating Project Lead Role',
+    'An error has occurred while attempting to delete the Lead Editor, please assign a different Lead Editor before removing. Please try again, if the error persists please contact your system administrator.',
+  updateProjectLeadRoleErrorTitle: 'Error Updating Lead Editor Role',
   updateProjectLeadRoleErrorText:
-    "An error has occurred while attempting to update the user's project lead role, please assign a different project lead before changing. Please try again, if the error persists please contact your system administrator.",
+    "An error has occurred while attempting to update the user's Lead Editor role, please assign a different Lead Editor before changing. Please try again, if the error persists please contact your system administrator.",
   removeSystemUserTitle: 'Remove System User ',
   removeUserFromProject: 'Remove User From Project',
   removeUserErrorTitle: 'Error Removing User From Team',
   removeUserErrorText:
     'An error has occurred while attempting to remove the user from the team, please try again. If the error persists, please contact your system administrator.'
-};
-
-export const DownloadEMLI18N = {
-  errorTitle: 'Error Downloading Project EML',
-  errorText:
-    'An error has occurred while attempting to download the project EML. Please try again, if the error persists please contact your system administrator.'
 };
 
 export const TableI18N = {
@@ -243,7 +230,7 @@ export const TableI18N = {
   importData: 'Import data',
   exportSelected: 'Export selected',
   exportNotSelected: 'Export not selected',
-  deleteDraft: 'Delete draft',
+  deleteDraft: 'Delete Draft',
   archive: 'Archive',
   unarchive: 'Unarchive',
   delete: 'Delete',
@@ -254,7 +241,13 @@ export const TableI18N = {
   noDataToExport: 'No data to export',
   updateStateCodeErrorTitle: 'Error Updating Status',
   updateStateCodeErrorText:
-    'An error has occurred while attempting to update the status. If the error persists, please contact your system administrator.'
+    'An error has occurred while attempting to update the status. If the error persists, please contact your system administrator.',
+  deleteDraftErrorTitle: 'Error Deleting Draft',
+  deleteDraftErrorText:
+    'An error has occurred while attempting to delete this draft. If the error persists, please contact your system administrator.',
+  draftName: 'Draft Name',
+  draft: 'draft',
+  drafts: 'drafts'
 };
 
 export const ProjectTableI18N = {
@@ -283,7 +276,15 @@ export const ProjectTableI18N = {
     'When project activities end, inclusive of any site monitoring and initial reporting.',
   statusTooltip: 'Current status, within project workflow.',
   statusInfo: 'Status',
-  projectConfirmation: 'project confirmation'
+  projectConfirmation: 'project confirmation',
+  deleteProject: 'Delete Project',
+  deleteText:
+    'Deleting this project will permanently remove it from the application. All the entered data will be lost.',
+  deleteWarning:
+    'Are you sure you want to delete this project, its attachments and associated map features?',
+  deleteErrorTitle: 'Error Deleting Project',
+  deleteErrorText:
+    'An error has occurred while attempting to delete this project, its attachments and associated map features, please try again. If the error persists, please contact your system administrator.'
 };
 
 export const PlanTableI18N = {
@@ -309,5 +310,12 @@ export const PlanTableI18N = {
   multiYear: 'Multi-Year',
   annual: 'Annual',
   statusTooltip: 'Restoration Plan status is either "Planning" or "Complete".',
-  planConfirmation: 'plan confirmation'
+  planConfirmation: 'plan confirmation',
+  deletePlan: 'Delete Plan',
+  deleteText:
+    'Deleting this plan will permanently remove it from the application. All the entered data will be lost.',
+  deleteWarning: 'Are you sure you want to delete this plan and associated map features?',
+  deleteErrorTitle: 'Error Deleting Plan',
+  deleteErrorText:
+    'An error has occurred while attempting to delete this plan, please try again. If the error persists, please contact your system administrator.'
 };

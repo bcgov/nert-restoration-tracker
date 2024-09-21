@@ -1,27 +1,38 @@
-import { mdiArrowCollapseVertical, mdiArrowExpandVertical, mdiPlus } from '@mdi/js';
+import React from 'react';
 import Icon from '@mdi/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
+import { mdiArrowCollapseVertical, mdiArrowExpandVertical, mdiPlus } from '@mdi/js';
+import { Box, Button, Card, Typography } from '@mui/material';
 import { SystemRoleGuard } from 'components/security/Guards';
 import { ICONS } from 'constants/misc';
 import { SYSTEM_ROLE } from 'constants/roles';
 import ProjectsListPage from 'features/projects/list/ProjectsListPage';
 import { IProjectsListProps } from 'interfaces/useProjectApi.interface';
-import React from 'react';
 import { useCollapse } from 'react-collapsed';
 import { useNavigate } from 'react-router-dom';
 import { ProjectTableI18N } from 'constants/i18n';
+import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
 
 const MyProjects: React.FC<IProjectsListProps> = (props) => {
-  const { projects, drafts } = props;
+  const { projects, drafts, isUserCreator } = props;
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse({ defaultExpanded: true });
   const history = useNavigate();
 
+  let rowsProjectFilterOutArchived = projects;
+  if (isUserCreator) {
+    if (rowsProjectFilterOutArchived && isUserCreator) {
+      rowsProjectFilterOutArchived = projects.filter(
+        (proj) => proj.project.state_code != getStateCodeFromLabel(states.ARCHIVED)
+      );
+    }
+  }
+
   return (
     <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        data-testid="my_projects_header">
         <Typography ml={1} variant="h1">
           <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> My Projects
         </Typography>
@@ -70,7 +81,11 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
 
       <Box {...getCollapseProps()}>
         <Box m={1}>
-          <ProjectsListPage projects={projects} drafts={drafts} myproject={true} />
+          <ProjectsListPage
+            projects={rowsProjectFilterOutArchived}
+            drafts={drafts}
+            myproject={true}
+          />
         </Box>
       </Box>
     </Card>

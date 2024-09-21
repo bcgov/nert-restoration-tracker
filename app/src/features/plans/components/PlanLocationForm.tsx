@@ -94,8 +94,8 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
   const wells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
+  const protectedAreas = useState<boolean>(false);
+  const seismic = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
   const layerVisibility = {
@@ -103,8 +103,8 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     wells,
     projects,
     plans,
-    wildlife,
-    indigenous,
+    protectedAreas,
+    seismic,
     baselayer
   };
 
@@ -163,6 +163,14 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
     setInfoTitle(indexContent ? indexContent : '');
     setInfoOpen(true);
   };
+
+  // This needs to be passed to the map for filtering the region boundary
+  const region = props.regions.reduce((acc, region) => {
+    if (region.value === values.location.region) {
+      return region.label;
+    }
+    return acc;
+  }, '');
 
   return (
     <>
@@ -267,6 +275,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             activeFeatureState={[activeFeature, setActiveFeature]}
             autoFocus={true}
             editModeOn={true}
+            region={region}
           />
         </Box>
         {errors?.location?.geometry && (

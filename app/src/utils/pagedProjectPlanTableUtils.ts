@@ -1,10 +1,5 @@
 import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
 import { focus } from 'constants/misc';
-import { useNertApi } from 'hooks/useNertApi';
-import { DialogContext } from 'contexts/dialogContext';
-import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import { useContext } from 'react';
-import { APIError } from 'hooks/api/useAxios';
 
 /**  Project related objects **/
 export interface ProjectData {
@@ -120,7 +115,6 @@ export interface PlanData {
   statusCode: number;
   statusLabel: string;
   archive: string;
-  export: string;
 }
 
 export interface PlansTableProps {
@@ -200,6 +194,41 @@ export const planHeadCells: readonly PlanHeadCell[] = [
   }
 ];
 
+// Draft related objects
+export interface DraftData {
+  id: number;
+  draftId: number;
+  draftName: string;
+  statusCode: number;
+  statusLabel: string;
+  deleteDraft: string;
+}
+
+export interface DraftTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof DraftData) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+}
+
+export interface DraftHeadCell {
+  disablePadding: boolean;
+  id: keyof DraftData;
+  label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
+  numeric: boolean;
+}
+
+export const draftHeadCells: readonly DraftHeadCell[] = [
+  {
+    id: 'draftName',
+    numeric: false,
+    disablePadding: true,
+    label: TableI18N.draftName
+  }
+];
+
 /** Common to projects and plan table **/
 export interface TableToolbarProps {
   numSelected: number;
@@ -258,6 +287,29 @@ export const authStyles = {
     height: '1.5rem'
   },
   authLabel: {
+    color: '#545454',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    textTransform: 'none',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
+export const fundingSrcStyles = {
+  fundChip: {
+    backgroundColor: '#E9FBFF',
+    marginBottom: '1px',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  noFundChip: {
+    justifyContent: 'left',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    height: '1.5rem'
+  },
+  fundLabel: {
     color: '#545454',
     fontSize: '0.78rem',
     fontWeight: 500,

@@ -1,14 +1,19 @@
 import Box from '@mui/material/Box';
 import centroid from '@turf/centroid';
 import { IErrorDialogProps } from 'components/dialog/ErrorDialog';
-import LayerSwitcher from 'components/map/components/LayerSwitcher';
+import LayerSwitcherInline from 'components/map/components/LayerSwitcherInline';
+import { IconButton } from '@mui/material';
 import MapContainer from 'components/map/MapContainer';
+import SideBar from 'components/map/components/SideBar';
 import { DialogContext } from 'contexts/dialogContext';
 import { APIError } from 'hooks/api/useAxios';
 import { useAuthStateContext } from 'hooks/useAuthStateContext';
 import { useNertApi } from 'hooks/useNertApi';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import LayersIcon from '@mui/icons-material/Layers';
+import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
 
 /**
  * Page to search for and display a list of records spatially.
@@ -41,6 +46,7 @@ const SearchPage: React.FC = () => {
     },
     [dialogContext]
   );
+  const archCode = getStateCodeFromLabel(states.ARCHIVED);
   const getSearchResults = useCallback(async () => {
     try {
       const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
@@ -58,10 +64,13 @@ const SearchPage: React.FC = () => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
           .geometryCollection[0];
 
-        clusteredPointGeometries.push({
-          position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-          feature: result
-        });
+        // Filter out archived projects/plans
+        if (archCode != result.state_code) {
+          clusteredPointGeometries.push({
+            position: centroid(feature as any).geometry.coordinates as LatLngTuple,
+            feature: result
+          });
+        }
       });
 
       setPerformSearch(false);
@@ -82,6 +91,8 @@ const SearchPage: React.FC = () => {
     }
   }, [performSearch, getSearchResults]);
 
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   /**
    * Reactive state to share between the layer picker and the map
    */
@@ -89,8 +100,8 @@ const SearchPage: React.FC = () => {
   const wells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
-  const wildlife = useState<boolean>(false);
-  const indigenous = useState<boolean>(false);
+  const protectedAreas = useState<boolean>(false);
+  const seismic = useState<boolean>(false);
   const baselayer = useState<string>('hybrid');
 
   const layerVisibility = {
@@ -98,24 +109,145 @@ const SearchPage: React.FC = () => {
     wells,
     projects,
     plans,
-    wildlife,
-    indigenous,
+    protectedAreas,
+    seismic,
     baselayer
+  };
+
+  const legend = {
+    protectedAreas: [
+      { label: 'Provincial or Federal Park', visible: true, allowToggle: false, color: '#B8D797' },
+      { label: 'Provincial Conservancy', visible: true, allowToggle: false, color: '#cce4cc' },
+      {
+        label: 'Wildlife Habitat Area',
+        visible: true,
+        allowToggle: false,
+        color: '#f3e5c0',
+        outlineColor: '#f9766f'
+      },
+      {
+        label: 'MUSKWA-KECHIKA Management Area',
+        visible: true,
+        allowToggle: false,
+        color: '#e4c1bb',
+        outlineColor: '#b4aaa3'
+      },
+      {
+        label: 'Ungulate Winter Range',
+        visible: true,
+        allowToggle: false,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/icon-uwr.png'
+      }
+    ],
+    boundary: [
+      {
+        label: 'West Coast Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/west.png'
+      },
+      {
+        label: 'South Coast Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/south.png'
+      },
+      {
+        label: 'Thompson-Okanagan Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/thompson-okanagan.png'
+      },
+      {
+        label: 'Kootenay-Boundary Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/kootenay-boundary.png'
+      },
+      {
+        label: 'Northeast Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/northeast.png'
+      },
+      {
+        label: 'Omineca Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/omineca.png'
+      },
+      {
+        label: 'Skeena Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/skeena.png'
+      },
+      {
+        label: 'Cariboo Natural Resource Region',
+        visible: true,
+        allowToggle: true,
+        image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/cariboo.png'
+      }
+    ]
+  };
+
+  /**
+   * Filter state to share between the layer picker and the map
+   *
+   */
+  const boundaryState = {
+    'West Coast Natural Resource Region': useState<boolean>(true),
+    'South Coast Natural Resource Region': useState<boolean>(true),
+    'Thompson-Okanagan Natural Resource Region': useState<boolean>(true),
+    'Kootenay-Boundary Natural Resource Region': useState<boolean>(true),
+    'Northeast Natural Resource Region': useState<boolean>(true),
+    'Omineca Natural Resource Region': useState<boolean>(true),
+    'Skeena Natural Resource Region': useState<boolean>(true),
+    'Cariboo Natural Resource Region': useState<boolean>(true)
+  };
+
+  const filterState = {
+    boundary: boundaryState
+  };
+
+  const sidebarButtonStyle = {
+    position: 'absolute',
+    top: '40px',
+    left: sidebarOpen ? '360px' : '0px',
+    zIndex: 1000,
+    backgroundColor: 'white',
+    transition: 'left 225ms cubic-bezier(0, 0, 0.2, 1)',
+    ':hover': {
+      transform: 'scale(1.1)',
+      backgroundColor: 'white'
+    },
+    borderRadius: '0 20% 20% 0'
   };
 
   /**
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Box sx={{ height: '100%' }}>
+    <Box sx={{ height: '100%', position: 'relative' }}>
       <MapContainer
         mapId="search_boundary_map"
         features={geometries}
         layerVisibility={layerVisibility}
-        // bounds={projectBoundary}
-        centroids={true}
-      />
-      <LayerSwitcher layerVisibility={layerVisibility} open={true} />
+        filterState={filterState}
+        centroids={true}>
+        <SideBar sidebarOpen={sidebarOpen}>
+          <LayerSwitcherInline
+            layerVisibility={layerVisibility}
+            legend={legend}
+            filterState={filterState}
+          />
+        </SideBar>
+
+        {/* button that opens and closes the sidebar */}
+        <IconButton onClick={() => setSidebarOpen(!sidebarOpen)} sx={sidebarButtonStyle}>
+          {sidebarOpen ? <ArrowBack /> : <LayersIcon />}
+        </IconButton>
+      </MapContainer>
     </Box>
   );
 };

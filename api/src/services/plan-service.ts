@@ -7,7 +7,6 @@ import { PlanRepository } from '../repositories/plan-repository';
 import { ProjectParticipationRepository } from '../repositories/project-participation-repository';
 import { ProjectRepository } from '../repositories/project-repository';
 import { getS3SignedURL } from '../utils/file-utils';
-import { AttachmentService } from './attachment-service';
 import { ProjectService } from './project-service';
 import { DBService } from './service';
 
@@ -65,7 +64,7 @@ export class PlanService extends DBService {
     const [projectData, contactData, locationData] = await Promise.all([
       this.projectRepository.getProjectData(id),
       this.projectRepository.getContactData(id, isPublic),
-      this.projectService.getLocationData(id)
+      this.projectService.getLocationData(id, isPublic)
     ]);
 
     return {
@@ -127,7 +126,7 @@ export class PlanService extends DBService {
     const [projectData, contactData, locationData, attachmentData] = await Promise.all([
       this.projectRepository.getProjectData(id),
       this.projectRepository.getContactData(id, isPublic),
-      this.projectService.getLocationData(id),
+      this.projectService.getLocationData(id, isPublic),
       this.attachmentRepository.getProjectAttachmentsByType(id, 'thumbnail')
     ]);
 
@@ -196,26 +195,5 @@ export class PlanService extends DBService {
     }
 
     return planResponse;
-  }
-
-  /**
-   * Delete a plan.
-   *
-   * @param {number} projectId
-   * @return {*}  {Promise<boolean>}
-   * @memberof PlanService
-   */
-  async deletePlan(projectId: number): Promise<boolean> {
-    /**
-     * PART 1
-     * Delete all the plan related and all associated records/resources from S3
-     */
-    await new AttachmentService(this.connection).deleteAllS3Attachments(projectId);
-
-    /**
-     * PART 2
-     * Delete the plan and all associated records/resources from our DB
-     */
-    return this.projectRepository.deleteProject(projectId);
   }
 }

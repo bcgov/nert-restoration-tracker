@@ -10,6 +10,7 @@ import React from 'react';
 import yup from 'utils/YupSchema';
 import StartEndDateFields from 'components/fields/PlanStartEndDateFields';
 import IsPublic from 'components/fields/IsPublic';
+import { CreateProjectI18N } from 'constants/i18n';
 
 export interface IProjectFundingFormArrayItem {
   organization_name: string;
@@ -32,7 +33,7 @@ export const ProjectFundingFormArrayItemInitialValues: IProjectFundingFormArrayI
 };
 
 export const ProjectFundingFormArrayItemYupSchema = yup.object().shape({
-  organization_name: yup.string().max(50, 'Cannot exceed 255 characters').required(),
+  organization_name: yup.string().max(200, 'Cannot exceed 200 characters').required(),
   description: yup.string().max(255, 'Cannot exceed 255 characters').nullable().notRequired(),
   funding_project_id: yup.string().max(50, 'Cannot exceed 50 characters').nullable().notRequired(),
   funding_amount: yup
@@ -87,7 +88,7 @@ const ProjectFundingItemForm: React.FC = () => {
               required={true}
               id="funding_amount"
               name="funding_amount"
-              label="Funding Amount"
+              label={CreateProjectI18N.fundingAmount}
             />
           </Grid>
           <Grid item xs={12}>
@@ -105,6 +106,7 @@ const ProjectFundingItemForm: React.FC = () => {
               errors={errors.is_public}
               values={values.is_public}
               handleChange={(value: string) => setFieldValue('is_public', value)}
+              customizeFor={'Funding'}
             />
           </Grid>
         </Grid>

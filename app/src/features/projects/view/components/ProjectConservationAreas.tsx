@@ -1,6 +1,9 @@
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-import { IGetProjectForViewResponse } from 'interfaces/useProjectApi.interface';
+import {
+  IGetProjectForViewResponse,
+  IGetProjectForViewResponseConservationAreas
+} from 'interfaces/useProjectApi.interface';
 import React from 'react';
 
 const pageStyles = {
@@ -45,15 +48,17 @@ const ProjectConservationAreas: React.FC<IProjectConservationAreasProps> = (prop
   return (
     <>
       {hasConservationAreas &&
-        location.conservationAreas.map((item: { conservationArea: string }, index) => (
-          <Chip
-            key={index}
-            data-testid="conservationArea_item"
-            size="small"
-            sx={pageStyles.conservationAreaChip}
-            label={conservationAreaStyled(item.conservationArea)}
-          />
-        ))}
+        location.conservationAreas.map(
+          (item: IGetProjectForViewResponseConservationAreas, index) => (
+            <Chip
+              key={index}
+              data-testid="conservationArea_item"
+              size="small"
+              sx={pageStyles.conservationAreaChip}
+              label={conservationAreaStyled(item.conservationArea)}
+            />
+          )
+        )}
 
       {!hasConservationAreas && (
         <Chip label="No Conservation Areas" data-testid="no_conservationArea_loaded" />
