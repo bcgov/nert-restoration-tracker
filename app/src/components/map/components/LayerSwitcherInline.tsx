@@ -177,17 +177,19 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             {props.legend.orphanedWells && (
               <List dense>
                 {props.legend.orphanedWells.map((well: any) => (
-                  <ListItem key={well.label} secondaryAction={
-                    well.allowToggle && (
-                      <Checkbox
-                        edge="end"
-                        checked={orphanedWellFilter[well.label][0]}
-                        onClick={() => {
-                          orphanedWellFilter[well.label][1](!orphanedWellFilter[well.label][0])
-                        }}
-                      />
-                    )
-                  }>
+                  <ListItem
+                    key={well.label}
+                    secondaryAction={
+                      well.allowToggle && (
+                        <Checkbox
+                          edge="end"
+                          checked={orphanedWellFilter[well.label][0]}
+                          onClick={() => {
+                            orphanedWellFilter[well.label][1](!orphanedWellFilter[well.label][0]);
+                          }}
+                        />
+                      )
+                    }>
                     <ListItemAvatar>
                       <Avatar
                         src={well.image}

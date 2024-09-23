@@ -432,7 +432,6 @@ const checkOrphanedWellsState = (orphanedWellsState: any) => {
   ];
 
   map.setFilter('orphanedActivitiesLayer', activitiesFilter as any);
-
 };
 
 const initializeMap = (
