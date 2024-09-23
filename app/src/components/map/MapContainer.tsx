@@ -425,7 +425,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, protectedAreas, seismic } = layerVisibility;
+  const { boundary, orphanedWells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -989,7 +989,7 @@ const initializeMap = (
     });
 
     // Add the well layers
-    drawWells(map, wells, tooltipState);
+    drawWells(map, orphanedWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {

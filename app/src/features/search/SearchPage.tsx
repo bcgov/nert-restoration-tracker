@@ -97,7 +97,7 @@ const SearchPage: React.FC = () => {
    * Reactive state to share between the layer picker and the map
    */
   const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
+  const orphanedWells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(false);
@@ -106,7 +106,7 @@ const SearchPage: React.FC = () => {
 
   const layerVisibility = {
     boundary,
-    wells,
+    orphanedWells,
     projects,
     plans,
     protectedAreas,
@@ -188,6 +188,12 @@ const SearchPage: React.FC = () => {
         allowToggle: true,
         image: 'https://nrs.objectstore.gov.bc.ca/nerdel/images/cariboo.png'
       }
+    ],
+    orphanedWells: [
+      { label: 'Assessed', visible: true, allowToggle: true, color: '#f0933e' },
+      { label: 'Inactive', visible: true, allowToggle: true, color: '#999999' },
+      { label: 'Decommissioned', visible: true, allowToggle: true, color: '#7fb2f9' },
+      { label: 'Reclaimed', visible: true, allowToggle: true, color: '#adc64f' }
     ]
   };
 
@@ -206,8 +212,16 @@ const SearchPage: React.FC = () => {
     'Cariboo Natural Resource Region': useState<boolean>(true)
   };
 
+  const orphanedWellsState = {
+    'Assessed': useState<boolean>(true),
+    'Inactive': useState<boolean>(true),
+    'Decommissioned': useState<boolean>(true),
+    'Reclaimed': useState<boolean>(true)
+  };
+
   const filterState = {
-    boundary: boundaryState
+    boundary: boundaryState,
+    orphanedWells: orphanedWellsState
   };
 
   const sidebarButtonStyle = {
