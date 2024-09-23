@@ -410,18 +410,30 @@ const checkBoundaryState = (boundaryState: any) => {
 };
 
 const checkOrphanedWellsState = (orphanedWellsState: any) => {
+  // First the orphaned wells layer
   if (!map.getLayer('orphanedWellsLayer')) return;
 
   const orphanedWells = Object.keys(orphanedWellsState);
   const visibleOrphanedWells = orphanedWells.filter((well: any) => orphanedWellsState[well][0]);
 
-  const filter = [
+  const orphanedWellsFilter = [
     'any',
     ...visibleOrphanedWells.map((well: any) => ['==', 'SITE_STATUS', well])
   ];
 
-  map.setFilter('orphanedWellsLayer', filter as any);
-}
+  map.setFilter('orphanedWellsLayer', orphanedWellsFilter as any);
+
+  // Now the orphaned well activities layer
+  if (!map.getLayer('orphanedActivitiesLayer')) return;
+
+  const activitiesFilter = [
+    'any',
+    ...visibleOrphanedWells.map((activity: any) => ['==', 'WORKSTREAM_SHORT', activity])
+  ];
+
+  map.setFilter('orphanedActivitiesLayer', activitiesFilter as any);
+
+};
 
 const initializeMap = (
   mapId: string,
@@ -1224,7 +1236,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
 
   useEffect(() => {
     checkOrphanedWellsState(filterState.orphanedWells);
-  }, [filterState.orphanedWells])
+  }, [filterState.orphanedWells]);
 
   return (
     <div id={mapId} style={pageStyle}>

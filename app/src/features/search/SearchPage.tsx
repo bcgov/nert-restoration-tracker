@@ -193,7 +193,13 @@ const SearchPage: React.FC = () => {
       { label: 'Assessed', visible: true, allowToggle: true, color: '#f0933e' },
       { label: 'Inactive', visible: true, allowToggle: true, color: '#999999' },
       { label: 'Decommissioned', visible: true, allowToggle: true, color: '#7fb2f9' },
-      { label: 'Reclaimed', visible: true, allowToggle: true, color: '#adc64f' }
+      { label: 'Reclaimed', visible: true, allowToggle: true, color: '#adc64f' },
+      { label: 'Deactivation', visible: true, allowToggle: true, outlineColor: '#fffe7d', color: '#ffffff' },
+      { label: 'Abandonment', visible: true, allowToggle: true, outlineColor: '#ee212f', color: '#ffffff' },
+      { label: 'Reclamation', visible: true, allowToggle: true, outlineColor: '#709958', color: '#ffffff' },
+      { label: 'Investigation', visible: true, allowToggle: true, outlineColor: '#f6b858', color: '#ffffff' },
+      { label: 'Remediation', visible: true, allowToggle: true, outlineColor: '#a92fe2', color: '#ffffff' },
+      { label: 'Decommissioning', visible: true, allowToggle: true, outlineColor: '#4a72b5', color: '#ffffff' },
     ]
   };
 
@@ -216,7 +222,13 @@ const SearchPage: React.FC = () => {
     'Assessed': useState<boolean>(true),
     'Inactive': useState<boolean>(true),
     'Decommissioned': useState<boolean>(true),
-    'Reclaimed': useState<boolean>(true)
+    'Reclaimed': useState<boolean>(true),
+    'Deactivation': useState<boolean>(true),
+    'Abandonment': useState<boolean>(true),
+    'Reclamation': useState<boolean>(true),
+    'Investigation': useState<boolean>(true),
+    'Remediation': useState<boolean>(true),
+    'Decommissioning': useState<boolean>(true)
   };
 
   const filterState = {
