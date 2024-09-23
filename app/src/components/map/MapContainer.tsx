@@ -49,9 +49,14 @@ const pageStyle = {
 const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
   /* The following are the URLs to the geojson data */
   const orphanedSitesURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?
+    outFields=OBJECTID,SITE_NAME,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
+    &where=1%3D1
+    &f=geojson`.replace(/\s+/g, '');
   const orphanedActivitiesURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?
+    outFields=OBJECTID,SITE_NAME,WORKSTREAM_SHORT,SITE_ID,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
+    &where=1%3D1&f=geojson`.replace(/\s+/g, '');
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -404,6 +409,31 @@ const checkBoundaryState = (boundaryState: any) => {
   map.setFilter('region_boundary', filter as any);
 };
 
+const checkOrphanedWellsState = (orphanedWellsState: any) => {
+  // First the orphaned wells layer
+  if (!map.getLayer('orphanedWellsLayer')) return;
+
+  const orphanedWells = Object.keys(orphanedWellsState);
+  const visibleOrphanedWells = orphanedWells.filter((well: any) => orphanedWellsState[well][0]);
+
+  const orphanedWellsFilter = [
+    'any',
+    ...visibleOrphanedWells.map((well: any) => ['==', 'SITE_STATUS', well])
+  ];
+
+  map.setFilter('orphanedWellsLayer', orphanedWellsFilter as any);
+
+  // Now the orphaned well activities layer
+  if (!map.getLayer('orphanedActivitiesLayer')) return;
+
+  const activitiesFilter = [
+    'any',
+    ...visibleOrphanedWells.map((activity: any) => ['==', 'WORKSTREAM_SHORT', activity])
+  ];
+
+  map.setFilter('orphanedActivitiesLayer', activitiesFilter as any);
+};
+
 const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
@@ -420,7 +450,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, protectedAreas, seismic } = layerVisibility;
+  const { boundary, orphanedWells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -984,7 +1014,7 @@ const initializeMap = (
     });
 
     // Add the well layers
-    drawWells(map, wells, tooltipState);
+    drawWells(map, orphanedWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {
@@ -1023,7 +1053,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 
     // Wells is a group of three different point layers
     if (
-      layer === 'wells' &&
+      layer === 'orphanedWells' &&
       map.getLayer('orphanedWellsLayer') &&
       map.getLayer('orphanedActivitiesLayer')
     ) {
@@ -1202,6 +1232,10 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkBoundaryState(filterState.boundary);
   }, [filterState.boundary]);
+
+  useEffect(() => {
+    checkOrphanedWellsState(filterState.orphanedWells);
+  }, [filterState.orphanedWells]);
 
   return (
     <div id={mapId} style={pageStyle}>

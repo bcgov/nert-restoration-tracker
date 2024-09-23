@@ -23,7 +23,7 @@ import './LayerSwitcherInline.css';
 export interface ILayerSwitcherProps {
   layerVisibility: {
     boundary: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    wells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    orphanedWells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     protectedAreas: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
@@ -46,13 +46,14 @@ const iconLegendIconStyle = {
 };
 
 const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
-  const { boundary, wells, projects, plans, protectedAreas, seismic, baselayer } =
+  const { boundary, orphanedWells, projects, plans, protectedAreas, seismic, baselayer } =
     props.layerVisibility;
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
   };
 
   const boundaryFilter = props.filterState?.boundary;
+  const orphanedWellFilter = props.filterState?.orphanedWells;
 
   return (
     <div>
@@ -165,10 +166,44 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             )}
           </LayerControl>
 
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
             label="Wells"
-          />
+          /> */}
+          <LayerControl
+            title="Orphaned Wells"
+            subTitle="BC Energy Regulator orphaned wells and orphaned well activities"
+            layerState={orphanedWells}>
+            {props.legend.orphanedWells && (
+              <List dense>
+                {props.legend.orphanedWells.map((well: any) => (
+                  <ListItem
+                    key={well.label}
+                    secondaryAction={
+                      well.allowToggle && (
+                        <Checkbox
+                          edge="end"
+                          checked={orphanedWellFilter[well.label][0]}
+                          onClick={() => {
+                            orphanedWellFilter[well.label][1](!orphanedWellFilter[well.label][0]);
+                          }}
+                        />
+                      )
+                    }>
+                    <ListItemAvatar>
+                      <Avatar
+                        src={well.image}
+                        style={{ backgroundColor: well.color, borderColor: well.outlineColor }}
+                        className={well.outlineColor ? 'outlined' : ''}>
+                        &nbsp;
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={well.label} />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </LayerControl>
 
           <FormControlLabel
             control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
