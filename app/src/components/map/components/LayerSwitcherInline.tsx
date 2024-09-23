@@ -172,7 +172,7 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
           /> */}
           <LayerControl
             title="Orphaned Wells"
-            subTitle="BC Energy Regulator orphaned wells"
+            subTitle="BC Energy Regulator orphaned wells and orphaned well activities"
             layerState={orphanedWells}>
             {props.legend.orphanedWells && (
               <List dense>
@@ -184,7 +184,6 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
                         checked={orphanedWellFilter[well.label][0]}
                         onClick={() => {
                           orphanedWellFilter[well.label][1](!orphanedWellFilter[well.label][0])
-                          console.log(well.visible)
                         }}
                       />
                     )

@@ -409,6 +409,20 @@ const checkBoundaryState = (boundaryState: any) => {
   map.setFilter('region_boundary', filter as any);
 };
 
+const checkOrphanedWellsState = (orphanedWellsState: any) => {
+  if (!map.getLayer('orphanedWellsLayer')) return;
+
+  const orphanedWells = Object.keys(orphanedWellsState);
+  const visibleOrphanedWells = orphanedWells.filter((well: any) => orphanedWellsState[well][0]);
+
+  const filter = [
+    'any',
+    ...visibleOrphanedWells.map((well: any) => ['==', 'SITE_STATUS', well])
+  ];
+
+  map.setFilter('orphanedWellsLayer', filter as any);
+}
+
 const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
@@ -1028,7 +1042,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 
     // Wells is a group of three different point layers
     if (
-      layer === 'wells' &&
+      layer === 'orphanedWells' &&
       map.getLayer('orphanedWellsLayer') &&
       map.getLayer('orphanedActivitiesLayer')
     ) {
@@ -1207,6 +1221,10 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkBoundaryState(filterState.boundary);
   }, [filterState.boundary]);
+
+  useEffect(() => {
+    checkOrphanedWellsState(filterState.orphanedWells);
+  }, [filterState.orphanedWells])
 
   return (
     <div id={mapId} style={pageStyle}>
