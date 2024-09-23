@@ -51,7 +51,9 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
   const orphanedSitesURL =
     'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
   const orphanedActivitiesURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?
+    outFields=OBJECTID,SITE_NAME,WORKSTREAM_SHORT,SITE_ID,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
+    &where=1%3D1&f=geojson`.replace(/\s+/g, '');
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
