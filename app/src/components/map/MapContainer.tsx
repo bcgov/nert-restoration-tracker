@@ -67,15 +67,20 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
    *
    * const dormantWellsURL = 'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
    * You can trim down the request by specifying the fields you need
-   * - objectid
-   * - well_authority_number
-   * - operator_abbreviation
-   * - dormant_status
-   * - well_name
-   * - well_activity
-   * - operation_type
-   * - fluid_code
+   * - OBJECTID
+   * - WELL_AUTHORITY_NUMBER
+   * - OPERATOR_ABBREVIATION
+   * - DORMANT_STATUS
+   * - WELL_NAME
+   * - WELL_ACTIVITY
+   * - OPERATION_TYPE
+   * - FLUID_CODE
    */
+  const dormantWellsURL =
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?
+    outFields=OBJECTID,WELL_AUTHORITY_NUMBER,OPERATOR_ABBREVIATION,DORMANT_STATUS,WELL_NAME,WELL_ACTIVITY,OPERATION_TYPE,FLUID_CODE
+    &where=1%3D1&f=geojson`.replace(/\s+/g, '');
+  console.log('dormantWellsURL', dormantWellsURL);
 
   map.addSource('orphanedWells', {
     type: 'geojson',
