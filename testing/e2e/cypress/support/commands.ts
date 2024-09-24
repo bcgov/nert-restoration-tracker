@@ -26,7 +26,7 @@
 
 // Hydrate baseUrl from the environment variables
 // UNCOMMENT THIS BLOCK TO USE ENVIRONMENT VARIABLES for LOCAL TESTING
-// Cypress.config("baseUrl", Cypress.env("baseUrl"));
+Cypress.config("baseUrl", Cypress.env("baseUrl"));
 
 Cypress.Commands.add("login", (username, password) => {
   cy.session([username, password], () => {

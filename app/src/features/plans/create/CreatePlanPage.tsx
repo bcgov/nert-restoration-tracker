@@ -379,7 +379,7 @@ const CreatePlanPage: React.FC = () => {
 
       <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
-          <Box mb={0.5} mt={0.9}>
+          <Box mb={0.5} mt={0.9} data-testid="create_plan_header">
             <Typography variant="h1">
               <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> Create Restoration
               Plan
@@ -464,7 +464,7 @@ const CreatePlanPage: React.FC = () => {
                   color="primary"
                   size="large"
                   onClick={() => setOpenYesNoDialog(true)}
-                  data-testid="Plan-create-button">
+                  data-testid="plan-create-button">
                   <span>Create Plan</span>
                 </Button>
                 <Button

@@ -134,7 +134,7 @@ describe("Admin User", () => {
         );
       });
 
-      describe("fills in project location", () => {
+      describe("fills in project objective", () => {
         cy.get('input[name="objective.objectives.[0].objective"]').type(
           projectData.objective.objectives[0].objective
         );
@@ -261,6 +261,101 @@ describe("Admin User", () => {
       ).check("true");
 
       cy.get('[data-testid="project-create-button"]').click();
+      cy.get('[data-testid="yes-button"]').click();
+    });
+  });
+
+  it("renders My Projects/Plans Page, then Creates a Plan", () => {
+    const button = cy.get('[data-testid="my_projects_plans"]').should("exist");
+    button.click();
+
+    const header = cy.get('[data-testid="my_plan_header"]').should("exist");
+    header.should("include.text", "My Plans");
+
+    header.within(($header) => {
+      const createButton = cy
+        .get('[data-testid="create-plan-button"]')
+        .should("exist");
+      createButton.click();
+    });
+
+    describe("renders the Create Plan Page", () => {
+      const header = cy
+        .get('[data-testid="create_plan_header"]')
+        .should("exist");
+      header.should("include.text", "Create Restoration Plan");
+
+      describe("fills in plan name", () => {
+        cy.get('input[name="project.project_name"]').type(
+          projectData.project.project_name
+        );
+      });
+
+      describe("fills in plan description", () => {
+        cy.get('textarea[name="project.brief_desc"]').type(
+          projectData.project.brief_desc
+        );
+      });
+
+      describe("fills in project dates", () => {
+        cy.get('input[name="project.start_date"]').type(
+          projectData.project.start_date
+        );
+
+        cy.get('input[name="project.end_date"]').type(
+          projectData.project.end_date
+        );
+      });
+
+      describe("selects project focus", () => {
+        cy.get('input[name="focus.focuses"]').click();
+        cy.get('[id="focus.focuses-option-0"]').click();
+        cy.get('[id="focus.focuses-option-1"]').click();
+        cy.get('input[name="focus.focuses"]').click();
+      });
+
+      describe("adds contact user", () => {
+        cy.get('[data-testid="add-contact-button"]').click();
+
+        cy.get('form[data-testid="contact-item-form"]').within(($form) => {
+          cy.get('input[name="first_name"]').type(
+            projectData.contact.contacts[0].first_name
+          );
+          cy.get('input[name="last_name"]').type(
+            projectData.contact.contacts[0].last_name
+          );
+          cy.get('input[name="email_address"]').type(
+            projectData.contact.contacts[0].email_address
+          );
+          cy.get('input[name="phone_number"]').type(
+            projectData.contact.contacts[0].phone_number
+          );
+          cy.get('input[name="organization"]').type(
+            projectData.contact.contacts[0].organization
+          );
+          cy.get('[id="isFirstNation"]').click();
+          cy.get('[id="primary_contact_details"]').click();
+          cy.get('input[name="is_public"]').check("false");
+        });
+        cy.get('[data-testid="edit-dialog-save-button"]').click();
+      });
+
+      describe("adds Location data", () => {
+        cy.get('[id="nrm-region-select"]').click();
+        cy.get("[data-value=3637]").click();
+
+        cy.get('[data-testid="plan-boundary-upload"]')
+          .click()
+          .then(() => {
+            cy.get('input[ data-testid="plan-boundary-upload"]')
+              .selectFile("cypress/fixtures/boundary.geojson", { force: true })
+              .then(() => {
+                cy.get('[data-testid="close_button"]').click();
+              });
+          });
+      });
+
+      cy.get('[data-testid="plan-create-button"]').click();
       cy.get('[data-testid="yes-button"]').click();
     });
   });
