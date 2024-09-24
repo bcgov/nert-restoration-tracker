@@ -141,6 +141,7 @@ export const handleGeoJSONUpload = async <T>(
     const allFeaturesWithIds = recalculateFeatureIds(allFeatures);
 
     setFieldValue(name, allFeaturesWithIds);
+    console.log('name', name);
   } catch (error) {
     setFieldError(name, 'Error uploading your GeoJSON file, please check the file and try again.');
   }

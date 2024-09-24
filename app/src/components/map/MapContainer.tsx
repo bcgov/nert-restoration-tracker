@@ -3,12 +3,13 @@ import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import ReactDomServer from 'react-dom/server';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import communities from './layers/communities.json';
 import './mapContainer.css'; // Custom styling
 import MapPopup from './components/Popup';
 import { useNertApi } from 'hooks/useNertApi';
 import { S3FileType } from 'constants/attachments';
+import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -1261,6 +1262,15 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkOrphanedWellsState(filterState.orphanedWells);
   }, [filterState.orphanedWells]);
+
+  // If more features are added, fit the map to the new features
+  const originalFeatures = useRef(features);
+  useEffect(() => {
+    if (features.length > originalFeatures.current.length) {
+      const bounds = calculateUpdatedMapBounds(features,true);
+      map.fitBounds(bounds, { padding: 50 });
+    }
+  }, [features]);
 
   return (
     <div id={mapId} style={pageStyle}>
