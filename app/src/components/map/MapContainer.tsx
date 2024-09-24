@@ -535,7 +535,7 @@ const initializeMap = (
         source: 'mask',
         paint: {
           'line-width': 4,
-          'line-color': 'orange',
+          'line-color': 'yellow',
           'line-dasharray': [3, 2],
           'line-blur': 2
         }
