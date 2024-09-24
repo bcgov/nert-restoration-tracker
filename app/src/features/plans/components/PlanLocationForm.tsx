@@ -91,7 +91,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
    * Reactive state to share between the layer picker and the map
    */
   const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
+  const orphanedWells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(false);
@@ -100,7 +100,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
 
   const layerVisibility = {
     boundary,
-    wells,
+    orphanedWells,
     projects,
     plans,
     protectedAreas,
