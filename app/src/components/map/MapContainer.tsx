@@ -1266,7 +1266,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   // If more features are added, fit the map to the new features
   const originalFeatures = useRef(features);
   useEffect(() => {
-    if (features.length > originalFeatures.current.length) {
+    if (features.length > originalFeatures.current.length && features.length > 0 && !centroids) {
       const bounds = calculateUpdatedMapBounds(features,true);
       map.fitBounds(bounds, { padding: 50 });
     }
