@@ -135,7 +135,12 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
               label="Natural Resource Mgmt. Boundaries"
             />
             <FormControlLabel
-              control={<Checkbox checked={orphanedWells[0]} onClick={() => orphanedWells[1](!orphanedWells[0])} />}
+              control={
+                <Checkbox
+                  checked={orphanedWells[0]}
+                  onClick={() => orphanedWells[1](!orphanedWells[0])}
+                />
+              }
               label="Orphaned Wells"
             />
             <FormControlLabel
