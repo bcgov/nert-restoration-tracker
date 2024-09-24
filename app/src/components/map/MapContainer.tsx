@@ -1267,7 +1267,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const originalFeatures = useRef(features);
   useEffect(() => {
     if (features.length > originalFeatures.current.length && features.length > 0 && !centroids) {
-      const bounds = calculateUpdatedMapBounds(features,true);
+      const bounds = calculateUpdatedMapBounds(features, true);
       map.fitBounds(bounds, { padding: 50 });
     }
   }, [features]);
