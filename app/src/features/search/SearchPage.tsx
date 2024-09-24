@@ -98,6 +98,7 @@ const SearchPage: React.FC = () => {
    */
   const boundary = useState<boolean>(true);
   const orphanedWells = useState<boolean>(false);
+  const dormantWells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(false);
@@ -107,6 +108,7 @@ const SearchPage: React.FC = () => {
   const layerVisibility = {
     boundary,
     orphanedWells,
+    dormantWells,
     projects,
     plans,
     protectedAreas,
