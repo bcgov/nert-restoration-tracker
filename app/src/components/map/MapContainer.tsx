@@ -80,7 +80,6 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
     `https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?
     outFields=OBJECTID,WELL_AUTHORITY_NUMBER,OPERATOR_ABBREVIATION,DORMANT_STATUS,WELL_NAME,WELL_ACTIVITY,OPERATION_TYPE,FLUID_CODE
     &where=1%3D1&f=geojson`.replace(/\s+/g, '');
-  console.log('dormantWellsURL', dormantWellsURL);
 
   map.addSource('orphanedWells', {
     type: 'geojson',
@@ -386,6 +385,13 @@ const checkFeatureState = (featureState: any) => {
       },
       { hover: false }
     );
+    map.setFeatureState(
+      {
+        source: 'mask',
+        id: hoverStateMarkerPolygon
+      },
+      { hover: false }
+    );
   }
 
   // If there is a feature state, set the hover state
@@ -393,6 +399,14 @@ const checkFeatureState = (featureState: any) => {
     map.setFeatureState(
       {
         source: 'markers',
+        id: featureState[0]
+      },
+      { hover: true }
+    );
+
+    map.setFeatureState(
+      {
+        source: 'mask',
         id: featureState[0]
       },
       { hover: true }
@@ -527,7 +541,8 @@ const initializeMap = (
 
       map.addSource('mask', {
         type: 'geojson',
-        data: maskGeojson
+        data: maskGeojson,
+        promoteId: 'id'
       });
       map.addLayer({
         id: 'mask',
@@ -535,7 +550,12 @@ const initializeMap = (
         source: 'mask',
         paint: {
           'line-width': 4,
-          'line-color': 'yellow',
+          'line-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            'rgba(3, 252, 252,1)',
+            'rgba(250,250,0,1)'
+          ],
           'line-dasharray': [3, 2],
           'line-blur': 2
         }
