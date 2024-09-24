@@ -58,27 +58,40 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
     outFields=OBJECTID,SITE_NAME,WORKSTREAM_SHORT,SITE_ID,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
     &where=1%3D1&f=geojson`.replace(/\s+/g, '');
 
-  /**
-   * Another layer to display is Dormant Wells
-   * Example of display is seen here https://geoweb-ags.bc-er.ca/portal/apps/webappviewer/index.html?id=b8a2b40512a8493284fc3c322077e677
-   * This layer is around 2.4Mg in size and should possibly be consumed as a vector tile
-   *
-   * You can trim down the request by specifying the fields you need
-   * - objectid
-   * - well_authority_number
-   * - operator_abbreviation
-   * - dormant_status
-   * - well_name
-   * - well_activity
-   * - operation_type
-   * - fluid_code
-   */
   const dormantWellsURL = `https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?
   outFields=objectid,well_authority_number,operator_abbreviation,dormant_status,well_name,well_activity,operation_type,fluid_code
   &where=1%3D1&f=geojson`.replace(/\s+/g, '');
   console.log('dormantWellsURL', dormantWellsURL);
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
+
+  map.addSource('dormantWells', {
+    type: 'geojson',
+    data: dormantWellsURL
+  });
+  map.addLayer({
+    id: 'dormantWellsLayer',
+    type: 'circle',
+    source: 'dormantWells',
+    layout: {
+      visibility: wells[0] ? 'visible' : 'none'
+    },
+    paint: {
+      'circle-radius': 7,
+      'circle-stroke-color': 'black',
+      'circle-stroke-width': 1,
+      'circle-stroke-opacity': 0.5,
+      'circle-color': [
+        'match',
+        ['get', 'dormant_status'],
+        'Dormant',
+        '#999999',
+        'Active',
+        '#f0933e',
+        'black'
+      ]
+    }
+  });
 
 
   map.addSource('orphanedWells', {
