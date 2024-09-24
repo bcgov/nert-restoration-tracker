@@ -3,7 +3,7 @@ import React from 'react';
 export interface IMapState {
   layerVisibility: {
     boundary: boolean;
-    wells: boolean;
+    orphanedWells: boolean;
     projects: boolean;
     plans: boolean;
     protectedAreas: boolean;
@@ -13,7 +13,7 @@ export interface IMapState {
 }
 export const layerVisibilityDefault = {
   boundary: true,
-  wells: false,
+  orphanedWells: false,
   projects: false,
   plans: true,
   protectedAreas: true,
