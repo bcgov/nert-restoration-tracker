@@ -6,7 +6,7 @@ import { authorizeRequestHandler } from '../../../request-handlers/security/auth
 import { ReportService } from '../../../services/reports-service';
 import { getLogger } from '../../../utils/logger';
 
-const defaultLog = getLogger('paths/reports/appreport/view');
+const defaultLog = getLogger('paths/reports/user/view');
 
 export const GET: Operation = [
   authorizeRequestHandler(() => {
@@ -19,11 +19,11 @@ export const GET: Operation = [
       ]
     };
   }),
-  viewReportApp()
+  viewUserReportApp()
 ];
 
 GET.apiDoc = {
-  description: 'Get app report data, for view-only purposes.',
+  description: 'Get app user report data, for view-only purposes.',
   tags: ['report'],
   security: [
     {
@@ -32,13 +32,13 @@ GET.apiDoc = {
   ],
   responses: {
     200: {
-      description: 'Application report data.',
+      description: 'Application user report data.',
       content: {
         'application/json': {
           schema: {
             type: 'array',
             items: {
-              title: 'App report get response array, for view purposes',
+              title: 'App user report get response array, for view purposes',
               type: 'object',
               required: [
                 'user_id',
@@ -120,19 +120,19 @@ GET.apiDoc = {
  *
  * @returns {RequestHandler}
  */
-export function viewReportApp(): RequestHandler {
-  defaultLog.debug({ label: 'viewReportApp' });
+export function viewUserReportApp(): RequestHandler {
+  defaultLog.debug({ label: 'viewUserReportApp' });
   return async (req, res) => {
     const connection = getDBConnection(req['keycloak_token']);
 
     try {
       await connection.open();
       const reportService = new ReportService(connection);
-      const result = await reportService.getAppReport();
+      const result = await reportService.getAppUserReport();
       await connection.commit();
       return res.status(200).json(result);
     } catch (error) {
-      defaultLog.error({ label: 'viewReportStats', message: 'error', error });
+      defaultLog.error({ label: 'viewUserReportApp', message: 'error', error });
       throw error;
     } finally {
       connection.release();

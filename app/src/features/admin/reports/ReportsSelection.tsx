@@ -49,7 +49,7 @@ const ReportsSelection: React.FC<IReportSelectionProps> = (props) => {
   return (
     <FormControl>
       <FormLabel sx={{ px: 2, pt: 2, fontWeight: 700 }} id="report-type-radio-group-label">
-        Report Type
+        Select Report
       </FormLabel>
       <RadioGroup
         row
@@ -57,7 +57,7 @@ const ReportsSelection: React.FC<IReportSelectionProps> = (props) => {
         name="report-type-radio-buttons-group"
         value={selectedReport}
         onChange={handleChange}>
-        <ReportsControlLabel value="appReport" control={<Radio />} label="Application Report" />
+        <ReportsControlLabel value="appUserReport" control={<Radio />} label="Users Report" />
         <ReportsControlLabel value="customReport" control={<Radio />} label="Custom Report" />
         <ReportsControlLabel value="piReport" control={<Radio />} label="PI Mgmt. Report" />
       </RadioGroup>
