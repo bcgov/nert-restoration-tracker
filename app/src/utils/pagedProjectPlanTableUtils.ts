@@ -1,4 +1,4 @@
-import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
+import { PlanTableI18N, ProjectTableI18N, TableI18N, AppReportTableI18N } from 'constants/i18n';
 import { focus } from 'constants/misc';
 
 /**  Project related objects **/
@@ -226,6 +226,87 @@ export const draftHeadCells: readonly DraftHeadCell[] = [
     numeric: false,
     disablePadding: true,
     label: TableI18N.draftName
+  }
+];
+
+// Application report related objects
+export interface AppReportData {
+  id: number;
+  user_id: number;
+  user_name: string;
+  role_names: string;
+  prj_count: string;
+  plan_count: string;
+  arch_prj_count: string;
+  arch_plan_count: string;
+  draft_prj_count: string;
+  draft_plan_count: string;
+}
+
+export interface AppReportTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof AppReportData) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+}
+
+export interface AppReportHeadCell {
+  disablePadding: boolean;
+  id: keyof AppReportData;
+  label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
+  numeric: boolean;
+}
+
+export const appReportHeadCells: readonly AppReportHeadCell[] = [
+  {
+    id: 'user_name',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.userName
+  },
+  {
+    id: 'role_names',
+    numeric: false,
+    disablePadding: false,
+    label: AppReportTableI18N.role
+  },
+  {
+    id: 'prj_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.publishedProjects
+  },
+  {
+    id: 'draft_prj_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.draftProjects
+  },
+  {
+    id: 'arch_prj_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.archivedProjects
+  },
+  {
+    id: 'plan_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.publishedPlans
+  },
+  {
+    id: 'draft_plan_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.draftPlans
+  },
+  {
+    id: 'arch_plan_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppReportTableI18N.archivedPlans
   }
 ];
 

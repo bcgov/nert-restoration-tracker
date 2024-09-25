@@ -77,7 +77,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
    * Reactive state to share between the layer picker and the map
    */
   const boundary = useState<boolean>(true);
-  const wells = useState<boolean>(false);
+  const orphanedWells = useState<boolean>(false);
   const projects = useState<boolean>(false);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(true);
@@ -86,7 +86,7 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
 
   const layerVisibility = {
     boundary,
-    wells,
+    orphanedWells,
     projects,
     plans,
     protectedAreas,

@@ -3,12 +3,13 @@ import { Feature, FeatureCollection } from 'geojson';
 import maplibre from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import ReactDomServer from 'react-dom/server';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import communities from './layers/communities.json';
 import './mapContainer.css'; // Custom styling
 import MapPopup from './components/Popup';
 import { useNertApi } from 'hooks/useNertApi';
 import { S3FileType } from 'constants/attachments';
+import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -46,19 +47,40 @@ const pageStyle = {
  * This function draws the wells on the map
  * @param map - the map object
  */
-const drawWells = (map: maplibre.Map, wells: any) => {
+const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
   /* The following are the URLs to the geojson data */
   const orphanedSitesURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?outFields=*&where=1%3D1&f=geojson';
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?
+    outFields=OBJECTID,SITE_NAME,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
+    &where=1%3D1
+    &f=geojson`.replace(/\s+/g, '');
   const orphanedActivitiesURL =
-    'https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_ACTIVITY_PT/FeatureServer/0/query?
+    outFields=OBJECTID,SITE_NAME,WORKSTREAM_SHORT,SITE_ID,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
+    &where=1%3D1&f=geojson`.replace(/\s+/g, '');
+
+  const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
   /**
    * Another layer to display is Dormant Wells
    * Example of display is seen here https://geoweb-ags.bc-er.ca/portal/apps/webappviewer/index.html?id=b8a2b40512a8493284fc3c322077e677
    * This layer is around 2.4Mg in size and should possibly be consumed as a vector tile
+   *
+   * const dormantWellsURL = 'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+   * You can trim down the request by specifying the fields you need
+   * - OBJECTID
+   * - WELL_AUTHORITY_NUMBER
+   * - OPERATOR_ABBREVIATION
+   * - DORMANT_STATUS
+   * - WELL_NAME
+   * - WELL_ACTIVITY
+   * - OPERATION_TYPE
+   * - FLUID_CODE
    */
-  // const dormantWellsURL = 'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
+  const dormantWellsURL =
+    `https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?
+    outFields=OBJECTID,WELL_AUTHORITY_NUMBER,OPERATOR_ABBREVIATION,DORMANT_STATUS,WELL_NAME,WELL_ACTIVITY,OPERATION_TYPE,FLUID_CODE
+    &where=1%3D1&f=geojson`.replace(/\s+/g, '');
 
   map.addSource('orphanedWells', {
     type: 'geojson',
@@ -90,6 +112,48 @@ const drawWells = (map: maplibre.Map, wells: any) => {
         'black'
       ]
     }
+  });
+
+  // Mouse over well to send attributes to the console
+  map.on('mouseenter', 'orphanedWellsLayer', (e: any) => {
+    const feature = e.features[0];
+
+    map.getCanvas().style.cursor = 'pointer';
+
+    const tooltip = feature.properties.SITE_NAME;
+
+    setTooltipVisible(true);
+    setTooltipX(e.point.x + 10);
+    setTooltipY(e.point.y - 24);
+    setTooltip(tooltip);
+  });
+
+  map.on('mouseleave', 'orphanedWellsLayer', () => {
+    map.getCanvas().style.cursor = '';
+    setTooltipVisible(false);
+  });
+
+  map.on('click', 'orphanedWellsLayer', (e: any) => {
+    const feature = e.features[0];
+    const html = `
+    <div>
+      <h3>${feature.properties.SITE_NAME}</h3>
+      Well Authorization: ${feature.properties.WELL_AUTHORIZATION}</br>
+      Land Type: ${feature.properties.LAND_TYPE}</br>
+      Site ID: ${feature.properties.SITE_ID}</br>
+      Site Status: ${feature.properties.SITE_STATUS}</br>
+      Site Type: ${feature.properties.SITE_TYPE}</br>
+      Surface Location: ${feature.properties.SURFACE_LOCATION}</br>
+      </div>
+    `;
+
+    // Add the attributes to the popup
+    const popup = new Popup({
+      closeButton: true,
+      closeOnClick: true
+    });
+
+    popup.setLngLat(feature.geometry.coordinates).setHTML(html).addTo(map);
   });
 
   // Orphaned activities - These are called "Activities" on the BCER site
@@ -142,6 +206,42 @@ const drawWells = (map: maplibre.Map, wells: any) => {
         'black'
       ]
     }
+  });
+  map.on('click', 'orphanedActivitiesLayer', (e: any) => {
+    const feature = e.features[0];
+    const html = `
+    <div>
+      <h3>${feature.properties.SITE_NAME}</h3>
+      Workstream: ${feature.properties.WORKSTREAM_SHORT}</br>
+      Site ID: ${feature.properties.SITE_ID}</br>
+      Site Status: ${feature.properties.SITE_STATUS}</br>
+      Site Type: ${feature.properties.SITE_TYPE}</br>
+      Surface Location: ${feature.properties.SURFACE_LOCATION}</br>
+      Land Type: ${feature.properties.LAND_TYPE}</br>
+    </div>
+    `;
+
+    const popup = new Popup({
+      closeButton: true,
+      closeOnClick: true
+    });
+
+    popup.setLngLat(feature.geometry.coordinates).setHTML(html).addTo(map);
+  });
+
+  map.on('mouseenter', 'orphanedActivitiesLayer', (e: any) => {
+    const feature = e.features[0];
+    map.getCanvas().style.cursor = 'pointer';
+    const tooltip = feature.properties.SITE_NAME;
+    setTooltipVisible(true);
+    setTooltipX(e.point.x + 10);
+    setTooltipY(e.point.y - 24);
+    setTooltip(tooltip);
+  });
+
+  map.on('mouseleave', 'orphanedActivitiesLayer', () => {
+    map.getCanvas().style.cursor = '';
+    setTooltipVisible(false);
   });
 };
 
@@ -286,6 +386,13 @@ const checkFeatureState = (featureState: any) => {
       },
       { hover: false }
     );
+    map.setFeatureState(
+      {
+        source: 'mask',
+        id: hoverStateMarkerPolygon
+      },
+      { hover: false }
+    );
   }
 
   // If there is a feature state, set the hover state
@@ -293,6 +400,14 @@ const checkFeatureState = (featureState: any) => {
     map.setFeatureState(
       {
         source: 'markers',
+        id: featureState[0]
+      },
+      { hover: true }
+    );
+
+    map.setFeatureState(
+      {
+        source: 'mask',
         id: featureState[0]
       },
       { hover: true }
@@ -314,6 +429,31 @@ const checkBoundaryState = (boundaryState: any) => {
   map.setFilter('region_boundary', filter as any);
 };
 
+const checkOrphanedWellsState = (orphanedWellsState: any) => {
+  // First the orphaned wells layer
+  if (!map.getLayer('orphanedWellsLayer')) return;
+
+  const orphanedWells = Object.keys(orphanedWellsState);
+  const visibleOrphanedWells = orphanedWells.filter((well: any) => orphanedWellsState[well][0]);
+
+  const orphanedWellsFilter = [
+    'any',
+    ...visibleOrphanedWells.map((well: any) => ['==', 'SITE_STATUS', well])
+  ];
+
+  map.setFilter('orphanedWellsLayer', orphanedWellsFilter as any);
+
+  // Now the orphaned well activities layer
+  if (!map.getLayer('orphanedActivitiesLayer')) return;
+
+  const activitiesFilter = [
+    'any',
+    ...visibleOrphanedWells.map((activity: any) => ['==', 'WORKSTREAM_SHORT', activity])
+  ];
+
+  map.setFilter('orphanedActivitiesLayer', activitiesFilter as any);
+};
+
 const initializeMap = (
   mapId: string,
   center: any = [-124, 55],
@@ -330,7 +470,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, wells, projects, plans, protectedAreas, seismic } = layerVisibility;
+  const { boundary, orphanedWells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -402,7 +542,8 @@ const initializeMap = (
 
       map.addSource('mask', {
         type: 'geojson',
-        data: maskGeojson
+        data: maskGeojson,
+        promoteId: 'id'
       });
       map.addLayer({
         id: 'mask',
@@ -410,7 +551,12 @@ const initializeMap = (
         source: 'mask',
         paint: {
           'line-width': 4,
-          'line-color': 'orange',
+          'line-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            'rgba(3, 252, 252,1)',
+            'rgba(250,250,0,1)'
+          ],
           'line-dasharray': [3, 2],
           'line-blur': 2
         }
@@ -894,7 +1040,7 @@ const initializeMap = (
     });
 
     // Add the well layers
-    drawWells(map, wells);
+    drawWells(map, orphanedWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {
@@ -933,7 +1079,7 @@ const checkLayerVisibility = (layers: any, features: any) => {
 
     // Wells is a group of three different point layers
     if (
-      layer === 'wells' &&
+      layer === 'orphanedWells' &&
       map.getLayer('orphanedWellsLayer') &&
       map.getLayer('orphanedActivitiesLayer')
     ) {
@@ -1112,6 +1258,19 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkBoundaryState(filterState.boundary);
   }, [filterState.boundary]);
+
+  useEffect(() => {
+    checkOrphanedWellsState(filterState.orphanedWells);
+  }, [filterState.orphanedWells]);
+
+  // If more features are added, fit the map to the new features
+  const originalFeatures = useRef(features);
+  useEffect(() => {
+    if (features.length > originalFeatures.current.length && features.length > 0 && !centroids) {
+      const bounds = calculateUpdatedMapBounds(features, true);
+      map.fitBounds(bounds, { padding: 50 });
+    }
+  }, [features]);
 
   return (
     <div id={mapId} style={pageStyle}>
