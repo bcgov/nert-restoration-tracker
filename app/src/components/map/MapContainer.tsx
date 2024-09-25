@@ -135,7 +135,6 @@ const drawWells = (map: maplibre.Map, wells: any, dormantWells: any, tooltipStat
   // On hover of cluster layer highlight the circle stroke to be yellow
   let hoverStateWellClusterLayer: boolean | any = false;
   map.on('mouseenter', 'dormantWellsClusterLayer', (e: any) => {
-    
     // Clear old hover state if present
     if (hoverStateWellClusterLayer) {
       map.setFeatureState(
@@ -613,7 +612,9 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, orphanedWells, dormantWells, projects, plans, protectedAreas, seismic } = layerVisibility;
+  const { boundary, orphanedWells, projects, plans, protectedAreas, seismic } = layerVisibility;
+
+  const dormantWells = layerVisibility.dormantWells || [];
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 

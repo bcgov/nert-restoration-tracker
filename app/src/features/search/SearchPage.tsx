@@ -287,7 +287,7 @@ const SearchPage: React.FC = () => {
 
   const filterState = {
     boundary: boundaryState,
-    orphanedWells: orphanedWellsState,
+    orphanedWells: orphanedWellsState
   };
 
   const sidebarButtonStyle = {

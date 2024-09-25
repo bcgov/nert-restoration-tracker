@@ -213,7 +213,7 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             {props.legend.dormantWells && (
               <List dense>
                 {props.legend.dormantWells.map((well: any) => (
-                  <ListItem 
+                  <ListItem
                     key={well.label}
                     secondaryAction={
                       well.allowToggle && (
@@ -240,7 +240,6 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
               </List>
             )}
           </LayerControl>
-          
 
           <FormControlLabel
             control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
