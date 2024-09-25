@@ -18,15 +18,17 @@ import {
   Switch,
   Card
 } from '@mui/material';
-import { IGetAppReport } from 'interfaces/useAdminApi.interface';
+import { IGetAppUserReport } from 'interfaces/useAdminApi.interface';
 import dayjs from 'dayjs';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ArrowBack } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
-import AppReportTableToolbar from './AppReportTableToolbar';
-import AppReportTableHead from './AppReportTableHead';
+import AppUserReportTableToolbar from './AppUserReportTableToolbar';
+import AppUserReportTableHead from './AppUserReportTableHead';
 import { TableI18N } from 'constants/i18n';
+import { SystemRoleGuard } from 'components/security/Guards';
+import { SYSTEM_ROLE } from 'constants/roles';
 
 const pageStyles = {
   breadCrumbLink: {
@@ -53,17 +55,15 @@ const pageStyles = {
  *
  * @return {*}
  */
-const ApplicationReportPage: React.FC = () => {
+const AppUserReportPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
   const history = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [appReportData, setAppReportData] = useState<utils.AppReportData[]>([]);
+  const [appUserReportData, setAppUserReportData] = useState<utils.AppUserReportData[]>([]);
   const [page, setPage] = useState(0);
-  const location = useLocation();
-  const { dateRange, reportType, startDate, endDate } = location.state;
 
-  function mapToTableData(data: IGetAppReport[]): utils.AppReportData[] {
-    const rowsAppReport = data
+  function mapToTableData(data: IGetAppUserReport[]): utils.AppUserReportData[] {
+    const rowsAppUserReport = data
       ? data.map((row, index) => {
           return {
             id: index,
@@ -76,41 +76,36 @@ const ApplicationReportPage: React.FC = () => {
             arch_plan_count: row.arch_plan_count,
             draft_prj_count: row.draft_prj_count,
             draft_plan_count: row.draft_plan_count
-          } as utils.AppReportData;
+          } as utils.AppUserReportData;
         })
       : [];
-    return rowsAppReport;
+    return rowsAppUserReport;
   }
 
-  const getAppReportData = async () => {
-    const data = await restorationTrackerApi.admin.getAppReport();
+  const getAppUserReportData = async () => {
+    const data = await restorationTrackerApi.admin.getAppUserReport();
     setIsLoading(false);
-    setAppReportData(mapToTableData(data));
+    setAppUserReportData(mapToTableData(data));
   };
 
   if (isLoading) {
-    getAppReportData();
+    getAppUserReportData();
     return;
   }
-
-  const formattedStartDate =
-    (startDate && dayjs(startDate).format(DATE_FORMAT.ShortMediumDateFormat)) || null;
-  const formattedEndDate =
-    (endDate && dayjs(endDate).format(DATE_FORMAT.ShortMediumDateFormat)) || null;
 
   const handleCancel = () => {
     history('/admin/reports');
   };
 
-  function ApplicationReportTable() {
+  function AppUserReportTable() {
     const [order, setOrder] = useState<utils.Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof utils.AppReportData>('user_name');
+    const [orderBy, setOrderBy] = useState<keyof utils.AppUserReportData>('user_name');
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const handleRequestSort = (
       event: React.MouseEvent<unknown>,
-      property: keyof utils.AppReportData
+      property: keyof utils.AppUserReportData
     ) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -131,46 +126,52 @@ const ApplicationReportPage: React.FC = () => {
     };
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - appReportData.length) : 0;
+    const emptyRows =
+      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - appUserReportData.length) : 0;
 
     const visibleRows = useMemo(
       () =>
         utils
-          .stableSort(appReportData, utils.getComparator(order, orderBy))
+          .stableSort(appUserReportData, utils.getComparator(order, orderBy))
           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
       [order, orderBy, page, rowsPerPage]
     );
 
     return (
       <Box sx={{ width: '100%' }}>
-        <AppReportTableToolbar numRows={appReportData.length} />
+        <AppUserReportTableToolbar numRows={appUserReportData.length} />
         <TableContainer>
           <Table
             sx={{ minWidth: 200 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}>
-            <AppReportTableHead
+            <AppUserReportTableHead
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={appReportData.length}
+              rowCount={appUserReportData.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const labelId = `app-report-table-${index}`;
+                const labelId = `app-user-report-table-${index}`;
 
                 return (
                   <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer' }}>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      <Link
-                        data-testid={row.user_name}
-                        underline="always"
-                        component="button"
-                        sx={{ textAlign: 'left' }}
-                        variant="body2"
-                        onClick={() => history(`/admin/users/${row.user_id}/details`)}>
+                      <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+                        <Link
+                          data-testid={row.user_name}
+                          underline="always"
+                          component="button"
+                          sx={{ textAlign: 'left' }}
+                          variant="body2"
+                          onClick={() => history(`/admin/users/${row.user_id}/details`)}>
+                          {row.user_name}
+                        </Link>
+                      </SystemRoleGuard>
+                      <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.MAINTAINER]}>
                         {row.user_name}
-                      </Link>
+                      </SystemRoleGuard>
                     </TableCell>
                     <TableCell align="left">
                       <Chip
@@ -222,7 +223,7 @@ const ApplicationReportPage: React.FC = () => {
             sx={{ backgroundColor: '#E2DDFB' }}
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={appReportData.length}
+            count={appUserReportData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -249,29 +250,15 @@ const ApplicationReportPage: React.FC = () => {
       </Box>
 
       <Box my={2}>
-        <Stack direction="column">
-          <Typography variant="h1">Application Report</Typography>
-          {startDate && (
-            <Stack direction="row" spacing={1}>
-              <Typography variant="h3">from:</Typography>
-              <Typography variant="h3" color="gray">
-                {formattedStartDate}
-              </Typography>
-              <Typography variant="h3">to:</Typography>
-              <Typography variant="h3" color="gray">
-                {formattedEndDate}
-              </Typography>
-            </Stack>
-          )}
-        </Stack>
+        <Typography variant="h1">Users Report</Typography>
       </Box>
-      {appReportData && (
+      {appUserReportData && (
         <Card>
-          <ApplicationReportTable />
+          <AppUserReportTable />
         </Card>
       )}
     </Container>
   );
 };
 
-export default ApplicationReportPage;
+export default AppUserReportPage;

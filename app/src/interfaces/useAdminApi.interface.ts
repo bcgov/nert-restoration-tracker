@@ -92,7 +92,7 @@ export interface IGetReport {
   last_updated: IGetReportLastData;
 }
 
-export interface IGetAppReport {
+export interface IGetAppUserReport {
   user_id: number;
   user_name: string;
   role_names: string[];

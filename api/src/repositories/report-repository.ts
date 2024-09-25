@@ -1,5 +1,5 @@
 import SQL from 'sql-template-strings';
-import { IGetAppReport, IGetReport } from '../interfaces/reports.interface';
+import { IGetAppUserReport, IGetReport } from '../interfaces/reports.interface';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
 
@@ -107,11 +107,11 @@ export class ReportRepository extends BaseRepository {
   /**
    * Get a app user report.
    *
-   * @return {*}  {Promise<IGetAppReport>}
+   * @return {*}  {Promise<IGetAppUserReport>}
    * @memberof ReportRepository
    */
-  async getAppReportData(): Promise<IGetAppReport[]> {
-    defaultLog.debug({ label: 'getAppReportData' });
+  async getAppUserReportData(): Promise<IGetAppUserReport[]> {
+    defaultLog.debug({ label: 'getAppUserReportData' });
 
     try {
       const sqlStatement = SQL`
@@ -167,7 +167,7 @@ export class ReportRepository extends BaseRepository {
           LEFT JOIN
             (SELECT draft_plan.create_user, count(*) AS draft_plan_count
             FROM webform_draft draft_plan
-            WHERE draft_plan.is_project = TRUE
+            WHERE draft_plan.is_project = FALSE
             GROUP BY
               draft_plan.create_user) t6
             ON t6.create_user = su.system_user_id
@@ -187,7 +187,7 @@ export class ReportRepository extends BaseRepository {
       const response = await this.connection.sql(sqlStatement);
       return response.rows;
     } catch (error) {
-      defaultLog.debug({ label: 'getAppReportData', message: 'error', error });
+      defaultLog.debug({ label: 'getAppUserReportData', message: 'error', error });
       throw error;
     }
   }

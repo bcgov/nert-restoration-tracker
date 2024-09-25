@@ -1,4 +1,4 @@
-import { PlanTableI18N, ProjectTableI18N, TableI18N, AppReportTableI18N } from 'constants/i18n';
+import { PlanTableI18N, ProjectTableI18N, TableI18N, AppUserReportTableI18N } from 'constants/i18n';
 import { focus } from 'constants/misc';
 
 /**  Project related objects **/
@@ -230,7 +230,7 @@ export const draftHeadCells: readonly DraftHeadCell[] = [
 ];
 
 // Application report related objects
-export interface AppReportData {
+export interface AppUserReportData {
   id: number;
   user_id: number;
   user_name: string;
@@ -243,70 +243,70 @@ export interface AppReportData {
   draft_plan_count: string;
 }
 
-export interface AppReportTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof AppReportData) => void;
+export interface AppUserReportTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof AppUserReportData) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
 }
 
-export interface AppReportHeadCell {
+export interface AppUserReportHeadCell {
   disablePadding: boolean;
-  id: keyof AppReportData;
+  id: keyof AppUserReportData;
   label: string;
   tooltipLabel?: string;
   infoButton?: string;
   numeric: boolean;
 }
 
-export const appReportHeadCells: readonly AppReportHeadCell[] = [
+export const appUserReportHeadCells: readonly AppUserReportHeadCell[] = [
   {
     id: 'user_name',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.userName
+    label: AppUserReportTableI18N.userName
   },
   {
     id: 'role_names',
     numeric: false,
     disablePadding: false,
-    label: AppReportTableI18N.role
+    label: AppUserReportTableI18N.role
   },
   {
     id: 'prj_count',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.publishedProjects
+    label: AppUserReportTableI18N.publishedProjects
   },
   {
     id: 'draft_prj_count',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.draftProjects
+    label: AppUserReportTableI18N.draftProjects
   },
   {
     id: 'arch_prj_count',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.archivedProjects
+    label: AppUserReportTableI18N.archivedProjects
   },
   {
     id: 'plan_count',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.publishedPlans
+    label: AppUserReportTableI18N.publishedPlans
   },
   {
     id: 'draft_plan_count',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.draftPlans
+    label: AppUserReportTableI18N.draftPlans
   },
   {
     id: 'arch_plan_count',
     numeric: false,
     disablePadding: true,
-    label: AppReportTableI18N.archivedPlans
+    label: AppUserReportTableI18N.archivedPlans
   }
 ];
 
