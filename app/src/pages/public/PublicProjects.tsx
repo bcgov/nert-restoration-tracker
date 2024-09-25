@@ -174,7 +174,11 @@ export default function PublicProjects() {
 
   return (
     <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        data-testid="projects-list-header">
         <Typography ml={1} variant="h1">
           <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />
           Projects

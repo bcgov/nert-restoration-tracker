@@ -237,14 +237,6 @@ describe("Admin User", () => {
         cy.get('[id="nrm-region-select"]').click();
         cy.get("[data-value=3637]").click();
 
-        cy.get('input[name="location.is_within_overlapping"]')
-          .check("true")
-          .then(() => {
-            cy.get(
-              'input[name="location.conservationAreas.[0].conservationArea"]'
-            ).type("Conservation Area 1");
-          });
-
         cy.get('[data-testid="project-boundary-upload"]')
           .click()
           .then(() => {

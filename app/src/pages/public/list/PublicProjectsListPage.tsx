@@ -305,7 +305,7 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
-            data-testid={'project_list'}>
+            data-testid={'project_table'}>
             <ProjectsTableHead
               numSelected={selected.length}
               order={order}
@@ -327,10 +327,11 @@ const PublicProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}>
+                    sx={{ cursor: 'pointer' }}
+                    data-testid={`${row.projectName}-row`}>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       <Link
-                        data-testid={`project_${row.id}`}
+                        data-testid={`project-${row.projectName}-link`}
                         underline="always"
                         component="button"
                         sx={{ textAlign: 'left' }}
