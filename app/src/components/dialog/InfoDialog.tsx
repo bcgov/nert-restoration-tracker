@@ -55,7 +55,7 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
   };
 
   const handleError = (error: any) => {
-    console.error('Error playing media', error);
+    console.error('Unable to play media', error);
     setIsError(true);
   };
 
@@ -113,7 +113,7 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
         <DialogContent dividers>
           {isError ? (
             <Alert variant="outlined" severity="error">
-              Error playing media
+              Unable to play media
             </Alert>
           ) : (
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>

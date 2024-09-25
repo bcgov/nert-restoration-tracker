@@ -36,7 +36,7 @@ const pageStyles = {
     fontWeight: 400
   },
   roleChip: {
-    backgroundColor: '#1976d2',
+    backgroundColor: '#4371C5',
     color: '#ffffff'
   }
 };

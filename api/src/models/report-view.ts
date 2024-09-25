@@ -40,9 +40,9 @@ export interface GetReportLastData {
 }
 
 class GetReportLast {
-  id: number;
-  name: string;
-  datetime: string;
+  id: number | null;
+  name: string | null;
+  datetime: string | null;
 
   constructor(lastReportData?: any) {
     this.id = lastReportData?.id || null;

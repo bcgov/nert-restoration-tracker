@@ -4,13 +4,16 @@ import Grid from '@mui/material/Grid';
 import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateValidationError } from '@mui/x-date-pickers/models';
 import { DATE_FORMAT, DATE_LIMIT } from 'constants/dateTimeFormats';
 import { default as dayjs } from 'dayjs';
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 
 interface IReportsStartEndDateFieldsProps {
-  startRequired: boolean;
-  endRequired: boolean;
+  startDate: string;
+  setStartDate: (date: string) => void;
+  endDate: string;
+  setEndDate: (date: string) => void;
 }
 
 const CalendarStartIcon = () => {
@@ -26,21 +29,30 @@ const CalendarEndIcon = () => {
  *
  */
 const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (props) => {
-  const { startRequired, endRequired } = props;
+  const [error, setError] = React.useState<DateValidationError | null>(null);
+  const { startDate, setStartDate, endDate, setEndDate } = props;
 
-  const [rawStartDateValue, setRawStartDateValue] = useState('');
-  const [rawEndDateValue, setRawEndDateValue] = useState('');
+  const errorMessage = useMemo(() => {
+    switch (error) {
+      case 'invalidDate': {
+        return 'Entered date is not valid';
+      }
+      default: {
+        return '';
+      }
+    }
+  }, [error]);
 
   const formattedStartDateValue =
-    (rawStartDateValue &&
-      dayjs(rawStartDateValue, DATE_FORMAT.ShortDateFormat).isValid() &&
-      dayjs(rawStartDateValue, DATE_FORMAT.ShortDateFormat)) ||
+    (startDate &&
+      dayjs(startDate, DATE_FORMAT.ShortDateFormat).isValid() &&
+      dayjs(startDate, DATE_FORMAT.ShortDateFormat)) ||
     null;
 
   const formattedEndDateValue =
-    (rawEndDateValue &&
-      dayjs(rawEndDateValue, DATE_FORMAT.ShortDateFormat).isValid() &&
-      dayjs(rawEndDateValue, DATE_FORMAT.ShortDateFormat)) ||
+    (endDate &&
+      dayjs(endDate, DATE_FORMAT.ShortDateFormat).isValid() &&
+      dayjs(endDate, DATE_FORMAT.ShortDateFormat)) ||
     null;
 
   return (
@@ -48,6 +60,7 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
       <Grid container item spacing={1.5}>
         <Grid item xs={6}>
           <DatePicker
+            onError={(newError) => setError(newError)}
             slots={{
               openPickerIcon: CalendarStartIcon
             }}
@@ -55,10 +68,10 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
               textField: {
                 size: 'small',
                 id: 'start_date',
-                required: startRequired,
+                required: true,
                 variant: 'outlined',
-                // error: get(touched, startName) && Boolean(get(errors, startName)),
-                // helperText: get(touched, startName) && get(errors, startName),
+                error: !!error,
+                helperText: errorMessage,
                 inputProps: {
                   'data-testid': 'start_date'
                 },
@@ -70,18 +83,18 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
             }}
             label="Start Date"
             format={DATE_FORMAT.ShortDateFormat}
-            minDate={dayjs(DATE_LIMIT.min)}
+            minDate={dayjs('2024-09-01')}
             maxDate={dayjs(DATE_LIMIT.max)}
             value={formattedStartDateValue}
             onChange={(value) => {
               if (!value || String(value) === 'Invalid Date') {
                 // The creation input value will be 'Invalid Date' when the date field is cleared (empty), and will
                 // contain an actual date string value if the field is not empty but is invalid.
-                setRawStartDateValue('');
+                setStartDate('');
                 return;
               }
 
-              setRawStartDateValue(dayjs(value).format(DATE_FORMAT.ShortDateFormat));
+              setStartDate(dayjs(value).format(DATE_FORMAT.ShortDateFormat));
             }}
           />
         </Grid>
@@ -94,10 +107,10 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
               textField: {
                 size: 'small',
                 id: 'end_date',
-                required: endRequired,
+                required: true,
                 variant: 'outlined',
-                // error: get(touched, endName) && Boolean(get(errors, endName)),
-                // helperText: get(touched, endName) && get(errors, endName),
+                error: !!error,
+                helperText: errorMessage,
                 inputProps: {
                   'data-testid': 'end_date'
                 },
@@ -109,18 +122,18 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
             }}
             label="End Date"
             format={DATE_FORMAT.ShortDateFormat}
-            minDate={dayjs(DATE_LIMIT.min)}
+            minDate={dayjs(startDate)}
             maxDate={dayjs(DATE_LIMIT.max)}
             value={formattedEndDateValue}
             onChange={(value: dayjs.Dayjs | null) => {
               if (!value || String(value) === 'Invalid Date') {
                 // The creation input value will be 'Invalid Date' when the date field is cleared (empty), and will
                 // contain an actual date string value if the field is not empty but is invalid.
-                setRawEndDateValue('');
+                setEndDate('');
                 return;
               }
 
-              setRawEndDateValue(dayjs(value).format(DATE_FORMAT.ShortDateFormat));
+              setEndDate(dayjs(value).format(DATE_FORMAT.ShortDateFormat));
             }}
           />
         </Grid>
