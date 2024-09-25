@@ -111,11 +111,13 @@ GET.apiDoc = {
                     properties: {
                       id: {
                         description: 'Unique project ID.',
-                        type: 'number'
+                        type: 'number',
+                        nullable: true
                       },
                       name: {
                         description: 'Project name.',
-                        type: 'string'
+                        type: 'string',
+                        nullable: true
                       },
                       datetime: {
                         oneOf: [{ type: 'object' }, { type: 'string', format: 'date-time' }],
@@ -132,11 +134,13 @@ GET.apiDoc = {
                     properties: {
                       id: {
                         description: 'Unique plan ID.',
-                        type: 'number'
+                        type: 'number',
+                        nullable: true
                       },
                       name: {
                         description: 'Plan name.',
-                        type: 'string'
+                        type: 'string',
+                        nullable: true
                       },
                       datetime: {
                         oneOf: [{ type: 'object' }, { type: 'string', format: 'date-time' }],
@@ -236,13 +240,9 @@ export function viewReportStats(): RequestHandler {
 
     try {
       await connection.open();
-
       const reportService = new ReportService(connection);
-
       const result = await reportService.getAppStats();
-
       await connection.commit();
-
       return res.status(200).json(result);
     } catch (error) {
       defaultLog.error({ label: 'viewReportStats', message: 'error', error });
