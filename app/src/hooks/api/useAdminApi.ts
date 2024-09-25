@@ -6,7 +6,7 @@ import {
   IgcNotifyRecipient,
   IGetAccessRequestsListResponse,
   IGetAdministrativeActivityStanding,
-  IGetAppReport,
+  IGetAppUserReport,
   IGetReport
 } from 'interfaces/useAdminApi.interface';
 
@@ -164,10 +164,10 @@ const useAdminApi = (axios: AxiosInstance) => {
   /**
    * Get admin and maintainer application report data.
    *
-   * @return {*}  {Promise<IGetAppReport>}
+   * @return {*}  {Promise<IGetAppUserReport>}
    */
-  const getAppReport = async (): Promise<IGetAppReport[]> => {
-    const { data } = await axios.get('/api/reports/appreport/view');
+  const getAppUserReport = async (): Promise<IGetAppUserReport[]> => {
+    const { data } = await axios.get('/api/reports/user/view');
 
     return data;
   };
@@ -182,7 +182,7 @@ const useAdminApi = (axios: AxiosInstance) => {
     addSystemUserRoles,
     addSystemUser,
     getDashboardReport,
-    getAppReport
+    getAppUserReport
   };
 };
 

@@ -1,23 +1,23 @@
-import { TableCell, TableHead, TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
+import { TableCell, TableHead, TableRow, TableSortLabel, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { visuallyHidden } from '@mui/utils';
 import { TableI18N } from 'constants/i18n';
 import React from 'react';
 import {
-  AppReportData,
-  appReportHeadCells,
-  AppReportTableProps
+  AppUserReportData,
+  appUserReportHeadCells,
+  AppUserReportTableProps
 } from 'utils/pagedProjectPlanTableUtils';
 
-function AppReportTableHead(props: AppReportTableProps) {
+function AppUserReportTableHead(props: AppUserReportTableProps) {
   const { order, orderBy, onRequestSort } = props;
 
   const createSortHandler =
-    (property: keyof AppReportData) => (event: React.MouseEvent<unknown>) => {
+    (property: keyof AppUserReportData) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 
-  const appReportRows = appReportHeadCells.map((headCell) => {
+  const appUserReportRows = appUserReportHeadCells.map((headCell) => {
     return (
       <TableCell
         key={headCell.id}
@@ -43,9 +43,9 @@ function AppReportTableHead(props: AppReportTableProps) {
 
   return (
     <TableHead>
-      <TableRow>{appReportRows}</TableRow>
+      <TableRow>{appUserReportRows}</TableRow>
     </TableHead>
   );
 }
 
-export default AppReportTableHead;
+export default AppUserReportTableHead;

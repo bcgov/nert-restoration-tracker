@@ -250,7 +250,7 @@ export const TableI18N = {
   drafts: 'drafts'
 };
 
-export const AppReportTableI18N = {
+export const AppUserReportTableI18N = {
   userName: 'User Name',
   user: 'user',
   users: 'users',
