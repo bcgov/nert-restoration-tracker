@@ -24,6 +24,7 @@ export interface ILayerSwitcherProps {
   layerVisibility: {
     boundary: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     orphanedWells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    dormantWells: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     projects: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     plans: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     protectedAreas: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
@@ -48,12 +49,16 @@ const iconLegendIconStyle = {
 const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
   const { boundary, orphanedWells, projects, plans, protectedAreas, seismic, baselayer } =
     props.layerVisibility;
+
+  const dormantWells = props.layerVisibility.dormantWells || [];
+
   const basemapChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     baselayer[1](event.target.value);
   };
 
   const boundaryFilter = props.filterState?.boundary;
   const orphanedWellFilter = props.filterState?.orphanedWells;
+  const dormantWellFilter = props.filterState?.dormantWells;
 
   return (
     <div>
@@ -166,10 +171,6 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             )}
           </LayerControl>
 
-          {/* <FormControlLabel
-            control={<Checkbox checked={wells[0]} onClick={() => wells[1](!wells[0])} />}
-            label="Wells"
-          /> */}
           <LayerControl
             title="Orphaned Wells"
             subTitle="BC Energy Regulator orphaned wells and orphaned well activities"
@@ -204,6 +205,42 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
               </List>
             )}
           </LayerControl>
+
+          <LayerControl
+            title="Dormant Wells"
+            subTitle="Wells that are currently inactive"
+            layerState={dormantWells}>
+            {props.legend.dormantWells && (
+              <List dense>
+                {props.legend.dormantWells.map((well: any) => (
+                  <ListItem 
+                    key={well.label}
+                    secondaryAction={
+                      well.allowToggle && (
+                        <Checkbox
+                          edge="end"
+                          checked={dormantWellFilter[well.label][0]}
+                          onClick={() => {
+                            dormantWellFilter[well.label][1](!dormantWellFilter[well.label][0]);
+                          }}
+                        />
+                      )
+                    }>
+                    <ListItemAvatar>
+                      <Avatar
+                        src={well.image}
+                        style={{ backgroundColor: well.color, borderColor: well.outlineColor }}
+                        className={well.outlineColor ? 'outlined' : ''}>
+                        &nbsp;
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={well.label} />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </LayerControl>
+          
 
           <FormControlLabel
             control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}

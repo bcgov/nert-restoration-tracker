@@ -98,6 +98,7 @@ const SearchPage: React.FC = () => {
    */
   const boundary = useState<boolean>(true);
   const orphanedWells = useState<boolean>(false);
+  const dormantWells = useState<boolean>(false);
   const projects = useState<boolean>(true);
   const plans = useState<boolean>(true);
   const protectedAreas = useState<boolean>(false);
@@ -107,6 +108,7 @@ const SearchPage: React.FC = () => {
   const layerVisibility = {
     boundary,
     orphanedWells,
+    dormantWells,
     projects,
     plans,
     protectedAreas,
@@ -236,6 +238,22 @@ const SearchPage: React.FC = () => {
         outlineColor: '#4a72b5',
         color: '#ffffff'
       }
+    ],
+    dormantWells: [
+      {
+        label: 'Multiple Wells',
+        visible: true,
+        allowToggle: false,
+        color: 'rgba(50,145,168,0.5)',
+        outlineColor: 'white'
+      },
+      {
+        label: 'Single Well',
+        visible: true,
+        allowToggle: false,
+        color: 'rgba(255,153,0,0.8)',
+        outlineColor: 'white'
+      }
     ]
   };
 
@@ -269,7 +287,7 @@ const SearchPage: React.FC = () => {
 
   const filterState = {
     boundary: boundaryState,
-    orphanedWells: orphanedWellsState
+    orphanedWells: orphanedWellsState,
   };
 
   const sidebarButtonStyle = {

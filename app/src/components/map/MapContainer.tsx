@@ -47,7 +47,7 @@ const pageStyle = {
  * This function draws the wells on the map
  * @param map - the map object
  */
-const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
+const drawWells = (map: maplibre.Map, wells: any, dormantWells: any, tooltipState: any) => {
   /* The following are the URLs to the geojson data */
   const orphanedSitesURL =
     `https://geoweb-ags.bc-er.ca/arcgis/rest/services/OPERATIONAL/ORPHAN_SITE_PT/MapServer/0/query?
@@ -82,6 +82,9 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
     type: 'circle',
     source: 'dormantWells',
     filter: ['has', 'point_count'],
+    layout: {
+      visibility: dormantWells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': ['step', ['get', 'point_count'], 10, 10, 20, 20, 30, 100, 40, 1000, 40],
       'circle-color': 'rgba(50,145,168,0.5)',
@@ -101,6 +104,9 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
     type: 'circle',
     source: 'dormantWells',
     filter: ['!', ['has', 'point_count']],
+    layout: {
+      visibility: dormantWells[0] ? 'visible' : 'none'
+    },
     paint: {
       'circle-radius': 8,
       'circle-color': 'rgba(255,153,0,0.8)',
@@ -109,9 +115,25 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
     }
   });
 
+  // Add the marker layer to show the number of sites in the cluster
+  map.addLayer({
+    id: 'dormantWellsMarkerLayer',
+    type: 'symbol',
+    source: 'dormantWells',
+    filter: ['all', ['has', 'point_count']],
+    layout: {
+      visibility: dormantWells[0] ? 'visible' : 'none',
+      'text-field': '{point_count_abbreviated}',
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-size': 12
+    },
+    paint: {
+      'text-color': 'white'
+    }
+  });
+
   // On hover of cluster layer highlight the circle stroke to be yellow
   let hoverStateWellClusterLayer: boolean | any = false;
-
   map.on('mouseenter', 'dormantWellsClusterLayer', (e: any) => {
     
     // Clear old hover state if present
@@ -591,7 +613,7 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
-  const { boundary, orphanedWells, projects, plans, protectedAreas, seismic } = layerVisibility;
+  const { boundary, orphanedWells, dormantWells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
 
@@ -1161,7 +1183,7 @@ const initializeMap = (
     });
 
     // Add the well layers
-    drawWells(map, orphanedWells, tooltipState);
+    drawWells(map, orphanedWells, dormantWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
     if (bounds) {
@@ -1211,6 +1233,28 @@ const checkLayerVisibility = (layers: any, features: any) => {
       );
       map.setLayoutProperty(
         'orphanedActivitiesLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+    }
+
+    if (
+      layer === 'dormantWells' &&
+      map.getLayer('dormantWellsClusterLayer') &&
+      map.getLayer('dormantWellsLayer')
+    ) {
+      map.setLayoutProperty(
+        'dormantWellsClusterLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'dormantWellsLayer',
+        'visibility',
+        layers[layer][0] ? 'visible' : 'none'
+      );
+      map.setLayoutProperty(
+        'dormantWellsMarkerLayer',
         'visibility',
         layers[layer][0] ? 'visible' : 'none'
       );
