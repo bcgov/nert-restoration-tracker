@@ -59,29 +59,150 @@ const drawWells = (map: maplibre.Map, wells: any, tooltipState: any) => {
     outFields=OBJECTID,SITE_NAME,WORKSTREAM_SHORT,SITE_ID,SITE_STATUS,SITE_TYPE,SURFACE_LOCATION,LAND_TYPE
     &where=1%3D1&f=geojson`.replace(/\s+/g, '');
 
-  const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
-
-  /**
-   * Another layer to display is Dormant Wells
-   * Example of display is seen here https://geoweb-ags.bc-er.ca/portal/apps/webappviewer/index.html?id=b8a2b40512a8493284fc3c322077e677
-   * This layer is around 2.4Mg in size and should possibly be consumed as a vector tile
-   *
-   * const dormantWellsURL = 'https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson';
-   * You can trim down the request by specifying the fields you need
-   * - OBJECTID
-   * - WELL_AUTHORITY_NUMBER
-   * - OPERATOR_ABBREVIATION
-   * - DORMANT_STATUS
-   * - WELL_NAME
-   * - WELL_ACTIVITY
-   * - OPERATION_TYPE
-   * - FLUID_CODE
-   */
   const dormantWellsURL =
     `https://geoweb-ags.bc-er.ca/arcgis/rest/services/PASR/PASR_WELL_SURFACE_STATE_FA_PT/FeatureServer/0/query?
     outFields=OBJECTID,WELL_AUTHORITY_NUMBER,OPERATOR_ABBREVIATION,DORMANT_STATUS,WELL_NAME,WELL_ACTIVITY,OPERATION_TYPE,FLUID_CODE
     &where=1%3D1&f=geojson`.replace(/\s+/g, '');
 
+  const { setTooltip, setTooltipVisible, setTooltipX, setTooltipY } = tooltipState;
+
+  /******** Dormant Wells ********/
+  map.addSource('dormantWells', {
+    type: 'geojson',
+    data: dormantWellsURL,
+    cluster: true,
+    clusterRadius: 50,
+    clusterMaxZoom: 12
+    // promoteId: 'OBJECTID'
+  });
+
+  // Add the cluster layer and set the radius equal to the number of sites in the cluster
+  map.addLayer({
+    id: 'dormantWellsClusterLayer',
+    type: 'circle',
+    source: 'dormantWells',
+    filter: ['has', 'point_count'],
+    paint: {
+      'circle-radius': ['step', ['get', 'point_count'], 10, 10, 20, 20, 30, 100, 40, 1000, 40],
+      'circle-color': 'rgba(50,145,168,0.5)',
+      'circle-stroke-width': 5,
+      'circle-stroke-color': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        'yellow',
+        'white'
+      ]
+    }
+  });
+
+  // Add the unclustered layer
+  map.addLayer({
+    id: 'dormantWellsLayer',
+    type: 'circle',
+    source: 'dormantWells',
+    filter: ['!', ['has', 'point_count']],
+    paint: {
+      'circle-radius': 8,
+      'circle-color': 'rgba(255,153,0,0.8)',
+      'circle-stroke-width': 1,
+      'circle-stroke-color': 'white'
+    }
+  });
+
+  // On hover of cluster layer highlight the circle stroke to be yellow
+  let hoverStateWellClusterLayer: boolean | any = false;
+
+  map.on('mouseenter', 'dormantWellsClusterLayer', (e: any) => {
+    
+    // Clear old hover state if present
+    if (hoverStateWellClusterLayer) {
+      map.setFeatureState(
+        {
+          source: 'dormantWells',
+          id: hoverStateWellClusterLayer
+        },
+        { hover: false }
+      );
+    }
+
+    const feature = e.features[0];
+    hoverStateWellClusterLayer = feature.properties.cluster_id;
+
+    map.setFeatureState(
+      {
+        source: 'dormantWells',
+        id: hoverStateWellClusterLayer
+      },
+      { hover: true }
+    );
+  });
+
+  map.on('mouseleave', 'dormantWellsClusterLayer', () => {
+    map.setFeatureState(
+      {
+        source: 'dormantWells',
+        id: hoverStateWellClusterLayer
+      },
+      { hover: false }
+    );
+    hoverStateWellClusterLayer = false;
+  });
+
+  map.on('mouseenter', 'dormantWellsLayer', (e: any) => {
+    // Add a tooltip to the well
+    const feature = e.features[0];
+    const tooltip = feature.properties.WELL_NAME;
+    setTooltipVisible(true);
+    setTooltipX(e.point.x + 10);
+    setTooltipY(e.point.y - 24);
+    setTooltip(tooltip);
+  });
+
+  map.on('mouseleave', 'dormantWellsLayer', () => {
+    setTooltipVisible(false);
+  });
+
+  map.on('click', 'dormantWellsLayer', (e: any) => {
+    // Add a popup to the well
+    const feature = e.features[0];
+    const html = `
+    <div>
+      <h3>${feature.properties.WELL_NAME}</h3>
+      Well Authorization: ${feature.properties.WELL_AUTHORITY_NUMBER}</br>
+      Operator: ${feature.properties.OPERATOR_ABBREVIATION}</br>
+      Dormant Status: ${feature.properties.DORMANT_STATUS}</br>
+      Well Activity: ${feature.properties.WELL_ACTIVITY}</br>
+      Operation Type: ${feature.properties.OPERATION_TYPE}</br>
+      Fluid Code: ${feature.properties.FLUID_CODE}</br>
+    </div>
+    `;
+
+    const popup = new Popup({
+      closeButton: true,
+      closeOnClick: true
+    });
+
+    popup.setLngLat(feature.geometry.coordinates).setHTML(html).addTo(map);
+  });
+
+  map.on('click', 'dormantWellsClusterLayer', (e: any) => {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const clusterId = e.features[0].properties.cluster_id;
+
+    // @ts-ignore
+    map
+      .getSource('dormantWells')
+      // @ts-ignore
+      .getClusterExpansionZoom(clusterId)
+      .then((zoom: any) => {
+        map.easeTo({
+          center: coordinates,
+          zoom: zoom
+        });
+      });
+  });
+
+  /******** Orphaned Wells ********/
   map.addSource('orphanedWells', {
     type: 'geojson',
     data: orphanedSitesURL
