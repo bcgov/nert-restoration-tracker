@@ -1,5 +1,5 @@
 import { IDBConnection } from '../database/db';
-import { IGetAppReport, IGetReport } from '../interfaces/reports.interface';
+import { IGetAppUserReport, IGetReport } from '../interfaces/reports.interface';
 import { ReportRepository } from '../repositories/report-repository';
 import { DBService } from './service';
 
@@ -24,13 +24,13 @@ export class ReportService extends DBService {
   }
 
   /**
-   * Get application report data.
+   * Get application user report data.
    *
-   * @return {*}  {Promise<IGetAppReport>}
+   * @return {*}  {Promise<IGetAppUserReport>}
    * @memberof ReportService
    */
-  async getAppReport(): Promise<IGetAppReport[]> {
-    const reportAppResponse = await Promise.all([this.reportRepository.getAppReportData()]);
+  async getAppUserReport(): Promise<IGetAppUserReport[]> {
+    const reportAppResponse = await Promise.all([this.reportRepository.getAppUserReportData()]);
 
     return reportAppResponse[0];
   }
