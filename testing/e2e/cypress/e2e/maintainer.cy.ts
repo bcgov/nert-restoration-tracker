@@ -108,4 +108,60 @@ describe("Home Page", () => {
           });
       });
   });
+
+  it("renders all Project Details and Edits Project", () => {
+    cy.get('[data-testid="admin_project_plan_navbar"]').click();
+
+    cy.get('[data-testid="hide-projects-list-button"]')
+      .click()
+      .then(() => {
+        cy.get('[data-testid="project_table"]');
+
+        cy.get(
+          `button[data-testid="project-${projectData.project.project_name}-link"]`
+        )
+          .first()
+          .click();
+      });
+
+    cy.get('[data-testid="view_project_page_component"]').should("exist");
+    cy.get('[data-testid="edit_project_button"]').click();
+
+    cy.get('[data-testid="edit_project_header"]').should("exist");
+
+    describe("fills in project name", () => {
+      cy.get('input[name="project.project_name"]').type(`-edited`);
+    });
+
+    cy.get('[data-testid="project-save-button"]').click();
+    cy.get('[data-testid="yes-button"]').click();
+  });
+
+  it("renders all Plan Details and Edits Plan", () => {
+    cy.get('[data-testid="admin_project_plan_navbar"]').click();
+
+    cy.get('[data-testid="hide-plans-list-button"]')
+      .click()
+      .then(() => {
+        cy.get('[data-testid="plan_table"]');
+
+        cy.get(
+          `button[data-testid="plan-${projectData.project.project_name}-link"]`
+        )
+          .first()
+          .click();
+      });
+
+    cy.get('[data-testid="view_plan_page_component"]').should("exist");
+    cy.get('[data-testid="edit_plan_button"]').click();
+
+    cy.get('[data-testid="edit_plan_header"]').should("exist");
+
+    describe("fills in plan name", () => {
+      cy.get('input[name="project.project_name"]').type(`-edited`);
+    });
+
+    cy.get('[data-testid="plan-save-button"]').click();
+    cy.get('[data-testid="yes-button"]').click();
+  });
 });
