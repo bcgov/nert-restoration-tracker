@@ -629,6 +629,7 @@ const initializeMap = (
     zoom: zoom,
     maxPitch: 65,
     hash: 'loc',
+    cooperativeGestures: centroids ? false : true,
     attributionControl: {
       compact: true,
       customAttribution: 'Basemap from <a href="https://esri.com">Esri</a>'

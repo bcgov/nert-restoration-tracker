@@ -1,4 +1,10 @@
-import { PlanTableI18N, ProjectTableI18N, TableI18N, AppUserReportTableI18N } from 'constants/i18n';
+import {
+  PlanTableI18N,
+  ProjectTableI18N,
+  TableI18N,
+  AppUserReportTableI18N,
+  PiMgmtReportTableI18N
+} from 'constants/i18n';
 import { focus } from 'constants/misc';
 
 /**  Project related objects **/
@@ -229,7 +235,7 @@ export const draftHeadCells: readonly DraftHeadCell[] = [
   }
 ];
 
-// Application report related objects
+// Application user report related objects
 export interface AppUserReportData {
   id: number;
   user_id: number;
@@ -307,6 +313,60 @@ export const appUserReportHeadCells: readonly AppUserReportHeadCell[] = [
     numeric: false,
     disablePadding: true,
     label: AppUserReportTableI18N.archivedPlans
+  }
+];
+
+// PI Management report related objects
+export interface PiMgmtReportData {
+  id: number;
+  project_id: number;
+  project_name: string;
+  user_id: number;
+  user_name: string;
+  update_date: string;
+  update_operation: string;
+}
+
+export interface PiMgmtReportTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof PiMgmtReportData) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+}
+
+export interface PiMgmtReportHeadCell {
+  disablePadding: boolean;
+  id: keyof PiMgmtReportData;
+  label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
+  numeric: boolean;
+}
+
+export const piMgmtReportDataHeadCells: readonly PiMgmtReportHeadCell[] = [
+  {
+    id: 'project_name',
+    numeric: false,
+    disablePadding: true,
+    label: PiMgmtReportTableI18N.prjName
+  },
+  {
+    id: 'user_name',
+    numeric: false,
+    disablePadding: false,
+    label: PiMgmtReportTableI18N.userName
+  },
+  {
+    id: 'update_date',
+    numeric: false,
+    disablePadding: true,
+    label: PiMgmtReportTableI18N.updateDate
+  },
+  {
+    id: 'update_operation',
+    numeric: false,
+    disablePadding: true,
+    label: PiMgmtReportTableI18N.updateAction
   }
 ];
 
