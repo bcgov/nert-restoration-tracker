@@ -124,11 +124,10 @@ const Header: React.FC = () => {
     codes.data?.branding.find((data) => data.name == 'title')?.value || 'Restoration Tracker';
 
   const email = codes.data?.branding.find((data) => data.name == 'email')?.value || '';
-  console.log('***Config', config);
-  const mmm = config?.VERSION
-    ? config.VERSION.split('-')[1] + '.' + config?.CHANGE_VERSION
-    : '0.0.0';
-  const nert_version = mmm ?? '0.0.0.NA';
+  const versionSplit = config?.VERSION ? config?.VERSION.split('-')[1] : '';
+  const nert_version = versionSplit
+    ? versionSplit.split('(')[0] + '.' + config?.CHANGE_VERSION
+    : '0.0.0.NA';
   const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
 
   const authStateContext = useAuthStateContext();
