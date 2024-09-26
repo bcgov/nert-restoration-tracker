@@ -263,6 +263,15 @@ export const AppUserReportTableI18N = {
   archivedPlans: 'Archived Plans'
 };
 
+export const PiMgmtReportTableI18N = {
+  userName: 'User Name',
+  prjName: 'Project Name',
+  updateDate: 'Update Date',
+  updateAction: 'Update Action',
+  update: 'update',
+  updates: 'updates'
+};
+
 export const ProjectTableI18N = {
   project: 'project',
   projects: 'projects',

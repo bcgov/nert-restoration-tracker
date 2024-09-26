@@ -1,32 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { useNertApi } from 'hooks/useNertApi';
-import {
-  Box,
-  Container,
-  Typography,
-  Stack,
-  Breadcrumbs,
-  Link,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  Chip,
-  FormControlLabel,
-  TablePagination,
-  Switch,
-  Card
-} from '@mui/material';
-import { IGetAppUserReport } from 'interfaces/useAdminApi.interface';
-import dayjs from 'dayjs';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { Box, Container, Typography, Stack, Breadcrumbs, Link } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router';
-import * as utils from 'utils/pagedProjectPlanTableUtils';
-import AppUserReportTableToolbar from './AppUserReportTableToolbar';
-import AppUserReportTableHead from './AppUserReportTableHead';
-import { TableI18N } from 'constants/i18n';
 
 const pageStyles = {
   breadCrumbLink: {
