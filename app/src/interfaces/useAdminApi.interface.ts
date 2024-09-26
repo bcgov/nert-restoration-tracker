@@ -103,3 +103,12 @@ export interface IGetAppUserReport {
   draft_prj_count: string;
   draft_plan_count: string;
 }
+
+export interface IGetPiMgmtReport {
+  project_id: number;
+  project_name: string;
+  user_id: number;
+  user_name: string;
+  update_date: string;
+  update_operation: string;
+}
