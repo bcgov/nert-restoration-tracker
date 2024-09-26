@@ -114,7 +114,7 @@ const phases = {
     objectStorageBucket: config.objectStorageBucket.test,
     maxUploadNumFiles,
     maxUploadFileSize,
-    nodeEnv: 'test',
+    nodeEnv: 'production',
     mapTiler: config.mapTiler.test,
     sso: config.sso.test,
     cpuRequest: '50m',

@@ -128,7 +128,15 @@ const Header: React.FC = () => {
   const nert_version = versionSplit
     ? versionSplit.split('(')[0] + '.' + config?.CHANGE_VERSION
     : '0.0.0.NA';
-  const nert_environment = config?.REACT_APP_NODE_ENV || 'undefined';
+  const envSplit = config?.VERSION.split('-')[0];
+  const nert_environment =
+    'prod' === envSplit
+      ? 'Production'
+      : 'test' === envSplit
+        ? 'Test'
+        : 'dev' === envSplit
+          ? 'Development'
+          : 'Local';
 
   const authStateContext = useAuthStateContext();
   const identitySource = authStateContext.nertUserWrapper.identitySource || '';
