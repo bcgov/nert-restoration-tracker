@@ -59,8 +59,7 @@ export function getSearchResults(): RequestHandler {
           p.state_code,
           psc.number_sites,
           psc.size_ha,
-          public.ST_asGeoJSON(psc.geography) as geometry,
-          psc.geojson#>>'{}' as geojson
+          public.ST_asGeoJSON(psc.geography) as geometry
         FROM
           project p
         LEFT JOIN
@@ -72,9 +71,7 @@ export function getSearchResults(): RequestHandler {
         ON
           psc.project_spatial_component_type_id = psct.project_spatial_component_type_id
         WHERE
-          psct.name = 'Boundary'
-        AND 
-          psc.geography IS NOT NULL;
+          psct.name = 'Boundary';
       `;
 
       await connection.open();

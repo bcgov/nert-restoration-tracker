@@ -100,6 +100,23 @@ export function getSearchResults(): RequestHandler {
   };
 }
 
+export interface IFeatureArray {
+  type: string;
+  coordinates: any[];
+}
+
+export interface IGeoJSON {
+  type: string;
+  geometry: IFeatureArray;
+  properties: {
+    id: number;
+    mask: { radius: number; centroid: number[] };
+    areaHa: number;
+    siteName: string;
+    maskedLocation: boolean;
+  };
+}
+
 /**
  * Cycle through a feature array and apply a mask if the feature has a mask.
  * This function is unique to this end point and is not used elsewhere.
@@ -108,10 +125,13 @@ export function getSearchResults(): RequestHandler {
  * @returns new feature array with mask applied
  */
 const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
-  const featureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
+  const featureArray: IFeatureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
   try {
-    const geojson = originalGeoJSON && JSON.parse(originalGeoJSON);
+    const geojson: IGeoJSON[] = originalGeoJSON && JSON.parse(originalGeoJSON);
 
+    if (!geojson) {
+      return featureArray;
+    }
     // If there is a mask and maskedLocation, return the mask instead of the geometry
     geojson.forEach((feature, index) => {
       if (feature.properties.maskedLocation && feature.properties.mask) {
