@@ -36,7 +36,11 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
 
   return (
     <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        data-testid="my_plan_header">
         <Typography ml={1} variant="h1">
           <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> My Plans
         </Typography>
@@ -54,7 +58,7 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
                 color="primary"
                 startIcon={<Icon path={mdiPlus} size={1} />}
                 onClick={() => history('/admin/plans/create')}
-                data-testid="create-project-button">
+                data-testid="create-plan-button">
                 Create Plan
               </Button>
             )}

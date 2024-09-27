@@ -200,6 +200,7 @@ const ViewProjectPage: React.FC = () => {
                 Team
               </Button>
               <Button
+                data-testid="edit_project_button"
                 aria-label="edit project"
                 variant="outlined"
                 color="primary"
