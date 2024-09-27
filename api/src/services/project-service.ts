@@ -1,3 +1,4 @@
+import { Feature } from 'geojson';
 import { PROJECT_ROLE } from '../constants/roles';
 import { IDBConnection } from '../database/db';
 import { HTTP400 } from '../errors/custom-error';
@@ -372,7 +373,7 @@ export class ProjectService extends DBService {
       id: number;
       name: string;
       is_project: boolean;
-      geometry: any;
+      geometry: Feature[];
     }[]
   > {
     return this.projectRepository.getSpatialSearch(isUserAdmin, systemUserId);
