@@ -250,6 +250,28 @@ export const TableI18N = {
   drafts: 'drafts'
 };
 
+export const AppUserReportTableI18N = {
+  userName: 'User Name',
+  user: 'user',
+  users: 'users',
+  role: 'System Role',
+  publishedProjects: 'Published Projects',
+  publishedPlans: 'Published Plans',
+  draftProjects: 'Draft Projects',
+  draftPlans: 'Draft Plans',
+  archivedProjects: 'Archived Projects',
+  archivedPlans: 'Archived Plans'
+};
+
+export const PiMgmtReportTableI18N = {
+  userName: 'User Name',
+  prjName: 'Project Name',
+  updateDate: 'Update Date',
+  updateAction: 'Update Action',
+  update: 'update',
+  updates: 'updates'
+};
+
 export const ProjectTableI18N = {
   project: 'project',
   projects: 'projects',

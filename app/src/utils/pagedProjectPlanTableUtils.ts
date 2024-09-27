@@ -1,4 +1,10 @@
-import { PlanTableI18N, ProjectTableI18N, TableI18N } from 'constants/i18n';
+import {
+  PlanTableI18N,
+  ProjectTableI18N,
+  TableI18N,
+  AppUserReportTableI18N,
+  PiMgmtReportTableI18N
+} from 'constants/i18n';
 import { focus } from 'constants/misc';
 
 /**  Project related objects **/
@@ -226,6 +232,141 @@ export const draftHeadCells: readonly DraftHeadCell[] = [
     numeric: false,
     disablePadding: true,
     label: TableI18N.draftName
+  }
+];
+
+// Application user report related objects
+export interface AppUserReportData {
+  id: number;
+  user_id: number;
+  user_name: string;
+  role_names: string;
+  prj_count: string;
+  plan_count: string;
+  arch_prj_count: string;
+  arch_plan_count: string;
+  draft_prj_count: string;
+  draft_plan_count: string;
+}
+
+export interface AppUserReportTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof AppUserReportData) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+}
+
+export interface AppUserReportHeadCell {
+  disablePadding: boolean;
+  id: keyof AppUserReportData;
+  label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
+  numeric: boolean;
+}
+
+export const appUserReportHeadCells: readonly AppUserReportHeadCell[] = [
+  {
+    id: 'user_name',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.userName
+  },
+  {
+    id: 'role_names',
+    numeric: false,
+    disablePadding: false,
+    label: AppUserReportTableI18N.role
+  },
+  {
+    id: 'prj_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.publishedProjects
+  },
+  {
+    id: 'draft_prj_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.draftProjects
+  },
+  {
+    id: 'arch_prj_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.archivedProjects
+  },
+  {
+    id: 'plan_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.publishedPlans
+  },
+  {
+    id: 'draft_plan_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.draftPlans
+  },
+  {
+    id: 'arch_plan_count',
+    numeric: false,
+    disablePadding: true,
+    label: AppUserReportTableI18N.archivedPlans
+  }
+];
+
+// PI Management report related objects
+export interface PiMgmtReportData {
+  id: number;
+  project_id: number;
+  project_name: string;
+  user_id: number;
+  user_name: string;
+  update_date: string;
+  update_operation: string;
+}
+
+export interface PiMgmtReportTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof PiMgmtReportData) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+}
+
+export interface PiMgmtReportHeadCell {
+  disablePadding: boolean;
+  id: keyof PiMgmtReportData;
+  label: string;
+  tooltipLabel?: string;
+  infoButton?: string;
+  numeric: boolean;
+}
+
+export const piMgmtReportDataHeadCells: readonly PiMgmtReportHeadCell[] = [
+  {
+    id: 'project_name',
+    numeric: false,
+    disablePadding: true,
+    label: PiMgmtReportTableI18N.prjName
+  },
+  {
+    id: 'user_name',
+    numeric: false,
+    disablePadding: false,
+    label: PiMgmtReportTableI18N.userName
+  },
+  {
+    id: 'update_date',
+    numeric: false,
+    disablePadding: true,
+    label: PiMgmtReportTableI18N.updateDate
+  },
+  {
+    id: 'update_operation',
+    numeric: false,
+    disablePadding: true,
+    label: PiMgmtReportTableI18N.updateAction
   }
 ];
 

@@ -2,10 +2,18 @@ import Box from '@mui/material/Box';
 import RadioGroup, { useRadioGroup } from '@mui/material/RadioGroup';
 import FormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
 import { styled } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React from 'react';
 import { FormControl, FormLabel, Radio } from '@mui/material';
 import ReportsStartEndDateFields from 'components/fields/ReportsStartEndDateFields';
 
+interface IDateRangeSelectionProps {
+  selectedRange: string;
+  setSelectedRange: (event: any) => void;
+  startDate: string;
+  setStartDate: (date: string) => void;
+  endDate: string;
+  setEndDate: (date: string) => void;
+}
 interface StyledFormControlLabelProps extends FormControlLabelProps {
   checked: boolean;
 }
@@ -32,16 +40,16 @@ function DateRangeFormControlLabel(props: FormControlLabelProps) {
 }
 
 /**
- * Table to display a list of active users.
+ * Select report date range.
  *
  * @param {*} props
  * @return {*}
  */
-const DateRangeSelection: React.FC = (props) => {
-  const [selectedRange, setselectedRange] = useState('currentMonth');
+const DateRangeSelection: React.FC<IDateRangeSelectionProps> = (props) => {
+  const { selectedRange, setSelectedRange, startDate, setStartDate, endDate, setEndDate } = props;
 
   const handleChange = (event: any) => {
-    setselectedRange(event.target.value);
+    setSelectedRange(event.target.value);
   };
 
   return (
@@ -61,7 +69,12 @@ const DateRangeSelection: React.FC = (props) => {
       </RadioGroup>
       {'customRange' === selectedRange && (
         <Box m={2} pl={2}>
-          <ReportsStartEndDateFields startRequired={true} endRequired={true} />
+          <ReportsStartEndDateFields
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
         </Box>
       )}
     </FormControl>

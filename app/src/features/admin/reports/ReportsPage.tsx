@@ -1,26 +1,41 @@
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import { Box, Container, Paper, Typography, Button, Divider, Stack } from '@mui/material';
 import { useNertApi } from 'hooks/useNertApi';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import DateRangeSelection from './DateRangeSelection';
-import { Button, Divider, Stack } from '@mui/material';
 import ReportsSelection from './ReportsSelection';
 import DashboardCard from './DashboardCard';
 import { IGetReport } from 'interfaces/useAdminApi.interface';
 import dayjs from 'dayjs';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
+import { useNavigate } from 'react-router';
+import { DialogContext } from 'contexts/dialogContext';
 
 /**
- * Page to display reports.
+ * Displays the reports page.
  *
  * @return {*}
  */
 const ReportsPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
+  const history = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<IGetReport>();
+
+  const [selectedReport, setSelectedReport] = useState('appUserReport');
+  const [selectedRange, setSelectedRange] = useState('currentMonth');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const dialogContext = useContext(DialogContext);
+
+  const defaultErrorDialogProps = {
+    onClose: () => {
+      dialogContext.setErrorDialog({ open: false });
+    },
+    onOk: () => {
+      dialogContext.setErrorDialog({ open: false });
+    }
+  };
 
   const getDashboardData = async () => {
     const data = await restorationTrackerApi.admin.getDashboardReport();
@@ -58,6 +73,29 @@ const ReportsPage: React.FC = () => {
         DATE_FORMAT.ShortMediumDateTimeFormat
       )) ||
     null;
+
+  function resolveStartDate(dateRange: string) {
+    if ('currentMonth' === dateRange) {
+      return dayjs().startOf('month').format(DATE_FORMAT.ShortMediumDateFormat);
+    }
+    if ('lastMonth' === dateRange) {
+      return dayjs()
+        .subtract(1, 'month')
+        .startOf('month')
+        .format(DATE_FORMAT.ShortMediumDateFormat);
+    }
+    return dayjs(startDate).format(DATE_FORMAT.ShortMediumDateFormat);
+  }
+
+  function resolveEndDate(dateRange: string) {
+    if ('currentMonth' === dateRange) {
+      return dayjs().endOf('month').format(DATE_FORMAT.ShortMediumDateFormat);
+    }
+    if ('lastMonth' === dateRange) {
+      return dayjs().subtract(1, 'month').endOf('month').format(DATE_FORMAT.ShortMediumDateFormat);
+    }
+    return dayjs(endDate).format(DATE_FORMAT.ShortMediumDateFormat);
+  }
 
   return (
     <Container maxWidth="xl">
@@ -123,16 +161,54 @@ const ReportsPage: React.FC = () => {
       </Box>
 
       <Paper sx={{ minWidth: 210 }}>
-        <DateRangeSelection />
+        <ReportsSelection selectedReport={selectedReport} setSelectedReport={setSelectedReport} />
         <Divider />
-        <ReportsSelection />
+        {'appUserReport' !== selectedReport && (
+          <DateRangeSelection
+            selectedRange={selectedRange}
+            setSelectedRange={setSelectedRange}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
+        )}
         <Divider />
         <Button
           sx={{ m: 2 }}
           variant="contained"
           color="primary"
           size="large"
-          // onClick={() => setOpenYesNoDialog(true)}
+          onClick={() => {
+            if ('appUserReport' === selectedReport) {
+              history('/admin/reports/user');
+              return;
+            }
+            if ('customRange' === selectedRange && (!startDate || !endDate)) {
+              dialogContext.setErrorDialog({
+                dialogTitle: 'Dates Validation Failed',
+                dialogText: 'Please enter the required start and end dates.',
+                ...defaultErrorDialogProps,
+                open: true
+              });
+              return;
+            }
+            if ('customReport' === selectedReport) {
+              history('/admin/reports/custom', {
+                state: {
+                  startDate: resolveStartDate(selectedRange),
+                  endDate: resolveEndDate(selectedRange)
+                }
+              });
+              return;
+            }
+            history('/admin/reports/pimgmt', {
+              state: {
+                startDate: resolveStartDate(selectedRange),
+                endDate: resolveEndDate(selectedRange)
+              }
+            });
+          }}
           data-testid="report-generate-button">
           <span>Generate Report</span>
         </Button>
