@@ -450,6 +450,9 @@ export class ProjectRepository extends BaseRepository {
           p.project_id as id,
           p.name,
           p.is_project,
+          p.state_code,
+          psc.number_sites,
+          psc.size_ha,
           public.ST_asGeoJSON(psc.geography) as geometry
         FROM
           project p
@@ -463,6 +466,8 @@ export class ProjectRepository extends BaseRepository {
           psc.project_spatial_component_type_id = psct.project_spatial_component_type_id
         WHERE
           psct.name = 'Boundary'
+        AND 
+          psc.geography IS NOT NULL
         `;
 
       if (!isUserAdmin) {
