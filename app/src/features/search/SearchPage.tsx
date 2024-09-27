@@ -14,6 +14,11 @@ import { generateValidGeometryCollection } from 'utils/mapBoundaryUploadHelpers'
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import LayersIcon from '@mui/icons-material/Layers';
 import { getStateCodeFromLabel, states } from 'components/workflow/StateMachine';
+import { Feature } from 'geojson';
+import { IGetSearchResultsResponse } from 'interfaces/useSearchApi.interface';
+import { AllGeoJSON } from '@turf/turf';
+import { hasAtLeastOneValidValue } from 'utils/authUtils';
+import { SYSTEM_ROLE } from 'constants/roles';
 
 /**
  * Page to search for and display a list of records spatially.
@@ -24,7 +29,7 @@ const SearchPage: React.FC = () => {
   const restorationApi = useNertApi();
 
   const [performSearch, setPerformSearch] = useState<boolean>(true);
-  const [geometries, setGeometries] = useState([]);
+  const [geometries, setGeometries] = useState<Feature[]>([]);
 
   const authStateContext = useAuthStateContext();
 
@@ -49,7 +54,12 @@ const SearchPage: React.FC = () => {
   const archCode = getStateCodeFromLabel(states.ARCHIVED);
   const getSearchResults = useCallback(async () => {
     try {
-      const response = authStateContext.nertUserWrapper.hasOneOrMoreProjectRoles
+      const hasSystemRole = hasAtLeastOneValidValue(
+        [SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER, SYSTEM_ROLE.PROJECT_CREATOR],
+        authStateContext.nertUserWrapper.roleNames
+      );
+
+      const response = hasSystemRole
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
 
@@ -60,16 +70,20 @@ const SearchPage: React.FC = () => {
 
       const clusteredPointGeometries: any = [];
 
-      response.forEach((result: any) => {
+      response.forEach((result: IGetSearchResultsResponse) => {
         const feature = generateValidGeometryCollection(result.geometry, result.id)
           .geometryCollection[0];
 
         // Filter out archived projects/plans
         if (archCode != result.state_code) {
-          clusteredPointGeometries.push({
-            position: centroid(feature as any).geometry.coordinates as LatLngTuple,
-            feature: result
-          });
+          const centroidFeature = centroid(feature as AllGeoJSON);
+
+          if (centroidFeature && centroidFeature.geometry && centroidFeature.geometry.coordinates) {
+            clusteredPointGeometries.push({
+              position: centroidFeature.geometry.coordinates as LatLngTuple,
+              feature: result
+            });
+          }
         }
       });
 
