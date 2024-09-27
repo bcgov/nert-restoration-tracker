@@ -56,9 +56,6 @@ export function getSearchResults(): RequestHandler {
           p.project_id as id,
           p.name,
           p.is_project,
-          p.state_code,
-          psc.number_sites,
-          psc.size_ha,
           public.ST_asGeoJSON(psc.geography) as geometry
         FROM
           project p
