@@ -372,7 +372,7 @@ export class ProjectService extends DBService {
       id: number;
       name: string;
       is_project: boolean;
-      geometry: any;
+      geometry: string;
     }[]
   > {
     return this.projectRepository.getSpatialSearch(isUserAdmin, systemUserId);
