@@ -8,10 +8,11 @@ import { Feature } from 'geojson';
  */
 export interface IGetSearchResultsResponse {
   id: string;
-  name?: string;
-  objectives?: string;
-  associatedtaxa?: string;
-  lifestage?: string;
+  name: string;
+  state_code: number;
+  number_sites: number;
+  size_ha: number;
+  is_project: boolean;
   geometry: Feature[];
 }
 
