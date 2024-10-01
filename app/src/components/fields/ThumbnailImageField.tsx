@@ -5,6 +5,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ConfigContext } from 'contexts/configContext';
 import FileUpload from 'components/attachments/FileUpload';
 import ThumbnailImageCard from 'components/attachments/ThumbnailImageCard';
+import YesNoDialog from 'components/dialog/YesNoDialog';
+import { Typography } from '@mui/material';
+import Link from '@mui/material/Link';
 
 // Fixing a lame typescript error
 const positionRelative = 'relative' as const;
@@ -35,11 +38,19 @@ const ThumbnailImageField: React.FC = () => {
 
   const [image, setImage] = useState<string>('');
 
+  // Whether or not to show the upload confirmation Yes/No dialog
+  const [openYesNoDialog, setOpenYesNoDialog] = useState(false);
+
   const deleteImage = () => {
     setFieldValue('project.project_image', null);
     setFieldValue('project.image_url', null);
     setFieldValue('project.image_key', null);
     setImage('');
+  };
+
+  const handleCancelConfirmation = () => {
+    deleteImage();
+    setOpenYesNoDialog(false);
   };
 
   const processImage = (image: string, file: File) => {
@@ -77,6 +88,8 @@ const ThumbnailImageField: React.FC = () => {
   };
 
   const handleLoadImage = (file: File) => {
+    setOpenYesNoDialog(true);
+
     const reader = new FileReader();
     reader.onloadend = () => {
       if (typeof reader.result !== 'string') {
@@ -102,26 +115,56 @@ const ThumbnailImageField: React.FC = () => {
   }, [values.project.image_url]);
 
   return (
-    <div style={uploadImageStyles.general}>
-      <div style={uploadImageStyles.description}>Thumbnail Image</div>
-      {image ? (
-        <ThumbnailImageCard image={image} deleteImage={deleteImage} />
-      ) : (
-        <FileUpload
-          uploadHandler={uploadImage()}
-          dropZoneProps={{
-            maxFileSize: config?.MAX_IMAGE_UPLOAD_SIZE || 52428800,
-            maxNumFiles: config?.MAX_IMAGE_NUM_FILES || 1,
-            multiple: config?.ALLOW_MULTIPLE_IMAGE_UPLOADS || false,
-            acceptedFileExtensionsHumanReadable: 'PNG & JPG',
-            acceptedFileExtensions: {
-              'image/png': ['.png'],
-              'image/jpeg': ['.jpg', '.jpeg']
-            }
-          }}
-        />
-      )}
-    </div>
+    <>
+      <YesNoDialog
+        dialogTitle="Upload Image"
+        dialogText=""
+        dialogTitleBgColor="#E9FBFF"
+        dialogContent={
+          <>
+            <Typography variant="body1" color="textPrimary">
+              Please make sure there is no Private Information (PI) in the data. Uploading an image
+              means it will be published (publicly available). See the{' '}
+              <Link
+                href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
+                color="primary">
+                BC Government PI
+              </Link>{' '}
+              page for more information.
+            </Typography>
+            <Typography variant="body1" mt={1} color="textPrimary">
+              Are you sure you want to upload this image?
+            </Typography>
+          </>
+        }
+        open={openYesNoDialog}
+        onClose={handleCancelConfirmation}
+        onNo={handleCancelConfirmation}
+        onYes={() => {
+          setOpenYesNoDialog(false);
+        }}
+      />
+      <div style={uploadImageStyles.general}>
+        <div style={uploadImageStyles.description}>Thumbnail Image</div>
+        {image ? (
+          <ThumbnailImageCard image={image} deleteImage={deleteImage} />
+        ) : (
+          <FileUpload
+            uploadHandler={uploadImage()}
+            dropZoneProps={{
+              maxFileSize: config?.MAX_IMAGE_UPLOAD_SIZE || 52428800,
+              maxNumFiles: config?.MAX_IMAGE_NUM_FILES || 1,
+              multiple: config?.ALLOW_MULTIPLE_IMAGE_UPLOADS || false,
+              acceptedFileExtensionsHumanReadable: 'PNG & JPG',
+              acceptedFileExtensions: {
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg']
+              }
+            }}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
