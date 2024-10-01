@@ -1,10 +1,11 @@
 import { mdiTrayArrowUp } from '@mdi/js';
 import Icon from '@mdi/react';
-import { Button } from '@mui/material';
+import { Button, Link, Typography } from '@mui/material';
 import AttachmentsList from 'components/attachments/AttachmentsList';
 import FileUpload from 'components/attachments/FileUpload';
 import { IUploadHandler } from 'components/attachments/FileUploadItem';
 import ComponentDialog from 'components/dialog/ComponentDialog';
+import YesNoDialog from 'components/dialog/YesNoDialog';
 import { ProjectRoleGuard } from 'components/security/Guards';
 import { ActionToolbar } from 'components/toolbar/ActionToolbars';
 import { S3FileType } from 'constants/attachments';
@@ -35,7 +36,14 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
 
   const [openUploadAttachments, setOpenUploadAttachments] = useState(false);
 
-  const handleUploadAttachmentClick = () => setOpenUploadAttachments(true);
+  // Whether or not to show the upload confirmation Yes/No dialog
+  const [openYesNoDialog, setOpenYesNoDialog] = useState(false);
+
+  const handleCancelConfirmation = () => {
+    setOpenYesNoDialog(false);
+  };
+
+  const handleUploadAttachmentClick = () => setOpenYesNoDialog(true);
 
   const getUploadHandler = (): IUploadHandler<IUploadAttachmentResponse> => {
     return (file, cancelToken) => {
@@ -50,6 +58,36 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
 
   return (
     <>
+      <YesNoDialog
+        dialogTitle="Upload Document"
+        dialogText=""
+        dialogTitleBgColor="#E9FBFF"
+        dialogContent={
+          <>
+            <Typography variant="body1" color="textPrimary">
+              Please make sure there is no Private Information (PI) in the data. Uploading a
+              document means it will be published (publicly available). See the{' '}
+              <Link
+                href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
+                color="primary">
+                BC Government PI
+              </Link>{' '}
+              page for more information.
+            </Typography>
+            <Typography variant="body1" mt={1} color="textPrimary">
+              Are you sure you want to upload a document?
+            </Typography>
+          </>
+        }
+        open={openYesNoDialog}
+        onClose={handleCancelConfirmation}
+        onNo={handleCancelConfirmation}
+        onYes={() => {
+          setOpenYesNoDialog(false);
+          setOpenUploadAttachments(true);
+        }}
+      />
+
       <ComponentDialog
         open={openUploadAttachments}
         dialogTitle="Upload Documents"
