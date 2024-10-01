@@ -252,7 +252,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             component="span"
             startIcon={<Icon path={mdiTrayArrowUp} size={1}></Icon>}
             onClick={() => setOpenUploadBoundary(true)}
-            data-testid="Plan-boundary-upload">
+            data-testid="plan-boundary-upload">
             Upload Areas
           </Button>
         </Box>
@@ -294,6 +294,7 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{
+            name: 'plan-boundary-upload',
             acceptedFileExtensions: {
               'application/json': ['.json', '.geojson']
             }

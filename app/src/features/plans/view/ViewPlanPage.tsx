@@ -197,6 +197,7 @@ const ViewPlanPage: React.FC = () => {
                   Team
                 </Button>
                 <Button
+                  data-testid="edit_plan_button"
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiPencilOutline} size={1} />}

@@ -256,7 +256,7 @@ const EditPlanPage: React.FC = () => {
       <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
           <Box mb={0.5} mt={0.9}>
-            <Typography variant="h1">
+            <Typography variant="h1" data-testid="edit_plan_header">
               <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> Edit Restoration Plan
             </Typography>
           </Box>

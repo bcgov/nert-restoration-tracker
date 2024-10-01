@@ -110,7 +110,7 @@ describe("Project List Page", () => {
       .should("exist");
     dropdown.click();
 
-    const project = cy.get('[data-testid="project_1"]').should("exist");
+    const project = cy.get('[data-testid="project-Seed Project 1-link"]').should("exist");
     project.should("have.length", 1);
   });
 
@@ -125,7 +125,7 @@ describe("Project List Page", () => {
       .should("exist");
     dropdown.click();
 
-    const project = cy.get('[data-testid="project_1"]').should("exist");
+    const project = cy.get('[data-testid="project-Seed Project 1-link"]').should("exist");
     project.should("have.length", 1);
 
     project.click();
@@ -145,7 +145,7 @@ describe("Plan List Page", () => {
   it("renders the plan list", () => {
     cy.visit("plans");
 
-    const planList = cy.get('[data-testid="plan_list"]').should("exist");
+    const planList = cy.get('[data-testid="plan_table"]').should("exist");
     planList.should("have.length", 1);
 
     const dropdown = cy
@@ -153,14 +153,14 @@ describe("Plan List Page", () => {
       .should("exist");
     dropdown.click();
 
-    const plan = cy.get('[data-testid="plan_1"]').should("exist");
+    const plan = cy.get('[data-testid="plan-Seed Plan 1-link"]').should("exist");
     plan.should("have.length", 1);
   });
 
   it("renders the plan details page on plan click", () => {
     cy.visit("plans");
 
-    const planList = cy.get('[data-testid="plan_list"]').should("exist");
+    const planList = cy.get('[data-testid="plan_table"]').should("exist");
     planList.should("have.length", 1);
 
     const dropdown = cy
@@ -168,7 +168,7 @@ describe("Plan List Page", () => {
       .should("exist");
     dropdown.click();
 
-    const plan = cy.get('[data-testid="plan_1"]').should("exist");
+    const plan = cy.get('[data-testid="plan-Seed Plan 1-link"]').should("exist");
     plan.should("have.length", 1);
 
     plan.click();
