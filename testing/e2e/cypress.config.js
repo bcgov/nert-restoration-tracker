@@ -6,7 +6,7 @@ module.exports = defineConfig({
     // pluginsFile: "./cypress/plugins/index.ts",
     screenshotsFolder: "./cypress/screenshots",
     videosFolder: "./cypress/videos",
-    projectId: "bq8wdr",
+    projectId: "epjwzk",
     chromeWebSecurity: false,
     execTimeout: 10000,
     taskTimeout: 10000,
