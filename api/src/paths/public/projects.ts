@@ -5,6 +5,7 @@ import { geoJsonFeature } from '../../openapi/schemas/geoJson';
 import { ProjectService } from '../../services/project-service';
 import { ProjectSearchCriteria, SearchService } from '../../services/search-service';
 import { getLogger } from '../../utils/logger';
+import { maskGateKeeper } from '../../utils/spatial-utils';
 
 const defaultLog = getLogger('paths/public/projects');
 
@@ -539,6 +540,15 @@ export function getPublicProjectsPlansList(): RequestHandler {
       // Get all projects data for the projectIds
       const projects = await projectService.getProjectsByIds(projectIds, true);
 
+      // Mask the geometries for all projects
+      projects.forEach((project) => {
+        const maskFilter = project.location.geometry?.map((feature) => {
+          return maskGateKeeper(feature);
+        });
+
+        project.location.geometry = maskFilter;
+      });
+      
       await connection.commit();
 
       return res.status(200).json(projects);
