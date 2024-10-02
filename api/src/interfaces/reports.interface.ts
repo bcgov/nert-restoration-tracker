@@ -19,3 +19,14 @@ export interface IGetAppUserReport {
   draft_prj_count: string;
   draft_plan_count: string;
 }
+
+export interface IGetPIMgmtReport {
+  project_id: number;
+  project_name: string;
+  is_project: boolean;
+  user_name: string;
+  date: string;
+  operation: string;
+  file_name: string;
+  file_type: string;
+}
