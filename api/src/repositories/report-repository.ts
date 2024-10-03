@@ -1,5 +1,5 @@
 import SQL from 'sql-template-strings';
-import { IGetAppUserReport, IGetReport } from '../interfaces/reports.interface';
+import { IGetAppUserReport, IGetPIMgmtReport, IGetReport } from '../interfaces/reports.interface';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
 
@@ -188,6 +188,51 @@ export class ReportRepository extends BaseRepository {
       return response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getAppUserReportData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get a app user report.
+   *
+   * @return {*}  {Promise<IGetAppUserReport>}
+   * @memberof ReportRepository
+   */
+  async getPIMgmtReportData(startDate: string, endDate: string): Promise<IGetPIMgmtReport[]> {
+    defaultLog.debug({ label: 'getPIMgmtReportData', message: 'params', startDate, endDate });
+
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          su.user_identifier AS user_name,
+          al.create_date AS date,
+          al.operation,
+          al.after_value -> 'project_id' AS project_id,
+          al.after_value -> 'is_project' AS is_project,
+          prj.name AS project_name,
+          al.after_value -> 'file_name' AS file_name,
+          al.after_value -> 'file_type' AS file_type
+        FROM audit_log al
+        LEFT JOIN system_user su ON al.system_user_id = su.system_user_id
+        LEFT JOIN project prj ON (al.after_value -> 'project_id')::TEXT::int = prj.project_id
+        WHERE
+          al.create_date >= DATE(${startDate}) AND 
+          al.create_date <= DATE(${endDate}) AND 
+          al.operation IN ('INSERT', 'UPDATE') AND
+          al.table_name IN ('restoration.project_attachment', 'restoration.project')
+        GROUP BY
+          prj.name,
+          su.user_identifier,
+          al.audit_log_id,
+          al.create_date,
+          al.operation
+        ORDER BY al.audit_log_id DESC;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getPIMgmtReportData', message: 'error', error });
       throw error;
     }
   }

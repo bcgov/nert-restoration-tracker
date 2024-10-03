@@ -107,8 +107,10 @@ export interface IGetAppUserReport {
 export interface IGetPiMgmtReport {
   project_id: number;
   project_name: string;
-  user_id: number;
+  is_project: boolean;
   user_name: string;
-  update_date: string;
-  update_operation: string;
+  date: string;
+  operation: string;
+  file_name: string;
+  file_type: string;
 }
