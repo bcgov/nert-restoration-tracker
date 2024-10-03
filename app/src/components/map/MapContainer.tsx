@@ -1101,6 +1101,7 @@ const initializeMap = (
           size_ha={sizeHa}
           state_code={stateCode}
           thumbnail={thumbnail}
+          maskDisclaimer={true}
         />
       );
 
