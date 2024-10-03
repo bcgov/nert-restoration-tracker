@@ -355,7 +355,7 @@ export function getPublicPlansList(): RequestHandler {
       // Get all projects data for the projectIds
       const projects = await planService.getPlansByIds(projectIds, true);
 
-      // Mask geometries that require it 
+      // Mask geometries that require it
       projects.forEach((project) => {
         const maskFilter = project.location.geometry?.map((feature) => {
           return maskGateKeeper(feature);

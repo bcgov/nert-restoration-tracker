@@ -548,7 +548,7 @@ export function getPublicProjectsPlansList(): RequestHandler {
 
         project.location.geometry = maskFilter;
       });
-      
+
       await connection.commit();
 
       return res.status(200).json(projects);

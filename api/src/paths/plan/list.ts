@@ -381,7 +381,6 @@ export function getPlansList(): RequestHandler {
         plan.location.geometry = maskFilter;
       });
 
-
       await connection.commit();
 
       return res.status(200).json(plans);

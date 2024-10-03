@@ -1038,7 +1038,6 @@ const initializeMap = (
         console.error('Error getting thumbnail');
       }
 
-
       /**
        * Maplibre only accepts a string for the popup content.
        * Convert the Popup component to a string here.
