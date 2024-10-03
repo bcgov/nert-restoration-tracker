@@ -71,6 +71,45 @@ To clean up the image stream and build configuration
 oc -n d83219-tools delete buildconfig/backup-postgres imagestream/backup-postgres 
 ```
 
+### Restore
+
+The `backup.sh` script's restore mode makes it very simple to restore the most recent backup of a particular database. It's as simple as running a the following command, for example (run `backup.sh -h` for full details on additional options);
+
+    ./backup.sh -I -r postgres=restoration-tracker-db-postgresql-dev-deploy:5432/restoration_tracker
+
+#### NOTE: `-I` is used as `v2.9.0` causes issues with grant permission with `postgres` user. Skipping errors but still letting Restore to finish successfully.
+
+Following are more detailed steps to perform a restore of a backup.
+
+1. Log into the OpenShift Console and log into OpenShift on the command shell window.
+   1. The instructions here use a mix of the console and command line, but all could be done from a command shell using "oc" commands.
+1. Scale to 0 all Apps that use the database connection.
+   1. This is necessary as the Apps will need to restart to pull data from the restored backup.
+   1. It is recommended that you also scale down to 0 your client application so that users know the application is unavailable while the database restore is underway.
+      1. A nice addition to this would be a user-friendly "This application is offline" message - not yet implemented.
+1. Restart the database pod as a quick way of closing any other database connections from users using port forward or that have rsh'd to directly connect to the database.
+1. Open an rsh into the backup pod:
+   1. Open a command prompt connection to OpenShift using `oc login` with parameters appropriate for your OpenShift host.
+   1. Change to the OpenShift project containing the Backup App `oc project <Project Name>`
+   1. List pods using `oc get pods`
+   1. Open a remote shell connection to the **backup** pod. `oc rsh <Backup Pod Name>`
+1. In the rsh run the backup script in restore mode, `./backup.sh -I -r postgres=restoration-tracker-db-postgresql-dev-deploy:5432/restoration_tracker`, to restore the desired backup file. For full information on how to use restore mode, refer to the script documentation, `./backup.sh -h`. Have the Admin password for the database handy, the script will ask for it during the restore process.
+   1. The restore script will automatically grant the database user access to the restored database. If there are other users needing access to the database, such as the DBA group, you will need to additionally run the following commands on the database pod itself using `psql`:
+      1. Get a list of the users by running the command `\du`
+      1. For each user that is not "postgres" and $POSTGRESQL_USER, execute the command `GRANT SELECT ON ALL TABLES IN SCHEMA public TO "<name of user>";`
+   1. If users have been set up with other grants, set them up as well.
+1. Verify that the database restore worked
+   1. On the database pod, query a table - e.g the USER table: `SELECT * FROM "SBI_USER";` - you can look at other tables if you want.
+   1. Verify the expected data is shown.
+1. Exit remote shells back to your local command line
+1. From the Openshift Console restart the app:
+   1. Scale up any pods you scaled down and wait for them to finish starting up. View the logs to verify there were no startup issues.
+1. Verify full application functionality.
+
+Done!
+
+
+
 ### NOTE: User Management Role Binding Required in tools env
 ```
 kind: RoleBinding
