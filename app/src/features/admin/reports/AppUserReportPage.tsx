@@ -4,7 +4,6 @@ import {
   Box,
   Container,
   Typography,
-  Stack,
   Breadcrumbs,
   Link,
   TableContainer,
@@ -19,10 +18,8 @@ import {
   Card
 } from '@mui/material';
 import { IGetAppUserReport } from 'interfaces/useAdminApi.interface';
-import dayjs from 'dayjs';
-import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { ArrowBack } from '@mui/icons-material';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import * as utils from 'utils/pagedProjectPlanTableUtils';
 import AppUserReportTableToolbar from './AppUserReportTableToolbar';
 import AppUserReportTableHead from './AppUserReportTableHead';
