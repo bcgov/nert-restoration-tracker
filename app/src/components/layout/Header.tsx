@@ -368,6 +368,11 @@ const Header: React.FC = () => {
                   Reports
                 </Link>
               </SystemRoleGuard>
+              <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+                <Link to="/admin/codes" id="menu_admin_codes" data-testid="edit_codes">
+                  Codes
+                </Link>
+              </SystemRoleGuard>
             </SystemRoleGuard>
           </Toolbar>
         </Box>
