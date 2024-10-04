@@ -577,6 +577,7 @@ export function getProjectsPlansList(): RequestHandler {
 
       // Mask private geometries
       projects.forEach((project) => {
+        if (!project.location?.geometry) return; // Skip if no geometry
         const maskFilter = project.location.geometry?.map((feature) => {
           return maskGateKeeper(feature);
         });
