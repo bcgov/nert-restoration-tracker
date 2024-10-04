@@ -375,6 +375,8 @@ export function getPlansList(): RequestHandler {
 
       // Mask private geometries
       plans.forEach((plan) => {
+        if (!plan.location?.geometry) return; // Skip if no geometry
+
         const maskFilter = plan.location.geometry?.map((feature) => {
           return maskGateKeeper(feature);
         });

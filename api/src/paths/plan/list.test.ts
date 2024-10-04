@@ -75,6 +75,7 @@ describe('list', () => {
 
       expect(mockRes.jsonValue).to.eql([mockPlan1, mockPlan2]);
       expect(mockRes.statusValue).to.equal(200);
+
     });
 
     it('catches error, calls rollback, and re-throws error', async () => {
