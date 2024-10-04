@@ -266,8 +266,9 @@ export const AppUserReportTableI18N = {
 export const PiMgmtReportTableI18N = {
   userName: 'User Name',
   prjName: 'Project Name',
-  updateDate: 'Update Date',
-  updateAction: 'Update Action',
+  updateDate: 'Date',
+  updateAction: 'Operation',
+  eventType: 'Event Type',
   update: 'update',
   updates: 'updates'
 };

@@ -321,10 +321,13 @@ export interface PiMgmtReportData {
   id: number;
   project_id: number;
   project_name: string;
+  is_project: string;
   user_id: number;
   user_name: string;
-  update_date: string;
-  update_operation: string;
+  date: string;
+  operation: string;
+  file_name: string;
+  file_type: string;
 }
 
 export interface PiMgmtReportTableProps {
@@ -347,7 +350,7 @@ export const piMgmtReportDataHeadCells: readonly PiMgmtReportHeadCell[] = [
   {
     id: 'project_name',
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: PiMgmtReportTableI18N.prjName
   },
   {
@@ -357,16 +360,22 @@ export const piMgmtReportDataHeadCells: readonly PiMgmtReportHeadCell[] = [
     label: PiMgmtReportTableI18N.userName
   },
   {
-    id: 'update_date',
+    id: 'date',
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: PiMgmtReportTableI18N.updateDate
   },
   {
-    id: 'update_operation',
+    id: 'operation',
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: PiMgmtReportTableI18N.updateAction
+  },
+  {
+    id: 'file_type',
+    numeric: false,
+    disablePadding: false,
+    label: PiMgmtReportTableI18N.eventType
   }
 ];
 
