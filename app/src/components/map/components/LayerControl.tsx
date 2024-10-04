@@ -37,7 +37,7 @@ const LayerControl = (props: ILayerControlProps) => {
   const subTitle = props.subTitle || '';
   const children = props.children || null;
   const [infoOpen, setInfoOpen] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(true);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   return (
     <>
