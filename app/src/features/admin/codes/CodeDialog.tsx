@@ -44,11 +44,14 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
     } else {
       handleUpdate(type, { ...codeSet, name: codeSet.name, id: codeSet.id });
     }
+
+    setValue('');
     setConfirmOpen(false);
     onClose();
   };
 
   const handleCancel = () => {
+    setValue('');
     setConfirmOpen(false);
     onClose();
   };
@@ -71,6 +74,7 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
             value={value}
             onChange={(e) => setValue(e.target.value)}
             fullWidth
+            inputProps={{ maxLength: 50 }}
           />
         </DialogContent>
         <DialogActions>
