@@ -3,6 +3,7 @@ import { AuthenticatedRouteGuard, SystemRoleRouteGuard } from 'components/securi
 import { SYSTEM_ROLE } from 'constants/roles';
 import AdminReportsRouter from 'features/admin/AdminReportsRouter';
 import AdminUsersRouter from 'features/admin/AdminUsersRouter';
+import CodesPage from 'features/admin/codes/CodesPage';
 import PlansRouter from 'features/plans/PlansRouter';
 import PublicPlansRouter from 'features/plans/PublicPlansRouter';
 import ProjectsRouter from 'features/projects/ProjectsRouter';
@@ -59,6 +60,7 @@ export const AppRouter = () => {
           {/* Admin Routes */}
           <Route element={<SystemRoleRouteGuard validRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]} />}>
             <Route path="/admin/users/*" element={<AdminUsersRouter />} />
+            <Route path="/admin/codes" element={<CodesPage />} />
           </Route>
 
           {/* Admin/Maintainer Route */}
