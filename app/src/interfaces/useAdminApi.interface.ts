@@ -114,3 +114,27 @@ export interface IGetPiMgmtReport {
   file_name: string;
   file_type: string;
 }
+
+export interface IGetCustomReportData {
+  id: number;
+  is_project: boolean;
+  name: string;
+  brief_desc: string;
+  start_date: string;
+  end_date: string;
+  actual_start_date: string;
+  actual_end_date: string;
+  state_code: number;
+  people_involved: number;
+  is_healing_land: boolean;
+  is_healing_people: boolean;
+  is_land_initiative: boolean;
+  is_cultural_initiative: boolean;
+  is_project_part_public_plan: boolean;
+  create_date: string;
+  create_user_name: string;
+  update_date: string;
+  update_user_name: string;
+  objective: string[];
+  contacts: string[];
+}

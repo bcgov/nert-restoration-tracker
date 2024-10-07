@@ -7,6 +7,7 @@ import {
   IGetAccessRequestsListResponse,
   IGetAdministrativeActivityStanding,
   IGetAppUserReport,
+  IGetCustomReportData,
   IGetPiMgmtReport,
   IGetReport
 } from 'interfaces/useAdminApi.interface';
@@ -191,6 +192,24 @@ const useAdminApi = (axios: AxiosInstance) => {
     return data;
   };
 
+  /**
+   * Get admin and maintainer custom report data.
+   *
+   * @param {string} startDate
+   * @param {string} endDate
+   * @return {*}  {Promise<IGetCustomReportData>}
+   */
+  const getCustomReport = async (
+    startDate: string,
+    endDate: string
+  ): Promise<IGetCustomReportData[]> => {
+    const { data } = await axios.get('/api/reports/custom/view', {
+      params: { startDate: startDate, endDate: endDate }
+    });
+
+    return data;
+  };
+
   return {
     sendGCNotification,
     getAdministrativeActivities,
@@ -202,7 +221,8 @@ const useAdminApi = (axios: AxiosInstance) => {
     addSystemUser,
     getDashboardReport,
     getAppUserReport,
-    getPiMgmtReport
+    getPiMgmtReport,
+    getCustomReport
   };
 };
 

@@ -50,7 +50,7 @@ const pageStyles = {
   }
 };
 /**
- * Page to display Application report.
+ * Page to display Application PI report.
  *
  * @return {*}
  */
