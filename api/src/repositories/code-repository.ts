@@ -16,25 +16,44 @@ export interface ICode {
  * A code set (an array of ICode values).
  */
 export type CodeSet<T extends ICode = ICode> = T[];
+export type CombinedCode = IBrandingCode | IInvestmentActionCategoryCode | IPartnershipCode | ICode;
+export interface IPartnershipCode {
+  id: number;
+  type_id: number;
+  name: string;
+}
 
+export interface IInvestmentActionCategoryCode {
+  id: number;
+  fs_id: number;
+  name: string;
+}
+
+export interface IBrandingCode {
+  id: number;
+  name: string;
+  value: string;
+}
 export interface IAllCodeSets {
-  partnership_type: CodeSet;
-  partnerships: CodeSet<{
-    id: number;
-    type_id: number;
-    name: string;
-  }>;
+  branding: CodeSet<IBrandingCode>;
   first_nations: CodeSet;
   regions: CodeSet;
   system_roles: CodeSet;
   project_roles: CodeSet;
   administrative_activity_status_type: CodeSet;
   authorization_type: CodeSet;
-  branding: {
-    id: number;
-    name: string;
-    value: string;
-  }[];
+  partnership_type: CodeSet;
+  partnerships: CodeSet<IPartnershipCode>;
+}
+export enum CodeType {
+  FIRST_NATIONS = 'first_nations',
+  SYSTEM_ROLES = 'system_roles',
+  PROJECT_ROLES = 'project_roles',
+  ADMINISTRATIVE_ACTIVITY_STATUS_TYPE = 'administrative_activity_status_type',
+  BRANDING = 'branding',
+  AUTHORIZATION_TYPE = 'authorization_type',
+  PARTNERSHIP_TYPE = 'partnership_type',
+  PARTNERSHIPS = 'partnerships'
 }
 
 export class CodeRepository extends BaseRepository {
@@ -243,4 +262,122 @@ export class CodeRepository extends BaseRepository {
 
     return response.rows;
   }
+
+  /**
+   * Update branding.
+   *
+   * @param {string} name
+   * @param {string} value
+   * @param {number} id
+   * @return {*}
+   * @memberof CodeRepository
+   */
+  async updateBranding(name: string, value: string, id: number) {
+    const sqlStatement = SQL`
+    UPDATE branding
+    SET name = ${name}, value = ${value}
+    WHERE branding_id = ${id}
+    RETURNING *;
+    `;
+
+    const response = await this.connection.sql(sqlStatement);
+
+    return response.rows[0];
+  }
+
+  // async updateFirstNations(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE first_nations
+  //     SET name = ${name}
+  //     WHERE first_nations_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updateFundingSource(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE funding_source
+  //     SET name = ${name}
+  //     WHERE funding_source_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updateInvestmentActionCategory(name: string, fs_id: number, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE investment_action_category
+  //     SET name = ${name}, funding_source_id = ${fs_id}
+  //     WHERE investment_action_category_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updateProjectRole(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE project_role
+  //     SET name = ${name}
+  //     WHERE project_role_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updateAdministrativeActivityStatusType(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE administrative_activity_status_type
+  //     SET name = ${name}
+  //     WHERE administrative_activity_status_type_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updateAuthorizationType(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE authorization_type
+  //     SET name = ${name}
+  //     WHERE authorization_type_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updatePartnershipType(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE partnership_type
+  //     SET name = ${name}
+  //     WHERE partnership_type_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
+
+  // async updatePartnership(name: string, id: number) {
+  //   const sqlStatement = SQL`
+  //     UPDATE partnerships
+  //     SET name = ${name}
+  //     WHERE partnerships_id = ${id};
+  //   `;
+
+  //   const response = await this.connection.sql(sqlStatement);
+
+  //   return response.rows;
+  // }
 }
