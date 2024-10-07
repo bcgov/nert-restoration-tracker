@@ -27,10 +27,21 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
   title,
   type
 }) => {
+  if (!codeSet || !type) {
+    return;
+  }
+
   const [value, setValue] = useState<string>('');
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleConfirm = () => {
+    if (type === CodeType.BRANDING && codeSet.name == 'email') {
+      if (validateEmail(value)) {
+        setConfirmOpen(true);
+        return;
+      }
+      return;
+    }
     setConfirmOpen(true);
   };
 
@@ -50,15 +61,23 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
     onClose();
   };
 
+  const validateEmail = (email: string) => {
+    // don't remember from where i copied this code, but this works.
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (re.test(email)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const handleCancel = () => {
     setValue('');
     setConfirmOpen(false);
     onClose();
   };
-
-  if (!codeSet) {
-    return;
-  }
 
   return (
     <>
@@ -69,13 +88,26 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
           <Typography variant="body1">{`Code: ${codeSet.name}`}</Typography>
           <Typography variant="body1">{`Value: ${checkCodeType(codeSet)}`}</Typography>
           <br />
-          <TextField
-            label="Update Value"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            fullWidth
-            inputProps={{ maxLength: 50 }}
-          />
+          {type === CodeType.BRANDING && codeSet.name == 'email' ? (
+            <TextField
+              label="Update Value"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              fullWidth
+              error={value.length > 5 && !validateEmail(value)}
+              helperText={value.length > 5 && !validateEmail(value) && 'Invalid email address'}
+              type="email"
+              inputProps={{ maxLength: 50 }}
+            />
+          ) : (
+            <TextField
+              label="Update Value"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              fullWidth
+              inputProps={{ maxLength: 50 }}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={handleConfirm} color="primary">
