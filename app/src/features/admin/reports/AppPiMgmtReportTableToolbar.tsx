@@ -21,7 +21,7 @@ function AppPiMgmtReportTableToolbar(props: IAppPiMgmtTableToolbarProps) {
         id="draftTableTitle"
         component="div">
         {TableI18N.found} {numRows}{' '}
-        {numRows !== 1 ? PiMgmtReportTableI18N.updates : PiMgmtReportTableI18N.update}
+        {numRows !== 1 ? PiMgmtReportTableI18N.records : PiMgmtReportTableI18N.record}
       </Typography>
       {/* we can add an info dialogue if needed */}
       {/* <InfoDialog isProject={isProject} infoContent={'drafts table'} /> */}
