@@ -169,7 +169,28 @@ const appTheme = createTheme(
           minWidth: '100px !important',
           fontWeight: 700
         }
-      }
+      },
+      MuiCssBaseline: {
+        '@media print': { // When printing
+          'header': {
+            'print-color-adjust': 'exact !important',
+            '-webkit-print-color-adjust': 'exact !important',
+            'background-color': 'rgba(0, 51, 102, 0.4) !important',
+          },
+          'header .main-nav-toolbar, footer': { // Hide the header and footer
+            display: 'none !important',
+          },
+          'button': { // Hide all buttons
+            display: 'none !important'
+          },
+          '.MuiButton-root': { // Hide all buttons
+            display: 'none !important'
+          },
+          '.MuiDrawer-root': { // Hide the drawer
+            display: 'none !important'
+          }
+        },
+      },
     }
   })
 );
