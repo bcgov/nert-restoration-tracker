@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
+import { CodeType, CombinedCode, IGetAllCodeSetsResponse } from 'interfaces/useCodesApi.interface';
 
 /**
  * Returns a set of supported api methods for working with projects.
@@ -19,8 +19,26 @@ const useCodesApi = (axios: AxiosInstance) => {
     return data;
   };
 
+  /**
+   * Update a code.
+   *
+   * @param {CodeType} codeType
+   * @param {CombinedCode} codeData
+   * @return {*}  {Promise<number>}
+   */
+  const updateCode = async (codeType: CodeType, codeData: CombinedCode): Promise<number> => {
+    const data = {
+      codeType,
+      codeData
+    };
+    const { status } = await axios.post(`/api/codes/`, data);
+
+    return status;
+  };
+
   return {
-    getAllCodeSets
+    getAllCodeSets,
+    updateCode
   };
 };
 

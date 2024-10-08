@@ -6,6 +6,7 @@ import { authorizeRequestHandler } from '../../request-handlers/security/authori
 import { PlanService } from '../../services/plan-service';
 import { PlanSearchCriteria, ProjectSearchCriteria, SearchService } from '../../services/search-service';
 import { getLogger } from '../../utils/logger';
+import { maskGateKeeper } from '../../utils/spatial-utils';
 
 const defaultLog = getLogger('paths/plan/list');
 
@@ -362,7 +363,6 @@ export function getPlansList(): RequestHandler {
         ha_from: searchCriteria.plan_ha_from
       };
 
-      console.log('projectSearchCriteria', projectSearchCriteria);
       // Fetch all planIds that match the search criteria
       const planIdsResponse = await searchService.findProjectIdsByCriteria(projectSearchCriteria);
 
@@ -372,6 +372,16 @@ export function getPlansList(): RequestHandler {
 
       // Get all plans data for the planIds
       const plans = await planService.getPlansByIds(planIds);
+
+      // Mask private geometries
+      plans.forEach((plan) => {
+        if (!plan.location?.geometry) return; // Skip if no geometry
+
+        const maskFilter = plan.location.geometry?.map((feature) => {
+          return maskGateKeeper(feature);
+        });
+        plan.location.geometry = maskFilter;
+      });
 
       await connection.commit();
 

@@ -11,6 +11,7 @@ export interface MapPopupProps {
   thumbnail?: string;
   maskedLocation?: boolean;
   hideButton?: boolean;
+  maskDisclaimer?: boolean;
 }
 
 const MapPopup = (props: any) => {
@@ -23,6 +24,7 @@ const MapPopup = (props: any) => {
   const thumbnail = props.thumbnail;
   const maskedLocation = props.maskedLocation || false;
   const hideButton = props.hideButton || false;
+  const maskDisclaimer = props.maskDisclaimer || false;
 
   // Project if true, Plan if false, Site if undefined/null
   const siteType = (isProject && 'Project') || (isProject === false && 'Plan') || 'Site';
@@ -107,6 +109,11 @@ const MapPopup = (props: any) => {
       </div>
       {maskedLocation && (
         <div style={style.attention}>Location sensitive site - see FOIPPA 16, 17, 18 & 18.1.</div>
+      )}
+      {maskDisclaimer && (
+        <div style={style.attention}>
+          Point location is approximate and does not represent the exact location of the site.
+        </div>
       )}
       {!hideButton && (
         <div>

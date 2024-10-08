@@ -15,7 +15,9 @@ import {
   FormControlLabel,
   TablePagination,
   Switch,
-  Card
+  Card,
+  Tooltip,
+  Chip
 } from '@mui/material';
 import { IGetPiMgmtReport } from 'interfaces/useAdminApi.interface';
 import dayjs from 'dayjs';
@@ -48,7 +50,7 @@ const pageStyles = {
   }
 };
 /**
- * Page to display Application report.
+ * Page to display Application PI report.
  *
  * @return {*}
  */
@@ -61,57 +63,37 @@ const AppPiMgmtReportPage: React.FC = () => {
   const location = useLocation();
   const { startDate, endDate } = location.state;
 
-  // function mapToTableData(data: IGetPiMgmtReport[]): utils.PiMgmtReportData[] {
-  //   const rowsPiMgmtReport = data
-  //     ? data.map((row, index) => {
-  //         return {
-  //           id: index,
-  //           project_id: row.project_id,
-  //           project_name: row.project_name,
-  //           user_id: row.user_id,
-  //           user_name: row.user_name,
-  //           update_date: row.update_date,
-  //           update_operation: row.update_operation
-  //         } as utils.PiMgmtReportData;
-  //       })
-  //     : [];
-  //   return rowsPiMgmtReport;
-  // }
+  function mapToTableData(data: IGetPiMgmtReport[]): utils.PiMgmtReportData[] {
+    const rowsPiMgmtReport = data
+      ? data.map((row, index) => {
+          return {
+            id: index,
+            project_id: row.project_id,
+            project_name: row.project_name,
+            is_project: row.is_project ? 'true' : 'false',
+            user_name: row.user_name,
+            date: row.date,
+            operation: row.operation,
+            file_name: row.file_name,
+            file_type: row.file_type
+              ? row.file_type + ' uploaded'
+              : !row.is_project
+                ? 'INSERT' !== row.operation
+                  ? 'plan updated'
+                  : 'plan created'
+                : 'INSERT' !== row.operation
+                  ? 'project updated'
+                  : 'project created'
+          } as utils.PiMgmtReportData;
+        })
+      : [];
+    return rowsPiMgmtReport;
+  }
 
   const getPiMgmtReportData = async () => {
-    // const data = await restorationTrackerApi.admin.getPiMgmtReport();
-    const data = await restorationTrackerApi.admin.getAppUserReport();
+    const data = await restorationTrackerApi.admin.getPiMgmtReport(startDate, endDate);
     setIsLoading(false);
-    // setPiMgmtReportData(mapToTableData(data));
-    setPiMgmtReportData([
-      {
-        id: 0,
-        project_id: 5,
-        project_name: 'testProject',
-        user_id: 4,
-        user_name: 'oscar-bc',
-        update_date: 'Sep 26, 2024, 3:32:10 pm',
-        update_operation: 'File Upload'
-      },
-      {
-        id: 1,
-        project_id: 5,
-        project_name: 'testProject',
-        user_id: 4,
-        user_name: 'oscar-bc',
-        update_date: 'Sep 25, 2024, 4:02:36 pm',
-        update_operation: 'Thumbnail Upload'
-      },
-      {
-        id: 2,
-        project_id: 5,
-        project_name: 'testProject',
-        user_id: 4,
-        user_name: 'oscar-bc',
-        update_date: 'Sep 25, 2024, 4:01:12 pm',
-        update_operation: 'Project Update'
-      }
-    ]);
+    setPiMgmtReportData(mapToTableData(data));
   };
 
   if (isLoading) {
@@ -123,9 +105,13 @@ const AppPiMgmtReportPage: React.FC = () => {
     history('/admin/reports');
   };
 
+  function formatDateTime(date: string) {
+    return dayjs(date).format(DATE_FORMAT.ShortMediumDateTimeFormat);
+  }
+
   function PiMgmtReportTable() {
-    const [order, setOrder] = useState<utils.Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof utils.PiMgmtReportData>('project_name');
+    const [order, setOrder] = useState<utils.Order>('desc');
+    const [orderBy, setOrderBy] = useState<keyof utils.PiMgmtReportData>('date');
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -189,14 +175,27 @@ const AppPiMgmtReportPage: React.FC = () => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        // onClick={() => history(`/admin/projects/${row.project_id}/details`)}
-                      >
+                        onClick={
+                          'true' !== row.is_project
+                            ? () => history(`/admin/plans/${row.project_id}/details`)
+                            : () => history(`/admin/projects/${row.project_id}/details`)
+                        }>
                         {row.project_name}
                       </Link>
                     </TableCell>
-                    <TableCell align="left">{row.user_name}</TableCell>
-                    <TableCell align="left">{row.update_date}</TableCell>
-                    <TableCell align="left">{row.update_operation}</TableCell>
+                    <TableCell>{row.user_name}</TableCell>
+                    <TableCell>{formatDateTime(row.date)}</TableCell>
+                    <TableCell>{row.operation}</TableCell>
+                    <TableCell>
+                      <Chip
+                        size="small"
+                        label={
+                          <Tooltip title={row.file_name} placement="top">
+                            <Typography variant="inherit">{row.file_type}</Typography>
+                          </Tooltip>
+                        }
+                      />
+                    </TableCell>
                   </TableRow>
                 );
               })}

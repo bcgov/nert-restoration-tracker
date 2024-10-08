@@ -1,5 +1,5 @@
 import { IDBConnection } from '../database/db';
-import { IGetAppUserReport, IGetReport } from '../interfaces/reports.interface';
+import { IGetAppUserReport, IGetCustomReport, IGetPIMgmtReport, IGetReport } from '../interfaces/reports.interface';
 import { ReportRepository } from '../repositories/report-repository';
 import { DBService } from './service';
 
@@ -33,5 +33,29 @@ export class ReportService extends DBService {
     const reportAppResponse = await Promise.all([this.reportRepository.getAppUserReportData()]);
 
     return reportAppResponse[0];
+  }
+
+  /**
+   * Get application PI report data.
+   *
+   * @return {*}  {Promise<IGetAppUserReport>}
+   * @memberof ReportService
+   */
+  async getPIMgmtReport(startDate: string, endDate: string): Promise<IGetPIMgmtReport[]> {
+    const reportPIResponse = await Promise.all([this.reportRepository.getPIMgmtReportData(startDate, endDate)]);
+
+    return reportPIResponse[0];
+  }
+
+  /**
+   * Get application Custom report data.
+   *
+   * @return {*}  {Promise<IGetAppUserReport>}
+   * @memberof ReportService
+   */
+  async getCustomReport(startDate: string, endDate: string): Promise<IGetCustomReport[]> {
+    const reportPIResponse = await Promise.all([this.reportRepository.getCustomReportData(startDate, endDate)]);
+
+    return reportPIResponse[0];
   }
 }

@@ -1,5 +1,5 @@
 import SQL from 'sql-template-strings';
-import { IGetAppUserReport, IGetReport } from '../interfaces/reports.interface';
+import { IGetAppUserReport, IGetCustomReport, IGetPIMgmtReport, IGetReport } from '../interfaces/reports.interface';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
 
@@ -188,6 +188,124 @@ export class ReportRepository extends BaseRepository {
       return response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getAppUserReportData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get a app PI report.
+   *
+   * @return {*}  {Promise<IGetPIMgmtReport>}
+   * @memberof ReportRepository
+   */
+  async getPIMgmtReportData(startDate: string, endDate: string): Promise<IGetPIMgmtReport[]> {
+    defaultLog.debug({ label: 'getPIMgmtReportData', message: 'params', startDate, endDate });
+
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          su.user_identifier AS user_name,
+          al.create_date AS date,
+          al.operation,
+          al.after_value -> 'project_id' AS project_id,
+          al.after_value -> 'is_project' AS is_project,
+          prj.name AS project_name,
+          al.after_value -> 'file_name' AS file_name,
+          al.after_value -> 'file_type' AS file_type
+        FROM audit_log al
+        LEFT JOIN system_user su ON al.system_user_id = su.system_user_id
+        LEFT JOIN project prj ON (al.after_value -> 'project_id')::TEXT::int = prj.project_id
+        WHERE
+          al.create_date >= DATE(${startDate}) AND 
+          al.create_date <= DATE(${endDate}) AND 
+          al.operation IN ('INSERT', 'UPDATE') AND
+          al.table_name IN ('restoration.project_attachment', 'restoration.project')
+        GROUP BY
+          prj.name,
+          su.user_identifier,
+          al.audit_log_id,
+          al.create_date,
+          al.operation
+        ORDER BY al.audit_log_id DESC;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getPIMgmtReportData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get a app Custom report.
+   *
+   * @return {*}  {Promise<IGetCustomReport>}
+   * @memberof ReportRepository
+   */
+  async getCustomReportData(startDate: string, endDate: string): Promise<IGetCustomReport[]> {
+    defaultLog.debug({ label: 'getCustomReportData', message: 'params', startDate, endDate });
+
+    try {
+      const sqlStatement = SQL`
+        SELECT 
+          prj.project_id AS id,
+          prj.is_project,
+          prj.name,
+          prj.brief_desc,
+          prj.start_date,
+          prj.end_date,
+          prj.actual_start_date,
+          prj.actual_end_date,
+          prj.state_code,
+          prj.people_involved,
+          prj.is_healing_land,
+          prj.is_healing_people,
+          prj.is_land_initiative,
+          prj.is_cultural_initiative,
+          prj.is_project_part_public_plan,
+          prj.create_date,
+          su.user_identifier AS create_user_name,
+          prj.update_date,
+          su.user_identifier AS update_user_name,
+          array_remove(array_agg(DISTINCT obj.objective), NULL) AS objective,
+          COALESCE(jsonb_agg(DISTINCT t1), '[]') AS contacts
+        FROM project prj
+        LEFT JOIN objective obj ON prj.project_id = obj.project_id
+        LEFT JOIN system_user su ON prj.create_user = su.system_user_id
+        LEFT JOIN 
+          (SELECT pc.project_id, pc.first_name, pc.last_name, pc.organization, pc.email_address, pc.is_primary, pc.is_public, pc.is_first_nation, pc.phone_number
+          FROM project_contact pc) t1
+          ON prj.project_id = t1.project_id
+        WHERE
+          prj.create_date >= DATE(${startDate}) AND 
+          prj.create_date <= DATE(${endDate})
+        GROUP BY
+          prj.project_id,
+          prj.is_project,
+          prj.name,
+          prj.brief_desc,
+          prj.start_date,
+          prj.end_date,
+          prj.actual_start_date,
+          prj.actual_end_date,
+          prj.state_code,
+          prj.people_involved,
+          prj.is_healing_land,
+          prj.is_healing_people,
+          prj.is_land_initiative,
+          prj.is_cultural_initiative,
+          prj.is_project_part_public_plan,
+          prj.create_date,
+          prj.update_date,
+          su.user_identifier
+        ORDER BY prj.project_id ASC;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getCustomReportData', message: 'error', error });
       throw error;
     }
   }

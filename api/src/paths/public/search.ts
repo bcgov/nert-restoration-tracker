@@ -68,7 +68,10 @@ export function getSearchResults(): RequestHandler {
         ON
           psc.project_spatial_component_type_id = psct.project_spatial_component_type_id
         WHERE
-          psct.name = 'Boundary';
+          psct.name = 'Boundary'
+        AND 
+          psc.geography IS NOT NULL
+        ;
       `;
 
       await connection.open();

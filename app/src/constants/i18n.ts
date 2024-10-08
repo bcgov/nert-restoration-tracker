@@ -1,3 +1,5 @@
+import { File } from 'buffer';
+
 export const CreateProjectI18N = {
   locationArea: 'Project Areas',
   locationGeoJSONProperties: 'GeoJSON Properties Information',
@@ -266,10 +268,15 @@ export const AppUserReportTableI18N = {
 export const PiMgmtReportTableI18N = {
   userName: 'User Name',
   prjName: 'Project Name',
-  updateDate: 'Update Date',
-  updateAction: 'Update Action',
-  update: 'update',
-  updates: 'updates'
+  updateDate: 'Date',
+  updateAction: 'Operation',
+  eventType: 'Event Type',
+  record: 'record',
+  records: 'records'
+};
+
+export const CustomReportI18N = {
+  downloadCsvFile: 'Download CSV File'
 };
 
 export const ProjectTableI18N = {
