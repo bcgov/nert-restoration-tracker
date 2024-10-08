@@ -191,15 +191,16 @@ const appTheme = createTheme(
           'button': { // Hide all buttons
             display: 'none !important'
           },
-          'header .MuiBox-root': {
-            border: 'none !important'
-          },
           '.MuiButton-root': { // Hide all buttons
             display: 'none !important'
           },
           '.MuiDrawer-root': { // Hide the drawer
             display: 'none !important'
           },
+          'header .MuiBox-root': { // annoying little line
+            border: 'none !important'
+          },
+          // Style the map attribution
           'details.maplibregl-ctrl': {
             background: 'none !important',
           },
@@ -212,9 +213,9 @@ const appTheme = createTheme(
           'details.maplibregl-ctrl summary': {
             display: 'none !important'
           },
-          // '.maplibregl-canvas-container': { // Hide the map
-          //   display: 'none !important'
-          // }
+          '.MuiGrid-item:has(> div.MuiCard-root)': {
+            maxWidth: '150px !important'
+          }
         },
       },
     }
