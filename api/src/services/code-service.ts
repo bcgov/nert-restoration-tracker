@@ -1,5 +1,5 @@
 import { IDBConnection } from '../database/db';
-import { CodeRepository, IAllCodeSets } from '../repositories/code-repository';
+import { CodeRepository, CodeType, CombinedCode, IAllCodeSets, IBrandingCode } from '../repositories/code-repository';
 import { getNRMRegions } from './../utils/spatial-utils';
 import { DBService } from './service';
 export class CodeService extends DBService {
@@ -54,5 +54,34 @@ export class CodeService extends DBService {
       partnership_type,
       partnerships
     };
+  }
+
+  /**
+   * Function that updates a code.
+   *
+   * @param {CodeType} type
+   * @param {CombinedCode} data
+   * @return {*}  {Promise<any>}
+   * @memberof CodeService
+   */
+  async updateCode(type: CodeType, data: CombinedCode): Promise<any> {
+    switch (type) {
+      // case CodeType.FIRST_NATIONS:
+      //   return this.codeRepository.updateFirstNations(data.name, data.id);
+      // case CodeType.PROJECT_ROLES:
+      //   return this.codeRepository.updateProjectRole(data.name, data.id);
+      // case CodeType.ADMINISTRATIVE_ACTIVITY_STATUS_TYPE:
+      //   return this.codeRepository.updateAdministrativeActivityStatusType(data.name, data.id);
+      case CodeType.BRANDING:
+        return this.codeRepository.updateBranding(data.name, (data as IBrandingCode).value, data.id);
+      // case CodeType.AUTHORIZATION_TYPE:
+      //   return this.codeRepository.updateAuthorizationType(data.name, data.id);
+      // case CodeType.PARTNERSHIP_TYPE:
+      //   return this.codeRepository.updatePartnershipType(data.name, data.id);
+      // case CodeType.PARTNERSHIPS:
+      //   return this.codeRepository.updatePartnership(data.name, data.id);
+      default:
+        throw new Error(`Invalid code type: ${type}`);
+    }
   }
 }

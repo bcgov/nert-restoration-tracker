@@ -50,7 +50,7 @@ const pageStyles = {
   }
 };
 /**
- * Page to display Application report.
+ * Page to display Application PI report.
  *
  * @return {*}
  */
@@ -245,7 +245,6 @@ const AppPiMgmtReportPage: React.FC = () => {
           </Link>
         </Breadcrumbs>
       </Box>
-
       <Box my={2}>
         <Stack direction="column">
           <Typography variant="h1">Personal Information (PI) Management Report</Typography>
@@ -261,7 +260,6 @@ const AppPiMgmtReportPage: React.FC = () => {
           </Stack>
         </Stack>
       </Box>
-
       <Card>
         <PiMgmtReportTable />
       </Card>

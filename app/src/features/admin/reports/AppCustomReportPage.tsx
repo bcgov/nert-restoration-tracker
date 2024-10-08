@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNertApi } from 'hooks/useNertApi';
-import { Box, Container, Typography, Stack, Breadcrumbs, Link } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Box, Container, Typography, Stack, Breadcrumbs, Link, Button } from '@mui/material';
+import { ArrowBack, FileDownload } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router';
+import { CustomReportI18N } from 'constants/i18n';
+import { IGetCustomReportData } from 'interfaces/useAdminApi.interface';
+import { csvDownload } from 'utils/cvsUtils';
 
 const pageStyles = {
   breadCrumbLink: {
@@ -25,16 +28,28 @@ const pageStyles = {
   }
 };
 /**
- * Page to display Application report.
+ * Page to display Application Custom report.
  *
  * @return {*}
  */
 const AppCustomReportPage: React.FC = () => {
   const restorationTrackerApi = useNertApi();
   const history = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [customReportData, setCustomReportData] = useState<IGetCustomReportData[]>([]);
   const location = useLocation();
   const { startDate, endDate } = location.state;
+
+  const getCustomReportData = async () => {
+    const data = await restorationTrackerApi.admin.getCustomReport(startDate, endDate);
+    setIsLoading(false);
+    setCustomReportData(data);
+  };
+
+  if (isLoading) {
+    getCustomReportData();
+    return;
+  }
 
   const handleCancel = () => {
     history('/admin/reports');
@@ -54,7 +69,6 @@ const AppCustomReportPage: React.FC = () => {
           </Link>
         </Breadcrumbs>
       </Box>
-
       <Box my={2}>
         <Stack direction="column">
           <Typography variant="h1">Custom Report</Typography>
@@ -69,6 +83,17 @@ const AppCustomReportPage: React.FC = () => {
             </Typography>
           </Stack>
         </Stack>
+        <Button
+          sx={{ mt: 2 }}
+          color="primary"
+          variant="contained"
+          size="large"
+          onClick={() => csvDownload(customReportData, startDate, endDate)}
+          data-testid="csv-report-download-button"
+          aria-label={CustomReportI18N.downloadCsvFile}
+          startIcon={<FileDownload />}>
+          <span>{CustomReportI18N.downloadCsvFile}</span>
+        </Button>
       </Box>
     </Container>
   );
