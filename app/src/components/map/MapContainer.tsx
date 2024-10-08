@@ -740,7 +740,7 @@ const initializeMap = (
     /* The boundary layer */
     map.addSource('natural_resource_districts', {
       type: 'vector',
-      bounds: [-139.0613059,48.2248346,-114.0541485,60.0047826],
+      bounds: [-139.0613059, 48.2248346, -114.0541485, 60.0047826],
       maxzoom: 12,
       minzoom: 0,
       tiles: [
