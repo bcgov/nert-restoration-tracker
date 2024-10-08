@@ -245,7 +245,6 @@ const AppPiMgmtReportPage: React.FC = () => {
           </Link>
         </Breadcrumbs>
       </Box>
-
       <Box my={2}>
         <Stack direction="column">
           <Typography variant="h1">Personal Information (PI) Management Report</Typography>
@@ -261,7 +260,6 @@ const AppPiMgmtReportPage: React.FC = () => {
           </Stack>
         </Stack>
       </Box>
-
       <Card>
         <PiMgmtReportTable />
       </Card>

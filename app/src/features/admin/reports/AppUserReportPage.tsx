@@ -245,7 +245,6 @@ const AppUserReportPage: React.FC = () => {
           </Link>
         </Breadcrumbs>
       </Box>
-
       <Box my={2}>
         <Typography variant="h1">Users Report</Typography>
       </Box>

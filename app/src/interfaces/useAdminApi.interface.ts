@@ -137,4 +137,16 @@ export interface IGetCustomReportData {
   update_user_name: string;
   objective: string[];
   contacts: string[];
+  attachments: string[];
+  funding_sources: string[];
+  conservation_areas: string[];
+  mgmt_region_id: number;
+  spatial_type_name: string;
+  overlaps_conservation_area: string;
+  number_sites: number;
+  size_ha: number;
+  spatial_create_date: string;
+  authorizations: string[];
+  partnerships: string[];
+  species: string[];
 }
