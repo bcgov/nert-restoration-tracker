@@ -629,6 +629,7 @@ const initializeMap = (
     zoom: zoom,
     maxPitch: 65,
     hash: 'loc',
+    preserveDrawingBuffer: true,
     cooperativeGestures: centroids ? false : true,
     attributionControl: {
       compact: true,

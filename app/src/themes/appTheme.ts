@@ -175,7 +175,15 @@ const appTheme = createTheme(
           'header': {
             'print-color-adjust': 'exact !important',
             '-webkit-print-color-adjust': 'exact !important',
-            'background-color': 'rgba(0, 51, 102, 0.4) !important',
+            'background-color': 'rgba(0, 51, 102, 0.6) !important',
+            'border-color': 'rgba(0, 51, 102, 0.6) !important',
+            'border-width': '0px !important',
+            'border-style': 'none !important',
+            'border-radius': '20px !important',
+            'padding': '10px 5px !important',
+            'margin': '0 0 10px 0 !important',
+            'line-height': '0 !important',
+            'position': 'unset !important'
           },
           'header .main-nav-toolbar, footer': { // Hide the header and footer
             display: 'none !important',
@@ -183,12 +191,30 @@ const appTheme = createTheme(
           'button': { // Hide all buttons
             display: 'none !important'
           },
+          'header .MuiBox-root': {
+            border: 'none !important'
+          },
           '.MuiButton-root': { // Hide all buttons
             display: 'none !important'
           },
           '.MuiDrawer-root': { // Hide the drawer
             display: 'none !important'
-          }
+          },
+          'details.maplibregl-ctrl': {
+            background: 'none !important',
+          },
+          'details.maplibregl-ctrl > *': {
+            color: 'rgba(255, 255, 255, 1) !important',
+          },
+          'details.maplibregl-ctrl a': {
+            color: 'rgba(255, 255, 255, 1) !important',
+          },
+          'details.maplibregl-ctrl summary': {
+            display: 'none !important'
+          },
+          // '.maplibregl-canvas-container': { // Hide the map
+          //   display: 'none !important'
+          // }
         },
       },
     }
