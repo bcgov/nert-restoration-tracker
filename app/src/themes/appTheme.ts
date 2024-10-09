@@ -175,15 +175,15 @@ const appTheme = createTheme(
           // When printing
           header: {
             printColorAdjust: 'exact !important',
-            'WebkitPrintColorAdjust': 'exact !important',
-            'backgroundColor': 'rgba(0, 51, 102, 0.6) !important',
-            'borderColor': 'rgba(0, 51, 102, 0.6) !important',
-            'borderWidth': '0px !important',
-            'borderStyle': 'none !important',
-            'borderRadius': '20px !important',
+            WebkitPrintColorAdjust: 'exact !important',
+            backgroundColor: 'rgba(0, 51, 102, 0.6) !important',
+            borderColor: 'rgba(0, 51, 102, 0.6) !important',
+            borderWidth: '0px !important',
+            borderStyle: 'none !important',
+            borderRadius: '20px !important',
             padding: '10px 5px !important',
             margin: '0 0 10px 0 !important',
-            'lineHeight': '0 !important',
+            lineHeight: '0 !important',
             position: 'unset !important'
           },
           'header .main-nav-toolbar, footer': {

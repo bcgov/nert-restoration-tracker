@@ -220,8 +220,7 @@ const ViewProjectPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                onClick={showPrintProjectDialog}
-              >
+                onClick={showPrintProjectDialog}>
                 Print
               </Button>
             </Box>

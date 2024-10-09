@@ -216,8 +216,7 @@ const ViewPlanPage: React.FC = () => {
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                  onClick={showPrintPlanDialog}
-                >
+                  onClick={showPrintPlanDialog}>
                   Print
                 </Button>
               </Box>
