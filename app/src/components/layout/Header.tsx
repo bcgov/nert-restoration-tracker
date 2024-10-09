@@ -307,6 +307,7 @@ const Header: React.FC = () => {
 
         <Box borderBottom={'1px solid'} sx={pageStyles.mainNav}>
           <Toolbar
+            className="main-nav-toolbar"
             variant="dense"
             sx={pageStyles.mainNavToolbar}
             role="navigation"
