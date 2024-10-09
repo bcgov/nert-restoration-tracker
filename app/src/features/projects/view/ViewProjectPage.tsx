@@ -52,6 +52,13 @@ const pageStyles = {
 };
 
 /**
+ * Print the project page.
+ */
+const showPrintProjectDialog = () => {
+  window.print();
+};
+
+/**
  * Page to display a single Project.
  *
  * @return {*}
@@ -213,7 +220,7 @@ const ViewProjectPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                // onClick={showPrintProjectDialog}
+                onClick={showPrintProjectDialog}
               >
                 Print
               </Button>
