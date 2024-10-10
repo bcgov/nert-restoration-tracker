@@ -57,6 +57,13 @@ const pageStyles = {
 };
 
 /**
+ * Print the plan page.
+ */
+const showPrintPlanDialog = () => {
+  window.print();
+};
+
+/**
  * Page to display a single Plan.
  *
  * @return {*}
@@ -209,8 +216,7 @@ const ViewPlanPage: React.FC = () => {
                   variant="outlined"
                   color="primary"
                   startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                  // onClick={showPrintPlanDialog}
-                >
+                  onClick={showPrintPlanDialog}>
                   Print
                 </Button>
               </Box>
