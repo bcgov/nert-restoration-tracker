@@ -168,14 +168,94 @@ GET.apiDoc = {
                   description: 'Project objectives.',
                   type: 'array',
                   items: {
-                    type: 'string'
+                    type: 'string',
+                    nullable: true
                   }
                 },
                 contacts: {
                   description: 'Project or Plan contacts list.',
                   type: 'array',
                   items: {
-                    type: 'object'
+                    type: 'object',
+                    nullable: true
+                  }
+                },
+                attachments: {
+                  description: 'Project attachments and thumbnail.',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    nullable: true
+                  }
+                },
+                funding_sources: {
+                  description: 'Project funding sources.',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    nullable: true
+                  }
+                },
+                conservation_areas: {
+                  description: 'Project conservation areas.',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    nullable: true
+                  }
+                },
+                mgmt_region_id: {
+                  description: 'Management region object id.',
+                  type: 'number',
+                  nullable: true
+                },
+                spatial_type_name: {
+                  description: 'Spatial type, Boundary or Mask.',
+                  type: 'string',
+                  nullable: true
+                },
+                overlaps_conservation_area: {
+                  description: 'Is overlaping conservation areas.',
+                  type: 'string',
+                  nullable: true
+                },
+                number_sites: {
+                  description: 'Total number of sites.',
+                  type: 'number',
+                  nullable: true
+                },
+                size_ha: {
+                  description: 'Total area size in hectares of all sites.',
+                  type: 'number',
+                  nullable: true
+                },
+                spatial_create_date: {
+                  description: 'Spatial object creation time stamp.',
+                  type: 'string',
+                  nullable: true
+                },
+                authorizations: {
+                  description: 'Project authorizations details.',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    nullable: true
+                  }
+                },
+                partnerships: {
+                  description: 'Project partnerships details.',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    nullable: true
+                  }
+                },
+                species: {
+                  description: 'Project species details.',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    nullable: true
                   }
                 }
               }
