@@ -308,7 +308,7 @@ const SearchPage: React.FC = () => {
     position: 'absolute',
     top: '40px',
     left: sidebarOpen ? '360px' : '0px',
-    zIndex: 1000,
+    zIndex: 1000000,
     backgroundColor: 'white',
     transition: 'left 225ms cubic-bezier(0, 0, 0.2, 1)',
     ':hover': {
