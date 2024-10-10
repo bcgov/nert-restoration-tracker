@@ -612,6 +612,8 @@ const initializeMap = (
   editModeOn?: boolean,
   region?: string | null
 ) => {
+  console.log('initializeMap');
+
   const { boundary, orphanedWells, projects, plans, protectedAreas, seismic } = layerVisibility;
 
   const dormantWells = layerVisibility.dormantWells || [];
