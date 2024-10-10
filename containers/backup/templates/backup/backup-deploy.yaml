@@ -250,9 +250,6 @@ objects:
                   value: ${ENVIRONMENT_FRIENDLY_NAME}
                 - name: ENVIRONMENT_NAME
                   value: ${ENVIRONMENT_NAME}
-                - name: PGDUTY_SVC_KEY
-                  required: false
-                  value: ""
               resources:
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -314,7 +311,7 @@ parameters:
     displayName: Database Name
     description: Used for backward compatibility only. Not needed when using the recommended 'backup.conf' configuration.  The name of the database.
     required: false
-    value: restoration-tracker
+    value: restoration_tracker
   - name: MONGODB_AUTHENTICATION_DATABASE
     displayName: MongoDB Authentication Database
     description: This is only required if you are backing up mongo database with a separate authentication database.
@@ -383,7 +380,7 @@ parameters:
     displayName: Webhook URL Hostname
     description: Webhook URL Hostname.  The backup-deploy.overrides.sh will parse this from the supplied WEBHOOK_URL, and fetch it from a secret for updates.
     required: false
-    value:
+    value: ""
   - name: ENVIRONMENT_FRIENDLY_NAME
     displayName: Friendly Environment Name
     description: The human readable name of the environment.  This variable is used by the webhook integration to identify the environment in which the backup notifications originate.
@@ -408,17 +405,17 @@ parameters:
     displayName: Number of Daily Backups to Retain
     description: The number of daily backup files to be retained.  Used for the `rolling` backup strategy.
     required: false
-    value: ""
+    value: "1"
   - name: WEEKLY_BACKUPS
     displayName: Number of Weekly Backups to Retain
     description: The number of weekly backup files to be retained.  Used for the `rolling` backup strategy.
     required: false
-    value: ""
+    value: "1"
   - name: MONTHLY_BACKUPS
     displayName: Number of Monthly Backups to Retain
     description: The number of monthly backup files to be retained.  Used for the `rolling` backup strategy.
     required: false
-    value: ""
+    value: "1"
   - name: BACKUP_PERIOD
     displayName: Period (d,m,s) between backups in a format used by the sleep command
     description: Used for backward compatibility only.  Ignored when using the recommended `backup.conf` and cron backup strategy.  Period (d,m,s) between backups in a format used by the sleep command

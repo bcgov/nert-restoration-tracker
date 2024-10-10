@@ -6,6 +6,7 @@ import { authorizeRequestHandler } from '../../request-handlers/security/authori
 import { ProjectService } from '../../services/project-service';
 import { ProjectSearchCriteria, SearchService } from '../../services/search-service';
 import { getLogger } from '../../utils/logger';
+import { maskGateKeeper } from '../../utils/spatial-utils';
 
 const defaultLog = getLogger('paths/projects/list');
 
@@ -573,6 +574,15 @@ export function getProjectsPlansList(): RequestHandler {
 
       // Get all projects data for the projectIds
       const projects = await projectService.getProjectsByIds(projectIds);
+
+      // Mask private geometries
+      projects.forEach((project) => {
+        if (!project.location?.geometry) return; // Skip if no geometry
+        const maskFilter = project.location.geometry?.map((feature) => {
+          return maskGateKeeper(feature);
+        });
+        project.location.geometry = maskFilter;
+      });
 
       await connection.commit();
 

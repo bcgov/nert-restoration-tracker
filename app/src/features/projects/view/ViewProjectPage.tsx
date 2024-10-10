@@ -52,6 +52,13 @@ const pageStyles = {
 };
 
 /**
+ * Print the project page.
+ */
+const showPrintProjectDialog = () => {
+  window.print();
+};
+
+/**
  * Page to display a single Project.
  *
  * @return {*}
@@ -200,6 +207,7 @@ const ViewProjectPage: React.FC = () => {
                 Team
               </Button>
               <Button
+                data-testid="edit_project_button"
                 aria-label="edit project"
                 variant="outlined"
                 color="primary"
@@ -212,8 +220,7 @@ const ViewProjectPage: React.FC = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<Icon path={mdiFilePdfBox} size={1} />}
-                // onClick={showPrintProjectDialog}
-              >
+                onClick={showPrintProjectDialog}>
                 Print
               </Button>
             </Box>

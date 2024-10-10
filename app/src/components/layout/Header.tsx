@@ -307,6 +307,7 @@ const Header: React.FC = () => {
 
         <Box borderBottom={'1px solid'} sx={pageStyles.mainNav}>
           <Toolbar
+            className="main-nav-toolbar"
             variant="dense"
             sx={pageStyles.mainNavToolbar}
             role="navigation"
@@ -366,6 +367,11 @@ const Header: React.FC = () => {
                 validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
                 <Link to="/admin/reports" id="menu_admin_reports" data-testid="generate_reports">
                   Reports
+                </Link>
+              </SystemRoleGuard>
+              <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
+                <Link to="/admin/codes" id="menu_admin_codes" data-testid="edit_codes">
+                  Codes
                 </Link>
               </SystemRoleGuard>
             </SystemRoleGuard>

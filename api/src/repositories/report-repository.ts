@@ -1,5 +1,5 @@
 import SQL from 'sql-template-strings';
-import { IGetAppUserReport, IGetReport } from '../interfaces/reports.interface';
+import { IGetAppUserReport, IGetCustomReport, IGetPIMgmtReport, IGetReport } from '../interfaces/reports.interface';
 import { getLogger } from '../utils/logger';
 import { BaseRepository } from './base-repository';
 
@@ -188,6 +188,171 @@ export class ReportRepository extends BaseRepository {
       return response.rows;
     } catch (error) {
       defaultLog.debug({ label: 'getAppUserReportData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get a app PI report.
+   *
+   * @return {*}  {Promise<IGetPIMgmtReport>}
+   * @memberof ReportRepository
+   */
+  async getPIMgmtReportData(startDate: string, endDate: string): Promise<IGetPIMgmtReport[]> {
+    defaultLog.debug({ label: 'getPIMgmtReportData', message: 'params', startDate, endDate });
+
+    try {
+      const sqlStatement = SQL`
+        SELECT
+          su.user_identifier AS user_name,
+          al.create_date AS date,
+          al.operation,
+          al.after_value -> 'project_id' AS project_id,
+          al.after_value -> 'is_project' AS is_project,
+          prj.name AS project_name,
+          al.after_value -> 'file_name' AS file_name,
+          al.after_value -> 'file_type' AS file_type
+        FROM audit_log al
+        LEFT JOIN system_user su ON al.system_user_id = su.system_user_id
+        LEFT JOIN project prj ON (al.after_value -> 'project_id')::TEXT::int = prj.project_id
+        WHERE
+          al.create_date >= DATE(${startDate}) AND 
+          al.create_date <= DATE(${endDate}) AND 
+          al.operation IN ('INSERT', 'UPDATE') AND
+          al.table_name IN ('restoration.project_attachment', 'restoration.project')
+        GROUP BY
+          prj.name,
+          su.user_identifier,
+          al.audit_log_id,
+          al.create_date,
+          al.operation
+        ORDER BY al.audit_log_id DESC;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getPIMgmtReportData', message: 'error', error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get a app Custom report.
+   *
+   * @return {*}  {Promise<IGetCustomReport>}
+   * @memberof ReportRepository
+   */
+  async getCustomReportData(startDate: string, endDate: string): Promise<IGetCustomReport[]> {
+    defaultLog.debug({ label: 'getCustomReportData', message: 'params', startDate, endDate });
+
+    try {
+      const sqlStatement = SQL`
+        SELECT 
+          prj.project_id AS id,
+          prj.is_project,
+          prj.name,
+          prj.brief_desc,
+          prj.start_date,
+          prj.end_date,
+          prj.actual_start_date,
+          prj.actual_end_date,
+          prj.state_code,
+          prj.people_involved,
+          prj.is_healing_land,
+          prj.is_healing_people,
+          prj.is_land_initiative,
+          prj.is_cultural_initiative,
+          prj.is_project_part_public_plan,
+          prj.create_date,
+          su.user_identifier AS create_user_name,
+          prj.update_date,
+          su.user_identifier AS update_user_name,
+          array_remove(array_agg(DISTINCT obj.objective), NULL) AS objective,
+          COALESCE(jsonb_agg(DISTINCT t1), NULL) AS contacts,
+          COALESCE(jsonb_agg(DISTINCT t2), NULL) AS attachments,
+          COALESCE(jsonb_agg(DISTINCT t3), NULL) AS funding_sources,
+          COALESCE(jsonb_agg(DISTINCT t4), NULL) AS conservation_areas,
+          nrm.objectid AS mgmt_region_id,
+          sc.name AS spatial_type_name,
+          sc.is_within_overlapping AS overlaps_conservation_area,
+          sc.number_sites,
+          sc.size_ha,
+          sc.create_date AS spatial_create_date,
+          COALESCE(jsonb_agg(DISTINCT t5), NULL) AS authorizations,
+	        COALESCE(jsonb_agg(DISTINCT t6), NULL) AS partnerships,
+	        COALESCE(jsonb_agg(DISTINCT t7), NULL) AS species
+        FROM project prj
+        LEFT JOIN objective obj ON prj.project_id = obj.project_id
+        LEFT JOIN system_user su ON prj.create_user = su.system_user_id
+        LEFT JOIN 
+          (SELECT pc.project_id, pc.first_name, pc.last_name, pc.organization, pc.email_address, pc.is_primary, pc.is_public, pc.is_first_nation, pc.phone_number
+          FROM project_contact pc) t1
+          ON prj.project_id = t1.project_id
+        LEFT JOIN 
+          (SELECT pat.project_id, pat.file_type, pat.file_name, pat.create_date
+          FROM project_attachment pat) t2
+          ON prj.project_id = t2.project_id
+        LEFT JOIN 
+          (SELECT fs.project_id, fs.organization_name AS organization, fs.funding_project_id AS funding_id, fs.funding_amount AS amount, fs.funding_start_date AS start_date, fs.funding_end_date AS end_date, fs.description, fs.is_public, fs.create_date
+          FROM project_funding_source fs) t3
+          ON prj.project_id = t3.project_id
+        LEFT JOIN 
+          (SELECT ca.project_id, ca.conservation_area AS name, ca.is_public, ca.create_date
+          FROM conservation_area ca) t4
+          ON prj.project_id = t4.project_id
+        LEFT JOIN nrm_region nrm ON prj.project_id = nrm.project_id
+        LEFT JOIN project_spatial_component sc ON prj.project_id = sc.project_id
+        LEFT JOIN 
+          (SELECT ah.project_id, ah.type, ah.number AS reference, ah.description, ah.create_date
+          FROM permit ah) t5
+          ON prj.project_id = t5.project_id
+        LEFT JOIN 
+          (SELECT pp.project_id, ppa.name AS partnership_type_name, ppb.name AS partnership_name, ppc.name AS first_nations_name, pp.name, pp.create_date
+          FROM project_partnership pp 
+          LEFT JOIN partnership_type ppa ON pp.partnership_type_id = ppa.partnership_type_id
+          LEFT JOIN partnerships ppb ON pp.partnerships_id = ppb.partnerships_id
+          LEFT JOIN first_nations ppc ON pp.first_nations_id = ppc.first_nations_id) t6
+          ON prj.project_id = t6.project_id
+        LEFT JOIN 
+          (SELECT ps.project_id, ps.itis_tsn, ps.create_date
+          FROM project_species ps) t7
+          ON prj.project_id = t7.project_id
+        WHERE
+          prj.create_date >= DATE(${startDate}) AND 
+          prj.create_date <= DATE(${endDate})
+        GROUP BY
+          prj.project_id,
+          prj.is_project,
+          prj.name,
+          prj.brief_desc,
+          prj.start_date,
+          prj.end_date,
+          prj.actual_start_date,
+          prj.actual_end_date,
+          prj.state_code,
+          prj.people_involved,
+          prj.is_healing_land,
+          prj.is_healing_people,
+          prj.is_land_initiative,
+          prj.is_cultural_initiative,
+          prj.is_project_part_public_plan,
+          prj.create_date,
+          prj.update_date,
+          su.user_identifier,
+          nrm.objectid,
+          sc.name,
+          sc.is_within_overlapping,
+          sc.number_sites,
+          sc.size_ha,
+          sc.create_date
+        ORDER BY prj.project_id ASC;
+      `;
+
+      const response = await this.connection.sql(sqlStatement);
+      return response.rows;
+    } catch (error) {
+      defaultLog.debug({ label: 'getCustomReportData', message: 'error', error });
       throw error;
     }
   }

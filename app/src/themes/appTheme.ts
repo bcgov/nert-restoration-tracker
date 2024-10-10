@@ -169,6 +169,60 @@ const appTheme = createTheme(
           minWidth: '100px !important',
           fontWeight: 700
         }
+      },
+      MuiCssBaseline: {
+        '@media print': {
+          // When printing
+          header: {
+            printColorAdjust: 'exact !important',
+            WebkitPrintColorAdjust: 'exact !important',
+            backgroundColor: 'rgba(0, 51, 102, 0.6) !important',
+            borderColor: 'rgba(0, 51, 102, 0.6) !important',
+            borderWidth: '0px !important',
+            borderStyle: 'none !important',
+            borderRadius: '20px !important',
+            padding: '10px 5px !important',
+            margin: '0 0 10px 0 !important',
+            lineHeight: '0 !important',
+            position: 'unset !important'
+          },
+          'header .main-nav-toolbar, footer': {
+            // Hide the header and footer
+            display: 'none !important'
+          },
+          button: {
+            // Hide all buttons
+            display: 'none !important'
+          },
+          '.MuiButton-root': {
+            // Hide all buttons
+            display: 'none !important'
+          },
+          '.MuiDrawer-root': {
+            // Hide the drawer
+            display: 'none !important'
+          },
+          'header .MuiBox-root': {
+            // annoying little line
+            border: 'none !important'
+          },
+          // Style the map attribution
+          'details.maplibregl-ctrl': {
+            background: 'none !important'
+          },
+          'details.maplibregl-ctrl > *': {
+            color: 'rgba(255, 255, 255, 1) !important'
+          },
+          'details.maplibregl-ctrl a': {
+            color: 'rgba(255, 255, 255, 1) !important'
+          },
+          'details.maplibregl-ctrl summary': {
+            display: 'none !important'
+          },
+          '.MuiGrid-item:has(> div.MuiCard-root)': {
+            maxWidth: '150px !important'
+          }
+        }
       }
     }
   })

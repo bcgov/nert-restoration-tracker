@@ -342,7 +342,7 @@ const EditProjectPage: React.FC = () => {
       <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
         <Box mb={3} ml={1}>
           <Box mb={0.5} mt={0.9}>
-            <Typography variant="h1">
+            <Typography variant="h1" data-testid="edit_project_header">
               <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Plan" /> Edit Restoration
               Project
             </Typography>

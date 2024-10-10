@@ -629,6 +629,7 @@ const initializeMap = (
     zoom: zoom,
     maxPitch: 65,
     hash: 'loc',
+    preserveDrawingBuffer: false,
     cooperativeGestures: centroids ? false : true,
     attributionControl: {
       compact: true,
@@ -739,6 +740,9 @@ const initializeMap = (
     /* The boundary layer */
     map.addSource('natural_resource_districts', {
       type: 'vector',
+      bounds: [-139.0613059, 48.2248346, -114.0541485, 60.0047826],
+      maxzoom: 12,
+      minzoom: 0,
       tiles: [
         'https://nrs.objectstore.gov.bc.ca/nerdel/tiles/natural_resource_districts/{z}/{x}/{y}.pbf'
       ]
@@ -1053,6 +1057,7 @@ const initializeMap = (
           size_ha={sizeHa}
           state_code={stateCode}
           thumbnail={thumbnail}
+          maskDisclaimer={true}
         />
       );
 
@@ -1100,6 +1105,7 @@ const initializeMap = (
           size_ha={sizeHa}
           state_code={stateCode}
           thumbnail={thumbnail}
+          maskDisclaimer={true}
         />
       );
 

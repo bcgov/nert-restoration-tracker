@@ -444,12 +444,16 @@ export class ProjectRepository extends BaseRepository {
     isUserAdmin: boolean,
     systemUserId?: number
   ): Promise<{ id: number; name: string; is_project: boolean; geometry: any }[]> {
+    defaultLog.debug({ label: 'getSpatialSearch', message: 'params', isUserAdmin, systemUserId });
     try {
       const sqlStatement = SQL`
         SELECT
           p.project_id as id,
           p.name,
           p.is_project,
+          p.state_code,
+          psc.number_sites,
+          psc.size_ha,
           public.ST_asGeoJSON(psc.geography) as geometry
         FROM
           project p
@@ -463,22 +467,12 @@ export class ProjectRepository extends BaseRepository {
           psc.project_spatial_component_type_id = psct.project_spatial_component_type_id
         WHERE
           psct.name = 'Boundary'
+        AND 
+          psc.geography IS NOT NULL
+          ;
         `;
 
-      if (!isUserAdmin) {
-        sqlStatement.append(SQL` and p.create_user = ${systemUserId};`);
-      } else {
-        sqlStatement.append(SQL`;`);
-      }
-
       const response = await this.connection.sql(sqlStatement);
-
-      if (!response.rowCount) {
-        throw new ApiExecuteSQLError('Failed to get spatial search results', [
-          'ProjectRepository->getSpatialSearch',
-          'rowCount was null or undefined, expected rowCount > 0'
-        ]);
-      }
 
       return response && response.rows;
     } catch (error) {
