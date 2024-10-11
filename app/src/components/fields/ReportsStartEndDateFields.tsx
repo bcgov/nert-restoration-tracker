@@ -5,7 +5,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateValidationError } from '@mui/x-date-pickers/models';
-import { DATE_FORMAT, DATE_LIMIT } from 'constants/dateTimeFormats';
+import { DATE_FORMAT } from 'constants/dateTimeFormats';
 import { default as dayjs } from 'dayjs';
 import React, { useMemo } from 'react';
 
@@ -84,7 +84,7 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
             label="Start Date"
             format={DATE_FORMAT.ShortDateFormat}
             minDate={dayjs('2024-09-01')}
-            maxDate={dayjs(DATE_LIMIT.max)}
+            maxDate={dayjs()}
             value={formattedStartDateValue}
             onChange={(value) => {
               if (!value || String(value) === 'Invalid Date') {
@@ -123,7 +123,7 @@ const ReportsStartEndDateFields: React.FC<IReportsStartEndDateFieldsProps> = (pr
             label="End Date"
             format={DATE_FORMAT.ShortDateFormat}
             minDate={dayjs(startDate)}
-            maxDate={dayjs(DATE_LIMIT.max)}
+            maxDate={dayjs()}
             value={formattedEndDateValue}
             onChange={(value: dayjs.Dayjs | null) => {
               if (!value || String(value) === 'Invalid Date') {
