@@ -90,8 +90,11 @@ const AppPiMgmtReportPage: React.FC = () => {
     return rowsPiMgmtReport;
   }
 
+  const startDateTime = dayjs(startDate).startOf('day').toISOString();
+  const endDateTime = dayjs(endDate).endOf('day').toISOString();
+
   const getPiMgmtReportData = async () => {
-    const data = await restorationTrackerApi.admin.getPiMgmtReport(startDate, endDate);
+    const data = await restorationTrackerApi.admin.getPiMgmtReport(startDateTime, endDateTime);
     setIsLoading(false);
     setPiMgmtReportData(mapToTableData(data));
   };

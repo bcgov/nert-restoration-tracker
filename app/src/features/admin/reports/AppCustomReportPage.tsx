@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { CustomReportI18N } from 'constants/i18n';
 import { IGetCustomReportData } from 'interfaces/useAdminApi.interface';
 import { csvDownload } from 'utils/cvsUtils';
+import dayjs from 'dayjs';
 
 const pageStyles = {
   breadCrumbLink: {
@@ -40,8 +41,11 @@ const AppCustomReportPage: React.FC = () => {
   const location = useLocation();
   const { startDate, endDate } = location.state;
 
+  const startDateTime = dayjs(startDate).startOf('day').toISOString();
+  const endDateTime = dayjs(endDate).endOf('day').toISOString();
+
   const getCustomReportData = async () => {
-    const data = await restorationTrackerApi.admin.getCustomReport(startDate, endDate);
+    const data = await restorationTrackerApi.admin.getCustomReport(startDateTime, endDateTime);
     setIsLoading(false);
     setCustomReportData(data);
   };
