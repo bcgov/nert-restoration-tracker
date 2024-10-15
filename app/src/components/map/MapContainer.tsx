@@ -566,6 +566,8 @@ const checkFeatureState = (featureState: any) => {
 };
 
 const checkBoundaryState = (boundaryState: any) => {
+  // TODO: This is not working in the editing views
+  console.log('Checking boundary state', boundaryState);
   if (!map.getLayer('region_boundary')) return;
 
   const boundaries = Object.keys(boundaryState);
@@ -629,6 +631,8 @@ const initializeMap = (
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
+  console.log('Initializing map', map);
+
   map = new Map({
     container: mapId,
     style: '/styles/hybrid.json',
@@ -657,6 +661,9 @@ const initializeMap = (
    * Load all custom layers here
    */
   map.on('load', async () => {
+
+    console.log('map loaded');
+
     /* Avoid double renders */
     if (!map.getSource('maptiler.raster-dem')) {
       /* The base layer */
@@ -1433,7 +1440,12 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
       region,
       setMapIdle
     );
-  }, [region]);
+  }, []);
+
+  // TOOD: I had to remove the region from the dependency array because it was causing duplicate map loads
+  // useEffect(() => {
+  //   updateRegions(map, layerVisibility.region);
+  // }, [layerVisibility.region]);
 
   // Listen to layer changes
   useEffect(() => {
