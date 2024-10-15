@@ -174,16 +174,16 @@ const appTheme = createTheme(
         '@media print': {
           // When printing
           header: {
-            'print-color-adjust': 'exact !important',
-            '-webkit-print-color-adjust': 'exact !important',
-            'background-color': 'rgba(0, 51, 102, 0.6) !important',
-            'border-color': 'rgba(0, 51, 102, 0.6) !important',
-            'border-width': '0px !important',
-            'border-style': 'none !important',
-            'border-radius': '20px !important',
+            printColorAdjust: 'exact !important',
+            WebkitPrintColorAdjust: 'exact !important',
+            backgroundColor: 'rgba(0, 51, 102, 0.6) !important',
+            borderColor: 'rgba(0, 51, 102, 0.6) !important',
+            borderWidth: '0px !important',
+            borderStyle: 'none !important',
+            borderRadius: '20px !important',
             padding: '10px 5px !important',
             margin: '0 0 10px 0 !important',
-            'line-height': '0 !important',
+            lineHeight: '0 !important',
             position: 'unset !important'
           },
           'header .main-nav-toolbar, footer': {
