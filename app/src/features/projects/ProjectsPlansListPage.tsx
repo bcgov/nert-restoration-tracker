@@ -8,7 +8,7 @@ import Projects from './Projects';
  */
 const ProjectsPlansListPage: React.FC = () => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" role="main" aria-label="Projects and Plans List">
       <Projects />
       <Plans />
     </Container>

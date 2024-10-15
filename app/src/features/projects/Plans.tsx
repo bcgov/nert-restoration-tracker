@@ -160,12 +160,23 @@ export default function Plans() {
   }, [isLoading, location.search, formikValues, collectFilterParams]);
 
   if (!codes.isReady || !codes.data) {
-    return <CircularProgress data-testid="plans-loading" className="pageProgress" size={40} />;
+    return (
+      <CircularProgress
+        data-testid="plans-loading"
+        className="pageProgress"
+        size={40}
+        role="status"
+        aria-label="Loading plans"
+      />
+    );
   }
 
   return (
-    <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+    <Card
+      sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}
+      role="region"
+      aria-labelledby="plans-list-header">
+      <Box display="flex" alignItems="center" justifyContent="space-between" id="plans-list-header">
         <Typography ml={1} variant="h1">
           <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> Plans
         </Typography>
@@ -175,7 +186,7 @@ export default function Plans() {
             variant="outlined"
             disableElevation
             data-testid="hide-plans-list-button"
-            aria-label={'hide plans'}
+            aria-label={isExpanded ? 'Collapse plans' : 'Expand plans'}
             startIcon={
               <Icon
                 path={isExpanded ? mdiArrowCollapseVertical : mdiArrowExpandVertical}

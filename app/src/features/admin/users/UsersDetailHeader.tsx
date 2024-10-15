@@ -15,7 +15,7 @@ import { IYesNoDialogProps } from '../../../components/dialog/YesNoDialog';
 import { SystemUserI18N } from '../../../constants/i18n';
 import { DialogContext } from '../../../contexts/dialogContext';
 import { APIError } from '../../../hooks/api/useAxios';
-import { IGetUserResponse } from '../../../interfaces/useUserApi.interface';
+import { ISystemUser } from '../../../interfaces/useUserApi.interface';
 
 const pageStyles = {
   breadCrumbLink: {
@@ -42,7 +42,7 @@ const pageStyles = {
 };
 
 export interface IUsersHeaderProps {
-  userDetails: IGetUserResponse;
+  userDetails: ISystemUser;
 }
 
 const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
@@ -80,7 +80,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
     [defaultErrorDialogProps, dialogContext]
   );
 
-  const deActivateSystemUser = async (user: IGetUserResponse) => {
+  const deActivateSystemUser = async (user: ISystemUser) => {
     if (!user?.id) {
       return;
     }
@@ -111,7 +111,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
   return (
     <>
       <Box pb={2}>
-        <Breadcrumbs>
+        <Breadcrumbs aria-label="breadcrumb">
           <Link
             color="primary"
             onClick={() => history('/admin/users')}
@@ -135,7 +135,10 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
               data-testid="user-role-chip"
               sx={pageStyles.roleChip}
               size="small"
-              label={userDetails.role_names[0] || 'Unassigned'}></Chip>
+              label={userDetails.role_names[0] || 'Unassigned'}
+              role="status"
+              aria-live="polite"
+            />
           </Box>
         </Box>
         <Box ml={2}>
@@ -146,7 +149,9 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
                 color="primary"
                 variant="outlined"
                 sx={pageStyles.actionButton}
-                startIcon={<Icon path={mdiTrashCanOutline} size={0.875} />}
+                startIcon={
+                  <Icon path={mdiTrashCanOutline} size={0.875} aria-label="Remove User Icon" />
+                }
                 data-testid={'remove-user-button'}
                 onClick={() =>
                   openYesNoDialog({

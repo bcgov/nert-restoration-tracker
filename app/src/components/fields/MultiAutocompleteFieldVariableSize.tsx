@@ -281,7 +281,12 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
         { selected }: any
       ) => {
         return (
-          <Box component="li" {...renderProps} key={renderOption.value}>
+          <Box
+            component="li"
+            {...renderProps}
+            key={renderOption.value}
+            role="option"
+            aria-selected={selected}>
             <Checkbox
               icon={<CheckBoxOutlineBlank fontSize="small" />}
               checkedIcon={<CheckBox fontSize="small" />}
@@ -290,6 +295,7 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
               disabled={props.options?.includes(renderOption) || false}
               value={renderOption.value}
               color="default"
+              aria-label={renderOption.label}
             />
             {renderOption.label}
           </Box>
@@ -306,6 +312,8 @@ const MultiAutocompleteFieldVariableSize: React.FC<IMultiAutocompleteField> = (p
           placeholder="Type to start searching"
           error={get(touched, props.id) && Boolean(get(errors, props.id))}
           helperText={get(touched, props.id) && get(errors, props.id)}
+          aria-label={props.label}
+          aria-invalid={get(touched, props.id) && Boolean(get(errors, props.id))}
         />
       )}
     />

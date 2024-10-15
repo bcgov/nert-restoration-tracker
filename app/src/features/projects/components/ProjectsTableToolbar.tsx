@@ -25,9 +25,16 @@ function ProjectsTableToolbar(props: ProjectTableToolbarProps) {
           bgcolor: (theme) =>
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
         })
-      }}>
+      }}
+      role="toolbar"
+      aria-labelledby="tableTitle">
       {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+          aria-live="polite">
           {numSelected} {numSelected !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}{' '}
           {TableI18N.selectedToExport}
         </Typography>
@@ -36,7 +43,8 @@ function ProjectsTableToolbar(props: ProjectTableToolbarProps) {
           sx={{ mx: '0.5rem', flex: '1 1 100%' }}
           variant="h2"
           id="tableTitle"
-          component="div">
+          component="div"
+          aria-live="polite">
           {TableI18N.found} {numRows}{' '}
           {numRows !== 1 ? ProjectTableI18N.projects : ProjectTableI18N.project}
         </Typography>
