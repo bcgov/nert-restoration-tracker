@@ -566,8 +566,6 @@ const checkFeatureState = (featureState: any) => {
 };
 
 const checkBoundaryState = (boundaryState: any) => {
-  // TODO: This is not working in the editing views
-  console.log('Checking boundary state', boundaryState);
   if (!map.getLayer('region_boundary')) return;
 
   const boundaries = Object.keys(boundaryState);
@@ -577,6 +575,13 @@ const checkBoundaryState = (boundaryState: any) => {
     ...visibleBoundaries.map((boundary: any) => ['==', 'REGION_NAME', boundary])
   ];
   map.setFilter('region_boundary', filter as any);
+};
+
+// Gets a single region name and sets the filter
+const selectOneRegion = (regionState: any) => {
+  if (!map.getLayer('region_boundary')) return;
+
+  map.setFilter('region_boundary', ['==', 'REGION_NAME', regionState] as any);
 };
 
 const checkOrphanedWellsState = (orphanedWellsState: any) => {
@@ -631,8 +636,6 @@ const initializeMap = (
 
   const markerGeoJSON = centroids ? convertToCentroidGeoJSON(features) : convertToGeoJSON(features);
 
-  console.log('Initializing map', map);
-
   map = new Map({
     container: mapId,
     style: '/styles/hybrid.json',
@@ -661,8 +664,6 @@ const initializeMap = (
    * Load all custom layers here
    */
   map.on('load', async () => {
-
-    console.log('map loaded');
 
     /* Avoid double renders */
     if (!map.getSource('maptiler.raster-dem')) {
@@ -1470,6 +1471,11 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     checkBoundaryState(filterState.boundary);
   }, [filterState.boundary]);
+
+  // If region is selected in the form, update the boundary state
+  useEffect(() => {
+    if (props.region) selectOneRegion(props.region);
+  }, [props.region]);
 
   useEffect(() => {
     // test
