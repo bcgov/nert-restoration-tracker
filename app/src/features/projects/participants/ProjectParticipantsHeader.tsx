@@ -87,10 +87,15 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
       <Container maxWidth="xl">
         <Box pb={3}>
           <Breadcrumbs aria-label="breadcrumb">
-            <Link color="primary" onClick={() => history('/admin/projects')} aria-current="page">
+            <Link
+              component="button"
+              color="primary"
+              onClick={() => history('/admin/projects')}
+              aria-current="page">
               <Typography variant="body2">Projects</Typography>
             </Link>
             <Link
+              component="button"
               color="primary"
               onClick={() => history(`/admin/projects/${urlParams['id']}/details`)}
               aria-current="page">

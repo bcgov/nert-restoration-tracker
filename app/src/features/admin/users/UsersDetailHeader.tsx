@@ -113,6 +113,7 @@ const UsersDetailHeader: React.FC<IUsersHeaderProps> = (props) => {
       <Box pb={2}>
         <Breadcrumbs aria-label="breadcrumb">
           <Link
+            component="button"
             color="primary"
             onClick={() => history('/admin/users')}
             aria-current="page"

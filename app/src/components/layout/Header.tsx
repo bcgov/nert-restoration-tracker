@@ -291,7 +291,7 @@ const Header: React.FC = () => {
             <IconButton
               aria-controls="simple-menu"
               aria-haspopup="true"
-              aria-label="need help"
+              aria-label="faq and help"
               sx={pageStyles.govHeaderIconButton}
               onClick={handleClick}
               size="large"
