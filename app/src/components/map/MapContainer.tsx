@@ -579,9 +579,13 @@ const checkBoundaryState = (boundaryState: any) => {
 
 // Gets a single region name and sets the filter
 const selectOneRegion = (regionState: any) => {
-  if (!map.getLayer('region_boundary')) return;
-
-  map.setFilter('region_boundary', ['==', 'REGION_NAME', regionState] as any);
+  if (map.getLayer('region_boundary')) {
+    map.setFilter('region_boundary', ['==', 'REGION_NAME', regionState] as any);
+  } else {
+    map.once('idle', () => {
+      map.setFilter('region_boundary', ['==', 'REGION_NAME', regionState] as any);
+    });
+  }
 };
 
 const checkOrphanedWellsState = (orphanedWellsState: any) => {
@@ -1220,6 +1224,8 @@ const initializeMap = (
     drawWells(map, orphanedWells, dormantWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
+    // I think this whole thing should wait until the map is idle
+    // TODO: This is where the problem is
     if (bounds) {
       map.fitBounds(bounds, { padding: 50 });
       map.once('idle', () => {
