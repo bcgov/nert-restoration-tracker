@@ -86,11 +86,16 @@ const PlanParticipantsHeader: React.FC<IPlanParticipantsHeaderProps> = (props) =
     <>
       <Container maxWidth="xl">
         <Box pb={3}>
-          <Breadcrumbs>
-            <Link color="primary" onClick={() => history('/admin/plans')} aria-current="page">
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link
+              component="button"
+              color="primary"
+              onClick={() => history('/admin/plans')}
+              aria-current="page">
               <Typography variant="body2">Plans</Typography>
             </Link>
             <Link
+              component="button"
               color="primary"
               onClick={() => history(`/admin/plans/${props.planWithDetails.project.project_id}`)}
               aria-current="page">
