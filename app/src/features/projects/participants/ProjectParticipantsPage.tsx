@@ -197,6 +197,7 @@ const ProjectParticipantsPage: React.FC = () => {
                   <IconButton
                     title="Remove Team Member"
                     data-testid={'remove-project-participant-button'}
+                    aria-label="Remove Team Member"
                     onClick={() =>
                       openYesNoDialog({
                         dialogTitle: ProjectParticipantsI18N.removeParticipantTitle,
@@ -246,7 +247,7 @@ const ProjectParticipantsPage: React.FC = () => {
   };
 
   if (!codes.isReady || !codes.data || !projectParticipants || !projectWithDetails) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return <CircularProgress className="pageProgress" size={40} aria-label="Loading" />;
   }
 
   return (
@@ -266,7 +267,7 @@ const ProjectParticipantsPage: React.FC = () => {
               </Typography>
             </Toolbar>
 
-            <Table sx={pageStyles.teamMembersTable}>
+            <Table sx={pageStyles.teamMembersTable} aria-label="Team Members Table">
               <TableHead>
                 <TableRow>
                   <TableCell>Username</TableCell>
@@ -392,7 +393,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
     <CustomMenuButton
       buttonLabel={currentProjectRoleName}
       buttonTitle={'Change Project Role'}
-      buttonProps={{ variant: 'text' }}
+      buttonProps={{ variant: 'text', 'aria-label': 'Change Project Role' }}
       menuItems={projectRoleCodes.map((roleCode) => {
         return {
           menuLabel: roleCode.name,

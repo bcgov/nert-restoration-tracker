@@ -25,14 +25,21 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
   const getRegionName = (regionNumber: number) => {
     const codeValue = props.codes.regions.find((code) => code.id === regionNumber);
     return (
-      <Typography variant="body2" component="dd" data-testid="project-region">
+      <Typography
+        variant="body2"
+        component="dd"
+        data-testid="project-region"
+        aria-label={`Region: ${codeValue?.name}`}>
         {codeValue?.name}
       </Typography>
     );
   };
 
   return (
-    <Box data-testid="general_info_component">
+    <Box data-testid="general_info_component" role="region" aria-labelledby="general_info_header">
+      <Typography variant="h6" id="general_info_header" sx={{ display: 'none' }}>
+        General Information
+      </Typography>
       <Box>
         <Typography variant="body2" component="dt" color="textSecondary">
           Region:
@@ -43,14 +50,14 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
       <Typography variant="body2" component="dt" color="textSecondary">
         Brief Description:
       </Typography>
-      <Typography variant="body2" component="dd">
+      <Typography variant="body2" component="dd" aria-label="Brief Description">
         {project.brief_desc}
       </Typography>
 
       <Typography variant="body2" component="dt" color="textSecondary">
         Start Date:
       </Typography>
-      <Typography variant="body2" component="dd">
+      <Typography variant="body2" component="dd" aria-label="Start Date">
         {project.start_date
           ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.start_date)
           : '---'}
@@ -59,7 +66,7 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
       <Typography variant="body2" component="dt" color="textSecondary">
         End Date:
       </Typography>
-      <Typography variant="body2" component="dd">
+      <Typography variant="body2" component="dd" aria-label="End Date">
         {project.end_date
           ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.end_date)
           : '---'}
@@ -68,7 +75,7 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
       <Typography variant="body2" component="dt" color="textSecondary">
         Actual Start Date:
       </Typography>
-      <Typography variant="body2" component="dd">
+      <Typography variant="body2" component="dd" aria-label="Actual Start Date">
         {project.actual_start_date
           ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.actual_start_date)
           : '---'}
@@ -77,7 +84,7 @@ const GeneralInformation: React.FC<IProjectGeneralInformationProps> = (props) =>
       <Typography variant="body2" component="dt" color="textSecondary">
         Actual End Date:
       </Typography>
-      <Typography variant="body2" component="dd">
+      <Typography variant="body2" component="dd" aria-label="Actual End Date">
         {project.actual_end_date
           ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, project.actual_end_date)
           : '---'}

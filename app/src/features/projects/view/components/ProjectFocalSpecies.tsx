@@ -52,8 +52,8 @@ const ProjectFocalSpecies: React.FC<IProjectFocusSpeciesProps> = (props) => {
   }, [species.focal_species]);
 
   return (
-    <Box mt={1}>
-      <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+    <Box mt={1} role="region" aria-labelledby="focal_species_header">
+      <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2" id="focal_species_header">
         Wildlife and/or fish species expected to benefit from project:
       </Typography>
       <Box display="flex" flexDirection={'column'} alignItems="left">
@@ -65,11 +65,17 @@ const ProjectFocalSpecies: React.FC<IProjectFocusSpeciesProps> = (props) => {
                 species={item}
                 index={index}
                 sx={pageStyles.itemChip}
+                aria-label={`Species ${index + 1}: ${item.common_name}`}
               />
             );
           })
         ) : (
-          <Chip label="No Assigned Species" data-testid="no_objective_loaded" />
+          <Chip
+            label="No Assigned Species"
+            data-testid="no_objective_loaded"
+            role="listitem"
+            aria-label="No Assigned Species"
+          />
         )}
       </Box>
     </Box>

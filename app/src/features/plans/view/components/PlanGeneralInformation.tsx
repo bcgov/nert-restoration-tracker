@@ -31,11 +31,19 @@ const PlanGeneralInformation: React.FC<IProjectGeneralInformationProps> = (props
   };
 
   return (
-    <Box component="dl" data-testid="general_info_component">
+    <Box
+      component="dl"
+      data-testid="general_info_component"
+      role="region"
+      aria-labelledby="general-info-title">
+      <Typography variant="h6" id="general-info-title" component="dt" color="textSecondary">
+        General Information
+      </Typography>
+
       <Typography variant="body2" component="dt" color="textSecondary">
         Region:
       </Typography>
-      {getRegionName(location.region)}
+      {location.region ? getRegionName(location.region) : '---'}
 
       <Typography variant="body2" component="dt" color="textSecondary">
         Brief Description:

@@ -62,7 +62,7 @@ function ProjectsTableToolbar(props: ProjectTableToolbarProps) {
           {TableI18N.exportData}
         </Button>
       ) : (
-        <InfoDialog isProject={true} infoContent={'paged table'} />
+        <InfoDialog isProject={true} infoContent={'paged table'} aria-labelledby="info-dialog" />
       )}
     </Toolbar>
   );

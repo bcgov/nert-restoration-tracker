@@ -81,7 +81,8 @@ function ProjectsTableHead(props: ProjectsTableProps) {
         isProject={true}
         open={infoOpen}
         dialogTitle={infoTitle}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="project-info-dialog">
         <InfoContent isProject={true} contentIndex={infoTitle} />
       </InfoDialogDraggable>
       <TableHead>

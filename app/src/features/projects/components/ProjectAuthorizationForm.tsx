@@ -105,7 +105,7 @@ const ProjectAuthorizationForm: React.FC = () => {
   };
 
   if (codesContext.codesDataLoader.isLoading || !codesContext.codesDataLoader.data) {
-    return <CircularProgress />;
+    return <CircularProgress aria-label="Loading authorization types" />;
   }
   const authorizationTypes = codesContext.codesDataLoader.data.authorization_type;
 
@@ -115,13 +115,17 @@ const ProjectAuthorizationForm: React.FC = () => {
         isProject={true}
         open={infoOpen}
         dialogTitle={CreateProjectI18N.authorization}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-label="Authorization Information Dialog">
         <InfoContent isProject={true} contentIndex={CreateProjectI18N.authorization} />
       </InfoDialogDraggable>
 
       <Typography component="legend">
         Project Authorizations
-        <IconButton edge="end" onClick={handleClickOpen}>
+        <IconButton
+          edge="end"
+          onClick={handleClickOpen}
+          aria-label="Open Authorization Information">
           <InfoIcon color="info" />
         </IconButton>
       </Typography>
@@ -144,7 +148,12 @@ const ProjectAuthorizationForm: React.FC = () => {
 
                 return (
                   /* authorization List List */
-                  <Grid container spacing={3} key={index}>
+                  <Grid
+                    container
+                    spacing={3}
+                    key={index}
+                    role="listitem"
+                    aria-label={`Authorization ${index + 1}`}>
                     <Grid item xs={12}>
                       <List>
                         <ListItem sx={pageStyles.customListItem}>
@@ -188,7 +197,8 @@ const ProjectAuthorizationForm: React.FC = () => {
                                     authorizationRefMeta.touched &&
                                     Boolean(authorizationRefMeta.error),
                                   helperText:
-                                    authorizationRefMeta.touched && authorizationRefMeta.error
+                                    authorizationRefMeta.touched && authorizationRefMeta.error,
+                                  'aria-label': 'Authorization Reference'
                                 }}
                               />
                             </Grid>
@@ -206,7 +216,8 @@ const ProjectAuthorizationForm: React.FC = () => {
                                     authorizationDescMeta.touched &&
                                     Boolean(authorizationDescMeta.error),
                                   helperText:
-                                    authorizationDescMeta.touched && authorizationDescMeta.error
+                                    authorizationDescMeta.touched && authorizationDescMeta.error,
+                                  'aria-label': 'Authorization Description'
                                 }}
                               />
                             </Grid>
@@ -216,7 +227,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                                   <IconButton
                                     color="primary"
                                     data-testid="delete-icon"
-                                    aria-label="remove authorization"
+                                    aria-label="Remove Authorization"
                                     onClick={() => arrayHelpers.remove(index)}
                                     edge="end"
                                     size="large">
@@ -244,7 +255,7 @@ const ProjectAuthorizationForm: React.FC = () => {
                 type="button"
                 variant="outlined"
                 color="primary"
-                aria-label="add authorization"
+                aria-label="Add Authorization"
                 startIcon={<Icon path={mdiPlus} size={1}></Icon>}
                 onClick={() => arrayHelpers.push(ProjectAuthorizationFormArrayItemInitialValues)}>
                 Add New Authorization
@@ -257,7 +268,9 @@ const ProjectAuthorizationForm: React.FC = () => {
         {errors.authorization?.authorizations &&
           !Array.isArray(errors.authorization?.authorizations) && (
             <Box pt={2}>
-              <Typography style={{ fontSize: '12px', color: '#f44336' }}>
+              <Typography
+                style={{ fontSize: '12px', color: '#f44336' }}
+                aria-label="Authorization Errors">
                 {errors.authorization.authorizations}
               </Typography>
             </Box>

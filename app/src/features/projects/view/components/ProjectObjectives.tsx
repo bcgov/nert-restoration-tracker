@@ -28,7 +28,7 @@ export interface IProjectObjectivesProps {
 const objectiveStyled = (objective: string) => {
   return (
     <Tooltip title={objective} disableHoverListener={objective.length < 130}>
-      <Typography sx={pageStyles.objectiveLabel} aria-label={`${objective}`}>
+      <Typography sx={pageStyles.objectiveLabel} aria-label={`Objective: ${objective}`}>
         &#x2022; {objective}
       </Typography>
     </Tooltip>
@@ -46,8 +46,8 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
   } = props;
   const hasObjectives = objective.objectives && objective.objectives.length > 0;
   return (
-    <Box mt={1}>
-      <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+    <Box mt={1} role="region" aria-labelledby="project_objectives_header">
+      <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2" id="project_objectives_header">
         Project Objectives:
       </Typography>
       <Box display="flex" flexDirection={'column'} alignItems="left">
@@ -59,10 +59,19 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
               size="small"
               sx={pageStyles.objectiveChip}
               label={objectiveStyled(item.objective)}
+              role="listitem"
+              aria-label={`Objective ${index + 1}`}
             />
           ))}
 
-        {!hasObjectives && <Chip label="No Objectives" data-testid="no_objective_loaded" />}
+        {!hasObjectives && (
+          <Chip
+            label="No Objectives"
+            data-testid="no_objective_loaded"
+            role="listitem"
+            aria-label="No Objectives"
+          />
+        )}
       </Box>
     </Box>
   );

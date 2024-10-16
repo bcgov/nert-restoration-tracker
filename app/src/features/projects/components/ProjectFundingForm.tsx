@@ -105,13 +105,17 @@ const ProjectFundingForm: React.FC = () => {
         isProject={true}
         open={infoOpen}
         dialogTitle={CreateProjectI18N.fundingSource}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="funding-source-info-dialog">
         <InfoContent isProject={true} contentIndex={CreateProjectI18N.fundingSource} />
       </InfoDialogDraggable>
 
-      <Typography component="legend">
+      <Typography component="legend" id="funding-sources-legend">
         Funding Sources
-        <IconButton edge="end" onClick={handleClickOpen}>
+        <IconButton
+          edge="end"
+          onClick={handleClickOpen}
+          aria-label="Open Funding Sources Information">
           <InfoIcon color="info" />
         </IconButton>
       </Typography>
@@ -153,10 +157,11 @@ const ProjectFundingForm: React.FC = () => {
                   // Close the modal
                   setIsModalOpen(false);
                 }}
+                aria-labelledby="add-funding-source-dialog"
               />
-              <List dense disablePadding>
+              <List dense disablePadding role="list" aria-label="Funding Sources List">
                 {!values.funding.fundingSources.length && (
-                  <ListItem dense component={Paper}>
+                  <ListItem dense component={Paper} role="listitem" aria-label="No Funding Sources">
                     <Box
                       display="flex"
                       flexGrow={1}
@@ -169,7 +174,12 @@ const ProjectFundingForm: React.FC = () => {
                 )}
                 {values.funding.fundingSources.map((fundingSource, index) => {
                   return (
-                    <ListItem dense sx={pageStyles.fundingListItem} key={index}>
+                    <ListItem
+                      dense
+                      sx={pageStyles.fundingListItem}
+                      key={index}
+                      role="listitem"
+                      aria-label={`Funding Source ${index + 1}`}>
                       <Paper sx={pageStyles.fundingListItemInner}>
                         <Toolbar sx={pageStyles.fundingListItemToolbar}>
                           <Typography sx={pageStyles.title}>

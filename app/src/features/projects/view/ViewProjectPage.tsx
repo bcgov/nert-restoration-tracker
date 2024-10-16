@@ -130,18 +130,28 @@ const ViewProjectPage: React.FC = () => {
       setIsLoadingProject(true);
     }
   }, [isLoadingProject, project, getProject, getAttachments]);
+
   if (!codes.isReady || !codes.data || !project) {
-    return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
+    return (
+      <CircularProgress
+        className="pageProgress"
+        size={40}
+        data-testid="loading_spinner"
+        aria-label="Loading"
+      />
+    );
   }
 
   return (
     <>
       <Card
         sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}
-        data-testid="view_project_page_component">
+        data-testid="view_project_page_component"
+        role="region"
+        aria-labelledby="view_project_page_header">
         <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
           <Box>
-            <Typography variant="h1">
+            <Typography variant="h1" id="view_project_page_header">
               <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" />{' '}
               {project.project.project_name}
             </Typography>
@@ -154,6 +164,8 @@ const ViewProjectPage: React.FC = () => {
                   size="small"
                   sx={getStatusStyle(project.project.state_code)}
                   label={getStateLabelFromCode(project.project.state_code)}
+                  role="status"
+                  aria-label={`Project status: ${getStateLabelFromCode(project.project.state_code)}`}
                 />
                 <InfoDialog isProject={true} infoContent={'workflow'} />
               </Box>
@@ -164,16 +176,30 @@ const ViewProjectPage: React.FC = () => {
               </Typography>
               <Box ml={1}>
                 {project.project.is_healing_land && (
-                  <Chip size="small" color={'default'} label={focus.HEALING_THE_LAND} />
+                  <Chip
+                    size="small"
+                    color={'default'}
+                    label={focus.HEALING_THE_LAND}
+                    role="status"
+                    aria-label="Focus: Healing the Land"
+                  />
                 )}
                 {project.project.is_healing_people && (
-                  <Chip size="small" color={'default'} label={focus.HEALING_THE_PEOPLE} />
+                  <Chip
+                    size="small"
+                    color={'default'}
+                    label={focus.HEALING_THE_PEOPLE}
+                    role="status"
+                    aria-label="Focus: Healing the People"
+                  />
                 )}
                 {project.project.is_land_initiative && (
                   <Chip
                     size="small"
                     color={'default'}
                     label={focus.LAND_BASED_RESTORATION_INITIATIVE}
+                    role="status"
+                    aria-label="Focus: Land Based Restoration Initiative"
                   />
                 )}
                 {project.project.is_cultural_initiative && (
@@ -181,6 +207,8 @@ const ViewProjectPage: React.FC = () => {
                     size="small"
                     color={'default'}
                     label={focus.CULTURAL_OR_COMMUNITY_INVESTMENT_INITIATIVE}
+                    role="status"
+                    aria-label="Focus: Cultural or Community Investment Initiative"
                   />
                 )}
               </Box>

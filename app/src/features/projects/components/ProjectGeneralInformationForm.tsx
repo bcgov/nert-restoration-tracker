@@ -111,7 +111,8 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
         isProject={true}
         open={infoOpen}
         dialogTitle={CreateProjectI18N.briefDescription}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="brief-description-info-dialog">
         <InfoContent isProject={true} contentIndex={CreateProjectI18N.briefDescription} />
       </InfoDialogDraggable>
 
@@ -124,7 +125,8 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
                 name="project.project_name"
                 label="Project Name"
                 other={{
-                  required: true
+                  required: true,
+                  'aria-label': 'Project Name'
                 }}
               />
             </Grid>
@@ -140,6 +142,7 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
                         size="small"
                         sx={getStatusStyle(getStateCodeFromLabel(currentState || states.DRAFT))}
                         label={currentState || states.DRAFT}
+                        aria-label="Project Status"
                       />
                     ),
                     endAdornment: (
@@ -150,10 +153,15 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
                               isProject={true}
                               currentStatus={currentState}
                               formikProps={formikProps}
+                              aria-label="Project Status Selector"
                             />
                           </Box>
                         )}
-                        <InfoDialog isProject={true} infoContent={'workflow'} />
+                        <InfoDialog
+                          isProject={true}
+                          infoContent={'workflow'}
+                          aria-label="Workflow Information"
+                        />
                       </>
                     )
                   }
@@ -170,9 +178,13 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
                     required: true,
                     multiline: true,
                     maxRows: 5,
+                    'aria-label': 'Brief Description',
                     InputProps: {
                       endAdornment: (
-                        <IconButton edge="end" onClick={handleClickOpen}>
+                        <IconButton
+                          edge="end"
+                          onClick={handleClickOpen}
+                          aria-label="Open Brief Description Information">
                           <InfoIcon color="info" />
                         </IconButton>
                       )
@@ -191,6 +203,7 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
               actualEndName={'project.actual_end_date'}
               actualStartRequired={false}
               actualEndRequired={false}
+              aria-label="Project Start and End Dates"
             />
           </Grid>
         </Grid>

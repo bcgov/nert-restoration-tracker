@@ -297,7 +297,9 @@ const CreatePlanPage: React.FC = () => {
   };
 
   if (!codes.data) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return (
+      <CircularProgress className="pageProgress" size={40} role="status" aria-label="Loading" />
+    );
   }
 
   return (
@@ -365,7 +367,7 @@ const CreatePlanPage: React.FC = () => {
       />
 
       <Box mb={1} ml={3}>
-        <Breadcrumbs>
+        <Breadcrumbs aria-label="breadcrumb">
           <Link
             color="primary"
             onClick={handleCancel}
@@ -456,7 +458,8 @@ const CreatePlanPage: React.FC = () => {
                   color="primary"
                   size="large"
                   onClick={() => setOpenDraftDialog(true)}
-                  data-testid="Plan-save-draft-button">
+                  data-testid="Plan-save-draft-button"
+                  aria-label="Save Draft">
                   Save Draft
                 </Button>
                 <Button
@@ -464,7 +467,8 @@ const CreatePlanPage: React.FC = () => {
                   color="primary"
                   size="large"
                   onClick={() => setOpenYesNoDialog(true)}
-                  data-testid="plan-create-button">
+                  data-testid="plan-create-button"
+                  aria-label="Create Plan">
                   <span>Create Plan</span>
                 </Button>
                 <Button
@@ -472,7 +476,8 @@ const CreatePlanPage: React.FC = () => {
                   color="primary"
                   size="large"
                   data-testid="Plan-cancel-buttton"
-                  onClick={handleCancel}>
+                  onClick={handleCancel}
+                  aria-label="Cancel">
                   Cancel
                 </Button>
               </Box>
