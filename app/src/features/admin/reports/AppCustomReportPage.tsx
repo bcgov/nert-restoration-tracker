@@ -62,8 +62,9 @@ const AppCustomReportPage: React.FC = () => {
   return (
     <Container maxWidth="xl">
       <Box mt={1}>
-        <Breadcrumbs>
+        <Breadcrumbs aria-label="breadcrumb">
           <Link
+            component="button"
             color="primary"
             onClick={handleCancel}
             aria-current="page"
