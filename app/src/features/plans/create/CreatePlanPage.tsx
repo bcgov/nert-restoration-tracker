@@ -365,8 +365,9 @@ const CreatePlanPage: React.FC = () => {
       />
 
       <Box mb={1} ml={3}>
-        <Breadcrumbs>
+        <Breadcrumbs aria-label="breadcrumb">
           <Link
+            component="button"
             color="primary"
             onClick={handleCancel}
             aria-current="page"
