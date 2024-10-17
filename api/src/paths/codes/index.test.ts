@@ -14,7 +14,16 @@ describe('codes', () => {
   const dbConnectionObj = getMockDBConnection();
 
   const sampleReq = {
-    keycloak_token: {}
+    keycloak_token: {},
+    body: {
+      codeType: 'first_nations',
+      codeData: {
+        id: 1,
+        name: 'management action',
+        value: 'management action',
+        fs_id: 1
+      }
+    }
   } as any;
 
   let actualResult = {
@@ -78,6 +87,43 @@ describe('codes', () => {
       } catch (actualError) {
         expect((actualError as HTTPError).message).to.equal(expectedError.message);
       }
+    });
+  });
+
+  describe('updateCode', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should throw a 500 error when fails to update code', async () => {
+      const dbConnection = getMockDBConnection();
+      sinon.stub(db, 'getDBConnection').returns(dbConnection);
+      sinon.stub(CodeService.prototype, 'updateCode').resolves(null);
+
+      try {
+        const result = codes.updateCode();
+
+        await result(sampleReq, null as unknown as any, null as unknown as any);
+        expect.fail();
+      } catch (actualError) {
+        expect((actualError as HTTPError).message).to.equal('Failed to update code');
+      }
+    });
+
+    it('should return the updated code on success', async () => {
+      const dbConnection = getMockDBConnection();
+      sinon.stub(db, 'getDBConnection').returns(dbConnection);
+
+      sinon.stub(CodeService.prototype, 'updateCode').resolves({
+        id: 1,
+        name: 'management action type'
+      } as any);
+
+      const result = codes.updateCode();
+
+      await result(sampleReq, sampleRes as any, null as unknown as any);
+
+      expect(actualResult).to.eql({ success: true });
     });
   });
 });
