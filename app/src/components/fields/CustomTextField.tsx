@@ -2,6 +2,7 @@ import TextField from '@mui/material/TextField';
 import { FormikContextType, useFormikContext } from 'formik';
 import get from 'lodash-es/get';
 import React from 'react';
+
 export interface ICustomTextField {
   label: string;
   name: string;
@@ -28,6 +29,8 @@ const CustomTextField: React.FC<React.PropsWithChildren<ICustomTextField>> = (pr
       fullWidth={true}
       error={get(touched, name) && Boolean(get(errors, name))}
       helperText={get(touched, name) && (get(errors, name) as string)}
+      aria-label={label}
+      aria-invalid={get(touched, name) && Boolean(get(errors, name))}
       {...other}
     />
   );

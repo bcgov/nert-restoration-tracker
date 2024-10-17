@@ -28,7 +28,7 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
   type
 }) => {
   if (!codeSet || !type) {
-    return;
+    return null;
   }
 
   const [value, setValue] = useState<string>('');
@@ -66,11 +66,7 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
     const re =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    if (re.test(email)) {
-      return true;
-    } else {
-      return false;
-    }
+    return re.test(email);
   };
 
   const handleCancel = () => {
@@ -81,8 +77,8 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose}>
-        <DialogTitle>{title}</DialogTitle>
+      <Dialog open={open} onClose={onClose} aria-labelledby="code-dialog-title">
+        <DialogTitle id="code-dialog-title">{title}</DialogTitle>
         <DialogContent>
           <Typography variant="body1">{`Type: ${type ? type.toLocaleUpperCase() : ''}`}</Typography>
           <Typography variant="body1">{`Code: ${codeSet.name}`}</Typography>
@@ -98,6 +94,7 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
               helperText={value.length > 5 && !validateEmail(value) && 'Invalid email address'}
               type="email"
               inputProps={{ maxLength: 50 }}
+              aria-label="Update Email Value"
             />
           ) : (
             <TextField
@@ -106,6 +103,7 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
               onChange={(e) => setValue(e.target.value)}
               fullWidth
               inputProps={{ maxLength: 50 }}
+              aria-label="Update Value"
             />
           )}
         </DialogContent>
@@ -119,8 +117,11 @@ const CodeDialog: React.FC<CodeDialogProps> = ({
         </DialogActions>
       </Dialog>
 
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm Update</DialogTitle>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        aria-labelledby="confirm-dialog-title">
+        <DialogTitle id="confirm-dialog-title">Confirm Update</DialogTitle>
         <DialogContent>Are you sure you want to update the code?</DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={handleConfirmUpdate} color="primary">

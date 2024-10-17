@@ -82,7 +82,8 @@ const ProjectObjectivesForm: React.FC = () => {
         isProject={true}
         open={infoOpen}
         dialogTitle={CreateProjectI18N.objective}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="objective-info-dialog">
         <InfoContent isProject={true} contentIndex={CreateProjectI18N.objective} />
       </InfoDialogDraggable>
 
@@ -96,8 +97,11 @@ const ProjectObjectivesForm: React.FC = () => {
 
                 return (
                   /* Objectives List */
-                  <List key={index}>
-                    <ListItem sx={pageStyles.customListItem}>
+                  <List key={index} role="list" aria-label="Objectives List">
+                    <ListItem
+                      sx={pageStyles.customListItem}
+                      role="listitem"
+                      aria-label={`Objective ${index + 1}`}>
                       <CustomTextField
                         name={`objective.objectives.[${index}].objective`}
                         label={CreateProjectI18N.objective}
@@ -107,9 +111,13 @@ const ProjectObjectivesForm: React.FC = () => {
                           value: objective.objective,
                           error: objectiveMeta.touched && Boolean(objectiveMeta.error),
                           helperText: objectiveMeta.touched && objectiveMeta.error,
+                          'aria-label': `Objective ${index + 1}`,
                           InputProps: {
                             endAdornment: !index ? (
-                              <IconButton edge="end" onClick={handleClickOpen}>
+                              <IconButton
+                                edge="end"
+                                onClick={handleClickOpen}
+                                aria-label="Open Objective Information">
                                 <InfoIcon color="info" />
                               </IconButton>
                             ) : null
@@ -121,7 +129,7 @@ const ProjectObjectivesForm: React.FC = () => {
                           <IconButton
                             color="primary"
                             data-testid="delete-icon"
-                            aria-label="remove objective"
+                            aria-label={`Remove Objective ${index + 1}`}
                             onClick={() => arrayHelpers.remove(index)}
                             edge="end"
                             size="large">
@@ -143,7 +151,7 @@ const ProjectObjectivesForm: React.FC = () => {
                   type="button"
                   variant="outlined"
                   color="primary"
-                  aria-label="add objective"
+                  aria-label="Add Objective"
                   startIcon={<Icon path={mdiPlus} size={1}></Icon>}
                   onClick={() => arrayHelpers.push(ProjectObjectivesFormArrayItemInitialValues)}>
                   Add New {CreateProjectI18N.objective}

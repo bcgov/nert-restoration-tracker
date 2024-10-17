@@ -29,18 +29,25 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
 
   if (!hasPartnerships) {
     return (
-      <Typography variant="body2" color="textSecondary" data-testid="no_partnerships_data">
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        data-testid="no_partnerships_data"
+        aria-label="No Partnerships">
         No Partnerships
       </Typography>
     );
   }
 
   if (!codes) {
-    return <CircularProgress />;
+    return <CircularProgress aria-label="Loading codes" />;
   }
 
   return (
-    <Box py={2}>
+    <Box py={2} role="region" aria-labelledby="partnerships_header">
+      <Typography variant="h6" id="partnerships_header" sx={{ display: 'none' }}>
+        Partnerships
+      </Typography>
       {partnerships?.map((data, index: number) => {
         return (
           <Typography
@@ -53,7 +60,8 @@ const Partnerships: React.FC<IPartnershipsProps> = (props) => {
               '&::first-letter': {
                 textTransform: 'capitalize'
               }
-            }}>
+            }}
+            aria-label={`Partnership ${index + 1}: ${handleGetPartnershipTypeName(data.partnership_type, codes)}`}>
             <strong>{handleGetPartnershipTypeName(data.partnership_type, codes)}</strong>
             {'|'}
             <em>

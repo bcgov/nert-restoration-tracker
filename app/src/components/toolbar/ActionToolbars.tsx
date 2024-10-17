@@ -148,7 +148,7 @@ export const CustomMenuButton: React.FC<ICustomMenuButtonProps> = (props) => {
           horizontal: 'right'
         }}
         MenuListProps={{
-          'aria-labelledby': 'basic-button'
+          'aria-labelledby': buttonId
         }}>
         {props.menuItems.map((menuItem) => {
           const menuItemId = `custom-menu-button-item-${menuItem.menuLabel.replace(/\s/g, '')}`;
@@ -222,7 +222,7 @@ export const CustomMenuIconButton: React.FC<ICustomMenuIconButtonProps> = (props
           horizontal: 'right'
         }}
         MenuListProps={{
-          'aria-labelledby': 'basic-button'
+          'aria-labelledby': buttonId
         }}>
         {props.menuItems.map((menuItem) => {
           const menuItemId = `custom-menu-icon-item-${menuItem.menuLabel.replace(/\s/g, '')}`;

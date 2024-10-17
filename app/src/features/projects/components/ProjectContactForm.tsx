@@ -66,7 +66,7 @@ const ProjectContactForm: React.FC = () => {
         {errors.contact &&
           errors.contact.contacts &&
           typeof errors.contact.contacts == 'string' && (
-            <Typography variant="body2" color="error">
+            <Typography variant="body2" color="error" aria-label="Contact Errors">
               {errors.contact.contacts}
             </Typography>
           )}
@@ -108,10 +108,11 @@ const ProjectContactForm: React.FC = () => {
                   // Close the modal
                   setIsModalOpen(false);
                 }}
+                aria-label="Edit Contact Dialog"
               />
-              <List dense disablePadding>
+              <List dense disablePadding role="list" aria-label="Contact List">
                 {!values.contact.contacts.length && (
-                  <ListItem dense component={Paper}>
+                  <ListItem dense component={Paper} role="listitem" aria-label="No Contacts">
                     <Box
                       display="flex"
                       flexGrow={1}
@@ -130,6 +131,7 @@ const ProjectContactForm: React.FC = () => {
                     arrayHelpers={arrayHelpers}
                     setCurrentContact={setCurrentProjectContact}
                     setIsModalOpen={setIsModalOpen}
+                    aria-label={`Contact ${index + 1}`}
                   />
                 ))}
               </List>

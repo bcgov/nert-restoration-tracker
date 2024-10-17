@@ -32,11 +32,11 @@ const CodesPage: React.FC = () => {
   };
 
   if (!codes.codesDataLoader.data) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return <CircularProgress className="pageProgress" size={40} aria-label="Loading" />;
   }
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" role="main">
       <CodeDialog
         open={open}
         onClose={() => setOpen(false)}
@@ -47,7 +47,9 @@ const CodesPage: React.FC = () => {
       />
 
       <Box my={2}>
-        <Typography variant="h1">Codes Dashboard</Typography>
+        <Typography variant="h1" id="codes-dashboard-title">
+          Codes Dashboard
+        </Typography>
       </Box>
 
       <CodeTable
@@ -55,6 +57,7 @@ const CodesPage: React.FC = () => {
         type={CodeType.BRANDING}
         data={codes.codesDataLoader.data?.branding}
         handleOpen={handleOpen}
+        aria-labelledby="codes-dashboard-title"
       />
     </Container>
   );

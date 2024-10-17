@@ -241,7 +241,9 @@ const PlanParticipantsPage: React.FC = () => {
   };
 
   if (!codes.isReady || !codes.data || !planParticipants || !planWithDetails) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return (
+      <CircularProgress className="pageProgress" size={40} role="status" aria-label="Loading" />
+    );
   }
 
   return (
@@ -252,16 +254,16 @@ const PlanParticipantsPage: React.FC = () => {
         refresh={getPlanParticipants}
       />
 
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" role="main" aria-labelledby="team-members-title">
         <Box my={3}>
           <Paper>
             <Toolbar sx={pageStyles.teamMembersToolbar}>
-              <Typography variant="h2" color="inherit">
+              <Typography variant="h2" color="inherit" id="team-members-title">
                 Team Members
               </Typography>
             </Toolbar>
 
-            <Table sx={pageStyles.teamMembersTable}>
+            <Table sx={pageStyles.teamMembersTable} aria-label="Team Members Table">
               <TableHead>
                 <TableRow>
                   <TableCell>Username</TableCell>

@@ -25,9 +25,15 @@ function PlansTableToolbar(props: PlansTableToolbarProps) {
           bgcolor: (theme) =>
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
         })
-      }}>
+      }}
+      aria-label="Plans Table Toolbar">
       {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+          aria-live="polite">
           {numSelected} {numSelected !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}{' '}
           {TableI18N.selectedToExport}
         </Typography>
@@ -36,7 +42,8 @@ function PlansTableToolbar(props: PlansTableToolbarProps) {
           sx={{ mx: '0.5rem', flex: '1 1 100%' }}
           variant="h2"
           id="tableTitle"
-          component="div">
+          component="div"
+          aria-live="polite">
           {TableI18N.found} {numRows} {numRows !== 1 ? PlanTableI18N.plans : PlanTableI18N.plan}
         </Typography>
       )}

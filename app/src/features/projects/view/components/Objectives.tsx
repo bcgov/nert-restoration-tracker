@@ -19,7 +19,10 @@ const Objectives: React.FC<IProjectObjectivesProps> = (props) => {
 
   return (
     <>
-      <Typography style={{ whiteSpace: 'pre-line' }} variant="body2">
+      <Typography
+        style={{ whiteSpace: 'pre-line' }}
+        variant="body2"
+        aria-label="Project Brief Description">
         {project.brief_desc}
       </Typography>
     </>

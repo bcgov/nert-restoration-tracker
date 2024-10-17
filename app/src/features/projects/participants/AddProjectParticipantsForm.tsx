@@ -55,7 +55,7 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
     useFormikContext<IAddProjectParticipantsForm>();
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} aria-label="Add Project Participants Form">
       <FieldArray
         name="participants"
         render={(arrayHelpers) => (
@@ -80,7 +80,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               value: participant.userIdentifier,
                               error:
                                 userIdentifierMeta.touched && Boolean(userIdentifierMeta.error),
-                              helperText: userIdentifierMeta.touched && userIdentifierMeta.error
+                              helperText: userIdentifierMeta.touched && userIdentifierMeta.error,
+                              'aria-label': 'Username'
                             }}
                           />
                         </Box>

@@ -26,12 +26,13 @@ const ProjectDraftForm: React.FC = () => {
   const { handleSubmit } = formikProps;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} aria-labelledby="draft-name-label">
       <CustomTextField
         name="draft_name"
         label="Draft Name"
         other={{
-          required: true
+          required: true,
+          'aria-label': 'Draft Name'
         }}
       />
     </form>

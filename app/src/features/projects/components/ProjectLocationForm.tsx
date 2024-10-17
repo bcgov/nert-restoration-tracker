@@ -205,7 +205,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
         isProject={true}
         open={infoOpen}
         dialogTitle={infoTitle}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="location-info-dialog">
         <InfoContent isProject={true} contentIndex={infoTitle} />
       </InfoDialogDraggable>
 
@@ -215,7 +216,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             Area and Location Details
             <IconButton
               edge="end"
-              onClick={() => handleClickOpen(CreateProjectI18N.locationRegion)}>
+              onClick={() => handleClickOpen(CreateProjectI18N.locationRegion)}
+              aria-label="Open Location Region Information">
               <InfoIcon color="info" />
             </IconButton>
           </Typography>
@@ -268,7 +270,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
               Is the project within or overlapping a known area of cultural or conservation?
               <IconButton
                 edge="end"
-                onClick={() => handleClickOpen(CreateProjectI18N.locationConservationArea)}>
+                onClick={() => handleClickOpen(CreateProjectI18N.locationConservationArea)}
+                aria-label="Open Conservation Area Information">
                 <InfoIcon color="info" />
               </IconButton>
             </FormLabel>
@@ -313,7 +316,10 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
           {locationRequired(
             parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
           ) && '*'}
-          <IconButton edge="end" onClick={() => handleClickOpen(CreateProjectI18N.locationArea)}>
+          <IconButton
+            edge="end"
+            onClick={() => handleClickOpen(CreateProjectI18N.locationArea)}
+            aria-label="Open Location Area Information">
             <InfoIcon color="info" />
           </IconButton>
         </Typography>
@@ -323,7 +329,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             <Tooltip title={CreateProjectI18N.locationGeoJSONProperties} placement="right">
               <IconButton
                 edge="end"
-                onClick={() => handleClickOpen(CreateProjectI18N.locationGeoJSONProperties)}>
+                onClick={() => handleClickOpen(CreateProjectI18N.locationGeoJSONProperties)}
+                aria-label="Open GeoJSON Properties Information">
                 <InfoIcon color="info" />
               </IconButton>
             </Tooltip>
@@ -338,7 +345,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             component="span"
             startIcon={<Icon path={mdiTrayArrowUp} size={1}></Icon>}
             onClick={() => setOpenUploadBoundary(true)}
-            data-testid="project-boundary-upload">
+            data-testid="project-boundary-upload"
+            aria-label="Upload Project Areas">
             Upload Areas
           </Button>
         </Box>
@@ -348,6 +356,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             mask={[mask, setMask]}
             maskState={[maskState, setMaskState]}
             activeFeatureState={[activeFeature, setActiveFeature]}
+            aria-label="Map Feature List"
           />
         </Box>
 
@@ -362,6 +371,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
             autoFocus={true}
             editModeOn={true}
             region={region}
+            aria-label="Project Location Map"
           />
         </Box>
         {errors?.location?.geometry && (
@@ -376,7 +386,8 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
       <ComponentDialog
         open={openUploadBoundary}
         dialogTitle="Upload Project Areas"
-        onClose={() => setOpenUploadBoundary(false)}>
+        onClose={() => setOpenUploadBoundary(false)}
+        aria-labelledby="upload-project-areas-dialog">
         <FileUpload
           uploadHandler={getUploadHandler()}
           dropZoneProps={{

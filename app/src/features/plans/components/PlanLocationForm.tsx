@@ -227,7 +227,10 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
           {locationRequired(
             parentFormikProps.values.focus.focuses ? parentFormikProps.values.focus.focuses : []
           ) && '*'}
-          <IconButton edge="end" onClick={() => handleClickOpen(CreatePlanI18N.locationArea)}>
+          <IconButton
+            edge="end"
+            onClick={() => handleClickOpen(CreatePlanI18N.locationArea)}
+            aria-label="More information">
             <InfoIcon color="info" />
           </IconButton>
         </Typography>
@@ -237,7 +240,8 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             <Tooltip title={CreatePlanI18N.locationGeoJSONProperties} placement="right">
               <IconButton
                 edge="end"
-                onClick={() => handleClickOpen(CreatePlanI18N.locationGeoJSONProperties)}>
+                onClick={() => handleClickOpen(CreatePlanI18N.locationGeoJSONProperties)}
+                aria-label="GeoJSON properties information">
                 <InfoIcon color="info" />
               </IconButton>
             </Tooltip>
@@ -252,7 +256,8 @@ const PlanLocationForm: React.FC<IPlanLocationFormProps> = (props) => {
             component="span"
             startIcon={<Icon path={mdiTrayArrowUp} size={1}></Icon>}
             onClick={() => setOpenUploadBoundary(true)}
-            data-testid="plan-boundary-upload">
+            data-testid="plan-boundary-upload"
+            aria-label="Upload Areas">
             Upload Areas
           </Button>
         </Box>

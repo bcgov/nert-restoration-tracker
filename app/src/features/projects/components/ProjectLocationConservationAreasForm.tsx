@@ -60,7 +60,8 @@ const ProjectLocationConservationAreas: React.FC = () => {
         isProject={true}
         open={infoOpen}
         dialogTitle={infoTitle}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="conservation-area-info-dialog">
         <InfoContent isProject={true} contentIndex={infoTitle} />
       </InfoDialogDraggable>
 
@@ -78,8 +79,11 @@ const ProjectLocationConservationAreas: React.FC = () => {
                   /* conservation Area List */
                   <Grid container spacing={3} key={index}>
                     <Grid item xs={12} md={10.5}>
-                      <List>
-                        <ListItem sx={pageStyles.customListItem}>
+                      <List role="list" aria-label="Conservation Areas List">
+                        <ListItem
+                          sx={pageStyles.customListItem}
+                          role="listitem"
+                          aria-label={`Conservation Area ${index + 1}`}>
                           <Grid container spacing={3}>
                             <Grid item xs={6} md={8}>
                               <CustomTextField
@@ -94,7 +98,8 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                     conservationAreaMeta.touched &&
                                     Boolean(conservationAreaMeta.error),
                                   helperText:
-                                    conservationAreaMeta.touched && conservationAreaMeta.error
+                                    conservationAreaMeta.touched && conservationAreaMeta.error,
+                                  'aria-label': `Conservation Area ${index + 1}`
                                 }}
                               />
                             </Grid>
@@ -105,7 +110,7 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                     color="primary"
                                     id="isPublic"
                                     name="isPublic"
-                                    aria-label="isPublic"
+                                    aria-label={`Hidden from Public ${index + 1}`}
                                     checked={!conservationArea.isPublic}
                                     value={conservationArea.isPublic}
                                     onChange={() => {
@@ -125,7 +130,8 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                         handleClickOpen(
                                           CreateProjectI18N.locationConservationAreaHidden
                                         )
-                                      }>
+                                      }
+                                      aria-label="Open Hidden from Public Information">
                                       <InfoIcon color="info" />
                                     </IconButton>
                                   </Typography>
@@ -139,7 +145,7 @@ const ProjectLocationConservationAreas: React.FC = () => {
                                 disabled={values.location.is_within_overlapping !== 'true'}
                                 color="primary"
                                 data-testid="delete-icon"
-                                aria-label="remove conservation area"
+                                aria-label={`Remove Conservation Area ${index + 1}`}
                                 onClick={() => arrayHelpers.remove(index)}
                                 edge="end"
                                 size="large">
@@ -166,7 +172,7 @@ const ProjectLocationConservationAreas: React.FC = () => {
                   type="button"
                   variant="outlined"
                   color="primary"
-                  aria-label="add conservation area"
+                  aria-label="Add Conservation Area"
                   startIcon={<Icon path={mdiPlus} size={1}></Icon>}
                   onClick={() =>
                     arrayHelpers.push(ProjectLocationConservationAreasFormArrayItemInitialValues)

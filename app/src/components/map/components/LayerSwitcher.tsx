@@ -81,7 +81,7 @@ const LayerSwitcher = (props: ILayerSwitcherProps) => {
     <div>
       {!switcherOpen ? (
         <Box title="Open Layer Picker" sx={buttonStyle}>
-          <IconButton onClick={toggleLayerswitcher}>
+          <IconButton title="toggle-layer" onClick={toggleLayerswitcher}>
             <LayersIcon />
           </IconButton>
         </Box>

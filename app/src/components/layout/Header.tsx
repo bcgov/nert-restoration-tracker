@@ -217,7 +217,8 @@ const Header: React.FC = () => {
     return (
       <Typography
         sx={pageStyles.appVersionTag}
-        variant="subtitle2"
+        variant="h3"
+        component="h2"
         aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
         v{nert_version} {nert_environment}
       </Typography>
@@ -243,26 +244,35 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="sticky" style={{ boxShadow: 'none' }}>
+      <AppBar position="sticky" style={{ boxShadow: 'none' }} role="banner">
         <Toolbar variant="dense">
           <Box display="flex" justifyContent="space-between" width="100%">
             <Box display="flex" justifyContent="left">
-              <Link to="/" style={pageStyles.brand} aria-label="Go to {title} Home">
+              <Link to="/" style={pageStyles.brand} aria-label={`Go to ${title} Home`} role="link">
                 <picture>
                   <source srcSet={headerImageLarge} media="(min-width: 1200px)"></source>
                   <source srcSet={headerImageSmall} media="(min-width: 600px)"></source>
-                  <img src={headerImageSmall} alt={'Government of British Columbia'} />
+                  <img src={headerImageSmall} alt="Government of British Columbia" />
                 </picture>
               </Link>
 
               <Box ml={2}>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} data-testid={'title'}>
+                <Typography
+                  variant="h6"
+                  component="h1"
+                  sx={{ flexGrow: 1 }}
+                  data-testid="title"
+                  aria-label={title}>
                   {title}
                 </Typography>
                 <VersionEnvironmentLabel />
               </Box>
               <Box mt={-0.5}>
-                <IconButton aria-label="General Info" onClick={handleClickOpen} size="small">
+                <IconButton
+                  aria-label="General Info"
+                  onClick={handleClickOpen}
+                  size="small"
+                  role="button">
                   <InfoIcon color="info" />
                 </IconButton>
               </Box>
@@ -286,7 +296,8 @@ const Header: React.FC = () => {
               sx={pageStyles.govHeaderIconButton}
               onClick={handleClick}
               size="large"
-              data-testid={'help_navbar'}>
+              data-testid="help_navbar"
+              role="button">
               <Icon path={mdiHelpCircle} size={1.12} />
             </IconButton>
             <Menu
@@ -294,18 +305,23 @@ const Header: React.FC = () => {
               anchorEl={anchorEl}
               keepMounted
               open={Boolean(anchorEl)}
-              onClose={handleClose}>
-              <MenuItem onClick={handleClose} key={'Tracker FAQ'} value={'Tracker FAQ'}>
+              onClose={handleClose}
+              role="menu">
+              <MenuItem onClick={handleClose} key="Tracker FAQ" value="Tracker FAQ" role="menuitem">
                 Tracker FAQ
               </MenuItem>
-              <MenuItem onClick={showSupportDialog} key={'Need Help'} value={'Need Help'}>
+              <MenuItem
+                onClick={showSupportDialog}
+                key="Need Help"
+                value="Need Help"
+                role="menuitem">
                 Need Help
               </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
 
-        <Box borderBottom={'1px solid'} sx={pageStyles.mainNav}>
+        <Box borderBottom="1px solid" sx={pageStyles.mainNav}>
           <Toolbar
             className="main-nav-toolbar"
             variant="dense"
@@ -320,14 +336,18 @@ const Header: React.FC = () => {
               ]}
               fallback={
                 <>
-                  <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
+                  <Link
+                    to="/projects"
+                    id="menu_projects"
+                    data-testid="all_project_plan_navbar"
+                    role="link">
                     Published Projects/Plans
                   </Link>
-                  <Link to="/search" id="menu_search" data-testid={'map_navbar'}>
+                  <Link to="/search" id="menu_search" data-testid="map_navbar" role="link">
                     Map
                   </Link>
                   <AuthGuard>
-                    <Link to="/access-request" id="menu_request_access">
+                    <Link to="/access-request" id="menu_request_access" role="link">
                       Request Access
                     </Link>
                   </AuthGuard>
@@ -337,7 +357,11 @@ const Header: React.FC = () => {
                 validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
                 fallback={
                   <>
-                    <Link to="/projects" id="menu_projects" data-testid={'all_project_plan_navbar'}>
+                    <Link
+                      to="/projects"
+                      id="menu_projects"
+                      data-testid="all_project_plan_navbar"
+                      role="link">
                       Published Projects/Plans
                     </Link>
                   </>
@@ -345,32 +369,42 @@ const Header: React.FC = () => {
                 <Link
                   to="/admin/projects"
                   id="menu_projects"
-                  data-testid={'admin_project_plan_navbar'}>
+                  data-testid="admin_project_plan_navbar"
+                  role="link">
                   All Projects/Plans
                 </Link>
               </SystemRoleGuard>
               <Link
                 to="/admin/user/projects"
                 data-testid="my_projects_plans"
-                id="menu_user_projects">
+                id="menu_user_projects"
+                role="link">
                 My Projects/Plans
               </Link>
-              <Link to="/admin/search" id="menu_search">
+              <Link to="/admin/search" id="menu_search" role="link">
                 Map
               </Link>
               <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-                <Link to="/admin/users" id="menu_admin_users" data-testid="manage_users">
+                <Link
+                  to="/admin/users"
+                  id="menu_admin_users"
+                  data-testid="manage_users"
+                  role="link">
                   Manage Users
                 </Link>
               </SystemRoleGuard>
               <SystemRoleGuard
                 validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
-                <Link to="/admin/reports" id="menu_admin_reports" data-testid="generate_reports">
+                <Link
+                  to="/admin/reports"
+                  id="menu_admin_reports"
+                  data-testid="generate_reports"
+                  role="link">
                   Reports
                 </Link>
               </SystemRoleGuard>
               <SystemRoleGuard validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN]}>
-                <Link to="/admin/codes" id="menu_admin_codes" data-testid="edit_codes">
+                <Link to="/admin/codes" id="menu_admin_codes" data-testid="edit_codes" role="link">
                   Codes
                 </Link>
               </SystemRoleGuard>
@@ -379,8 +413,8 @@ const Header: React.FC = () => {
         </Box>
       </AppBar>
 
-      <Dialog open={infoOpen}>
-        <DialogTitle>General Info: {title}</DialogTitle>
+      <Dialog open={infoOpen} role="dialog" aria-labelledby="general-info-title">
+        <DialogTitle id="general-info-title">General Info: {title}</DialogTitle>
         <DialogContent>
           <Typography>
             The Restoration Tracker is a web application providing planned, active and completed
@@ -393,14 +427,14 @@ const Header: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="primary" onClick={handleClickClose}>
+          <Button variant="contained" color="primary" onClick={handleClickClose} role="button">
             OK
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={open}>
-        <DialogTitle>Need Help?</DialogTitle>
+      <Dialog open={open} role="dialog" aria-labelledby="need-help-title">
+        <DialogTitle id="need-help-title">Need Help?</DialogTitle>
         <DialogContent>
           <Typography variant="body1" component="div" color="textSecondary" gutterBottom>
             For technical support or questions about this application, please email:&nbsp;
@@ -417,7 +451,7 @@ const Header: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="primary" onClick={hideSupportDialog}>
+          <Button variant="contained" color="primary" onClick={hideSupportDialog} role="button">
             OK
           </Button>
         </DialogActions>

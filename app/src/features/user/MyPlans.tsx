@@ -40,8 +40,10 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        data-testid="my_plan_header">
-        <Typography ml={1} variant="h1">
+        data-testid="my_plan_header"
+        role="region"
+        aria-labelledby="my-plans-header">
+        <Typography ml={1} variant="h1" id="my-plans-header">
           <img src={ICONS.PLAN_ICON} width="20" height="32" alt="Plan" /> My Plans
         </Typography>
         <Box my={1} mx={1}>
@@ -56,9 +58,10 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
                 sx={{ mr: '1rem' }}
                 variant="contained"
                 color="primary"
-                startIcon={<Icon path={mdiPlus} size={1} />}
+                startIcon={<Icon path={mdiPlus} size={1} aria-label="Create Plan Icon" />}
                 onClick={() => history('/admin/plans/create')}
-                data-testid="create-plan-button">
+                data-testid="create-plan-button"
+                aria-label="Create Plan">
                 Create Plan
               </Button>
             )}
@@ -68,11 +71,12 @@ const MyPlans: React.FC<IPlansListProps> = (props) => {
             variant="outlined"
             disableElevation
             data-testid="hide-plans-list-button"
-            aria-label={'hide plans'}
+            aria-label={isExpanded ? 'Collapse Plans' : 'Expand Plans'}
             startIcon={
               <Icon
                 path={isExpanded ? mdiArrowCollapseVertical : mdiArrowExpandVertical}
                 size={1}
+                aria-label={isExpanded ? 'Collapse Plans Icon' : 'Expand Plans Icon'}
               />
             }
             {...getToggleProps()}>

@@ -31,9 +31,12 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
       {hasContacts &&
         contact.contacts.map((contactDetails, index) => (
           <Box my={1} key={index}>
-            <Card sx={{ borderRadius: '10px' }} data-testid={'contact-card'}>
+            <Card
+              sx={{ borderRadius: '10px' }}
+              data-testid={'contact-card'}
+              aria-label={`Contact ${index + 1}: ${contactDetails.first_name} ${contactDetails.last_name}`}>
               <CardHeader
-                avatar={<Avatar aria-label="contact" />}
+                avatar={<Avatar />}
                 title={`${contactDetails.first_name} ${contactDetails.last_name}`}
                 subheader={
                   <Grid container>
@@ -46,7 +49,7 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
                     <Grid item xs={6} textAlign={'center'}>
                       {contactDetails.is_primary === 'true' ? (
                         <Box>
-                          <Chip size="small" label="PRIMARY" />
+                          <Chip size="small" label="PRIMARY" aria-label="Primary Contact" />
                         </Box>
                       ) : (
                         <></>
@@ -66,7 +69,11 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
         ))}
 
       {!hasContacts && (
-        <Typography variant="body2" color="textSecondary" data-testid="no_contacts">
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          data-testid="no_contacts"
+          aria-label="No Contacts">
           No Contacts
         </Typography>
       )}

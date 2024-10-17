@@ -183,6 +183,7 @@ const UsersDetailProjectsPlans: React.FC<IProjectDetailsProps> = (props) => {
                   <IconButton
                     title="Remove Participant"
                     data-testid={'remove-project-participant-button'}
+                    aria-label="Remove Participant"
                     onClick={() =>
                       openYesNoDialog({
                         dialogTitle: SystemUserI18N.removeUserFromProject,
@@ -210,7 +211,7 @@ const UsersDetailProjectsPlans: React.FC<IProjectDetailsProps> = (props) => {
                       })
                     }
                     size="large">
-                    <Icon path={mdiTrashCanOutline} size={1} />
+                    <Icon path={mdiTrashCanOutline} size={1} aria-label="Trash Can Icon" />
                   </IconButton>
                 </Box>
               </TableCell>
@@ -232,18 +233,25 @@ const UsersDetailProjectsPlans: React.FC<IProjectDetailsProps> = (props) => {
   };
 
   if (!codes.isReady || !codes.data || !assignedProjects) {
-    return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
+    return (
+      <CircularProgress
+        data-testid="project-loading"
+        className="pageProgress"
+        size={40}
+        aria-label="Loading"
+      />
+    );
   }
 
   return (
     <Paper>
       <Toolbar sx={pageStyles.projectMembersToolbar}>
-        <Typography data-testid="projects_header" variant="h2">
+        <Typography data-testid="projects_header" variant="h2" id="projects-header">
           Assigned Projects and Plans ({assignedProjects?.length})
         </Typography>
       </Toolbar>
       <Box>
-        <Table sx={pageStyles.projectMembersTable}>
+        <Table sx={pageStyles.projectMembersTable} aria-labelledby="projects-header">
           <TableHead>
             <TableRow>
               <TableCell>Project/Plan Name</TableCell>
@@ -380,7 +388,7 @@ const ChangeProjectRoleMenu: React.FC<IChangeProjectRoleMenuProps> = (props) => 
           menuOnClick: () => handleChangeUserPermissionsClick(row, roleCode.name, roleCode.id)
         };
       })}
-      buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
+      buttonEndIcon={<Icon path={mdiMenuDown} size={1} aria-label="Menu Down Icon" />}
     />
   );
 };

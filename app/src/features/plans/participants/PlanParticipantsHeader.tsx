@@ -84,7 +84,7 @@ const PlanParticipantsHeader: React.FC<IPlanParticipantsHeaderProps> = (props) =
 
   return (
     <>
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" role="main" aria-labelledby="plan-participants-header-title">
         <Box pb={3}>
           <Breadcrumbs aria-label="breadcrumb">
             <Link
@@ -106,13 +106,15 @@ const PlanParticipantsHeader: React.FC<IPlanParticipantsHeaderProps> = (props) =
         </Box>
 
         <Box display="flex" justifyContent="space-between" mb={5}>
-          <Typography variant="h1">Plan Team</Typography>
+          <Typography variant="h1" id="plan-participants-header-title">
+            Plan Team
+          </Typography>
           <Box ml={4}>
             <Button
               color="primary"
               variant="contained"
               data-testid="invite-project-users-button"
-              aria-label={'Add Team Members'}
+              aria-label="Add Team Members"
               startIcon={<Icon path={mdiPlus} size={1} />}
               onClick={() => setOpenAddParticipantsDialog(true)}>
               Add Team Members
@@ -122,9 +124,9 @@ const PlanParticipantsHeader: React.FC<IPlanParticipantsHeaderProps> = (props) =
       </Container>
 
       <EditDialog
-        dialogTitle={'Add Team Members'}
+        dialogTitle="Add Team Members"
         open={openAddParticipantsDialog}
-        dialogSaveButtonLabel={'Add'}
+        dialogSaveButtonLabel="Add"
         component={{
           element: (
             <AddProjectParticipantsForm

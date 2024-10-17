@@ -71,6 +71,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           label="General Information"
           size="medium"
           data-testid="GeneralInfoTitle"
+          aria-label="General Information"
         />
         <GeneralInformation
           projectForViewData={projectForViewData}
@@ -85,6 +86,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           label="Project Contacts"
           size="medium"
           data-testid="ContactsTitle"
+          aria-label="Project Contacts"
         />
         <ProjectRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}
@@ -103,6 +105,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           label="Authorizations"
           size="medium"
           data-testid="AuthorizationsTitle"
+          aria-label="Authorizations"
         />
         <ProjectAuthorizations projectForViewData={projectForViewData} refresh={refresh} />
       </Box>
@@ -113,6 +116,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           label="Funding Sources"
           size="medium"
           data-testid="FundingSourceTitle"
+          aria-label="Funding Sources"
         />
         <FundingSource projectForViewData={projectForViewData} />
       </Box>
@@ -123,6 +127,7 @@ const ProjectDetailsPage: React.FC<IProjectDetailsProps> = (props) => {
           label="Partnerships"
           size="medium"
           data-testid="PartnershipTitle"
+          aria-label="Partnerships"
         />
         <Partnerships projectForViewData={projectForViewData} refresh={refresh} />
       </Box>

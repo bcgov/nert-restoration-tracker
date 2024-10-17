@@ -69,7 +69,8 @@ const ProjectAttachments: React.FC<IProjectAttachmentsProps> = (props) => {
               document means it will be published (publicly available). See the{' '}
               <Link
                 href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/privacy/personal-information"
-                color="primary">
+                color="primary"
+                aria-label="BC Government PI page">
                 BC Government PI
               </Link>{' '}
               page for more information.

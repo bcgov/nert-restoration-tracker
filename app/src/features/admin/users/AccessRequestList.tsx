@@ -145,11 +145,13 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
       <Paper>
         <Toolbar disableGutters>
           <Box px={2}>
-            <Typography variant="h2">Access Requests ({accessRequests?.length || 0})</Typography>
+            <Typography variant="h2" id="access-requests-header">
+              Access Requests ({accessRequests?.length || 0})
+            </Typography>
           </Box>
         </Toolbar>
         <TableContainer>
-          <Table sx={pageStyles.table}>
+          <Table sx={pageStyles.table} aria-labelledby="access-requests-header">
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
@@ -184,7 +186,8 @@ const AccessRequestList: React.FC<IAccessRequestListProps> = (props) => {
                         <Button
                           color="primary"
                           variant="outlined"
-                          onClick={() => setActiveReviewDialog({ open: true, request: row })}>
+                          onClick={() => setActiveReviewDialog({ open: true, request: row })}
+                          aria-label={`Review access request for ${row.data?.username}`}>
                           <strong>Review</strong>
                         </Button>
                       )}

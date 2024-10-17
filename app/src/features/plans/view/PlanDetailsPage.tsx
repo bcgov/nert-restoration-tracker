@@ -57,9 +57,11 @@ const PlanDetailsPage: React.FC<IPlanDetailsProps> = (props) => {
   const refresh = () => {};
 
   return (
-    <Box sx={pageStyles.planMetadata} py={1} px={2}>
+    <Box sx={pageStyles.planMetadata} py={1} px={2} role="main">
       <Box mb={2}>
-        <Typography variant="h2">Additional Plan Details</Typography>
+        <Typography variant="h2" id="additional-plan-details-title">
+          Additional Plan Details
+        </Typography>
       </Box>
 
       <Box mt={2}>
@@ -68,6 +70,7 @@ const PlanDetailsPage: React.FC<IPlanDetailsProps> = (props) => {
           label="General Information"
           size="medium"
           data-testid="PlanGeneralInfoTitle"
+          aria-labelledby="general-information-title"
         />
         <PlanGeneralInformation planForViewData={planForViewData} codes={codes} />
       </Box>
@@ -78,6 +81,7 @@ const PlanDetailsPage: React.FC<IPlanDetailsProps> = (props) => {
           label="Plan Contacts"
           size="medium"
           data-testid="PlanContactsTitle"
+          aria-labelledby="plan-contacts-title"
         />
         <ProjectRoleGuard
           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}

@@ -110,6 +110,7 @@ const PlanGeneralInformationForm: React.FC<ICurrentPlanStateProps> = (props) => 
                 other={{
                   required: true
                 }}
+                aria-required="true"
               />
             </Grid>
             <Grid item xs={12}>
@@ -142,6 +143,7 @@ const PlanGeneralInformationForm: React.FC<ICurrentPlanStateProps> = (props) => 
                     )
                   }
                 }}
+                aria-readonly="true"
               />
             </Grid>
             <Grid item xs={12}>
@@ -156,12 +158,16 @@ const PlanGeneralInformationForm: React.FC<ICurrentPlanStateProps> = (props) => 
                     maxRows: 5,
                     InputProps: {
                       endAdornment: (
-                        <IconButton edge="end" onClick={handleClickOpen}>
+                        <IconButton
+                          edge="end"
+                          onClick={handleClickOpen}
+                          aria-label="More information">
                           <InfoIcon color="info" />
                         </IconButton>
                       )
                     }
                   }}
+                  aria-required="true"
                 />
               </Grid>
             </Grid>

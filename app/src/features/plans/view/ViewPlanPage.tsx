@@ -130,12 +130,19 @@ const ViewPlanPage: React.FC = () => {
   }, [isLoadingPlan, planWithDetails, getPlan, getAttachments]);
 
   if (!codes.isReady || !codes.data || !planWithDetails) {
-    return <CircularProgress className="pageProgress" size={40} data-testid="loading_spinner" />;
+    return (
+      <CircularProgress
+        className="pageProgress"
+        size={40}
+        data-testid="loading_spinner"
+        aria-label="Loading"
+      />
+    );
   }
 
   return (
     <>
-      <Container maxWidth="xl" data-testid="view_plan_page_component">
+      <Container maxWidth="xl" data-testid="view_plan_page_component" role="main">
         <Card sx={{ backgroundColor: '#FFF4EB', marginBottom: '0.6rem' }}>
           <Box ml={1} mt={0.5} display="flex" justifyContent="space-between">
             <Box>
@@ -152,6 +159,8 @@ const ViewPlanPage: React.FC = () => {
                     size="small"
                     sx={getStatusStyle(planWithDetails.project.state_code)}
                     label={getStateLabelFromCode(planWithDetails.project.state_code)}
+                    role="status"
+                    aria-live="polite"
                   />
                   <InfoDialog isProject={false} infoContent={'workflow'} />
                 </Box>
@@ -242,7 +251,9 @@ const ViewPlanPage: React.FC = () => {
                     <Accordion
                       defaultExpanded={!!planWithDetails.location.geometry?.length || false}>
                       <AccordionSummary
-                        expandIcon={<Icon path={mdiArrowCollapseDown} size={1} />}
+                        expandIcon={
+                          <Icon path={mdiArrowCollapseDown} size={1} aria-label="Expand" />
+                        }
                         aria-controls="panel1-content"
                         id="panel1-header">
                         <Box

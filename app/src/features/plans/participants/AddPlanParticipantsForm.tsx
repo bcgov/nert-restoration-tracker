@@ -1,6 +1,6 @@
 import { mdiPlus, mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -54,7 +54,10 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
     useFormikContext<IAddPlanParticipantsForm>();
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} role="form" aria-labelledby="add-participants-form-title">
+      <Typography variant="h6" id="add-participants-form-title" component="h2">
+        Add Participants
+      </Typography>
       <FieldArray
         name="participants"
         render={(arrayHelpers) => (
@@ -79,7 +82,8 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                               value: participant.userIdentifier,
                               error:
                                 userIdentifierMeta.touched && Boolean(userIdentifierMeta.error),
-                              helperText: userIdentifierMeta.touched && userIdentifierMeta.error
+                              helperText: userIdentifierMeta.touched && userIdentifierMeta.error,
+                              'aria-label': `Username for participant ${index + 1}`
                             }}
                           />
                         </Box>
@@ -90,17 +94,19 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                           variant="outlined"
                           required={true}
                           error={identitySourceMeta.touched && Boolean(identitySourceMeta.error)}>
-                          <InputLabel id="loginMethod" required={false}>
+                          <InputLabel id={`loginMethod-${index}`} required={false}>
                             Login Method
                           </InputLabel>
                           <Select
                             id={`participants.[${index}].identitySource`}
                             name={`participants.[${index}].identitySource`}
-                            labelId="login_method"
+                            labelId={`loginMethod-${index}`}
                             label="Login Method"
                             value={participant.identitySource}
                             onChange={handleChange}
-                            inputProps={{ 'aria-label': 'Login Method' }}>
+                            inputProps={{
+                              'aria-label': `Login Method for participant ${index + 1}`
+                            }}>
                             <MenuItem
                               key={SYSTEM_IDENTITY_SOURCE.IDIR}
                               value={SYSTEM_IDENTITY_SOURCE.IDIR}>
@@ -128,17 +134,19 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                           variant="outlined"
                           required={true}
                           error={roleIdMeta.touched && Boolean(roleIdMeta.error)}>
-                          <InputLabel id="Id" required={false}>
+                          <InputLabel id={`roleId-${index}`} required={false}>
                             Project Role
                           </InputLabel>
                           <Select
                             id={`participants.[${index}].roleId`}
                             name={`participants.[${index}].roleId`}
-                            labelId="project_role"
+                            labelId={`roleId-${index}`}
                             label="Project Role"
                             value={participant.roleId}
                             onChange={handleChange}
-                            inputProps={{ 'aria-label': 'Project Role' }}>
+                            inputProps={{
+                              'aria-label': `Project Role for participant ${index + 1}`
+                            }}>
                             {props.project_roles.map((item) => (
                               <MenuItem key={item.value} value={item.value}>
                                 {item.label}
@@ -151,7 +159,7 @@ const AddProjectParticipantsForm: React.FC<AddProjectParticipantsFormProps> = (p
                       <Grid item xs={1.5} textAlign={'center'}>
                         <IconButton
                           data-testid="delete-icon"
-                          aria-label="remove participant"
+                          aria-label={`remove participant ${index + 1}`}
                           onClick={() => arrayHelpers.remove(index)}
                           size="large">
                           <Icon path={mdiTrashCanOutline} size={1} />

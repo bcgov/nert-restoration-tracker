@@ -18,11 +18,11 @@ interface IStartEndDateFieldsProps {
 }
 
 const CalendarStartIcon = () => {
-  return <Icon path={mdiCalendarStart} size={1} />;
+  return <Icon path={mdiCalendarStart} size={1} aria-label="Start Date Calendar Icon" />;
 };
 
 const CalendarEndIcon = () => {
-  return <Icon path={mdiCalendarEnd} size={1} />;
+  return <Icon path={mdiCalendarEnd} size={1} aria-label="End Date Calendar Icon" />;
 };
 
 /**
@@ -71,7 +71,8 @@ const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
                 error: get(touched, startName) && Boolean(get(errors, startName)),
                 helperText: get(touched, startName) && get(errors, startName),
                 inputProps: {
-                  'data-testid': 'start_date'
+                  'data-testid': 'start_date',
+                  'aria-label': 'Start Date'
                 },
                 InputLabelProps: {
                   shrink: true
@@ -111,7 +112,8 @@ const StartEndDateFields: React.FC<IStartEndDateFieldsProps> = (props) => {
                 error: get(touched, endName) && Boolean(get(errors, endName)),
                 helperText: get(touched, endName) && get(errors, endName),
                 inputProps: {
-                  'data-testid': 'end_date'
+                  'data-testid': 'end_date',
+                  'aria-label': 'End Date'
                 },
                 InputLabelProps: {
                   shrink: true

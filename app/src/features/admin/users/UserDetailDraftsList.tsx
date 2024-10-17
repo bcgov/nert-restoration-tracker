@@ -184,12 +184,19 @@ const UserDetailDraftsList: React.FC<IUserDetailDraftsListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history(`/admin/projects/create?draftId=${row.draftId}`)}>
+                        onClick={() => history(`/admin/projects/create?draftId=${row.draftId}`)}
+                        aria-label={`Draft project ${row.draftName}`}>
                         {row.draftName}
                       </Link>
                     </TableCell>
                     <TableCell align="left">
-                      <Chip size="small" sx={draftStatusStyle} label={states.DRAFT} />
+                      <Chip
+                        size="small"
+                        sx={draftStatusStyle}
+                        label={states.DRAFT}
+                        role="status"
+                        aria-live="polite"
+                      />
                     </TableCell>
                     <TableCell width="100px" align="left">
                       <Tooltip title={TableI18N.deleteDraft} placement="top">
@@ -225,7 +232,8 @@ const UserDetailDraftsList: React.FC<IUserDetailDraftsListProps> = (props) => {
                               }
                             })
                           }
-                          color="error">
+                          color="error"
+                          aria-label={`Delete draft project ${row.draftName}`}>
                           <DeleteForeverIcon />
                         </IconButton>
                       </Tooltip>
@@ -259,6 +267,7 @@ const UserDetailDraftsList: React.FC<IUserDetailDraftsListProps> = (props) => {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            aria-label="Project drafts pagination"
           />
         </Box>
       </Box>
@@ -355,12 +364,19 @@ const UserDetailDraftsList: React.FC<IUserDetailDraftsListProps> = (props) => {
                         component="button"
                         sx={{ textAlign: 'left' }}
                         variant="body2"
-                        onClick={() => history(`/admin/projects/create?draftId=${row.draftId}`)}>
+                        onClick={() => history(`/admin/projects/create?draftId=${row.draftId}`)}
+                        aria-label={`Draft plan ${row.draftName}`}>
                         {row.draftName}
                       </Link>
                     </TableCell>
                     <TableCell align="left">
-                      <Chip size="small" sx={draftStatusStyle} label={states.DRAFT} />
+                      <Chip
+                        size="small"
+                        sx={draftStatusStyle}
+                        label={states.DRAFT}
+                        role="status"
+                        aria-live="polite"
+                      />
                     </TableCell>
                     <TableCell width="100px" align="left">
                       <Tooltip title={TableI18N.deleteDraft} placement="top">
@@ -396,7 +412,8 @@ const UserDetailDraftsList: React.FC<IUserDetailDraftsListProps> = (props) => {
                               }
                             })
                           }
-                          color="error">
+                          color="error"
+                          aria-label={`Delete draft plan ${row.draftName}`}>
                           <DeleteForeverIcon />
                         </IconButton>
                       </Tooltip>
@@ -430,6 +447,7 @@ const UserDetailDraftsList: React.FC<IUserDetailDraftsListProps> = (props) => {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            aria-label="Plan drafts pagination"
           />
         </Box>
       </Box>

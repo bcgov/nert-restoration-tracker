@@ -108,9 +108,9 @@ const PlanContactForm: React.FC = () => {
                   setIsModalOpen(false);
                 }}
               />
-              <List dense disablePadding>
+              <List dense disablePadding aria-label="Contact List">
                 {!values.contact.contacts.length && (
-                  <ListItem dense component={Paper}>
+                  <ListItem dense component={Paper} role="listitem">
                     <Box
                       display="flex"
                       flexGrow={1}

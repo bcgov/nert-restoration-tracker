@@ -18,12 +18,16 @@ function UserDetailDraftsTableHead(props: DraftTableProps) {
         key={headCell.id}
         align={headCell.numeric ? 'right' : 'left'}
         padding={headCell.disablePadding ? 'none' : 'normal'}
-        sortDirection={orderBy === headCell.id ? order : false}>
-        <Tooltip title={headCell.tooltipLabel ? headCell.tooltipLabel : null} placement="top">
+        sortDirection={orderBy === headCell.id ? order : false}
+        aria-sort={
+          orderBy === headCell.id ? (order === 'desc' ? 'descending' : 'ascending') : 'none'
+        }>
+        <Tooltip title={headCell.tooltipLabel ? headCell.tooltipLabel : ''} placement="top">
           <TableSortLabel
             active={orderBy === headCell.id}
             direction={orderBy === headCell.id ? order : 'asc'}
-            onClick={createSortHandler(headCell.id)}>
+            onClick={createSortHandler(headCell.id)}
+            aria-label={`Sort by ${headCell.label}`}>
             {headCell.label}
             {orderBy === headCell.id ? (
               <Box component="span" sx={visuallyHidden}>

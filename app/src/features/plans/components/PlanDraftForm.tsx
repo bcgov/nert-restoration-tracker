@@ -26,13 +26,14 @@ const PlanDraftForm: React.FC = () => {
   const { handleSubmit } = formikProps;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} aria-labelledby="draft-form-title">
       <CustomTextField
         name="draft_name"
         label="Draft Name"
         other={{
           required: true
         }}
+        aria-required="true"
       />
     </form>
   );

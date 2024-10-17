@@ -74,7 +74,7 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
   return (
     <Fragment>
       <Tooltip title={`${item.typeLabel} ${infoContent}`} placement="top">
-        <IconButton edge="end" onClick={handleClickOpen}>
+        <IconButton edge="end" onClick={handleClickOpen} aria-label={`Open ${item.typeLabel} info`}>
           <InfoIcon color="info" />
         </IconButton>
       </Tooltip>
@@ -93,6 +93,8 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
               sx={{ width: 20, height: 32 }}
               image={item.typeIcon}
               title={item.typeLabel}
+              role="img"
+              aria-label={`${item.typeLabel} icon`}
             />
             <Typography sx={{ mt: 1, ml: 1, fontWeight: 550 }}>
               {item.typeLabel} {infoContent}
@@ -112,7 +114,7 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
         </IconButton>
         <DialogContent dividers>
           {isError ? (
-            <Alert variant="outlined" severity="error">
+            <Alert variant="outlined" severity="error" role="alert">
               Unable to play media
             </Alert>
           ) : (
@@ -133,7 +135,7 @@ const InfoDialog: React.FC<IInfoDialogProps> = (props) => {
           )}
         </DialogContent>
         <DialogActions sx={{ backgroundColor: item.typeBgColor }}>
-          <Button autoFocus onClick={handleClose}>
+          <Button autoFocus onClick={handleClose} aria-label="Close dialog">
             Close
           </Button>
         </DialogActions>

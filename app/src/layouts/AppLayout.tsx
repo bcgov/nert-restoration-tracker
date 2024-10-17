@@ -29,14 +29,16 @@ const AppLayout = () => {
           sx={{
             color: 'primary.main',
             backgroundColor: '#fcba19'
-          }}>
+          }}
+          role="alert"
+          aria-live="assertive">
           This is an unsupported browser. Some functionality may not work as expected.
         </Alert>
       )}
 
       <Header />
 
-      <Box component="main" flex="1 1 auto" py={4} sx={{ padding: 0 }}>
+      <Box component="main" flex="1 1 auto" py={4} sx={{ padding: 0 }} role="main">
         <Outlet />
       </Box>
 
