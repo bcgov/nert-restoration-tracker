@@ -668,7 +668,6 @@ const initializeMap = (
    * Load all custom layers here
    */
   map.on('load', async () => {
-
     /* Avoid double renders */
     if (!map.getSource('maptiler.raster-dem')) {
       /* The base layer */
@@ -1224,21 +1223,21 @@ const initializeMap = (
     drawWells(map, orphanedWells, dormantWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
-      if (bounds) {
-        map.fitBounds(bounds, { padding: 50 });
-        map.once('idle', () => {
-          setMapIdle(true);
-        });
-      } else if (autoFocus && features.length > 0) {
-        const featureCollection = turf.featureCollection(features);
-        const newBounds = turf.bbox(featureCollection);
+    if (bounds) {
+      map.fitBounds(bounds, { padding: 50 });
+      map.once('idle', () => {
+        setMapIdle(true);
+      });
+    } else if (autoFocus && features.length > 0) {
+      const featureCollection = turf.featureCollection(features);
+      const newBounds = turf.bbox(featureCollection);
 
-        // @ts-ignore - turf types are incorrect here
-        map.fitBounds(newBounds, { padding: 150 });
-        map.once('idle', () => {
-          setMapIdle(true);
-        });
-      }
+      // @ts-ignore - turf types are incorrect here
+      map.fitBounds(newBounds, { padding: 150 });
+      map.once('idle', () => {
+        setMapIdle(true);
+      });
+    }
   });
 };
 
@@ -1488,7 +1487,12 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   // If more features are added, fit the map to the new features
   const originalFeatures = useRef(features);
   useEffect(() => {
-    if (features.length > originalFeatures.current.length && features.length > 0 && !centroids && mapIdle) {
+    if (
+      features.length > originalFeatures.current.length &&
+      features.length > 0 &&
+      !centroids &&
+      mapIdle
+    ) {
       const bounds = calculateUpdatedMapBounds(features, true);
       map.once('idle', () => {
         setMapIdle(false);

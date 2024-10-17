@@ -195,7 +195,7 @@ const ProjectLocationForm: React.FC<IProjectLocationFormProps> = (props) => {
 
   const [region, setRegion] = useState('');
   useEffect(() => {
-    const selectedRegion = props.regions.find(r => r.value === values.location.region);
+    const selectedRegion = props.regions.find((r) => r.value === values.location.region);
     setRegion(selectedRegion ? selectedRegion.label : '');
   }, [values.location.region]);
 
