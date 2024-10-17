@@ -47,7 +47,11 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
   const hasObjectives = objective.objectives && objective.objectives.length > 0;
   return (
     <Box mt={1} role="region" aria-labelledby="project_objectives_header">
-      <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2" id="project_objectives_header">
+      <Typography
+        sx={{ fontWeight: 'bold' }}
+        variant="subtitle2"
+        component="h2"
+        id="project_objectives_header">
         Project Objectives:
       </Typography>
       <Box display="flex" flexDirection={'column'} alignItems="left">
@@ -59,7 +63,6 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
               size="small"
               sx={pageStyles.objectiveChip}
               label={objectiveStyled(item.objective)}
-              role="listitem"
               aria-label={`Objective ${index + 1}`}
             />
           ))}
@@ -68,7 +71,6 @@ const ProjectObjectives: React.FC<IProjectObjectivesProps> = (props) => {
           <Chip
             label="No Objectives"
             data-testid="no_objective_loaded"
-            role="listitem"
             aria-label="No Objectives"
           />
         )}

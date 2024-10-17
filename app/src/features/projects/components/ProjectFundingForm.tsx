@@ -168,7 +168,9 @@ const ProjectFundingForm: React.FC = () => {
                       justifyContent="center"
                       alignContent="middle"
                       p={2}>
-                      <Typography variant="subtitle2">No Funding Sources</Typography>
+                      <Typography variant="subtitle2" component="h3">
+                        No Funding Sources
+                      </Typography>
                     </Box>
                   </ListItem>
                 )}

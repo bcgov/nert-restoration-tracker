@@ -148,12 +148,7 @@ const ProjectAuthorizationForm: React.FC = () => {
 
                 return (
                   /* authorization List List */
-                  <Grid
-                    container
-                    spacing={3}
-                    key={index}
-                    role="listitem"
-                    aria-label={`Authorization ${index + 1}`}>
+                  <Grid container spacing={3} key={index} aria-label={`Authorization ${index + 1}`}>
                     <Grid item xs={12}>
                       <List>
                         <ListItem sx={pageStyles.customListItem}>

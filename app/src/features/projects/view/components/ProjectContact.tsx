@@ -34,10 +34,9 @@ const ProjectContact: React.FC<IProjectContactProps> = ({ projectForViewData }) 
             <Card
               sx={{ borderRadius: '10px' }}
               data-testid={'contact-card'}
-              role="listitem"
               aria-label={`Contact ${index + 1}: ${contactDetails.first_name} ${contactDetails.last_name}`}>
               <CardHeader
-                avatar={<Avatar aria-label="contact" />}
+                avatar={<Avatar />}
                 title={`${contactDetails.first_name} ${contactDetails.last_name}`}
                 subheader={
                   <Grid container>

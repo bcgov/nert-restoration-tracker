@@ -142,7 +142,6 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
                         size="small"
                         sx={getStatusStyle(getStateCodeFromLabel(currentState || states.DRAFT))}
                         label={currentState || states.DRAFT}
-                        aria-label="Project Status"
                       />
                     ),
                     endAdornment: (
@@ -153,7 +152,6 @@ const ProjectGeneralInformationForm: React.FC<ICurrentProjectStateProps> = (prop
                               isProject={true}
                               currentStatus={currentState}
                               formikProps={formikProps}
-                              aria-label="Project Status Selector"
                             />
                           </Box>
                         )}

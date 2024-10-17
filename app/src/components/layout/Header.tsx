@@ -217,7 +217,8 @@ const Header: React.FC = () => {
     return (
       <Typography
         sx={pageStyles.appVersionTag}
-        variant="subtitle2"
+        variant="h3"
+        component="h2"
         aria-label={`This application version is ${nert_version} in environment ${nert_environment}`}>
         v{nert_version} {nert_environment}
       </Typography>
@@ -258,10 +259,10 @@ const Header: React.FC = () => {
               <Box ml={2}>
                 <Typography
                   variant="h6"
-                  component="div"
+                  component="h1"
                   sx={{ flexGrow: 1 }}
                   data-testid="title"
-                  role="heading">
+                  aria-label={title}>
                   {title}
                 </Typography>
                 <VersionEnvironmentLabel />
