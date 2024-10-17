@@ -1224,23 +1224,21 @@ const initializeMap = (
     drawWells(map, orphanedWells, dormantWells, tooltipState);
 
     // If bounds are provided, fit the map to the bounds with a buffer
-    // I think this whole thing should wait until the map is idle
-    // TODO: This is where the problem is
-    if (bounds) {
-      map.fitBounds(bounds, { padding: 50 });
-      map.once('idle', () => {
-        setMapIdle(true);
-      });
-    } else if (autoFocus && features.length > 0) {
-      const featureCollection = turf.featureCollection(features);
-      const newBounds = turf.bbox(featureCollection);
+      if (bounds) {
+        map.fitBounds(bounds, { padding: 50 });
+        map.once('idle', () => {
+          setMapIdle(true);
+        });
+      } else if (autoFocus && features.length > 0) {
+        const featureCollection = turf.featureCollection(features);
+        const newBounds = turf.bbox(featureCollection);
 
-      // @ts-ignore - turf types are incorrect here
-      map.fitBounds(newBounds, { padding: 150 });
-      map.once('idle', () => {
-        setMapIdle(true);
-      });
-    }
+        // @ts-ignore - turf types are incorrect here
+        map.fitBounds(newBounds, { padding: 150 });
+        map.once('idle', () => {
+          setMapIdle(true);
+        });
+      }
   });
 };
 
@@ -1417,7 +1415,7 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   const [projectMarker, setProjectMarker] = useState<any>();
   const [planMarker, setPlanMarker] = useState<any>();
 
-  const [mapIdle, setMapIdle] = useState(false);
+  const [mapIdle, setMapIdle] = useState(true);
 
   const markerState = {
     projectMarker,
@@ -1484,7 +1482,6 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   }, [props.region]);
 
   useEffect(() => {
-    // test
     checkOrphanedWellsState(filterState.orphanedWells);
   }, [filterState.orphanedWells]);
 
@@ -1493,10 +1490,13 @@ const MapContainer: React.FC<IMapContainerProps> = (props) => {
   useEffect(() => {
     if (features.length > originalFeatures.current.length && features.length > 0 && !centroids && mapIdle) {
       const bounds = calculateUpdatedMapBounds(features, true);
-      setMapIdle(false);
-      map.fitBounds(bounds, { padding: 50 });
       map.once('idle', () => {
-        setMapIdle(true);
+        setMapIdle(false);
+        map.fitBounds(bounds, { padding: 50 });
+        map.once('idle', () => {
+          setMapIdle(true);
+          updateMasks(mask, maskState, features);
+        });
       });
     }
   }, [features]);
