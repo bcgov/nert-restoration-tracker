@@ -416,7 +416,8 @@ const convertToCentroidGeoJSON = (features: any) => {
           is_project: f.is_project,
           state_code: f.state_code,
           number_sites: f.number_sites,
-          size_ha: f.size_ha
+          size_ha: f.size_ha,
+          maskedLocation: f.maskedLocation
         }
       };
     })
@@ -1057,6 +1058,7 @@ const initializeMap = (
         const numberSites = prop.number_sites;
         const sizeHa = prop.size_ha;
         const stateCode = prop.state_code;
+        const maskedLocation = prop.maskedLocation;
 
         let thumbnail = '';
         try {
@@ -1083,6 +1085,7 @@ const initializeMap = (
             number_sites={numberSites}
             size_ha={sizeHa}
             state_code={stateCode}
+            maskedLocation={maskedLocation}
             thumbnail={thumbnail}
             maskDisclaimer={true}
           />
@@ -1110,6 +1113,7 @@ const initializeMap = (
         const numberSites = prop.number_sites;
         const sizeHa = prop.size_ha;
         const stateCode = prop.state_code;
+        const maskedLocation = prop.maskedLocation;
 
         let thumbnail = '';
         try {
@@ -1133,6 +1137,7 @@ const initializeMap = (
             state_code={stateCode}
             thumbnail={thumbnail}
             maskDisclaimer={true}
+            maskedLocation={maskedLocation}
           />
         );
 

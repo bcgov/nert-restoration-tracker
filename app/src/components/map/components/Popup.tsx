@@ -110,11 +110,6 @@ const MapPopup = (props: any) => {
       {maskedLocation && (
         <div style={style.attention}>Location sensitive site - see FOIPPA 16, 17, 18 & 18.1.</div>
       )}
-      {maskDisclaimer && (
-        <div style={style.attention}>
-          Point location is approximate and does not represent the exact location of the site.
-        </div>
-      )}
       {!hideButton && (
         <div>
           <a href={`/${isProject ? 'projects' : 'plans'}/${id}`}>

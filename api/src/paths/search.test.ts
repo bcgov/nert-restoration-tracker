@@ -107,6 +107,7 @@ describe('search', () => {
           number_sites: 1,
           size_ha: 100,
           state_code: 1,
+          maskedLocation: false,
           geometry: '{"type":"Point","coordinates":[50.7,60.9]}'
         }
       ];
@@ -133,6 +134,7 @@ describe('search', () => {
           number_sites: searchList[0].number_sites,
           size_ha: searchList[0].size_ha,
           state_code: searchList[0].state_code,
+          maskedLocation: searchList[0].maskedLocation,
           geometry: [
             {
               type: 'Point',

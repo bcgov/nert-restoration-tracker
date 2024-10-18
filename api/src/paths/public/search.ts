@@ -59,7 +59,8 @@ export function getSearchResults(): RequestHandler {
           p.state_code,
           psc.number_sites,
           psc.size_ha,
-          public.ST_asGeoJSON(psc.geography) as geometry
+          public.ST_asGeoJSON(psc.geography) as geometry,
+          psc.geojson#>>'{}' as geojson
         FROM
           project p
         LEFT JOIN

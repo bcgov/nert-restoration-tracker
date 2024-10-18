@@ -140,16 +140,35 @@ const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) 
           units: 'meters',
           properties: feature.properties
         });
-        featureArray.coordinates[index] = mask.geometry.coordinates;
+        featureArray.coordinates[index] = mask.geometry.coordinates[0];
       }
     });
   } catch (error) {
     console.log('error', error);
+    throw error;
   }
 
   return featureArray;
 };
 
+/**
+ * Check if there are any masked locations in the geojson.
+ * @param geojsonString
+ * @returns {boolean}
+ */
+const _findMaskedLocations = (geojsonString: string) => {
+  let maskedLocations = false;
+  try {
+    const geojson = JSON.parse(geojsonString);
+    if (geojson && geojson.some((feature: any) => feature.properties.maskedLocation)) {
+      maskedLocations = true;
+    }
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+  return maskedLocations;
+};
 /**
  * Extract an array of search result data from DB query.
  *
@@ -167,6 +186,7 @@ export function _extractResults(rows: any[]): any[] {
   rows.forEach((row) => {
     // Protected shapes must have their geometry masked here
     const features = _maskGateKeeper(row.geometry, row.geojson);
+    const maskedLocations = _findMaskedLocations(row.geojson || '{[]}');
 
     const result: any = {
       id: row.id,
@@ -175,7 +195,8 @@ export function _extractResults(rows: any[]): any[] {
       state_code: row.state_code,
       number_sites: row.number_sites,
       size_ha: row.size_ha,
-      geometry: [features]
+      geometry: [features],
+      maskedLocation: maskedLocations
     };
 
     searchResults.push(result);
