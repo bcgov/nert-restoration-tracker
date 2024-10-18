@@ -99,11 +99,10 @@ const SearchPage: React.FC = () => {
     }
   }, [restorationApi.search, restorationApi.public.search, authStateContext.auth]);
 
+  // This was the source of the infinite loop.
   useEffect(() => {
-    if (performSearch) {
       getSearchResults();
-    }
-  }, [performSearch, getSearchResults]);
+  }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 

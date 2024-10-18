@@ -125,6 +125,10 @@ export interface IGeoJSON {
  * @returns new feature array with mask applied
  */
 const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
+
+  // // TESTING: 
+  // return JSON.parse(originalFeatureArray);
+
   const featureArray: IFeatureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
   try {
     const geojson: IGeoJSON[] = originalGeoJSON && JSON.parse(originalGeoJSON);
@@ -150,6 +154,10 @@ const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) 
   return featureArray;
 };
 
+const _findMaskedLocation = (rows: any[]) => {
+  defaultLog.debug({ label: 'rows', message: rows });
+  return true;
+}
 /**
  * Extract an array of search result data from DB query.
  *
@@ -163,6 +171,8 @@ export function _extractResults(rows: any[]): any[] {
   }
 
   const searchResults: any[] = [];
+  
+  const maskedLocations = _findMaskedLocation(rows);
 
   rows.forEach((row) => {
     // Protected shapes must have their geometry masked here
@@ -175,7 +185,8 @@ export function _extractResults(rows: any[]): any[] {
       state_code: row.state_code,
       number_sites: row.number_sites,
       size_ha: row.size_ha,
-      geometry: [features]
+      geometry: [features],
+      maskedLocation: maskedLocations
     };
 
     searchResults.push(result);

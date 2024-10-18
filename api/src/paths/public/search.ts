@@ -59,7 +59,8 @@ export function getSearchResults(): RequestHandler {
           p.state_code,
           psc.number_sites,
           psc.size_ha,
-          public.ST_asGeoJSON(psc.geography) as geometry
+          public.ST_asGeoJSON(psc.geography) as geometry,
+          psc.geojson#>>'{}' as geojson
         FROM
           project p
         LEFT JOIN
@@ -83,11 +84,15 @@ export function getSearchResults(): RequestHandler {
 
       await connection.commit();
 
+      // defaultLog.debug({ label: 'getSearchResults', message: 'response', response });
+
       if (!response || !response.rows) {
         return res.status(200).json(null);
       }
 
       const result: any[] = _extractResults(response.rows);
+
+      defaultLog.debug({ label: 'getSearchResults', message: 'result', result });
 
       return res.status(200).json(result);
     } catch (error) {
