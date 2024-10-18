@@ -62,7 +62,10 @@ const ProjectFundingItemForm: React.FC = () => {
   const { values, touched, errors, handleSubmit, setFieldValue } = formikProps;
 
   return (
-    <form data-testid="funding-item-form" onSubmit={handleSubmit}>
+    <form
+      data-testid="funding-item-form"
+      onSubmit={handleSubmit}
+      aria-labelledby="funding-item-form-title">
       <Box component="fieldset" mt={1}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -71,17 +74,30 @@ const ProjectFundingItemForm: React.FC = () => {
                 name="organization_name"
                 label="Funding Organization Name"
                 other={{
-                  required: true
+                  required: true,
+                  'aria-label': 'Funding Organization Name'
                 }}
               />
               <FormHelperText>{errors.organization_name}</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <CustomTextField name="description" label="Description" />
+            <CustomTextField
+              name="description"
+              label="Description"
+              other={{
+                'aria-label': 'Description'
+              }}
+            />
           </Grid>
           <Grid item xs={12}>
-            <CustomTextField name="funding_project_id" label="Funding Project ID" />
+            <CustomTextField
+              name="funding_project_id"
+              label="Funding Project ID"
+              other={{
+                'aria-label': 'Funding Project ID'
+              }}
+            />
           </Grid>
           <Grid item xs={12}>
             <DollarAmountField
@@ -89,6 +105,7 @@ const ProjectFundingItemForm: React.FC = () => {
               id="funding_amount"
               name="funding_amount"
               label={CreateProjectI18N.fundingAmount}
+              aria-label="Funding Amount"
             />
           </Grid>
           <Grid item xs={12}>
@@ -98,6 +115,7 @@ const ProjectFundingItemForm: React.FC = () => {
               endName={'end_date'}
               startRequired={false}
               endRequired={false}
+              aria-label="Start and End Dates"
             />
           </Grid>
           <Grid item xs={12}>
@@ -107,6 +125,7 @@ const ProjectFundingItemForm: React.FC = () => {
               values={values.is_public}
               handleChange={(value: string) => setFieldValue('is_public', value)}
               customizeFor={'Funding'}
+              aria-label="Is Public"
             />
           </Grid>
         </Grid>

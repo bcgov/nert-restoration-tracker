@@ -214,7 +214,10 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const focusTooltip = (focus: string) => {
       return (
         <Tooltip title={focus} disableHoverListener={focus.length < 35}>
-          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+          <Typography
+            sx={utils.focusStyles.focusLabel}
+            aria-label={`Focus: ${focus}`}
+            role="tooltip">
             {focus}
           </Typography>
         </Tooltip>
@@ -224,7 +227,10 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
     const orgTooltip = (org: string) => {
       return (
         <Tooltip title={org} disableHoverListener={org.length < 35}>
-          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+          <Typography
+            sx={utils.orgStyles.orgLabel}
+            aria-label={`Organization: ${org}`}
+            role="tooltip">
             {org}
           </Typography>
         </Tooltip>
@@ -304,7 +310,8 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
-            data-testid={'project_table'}>
+            data-testid={'project_table'}
+            role="table">
             <ProjectsTableHead
               myProject={myProject}
               numSelected={selected.length}
@@ -322,13 +329,13 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                 return (
                   <TableRow
                     hover
-                    role="checkbox"
+                    role="row"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}>
-                    <TableCell component="th" id={labelId} scope="row" padding="normal">
+                    <TableCell component="th" id={labelId} scope="row" padding="normal" role="cell">
                       <Link
                         data-testid={`project-${row.projectName}-link`}
                         underline="always"
@@ -339,11 +346,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                           draftCode != row.statusCode
                             ? () => history(`/admin/projects/${row.projectId}/details`)
                             : () => history(`/admin/projects/create?draftId=${row.projectId}`)
-                        }>
+                        }
+                        aria-label={`View details for project ${row.projectName}`}>
                         {row.projectName}
                       </Link>
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" role="cell">
                       {row.focus &&
                         row.focus.split('\r').map((focus: string, key) => (
                           <Fragment key={key}>
@@ -353,6 +361,8 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                                 size="small"
                                 sx={utils.focusStyles.focusProjectChip}
                                 label={focusTooltip(focus)}
+                                role="button"
+                                aria-label={`Focus: ${focus}`}
                               />
                             </Box>
                           </Fragment>
@@ -363,10 +373,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                           label="No Focuses"
                           sx={utils.focusStyles.noFocusChip}
                           data-testid="no_focuses_loaded"
+                          role="button"
+                          aria-label="No focuses available"
                         />
                       )}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" role="cell">
                       {row.org &&
                         row.org.split('\r').map((organization: string, key) => (
                           <Fragment key={key}>
@@ -376,6 +388,8 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                                 size="small"
                                 sx={utils.orgStyles.orgProjectChip}
                                 label={orgTooltip(organization)}
+                                role="button"
+                                aria-label={`Organization: ${organization}`}
                               />
                             </Box>
                           </Fragment>
@@ -386,29 +400,33 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                           label="No Organizations"
                           sx={utils.orgStyles.noOrgChip}
                           data-testid="no_organizations_loaded"
+                          role="button"
+                          aria-label="No organizations available"
                         />
                       )}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" role="cell">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedStartDate)}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" role="cell">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualStartDate)}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" role="cell">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.plannedEndDate)}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" role="cell">
                       {getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, row.actualEndDate)}
                     </TableCell>
-                    <TableCell sx={{ p: 0 }} align="left">
+                    <TableCell sx={{ p: 0 }} align="left" role="cell">
                       <Chip
                         size="small"
                         sx={getStatusStyle(row.statusCode)}
                         label={row.statusLabel}
+                        role="button"
+                        aria-label={`Status: ${row.statusLabel}`}
                       />
                     </TableCell>
-                    <TableCell sx={{ maxWidth: 50 }} align="left">
+                    <TableCell sx={{ maxWidth: 50 }} align="left" role="cell">
                       {draftCode !== row.statusCode ? (
                         <SystemRoleGuard
                           validSystemRoles={[SYSTEM_ROLE.SYSTEM_ADMIN, SYSTEM_ROLE.MAINTAINER]}>
@@ -475,7 +493,12 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                                   }
                                 })
                               }
-                              color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                              color={archCode !== row.statusCode ? 'info' : 'warning'}
+                              aria-label={
+                                archCode !== row.statusCode
+                                  ? 'Archive project'
+                                  : 'Unarchive project'
+                              }>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                             </IconButton>
                           </Tooltip>
@@ -512,7 +535,8 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                                   }
                                 })
                               }
-                              color="error">
+                              color="error"
+                              aria-label="Delete project">
                               <DeleteForeverIcon />
                             </IconButton>
                           </Tooltip>
@@ -553,7 +577,8 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                                 }
                               })
                             }
-                            color="error">
+                            color="error"
+                            aria-label="Delete draft">
                             <DeleteForeverIcon />
                           </IconButton>
                         </Tooltip>
@@ -561,7 +586,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                     </TableCell>
 
                     {!myProject ? (
-                      <TableCell padding="checkbox">
+                      <TableCell padding="checkbox" role="cell">
                         <Tooltip
                           title={
                             isItemSelected ? TableI18N.exportSelected : TableI18N.exportNotSelected
@@ -574,6 +599,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                               'aria-labelledby': labelId
                             }}
                             onClick={(event) => handleClick(event, row.id)}
+                            aria-label={isItemSelected ? 'Deselect project' : 'Select project'}
                           />
                         </Tooltip>
                       </TableCell>
@@ -587,8 +613,9 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows
-                  }}>
-                  <TableCell colSpan={9} />
+                  }}
+                  role="row">
+                  <TableCell colSpan={9} role="cell" />
                 </TableRow>
               )}
             </TableBody>
@@ -599,6 +626,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             sx={{ ml: '0.5rem' }}
             control={<Switch size="small" checked={dense} onChange={handleChangeDense} />}
             label={<Typography variant="caption">{TableI18N.densePadding}</Typography>}
+            aria-label="Toggle dense padding"
           />
           <TablePagination
             sx={{ backgroundColor: '#E9FBFF' }}
@@ -609,6 +637,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            aria-label="Table pagination"
           />
         </Box>
       </Box>
@@ -619,7 +648,7 @@ const ProjectsListPage: React.FC<IProjectsListProps> = (props) => {
    * Displays project list.
    */
   return (
-    <Card>
+    <Card role="region" aria-labelledby="projects-table-header">
       <ProjectsTable />
     </Card>
   );

@@ -32,8 +32,10 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        data-testid="my_projects_header">
-        <Typography ml={1} variant="h1">
+        data-testid="my_projects_header"
+        role="region"
+        aria-labelledby="my-projects-header">
+        <Typography ml={1} variant="h1" id="my-projects-header">
           <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> My Projects
         </Typography>
         <Box my={1} mx={1}>
@@ -48,9 +50,10 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
                 sx={{ mr: '1rem' }}
                 variant="contained"
                 color="primary"
-                startIcon={<Icon path={mdiPlus} size={1} />}
+                startIcon={<Icon path={mdiPlus} size={1} aria-label="Create Project Icon" />}
                 onClick={() => history('/admin/projects/create')}
-                data-testid="create-project-button">
+                data-testid="create-project-button"
+                aria-label="Create Project">
                 Create Project
               </Button>
             )}
@@ -61,11 +64,12 @@ const MyProjects: React.FC<IProjectsListProps> = (props) => {
             variant="outlined"
             disableElevation
             data-testid="hide-projects-list-button"
-            aria-label={'hide projects'}
+            aria-label={isExpanded ? 'Collapse Projects' : 'Expand Projects'}
             startIcon={
               <Icon
                 path={isExpanded ? mdiArrowCollapseVertical : mdiArrowExpandVertical}
                 size={1}
+                aria-label={isExpanded ? 'Collapse Projects Icon' : 'Expand Projects Icon'}
               />
             }
             {...getToggleProps()}>

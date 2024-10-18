@@ -28,7 +28,7 @@ const ProjectAuthorizations: React.FC<IProjectAuthorizationsProps> = (props) => 
   const authTooltip = (authDesc: string, authType: string) => {
     return (
       <Tooltip title={authDesc} placement="left">
-        <Typography sx={utils.authStyles.authLabel} aria-label={`${authType}`}>
+        <Typography sx={utils.authStyles.authLabel} aria-label={`Authorization Type: ${authType}`}>
           {authType}
         </Typography>
       </Tooltip>
@@ -47,7 +47,7 @@ const ProjectAuthorizations: React.FC<IProjectAuthorizationsProps> = (props) => 
             },
             index
           ) => (
-            <Box key={index}>
+            <Box key={index} role="listitem" aria-label={`Authorization ${index + 1}`}>
               <Chip
                 deleteIcon={
                   <>
@@ -73,13 +73,17 @@ const ProjectAuthorizations: React.FC<IProjectAuthorizationsProps> = (props) => 
                     : utils.authStyles.pendingAuthChip
                 }
                 label={authTooltip(item.authorization_desc, item.authorization_type)}
+                aria-label={`Authorization ${index + 1}: ${item.authorization_type}`}
               />
             </Box>
           )
         )}
 
       {!hasAuthorizations && (
-        <Typography variant="body2" data-testid="no_authorization_loaded">
+        <Typography
+          variant="body2"
+          data-testid="no_authorization_loaded"
+          aria-label="No Authorizations">
           No Authorizations
         </Typography>
       )}

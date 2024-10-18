@@ -146,13 +146,14 @@ const ProjectPartnershipsForm: React.FC = () => {
         isProject={true}
         open={infoOpen}
         dialogTitle={CreateProjectI18N.partnership}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="partnership-info-dialog">
         <InfoContent isProject={true} contentIndex={CreateProjectI18N.partnership} />
       </InfoDialogDraggable>
 
       <Typography component="legend">
         Partnerships
-        <IconButton edge="end" onClick={handleClickOpen}>
+        <IconButton edge="end" onClick={handleClickOpen} aria-label="Open Partnership Information">
           <InfoIcon color="info" />
         </IconButton>
       </Typography>
@@ -177,8 +178,11 @@ const ProjectPartnershipsForm: React.FC = () => {
                   /* partnerships List */
                   <Grid container spacing={3} key={index}>
                     <Grid item xs={12} md={12}>
-                      <List>
-                        <ListItem sx={pageStyles.customListItem}>
+                      <List role="list" aria-label="Partnerships List">
+                        <ListItem
+                          sx={pageStyles.customListItem}
+                          role="listitem"
+                          aria-label={`Partnership ${index + 1}`}>
                           <Grid container spacing={3}>
                             <Grid item xs={4} md={4}>
                               <FormControl fullWidth size="small" variant="outlined">
@@ -258,7 +262,8 @@ const ProjectPartnershipsForm: React.FC = () => {
                                         Boolean(partnershipNameMeta.error),
                                       helperText:
                                         partnershipNameMeta.touched && partnershipNameMeta.error,
-                                      required: partnership.partnership_type !== '' ? true : false
+                                      required: partnership.partnership_type !== '' ? true : false,
+                                      'aria-label': `Partnership Name ${index + 1}`
                                     }}
                                   />
                                 </Grid>
@@ -278,7 +283,8 @@ const ProjectPartnershipsForm: React.FC = () => {
                                       Boolean(partnershipNameMeta.error),
                                     helperText:
                                       partnershipNameMeta.touched && partnershipNameMeta.error,
-                                    required: partnership.partnership_type !== '' ? true : false
+                                    required: partnership.partnership_type !== '' ? true : false,
+                                    'aria-label': `Partnership Name ${index + 1}`
                                   }}
                                 />
                               </Grid>
@@ -289,7 +295,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                               <IconButton
                                 color="primary"
                                 data-testid="delete-icon"
-                                aria-label="remove partnership"
+                                aria-label={`Remove Partnership ${index + 1}`}
                                 onClick={() => arrayHelpers.remove(index)}
                                 edge="end"
                                 size="large">
@@ -315,7 +321,7 @@ const ProjectPartnershipsForm: React.FC = () => {
                 type="button"
                 variant="outlined"
                 color="primary"
-                aria-label="add partnership"
+                aria-label="Add Partnership"
                 startIcon={<Icon path={mdiPlus} size={1}></Icon>}
                 onClick={() => arrayHelpers.push(ProjectPartnershipsFormArrayItemInitialValues)}>
                 Add New Partnership

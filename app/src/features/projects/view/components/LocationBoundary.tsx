@@ -95,15 +95,22 @@ const LocationBoundary: React.FC<ILocationBoundaryProps> = (props) => {
   };
 
   return (
-    <Box width="100%" height="100%" data-testid="map_container" sx={pageStyles.mapContainer}>
+    <Box
+      width="100%"
+      height="100%"
+      data-testid="map_container"
+      sx={pageStyles.mapContainer}
+      role="region"
+      aria-label="Map Container">
       <MapContainer
         mapId="project_location_form_map"
         features={locationData.geometry}
         bounds={bounds}
         layerVisibility={layerVisibility}
         region={region}
+        aria-label="Project Location Map"
       />
-      <Box sx={pageStyles.layerSwitcherContainer}>
+      <Box sx={pageStyles.layerSwitcherContainer} role="region" aria-label="Layer Switcher">
         <LayerSwitcher layerVisibility={layerVisibility} open={false} hideProjects={true} />
       </Box>
     </Box>

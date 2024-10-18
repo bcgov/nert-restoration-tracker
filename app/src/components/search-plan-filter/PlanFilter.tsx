@@ -212,6 +212,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
             clickable={false}
             onDelete={() => handleDelete(key, chipValue)}
             deleteIcon={<Icon path={mdiClose} color="white" size={1} />}
+            aria-label={`Remove filter ${getChipLabel(key, chipValue)}`}
           />
         </Grid>
       );
@@ -227,11 +228,13 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Card>
+    <form onSubmit={handleSubmit} aria-labelledby="filter-plans-form">
+      <Card role="region" aria-labelledby="filter-plans-header">
         <Box my={2} mx={3}>
           <Box mb={2}>
-            <Typography variant="h2">Filter Plans</Typography>
+            <Typography variant="h2" id="filter-plans-header">
+              Filter Plans
+            </Typography>
           </Box>
           <Box display="flex">
             <Box flex="1 1 auto" display="flex">
@@ -249,6 +252,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 placeholder="Enter Keywords"
                 onChange={handleChange}
                 value={values.keyword}
+                aria-label="Enter Keywords"
               />
               <Button
                 sx={pageStyles.filterToggleBtn}
@@ -259,7 +263,9 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   (!isAdvancedFiltersOpen && <Icon path={mdiMenuDown} size={1} />) ||
                   (isAdvancedFiltersOpen && <Icon path={mdiMenuUp} size={1} />)
                 }
-                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}>
+                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
+                aria-expanded={isAdvancedFiltersOpen}
+                aria-controls="advanced-filters">
                 Advanced
               </Button>
             </Box>
@@ -270,7 +276,8 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 variant="contained"
                 color="primary"
                 sx={pageStyles.filterApplyBtn}
-                onClick={handleFilterUpdate}>
+                onClick={handleFilterUpdate}
+                aria-label="Apply Filters">
                 Apply
               </Button>
             </Box>
@@ -292,14 +299,18 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                     isFilterValueNotEmpty(value) && getFilterChips(key, value as string)
                 )}
                 <Grid item>
-                  <Chip label={'Clear all'} onClick={handleFilterReset} />
+                  <Chip
+                    label={'Clear all'}
+                    onClick={handleFilterReset}
+                    aria-label="Clear all filters"
+                  />
                 </Grid>
               </Grid>
             </Box>
           )}
 
           {isAdvancedFiltersOpen && (
-            <Box my={5}>
+            <Box my={5} id="advanced-filters">
               <PlanAdvancedFilters region={region} status={status} focus={focus} />
 
               <Box textAlign="right" mt={3}>
@@ -309,7 +320,8 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                   color="primary"
                   size="medium"
                   sx={pageStyles.actionButton}
-                  onClick={handleFilterReset}>
+                  onClick={handleFilterReset}
+                  aria-label="Reset Filters">
                   Reset
                 </Button>
               </Box>

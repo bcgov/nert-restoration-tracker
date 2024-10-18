@@ -47,8 +47,9 @@ const ProjectRestorationPlanForm: React.FC = () => {
               error={
                 touched.restoration_plan?.is_project_part_public_plan &&
                 Boolean(errors.restoration_plan?.is_project_part_public_plan)
-              }>
-              <FormLabel component="legend">
+              }
+              aria-labelledby="restoration-plan-label">
+              <FormLabel component="legend" id="restoration-plan-label">
                 Is this project part of a publicly available Restoration Plan within this
                 Restoration Tracker? *
               </FormLabel>
@@ -61,11 +62,13 @@ const ProjectRestorationPlanForm: React.FC = () => {
                   value={false}
                   control={<Radio color="primary" size="small" />}
                   label="No"
+                  aria-label="No"
                 />
                 <FormControlLabel
                   value={true}
                   control={<Radio color="primary" size="small" />}
                   label="Yes"
+                  aria-label="Yes"
                 />
                 <FormHelperText>
                   {touched.restoration_plan?.is_project_part_public_plan &&

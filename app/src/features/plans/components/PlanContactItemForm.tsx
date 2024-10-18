@@ -64,9 +64,9 @@ const PlanContactItemForm: React.FC = () => {
     useFormikContext<IPlanContactItemForm>();
 
   return (
-    <form data-testid="contact-item-form">
+    <form data-testid="contact-item-form" aria-labelledby="contact-item-form-title">
       <Box component="fieldset">
-        <Typography id="organization_details" component="legend">
+        <Typography id="contact-item-form-title" component="legend">
           Contact Details
         </Typography>
         <Grid container spacing={3}>
@@ -77,6 +77,7 @@ const PlanContactItemForm: React.FC = () => {
               other={{
                 required: true
               }}
+              aria-required="true"
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -86,6 +87,7 @@ const PlanContactItemForm: React.FC = () => {
               other={{
                 required: true
               }}
+              aria-required="true"
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -95,6 +97,7 @@ const PlanContactItemForm: React.FC = () => {
               other={{
                 required: true
               }}
+              aria-required="true"
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -107,6 +110,7 @@ const PlanContactItemForm: React.FC = () => {
               other={{
                 required: true
               }}
+              aria-required="true"
             />
           </Grid>
           <Grid item xs={12} md={6}>
