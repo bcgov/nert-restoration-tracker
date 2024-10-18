@@ -10,6 +10,7 @@ import MapPopup from './components/Popup';
 import { useNertApi } from 'hooks/useNertApi';
 import { S3FileType } from 'constants/attachments';
 import { calculateUpdatedMapBounds } from 'utils/mapBoundaryUploadHelpers';
+import { hybridJSON } from './components/hybrid';
 
 const { Map, Popup, NavigationControl } = maplibre;
 
@@ -642,7 +643,7 @@ const initializeMap = (
 
   map = new Map({
     container: mapId,
-    style: '/styles/hybrid.json',
+    style: hybridJSON as any,
     center: center,
     zoom: zoom,
     maxPitch: 65,
