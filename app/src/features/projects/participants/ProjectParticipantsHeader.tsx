@@ -86,11 +86,16 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
     <>
       <Container maxWidth="xl">
         <Box pb={3}>
-          <Breadcrumbs>
-            <Link color="primary" onClick={() => history('/admin/projects')} aria-current="page">
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link
+              component="button"
+              color="primary"
+              onClick={() => history('/admin/projects')}
+              aria-current="page">
               <Typography variant="body2">Projects</Typography>
             </Link>
             <Link
+              component="button"
               color="primary"
               onClick={() => history(`/admin/projects/${urlParams['id']}/details`)}
               aria-current="page">
@@ -109,7 +114,7 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
               color="primary"
               variant="contained"
               data-testid="invite-project-users-button"
-              aria-label={'Add Team Members'}
+              aria-label="Add Team Members"
               startIcon={<Icon path={mdiPlus} size={1} />}
               onClick={() => setOpenAddParticipantsDialog(true)}>
               Add Team Members
@@ -119,9 +124,9 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
       </Container>
 
       <EditDialog
-        dialogTitle={'Add Team Members'}
+        dialogTitle="Add Team Members"
         open={openAddParticipantsDialog}
-        dialogSaveButtonLabel={'Add'}
+        dialogSaveButtonLabel="Add"
         component={{
           element: (
             <AddProjectParticipantsForm

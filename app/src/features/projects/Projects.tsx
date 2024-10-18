@@ -168,16 +168,28 @@ export default function Projects() {
   }, [isLoading, location.search, formikValues, collectFilterParams]);
 
   if (!codes.isReady || !codes.data) {
-    return <CircularProgress data-testid="project-loading" className="pageProgress" size={40} />;
+    return (
+      <CircularProgress
+        data-testid="project-loading"
+        className="pageProgress"
+        size={40}
+        role="status"
+        aria-label="Loading projects"
+      />
+    );
   }
 
   return (
-    <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}>
+    <Card
+      sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem' }}
+      role="region"
+      aria-labelledby="projects-list-header">
       <Box
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        data-testid="projects-list-header">
+        data-testid="projects-list-header"
+        id="projects-list-header">
         <Typography ml={1} variant="h1">
           <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Project" /> Projects
         </Typography>
@@ -187,7 +199,7 @@ export default function Projects() {
             variant="outlined"
             disableElevation
             data-testid="hide-projects-list-button"
-            aria-label={'hide projects'}
+            aria-label={isExpanded ? 'Collapse projects' : 'Expand projects'}
             startIcon={
               <Icon
                 path={isExpanded ? mdiArrowCollapseVertical : mdiArrowExpandVertical}

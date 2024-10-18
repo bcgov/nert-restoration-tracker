@@ -25,17 +25,17 @@ export interface IPlanAdvancedFiltersProps {
 const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
   const formikProps = useFormikContext<IPlanAdvancedFilters>();
   return (
-    <Box data-testid="advancedFilters">
+    <Box data-testid="advancedFilters" role="region" aria-labelledby="advanced-filters-header">
       <Grid container spacing={0.5} justifyContent="flex-start">
         <Grid item xs={12} md={2}>
-          <Typography variant="subtitle1" component="h3">
+          <Typography variant="subtitle1" component="h3" id="advanced-filters-header">
             <strong>Plan Details</strong>
           </Typography>
         </Grid>
         <Grid item xs={12} md={10}>
           <Grid container spacing={1.5}>
             <Grid item xs={12}>
-              <CustomTextField name="plan_name" label="Name" />
+              <CustomTextField name="plan_name" label="Name" aria-label="Plan Name" />
             </Grid>
             <Grid item xs={6}>
               <MultiAutocompleteFieldVariableSize
@@ -44,6 +44,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 label="Status"
                 options={props.status}
                 required={false}
+                aria-label="Plan Status"
               />
             </Grid>
             <Grid item xs={6}>
@@ -53,6 +54,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 label="Region"
                 options={props.region}
                 required={false}
+                aria-label="Plan Region"
               />
             </Grid>
             <Grid item xs={12}>
@@ -62,10 +64,15 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 endName={'plan_end_date'}
                 startRequired={false}
                 endRequired={false}
+                aria-label="Plan Start and End Dates"
               />
             </Grid>
             <Grid item xs={12}>
-              <CustomTextField name="plan_organizations" label="Organizations" />
+              <CustomTextField
+                name="plan_organizations"
+                label="Organizations"
+                aria-label="Plan Organizations"
+              />
             </Grid>
             <Grid item xs={12}>
               <MultiAutocompleteFieldVariableSize
@@ -74,6 +81,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 label="Focus"
                 options={props.focus}
                 required={false}
+                aria-label="Plan Focus"
               />
             </Grid>
             <Grid item xs={12}>
@@ -86,6 +94,7 @@ const PlanAdvancedFilters: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 maxName={'plan_ha_to'}
                 minRequired={false}
                 maxRequired={false}
+                aria-label="Area Size in Hectares"
               />
             </Grid>
           </Grid>

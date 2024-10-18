@@ -1,4 +1,6 @@
 import { Box, Container, Paper, Typography, Button, Divider, Stack } from '@mui/material';
+import { mdiNewspaperVariant } from '@mdi/js';
+import { Icon } from '@mdi/react';
 import { useNertApi } from 'hooks/useNertApi';
 import React, { useContext, useState } from 'react';
 import DateRangeSelection from './DateRangeSelection';
@@ -179,20 +181,33 @@ const ReportsPage: React.FC = () => {
           variant="contained"
           color="primary"
           size="large"
+          startIcon={<Icon path={mdiNewspaperVariant} size={1} />}
           onClick={() => {
             if ('appUserReport' === selectedReport) {
               history('/admin/reports/user');
               return;
             }
-            if ('customRange' === selectedRange && (!startDate || !endDate)) {
-              dialogContext.setErrorDialog({
-                dialogTitle: 'Dates Validation Failed',
-                dialogText: 'Please enter the required start and end dates.',
-                ...defaultErrorDialogProps,
-                open: true
-              });
-              return;
+            if ('customRange' === selectedRange) {
+              if (!startDate || !endDate) {
+                dialogContext.setErrorDialog({
+                  dialogTitle: 'Dates Validation Failed',
+                  dialogText: 'Please enter the required start and end dates.',
+                  ...defaultErrorDialogProps,
+                  open: true
+                });
+                return;
+              }
+              if (dayjs(startDate) > dayjs(endDate)) {
+                dialogContext.setErrorDialog({
+                  dialogTitle: 'Dates Validation Failed',
+                  dialogText: 'Start date cannot be after end date.',
+                  ...defaultErrorDialogProps,
+                  open: true
+                });
+                return;
+              }
             }
+
             if ('customReport' === selectedReport) {
               history('/admin/reports/custom', {
                 state: {

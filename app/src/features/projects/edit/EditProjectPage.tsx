@@ -276,7 +276,7 @@ const EditProjectPage: React.FC = () => {
   };
 
   if (!codes || !hasLoadedDraftData) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return <CircularProgress className="pageProgress" size={40} aria-label="Loading" />;
   }
 
   return (
@@ -327,8 +327,9 @@ const EditProjectPage: React.FC = () => {
       />
 
       <Box mb={1} ml={3}>
-        <Breadcrumbs>
+        <Breadcrumbs aria-label="breadcrumb">
           <Link
+            component="button"
             color="primary"
             onClick={handleCancel}
             aria-current="page"
@@ -339,10 +340,13 @@ const EditProjectPage: React.FC = () => {
         </Breadcrumbs>
       </Box>
 
-      <Card sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}>
+      <Card
+        sx={{ backgroundColor: '#E9FBFF', marginBottom: '0.6rem', marginX: 3 }}
+        role="region"
+        aria-labelledby="edit_project_header">
         <Box mb={3} ml={1}>
           <Box mb={0.5} mt={0.9}>
-            <Typography variant="h1" data-testid="edit_project_header">
+            <Typography variant="h1" data-testid="edit_project_header" id="edit_project_header">
               <img src={ICONS.PROJECT_ICON} width="20" height="32" alt="Plan" /> Edit Restoration
               Project
             </Typography>
@@ -471,7 +475,8 @@ const EditProjectPage: React.FC = () => {
                   size="large"
                   type="submit"
                   onClick={() => setOpenYesNoDialog(true)}
-                  data-testid="project-save-button">
+                  data-testid="project-save-button"
+                  aria-label="Save Project">
                   Save Project
                 </Button>
                 <Button
@@ -479,7 +484,8 @@ const EditProjectPage: React.FC = () => {
                   color="primary"
                   size="large"
                   data-testid="project-cancel-buttton"
-                  onClick={handleCancel}>
+                  onClick={handleCancel}
+                  aria-label="Cancel">
                   Cancel
                 </Button>
               </Box>

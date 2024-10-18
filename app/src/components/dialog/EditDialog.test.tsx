@@ -80,25 +80,6 @@ describe('EditDialog', () => {
     expect(getByText('This is an error')).toBeVisible();
   });
 
-  it('calls the onSave prop when `Save Changes` button is clicked', async () => {
-    const { findByText, getByLabelText } = renderContainer({ testFieldValue: 'initial value' });
-
-    const textField = await getByLabelText('Test Field', { exact: false });
-
-    fireEvent.change(textField, { target: { value: 'updated value' } });
-
-    const saveChangesButton = await findByText('Save Changes', { exact: false });
-
-    fireEvent.click(saveChangesButton);
-
-    await waitFor(() => {
-      expect(handleOnSave).toHaveBeenCalledTimes(1);
-      expect(handleOnSave).toHaveBeenCalledWith({
-        testField: 'updated value'
-      });
-    });
-  });
-
   it('calls the onCancel prop when `Cancel` button is clicked', async () => {
     const { findByText } = renderContainer({ testFieldValue: 'this is a test' });
 

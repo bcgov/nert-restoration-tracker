@@ -381,7 +381,7 @@ const CreateProjectPage: React.FC = () => {
   };
 
   if (!codes.data) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return <CircularProgress className="pageProgress" size={40} aria-label="Loading" />;
   }
 
   return (
@@ -449,8 +449,10 @@ const CreateProjectPage: React.FC = () => {
       />
 
       <Box mb={1} ml={3}>
-        <Breadcrumbs>
+        <Breadcrumbs aria-label="breadcrumb">
           <Link
+            component="button"
+            tabIndex={0}
             color="primary"
             onClick={handleCancel}
             aria-current="page"
@@ -591,7 +593,8 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     onClick={() => setOpenDraftDialog(true)}
-                    data-testid="project-save-draft-button">
+                    data-testid="project-save-draft-button"
+                    aria-label="Save Draft">
                     Save Draft
                   </Button>
                   <Button
@@ -599,7 +602,8 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     onClick={() => setOpenYesNoDialog(true)}
-                    data-testid="project-create-button">
+                    data-testid="project-create-button"
+                    aria-label="Create Project">
                     <span>Create Project</span>
                   </Button>
                   <Button
@@ -607,7 +611,8 @@ const CreateProjectPage: React.FC = () => {
                     color="primary"
                     size="large"
                     data-testid="project-cancel-buttton"
-                    onClick={handleCancel}>
+                    onClick={handleCancel}
+                    aria-label="Cancel">
                     Cancel
                   </Button>
                 </Box>

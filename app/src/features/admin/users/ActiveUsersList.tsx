@@ -197,13 +197,15 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
         <Grid justifyContent="space-between" container alignItems="center">
           <Grid item>
             <Box px={2}>
-              <Typography variant="h2">Active Users ({activeUsers?.length || 0})</Typography>
+              <Typography variant="h2" id="active-users-header">
+                Active Users ({activeUsers?.length || 0})
+              </Typography>
             </Box>
           </Grid>
         </Grid>
       </Toolbar>
       <TableContainer>
-        <Table sx={pageStyles.table}>
+        <Table sx={pageStyles.table} aria-labelledby="active-users-header">
           <TableHead>
             <TableRow>
               <TableCell>Username</TableCell>
@@ -245,7 +247,9 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                                 handleChangeUserPermissionsClick(row, item.name, item.id)
                             };
                           })}
-                        buttonEndIcon={<Icon path={mdiMenuDown} size={1} />}
+                        buttonEndIcon={
+                          <Icon path={mdiMenuDown} size={1} aria-label="Role Dropdown Icon" />
+                        }
                       />
                     </Box>
                   </TableCell>
@@ -253,16 +257,30 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
                     <Box my={-1}>
                       <CustomMenuIconButton
                         buttonTitle="Actions"
-                        buttonIcon={<Icon path={mdiDotsVertical} size={1} />}
+                        buttonIcon={
+                          <Icon path={mdiDotsVertical} size={1} aria-label="Actions Icon" />
+                        }
                         menuItems={[
                           {
-                            menuIcon: <Icon path={mdiInformationOutline} size={0.875} />,
+                            menuIcon: (
+                              <Icon
+                                path={mdiInformationOutline}
+                                size={0.875}
+                                aria-label="User Details Icon"
+                              />
+                            ),
                             menuLabel: 'User Details',
                             menuOnClick: () =>
                               history(`/admin/users/${row.id}/details`, { state: row })
                           },
                           {
-                            menuIcon: <Icon path={mdiTrashCanOutline} size={0.875} />,
+                            menuIcon: (
+                              <Icon
+                                path={mdiTrashCanOutline}
+                                size={0.875}
+                                aria-label="Remove User Icon"
+                              />
+                            ),
                             menuLabel: 'Remove User',
                             menuOnClick: () => handleRemoveUserClick(row)
                           }
@@ -288,6 +306,7 @@ const ActiveUsersList: React.FC<IActiveUsersListProps> = (props) => {
           onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             handleChangeRowsPerPage(event, setPage, setRowsPerPage)
           }
+          aria-label="Active Users Table Pagination"
         />
       )}
     </Paper>

@@ -151,7 +151,7 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
     setFieldValue(key, values[key]);
 
     if (JSON.stringify(values) === JSON.stringify(ProjectAdvancedFiltersInitialValues)) {
-      //if current filters are equal to inital values, then no filters are set ....
+      //if current filters are equal to initial values, then no filters are set ....
       //then reset filter chips to closed
       handleFilterReset();
     } else {
@@ -226,6 +226,8 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
             clickable={false}
             onDelete={() => handleDelete(key, chipValue)}
             deleteIcon={<Icon path={mdiClose} color="white" size={1} />}
+            role="button"
+            aria-label={`Remove filter ${getChipLabel(key, chipValue)}`}
           />
         </Grid>
       );
@@ -240,39 +242,40 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} role="form" aria-labelledby="filter-projects-form">
       <Card>
         <Box my={2} mx={3}>
           <Box mb={2}>
-            <Typography variant="h2">Filter Projects</Typography>
+            <Typography variant="h2" id="filter-projects-form">
+              Filter Projects
+            </Typography>
           </Box>
           <Box display="flex">
             <Box flex="1 1 auto" display="flex">
               <Input
-                tabIndex={0}
                 sx={pageStyles.keywordSearch}
                 name="keyword"
                 fullWidth
-                startAdornment={
-                  <InputAdornment position="start">
-                    <Icon path={mdiMagnify} size={1} />
-                  </InputAdornment>
-                }
+                startAdornment={<Icon path={mdiMagnify} size={1} />}
                 disableUnderline={true}
                 placeholder="Enter Keywords"
                 onChange={handleChange}
                 value={values.keyword}
+                aria-label="Keyword search"
               />
               <Button
                 sx={pageStyles.filterToggleBtn}
                 size="large"
                 variant="outlined"
-                disableRipple={true}
+                focusRipple={true}
                 endIcon={
                   (!isAdvancedFiltersOpen && <Icon path={mdiMenuDown} size={1} />) ||
                   (isAdvancedFiltersOpen && <Icon path={mdiMenuUp} size={1} />)
                 }
-                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}>
+                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
+                aria-expanded={isAdvancedFiltersOpen}
+                aria-controls="advanced-filters"
+                aria-label="Toggle advanced filters">
                 Advanced
               </Button>
             </Box>
@@ -283,7 +286,8 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                 variant="contained"
                 color="primary"
                 sx={pageStyles.filterApplyBtn}
-                onClick={handleFilterUpdate}>
+                onClick={handleFilterUpdate}
+                aria-label="Apply filters">
                 Apply
               </Button>
             </Box>
@@ -305,14 +309,19 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                     isFilterValueNotEmpty(value) && getFilterChips(key, value as string)
                 )}
                 <Grid item>
-                  <Chip label={'Clear all'} onClick={handleFilterReset} />
+                  <Chip
+                    label={'Clear all'}
+                    onClick={handleFilterReset}
+                    role="button"
+                    aria-label="Clear all filters"
+                  />
                 </Grid>
               </Grid>
             </Box>
           )}
 
           {isAdvancedFiltersOpen && (
-            <Box my={5}>
+            <Box my={5} id="advanced-filters">
               <ProjectAdvancedFilters region={region} status={status} focus={focus} />
 
               <Box textAlign="right" mt={3}>
@@ -322,7 +331,8 @@ const ProjectFilter: React.FC<IProjectAdvancedFiltersProps> = (props) => {
                   color="primary"
                   size="medium"
                   sx={pageStyles.actionButton}
-                  onClick={handleFilterReset}>
+                  onClick={handleFilterReset}
+                  aria-label="Reset filters">
                   Reset
                 </Button>
               </Box>

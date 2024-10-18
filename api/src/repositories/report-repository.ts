@@ -198,8 +198,8 @@ export class ReportRepository extends BaseRepository {
    * @return {*}  {Promise<IGetPIMgmtReport>}
    * @memberof ReportRepository
    */
-  async getPIMgmtReportData(startDate: string, endDate: string): Promise<IGetPIMgmtReport[]> {
-    defaultLog.debug({ label: 'getPIMgmtReportData', message: 'params', startDate, endDate });
+  async getPIMgmtReportData(startDateTime: string, endDateTime: string): Promise<IGetPIMgmtReport[]> {
+    defaultLog.debug({ label: 'getPIMgmtReportData', message: 'params', startDateTime, endDateTime });
 
     try {
       const sqlStatement = SQL`
@@ -216,10 +216,14 @@ export class ReportRepository extends BaseRepository {
         LEFT JOIN system_user su ON al.system_user_id = su.system_user_id
         LEFT JOIN project prj ON (al.after_value -> 'project_id')::TEXT::int = prj.project_id
         WHERE
-          al.create_date >= DATE(${startDate}) AND 
-          al.create_date <= DATE(${endDate}) AND 
+          al.create_date >= DATE(`;
+      sqlStatement.append("'" + startDateTime + "'");
+      sqlStatement.append(SQL`) AND al.create_date <= DATE(`);
+      sqlStatement.append("'" + endDateTime + "'");
+      sqlStatement.append(SQL`) AND 
           al.operation IN ('INSERT', 'UPDATE') AND
-          al.table_name IN ('restoration.project_attachment', 'restoration.project')
+          al.table_name IN ('restoration.project_attachment', 'restoration.project') AND
+          prj.name IS NOT NULL
         GROUP BY
           prj.name,
           su.user_identifier,
@@ -227,7 +231,7 @@ export class ReportRepository extends BaseRepository {
           al.create_date,
           al.operation
         ORDER BY al.audit_log_id DESC;
-      `;
+      `);
 
       const response = await this.connection.sql(sqlStatement);
       return response.rows;
@@ -243,8 +247,8 @@ export class ReportRepository extends BaseRepository {
    * @return {*}  {Promise<IGetCustomReport>}
    * @memberof ReportRepository
    */
-  async getCustomReportData(startDate: string, endDate: string): Promise<IGetCustomReport[]> {
-    defaultLog.debug({ label: 'getCustomReportData', message: 'params', startDate, endDate });
+  async getCustomReportData(startDateTime: string, endDateTime: string): Promise<IGetCustomReport[]> {
+    defaultLog.debug({ label: 'getCustomReportData', message: 'params', startDateTime, endDateTime });
 
     try {
       const sqlStatement = SQL`
@@ -319,8 +323,11 @@ export class ReportRepository extends BaseRepository {
           FROM project_species ps) t7
           ON prj.project_id = t7.project_id
         WHERE
-          prj.create_date >= DATE(${startDate}) AND 
-          prj.create_date <= DATE(${endDate})
+          prj.create_date >= DATE(`;
+      sqlStatement.append("'" + startDateTime + "'");
+      sqlStatement.append(SQL`) AND prj.create_date <= DATE(`);
+      sqlStatement.append("'" + endDateTime + "'");
+      sqlStatement.append(SQL`) 
         GROUP BY
           prj.project_id,
           prj.is_project,
@@ -347,7 +354,7 @@ export class ReportRepository extends BaseRepository {
           sc.size_ha,
           sc.create_date
         ORDER BY prj.project_id ASC;
-      `;
+      `);
 
       const response = await this.connection.sql(sqlStatement);
       return response.rows;

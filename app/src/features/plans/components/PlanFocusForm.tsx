@@ -53,9 +53,9 @@ const PlanFocusForm: React.FC = () => {
         <InfoContent isProject={false} contentIndex={CreatePlanI18N.focus} />
       </InfoDialogDraggable>
 
-      <Typography component="legend">
+      <Typography component="legend" id="focus-form-title">
         Healing the Land and/or People
-        <IconButton edge="end" onClick={handleClickOpen}>
+        <IconButton edge="end" onClick={handleClickOpen} aria-label="More information">
           <InfoIcon color="info" />
         </IconButton>
       </Typography>
@@ -69,6 +69,7 @@ const PlanFocusForm: React.FC = () => {
                 label="Plan Focus"
                 options={focusOptions}
                 required={true}
+                aria-required="true"
               />
             </Grid>
           </Grid>
