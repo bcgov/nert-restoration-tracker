@@ -88,7 +88,7 @@ const ManageUsersPage: React.FC = () => {
   const codes = useCodesContext().codesDataLoader;
 
   if (!hasLoadedAccessRequests || !hasLoadedActiveUsers || !codes.data || !codes.isReady) {
-    return <CircularProgress className="pageProgress" size={40} />;
+    return <CircularProgress className="pageProgress" size={40} aria-label="Loading" />;
   }
 
   return (
@@ -99,8 +99,12 @@ const ManageUsersPage: React.FC = () => {
         alignItems="center"
         justifyContent="space-between"
         data-testid="manage_users_header"
-        sx={{ paddingTop: '20px' }}>
-        <Typography variant="h1">Manage Users</Typography>
+        sx={{ paddingTop: '20px' }}
+        role="region"
+        aria-labelledby="manage-users-header">
+        <Typography variant="h1" id="manage-users-header">
+          Manage Users
+        </Typography>
       </Box>
 
       <Box mb={5}>

@@ -216,7 +216,10 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const focusTooltip = (focus: string) => {
       return (
         <Tooltip title={focus} disableHoverListener={focus.length < 35}>
-          <Typography sx={utils.focusStyles.focusLabel} aria-label={`${focus}`}>
+          <Typography
+            sx={utils.focusStyles.focusLabel}
+            aria-label={`Focus: ${focus}`}
+            role="tooltip">
             {focus}
           </Typography>
         </Tooltip>
@@ -226,7 +229,10 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
     const orgTooltip = (org: string) => {
       return (
         <Tooltip title={org} disableHoverListener={org.length < 35}>
-          <Typography sx={utils.orgStyles.orgLabel} aria-label={`${org}`}>
+          <Typography
+            sx={utils.orgStyles.orgLabel}
+            aria-label={`Organization: ${org}`}
+            role="tooltip">
             {org}
           </Typography>
         </Tooltip>
@@ -340,7 +346,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                           draftCode != row.statusCode
                             ? () => history(`/admin/plans/${row.planId}`)
                             : () => history(`/admin/plans/create?draftId=${row.planId}`)
-                        }>
+                        }
+                        aria-label={`View details for ${row.planName}`}>
                         {row.planName}
                       </Link>
                     </TableCell>
@@ -354,6 +361,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                                 size="small"
                                 sx={utils.focusStyles.focusPlanChip}
                                 label={focusTooltip(focus)}
+                                aria-label={`Focus: ${focus}`}
                               />
                             </Box>
                           </Fragment>
@@ -364,6 +372,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                           label="No Focuses"
                           sx={utils.focusStyles.noFocusChip}
                           data-testid="no_focuses_loaded"
+                          aria-label="No focuses available"
                         />
                       )}
                     </TableCell>
@@ -378,6 +387,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                                 size="small"
                                 sx={utils.orgStyles.orgPlanChip}
                                 label={orgTooltip(organization)}
+                                aria-label={`Organization: ${organization}`}
                               />
                             </Box>
                           </Fragment>
@@ -388,6 +398,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                           label="No Organizations"
                           sx={utils.orgStyles.noOrgChip}
                           data-testid="no_organizations_loaded"
+                          aria-label="No organizations available"
                         />
                       )}
                     </TableCell>
@@ -402,6 +413,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                         size="small"
                         sx={getStatusStyle(row.statusCode)}
                         label={row.statusLabel}
+                        aria-label={`Status: ${row.statusLabel}`}
                       />
                     </TableCell>
                     <TableCell sx={{ maxWidth: 50 }} align="left">
@@ -468,7 +480,12 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                                   }
                                 })
                               }
-                              color={archCode !== row.statusCode ? 'info' : 'warning'}>
+                              color={archCode !== row.statusCode ? 'info' : 'warning'}
+                              aria-label={
+                                archCode !== row.statusCode
+                                  ? `Archive ${row.planName}`
+                                  : `Unarchive ${row.planName}`
+                              }>
                               {archCode !== row.statusCode ? <ArchiveIcon /> : <UnarchiveIcon />}
                             </IconButton>
                           </Tooltip>
@@ -505,7 +522,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                                   }
                                 })
                               }
-                              color="error">
+                              color="error"
+                              aria-label={`Delete ${row.planName}`}>
                               <DeleteForeverIcon />
                             </IconButton>
                           </Tooltip>
@@ -544,7 +562,8 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
                                 }
                               })
                             }
-                            color="error">
+                            color="error"
+                            aria-label={`Delete draft ${row.planName}`}>
                             <DeleteForeverIcon />
                           </IconButton>
                         </Tooltip>
@@ -609,7 +628,7 @@ const PlanListPage: React.FC<IPlansListProps> = (props) => {
    * Displays plans list.
    */
   return (
-    <Card>
+    <Card role="region" aria-labelledby="plans-table-header">
       <PlanTable />
     </Card>
   );

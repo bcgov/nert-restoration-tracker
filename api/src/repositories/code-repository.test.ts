@@ -175,4 +175,68 @@ describe('CodeRepository', () => {
       expect(response).to.deep.equal([]);
     });
   });
+
+  describe('getPartnershipType', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return array in rows', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const codeRepository = new CodeRepository(mockDBConnection);
+
+      const response = await codeRepository.getPartnershipType();
+
+      expect(response).to.deep.equal([]);
+    });
+  });
+
+  describe('getPartnerships', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return array in rows', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const codeRepository = new CodeRepository(mockDBConnection);
+
+      const response = await codeRepository.getPartnerships();
+
+      expect(response).to.deep.equal([]);
+    });
+  });
+
+  describe('updateBranding', () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('should return array in rows', async () => {
+      const mockQueryResponse = { rowCount: 0, rows: [{ id: 1 }] } as any as Promise<QueryResult<any>>;
+
+      const mockDBConnection = getMockDBConnection({
+        sql: async () => {
+          return mockQueryResponse;
+        }
+      });
+
+      const codeRepository = new CodeRepository(mockDBConnection);
+
+      const response = await codeRepository.updateBranding('name', 'value', 1);
+
+      expect(response).to.deep.equal({ id: 1 });
+    });
+  });
 });

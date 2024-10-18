@@ -20,7 +20,7 @@ export const GET: Operation = [
 ];
 
 GET.apiDoc = {
-  description: "Update the log level for the API's default logger",
+  description: 'Update the log level for the APIs default logger',
   tags: ['misc'],
   security: [
     {

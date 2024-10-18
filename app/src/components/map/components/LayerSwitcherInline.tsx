@@ -58,76 +58,101 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
 
   const boundaryFilter = props.filterState?.boundary;
   const orphanedWellFilter = props.filterState?.orphanedWells;
-  const dormantWellFilter = props.filterState?.dormantWells;
 
   return (
     <div>
       <Box>
         {props.hideProjects !== true && (
           <Box>
-            <Typography variant="h6">Projects & Plans</Typography>
+            <Typography variant="h6" component="h3">
+              Projects & Plans
+            </Typography>
             <FormGroup>
               <FormControlLabel
                 control={
-                  <Checkbox checked={projects[0]} onClick={() => projects[1](!projects[0])} />
+                  <Checkbox
+                    title="Toggle visibility - Projects"
+                    checked={projects[0]}
+                    onClick={() => projects[1](!projects[0])}
+                  />
                 }
                 label={
-                  <div style={iconLegendStyle}>
+                  <label style={iconLegendStyle}>
                     <span>Projects</span>
                     <img
                       style={iconLegendIconStyle}
                       src="/assets/icon/marker-icon.png"
                       alt="projects"
                     />
-                  </div>
+                  </label>
                 }
               />
               <FormControlLabel
-                control={<Checkbox checked={plans[0]} onClick={() => plans[1](!plans[0])} />}
+                control={
+                  <Checkbox
+                    title="Toggle visibility - Plans"
+                    checked={plans[0]}
+                    onClick={() => plans[1](!plans[0])}
+                  />
+                }
                 label={
-                  <div style={iconLegendStyle}>
+                  <label style={iconLegendStyle}>
                     <span>Plans</span>
                     <img
                       style={iconLegendIconStyle}
                       src="/assets/icon/marker-icon2.png"
                       alt="plans"
                     />
-                  </div>
+                  </label>
                 }
               />
             </FormGroup>
             <hr />
           </Box>
         )}
-        <Typography variant="h6">Context Layers</Typography>
+        <Typography variant="h6" component="h3">
+          Context Layers
+        </Typography>
         <FormGroup>
           <LayerControl
             title="Management Boundaries"
             subTitle="Natural resource management boundaries"
             layerState={boundary}>
             {props.legend.boundary && (
-              <List dense>
+              <List dense sx={{ mt: 2 }}>
                 {props.legend.boundary.map((item: any) => (
-                  <ListItem
-                    key={item.label}
-                    secondaryAction={
-                      <Checkbox
-                        edge="end"
-                        checked={boundaryFilter[item.label][0]}
-                        onChange={() =>
-                          boundaryFilter[item.label][1](!boundaryFilter[item.label][0])
+                  <ListItem key={item.label}>
+                    <FormGroup>
+                      <FormControlLabel
+                        labelPlacement="start"
+                        control={
+                          <Checkbox
+                            title="Toggle visibility - Management Boundaries"
+                            edge="end"
+                            checked={boundaryFilter[item.label][0]}
+                            onChange={() =>
+                              boundaryFilter[item.label][1](!boundaryFilter[item.label][0])
+                            }
+                          />
+                        }
+                        label={
+                          <Box display="flex" alignItems="center">
+                            <ListItemAvatar>
+                              <Avatar
+                                src={item.image}
+                                style={{
+                                  backgroundColor: item.color,
+                                  borderColor: item.outlineColor
+                                }}
+                                className={item.outlineColor ? 'outlined' : ''}
+                                alt="management-icon"
+                              />
+                            </ListItemAvatar>
+                            <ListItemText sx={{ width: 180 }} primary={item.label} />
+                          </Box>
                         }
                       />
-                    }>
-                    <ListItemAvatar>
-                      <Avatar
-                        src={item.image}
-                        style={{ backgroundColor: item.color, borderColor: item.outlineColor }}
-                        className={item.outlineColor ? 'outlined' : ''}>
-                        &nbsp;
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={item.label} />
+                    </FormGroup>
                   </ListItem>
                 ))}
               </List>
@@ -140,30 +165,39 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             layerState={protectedAreas}>
             {/* Conditional rendering of legend */}
             {props.legend.protectedAreas && (
-              <List dense>
+              <List dense sx={{ mt: 2 }}>
                 {props.legend.protectedAreas.map((area: any) => {
                   return (
-                    <ListItem
-                      key={area.label}
-                      secondaryAction={
-                        // Only show the checkbox if the area allows toggling
-                        area.allowToggle && (
-                          <Checkbox
-                            edge="end"
-                            checked={area.visible}
-                            onClick={() => (area.visible = !area.visible)}
-                          />
-                        )
-                      }>
-                      <ListItemAvatar>
-                        <Avatar
-                          src={area.image}
-                          style={{ backgroundColor: area.color, borderColor: area.outlineColor }}
-                          className={area.outlineColor ? 'outlined' : ''}>
-                          &nbsp;
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText primary={area.label} />
+                    <ListItem key={area.label}>
+                      <FormGroup>
+                        <FormControlLabel
+                          labelPlacement="start"
+                          control={
+                            <Checkbox
+                              title="Toggle visibility - Protected Areas"
+                              edge="end"
+                              checked={area.visible}
+                              onClick={() => (area.visible = !area.visible)}
+                            />
+                          }
+                          label={
+                            <Box display="flex" alignItems="center">
+                              <ListItemAvatar>
+                                <Avatar
+                                  src={area.image}
+                                  style={{
+                                    backgroundColor: area.color,
+                                    borderColor: area.outlineColor
+                                  }}
+                                  className={area.outlineColor ? 'outlined' : ''}
+                                  alt="protected-area-icon"
+                                />
+                              </ListItemAvatar>
+                              <ListItemText sx={{ width: 180 }} primary={area.label} />
+                            </Box>
+                          }
+                        />
+                      </FormGroup>
                     </ListItem>
                   );
                 })}
@@ -176,30 +210,40 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             subTitle="BC Energy Regulator orphaned wells and orphaned well activities"
             layerState={orphanedWells}>
             {props.legend.orphanedWells && (
-              <List dense>
+              <List dense sx={{ mt: 2 }}>
                 {props.legend.orphanedWells.map((well: any) => (
-                  <ListItem
-                    key={well.label}
-                    secondaryAction={
-                      well.allowToggle && (
-                        <Checkbox
-                          edge="end"
-                          checked={orphanedWellFilter[well.label][0]}
-                          onClick={() => {
-                            orphanedWellFilter[well.label][1](!orphanedWellFilter[well.label][0]);
-                          }}
-                        />
-                      )
-                    }>
-                    <ListItemAvatar>
-                      <Avatar
-                        src={well.image}
-                        style={{ backgroundColor: well.color, borderColor: well.outlineColor }}
-                        className={well.outlineColor ? 'outlined' : ''}>
-                        &nbsp;
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={well.label} />
+                  <ListItem key={well.label}>
+                    <FormGroup>
+                      <FormControlLabel
+                        labelPlacement="start"
+                        control={
+                          <Checkbox
+                            title="Toggle visibility - Orphaned Wells"
+                            edge="end"
+                            checked={orphanedWellFilter[well.label][0]}
+                            onClick={() => {
+                              orphanedWellFilter[well.label][1](!orphanedWellFilter[well.label][0]);
+                            }}
+                          />
+                        }
+                        label={
+                          <Box display={'flex'} alignItems="center">
+                            <ListItemAvatar>
+                              <Avatar
+                                src={well.image}
+                                style={{
+                                  backgroundColor: well.color,
+                                  borderColor: well.outlineColor
+                                }}
+                                className={well.outlineColor ? 'outlined' : ''}
+                                alt="orphaned-well-icon"
+                              />
+                            </ListItemAvatar>
+                            <ListItemText sx={{ width: 180 }} primary={well.label} />
+                          </Box>
+                        }
+                      />
+                    </FormGroup>
                   </ListItem>
                 ))}
               </List>
@@ -211,28 +255,16 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
             subTitle="Wells that are currently inactive"
             layerState={dormantWells}>
             {props.legend.dormantWells && (
-              <List dense>
+              <List dense sx={{ mt: 2 }}>
                 {props.legend.dormantWells.map((well: any) => (
-                  <ListItem
-                    key={well.label}
-                    secondaryAction={
-                      well.allowToggle && (
-                        <Checkbox
-                          edge="end"
-                          checked={dormantWellFilter[well.label][0]}
-                          onClick={() => {
-                            dormantWellFilter[well.label][1](!dormantWellFilter[well.label][0]);
-                          }}
-                        />
-                      )
-                    }>
+                  <ListItem key={well.label} secondaryAction={<></>}>
                     <ListItemAvatar>
                       <Avatar
                         src={well.image}
                         style={{ backgroundColor: well.color, borderColor: well.outlineColor }}
-                        className={well.outlineColor ? 'outlined' : ''}>
-                        &nbsp;
-                      </Avatar>
+                        className={well.outlineColor ? 'outlined' : ''}
+                        alt="dormant-well-icon"
+                      />
                     </ListItemAvatar>
                     <ListItemText primary={well.label} />
                   </ListItem>
@@ -242,12 +274,20 @@ const LayerSwitcherInline = (props: ILayerSwitcherProps) => {
           </LayerControl>
 
           <FormControlLabel
-            control={<Checkbox checked={seismic[0]} onClick={() => seismic[1](!seismic[0])} />}
+            control={
+              <Checkbox
+                title="Seismic Checkbox"
+                checked={seismic[0]}
+                onClick={() => seismic[1](!seismic[0])}
+              />
+            }
             label="Seismic Lines"
           />
         </FormGroup>
         <hr />
-        <Typography variant="h6">Base Layers</Typography>
+        <Typography variant="h6" component="h3">
+          Base Layers
+        </Typography>
         <RadioGroup value={baselayer[0]} onChange={basemapChanged}>
           <FormControlLabel value="hybrid" control={<Radio />} label="Satellite" />
           <FormControlLabel value="terrain" control={<Radio />} label="Terrain" />

@@ -36,7 +36,7 @@ const CodeTable: React.FC<ICodeTableProps> = (props) => {
     <TableContainer component={Paper}>
       <Accordion defaultExpanded={false}>
         <AccordionSummary
-          expandIcon={<Icon path={mdiMenuDown} size={1} />}
+          expandIcon={<Icon path={mdiMenuDown} size={1} aria-label="Expand" />}
           aria-controls={`${title}-content`}
           id={`${title}-header`}>
           <Typography variant="h2" p={2}>
@@ -44,7 +44,7 @@ const CodeTable: React.FC<ICodeTableProps> = (props) => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Table>
+          <Table aria-labelledby={`${title}-header`}>
             <TableHead>
               <TableRow>
                 <TableCell>Code</TableCell>
@@ -61,7 +61,8 @@ const CodeTable: React.FC<ICodeTableProps> = (props) => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleOpen(row, type)}>
+                      onClick={() => handleOpen(row, type)}
+                      aria-label={`Edit ${row.name}`}>
                       Edit
                     </Button>
                     {/* <Button variant="contained" color="secondary">

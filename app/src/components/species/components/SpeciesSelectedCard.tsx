@@ -43,7 +43,11 @@ const SpeciesSelectedCard = (props: ISpeciesSelectedCardProps) => {
   const { index, species, handleRemove, sx } = props;
 
   return (
-    <Paper variant="outlined" sx={sx ? sx : { ...sx, mt: 1, background: grey[100] }}>
+    <Paper
+      variant="outlined"
+      sx={sx ? sx : { ...sx, mt: 1, background: grey[100] }}
+      role="listitem"
+      aria-label={`Species ${index + 1}: ${species.commonNames}`}>
       <Box display="flex" alignItems="center" px={2} py={1.5}>
         <Box flex="1 1 auto">
           <SpeciesCard taxon={species} />
@@ -55,7 +59,7 @@ const SpeciesSelectedCard = (props: ISpeciesSelectedCardProps) => {
               sx={{
                 ml: 2
               }}
-              aria-label="remove species"
+              aria-label={`remove species ${species.commonNames}`}
               onClick={() => handleRemove(species.tsn)}>
               <Icon path={mdiClose} size={1}></Icon>
             </IconButton>
