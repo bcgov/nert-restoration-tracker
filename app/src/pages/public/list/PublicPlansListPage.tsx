@@ -125,7 +125,16 @@ const PublicPlanListPage: React.FC<IPlansListProps> = (props) => {
                       <TableSortLabel
                         active={orderBy === headCell.id}
                         direction={orderBy === headCell.id ? order : 'asc'}
-                        onClick={createSortHandler(headCell.id)}>
+                        onClick={createSortHandler(headCell.id)}
+                        sx={
+                          orderBy === headCell.id
+                            ? {
+                                '& .MuiTableSortLabel-icon': {
+                                  color: 'black !important'
+                                }
+                              }
+                            : {}
+                        }>
                         {headCell.label}
                         {orderBy === headCell.id ? (
                           <Box component="span" sx={visuallyHidden}>
