@@ -60,9 +60,9 @@ const ProjectContactItemForm: React.FC = () => {
     useFormikContext<IProjectContactItemForm>();
 
   return (
-    <form data-testid="contact-item-form">
+    <form data-testid="contact-item-form" aria-labelledby="contact-details-header">
       <Box component="fieldset">
-        <Typography id="agency_details" component="legend">
+        <Typography id="contact-details-header" component="legend">
           Contact Details
         </Typography>
         <Grid container spacing={3}>
@@ -71,7 +71,8 @@ const ProjectContactItemForm: React.FC = () => {
               name="first_name"
               label="First Name"
               other={{
-                required: true
+                required: true,
+                'aria-label': 'First Name'
               }}
             />
           </Grid>
@@ -80,7 +81,8 @@ const ProjectContactItemForm: React.FC = () => {
               name="last_name"
               label="Last Name"
               other={{
-                required: true
+                required: true,
+                'aria-label': 'Last Name'
               }}
             />
           </Grid>
@@ -89,19 +91,27 @@ const ProjectContactItemForm: React.FC = () => {
               name="email_address"
               label="Business Email Address"
               other={{
-                required: true
+                required: true,
+                'aria-label': 'Business Email Address'
               }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomTextField name="phone_number" label="Phone Number" />
+            <CustomTextField
+              name="phone_number"
+              label="Phone Number"
+              other={{
+                'aria-label': 'Phone Number'
+              }}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomTextField
               name="organization"
               label="Organization"
               other={{
-                required: true
+                required: true,
+                'aria-label': 'Organization'
               }}
             />
           </Grid>

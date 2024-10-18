@@ -34,27 +34,33 @@ const pageStyles = {
 
 const Footer: React.FC = () => {
   return (
-    <footer style={pageStyles.appFooter}>
+    <footer style={pageStyles.appFooter} role="contentinfo" aria-label="Footer">
       <Toolbar
         variant="dense"
         sx={pageStyles.appFooterToolbar}
         role="navigation"
         data-testid="footer"
-        aria-label="Footer">
+        aria-label="Footer Navigation">
         <ul>
           <li>
-            <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer">Disclaimer</a>
+            <a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" role="link">
+              Disclaimer
+            </a>
           </li>
           <li>
-            <a href="https://www2.gov.bc.ca/gov/content/home/privacy">Privacy</a>
+            <a href="https://www2.gov.bc.ca/gov/content/home/privacy" role="link">
+              Privacy
+            </a>
           </li>
           <li>
-            <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government">
+            <a href="https://www2.gov.bc.ca/gov/content/home/accessible-government" role="link">
               Accessibility
             </a>
           </li>
           <li>
-            <a href="https://www2.gov.bc.ca/gov/content/home/copyright">Copyright</a>
+            <a href="https://www2.gov.bc.ca/gov/content/home/copyright" role="link">
+              Copyright
+            </a>
           </li>
         </ul>
       </Toolbar>

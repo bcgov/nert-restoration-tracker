@@ -40,7 +40,7 @@ const ProjectDetails: React.FC<IProjectDetails> = (props) => {
         <InfoContent isProject={true} contentIndex={ViewProjectI18N.detailsInfo} />
       </InfoDialogDraggable>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} role="region" aria-labelledby="project_details_header">
         {
           // Project Image
           thumbnailImageUrl && (

@@ -39,7 +39,7 @@ export interface GetReportLastData {
   plan: GetReportLast;
 }
 
-class GetReportLast {
+export class GetReportLast {
   id: number | null;
   name: string | null;
   datetime: string | null;

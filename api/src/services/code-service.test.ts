@@ -3,7 +3,7 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getMockDBConnection } from '../__mocks__/db';
-import { CodeRepository } from '../repositories/code-repository';
+import { CodeRepository, CodeType } from '../repositories/code-repository';
 import { CodeService } from './code-service';
 
 chai.use(sinonChai);
@@ -94,6 +94,39 @@ describe('CodeService', () => {
       expect(response.authorization_type).to.eql([]);
       expect(response.partnership_type).to.eql([]);
       expect(response.partnerships).to.eql([]);
+    });
+  });
+
+  describe('updateCode', function () {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('returns the updated code', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      const updateBrandingStub = sinon
+        .stub(CodeRepository.prototype, 'updateBranding')
+        .resolves({ id: 1, name: 'codeName' });
+
+      const codeService = new CodeService(mockDBConnection);
+
+      const response = await codeService.updateCode(CodeType.BRANDING, { id: 1, name: 'codeName', value: 'codeValue' });
+
+      expect(response).to.eql({ id: 1, name: 'codeName' });
+      expect(updateBrandingStub).to.have.been.calledWith('codeName', 'codeValue', 1);
+    });
+
+    it('throws an error when the code type is not found', async function () {
+      const mockDBConnection = getMockDBConnection();
+
+      const codeService = new CodeService(mockDBConnection);
+
+      try {
+        await codeService.updateCode('invalid' as CodeType, { id: 1, name: 'codeName' });
+      } catch (error: any) {
+        expect(error.message).to.equal('Invalid code type: invalid');
+      }
     });
   });
 });

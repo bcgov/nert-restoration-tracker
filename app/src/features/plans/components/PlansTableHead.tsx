@@ -51,7 +51,17 @@ function PlansTableHead(props: PlansTableProps) {
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}>
+              onClick={createSortHandler(headCell.id)}
+              aria-label={`Sort by ${headCell.label}`}
+              sx={
+                orderBy === headCell.id
+                  ? {
+                      '& .MuiTableSortLabel-icon': {
+                        color: 'black !important'
+                      }
+                    }
+                  : {}
+              }>
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -62,7 +72,9 @@ function PlansTableHead(props: PlansTableProps) {
           </Tooltip>
 
           {headCell.infoButton ? (
-            <IconButton onClick={() => handleClickOpen(headCell)}>
+            <IconButton
+              onClick={() => handleClickOpen(headCell)}
+              aria-label={`More information about ${headCell.label}`}>
               <InfoIcon color="info" />
             </IconButton>
           ) : null}

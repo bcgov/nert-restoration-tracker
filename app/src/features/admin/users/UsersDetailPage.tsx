@@ -53,11 +53,18 @@ const UsersDetailPage: React.FC = () => {
   }, [restorationTrackerApi.user, selectedUser, drafts, isLoading]);
 
   if (!selectedUser || !drafts) {
-    return <CircularProgress data-testid="page-loading" className="pageProgress" size={40} />;
+    return (
+      <CircularProgress
+        data-testid="page-loading"
+        className="pageProgress"
+        size={40}
+        aria-label="Loading"
+      />
+    );
   }
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" role="main">
       <UsersDetailHeader userDetails={selectedUser} />
       <Box my={3}>
         <UsersDetailProjectsPlans userDetails={selectedUser} />

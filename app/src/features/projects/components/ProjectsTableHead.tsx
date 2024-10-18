@@ -52,7 +52,17 @@ function ProjectsTableHead(props: ProjectsTableProps) {
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}>
+              onClick={createSortHandler(headCell.id)}
+              aria-label={`Sort by ${headCell.label}`}
+              sx={
+                orderBy === headCell.id
+                  ? {
+                      '& .MuiTableSortLabel-icon': {
+                        color: 'black !important'
+                      }
+                    }
+                  : {}
+              }>
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -63,7 +73,10 @@ function ProjectsTableHead(props: ProjectsTableProps) {
           </Tooltip>
 
           {headCell.infoButton ? (
-            <IconButton sx={{ p: 0 }} onClick={() => handleClickOpen(headCell)}>
+            <IconButton
+              sx={{ p: 0 }}
+              onClick={() => handleClickOpen(headCell)}
+              aria-label={`Info about ${headCell.label}`}>
               <InfoIcon color="info" />
             </IconButton>
           ) : null}
@@ -77,7 +90,8 @@ function ProjectsTableHead(props: ProjectsTableProps) {
         isProject={true}
         open={infoOpen}
         dialogTitle={infoTitle}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="project-info-dialog">
         <InfoContent isProject={true} contentIndex={infoTitle} />
       </InfoDialogDraggable>
       <TableHead>

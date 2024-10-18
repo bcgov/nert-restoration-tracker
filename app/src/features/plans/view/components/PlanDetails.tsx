@@ -10,6 +10,7 @@ import { IGetPlanForViewResponse } from 'interfaces/usePlanApi.interface';
 import InfoDialogDraggable from 'components/dialog/InfoDialogDraggable';
 import InfoContent from 'components/info/InfoContent';
 import { ViewPlanI18N } from 'constants/i18n';
+
 export interface IPlanDetails {
   plan: IGetPlanForViewResponse;
   thumbnailImageUrl: string;
@@ -59,7 +60,8 @@ const PlanDetails: React.FC<IPlanDetails> = (props) => {
                 sx={{ fontWeight: 'bold' }}
                 variant="subtitle2"
                 component="span"
-                color="textPrimary">
+                color="textPrimary"
+                aria-label="Plan Size">
                 {plan.location.size_ha}
               </Typography>
               <Tooltip title={ViewPlanI18N.sizeAndSites} placement="right">
@@ -82,7 +84,8 @@ const PlanDetails: React.FC<IPlanDetails> = (props) => {
                 sx={{ fontWeight: 'bold' }}
                 variant="subtitle2"
                 component="span"
-                color="textPrimary">
+                color="textPrimary"
+                aria-label="Number of Sites">
                 {plan.location.number_sites}
               </Typography>
             </Box>

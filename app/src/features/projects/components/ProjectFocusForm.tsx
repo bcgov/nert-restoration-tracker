@@ -71,14 +71,18 @@ const ProjectFocusForm: React.FC = () => {
         isProject={true}
         open={infoOpen}
         dialogTitle={infoTitle}
-        onClose={() => setInfoOpen(false)}>
+        onClose={() => setInfoOpen(false)}
+        aria-labelledby="info-dialog-title">
         <InfoContent isProject={true} contentIndex={infoTitle} />
       </InfoDialogDraggable>
 
       <Box mt={2}>
-        <Typography component="legend">
+        <Typography component="legend" id="healing-land-people">
           Healing the Land and/or People
-          <IconButton edge="end" onClick={() => handleClickOpen(CreateProjectI18N.focus)}>
+          <IconButton
+            edge="end"
+            onClick={() => handleClickOpen(CreateProjectI18N.focus)}
+            aria-label="Open Healing the Land and/or People Information">
             <InfoIcon color="info" />
           </IconButton>
         </Typography>
@@ -91,6 +95,7 @@ const ProjectFocusForm: React.FC = () => {
               label="Project Focus"
               options={focusOptions}
               required={true}
+              aria-label="Project Focus"
             />
           </Grid>
           <Grid item xs={12}>
@@ -117,12 +122,14 @@ const ProjectFocusForm: React.FC = () => {
                   <RangeSelectField
                     formikProps={formikProps}
                     formFieldName={peopleInvolvedFormName}
+                    aria-label="Number of People Involved"
                   />
                 ),
                 endAdornment: (
                   <IconButton
                     edge="end"
-                    onClick={() => handleClickOpen(CreateProjectI18N.numberOfPeopleInvolved)}>
+                    onClick={() => handleClickOpen(CreateProjectI18N.numberOfPeopleInvolved)}
+                    aria-label="Open Number of People Involved Information">
                     <InfoIcon color="info" />
                   </IconButton>
                 )
@@ -134,7 +141,8 @@ const ProjectFocusForm: React.FC = () => {
               helperText={
                 get(formikProps.touched, peopleInvolvedFormName) &&
                 (get(formikProps.errors, peopleInvolvedFormName) as string)
-              }>
+              }
+              aria-label="Number of People Involved">
               <MenuItem></MenuItem>
             </TextField>
           </Grid>

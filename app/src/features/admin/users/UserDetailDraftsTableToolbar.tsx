@@ -16,7 +16,8 @@ function UserDetailDraftsTableToolbar(props: DarftTableToolbarProps) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         background: isProject ? '#E9FBFF' : '#FFF4EB'
-      }}>
+      }}
+      aria-labelledby="draftTableTitle">
       <Typography
         sx={{ mx: '0.5rem', flex: '1 1 100%' }}
         variant="h2"

@@ -53,7 +53,8 @@ const AreaSizeFields: React.FC<IAreaSizeFieldsProps> = (props) => {
             inputProps: {
               min: AREA_SIZE_MIN_MAX.min,
               max: AREA_SIZE_MIN_MAX.max,
-              'data-testid': 'min-area'
+              'data-testid': 'min-area',
+              'aria-label': 'Minimum Area Size'
             },
             endAdornment: <InputAdornment position="end">Ha</InputAdornment>
           }}
@@ -61,7 +62,8 @@ const AreaSizeFields: React.FC<IAreaSizeFieldsProps> = (props) => {
             // Firefox min/max area
             min: AREA_SIZE_MIN_MAX.min,
             max: AREA_SIZE_MIN_MAX.max,
-            'data-testid': 'min-area'
+            'data-testid': 'min-area',
+            'aria-label': 'Minimum Area Size'
           }}
           onChange={handleChange}
           error={get(touched, minName) && Boolean(get(errors, minName))}
@@ -69,6 +71,7 @@ const AreaSizeFields: React.FC<IAreaSizeFieldsProps> = (props) => {
           InputLabelProps={{
             shrink: true
           }}
+          aria-invalid={get(touched, minName) && Boolean(get(errors, minName))}
         />
       </Grid>
       <Grid item xs={12} md={2}>
@@ -88,7 +91,8 @@ const AreaSizeFields: React.FC<IAreaSizeFieldsProps> = (props) => {
             inputProps: {
               min: minValue,
               max: AREA_SIZE_MIN_MAX.max,
-              'data-testid': 'max-area'
+              'data-testid': 'max-area',
+              'aria-label': 'Maximum Area Size'
             },
             endAdornment: <InputAdornment position="end">Ha</InputAdornment>
           }}
@@ -96,7 +100,8 @@ const AreaSizeFields: React.FC<IAreaSizeFieldsProps> = (props) => {
             // Firefox min/max dates
             min: minValue,
             max: AREA_SIZE_MIN_MAX.max,
-            'data-testid': 'max-area'
+            'data-testid': 'max-area',
+            'aria-label': 'Maximum Area Size'
           }}
           onChange={handleChange}
           error={get(touched, maxName) && Boolean(get(errors, maxName))}
@@ -104,6 +109,7 @@ const AreaSizeFields: React.FC<IAreaSizeFieldsProps> = (props) => {
           InputLabelProps={{
             shrink: true
           }}
+          aria-invalid={get(touched, maxName) && Boolean(get(errors, maxName))}
         />
       </Grid>
     </Grid>

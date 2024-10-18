@@ -114,7 +114,7 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
               color="primary"
               variant="contained"
               data-testid="invite-project-users-button"
-              aria-label={'Add Team Members'}
+              aria-label="Add Team Members"
               startIcon={<Icon path={mdiPlus} size={1} />}
               onClick={() => setOpenAddParticipantsDialog(true)}>
               Add Team Members
@@ -124,9 +124,9 @@ const ProjectParticipantsHeader: React.FC<IProjectParticipantsHeaderProps> = (pr
       </Container>
 
       <EditDialog
-        dialogTitle={'Add Team Members'}
+        dialogTitle="Add Team Members"
         open={openAddParticipantsDialog}
-        dialogSaveButtonLabel={'Add'}
+        dialogSaveButtonLabel="Add"
         component={{
           element: (
             <AddProjectParticipantsForm

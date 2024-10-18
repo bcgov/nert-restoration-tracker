@@ -314,23 +314,31 @@ const SearchPage: React.FC = () => {
    * Displays search results visualized on a map spatially.
    */
   return (
-    <Box sx={{ height: '100%', position: 'relative' }}>
+    <Box
+      sx={{ height: '100%', position: 'relative' }}
+      role="region"
+      aria-label="Search Results Map">
       <MapContainer
         mapId="search_boundary_map"
         features={geometries}
         layerVisibility={layerVisibility}
         filterState={filterState}
-        centroids={true}>
-        <SideBar sidebarOpen={sidebarOpen}>
+        centroids={true}
+        aria-label="Search Boundary Map">
+        <SideBar sidebarOpen={sidebarOpen} aria-label="Sidebar">
           <LayerSwitcherInline
             layerVisibility={layerVisibility}
             legend={legend}
             filterState={filterState}
+            aria-label="Layer Switcher"
           />
         </SideBar>
 
         {/* button that opens and closes the sidebar */}
-        <IconButton onClick={() => setSidebarOpen(!sidebarOpen)} sx={sidebarButtonStyle}>
+        <IconButton
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          sx={sidebarButtonStyle}
+          aria-label={sidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}>
           {sidebarOpen ? <ArrowBack /> : <LayersIcon />}
         </IconButton>
       </MapContainer>

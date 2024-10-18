@@ -27,7 +27,9 @@ export interface IProjectConservationAreasProps {
 
 const conservationAreaStyled = (conservationArea: string) => {
   return (
-    <Typography sx={pageStyles.conservationAreaLabel} aria-label={`${conservationArea}`}>
+    <Typography
+      sx={pageStyles.conservationAreaLabel}
+      aria-label={`Conservation Area: ${conservationArea}`}>
       {conservationArea}
     </Typography>
   );
@@ -56,12 +58,19 @@ const ProjectConservationAreas: React.FC<IProjectConservationAreasProps> = (prop
               size="small"
               sx={pageStyles.conservationAreaChip}
               label={conservationAreaStyled(item.conservationArea)}
+              role="listitem"
+              aria-label={`Conservation Area ${index + 1}: ${item.conservationArea}`}
             />
           )
         )}
 
       {!hasConservationAreas && (
-        <Chip label="No Conservation Areas" data-testid="no_conservationArea_loaded" />
+        <Chip
+          label="No Conservation Areas"
+          data-testid="no_conservationArea_loaded"
+          role="listitem"
+          aria-label="No Conservation Areas"
+        />
       )}
     </>
   );

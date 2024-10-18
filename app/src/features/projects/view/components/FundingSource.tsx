@@ -1,4 +1,4 @@
-import { Chip, Divider, Tooltip } from '@mui/material';
+import { Chip, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { DATE_FORMAT } from 'constants/dateTimeFormats';
@@ -17,7 +17,7 @@ export interface IProjectFundingProps {
 const fundSrcStyled = (fundSrc: string) => {
   return (
     <Tooltip title={fundSrc} disableHoverListener={fundSrc.length < 30}>
-      <Typography sx={fundingSrcStyles.fundLabel} aria-label={`${fundSrc}`}>
+      <Typography sx={fundingSrcStyles.fundLabel} aria-label={`Funding Source: ${fundSrc}`}>
         {fundSrc}
       </Typography>
     </Tooltip>
@@ -41,7 +41,11 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
       {hasFundingSources &&
         funding.fundingSources.map(
           (item: IGetProjectForViewResponseFundingSource, index: number) => (
-            <Box key={index} data-testid="funding_data">
+            <Box
+              key={index}
+              data-testid="funding_data"
+              role="listitem"
+              aria-label={`Funding Source ${index + 1}`}>
               <Chip
                 data-testid="funding_src_item"
                 size="small"
@@ -51,7 +55,7 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
               <Typography variant="body2" component="dt" color="textSecondary">
                 Amount:
               </Typography>
-              <Typography variant="body2" component="dd">
+              <Typography variant="body2" component="dd" aria-label="Funding Amount">
                 {/* When funding amount is -1 it means it is not for public view */}
                 {-1 !== item.funding_amount
                   ? getFormattedAmount(item.funding_amount)
@@ -60,7 +64,7 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
               <Typography variant="body2" component="dt" color="textSecondary">
                 Project ID:
               </Typography>
-              <Typography variant="body2" component="dd">
+              <Typography variant="body2" component="dd" aria-label="Funding Project ID">
                 {item.funding_project_id}
               </Typography>
               {item.description && (
@@ -68,7 +72,7 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                   <Typography variant="body2" component="dt" color="textSecondary">
                     Description:
                   </Typography>
-                  <Typography variant="body2" component="dd">
+                  <Typography variant="body2" component="dd" aria-label="Funding Description">
                     {item.description}
                   </Typography>
                 </>
@@ -78,7 +82,7 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                   <Typography variant="body2" component="dt" color="textSecondary">
                     Start Date:
                   </Typography>
-                  <Typography variant="body2" component="dd">
+                  <Typography variant="body2" component="dd" aria-label="Funding Start Date">
                     {item.start_date
                       ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.start_date)
                       : '---'}
@@ -90,7 +94,7 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
                   <Typography variant="body2" component="dt" color="textSecondary">
                     End Date:
                   </Typography>
-                  <Typography variant="body2" component="dd">
+                  <Typography variant="body2" component="dd" aria-label="Funding End Date">
                     {item.end_date
                       ? getFormattedDate(DATE_FORMAT.ShortMediumDateFormat, item.end_date)
                       : '---'}
@@ -102,7 +106,11 @@ const FundingSource: React.FC<IProjectFundingProps> = (props) => {
         )}
 
       {!hasFundingSources && (
-        <Typography variant="body2" color="textSecondary" data-testid="no_funding_sources">
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          data-testid="no_funding_sources"
+          aria-label="No Funding Sources">
           No Funding Sources
         </Typography>
       )}
