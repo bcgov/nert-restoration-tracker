@@ -28,7 +28,6 @@ import { SYSTEM_ROLE } from 'constants/roles';
 const SearchPage: React.FC = () => {
   const restorationApi = useNertApi();
 
-  const [performSearch, setPerformSearch] = useState<boolean>(true);
   const [geometries, setGeometries] = useState<Feature[]>([]);
 
   const authStateContext = useAuthStateContext();
@@ -63,11 +62,6 @@ const SearchPage: React.FC = () => {
         ? await restorationApi.search.getSearchResults()
         : await restorationApi.public.search.getSearchResults();
 
-      if (!response) {
-        setPerformSearch(false);
-        return;
-      }
-
       const clusteredPointGeometries: any = [];
 
       response.forEach((result: IGetSearchResultsResponse) => {
@@ -87,7 +81,6 @@ const SearchPage: React.FC = () => {
         }
       });
 
-      setPerformSearch(false);
       setGeometries(clusteredPointGeometries);
     } catch (error) {
       const apiError = error as APIError;

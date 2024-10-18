@@ -126,9 +126,6 @@ export interface IGeoJSON {
  */
 const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
 
-  // // TESTING: 
-  // return JSON.parse(originalFeatureArray);
-
   const featureArray: IFeatureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
   try {
     const geojson: IGeoJSON[] = originalGeoJSON && JSON.parse(originalGeoJSON);
@@ -154,9 +151,22 @@ const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) 
   return featureArray;
 };
 
-const _findMaskedLocation = (rows: any[]) => {
-  defaultLog.debug({ label: 'rows', message: rows });
-  return true;
+/**
+ * Check if there are any masked locations in the geojson.
+ * @param geojsonString 
+ * @returns {boolean}
+ */
+const _findMaskedLocations = (geojsonString: string) => {
+  let maskedLocations = false;
+  try {
+    const geojson = JSON.parse(geojsonString);
+    if (geojson && geojson.some((feature: any) => feature.properties.maskedLocation)) {
+      maskedLocations = true;
+    }
+  } catch (error) {
+    console.log('error', error);
+  }
+  return maskedLocations;
 }
 /**
  * Extract an array of search result data from DB query.
@@ -171,12 +181,11 @@ export function _extractResults(rows: any[]): any[] {
   }
 
   const searchResults: any[] = [];
-  
-  const maskedLocations = _findMaskedLocation(rows);
 
   rows.forEach((row) => {
     // Protected shapes must have their geometry masked here
     const features = _maskGateKeeper(row.geometry, row.geojson);
+    const maskedLocations = _findMaskedLocations(row.geojson || '{[]}');
 
     const result: any = {
       id: row.id,

@@ -84,15 +84,11 @@ export function getSearchResults(): RequestHandler {
 
       await connection.commit();
 
-      // defaultLog.debug({ label: 'getSearchResults', message: 'response', response });
-
       if (!response || !response.rows) {
         return res.status(200).json(null);
       }
 
       const result: any[] = _extractResults(response.rows);
-
-      defaultLog.debug({ label: 'getSearchResults', message: 'result', result });
 
       return res.status(200).json(result);
     } catch (error) {
