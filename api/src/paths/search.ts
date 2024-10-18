@@ -140,11 +140,12 @@ const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) 
           units: 'meters',
           properties: feature.properties
         });
-        featureArray.coordinates[index] = mask.geometry.coordinates;
+        featureArray.coordinates[index] = mask.geometry.coordinates[0];
       }
     });
   } catch (error) {
     console.log('error', error);
+    throw error;
   }
 
   return featureArray;
@@ -164,6 +165,7 @@ const _findMaskedLocations = (geojsonString: string) => {
     }
   } catch (error) {
     console.log('error', error);
+    throw error;
   }
   return maskedLocations;
 };
