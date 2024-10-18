@@ -125,7 +125,6 @@ export interface IGeoJSON {
  * @returns new feature array with mask applied
  */
 const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) => {
-
   const featureArray: IFeatureArray = originalFeatureArray && JSON.parse(originalFeatureArray);
   try {
     const geojson: IGeoJSON[] = originalGeoJSON && JSON.parse(originalGeoJSON);
@@ -153,7 +152,7 @@ const _maskGateKeeper = (originalFeatureArray: string, originalGeoJSON: string) 
 
 /**
  * Check if there are any masked locations in the geojson.
- * @param geojsonString 
+ * @param geojsonString
  * @returns {boolean}
  */
 const _findMaskedLocations = (geojsonString: string) => {
@@ -167,7 +166,7 @@ const _findMaskedLocations = (geojsonString: string) => {
     console.log('error', error);
   }
   return maskedLocations;
-}
+};
 /**
  * Extract an array of search result data from DB query.
  *

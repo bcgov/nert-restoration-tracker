@@ -94,7 +94,7 @@ const SearchPage: React.FC = () => {
 
   // This was the source of the infinite loop.
   useEffect(() => {
-      getSearchResults();
+    getSearchResults();
   }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
