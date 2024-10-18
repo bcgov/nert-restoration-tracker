@@ -52,7 +52,16 @@ function PlansTableHead(props: PlansTableProps) {
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
-              aria-label={`Sort by ${headCell.label}`}>
+              aria-label={`Sort by ${headCell.label}`}
+              sx={
+                orderBy === headCell.id
+                  ? {
+                      '& .MuiTableSortLabel-icon': {
+                        color: 'black !important'
+                      }
+                    }
+                  : {}
+              }>
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>

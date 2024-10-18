@@ -239,15 +239,10 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
           <Box display="flex">
             <Box flex="1 1 auto" display="flex">
               <Input
-                tabIndex={0}
                 sx={pageStyles.keywordSearch}
                 name="plan_keyword"
                 fullWidth
-                startAdornment={
-                  <InputAdornment position="start">
-                    <Icon path={mdiMagnify} size={1} />
-                  </InputAdornment>
-                }
+                startAdornment={<Icon path={mdiMagnify} size={1} />}
                 disableUnderline={true}
                 placeholder="Enter Keywords"
                 onChange={handleChange}
@@ -258,7 +253,7 @@ const PlanFilter: React.FC<IPlanAdvancedFiltersProps> = (props) => {
                 sx={pageStyles.filterToggleBtn}
                 size="large"
                 variant="outlined"
-                disableRipple={true}
+                focusRipple={true}
                 endIcon={
                   (!isAdvancedFiltersOpen && <Icon path={mdiMenuDown} size={1} />) ||
                   (isAdvancedFiltersOpen && <Icon path={mdiMenuUp} size={1} />)
